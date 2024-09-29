@@ -40,6 +40,7 @@ icu::normalizer::uts46::Uts46MapperBorrowed::map_normalize#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::new#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::normalize_validate#FnInStruct
 icu::plurals::PluralElements#Struct
+icu::plurals::PluralElements::as_ref#FnInStruct
 icu::plurals::PluralElements::explicit_one#FnInStruct
 icu::plurals::PluralElements::explicit_zero#FnInStruct
 icu::plurals::PluralElements::few#FnInStruct
@@ -59,11 +60,14 @@ icu::plurals::PluralElements::with_zero_value#FnInStruct
 icu::plurals::PluralElements::zero#FnInStruct
 icu::plurals::PluralOperands::is_exactly_one#FnInStruct
 icu::plurals::PluralOperands::is_exactly_zero#FnInStruct
-icu::properties::PropertyNames#Struct
-icu::properties::PropertyNames::new_long#FnInStruct
-icu::properties::PropertyNames::new_short#FnInStruct
-icu::properties::PropertyNamesBorrowed#Struct
-icu::properties::PropertyNamesBorrowed::get#FnInStruct
+icu::properties::PropertyNamesLong#Struct
+icu::properties::PropertyNamesLong::new#FnInStruct
+icu::properties::PropertyNamesLongBorrowed#Struct
+icu::properties::PropertyNamesLongBorrowed::get#FnInStruct
+icu::properties::PropertyNamesShort#Struct
+icu::properties::PropertyNamesShort::new#FnInStruct
+icu::properties::PropertyNamesShortBorrowed#Struct
+icu::properties::PropertyNamesShortBorrowed::get#FnInStruct
 icu::properties::bidi::BidiAuxiliaryProperties#Struct
 icu::properties::bidi::BidiAuxiliaryProperties::as_borrowed#FnInStruct
 icu::properties::bidi::BidiAuxiliaryProperties::new#FnInStruct

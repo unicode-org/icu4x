@@ -103,7 +103,6 @@ fn test_markers_for_bin() {
             crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
             crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
             crate::datetime::provider::neo::WeekdayNamesV1Marker::INFO,
-            crate::calendar::provider::WeekDataV1Marker::INFO,
             crate::calendar::provider::WeekDataV2Marker::INFO,
             crate::decimal::provider::DecimalSymbolsV1Marker::INFO,
         ]

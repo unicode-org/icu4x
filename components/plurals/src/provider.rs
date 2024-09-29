@@ -23,7 +23,6 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
-use icu_provider::DynamicDataMarker;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
@@ -105,12 +104,6 @@ pub struct PluralRulesV1<'data> {
     /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
-}
-
-pub(crate) struct ErasedPluralRulesV1Marker;
-
-impl DynamicDataMarker for ErasedPluralRulesV1Marker {
-    type DataStruct = PluralRulesV1<'static>;
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -525,6 +518,11 @@ where
             None => None,
         }
         .unwrap_or(parts.default)
+    }
+
+    /// Returns the value for the default ("other") plural variant.
+    pub fn get_default(&self) -> (FourBitMetadata, &V) {
+        self.as_parts().default
     }
 }
 
@@ -1075,10 +1073,10 @@ fn test_serde_nonsingleton_roundtrip() {
     assert_eq!(
         postcard_bytes,
         &[
-            16,   // Postcard header
+            14,   // Postcard header
             0x80, // Discriminant
             3, b'a', b'b', b'c', // String of length 3
-            1, 0, 0, 0, 0, 0, // VarZeroVec of length 1
+            1, 0, 0, 0, // VarZeroVec of length 1
             0x10, b'd', b'e', b'f', b'g' // Plural category 1 and string "defg"
         ]
     );

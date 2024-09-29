@@ -789,14 +789,11 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Loads data for a property specified as a string as long as it is one of the
   /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
   ///
-  /// Returns `Error::PropertyUnexpectedPropertyNameError` in case the string does not
-  /// match any property in the list
+  /// Returns `DataError::Custom` in case the string does not match any property in the list.
   ///
   /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
   ///
-  /// See the [Rust documentation for `new_runtime`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html#method.new_runtime) for more information.
-  ///
-  /// See the [Rust documentation for `parse_ecma262_name`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeProperty.html#method.parse_ecma262_name) for more information.
+  /// See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.forEcma262(DataProvider provider, String propertyName) {

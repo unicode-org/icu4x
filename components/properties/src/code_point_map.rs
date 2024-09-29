@@ -2,20 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointMapData`] representing, for
-//! each code point in the entire range of code points, the property values
-//! for a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.
-//!
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-
 use crate::props::GeneralCategory;
 use crate::provider::*;
 use crate::{code_point_set::CodePointSetData, props::GeneralCategoryGroup};
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use zerovec::ule::UleError;
 
@@ -25,7 +17,7 @@ use zerovec::ule::UleError;
 /// [`CodePointMapDataBorrowed`].
 #[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
-    data: DataPayload<ErasedPropertyCodePointMapV1Marker<T>>,
+    data: DataPayload<ErasedMarker<PropertyCodePointMapV1<'static, T>>>,
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -96,10 +88,8 @@ impl<T: TrieValue> CodePointMapData<T> {
         P: TrieValue,
     {
         self.data
-            .try_map_project::<ErasedPropertyCodePointMapV1Marker<P>, _, _>(move |data, _| {
-                data.try_into_converted()
-            })
-            .map(CodePointMapData::from_data)
+            .try_map_project(|data, _| data.try_into_converted())
+            .map(CodePointMapData::from_data::<ErasedMarker<PropertyCodePointMapV1<'static, P>>>)
     }
 
     /// Construct a new one from loaded data
@@ -115,9 +105,9 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
         let set = PropertyCodePointMapV1::from_code_point_trie(trie);
-        CodePointMapData::from_data(
-            DataPayload::<ErasedPropertyCodePointMapV1Marker<T>>::from_owned(set),
-        )
+        CodePointMapData::from_data(DataPayload::<
+            ErasedMarker<PropertyCodePointMapV1<'static, T>>,
+        >::from_owned(set))
     }
 
     /// Convert this type to a [`CodePointTrie`] as a borrowed value.
@@ -336,10 +326,19 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 }
 
 /// A Unicode character property that assigns a value to each code point.
+///
+/// The descriptions of most properties are taken from [`TR44`], the documentation for the
+/// Unicode Character Database.
+///
+/// [`TR44`]: https://www.unicode.org/reports/tr44
 pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointMapV1<'static, Self>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     const SINGLETON: &'static PropertyCodePointMapV1<'static, Self>;
+    /// The name of this property
+    const NAME: &'static [u8];
+    /// The abbreviated name of this property, if it exists, otherwise the name
+    const SHORT_NAME: &'static [u8];
 }

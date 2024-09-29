@@ -5,6 +5,7 @@
 use crate::provider::*;
 use crate::ListLength;
 use core::fmt::{self, Write};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use writeable::*;
 
@@ -15,7 +16,7 @@ extern crate writeable;
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]
 pub struct ListFormatter {
-    data: DataPayload<ErasedListV2Marker>,
+    data: DataPayload<ErasedMarker<ListFormatterPatternsV2<'static>>>,
 }
 
 macro_rules! constructor {

@@ -1482,6 +1482,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "unicode-bidi",
+ "zerotrie",
  "zerovec",
 ]
 

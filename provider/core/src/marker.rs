@@ -636,6 +636,13 @@ impl fmt::Debug for DataMarkerInfo {
     }
 }
 
+/// A marker for the given `DataStruct`.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct ErasedMarker<DataStruct: for<'a> Yokeable<'a>>(PhantomData<DataStruct>);
+impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataStruct> {
+    type DataStruct = DataStruct;
+}
+
 #[test]
 fn test_path_syntax() {
     // Valid paths:

@@ -76,9 +76,11 @@ pub use code_point_map::{CodePointMapData, CodePointMapDataBorrowed};
 mod unicode_set;
 pub use unicode_set::{UnicodeSetData, UnicodeSetDataBorrowed};
 mod names;
-pub use names::{PropertyNames, PropertyNamesBorrowed, PropertyParser, PropertyParserBorrowed};
+pub use names::{
+    PropertyNamesLong, PropertyNamesLongBorrowed, PropertyNamesShort, PropertyNamesShortBorrowed,
+    PropertyParser, PropertyParserBorrowed,
+};
 mod runtime;
-pub use runtime::UnicodeProperty;
 
 pub mod bidi;
 // NOTE: The Pernosco debugger has special knowledge

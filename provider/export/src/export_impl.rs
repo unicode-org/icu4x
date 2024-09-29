@@ -96,7 +96,7 @@ impl ExportDriver {
         let flush_metadata = flush_metadata;
 
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
-            log::trace!("Generating marker/locale: {marker:?}/{}", id.locale);
+            log::trace!("Generating marker/locale: {marker:?}/{id}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -113,7 +113,7 @@ impl ExportDriver {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
                             if iter.get().is_default() && !id.locale.is_default() {
-                                log::debug!("Falling back to und: {marker:?}/{}", id.locale);
+                                log::debug!("Falling back to und: {marker:?}/{id}");
                             }
                         }
                         return Some(Ok(data_response.payload));
@@ -124,7 +124,7 @@ impl ExportDriver {
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
                             if iter.get().is_default() {
-                                log::debug!("Could not find data for: {marker:?}/{}", id.locale);
+                                log::debug!("Could not find data for: {marker:?}/{id}");
                                 return None;
                             }
                             iter.step();
@@ -435,12 +435,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
             ) {
                 if inherited_payload == payload {
                     // Found a match: don't need to write anything
-                    log::trace!(
-                        "Deduplicating {:?}/{} (inherits from {})",
-                        id.locale,
-                        id.marker_attributes.as_str(),
-                        iter.get()
-                    );
+                    log::trace!("Deduplicating {id} (inherits from {})", iter.get());
                     return Ok(());
                 } else {
                     // Not a match: we must include this

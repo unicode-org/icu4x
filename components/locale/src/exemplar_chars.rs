@@ -33,18 +33,12 @@
 use crate::provider::*;
 use core::ops::Deref;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_provider::prelude::*;
+use icu_provider::{marker::ErasedMarker, prelude::*};
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct ExemplarCharacters {
-    data: DataPayload<ErasedUnicodeSetMarker>,
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedUnicodeSetMarker;
-impl DynamicDataMarker for ErasedUnicodeSetMarker {
-    type DataStruct = ExemplarCharactersV1<'static>;
+    data: DataPayload<ErasedMarker<ExemplarCharactersV1<'static>>>,
 }
 
 impl ExemplarCharacters {

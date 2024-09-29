@@ -75,7 +75,7 @@
 //! };
 //! let bincode_bytes =
 //!     bincode::serialize(&data).expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 67);
+//! assert_eq!(bincode_bytes.len(), 65);
 //!
 //! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -149,7 +149,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 168);
+//! assert_eq!(bincode_bytes.len(), 164);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -518,6 +518,8 @@ pub use zerovec_derive::make_ule;
 pub use zerovec_derive::make_varule;
 
 #[cfg(test)]
+// Expected sizes are based on a 64-bit architecture
+#[cfg(target_pointer_width = "64")]
 mod tests {
     use super::*;
     use core::mem::size_of;

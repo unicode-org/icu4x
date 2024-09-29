@@ -141,8 +141,3 @@ pub struct Pattern<'data> {
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
 }
-pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
-
-impl DynamicDataMarker for ErasedCompactDecimalFormatDataV1Marker {
-    type DataStruct = CompactDecimalPatternDataV1<'static>;
-}

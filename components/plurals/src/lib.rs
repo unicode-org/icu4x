@@ -81,11 +81,12 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
-use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
+use provider::PluralRulesV1;
 use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
@@ -280,7 +281,7 @@ impl PluralCategory {
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
 #[derive(Debug)]
-pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
+pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesV1<'static>>>);
 
 impl AsRef<PluralRules> for PluralRules {
     fn as_ref(&self) -> &PluralRules {
@@ -876,11 +877,11 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// A bag of values for different plural cases.
 pub struct PluralElements<T>(PluralElementsInner<T>);
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub(crate) struct PluralElementsInner<T> {
@@ -968,6 +969,20 @@ impl<T> PluralElements<T> {
             many: self.0.many.map(f),
             explicit_zero: self.0.explicit_zero.map(f),
             explicit_one: self.0.explicit_one.map(f),
+        })
+    }
+
+    /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
+    pub fn as_ref(&self) -> PluralElements<&T> {
+        PluralElements(PluralElementsInner {
+            other: &self.0.other,
+            zero: self.0.zero.as_ref(),
+            one: self.0.one.as_ref(),
+            two: self.0.two.as_ref(),
+            few: self.0.few.as_ref(),
+            many: self.0.many.as_ref(),
+            explicit_zero: self.0.explicit_zero.as_ref(),
+            explicit_one: self.0.explicit_one.as_ref(),
         })
     }
 }

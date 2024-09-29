@@ -33,9 +33,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed locale identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// No subtag validation or alias resolution is performed.
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///

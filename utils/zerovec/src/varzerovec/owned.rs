@@ -19,9 +19,8 @@ use core::ops::Deref;
 use core::ops::Range;
 use core::{fmt, ptr, slice};
 
-use super::components::LENGTH_WIDTH;
+use super::components::IntegerULE;
 use super::components::MAX_INDEX;
-use super::components::MAX_LENGTH;
 use super::components::METADATA_WIDTH;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
@@ -91,7 +90,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                 marker: PhantomData,
                 // TODO(#1410): Rethink length errors in VZV.
                 entire_slice: components::get_serializable_bytes_non_empty::<T, A, F>(elements)
-                    .ok_or(F::TOO_LARGE_ERROR)?,
+                    .ok_or(F::Index::TOO_LARGE_ERROR)?,
             }
         })
     }
@@ -111,7 +110,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: Vec::with_capacity(capacity * (F::INDEX_WIDTH + 4)),
+            entire_slice: Vec::with_capacity(capacity * (F::Index::SIZE + 4)),
         }
     }
 
@@ -119,7 +118,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// elements. Since `T` can take up an arbitrary size this will
     /// just allocate enough space for 4-byte Ts
     pub(crate) fn reserve(&mut self, capacity: usize) {
-        self.entire_slice.reserve(capacity * (F::INDEX_WIDTH + 4))
+        self.entire_slice.reserve(capacity * (F::Index::SIZE + 4))
     }
 
     /// Get the position of a specific element in the data segment.
@@ -131,12 +130,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
-            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - (F::INDEX_WIDTH * len)
+            self.entire_slice.len() - F::Len::SIZE - METADATA_WIDTH - (F::Index::SIZE * len)
         } else {
-            F::rawbytes_to_usize(*self.index_data(idx))
+            self.index_data(idx).iule_to_usize()
         };
         debug_assert!(
-            out + LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH <= self.entire_slice.len()
+            out + F::Len::SIZE + METADATA_WIDTH + len * F::Index::SIZE <= self.entire_slice.len()
         );
         out
     }
@@ -157,24 +156,25 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// ## Safety
     /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
     unsafe fn set_len(&mut self, len: usize) {
-        assert!(len <= MAX_LENGTH);
+        assert!(len <= F::Len::MAX_VALUE as usize);
         let len_bytes = len.to_le_bytes();
-        self.entire_slice[0..LENGTH_WIDTH].copy_from_slice(&len_bytes[0..LENGTH_WIDTH]);
+        let len_ule = F::Len::iule_from_usize(len).expect(F::Len::TOO_LARGE_ERROR);
+        self.entire_slice[0..F::Len::SIZE].copy_from_slice(ULE::as_byte_slice(&[len_ule]));
         // Double-check that the length fits in the length field
-        assert_eq!(len_bytes[LENGTH_WIDTH..].iter().sum::<u8>(), 0);
+        assert_eq!(len_bytes[F::Len::SIZE..].iter().sum::<u8>(), 0);
     }
 
     fn index_range(index: usize) -> Range<usize> {
-        let pos = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index;
-        pos..pos + F::INDEX_WIDTH
+        let pos = F::Len::SIZE + METADATA_WIDTH + F::Index::SIZE * index;
+        pos..pos + F::Index::SIZE
     }
 
     /// Return the raw bytes representing the given `index`.
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    unsafe fn index_data(&self, index: usize) -> &F::RawBytes {
-        &F::RawBytes::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])[0]
+    unsafe fn index_data(&self, index: usize) -> &F::Index {
+        &F::Index::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])[0]
     }
 
     /// Return the mutable slice representing the given `index`.
@@ -182,16 +182,16 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// ## Safety
     /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
-    unsafe fn index_data_mut(&mut self, index: usize) -> &mut F::RawBytes {
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut F::Index {
         let ptr = self.entire_slice.as_mut_ptr();
         let range = Self::index_range(index);
 
         // Doing this instead of just `get_unchecked_mut()` because it's unclear
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
-        let data = slice::from_raw_parts_mut(ptr.add(range.start), F::INDEX_WIDTH);
+        let data = slice::from_raw_parts_mut(ptr.add(range.start), F::Index::SIZE);
 
-        &mut F::rawbytes_from_byte_slice_unchecked_mut(data)[0]
+        &mut F::Index::iule_from_byte_slice_unchecked_mut(data)[0]
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -201,18 +201,18 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
-        let indices = F::rawbytes_from_byte_slice_unchecked_mut(
-            &mut self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
-                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
+        let indices = F::Index::iule_from_byte_slice_unchecked_mut(
+            &mut self.entire_slice[F::Len::SIZE + METADATA_WIDTH
+                ..F::Len::SIZE + METADATA_WIDTH + F::Index::SIZE * len],
         );
         for idx in &mut indices[starting_index..] {
-            let mut new_idx = F::rawbytes_to_usize(*idx);
+            let mut new_idx = idx.iule_to_usize();
             if amount > 0 {
                 new_idx = new_idx.checked_add(amount.try_into().unwrap()).unwrap();
             } else {
                 new_idx = new_idx.checked_sub((-amount).try_into().unwrap()).unwrap();
             }
-            *idx = F::usize_to_rawbytes(new_idx);
+            *idx = F::Index::iule_from_usize(new_idx).expect(F::Index::TOO_LARGE_ERROR);
         }
     }
 
@@ -241,7 +241,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     ///
     /// ## Safety
     /// - `index` must be a valid index, or, if `shift_type == ShiftType::Insert`, `index == self.len()` is allowed.
-    /// - `new_size` musn't result in the data segment growing larger than `F::MAX_VALUE`.
+    /// - `new_size` musn't result in the data segment growing larger than `F::Index::MAX_VALUE`.
     unsafe fn shift(&mut self, index: usize, new_size: usize, shift_type: ShiftType) -> &mut [u8] {
         // The format of the encoded data is:
         //  - four bytes of "len"
@@ -266,16 +266,16 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // How much shifting must be done in bytes due to removal/insertion of an index.
         let index_shift: i64 = match shift_type {
-            ShiftType::Insert => F::INDEX_WIDTH as i64,
+            ShiftType::Insert => F::Index::SIZE as i64,
             ShiftType::Replace => 0,
-            ShiftType::Remove => -(F::INDEX_WIDTH as i64),
+            ShiftType::Remove => -(F::Index::SIZE as i64),
         };
         // The total shift in byte size of the owned slice.
         let shift: i64 =
             new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
         let new_slice_len = slice_len.wrapping_add(shift as usize);
         if shift > 0 {
-            if new_slice_len > F::MAX_VALUE as usize {
+            if new_slice_len > F::Index::MAX_VALUE as usize {
                 panic!(
                     "Attempted to grow VarZeroVec to an encoded size that does not fit within the length size used by {}",
                     any::type_name::<F>()
@@ -292,7 +292,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             let old_slice_end = slice_range.start.add(slice_len);
             let data_start = slice_range
                 .start
-                .add(LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH);
+                .add(F::Len::SIZE + METADATA_WIDTH + len * F::Index::SIZE);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -303,8 +303,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             let index_range = {
                 let index_start = slice_range
                     .start
-                    .add(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index);
-                index_start..index_start.add(F::INDEX_WIDTH)
+                    .add(F::Len::SIZE + METADATA_WIDTH + F::Index::SIZE * index);
+                index_start..index_start.add(F::Index::SIZE)
             };
 
             unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
@@ -330,7 +330,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                     // Move data before the element forward by 4 to make space for a new index.
                     shift_bytes(index_range.start..prev_element_p.start, index_range.end);
 
-                    *self.index_data_mut(index) = F::usize_to_rawbytes(prev_element.start);
+                    *self.index_data_mut(index) = F::Index::iule_from_usize(prev_element.start)
+                        .expect(F::Index::TOO_LARGE_ERROR);
                     self.set_len(len + 1);
                     index + 1
                 }
@@ -352,9 +353,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         debug_assert!(self.verify_integrity());
 
         // Return a mut slice to the new element data.
-        let element_pos = LENGTH_WIDTH
+        let element_pos = F::Len::SIZE
             + METADATA_WIDTH
-            + self.len() * F::INDEX_WIDTH
+            + self.len() * F::Index::SIZE
             + self.element_position_unchecked(index);
         &mut self.entire_slice[element_pos..element_pos + new_size]
     }
@@ -375,21 +376,19 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             _ => (),
         }
         let len = unsafe {
-            RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(
-                &self.entire_slice[..LENGTH_WIDTH],
-            )[0]
-            .as_unsigned_int()
+            <F::Len as ULE>::from_byte_slice_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
+                .iule_to_usize()
         };
         if len == 0 {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
             return false;
         }
-        if slice_len < LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH {
+        if slice_len < F::Len::SIZE + METADATA_WIDTH + len * F::Index::SIZE {
             // Not enough room for the indices.
             return false;
         }
         let data_len =
-            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * F::INDEX_WIDTH;
+            self.entire_slice.len() - F::Len::SIZE - METADATA_WIDTH - len * F::Index::SIZE;
         if data_len > MAX_INDEX {
             // The data segment is too long.
             return false;
@@ -397,19 +396,19 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // Test index validity.
         let indices = unsafe {
-            F::RawBytes::from_byte_slice_unchecked(
-                &self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
-                    ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH],
+            F::Index::from_byte_slice_unchecked(
+                &self.entire_slice[F::Len::SIZE + METADATA_WIDTH
+                    ..F::Len::SIZE + METADATA_WIDTH + len * F::Index::SIZE],
             )
         };
         for idx in indices {
-            if F::rawbytes_to_usize(*idx) > data_len {
+            if idx.iule_to_usize() > data_len {
                 // Indices must not point past the data segment.
                 return false;
             }
         }
         for window in indices.windows(2) {
-            if F::rawbytes_to_usize(window[0]) > F::rawbytes_to_usize(window[1]) {
+            if window[0].iule_to_usize() > window[1].iule_to_usize() {
                 // Indices must be in non-decreasing order.
                 return false;
             }
@@ -432,7 +431,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         let value_len = element.encode_var_ule_len();
 
         if len == 0 {
-            let header_len = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH;
+            let header_len = F::Len::SIZE + METADATA_WIDTH + F::Index::SIZE;
             let cap = header_len + value_len;
             self.entire_slice.resize(cap, 0);
             self.entire_slice[0] = 1; // set length
