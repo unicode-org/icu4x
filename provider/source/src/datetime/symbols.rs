@@ -410,7 +410,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
-            "LinearNamesV1 { symbols: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+            "LinearNamesV1 { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
         );
     }
 
