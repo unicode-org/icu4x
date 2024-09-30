@@ -384,7 +384,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_weekdays_abbreviated:?}"),
-            "LinearNamesV1 { symbols: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
+            "LinearNamesV1 { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
         );
     }
 
@@ -462,7 +462,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_dayperiods_abbreviated:?}"),
-            "LinearNamesV1 { symbols: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
+            "LinearNamesV1 { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
         );
     }
 }
