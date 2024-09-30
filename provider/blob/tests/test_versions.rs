@@ -13,8 +13,7 @@ use icu_provider_blob::BlobDataProvider;
 use std::collections::BTreeSet;
 use std::hash::Hasher;
 
-const BLOB_V1: &[u8] = include_bytes!("data/v1.postcard");
-const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
+const BLOB_V3: &[u8] = include_bytes!("data/v3.postcard");
 
 fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1Marker>)
 where
@@ -105,39 +104,30 @@ fn check_hello_world(
 }
 
 #[test]
-fn test_v1() {
+fn test_format() {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     run_driver(exporter, &HelloWorldProvider);
-    assert_eq!(BLOB_V1, blob.as_slice());
-
-    let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
-    check_hello_world(blob_provider.as_deserializing(), false);
-}
-
-#[test]
-fn test_v2() {
-    let mut blob: Vec<u8> = Vec::new();
-    let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    run_driver(exporter, &HelloWorldProvider);
-    assert_eq!(BLOB_V2, blob.as_slice());
+    std::fs::write("./tests/data/v3.postcard", blob.as_slice()).unwrap();
+    assert_eq!(BLOB_V3, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
-        !blob_provider.internal_is_using_v2_bigger_format(),
-        "Should have exported to smaller V2 format"
+        !blob_provider.internal_is_using_bigger_format(),
+        "Should have exported to smaller V3 format"
     );
     check_hello_world(blob_provider.as_deserializing(), true);
 }
 
-// This tests that the V2Bigger format works by attempting to export something with 26^4 = 456976 data entries
+// This tests that the V3Bigger format works by attempting to export something with 26^4 = 456976 data entries
 #[test]
-fn test_v2_bigger() {
+fn test_format_bigger() {
     // We do print progress since this is a slower test and it's useful to get some feedback.
     println!("Exporting blob ....");
     let mut blob: Vec<u8> = Vec::new();
-    let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
+    let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     run_driver(exporter, &ManyLocalesProvider);
+
     // Rather than check in a 10MB file, we just compute hashes
     println!("Computing hash ....");
     // Construct a hasher with a random, stable seed
@@ -146,15 +136,15 @@ fn test_v2_bigger() {
     let hash = hasher.finish();
 
     assert_eq!(
-        hash, 11911648880836574343,
+        hash, 15551798874510060652,
         "V2Bigger format appears to have changed!"
     );
 
     println!("Loading and testing locales .... ");
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
-        blob_provider.internal_is_using_v2_bigger_format(),
-        "Should have exported to V2Bigger format"
+        blob_provider.internal_is_using_bigger_format(),
+        "Should have exported to V3Bigger format"
     );
     let blob_provider = blob_provider.as_deserializing();
 

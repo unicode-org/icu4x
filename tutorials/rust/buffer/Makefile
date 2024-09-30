@@ -30,7 +30,7 @@ bin/tutorial_buffer.wasm:
 
 buffer_data.postcard: ../bin/icu4x-datagen bin/tutorial_buffer
 	../bin/icu4x-datagen \
-		--format blob2 \
+		--format blob \
 		--markers-for-bin bin/tutorial_buffer \
 		--locales my en-ZA \
 		--cldr-tag latest \

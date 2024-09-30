@@ -45,8 +45,7 @@ exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --l
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format fs --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
 # Blob
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob --overwrite --out provider/blob/tests/data/v3.postcard
 
 # Baked
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data

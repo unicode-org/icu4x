@@ -11,19 +11,12 @@ use icu_provider::{marker::DataMarkerPathHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
 use zerovec::vecs::VarZeroVecOwned;
 use zerovec::VarZeroVec;
-use zerovec::ZeroMap2d;
 use zerovec::ZeroVec;
 
 use postcard::ser_flavors::{AllocVec, Flavor};
-
-enum VersionConfig {
-    V001,
-    V002,
-}
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
@@ -36,7 +29,6 @@ pub struct BlobExporter<'w> {
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
-    version: VersionConfig,
 }
 
 impl core::fmt::Debug for BlobExporter<'_> {
@@ -54,29 +46,13 @@ impl<'w> BlobExporter<'w> {
     /// Creates a version 1 [`BlobExporter`] that writes to the given I/O stream.
     ///
     /// Version 1 is needed if the blob may be consumed by ICU4X versions 1.0 through 1.3. If
-    /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_v2_with_sink()].
+    /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_with_sink()].
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Default::default(),
             unique_resources: Default::default(),
             all_markers: Default::default(),
             sink,
-            version: VersionConfig::V001,
-        }
-    }
-
-    /// Creates a version 2 [`BlobExporter`] that writes to the given I/O stream.
-    ///
-    /// Version 2 produces a smaller postcard file than version 1 without sacrificing performance.
-    /// It is compatible with ICU4X 1.4 and above. If you need to support older version of ICU4X,
-    /// see [BlobExporter::new_with_sink()].
-    pub fn new_v2_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
-        Self {
-            resources: Default::default(),
-            unique_resources: Default::default(),
-            all_markers: Default::default(),
-            sink,
-            version: VersionConfig::V002,
         }
     }
 }
@@ -128,10 +104,7 @@ impl DataExporter for BlobExporter<'_> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        match self.version {
-            VersionConfig::V001 => self.close_v1(),
-            VersionConfig::V002 => self.close_v2(),
-        }
+        self.close_internal()
     }
 }
 
@@ -171,50 +144,7 @@ impl BlobExporter<'_> {
         FinalizedBuffers { vzv, remap }
     }
 
-    fn close_v1(&mut self) -> Result<(), DataError> {
-        let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
-
-        // Now build up the ZeroMap2d, changing old ID to new ID
-        let mut zm = self
-            .resources
-            .get_mut()
-            .expect("poison")
-            .iter()
-            .flat_map(|(hash, sub_map)| {
-                sub_map
-                    .iter()
-                    .map(|(locale, old_id)| (*hash, locale, old_id))
-            })
-            .map(|(hash, locale, old_id)| {
-                (
-                    hash,
-                    Index32U8::parse_byte_slice(locale)
-                        .expect("[u8] to IndexU32U8 should never fail"),
-                    remap.get(old_id).expect("in-bound index"),
-                )
-            })
-            .collect::<ZeroMap2d<DataMarkerPathHash, Index32U8, usize>>();
-
-        for marker in self.all_markers.lock().expect("poison").iter() {
-            if zm.get0(marker).is_none() {
-                zm.insert(marker, Index32U8::SENTINEL, &vzv.len());
-            }
-        }
-
-        if !zm.is_empty() {
-            let blob = BlobSchema::V001(BlobSchemaV1 {
-                markers: zm.as_borrowed(),
-                buffers: &vzv,
-            });
-            log::info!("Serializing blob to output stream...");
-
-            let output = postcard::to_allocvec(&blob)?;
-            self.sink.write_all(&output)?;
-        }
-        Ok(())
-    }
-
-    fn close_v2(&mut self) -> Result<(), DataError> {
+    fn close_internal(&mut self) -> Result<(), DataError> {
         let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
 
         let all_markers = self.all_markers.lock().expect("poison");
@@ -244,7 +174,7 @@ impl BlobExporter<'_> {
             if let Ok(locales_vzv) =
                 VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
             {
-                let blob = BlobSchema::V002(BlobSchemaV2 {
+                let blob = BlobSchema::V003(BlobSchemaV3 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
@@ -254,11 +184,11 @@ impl BlobExporter<'_> {
                 let output = postcard::to_allocvec(&blob)?;
                 self.sink.write_all(&output)?;
             } else {
-                log::info!("Upgrading to BlobSchemaV2 (bigger)...");
+                log::info!("Upgrading to BlobSchemaV3 (bigger)...");
                 let locales_vzv =
                     VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
                         .expect("Locales vector does not fit in Index32 buffer!");
-                let blob = BlobSchema::V002Bigger(BlobSchemaV2 {
+                let blob = BlobSchema::V003Bigger(BlobSchemaV3 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
