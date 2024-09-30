@@ -80,7 +80,7 @@ pub(crate) const UNICODE_EXT_STR: &str = "u";
 ///     Some(&value!("buddhist"))
 /// );
 /// ```
-#[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
+#[derive(Clone, PartialEq, Eq, Debug, Default, Hash)]
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure
 pub struct Unicode {
     /// The key-value pairs present in this locale extension, with each extension key subtag
