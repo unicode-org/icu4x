@@ -143,8 +143,6 @@ $ icu4x-datagen --markers all --locales ja --format blob --out my_data_blob.post
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
 
-💡 Note: `--format blob` generates version 2 of the blob format. Alternatively, `--format blob` produces an older blob format which works with ICU4X prior to 1.4 but is not as optimized.
-
 ## Locale Fallbacking
 
 Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
