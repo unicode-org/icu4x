@@ -520,6 +520,11 @@ where
         .unwrap_or(parts.default)
     }
 
+    /// Recovers the [`PluralElements`] corresponding to this packed structure.
+    pub fn decode(&self) -> PluralElements<(FourBitMetadata, &V)> {
+        PluralElements(PluralElementsInner::from_packed(self))
+    }
+
     /// Returns the value for the default ("other") plural variant.
     pub fn get_default(&self) -> (FourBitMetadata, &V) {
         self.as_parts().default
