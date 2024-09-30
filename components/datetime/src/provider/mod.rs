@@ -17,6 +17,7 @@
 
 pub mod calendar;
 pub(crate) mod date_time;
+pub mod packed_pattern;
 pub mod time_zones;
 
 /// Module for new DateSymbols design

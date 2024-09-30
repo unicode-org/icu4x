@@ -331,9 +331,6 @@
               "Chita": {
                 "exemplarCity": "Çita"
               },
-              "Choibalsan": {
-                "exemplarCity": "Çoybalsan"
-              },
               "Colombo": {
                 "exemplarCity": "Kolombo"
               },
@@ -758,13 +755,6 @@
                 "generic": "Çin Saati",
                 "standard": "Çin Standart Saati",
                 "daylight": "Çin Yaz Saati"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "Çoybalsan Saati",
-                "standard": "Çoybalsan Standart Saati",
-                "daylight": "Çoybalsan Yaz Saati"
               }
             },
             "Christmas": {

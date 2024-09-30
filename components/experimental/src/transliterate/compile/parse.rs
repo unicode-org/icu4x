@@ -287,7 +287,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -306,7 +306,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -315,11 +315,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,

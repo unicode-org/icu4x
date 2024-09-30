@@ -38,7 +38,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = std::fs::read("tests/data/v2.postcard")
+/// let blob = std::fs::read("tests/data/v3.postcard")
 ///     .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
@@ -66,7 +66,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob statically:
-/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v2.postcard");
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v3.postcard");
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
@@ -115,8 +115,8 @@ impl BlobDataProvider {
     }
 
     #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
-    pub fn internal_is_using_v2_bigger_format(&self) -> bool {
-        matches!(self.data.get(), BlobSchema::V002Bigger(..))
+    pub fn internal_is_using_bigger_format(&self) -> bool {
+        matches!(self.data.get(), BlobSchema::V003Bigger(..))
     }
 }
 
@@ -171,88 +171,76 @@ mod test {
 
     #[test]
     fn test_empty() {
-        for version in [1, 2] {
-            let mut blob: Vec<u8> = Vec::new();
+        let mut blob: Vec<u8> = Vec::new();
 
-            {
-                let mut exporter = if version == 1 {
-                    BlobExporter::new_with_sink(Box::new(&mut blob))
-                } else {
-                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
-                };
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-                exporter
-                    .flush(HelloWorldV1Marker::INFO, Default::default())
-                    .unwrap();
+            exporter
+                .flush(HelloWorldV1Marker::INFO, Default::default())
+                .unwrap();
 
-                exporter.close().unwrap();
-            }
-
-            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-            assert!(
-                matches!(
-                    provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
+            exporter.close().unwrap();
         }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(
+            matches!(
+                provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                })
+            ),
+            "Empty blob test"
+        );
     }
 
     #[test]
     fn test_singleton() {
-        for version in [1, 2] {
-            let mut blob: Vec<u8> = Vec::new();
+        let mut blob: Vec<u8> = Vec::new();
 
-            {
-                let mut exporter = if version == 1 {
-                    BlobExporter::new_with_sink(Box::new(&mut blob))
-                } else {
-                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
-                };
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-                exporter
-                    .flush(HelloSingletonV1Marker::INFO, Default::default())
-                    .unwrap();
+            exporter
+                .flush(HelloSingletonV1Marker::INFO, Default::default())
+                .unwrap();
 
-                exporter.close().unwrap();
-            }
-
-            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-            assert!(
-                matches!(
-                    provider.load_data(
-                        HelloSingletonV1Marker::INFO,
-                        DataRequest {
-                            id: DataIdentifierBorrowed::for_locale(
-                                &icu_locale_core::langid!("de").into()
-                            ),
-                            ..Default::default()
-                        }
-                    ),
-                    Err(DataError {
-                        kind: DataErrorKind::InvalidRequest,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
-
-            assert!(
-                matches!(
-                    provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
+            exporter.close().unwrap();
         }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(
+            matches!(
+                provider.load_data(
+                    HelloSingletonV1Marker::INFO,
+                    DataRequest {
+                        id: DataIdentifierBorrowed::for_locale(
+                            &icu_locale_core::langid!("de").into()
+                        ),
+                        ..Default::default()
+                    }
+                ),
+                Err(DataError {
+                    kind: DataErrorKind::InvalidRequest,
+                    ..
+                })
+            ),
+            "Singleton blob test"
+        );
+
+        assert!(
+            matches!(
+                provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                })
+            ),
+            "Singleton blob test"
+        );
     }
 }

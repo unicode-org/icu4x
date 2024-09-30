@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 344B for the lookup data structure (61 data identifiers)
-/// * 4217B[^1] for the actual data (35 unique structs)
+/// * 4077B[^1] for the actual data (35 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -21,143 +21,143 @@ macro_rules! __impl_ethiopian_year_names_v1_marker {
                 values: &[
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\t\0a. E.ERA0d. E.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\t\0a. E.ERA0d. E.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x11\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6ERA0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\r\0\x11\0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA6ERA0\xE0\xA6\xAF\xE0\xA7\x81\xE0\xA6\x97 \xE0\xA7\xA7") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\x000. tidsr.ERA01. tidsr.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\t\0\r\x000. tidsr.ERA01. tidsr.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x18\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x81\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\x87\xF0\x9E\xA4\x81") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x08\0\x18\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x81\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\x87\xF0\x9E\xA4\x81") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x0C\0av. Inc.ERA0ap. Inc.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x08\0\x0C\0av. Inc.ERA0ap. Inc.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x0E\0\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE0ERA0\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\n\0\x0E\0\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE0ERA0\xE0\xAA\x8F\xE0\xAA\xB0\xE0\xAA\xBE1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\0T\xC3\xADmabil0ERA0T\xC3\xADmabil1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\t\0\r\0T\xC3\xADmabil0ERA0T\xC3\xADmabil1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x11\0pirms KristusERA0p\xC4\x93c Kristus") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\r\0\x11\0pirms KristusERA0p\xC4\x93c Kristus") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0B\0\xD0\x95\xD0\xA0\xD0\x900ERA0\xD0\x95\xD0\xA0\xD0\x901") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x07\0\x0B\0\xD0\x95\xD0\xA0\xD0\x900ERA0\xD0\x95\xD0\xA0\xD0\x901") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x19\0\x1D\0\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x820ERA0\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x821") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x19\0\x1D\0\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x820ERA0\xE0\xB4\x95\xE0\xB4\xBE\xE0\xB4\xB2\xE0\xB4\x98\xE0\xB4\x9F\xE0\xB5\x8D\xE0\xB4\x9F\xE0\xB4\x821") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x0E\0\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x970ERA0\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x971") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\n\0\x0E\0\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x970ERA0\xE0\xA4\xAF\xE0\xA5\x81\xE0\xA4\x971") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0era 0era 0era 1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0era 0era 0era 1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0E\x000. t.a.0. t.a.1. t.a.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x07\0\x0E\x000. t.a.0. t.a.1. t.a.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x0E\0\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB20ERA0\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB21") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\n\0\x0E\0\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB20ERA0\xE0\xA8\x95\xE0\xA8\xBE\xE0\xA8\xB21") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\0\xC3\xAE.\xC3\x8Entr.ERA0d.\xC3\x8Entr.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\t\0\r\0\xC3\xAE.\xC3\x8Entr.ERA0d.\xC3\x8Entr.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x11\0\x15\0\xD0\xB4\xD0\xBE \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0ERA0\xD0\xBE\xD1\x82 \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x11\0\x15\0\xD0\xB4\xD0\xBE \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0ERA0\xD0\xBE\xD1\x82 \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x06\0\n\0a.Inc.a.m.p.Inc.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x06\0\n\0a.Inc.a.m.p.Inc.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x04\0\x08\0ERA0ERA0ERA1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0B\0\xD8\xAF\xD9\x88\xD8\xB10ERA0\xD8\xAF\xD9\x88\xD8\xB11") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x07\0\x0B\0\xD8\xAF\xD9\x88\xD8\xB10ERA0\xD8\xAF\xD9\x88\xD8\xB11") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\r\0\xE5\x9F\x83\xE5\x8E\x86\xE5\x89\x8DERA0\xE5\x9F\x83\xE5\x8E\x86") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\t\0\r\0\xE5\x9F\x83\xE5\x8E\x86\xE5\x89\x8DERA0\xE5\x9F\x83\xE5\x8E\x86") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x02\0\x06\0aEERA0dE") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x02\0\x06\0aEERA0dE") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\t\x000. t.ERA01. t.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\t\x000. t.ERA01. t.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x03\0\x06\0TA0TA0TA1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x03\0\x06\0TA0TA0TA1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x18\0\x1C\0antes de la Encarnaci\xC3\xB3nERA0despu\xC3\xA9s de la Encarnaci\xC3\xB3n") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x18\0\x1C\0antes de la Encarnaci\xC3\xB3nERA0despu\xC3\xA9s de la Encarnaci\xC3\xB3n") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x12\x000. tidsregningERA01. tidsregning") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x0E\0\x12\x000. tidsregningERA01. tidsregning") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0-\0=\0\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\xA9\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB1\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0-\0=\0\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5\xF0\x9E\xA4\x98\xF0\x9E\xA4\x8B\xF0\x9E\xA4\x88\xF0\x9E\xA5\x90\xF0\x9E\xA4\xA9\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB1\xF0\x9E\xA4\xAE \xF0\x9E\xA4\xA3\xF0\x9E\xA4\xAD\xF0\x9E\xA5\x85\xF0\x9E\xA4\xA4\xF0\x9E\xA4\xA2\xF0\x9E\xA5\x84\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xB5") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x15\0\x19\0avant l\xE2\x80\x99IncarnationERA0apr\xC3\xA8s l\xE2\x80\x99Incarnation") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x15\0\x19\0avant l\xE2\x80\x99IncarnationERA0apr\xC3\xA8s l\xE2\x80\x99Incarnation") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x0E\0\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 0ERA0\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\n\0\x0E\0\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 0ERA0\xD7\xA2\xD7\x99\xD7\x93\xD7\x9F 1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1C\0 \0pirms Kristus iemieso\xC5\xA1an\xC4\x81sERA0p\xC4\x93c Kristus iemieso\xC5\xA1an\xC4\x81s") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x1C\0 \0pirms Kristus iemieso\xC5\xA1an\xC4\x81sERA0p\xC4\x93c Kristus iemieso\xC5\xA1an\xC4\x81s") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x14\0tijdperk 0tijdperk 0tijdperk 1") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\n\0\x14\0tijdperk 0tijdperk 0tijdperk 1") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0C\0\x18\x000. tidsalder0. tidsalder1. tidsalder") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x0C\0\x18\x000. tidsalder0. tidsalder1. tidsalder") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x16\0\x1A\0\xC3\xAEnainte de \xC3\x8EntrupareERA0dup\xC4\x83 \xC3\x8Entrupare") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x16\0\x1A\0\xC3\xAEnainte de \xC3\x8EntrupareERA0dup\xC4\x83 \xC3\x8Entrupare") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0&\0*\0\xD0\xB4\xD0\xBE \xD0\xB2\xD0\xBE\xD0\xBF\xD0\xBB\xD0\xBE\xD1\x89\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0ERA0\xD0\xBE\xD1\x82 \xD0\xB2\xD0\xBE\xD0\xBF\xD0\xBB\xD0\xBE\xD1\x89\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0&\0*\0\xD0\xB4\xD0\xBE \xD0\xB2\xD0\xBE\xD0\xBF\xD0\xBB\xD0\xBE\xD1\x89\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0ERA0\xD0\xBE\xD1\x82 \xD0\xB2\xD0\xBE\xD0\xBF\xD0\xBB\xD0\xBE\xD1\x89\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xA5\xD1\x80\xD0\xB8\xD1\x81\xD1\x82\xD0\xB0") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1D\0-\0in antis de s\xE2\x80\x99Incarnatzioneannu de su mundua pustis de s\xE2\x80\x99Incarnatzione") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x1D\0-\0in antis de s\xE2\x80\x99Incarnatzioneannu de su mundua pustis de s\xE2\x80\x99Incarnatzione") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x15\09\0\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE5\x8E\x86\xE5\x89\x8D\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE9\x98\xBF\xE7\xB1\xB3\xE7\x89\xB9\xE9\x98\xBF\xE8\x8E\xB1\xE5\xA7\x86\xE5\x8E\x86\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE5\x8E\x86") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x05\0\n\0incarmundipre-incar") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\x15\09\0\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE5\x8E\x86\xE5\x89\x8D\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE9\x98\xBF\xE7\xB1\xB3\xE7\x89\xB9\xE9\x98\xBF\xE8\x8E\xB1\xE5\xA7\x86\xE5\x8E\x86\xE5\x9F\x83\xE5\xA1\x9E\xE4\xBF\x84\xE6\xAF\x94\xE4\xBA\x9A\xE5\x8E\x86") })
                     }),
                 ],
             };

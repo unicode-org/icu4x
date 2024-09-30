@@ -49,11 +49,6 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "main")]
         pub fn try_new_main(
             provider: &DataProvider,
@@ -71,11 +66,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary")]
         pub fn try_new_auxiliary(
@@ -95,11 +85,6 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation")]
         pub fn try_new_punctuation(
             provider: &DataProvider,
@@ -118,11 +103,6 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers")]
         pub fn try_new_numbers(
             provider: &DataProvider,
@@ -140,11 +120,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "index")]
         pub fn try_new_index(

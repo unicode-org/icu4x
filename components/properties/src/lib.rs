@@ -81,7 +81,6 @@ pub use names::{
     PropertyParser, PropertyParserBorrowed,
 };
 mod runtime;
-pub use runtime::UnicodeProperty;
 
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`

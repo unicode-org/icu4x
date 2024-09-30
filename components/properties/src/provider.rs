@@ -18,24 +18,24 @@
 pub mod names;
 
 pub use names::{
-    BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
-    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV1Marker,
+    BidiClassNameToValueV2Marker, BidiClassValueToLongNameV1Marker,
+    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV2Marker,
     CanonicalCombiningClassValueToLongNameV1Marker,
-    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV1Marker,
+    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV2Marker,
     EastAsianWidthValueToLongNameV1Marker, EastAsianWidthValueToShortNameV1Marker,
-    GeneralCategoryMaskNameToValueV1Marker, GeneralCategoryNameToValueV1Marker,
+    GeneralCategoryMaskNameToValueV2Marker, GeneralCategoryNameToValueV2Marker,
     GeneralCategoryValueToLongNameV1Marker, GeneralCategoryValueToShortNameV1Marker,
-    GraphemeClusterBreakNameToValueV1Marker, GraphemeClusterBreakValueToLongNameV1Marker,
-    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV1Marker,
+    GraphemeClusterBreakNameToValueV2Marker, GraphemeClusterBreakValueToLongNameV1Marker,
+    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV2Marker,
     HangulSyllableTypeValueToLongNameV1Marker, HangulSyllableTypeValueToShortNameV1Marker,
-    IndicSyllabicCategoryNameToValueV1Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
-    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV1Marker,
+    IndicSyllabicCategoryNameToValueV2Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
+    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV2Marker,
     JoiningTypeValueToLongNameV1Marker, JoiningTypeValueToShortNameV1Marker,
-    LineBreakNameToValueV1Marker, LineBreakValueToLongNameV1Marker,
-    LineBreakValueToShortNameV1Marker, ScriptNameToValueV1Marker, ScriptValueToLongNameV1Marker,
-    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV1Marker,
+    LineBreakNameToValueV2Marker, LineBreakValueToLongNameV1Marker,
+    LineBreakValueToShortNameV1Marker, ScriptNameToValueV2Marker, ScriptValueToLongNameV1Marker,
+    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV2Marker,
     SentenceBreakValueToLongNameV1Marker, SentenceBreakValueToShortNameV1Marker,
-    WordBreakNameToValueV1Marker, WordBreakValueToLongNameV1Marker,
+    WordBreakNameToValueV2Marker, WordBreakValueToLongNameV1Marker,
     WordBreakValueToShortNameV1Marker,
 };
 
@@ -74,7 +74,7 @@ const _: () = {
     impl_alphabetic_v1_marker!(Baked);
     impl_ascii_hex_digit_v1_marker!(Baked);
     impl_basic_emoji_v1_marker!(Baked);
-    impl_bidi_class_name_to_value_v1_marker!(Baked);
+    impl_bidi_class_name_to_value_v2_marker!(Baked);
     impl_bidi_class_v1_marker!(Baked);
     impl_bidi_class_value_to_long_name_v1_marker!(Baked);
     impl_bidi_class_value_to_short_name_v1_marker!(Baked);
@@ -82,7 +82,7 @@ const _: () = {
     impl_bidi_mirrored_v1_marker!(Baked);
     impl_bidi_mirroring_glyph_v1_marker!(Baked);
     impl_blank_v1_marker!(Baked);
-    impl_canonical_combining_class_name_to_value_v1_marker!(Baked);
+    impl_canonical_combining_class_name_to_value_v2_marker!(Baked);
     impl_canonical_combining_class_v1_marker!(Baked);
     impl_canonical_combining_class_value_to_long_name_v1_marker!(Baked);
     impl_canonical_combining_class_value_to_short_name_v1_marker!(Baked);
@@ -99,7 +99,7 @@ const _: () = {
     impl_default_ignorable_code_point_v1_marker!(Baked);
     impl_deprecated_v1_marker!(Baked);
     impl_diacritic_v1_marker!(Baked);
-    impl_east_asian_width_name_to_value_v1_marker!(Baked);
+    impl_east_asian_width_name_to_value_v2_marker!(Baked);
     impl_east_asian_width_v1_marker!(Baked);
     impl_east_asian_width_value_to_long_name_v1_marker!(Baked);
     impl_east_asian_width_value_to_short_name_v1_marker!(Baked);
@@ -111,20 +111,20 @@ const _: () = {
     impl_extended_pictographic_v1_marker!(Baked);
     impl_extender_v1_marker!(Baked);
     impl_full_composition_exclusion_v1_marker!(Baked);
-    impl_general_category_mask_name_to_value_v1_marker!(Baked);
-    impl_general_category_name_to_value_v1_marker!(Baked);
+    impl_general_category_mask_name_to_value_v2_marker!(Baked);
+    impl_general_category_name_to_value_v2_marker!(Baked);
     impl_general_category_v1_marker!(Baked);
     impl_general_category_value_to_long_name_v1_marker!(Baked);
     impl_general_category_value_to_short_name_v1_marker!(Baked);
     impl_graph_v1_marker!(Baked);
     impl_grapheme_base_v1_marker!(Baked);
-    impl_grapheme_cluster_break_name_to_value_v1_marker!(Baked);
+    impl_grapheme_cluster_break_name_to_value_v2_marker!(Baked);
     impl_grapheme_cluster_break_v1_marker!(Baked);
     impl_grapheme_cluster_break_value_to_long_name_v1_marker!(Baked);
     impl_grapheme_cluster_break_value_to_short_name_v1_marker!(Baked);
     impl_grapheme_extend_v1_marker!(Baked);
     impl_grapheme_link_v1_marker!(Baked);
-    impl_hangul_syllable_type_name_to_value_v1_marker!(Baked);
+    impl_hangul_syllable_type_name_to_value_v2_marker!(Baked);
     impl_hangul_syllable_type_v1_marker!(Baked);
     impl_hangul_syllable_type_value_to_long_name_v1_marker!(Baked);
     impl_hangul_syllable_type_value_to_short_name_v1_marker!(Baked);
@@ -135,16 +135,16 @@ const _: () = {
     impl_ideographic_v1_marker!(Baked);
     impl_ids_binary_operator_v1_marker!(Baked);
     impl_ids_trinary_operator_v1_marker!(Baked);
-    impl_indic_syllabic_category_name_to_value_v1_marker!(Baked);
+    impl_indic_syllabic_category_name_to_value_v2_marker!(Baked);
     impl_indic_syllabic_category_v1_marker!(Baked);
     impl_indic_syllabic_category_value_to_long_name_v1_marker!(Baked);
     impl_indic_syllabic_category_value_to_short_name_v1_marker!(Baked);
     impl_join_control_v1_marker!(Baked);
-    impl_joining_type_name_to_value_v1_marker!(Baked);
+    impl_joining_type_name_to_value_v2_marker!(Baked);
     impl_joining_type_v1_marker!(Baked);
     impl_joining_type_value_to_long_name_v1_marker!(Baked);
     impl_joining_type_value_to_short_name_v1_marker!(Baked);
-    impl_line_break_name_to_value_v1_marker!(Baked);
+    impl_line_break_name_to_value_v2_marker!(Baked);
     impl_line_break_v1_marker!(Baked);
     impl_line_break_value_to_long_name_v1_marker!(Baked);
     impl_line_break_value_to_short_name_v1_marker!(Baked);
@@ -163,13 +163,13 @@ const _: () = {
     impl_quotation_mark_v1_marker!(Baked);
     impl_radical_v1_marker!(Baked);
     impl_regional_indicator_v1_marker!(Baked);
-    impl_script_name_to_value_v1_marker!(Baked);
+    impl_script_name_to_value_v2_marker!(Baked);
     impl_script_v1_marker!(Baked);
     impl_script_value_to_long_name_v1_marker!(Baked);
     impl_script_value_to_short_name_v1_marker!(Baked);
     impl_script_with_extensions_property_v1_marker!(Baked);
     impl_segment_starter_v1_marker!(Baked);
-    impl_sentence_break_name_to_value_v1_marker!(Baked);
+    impl_sentence_break_name_to_value_v2_marker!(Baked);
     impl_sentence_break_v1_marker!(Baked);
     impl_sentence_break_value_to_long_name_v1_marker!(Baked);
     impl_sentence_break_value_to_short_name_v1_marker!(Baked);
@@ -180,7 +180,7 @@ const _: () = {
     impl_uppercase_v1_marker!(Baked);
     impl_variation_selector_v1_marker!(Baked);
     impl_white_space_v1_marker!(Baked);
-    impl_word_break_name_to_value_v1_marker!(Baked);
+    impl_word_break_name_to_value_v2_marker!(Baked);
     impl_word_break_v1_marker!(Baked);
     impl_word_break_value_to_long_name_v1_marker!(Baked);
     impl_word_break_value_to_short_name_v1_marker!(Baked);
@@ -260,52 +260,52 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     XdigitV1Marker::INFO,
     XidContinueV1Marker::INFO,
     XidStartV1Marker::INFO,
-    BidiClassNameToValueV1Marker::INFO,
+    BidiClassNameToValueV2Marker::INFO,
     BidiClassV1Marker::INFO,
     BidiClassValueToLongNameV1Marker::INFO,
     BidiClassValueToShortNameV1Marker::INFO,
-    CanonicalCombiningClassNameToValueV1Marker::INFO,
+    CanonicalCombiningClassNameToValueV2Marker::INFO,
     CanonicalCombiningClassV1Marker::INFO,
     CanonicalCombiningClassValueToLongNameV1Marker::INFO,
     CanonicalCombiningClassValueToShortNameV1Marker::INFO,
-    EastAsianWidthNameToValueV1Marker::INFO,
+    EastAsianWidthNameToValueV2Marker::INFO,
     EastAsianWidthV1Marker::INFO,
     EastAsianWidthValueToLongNameV1Marker::INFO,
     EastAsianWidthValueToShortNameV1Marker::INFO,
-    GeneralCategoryMaskNameToValueV1Marker::INFO,
-    GeneralCategoryNameToValueV1Marker::INFO,
+    GeneralCategoryMaskNameToValueV2Marker::INFO,
+    GeneralCategoryNameToValueV2Marker::INFO,
     GeneralCategoryV1Marker::INFO,
     GeneralCategoryValueToLongNameV1Marker::INFO,
     GeneralCategoryValueToShortNameV1Marker::INFO,
-    GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GraphemeClusterBreakNameToValueV2Marker::INFO,
     GraphemeClusterBreakV1Marker::INFO,
     GraphemeClusterBreakValueToLongNameV1Marker::INFO,
     GraphemeClusterBreakValueToShortNameV1Marker::INFO,
-    HangulSyllableTypeNameToValueV1Marker::INFO,
+    HangulSyllableTypeNameToValueV2Marker::INFO,
     HangulSyllableTypeV1Marker::INFO,
     HangulSyllableTypeValueToLongNameV1Marker::INFO,
     HangulSyllableTypeValueToShortNameV1Marker::INFO,
-    IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryNameToValueV2Marker::INFO,
     IndicSyllabicCategoryV1Marker::INFO,
     IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
     IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
-    JoiningTypeNameToValueV1Marker::INFO,
+    JoiningTypeNameToValueV2Marker::INFO,
     JoiningTypeV1Marker::INFO,
     JoiningTypeValueToLongNameV1Marker::INFO,
     JoiningTypeValueToShortNameV1Marker::INFO,
-    LineBreakNameToValueV1Marker::INFO,
+    LineBreakNameToValueV2Marker::INFO,
     LineBreakV1Marker::INFO,
     LineBreakValueToLongNameV1Marker::INFO,
     LineBreakValueToShortNameV1Marker::INFO,
-    ScriptNameToValueV1Marker::INFO,
+    ScriptNameToValueV2Marker::INFO,
     ScriptV1Marker::INFO,
     ScriptValueToLongNameV1Marker::INFO,
     ScriptValueToShortNameV1Marker::INFO,
-    SentenceBreakNameToValueV1Marker::INFO,
+    SentenceBreakNameToValueV2Marker::INFO,
     SentenceBreakV1Marker::INFO,
     SentenceBreakValueToLongNameV1Marker::INFO,
     SentenceBreakValueToShortNameV1Marker::INFO,
-    WordBreakNameToValueV1Marker::INFO,
+    WordBreakNameToValueV2Marker::INFO,
     WordBreakV1Marker::INFO,
     WordBreakValueToLongNameV1Marker::INFO,
     WordBreakValueToShortNameV1Marker::INFO,

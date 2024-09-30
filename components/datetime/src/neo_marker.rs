@@ -1017,13 +1017,13 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for loading exemplar city names for time zone formatting
     type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericLongV1<'static>>;
+    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericShortV1<'static>>;
+    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificLongV1<'static>>;
+    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificShortV1<'static>>;
+    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -1145,10 +1145,10 @@ impl ZoneMarkers for NeoNeverMarker {
     type TimeZoneVariantInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
-    type GenericLongV1Marker = NeverMarker<tz::MzGenericLongV1<'static>>;
-    type GenericShortV1Marker = NeverMarker<tz::MzGenericShortV1<'static>>;
-    type SpecificLongV1Marker = NeverMarker<tz::MzSpecificLongV1<'static>>;
-    type SpecificShortV1Marker = NeverMarker<tz::MzSpecificShortV1<'static>>;
+    type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
+    type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
+    type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
+    type SpecificShortV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
 }
 
 /// A struct that supports formatting both a date and a time.
@@ -1504,16 +1504,16 @@ macro_rules! datetime_marker_helper {
         NeverMarker<tz::ExemplarCitiesV1<'static>>
     };
     (@data/zone/generic_long,) => {
-        NeverMarker<tz::MzGenericLongV1<'static>>
+        NeverMarker<tz::MzGenericV1<'static>>
     };
     (@data/zone/generic_short,) => {
-        NeverMarker<tz::MzGenericShortV1<'static>>
+        NeverMarker<tz::MzGenericV1<'static>>
     };
     (@data/zone/specific_long,) => {
-        NeverMarker<tz::MzSpecificLongV1<'static>>
+        NeverMarker<tz::MzSpecificV1<'static>>
     };
     (@data/zone/specific_short,) => {
-        NeverMarker<tz::MzSpecificShortV1<'static>>
+        NeverMarker<tz::MzSpecificV1<'static>>
     };
     (@names/year, yes) => {
         YearNamesV1Marker

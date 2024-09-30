@@ -269,21 +269,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
         <Self as VarULE>::parse_byte_slice(slice)
     }
-
-    /// Convert a `bytes` array known to represent a `VarZeroSlice` to a mutable reference to a `VarZeroSlice`
-    ///
-    /// # Safety
-    /// - `bytes` must be a valid sequence of bytes for this VarZeroVec
-    pub(crate) unsafe fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut Self {
-        // self is really just a wrapper around a byte slice
-        mem::transmute(bytes)
-    }
-
-    pub(crate) unsafe fn get_bytes_at_mut(&mut self, idx: usize) -> &mut [u8] {
-        let range = self.as_components().get_range(idx);
-        #[allow(clippy::indexing_slicing)] // get_range() is known to return in-bounds ranges
-        &mut self.entire_slice[range]
-    }
 }
 
 impl<T, F> VarZeroSlice<T, F>

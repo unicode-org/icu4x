@@ -85,34 +85,21 @@ mod test {
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::{components, preferences},
         pattern::{reference, runtime},
-        provider::calendar::{
-            DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
-            SkeletonV1,
-        },
+        provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
     };
     use icu::locale::locale;
-    use icu_provider::prelude::*;
     use litemap::LiteMap;
 
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> (
-        DataPayload<GregorianDateLengthsV1Marker>,
-        DataPayload<DateSkeletonPatternsV1Marker>,
-    ) {
+    fn get_data_payload() -> (DateLengthsV1<'static>, DateSkeletonPatternsV1<'static>) {
         let locale = locale!("en").into();
 
-        let patterns = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            })
-            .expect("Failed to load payload")
-            .payload;
         let data = SourceDataProvider::new_testing()
             .get_datetime_resources(&locale, Either::Right("gregorian"))
             .unwrap();
-        let skeletons = DataPayload::from_owned(DateSkeletonPatternsV1::from(&data));
+        let patterns = DateLengthsV1::from(&data);
+        let skeletons = DateSkeletonPatternsV1::from(&data);
         (patterns, skeletons)
     }
 
@@ -132,7 +119,7 @@ mod test {
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
@@ -157,7 +144,7 @@ mod test {
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern
@@ -187,8 +174,8 @@ mod test {
         let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
-            skeletons.get(),
-            &patterns.get().length_combinations,
+            &skeletons,
+            &patterns.length_combinations,
             &requested_fields,
             &Default::default(),
             false,
@@ -214,7 +201,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         assert_eq!(
-            get_best_available_format_pattern(skeletons.get(), &requested_fields, false),
+            get_best_available_format_pattern(&skeletons, &requested_fields, false),
             BestSkeleton::NoMatch,
             "No match was found"
         );
@@ -384,7 +371,7 @@ mod test {
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern
@@ -407,7 +394,7 @@ mod test {
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern

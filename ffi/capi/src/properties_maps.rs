@@ -27,11 +27,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::CodePointMapData::new, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::new, FnInStruct, hidden)]
     #[diplomat::rust_link(
-        icu::properties::CodePointMapData::try_new_unstable,
-        FnInStruct,
-        hidden
-    )]
-    #[diplomat::rust_link(
         icu::properties::CodePointMapData::try_into_converted,
         FnInStruct,
         hidden

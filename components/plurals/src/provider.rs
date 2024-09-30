@@ -519,6 +519,11 @@ where
         }
         .unwrap_or(parts.default)
     }
+
+    /// Returns the value for the default ("other") plural variant.
+    pub fn get_default(&self) -> (FourBitMetadata, &V) {
+        self.as_parts().default
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1068,10 +1073,10 @@ fn test_serde_nonsingleton_roundtrip() {
     assert_eq!(
         postcard_bytes,
         &[
-            16,   // Postcard header
+            14,   // Postcard header
             0x80, // Discriminant
             3, b'a', b'b', b'c', // String of length 3
-            1, 0, 0, 0, 0, 0, // VarZeroVec of length 1
+            1, 0, 0, 0, // VarZeroVec of length 1
             0x10, b'd', b'e', b'f', b'g' // Plural category 1 and string "defg"
         ]
     );

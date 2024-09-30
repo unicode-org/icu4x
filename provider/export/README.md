@@ -22,7 +22,7 @@ ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), 
     .with_markers([icu::list::provider::AndListV2Marker::INFO])
     .export(
         &provider,
-        BlobExporter::new_v2_with_sink(Box::new(
+        BlobExporter::new_with_sink(Box::new(
             File::create("data.postcard").unwrap(),
         )),
     )

@@ -880,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "Чита"
               },
-              "Choibalsan": {
-                "exemplarCity": "Чојбалсан"
-              },
               "Colombo": {
                 "exemplarCity": "Коломбо"
               },
@@ -1568,13 +1565,6 @@
                 "generic": "Кина време",
                 "standard": "Кинеско стандардно време",
                 "daylight": "Кина, летње време"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "Чојбалсан време",
-                "standard": "Чојбалсан, стандардно време",
-                "daylight": "Чојбалсан, летње време"
               }
             },
             "Christmas": {

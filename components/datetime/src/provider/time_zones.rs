@@ -16,14 +16,12 @@ use icu_timezone::ZoneVariant;
 pub(crate) mod tz {
     pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::ExemplarCitiesV1Marker;
-    pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
-    pub(crate) use super::MetazoneGenericNamesShortV1 as MzGenericShortV1;
     pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
+    pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
+    pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
     pub(crate) use super::TimeZoneFormatsV1 as EssentialsV1;
     pub(crate) use super::TimeZoneFormatsV1Marker as EssentialsV1Marker;
 }
@@ -89,7 +87,7 @@ pub struct ExemplarCitiesV1<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TimeZoneBcp47Id, str>,
 );
 
-/// An ICU4X mapping to the long-form generic metazone names.
+/// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
 /// <div class="stab unstable">
@@ -97,13 +95,16 @@ pub struct ExemplarCitiesV1<'data>(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(MetazoneGenericNamesLongV1Marker = "time_zone/generic_long@1")]
+#[icu_provider::data_struct(
+    marker(MetazoneGenericNamesLongV1Marker, "time_zone/generic_long@1"),
+    marker(MetazoneGenericNamesShortV1Marker, "time_zone/generic_short@1")
+)]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneGenericNamesLongV1<'data> {
+pub struct MetazoneGenericNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
@@ -112,30 +113,7 @@ pub struct MetazoneGenericNamesLongV1<'data> {
     pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }
 
-/// An ICU4X mapping to the short-form generic metazone names.
-/// See CLDR-JSON timeZoneNames.json for more context.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(MetazoneGenericNamesShortV1Marker = "time_zone/generic_short@1")]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct MetazoneGenericNamesShortV1<'data> {
-    /// The default mapping between metazone id and localized metazone name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, MetazoneId, str>,
-    /// The override mapping between timezone id and localized metazone name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
-}
-
-/// An ICU4X mapping to the long-form specific metazone names.
+/// An ICU4X mapping to specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
@@ -144,37 +122,16 @@ pub struct MetazoneGenericNamesShortV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(MetazoneSpecificNamesLongV1Marker = "time_zone/specific_long@1")]
+#[icu_provider::data_struct(
+    marker(MetazoneSpecificNamesLongV1Marker, "time_zone/specific_long@1"),
+    marker(MetazoneSpecificNamesShortV1Marker, "time_zone/specific_short@1")
+)]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneSpecificNamesLongV1<'data> {
-    /// The default mapping between metazone id and localized metazone name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, MetazoneId, ZoneVariant, str>,
-    /// The override mapping between timezone id and localized metazone name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, ZoneVariant, str>,
-}
-
-/// An ICU4X mapping to the short-form specific metazone names.
-/// Specific names include time variants such as "daylight."
-/// See CLDR-JSON timeZoneNames.json for more context.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(MetazoneSpecificNamesShortV1Marker = "time_zone/specific_short@1")]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct MetazoneSpecificNamesShortV1<'data> {
+pub struct MetazoneSpecificNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap2d<'data, MetazoneId, ZoneVariant, str>,

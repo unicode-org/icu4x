@@ -650,19 +650,19 @@ fn test_everything() {
 
     let zhm: zerovec::ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 75);
+    assert_eq!(zhm_buf.len(), 73);
 
     let zhm: zerovec::ZeroMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 65);
+    assert_eq!(zhm_buf.len(), 63);
 
     let zhm: zerovec::ZeroHashMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 148);
+    assert_eq!(zhm_buf.len(), 146);
 
     let zhm: zerovec::ZeroHashMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 138);
+    assert_eq!(zhm_buf.len(), 136);
 }
 
 macro_rules! utf8_byte {
@@ -806,19 +806,19 @@ fn test_short_subtags_10pct() {
 
     let zhm: zerovec::ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 1331);
+    assert_eq!(zhm_buf.len(), 1329);
 
     let zhm: zerovec::ZeroMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 1330);
+    assert_eq!(zhm_buf.len(), 1328);
 
     let zhm: zerovec::ZeroHashMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 2837);
+    assert_eq!(zhm_buf.len(), 2835);
 
     let zhm: zerovec::ZeroHashMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 2836);
+    assert_eq!(zhm_buf.len(), 2834);
 }
 
 #[test]
@@ -836,17 +836,17 @@ fn test_short_subtags() {
 
     let zm: zerovec::ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zm).unwrap();
-    assert_eq!(zhm_buf.len(), 15182);
+    assert_eq!(zhm_buf.len(), 15180);
 
     let zm: zerovec::ZeroMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zm).unwrap();
-    assert_eq!(zhm_buf.len(), 13304);
+    assert_eq!(zhm_buf.len(), 13302);
 
     let zhm: zerovec::ZeroHashMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 30200);
+    assert_eq!(zhm_buf.len(), 30198);
 
     let zhm: zerovec::ZeroHashMap<[u8], u8> = litemap.iter().map(|(a, b)| (*a, *b as u8)).collect();
     let zhm_buf = postcard::to_allocvec(&zhm).unwrap();
-    assert_eq!(zhm_buf.len(), 28322);
+    assert_eq!(zhm_buf.len(), 28320);
 }

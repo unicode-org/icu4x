@@ -1,17 +1,17 @@
 // @generated
-include!("grapheme_cluster_break_name_to_value_v1_marker.rs.data");
-include!("indic_syllabic_category_name_to_value_v1_marker.rs.data");
-include!("sentence_break_name_to_value_v1_marker.rs.data");
-include!("word_break_name_to_value_v1_marker.rs.data");
-include!("bidi_class_name_to_value_v1_marker.rs.data");
-include!("canonical_combining_class_name_to_value_v1_marker.rs.data");
-include!("east_asian_width_name_to_value_v1_marker.rs.data");
-include!("general_category_name_to_value_v1_marker.rs.data");
-include!("general_category_mask_name_to_value_v1_marker.rs.data");
-include!("hangul_syllable_type_name_to_value_v1_marker.rs.data");
-include!("joining_type_name_to_value_v1_marker.rs.data");
-include!("line_break_name_to_value_v1_marker.rs.data");
-include!("script_name_to_value_v1_marker.rs.data");
+include!("grapheme_cluster_break_name_to_value_v2_marker.rs.data");
+include!("indic_syllabic_category_name_to_value_v2_marker.rs.data");
+include!("sentence_break_name_to_value_v2_marker.rs.data");
+include!("word_break_name_to_value_v2_marker.rs.data");
+include!("bidi_class_name_to_value_v2_marker.rs.data");
+include!("canonical_combining_class_name_to_value_v2_marker.rs.data");
+include!("east_asian_width_name_to_value_v2_marker.rs.data");
+include!("general_category_name_to_value_v2_marker.rs.data");
+include!("general_category_mask_name_to_value_v2_marker.rs.data");
+include!("hangul_syllable_type_name_to_value_v2_marker.rs.data");
+include!("joining_type_name_to_value_v2_marker.rs.data");
+include!("line_break_name_to_value_v2_marker.rs.data");
+include!("script_name_to_value_v2_marker.rs.data");
 include!("grapheme_cluster_break_value_to_long_name_v1_marker.rs.data");
 include!("indic_syllabic_category_value_to_long_name_v1_marker.rs.data");
 include!("sentence_break_value_to_long_name_v1_marker.rs.data");
@@ -145,19 +145,19 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_grapheme_cluster_break_name_to_value_v1_marker!($provider);
-        impl_indic_syllabic_category_name_to_value_v1_marker!($provider);
-        impl_sentence_break_name_to_value_v1_marker!($provider);
-        impl_word_break_name_to_value_v1_marker!($provider);
-        impl_bidi_class_name_to_value_v1_marker!($provider);
-        impl_canonical_combining_class_name_to_value_v1_marker!($provider);
-        impl_east_asian_width_name_to_value_v1_marker!($provider);
-        impl_general_category_name_to_value_v1_marker!($provider);
-        impl_general_category_mask_name_to_value_v1_marker!($provider);
-        impl_hangul_syllable_type_name_to_value_v1_marker!($provider);
-        impl_joining_type_name_to_value_v1_marker!($provider);
-        impl_line_break_name_to_value_v1_marker!($provider);
-        impl_script_name_to_value_v1_marker!($provider);
+        impl_grapheme_cluster_break_name_to_value_v2_marker!($provider);
+        impl_indic_syllabic_category_name_to_value_v2_marker!($provider);
+        impl_sentence_break_name_to_value_v2_marker!($provider);
+        impl_word_break_name_to_value_v2_marker!($provider);
+        impl_bidi_class_name_to_value_v2_marker!($provider);
+        impl_canonical_combining_class_name_to_value_v2_marker!($provider);
+        impl_east_asian_width_name_to_value_v2_marker!($provider);
+        impl_general_category_name_to_value_v2_marker!($provider);
+        impl_general_category_mask_name_to_value_v2_marker!($provider);
+        impl_hangul_syllable_type_name_to_value_v2_marker!($provider);
+        impl_joining_type_name_to_value_v2_marker!($provider);
+        impl_line_break_name_to_value_v2_marker!($provider);
+        impl_script_name_to_value_v2_marker!($provider);
         impl_grapheme_cluster_break_value_to_long_name_v1_marker!($provider);
         impl_indic_syllabic_category_value_to_long_name_v1_marker!($provider);
         impl_sentence_break_value_to_long_name_v1_marker!($provider);
@@ -271,19 +271,19 @@ macro_rules! impl_any_provider {
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.path.hashed() {
-                    h if h == <icu::properties::provider::GraphemeClusterBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::IndicSyllabicCategoryNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::SentenceBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::WordBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::WordBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::BidiClassNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::CanonicalCombiningClassNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::GeneralCategoryNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::GeneralCategoryMaskNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryMaskNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::HangulSyllableTypeNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::JoiningTypeNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::LineBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ScriptNameToValueV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::GraphemeClusterBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::IndicSyllabicCategoryNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::SentenceBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::WordBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::WordBreakNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::BidiClassNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::CanonicalCombiningClassNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::EastAsianWidthNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::GeneralCategoryNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::GeneralCategoryMaskNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryMaskNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::HangulSyllableTypeNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::JoiningTypeNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::LineBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::ScriptNameToValueV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptNameToValueV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::SentenceBreakValueToLongNameV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
