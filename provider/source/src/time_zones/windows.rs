@@ -13,8 +13,6 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-use super::convert::compute_bcp47_tzids_btreemap;
-
 impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
     fn load(
         &self,
@@ -25,11 +23,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
             .core()
             .read_and_parse("supplemental/windowsZones.json")?;
 
-        // Read and handle BCP-47 IDs the same as IanaToBcp
-        let bcp_resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
-
-        let iana2bcp = compute_bcp47_tzids_btreemap(&bcp_resource.keyword.u.time_zones.values);
+        let iana2bcp = self.compute_bcp47_tzids_btreemap()?;
 
         let windows_zones = &resource.supplemental.windows_zones;
 

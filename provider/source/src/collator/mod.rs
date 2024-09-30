@@ -161,7 +161,7 @@ impl DataProvider<CollationRootV1Marker> for SourceDataProvider {
 
 impl IterableDataProviderCached<CollationRootV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok([Default::default()].into_iter().collect())
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
