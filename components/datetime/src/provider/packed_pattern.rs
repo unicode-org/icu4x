@@ -13,7 +13,6 @@ use crate::{
     NeoSkeletonLength,
 };
 use alloc::vec::Vec;
-use constants::Q_BIT;
 use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
     PluralElements,
@@ -166,6 +165,7 @@ enum VariantPatternIndex {
 }
 
 impl VariantPatternIndex {
+    #[cfg(feature = "datagen")]
     pub(super) fn from_header_with_shift(header: u32, shift: u32) -> Self {
         match Self::try_from_u32((header >> shift) & constants::CHUNK_MASK) {
             Some(x) => x,
@@ -256,14 +256,13 @@ impl<'a> UnpackedPatterns<'a> {
             elements: elements.as_slice().into(),
         }
     }
-}
 
-impl<'data> From<&'data PackedPatternsV1<'_>> for UnpackedPatterns<'data> {
-    fn from(packed: &'data PackedPatternsV1<'_>) -> Self {
+    #[cfg(feature = "datagen")]
+    pub(super) fn from_packed(packed: &'a PackedPatternsV1<'_>) -> Self {
         let mut unpacked = Self::default();
         unpacked.has_explicit_medium = (packed.header & constants::M_DIFFERS) != 0;
         unpacked.has_explicit_short = (packed.header & constants::S_DIFFERS) != 0;
-        unpacked.variant_indices = if (packed.header & Q_BIT) != 0 {
+        unpacked.variant_indices = if (packed.header & constants::Q_BIT) != 0 {
             VariantIndices::OnePatternPerVariant
         } else {
             VariantIndices::IndicesPerVariant([
@@ -504,7 +503,6 @@ impl PackedPatternsV1<'_> {
 mod _serde {
     use super::*;
     use crate::pattern::reference;
-    use serde::{de::Error as _, ser::Error as _};
     use zerovec::VarZeroSlice;
 
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -550,6 +548,7 @@ mod _serde {
         where
             D: serde::Deserializer<'de>,
         {
+            use serde::de::Error as _;
             if deserializer.is_human_readable() {
                 let human = <PackedPatternsHuman>::deserialize(deserializer)?;
                 let mut unpacked = UnpackedPatterns::default();
@@ -597,8 +596,9 @@ mod _serde {
         where
             S: serde::Serializer,
         {
+            use serde::ser::Error as _;
             if serializer.is_human_readable() {
-                let unpacked = UnpackedPatterns::from(self);
+                let unpacked = UnpackedPatterns::from_packed(self);
                 let mut human = PackedPatternsHuman::default();
                 human.has_explicit_medium = unpacked.has_explicit_medium;
                 human.has_explicit_short = unpacked.has_explicit_short;

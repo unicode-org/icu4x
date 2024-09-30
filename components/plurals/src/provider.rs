@@ -521,6 +521,7 @@ where
     }
 
     /// Recovers the [`PluralElements`] corresponding to this packed structure.
+    #[cfg(feature = "datagen")]
     pub fn decode(&self) -> PluralElements<(FourBitMetadata, &V)> {
         PluralElements(PluralElementsInner::from_packed(self))
     }
