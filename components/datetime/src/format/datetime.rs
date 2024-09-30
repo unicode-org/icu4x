@@ -6,9 +6,9 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
-use crate::provider::date_time::GetSymbolForDayPeriodError;
+use crate::provider::date_time::GetNameForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
+    DateSymbols, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::time_zone::{
@@ -255,7 +255,7 @@ where
                         let Some(era) = year.formatting_era() else {
                             return Err(DateTimeWriteError::MissingInputField("era"));
                         };
-                        ds.get_symbol_for_era(l, era).map_err(|e| match e {
+                        ds.get_name_for_era(l, era).map_err(|e| match e {
                             GetSymbolForEraError::Missing => {
                                 DateTimeWriteError::MissingEraSymbol(era)
                             }
@@ -382,12 +382,12 @@ where
             Some(month_info) => match date_symbols
                 .ok_or(DateTimeWriteError::MissingDateSymbols)
                 .and_then(|ds| {
-                    ds.get_symbol_for_month(month, l, month_info.formatting_code)
+                    ds.get_name_for_month(month, l, month_info.formatting_code)
                         .map_err(|e| match e {
-                            GetSymbolForMonthError::Missing => {
+                            GetNameForMonthError::Missing => {
                                 DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
                             }
-                            GetSymbolForMonthError::MissingNames(f) => {
+                            GetNameForMonthError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
                         })
@@ -452,12 +452,12 @@ where
             Some(wd) => match date_symbols
                 .ok_or(DateTimeWriteError::MissingDateSymbols)
                 .and_then(|ds| {
-                    ds.get_symbol_for_weekday(weekday, l, wd)
+                    ds.get_name_for_weekday(weekday, l, wd)
                         .map_err(|e| match e {
-                            GetSymbolForWeekdayError::Missing => {
+                            GetNameForWeekdayError::Missing => {
                                 DateTimeWriteError::MissingWeekdaySymbol(wd)
                             }
-                            GetSymbolForWeekdayError::MissingNames(f) => {
+                            GetNameForWeekdayError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
                         })
@@ -569,7 +569,7 @@ where
                 match time_symbols
                     .ok_or(DateTimeWriteError::MissingTimeSymbols)
                     .and_then(|ts| {
-                        ts.get_symbol_for_day_period(
+                        ts.get_name_for_day_period(
                             period,
                             l,
                             hour,
@@ -580,7 +580,7 @@ where
                             ),
                         )
                         .map_err(|e| match e {
-                            GetSymbolForDayPeriodError::MissingNames(f) => {
+                            GetNameForDayPeriodError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
                         })
