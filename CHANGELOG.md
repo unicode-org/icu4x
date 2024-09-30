@@ -10,7 +10,11 @@
   - `icu_normalizer`
   - `icu_datetime`
   - `icu_experimental`
-  - `icu_locid`
+  - `icu_locale`
+    - New crate
+  - `icu_locale_core`
+    - New crate, split out of `icu_locid`
+    - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
   - `icu_locid_transform`
   - `icu_plurals`
   - `icu_properties`
