@@ -1059,9 +1059,8 @@
             "unitPattern-count-other": "{0} Imp. quart"
           },
           "speed-light-speed": {
-            "displayName": "আঃবঃ",
-            "unitPattern-count-one": "{0} আঃবঃ",
-            "unitPattern-count-other": "{0} আঃবঃ"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "পার্ট প্রতি বিলিয়ন",
@@ -2014,9 +2013,8 @@
             "unitPattern-count-other": "{0} qt Imp."
           },
           "speed-light-speed": {
-            "displayName": "আঃবঃ",
-            "unitPattern-count-one": "{0} আঃবঃ",
-            "unitPattern-count-other": "{0} আঃবঃ"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "পার্ট/ বিলিয়ন",
@@ -2987,9 +2985,8 @@
             "unitPattern-count-other": "{0} qt Imp."
           },
           "speed-light-speed": {
-            "displayName": "আঃবঃ",
-            "unitPattern-count-one": "{0} আঃবঃ",
-            "unitPattern-count-other": "{0} আঃবঃ"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "পার্ট/ বিলিয়ন",

@@ -4,11 +4,10 @@ calendar/islamicobservationalcache@1, <singleton>, 532B, 504B, 18af87d272c76f14
 calendar/islamicummalquracache@1, <singleton>, 532B, 504B, ef6ac9ff14fd3f3
 calendar/japanese@1, <singleton>, 134B, 111B, b31e52deaf52706f
 calendar/japanext@1, <singleton>, 5238B, 5216B, 6c20e216c8cd6e41
-datetime/week_data@2, <lookup>, 450B, 115 identifiers
+datetime/week_data@2, <lookup>, 447B, 114 identifiers
 datetime/week_data@2, <total>, 33B, 33B, 11 unique payloads
 datetime/week_data@2, und, 3B, 3B, 9d9f0d8d13520828
 datetime/week_data@2, und-AD, 3B, 3B, bd6a06572fc718be
-datetime/week_data@2, und-AE, 3B, 3B, a0405d18fe0583e1
 datetime/week_data@2, und-AF, 3B, 3B, 38f1b64f8a840a6
 datetime/week_data@2, und-AG, 3B, 3B, c7700ca0a16a1d32
 datetime/week_data@2, und-AN, -> und-AD
@@ -29,7 +28,7 @@ datetime/week_data@2, und-CH, -> und-AD
 datetime/week_data@2, und-CO, -> und-AG
 datetime/week_data@2, und-CZ, -> und-AD
 datetime/week_data@2, und-DE, -> und-AD
-datetime/week_data@2, und-DJ, -> und-AE
+datetime/week_data@2, und-DJ, 3B, 3B, a0405d18fe0583e1
 datetime/week_data@2, und-DK, -> und-AD
 datetime/week_data@2, und-DM, -> und-AG
 datetime/week_data@2, und-DO, -> und-AG

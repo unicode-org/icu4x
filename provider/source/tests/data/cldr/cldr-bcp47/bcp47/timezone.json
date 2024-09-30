@@ -1069,8 +1069,9 @@
           "_iana": "Asia/Yangon"
         },
         "mncoq": {
+          "_deprecated": true,
           "_description": "Choibalsan, Mongolia",
-          "_alias": "Asia/Choibalsan"
+          "_preferred": "mnuln"
         },
         "mnhvd": {
           "_description": "Khovd (Hovd), Mongolia",
@@ -1078,7 +1079,7 @@
         },
         "mnuln": {
           "_description": "Ulaanbaatar (Ulan Bator), Mongolia",
-          "_alias": "Asia/Ulaanbaatar Asia/Ulan_Bator"
+          "_alias": "Asia/Ulaanbaatar Asia/Ulan_Bator Asia/Choibalsan"
         },
         "momfm": {
           "_description": "Macau SAR China",

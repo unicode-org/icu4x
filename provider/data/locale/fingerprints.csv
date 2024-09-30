@@ -1,4 +1,4 @@
-locale/aliases@2, <singleton>, 8539B, 8087B, 79b314f194afdea6
+locale/aliases@2, <singleton>, 8581B, 8129B, f5c908516b6bd84f
 locale/exemplarchars/auxiliary@1, <lookup>, 802B, 163 identifiers
 locale/exemplarchars/auxiliary@1, <total>, 42517B, 34794B, 144 unique payloads
 locale/exemplarchars/auxiliary@1, af, 104B, 50B, cb103acefaf75d10
@@ -741,6 +741,6 @@ locale/exemplarchars/punctuation@1, zh, -> yue-Hans
 locale/exemplarchars/punctuation@1, zh-Hant, -> yue
 locale/likelysubtags_ext@1, <singleton>, 72368B, 72100B, f9b76ab2aa433a36
 locale/likelysubtags_l@1, <singleton>, 2330B, 2191B, 85986e5c29062319
-locale/likelysubtags_sr@1, <singleton>, 3324B, 3192B, 13bae00bbf77ee21
+locale/likelysubtags_sr@1, <singleton>, 3304B, 3172B, 634444ec4f73b8bc
 locale/parents@1, <singleton>, 2595B, 2551B, 5a1c963327e27cdc
 locale/script_dir@1, <singleton>, 740B, 696B, b43c5a46f6b655d7
