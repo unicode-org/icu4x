@@ -35,6 +35,7 @@
     - `calendrical_calculations`:
     - `databake`
     - `fixed_decimal`
+      - `FloatPrecision::Floating` renamed to `FloatPrecision::RoundTrip` (https://github.com/unicode-org/icu4x/pull/5616)
       - `FixedDecimal::concatenated_end()` now returns both `self` and `other` in the error case. (https://github.com/unicode-org/icu4x/pull/5623)
     - `icu_pattern`
     - `litemap`
