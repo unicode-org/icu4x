@@ -947,6 +947,35 @@ impl<T> PluralElements<T> {
         &self.0.other
     }
 
+    /// If the only variant is `other`, returns `Some(other)`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_plurals::PluralElements;
+    ///
+    /// let mut only_other = PluralElements::new("abc").with_one_value(Some("abc"));
+    /// assert_eq!(only_other.try_into_other(), Some("abc"));
+    ///
+    /// let mut multi = PluralElements::new("abc").with_one_value(Some("def"));
+    /// assert_eq!(multi.try_into_other(), None);
+    /// ```
+    pub fn try_into_other(self) -> Option<T> {
+        match self.0 {
+            PluralElementsInner {
+                zero: None,
+                one: None,
+                two: None,
+                few: None,
+                many: None,
+                other,
+                explicit_zero: None,
+                explicit_one: None,
+            } => Some(other),
+            _ => None,
+        }
+    }
+
     /// The value used when the [`PluralOperands`] are exactly 0.
     pub fn explicit_zero(&self) -> Option<&T> {
         self.0.explicit_zero.as_ref()
