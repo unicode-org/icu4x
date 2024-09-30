@@ -496,7 +496,21 @@ impl SourceDataProvider {
                         ("cldr-person-names-full/main/sr-Latn/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/sr-Latn/personNames.json").as_slice()),
                         ("cldr-person-names-full/main/th/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/th/personNames.json").as_slice()),
                         ("cldr-person-names-full/main/tr/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/tr/personNames.json").as_slice()),
-                        ("cldr-person-names-full/main/und/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/und/personNames.json").as_slice())
+                        ("cldr-person-names-full/main/und/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/und/personNames.json").as_slice()),
+                        ("cldr-transforms/transforms/Any-Publishing.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Any-Publishing.json").as_slice()),
+                        ("cldr-transforms/transforms/Any-Publishing.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Any-Publishing.txt").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-Arabic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-Arabic.json").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-Arabic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-Arabic.txt").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-InterIndic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-InterIndic.json").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-InterIndic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-InterIndic.txt").as_slice()),
+                        ("cldr-transforms/transforms/de-ASCII.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/de-ASCII.json").as_slice()),
+                        ("cldr-transforms/transforms/de-ASCII.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/de-ASCII.txt").as_slice()),
+                        ("cldr-transforms/transforms/Greek-Latin-BGN.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Greek-Latin-BGN.json").as_slice()),
+                        ("cldr-transforms/transforms/Greek-Latin-BGN.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Greek-Latin-BGN.txt").as_slice()),
+                        ("cldr-transforms/transforms/InterIndic-Arabic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/InterIndic-Arabic.json").as_slice()),
+                        ("cldr-transforms/transforms/InterIndic-Arabic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/InterIndic-Arabic.txt").as_slice()),
+                        ("cldr-transforms/transforms/Latin-ASCII.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Latin-ASCII.json").as_slice()),
+                        ("cldr-transforms/transforms/Latin-ASCII.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Latin-ASCII.txt").as_slice())
                     ].into_iter().collect(),
                 ))))),
                 icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
