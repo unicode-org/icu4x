@@ -22,7 +22,7 @@
     "unicode_sets": [
       {
         "cp_inv_list": [
-          "\u0000-퟾",
+          "\u0000-U+DFFF",
           "-􏿿"
         ],
         "str_list": []

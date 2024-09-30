@@ -24,47 +24,47 @@ pub(crate) enum Visibility {
 }
 
 #[derive(PartialEq, Debug, Clone)]
-pub(crate) enum TransformAlias {
-    Bcp47(Locale),
-    LegacyId(String),
-}
+pub(crate) struct LocaleFromString(pub(crate) Locale);
 
-impl<'de> Deserialize<'de> for TransformAlias {
+impl<'de> Deserialize<'de> for LocaleFromString {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let s = String::deserialize(deserializer)?;
-        if let Some(Ok(locale)) = s.contains("-t-").then(|| s.parse::<Locale>()) {
-            Ok(Self::Bcp47(locale))
-        } else {
-            Ok(Self::LegacyId(s))
-        }
+        use serde::de::Error;
+        Ok(Self(
+            String::deserialize(deserializer)?
+                .parse()
+                .map_err(|_| D::Error::custom("invalid bcp47"))?,
+        ))
     }
 }
 
-impl Display for TransformAlias {
+impl Display for LocaleFromString {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Bcp47(locale) => locale.fmt(f),
-            Self::LegacyId(s) => s.fmt(f),
-        }
+        self.0.fmt(f)
     }
 }
 
-// cldr-transforms-full/main/<lang>/metadata.json
+// cldr-transforms/transforms/<lang>.json
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Resource {
+    #[serde(rename = "_rulesFile")]
+    pub(crate) rules_file: String,
+    #[serde(rename = "_direction")]
     pub(crate) direction: Direction,
-    #[serde(default)]
+    #[serde(rename = "_visibility", default)]
     pub(crate) visibility: Visibility,
+    #[serde(rename = "_source")]
     pub(crate) source: String,
+    #[serde(rename = "_target")]
     pub(crate) target: String,
-    #[serde(default)]
-    pub(crate) variant: Option<String>,
-    #[serde(default)]
-    pub(crate) alias: Vec<TransformAlias>,
-    #[serde(default)]
-    #[serde(rename = "backwardAlias")]
-    pub(crate) backward_alias: Vec<TransformAlias>,
+    #[serde(rename = "_alias", default)]
+    pub(crate) alias: Option<String>,
+    #[serde(rename = "_backwardAlias", default)]
+    pub(crate) backward_alias: Option<String>,
+    #[serde(rename = "_aliasBcp47", default)]
+    pub(crate) alias_bcp47: Option<String>,
+    #[serde(rename = "_backwardAliasBcp47", default)]
+    pub(crate) backward_alias_bcp47: Option<String>,
 }
