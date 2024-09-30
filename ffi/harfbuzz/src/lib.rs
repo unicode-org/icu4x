@@ -43,10 +43,9 @@ use icu_normalizer::provider::{
     CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
 };
-use icu_properties::bidi::BidiAuxiliaryProperties;
-use icu_properties::props::{GeneralCategory, Script};
+use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
-    BidiAuxiliaryPropertiesV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
+    BidiMirroringGlyphV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
     ScriptValueToShortNameV1Marker,
 };
 use icu_properties::script::ScriptMapper;
@@ -94,8 +93,8 @@ impl CombiningClassFunc for AllUnicodeFuncs {
 impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
-        BidiAuxiliaryProperties::new()
-            .get32_mirroring_props(ch.into())
+        CodePointMapData::<BidiMirroringGlyph>::new()
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }
@@ -256,16 +255,16 @@ impl CombiningClassFunc for CombiningClassData {
 /// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct MirroringData {
-    bidi: BidiAuxiliaryProperties,
+    bidi: CodePointMapData<BidiMirroringGlyph>,
 }
 
 impl MirroringData {
     /// Construct a new [`MirroringData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
+        D: DataProvider<BidiMirroringGlyphV1Marker> + ?Sized,
     {
-        let bidi = BidiAuxiliaryProperties::try_new_unstable(provider)?;
+        let bidi = CodePointMapData::try_new_unstable(provider)?;
 
         Ok(Self { bidi })
     }
@@ -290,7 +289,7 @@ impl MirroringFunc for MirroringData {
     fn mirroring(&self, ch: char) -> char {
         self.bidi
             .as_borrowed()
-            .get32_mirroring_props(ch.into())
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }

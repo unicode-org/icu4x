@@ -39,6 +39,7 @@ props/AHex@1, <singleton>, 56B, 26B, 779017d199091bbe
 props/Alpha@1, <singleton>, 5896B, 5867B, 6d7b02a5e1d18551
 props/Basic_Emoji@1, <singleton>, 2449B, 2398B, 1b40c523c9139bdc
 props/Bidi_C@1, <singleton>, 64B, 34B, c67c3c6e4bb91ab9
+props/Bidi_G@1, <singleton>, 4739B, 4673B, cae8857e2f26fcbf
 props/Bidi_M@1, <singleton>, 944B, 915B, 68cec45cb8b30828
 props/CI@1, <singleton>, 3528B, 3499B, 3d15d6d40a0a8fe9
 props/CWCF@1, <singleton>, 5008B, 4979B, 3b94a621fa84c90a
@@ -97,7 +98,6 @@ props/XIDC@1, <singleton>, 6240B, 6211B, 35702fd271dcc809
 props/XIDS@1, <singleton>, 5368B, 5339B, fd5c508e3dbc7b5b
 props/alnum@1, <singleton>, 6216B, 6187B, da3947cba09f164e
 props/bc@1, <singleton>, 9544B, 9488B, 9659efa7a524de9b
-props/bidiauxiliaryprops@1, <singleton>, 4739B, 4672B, 82f34dee36202d63
 props/blank@1, <singleton>, 96B, 66B, 1e75f3c7a32d0e8a
 props/ccc@1, <singleton>, 5328B, 5270B, 85887761e8c0b554
 props/ea@1, <singleton>, 5020B, 4963B, 74b1a8cea9a0f2e1

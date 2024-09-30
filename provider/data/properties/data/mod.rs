@@ -40,6 +40,7 @@ include!("ascii_hex_digit_v1_marker.rs.data");
 include!("alphabetic_v1_marker.rs.data");
 include!("basic_emoji_v1_marker.rs.data");
 include!("bidi_control_v1_marker.rs.data");
+include!("bidi_mirroring_glyph_v1_marker.rs.data");
 include!("bidi_mirrored_v1_marker.rs.data");
 include!("case_ignorable_v1_marker.rs.data");
 include!("changes_when_casefolded_v1_marker.rs.data");
@@ -98,7 +99,6 @@ include!("xid_continue_v1_marker.rs.data");
 include!("xid_start_v1_marker.rs.data");
 include!("alnum_v1_marker.rs.data");
 include!("bidi_class_v1_marker.rs.data");
-include!("bidi_auxiliary_properties_v1_marker.rs.data");
 include!("blank_v1_marker.rs.data");
 include!("canonical_combining_class_v1_marker.rs.data");
 include!("east_asian_width_v1_marker.rs.data");
@@ -186,6 +186,7 @@ macro_rules! impl_data_provider {
         impl_alphabetic_v1_marker!($provider);
         impl_basic_emoji_v1_marker!($provider);
         impl_bidi_control_v1_marker!($provider);
+        impl_bidi_mirroring_glyph_v1_marker!($provider);
         impl_bidi_mirrored_v1_marker!($provider);
         impl_case_ignorable_v1_marker!($provider);
         impl_changes_when_casefolded_v1_marker!($provider);
@@ -244,7 +245,6 @@ macro_rules! impl_data_provider {
         impl_xid_start_v1_marker!($provider);
         impl_alnum_v1_marker!($provider);
         impl_bidi_class_v1_marker!($provider);
-        impl_bidi_auxiliary_properties_v1_marker!($provider);
         impl_blank_v1_marker!($provider);
         impl_canonical_combining_class_v1_marker!($provider);
         impl_east_asian_width_v1_marker!($provider);
@@ -312,6 +312,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::AlphabeticV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::AlphabeticV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BasicEmojiV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BasicEmojiV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiControlV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiControlV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::BidiMirroringGlyphV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiMirroringGlyphV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiMirroredV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiMirroredV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CaseIgnorableV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::CaseIgnorableV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ChangesWhenCasefoldedV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ChangesWhenCasefoldedV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -370,7 +371,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::XidStartV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::XidStartV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::AlnumV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::AlnumV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiClassV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::BidiAuxiliaryPropertiesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiAuxiliaryPropertiesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BlankV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BlankV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CanonicalCombiningClassV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

@@ -46,6 +46,7 @@ lazy_static::lazy_static! {
         "Sync",
         "ToOwned",
         "ToString", // We expose this when we see fit
+        "TrieValue",
         "TryFrom", // We expose this when we see fit
         "TryInto", // We expose this when we see fit
         "Unpin",
@@ -322,8 +323,6 @@ lazy_static::lazy_static! {
         "icu::normalizer::properties::CanonicalDecompositionBorrowed::static_to_owned",
         "icu::normalizer::uts46::Uts46Mapper::as_borrowed",
         "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
-        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
-        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
         "icu::properties::CodePointMapData::as_borrowed",
         "icu::properties::CodePointMapDataBorrowed::static_to_owned",
         "icu::properties::CodePointSetData::as_borrowed",
