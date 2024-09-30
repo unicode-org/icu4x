@@ -109,8 +109,7 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice: &[T::ULE] = self.vector.as_slice();
-        ZeroSlice::from_ule_slice(slice)
+        self.as_slice()
     }
 }
 
@@ -193,7 +192,7 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
 
 impl<'a, T: AsULE> AsRef<ZeroSlice<T>> for ZeroVec<'a, T> {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        self.deref()
+        self.as_slice()
     }
 }
 
@@ -429,6 +428,16 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         }
     }
 
+    /// Returns this [`ZeroVec`] as a [`ZeroSlice`].
+    ///
+    /// To get a reference with a longer lifetime from a borrowed [`ZeroVec`],
+    /// use [`ZeroVec::as_maybe_borrowed`].
+    #[inline]
+    pub const fn as_slice(&self) -> &ZeroSlice<T> {
+        let slice: &[T::ULE] = self.vector.as_slice();
+        ZeroSlice::from_ule_slice(slice)
+    }
+
     /// Casts a `ZeroVec<T>` to a compatible `ZeroVec<P>`.
     ///
     /// `T` and `P` are compatible if they have the same `ULE` representation.
@@ -567,8 +576,11 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         self.vector.capacity != 0
     }
 
-    /// If this is a borrowed ZeroVec, return it as a slice that covers
-    /// its lifetime parameter
+    /// If this is a borrowed [`ZeroVec`], return it as a slice that covers
+    /// its lifetime parameter.
+    ///
+    /// To infallibly get a [`ZeroSlice`] with a shorter lifetime, use
+    /// [`ZeroVec::as_slice`].
     #[inline]
     pub fn as_maybe_borrowed(&self) -> Option<&'a ZeroSlice<T>> {
         if self.is_owned() {
