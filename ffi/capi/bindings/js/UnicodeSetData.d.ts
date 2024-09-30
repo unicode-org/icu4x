@@ -19,9 +19,9 @@ export class UnicodeSetData {
 
     get ffiValue(): pointer;
 
-    contains(s: string): boolean;
+    containsStr(s: string): boolean;
 
-    containsChar(cp: codepoint): boolean;
+    contains(cp: codepoint): boolean;
 
     static loadBasicEmoji(provider: DataProvider): UnicodeSetData;
 }

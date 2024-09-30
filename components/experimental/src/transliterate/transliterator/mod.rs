@@ -922,10 +922,10 @@ impl<'a> SpecialMatcher<'a> {
                 // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
                 if matcher.is_empty() {
-                    if set.contains("") {
+                    if set.contains_str("") {
                         return true;
                     }
-                    if set.contains("\u{FFFF}") {
+                    if set.contains_str("\u{FFFF}") {
                         if matcher.match_end_anchor() {
                             return true;
                         }
@@ -961,7 +961,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 if let Some(input_c) = matcher.next_char() {
                     // eprintln!("checking if set {set:?} contains char {input_c:?}");
-                    if set.contains_char(input_c) {
+                    if set.contains(input_c) {
                         // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }
@@ -1025,10 +1025,10 @@ impl<'a> SpecialMatcher<'a> {
                 // eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
                 if matcher.is_empty() {
-                    if set.contains("") {
+                    if set.contains_str("") {
                         return true;
                     }
-                    if set.contains("\u{FFFF}") {
+                    if set.contains_str("\u{FFFF}") {
                         if matcher.match_end_anchor() {
                             return true;
                         }
@@ -1055,7 +1055,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 if let Some(input_c) = matcher.next_char() {
                     // eprintln!("checking if set {set:?} contains char {input_c:?}");
-                    if set.contains_char(input_c) {
+                    if set.contains(input_c) {
                         // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }

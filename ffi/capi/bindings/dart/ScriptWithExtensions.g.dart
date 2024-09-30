@@ -38,16 +38,16 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
-  int getScriptVal(int codePoint) {
-    final result = _icu4x_ScriptWithExtensions_get_script_val_mv1(_ffi, codePoint);
+  int getScriptVal(Rune ch) {
+    final result = _icu4x_ScriptWithExtensions_get_script_val_mv1(_ffi, ch);
     return result;
   }
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
-  bool hasScript(int codePoint, int script) {
-    final result = _icu4x_ScriptWithExtensions_has_script_mv1(_ffi, codePoint, script);
+  bool hasScript(Rune ch, int script) {
+    final result = _icu4x_ScriptWithExtensions_has_script_mv1(_ffi, ch, script);
     return result;
   }
 
@@ -85,12 +85,12 @@ external _ResultOpaqueInt32 _icu4x_ScriptWithExtensions_create_mv1(ffi.Pointer<f
 @meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_get_script_val_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_ScriptWithExtensions_get_script_val_mv1(ffi.Pointer<ffi.Opaque> self, int codePoint);
+external int _icu4x_ScriptWithExtensions_get_script_val_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_has_script_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ScriptWithExtensions_has_script_mv1(ffi.Pointer<ffi.Opaque> self, int codePoint, int script);
+external bool _icu4x_ScriptWithExtensions_has_script_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch, int script);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_as_borrowed_mv1')

@@ -80,12 +80,12 @@ mod tests {
             icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
-        assert_eq!(swe.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
-        assert_eq!(swe.get_script_val('🥳' as u32), Script::Common); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-        assert_eq!(swe.get_script_val(0x200D), Script::Inherited); // ZERO WIDTH JOINER
-        assert_eq!(swe.get_script_val('௫' as u32), Script::Tamil); // U+0BEB TAMIL DIGIT FIVE
-        assert_eq!(swe.get_script_val(0x11303), Script::Grantha); // GRANTHA SIGN VISARGA
-        assert_eq!(swe.get_script_val(0x30A0), Script::Common); // U+30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN
+        assert_eq!(swe.get_script_val('𐓐'), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
+        assert_eq!(swe.get_script_val('🥳'), Script::Common); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+        assert_eq!(swe.get_script_val32(0x200D), Script::Inherited); // ZERO WIDTH JOINER
+        assert_eq!(swe.get_script_val('௫'), Script::Tamil); // U+0BEB TAMIL DIGIT FIVE
+        assert_eq!(swe.get_script_val32(0x11303), Script::Grantha); // GRANTHA SIGN VISARGA
+        assert_eq!(swe.get_script_val32(0x30A0), Script::Common); // U+30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN
     }
 
     #[test]
@@ -97,60 +97,60 @@ mod tests {
         let swe = swe.as_borrowed();
 
         assert_eq!(
-            swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
+            swe.get_script_extensions_val('𐓐') /* U+104D0 OSAGE CAPITAL LETTER KHA */
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Osage]
         );
         assert_eq!(
-            swe.get_script_extensions_val('🥳' as u32) /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
+            swe.get_script_extensions_val('🥳') /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Common]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+            swe.get_script_extensions_val32(0x200D) // ZERO WIDTH JOINER
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Inherited]
         );
         assert_eq!(
-            swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+            swe.get_script_extensions_val('௫') // U+0BEB TAMIL DIGIT FIVE
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            swe.get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x30A0) // KATAKANA-HIRAGANA DOUBLE HYPHEN
+            swe.get_script_extensions_val32(0x30A0) // KATAKANA-HIRAGANA DOUBLE HYPHEN
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Hiragana, Script::Katakana]
         );
 
         assert_eq!(
-            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+            swe.get_script_extensions_val32(0x200D) // ZERO WIDTH JOINER
                 .iter()
                 .next(),
             Some(Script::Inherited)
         );
 
         assert!(swe
-            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
             .contains(&Script::Grantha));
 
         assert!(!swe
-            .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+            .get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
             .contains(&Script::Common));
 
         // // Invalid code point
         assert_eq!(
-            swe.get_script_extensions_val(0x11_0000) // CODE_POINT_MAX + 1 is invalid
+            swe.get_script_extensions_val32(0x11_0000) // CODE_POINT_MAX + 1 is invalid
                 .iter()
                 .collect::<Vec<_>>(),
             [Script::Unknown]
@@ -165,71 +165,71 @@ mod tests {
             icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
-        assert!(swe.has_script('𐓐' as u32, Script::Osage));
-        assert!(!swe.has_script('𐓐' as u32, Script::Common));
-        assert!(!swe.has_script('𐓐' as u32, Script::Inherited));
+        assert!(swe.has_script('𐓐', Script::Osage));
+        assert!(!swe.has_script('𐓐', Script::Common));
+        assert!(!swe.has_script('𐓐', Script::Inherited));
 
-        assert!(swe.has_script('🥳' as u32, Script::Common));
-        assert!(!swe.has_script('🥳' as u32, Script::Inherited));
+        assert!(swe.has_script('🥳', Script::Common));
+        assert!(!swe.has_script('🥳', Script::Inherited));
 
-        assert!(!swe.has_script(0x200D, Script::Common));
-        assert!(swe.has_script(0x200D, Script::Inherited));
+        assert!(!swe.has_script32(0x200D, Script::Common));
+        assert!(swe.has_script32(0x200D, Script::Inherited));
 
-        assert!(swe.has_script('௫' as u32, Script::Tamil));
-        assert!(swe.has_script('௫' as u32, Script::Grantha));
-        assert!(!swe.has_script('௫' as u32, Script::Common));
-        assert!(!swe.has_script('௫' as u32, Script::Inherited));
+        assert!(swe.has_script('௫', Script::Tamil));
+        assert!(swe.has_script('௫', Script::Grantha));
+        assert!(!swe.has_script('௫', Script::Common));
+        assert!(!swe.has_script('௫', Script::Inherited));
 
-        assert!(swe.has_script(0x11303, Script::Tamil));
-        assert!(swe.has_script(0x11303, Script::Grantha));
-        assert!(!swe.has_script(0x11303, Script::Common));
-        assert!(!swe.has_script(0x11303, Script::Inherited));
+        assert!(swe.has_script32(0x11303, Script::Tamil));
+        assert!(swe.has_script32(0x11303, Script::Grantha));
+        assert!(!swe.has_script32(0x11303, Script::Common));
+        assert!(!swe.has_script32(0x11303, Script::Inherited));
 
-        assert!(swe.has_script(0x30A0, Script::Hiragana));
-        assert!(swe.has_script(0x30A0, Script::Katakana));
-        assert!(!swe.has_script(0x30A0, Script::Common));
-        assert!(!swe.has_script(0x30A0, Script::Inherited));
+        assert!(swe.has_script32(0x30A0, Script::Hiragana));
+        assert!(swe.has_script32(0x30A0, Script::Katakana));
+        assert!(!swe.has_script32(0x30A0, Script::Common));
+        assert!(!swe.has_script32(0x30A0, Script::Inherited));
 
         // U+0964 DEVANAGARI DANDA
-        assert!(!swe.has_script(0x0964, Script::Common));
-        assert!(swe.has_script(0x0964, Script::Devanagari));
-        assert!(swe.has_script(0x0964, Script::Bengali));
+        assert!(!swe.has_script32(0x0964, Script::Common));
+        assert!(swe.has_script32(0x0964, Script::Devanagari));
+        assert!(swe.has_script32(0x0964, Script::Bengali));
 
         // TestHasScript() test cases from ICU4J
 
         // U+063F ARABIC LETTER FARSI YEH WITH THREE DOTS ABOVE
-        assert!(!swe.has_script(0x063F, Script::Common));
-        assert!(swe.has_script(0x063F, Script::Arabic)); // main Script value
-        assert!(!swe.has_script(0x063F, Script::Syriac));
-        assert!(!swe.has_script(0x063F, Script::Thaana));
+        assert!(!swe.has_script32(0x063F, Script::Common));
+        assert!(swe.has_script32(0x063F, Script::Arabic)); // main Script value
+        assert!(!swe.has_script32(0x063F, Script::Syriac));
+        assert!(!swe.has_script32(0x063F, Script::Thaana));
 
         // U+0640 ARABIC TATWEEL
-        assert!(!swe.has_script(0x0640, Script::Common)); // main Script value
-        assert!(swe.has_script(0x0640, Script::Arabic));
-        assert!(swe.has_script(0x0640, Script::Syriac));
-        assert!(!swe.has_script(0x0640, Script::Thaana));
+        assert!(!swe.has_script32(0x0640, Script::Common)); // main Script value
+        assert!(swe.has_script32(0x0640, Script::Arabic));
+        assert!(swe.has_script32(0x0640, Script::Syriac));
+        assert!(!swe.has_script32(0x0640, Script::Thaana));
 
         // U+0650 ARABIC KASRA
-        assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
-        assert!(swe.has_script(0x0650, Script::Arabic));
-        assert!(swe.has_script(0x0650, Script::Syriac));
-        assert!(!swe.has_script(0x0650, Script::Thaana));
+        assert!(!swe.has_script32(0x0650, Script::Inherited)); // main Script value
+        assert!(swe.has_script32(0x0650, Script::Arabic));
+        assert!(swe.has_script32(0x0650, Script::Syriac));
+        assert!(!swe.has_script32(0x0650, Script::Thaana));
 
         // U+0660 ARABIC-INDIC DIGIT ZERO
-        assert!(!swe.has_script(0x0660, Script::Common));
-        assert!(swe.has_script(0x0660, Script::Arabic)); // main Script value
-        assert!(!swe.has_script(0x0660, Script::Syriac));
-        assert!(swe.has_script(0x0660, Script::Thaana));
+        assert!(!swe.has_script32(0x0660, Script::Common));
+        assert!(swe.has_script32(0x0660, Script::Arabic)); // main Script value
+        assert!(!swe.has_script32(0x0660, Script::Syriac));
+        assert!(swe.has_script32(0x0660, Script::Thaana));
 
         // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
-        assert!(!swe.has_script(0xFDF2, Script::Common));
-        assert!(swe.has_script(0xFDF2, Script::Arabic)); // main Script value
-        assert!(!swe.has_script(0xFDF2, Script::Syriac));
-        assert!(swe.has_script(0xFDF2, Script::Thaana));
+        assert!(!swe.has_script32(0xFDF2, Script::Common));
+        assert!(swe.has_script32(0xFDF2, Script::Arabic)); // main Script value
+        assert!(!swe.has_script32(0xFDF2, Script::Syriac));
+        assert!(swe.has_script32(0xFDF2, Script::Thaana));
 
         // The ICU4J comment for this test says:
         // An unguarded implementation might go into an infinite loop.
-        assert!(!swe.has_script(0x0640, Script(0xAFFE)));
+        assert!(!swe.has_script32(0x0640, Script(0xAFFE)));
     }
 
     #[test]

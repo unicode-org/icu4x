@@ -27,28 +27,29 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensionsBorrowed_destroy_mv1));
 
   /// Get the Script property value for a code point
+  /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
-  int getScriptVal(int codePoint) {
-    final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(_ffi, codePoint);
+  int getScriptVal(Rune ch) {
+    final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(_ffi, ch);
     return result;
   }
 
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
-  ScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
+  ScriptExtensionsSet getScriptExtensionsVal(Rune ch) {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(_ffi, codePoint);
+    final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(_ffi, ch);
     return ScriptExtensionsSet._fromFfi(result, [], aEdges);
   }
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
-  bool hasScript(int codePoint, int script) {
-    final result = _icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(_ffi, codePoint, script);
+  bool hasScript(Rune ch, int script) {
+    final result = _icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(_ffi, ch, script);
     return result;
   }
 
@@ -70,17 +71,17 @@ external void _icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ffi.Pointer<ffi.Vo
 @meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(ffi.Pointer<ffi.Opaque> self, int codePoint);
+external int _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(ffi.Pointer<ffi.Opaque> self, int codePoint);
+external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensionsBorrowed_has_script_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(ffi.Pointer<ffi.Opaque> self, int codePoint, int script);
+external bool _icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch, int script);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1')

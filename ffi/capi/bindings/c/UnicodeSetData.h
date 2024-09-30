@@ -17,9 +17,9 @@
 
 
 
-bool icu4x_UnicodeSetData_contains_mv1(const UnicodeSetData* self, DiplomatStringView s);
+bool icu4x_UnicodeSetData_contains_str_mv1(const UnicodeSetData* self, DiplomatStringView s);
 
-bool icu4x_UnicodeSetData_contains_char_mv1(const UnicodeSetData* self, char32_t cp);
+bool icu4x_UnicodeSetData_contains_mv1(const UnicodeSetData* self, char32_t cp);
 
 typedef struct icu4x_UnicodeSetData_load_basic_emoji_mv1_result {union {UnicodeSetData* ok; DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_basic_emoji_mv1_result;
 icu4x_UnicodeSetData_load_basic_emoji_mv1_result icu4x_UnicodeSetData_load_basic_emoji_mv1(const DataProvider* provider);

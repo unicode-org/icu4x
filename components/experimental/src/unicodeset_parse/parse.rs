@@ -1788,7 +1788,7 @@ mod tests {
         for s in strings {
             expected_size += 1;
             assert!(
-                cpinvlistandstrlist.contains(s),
+                cpinvlistandstrlist.contains_str(s),
                 "missing string \"{}\" from parsed set \"{}\"",
                 s.escape_debug(),
                 source.escape_debug()

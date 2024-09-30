@@ -114,20 +114,20 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
     ///
     /// This matches ICU behavior for ICU's `UnicodeSet`.
     #[inline]
-    pub fn contains(self, s: &str) -> bool {
-        self.set.contains(s)
+    pub fn contains_str(self, s: &str) -> bool {
+        self.set.contains_str(s)
     }
 
-    /// Check if the set contains a character as a UTF32 code unit
+    /// Check if the set contains the code point.
+    #[inline]
+    pub fn contains(&self, ch: char) -> bool {
+        self.set.contains(ch)
+    }
+
+    /// See [`Self::contains_char`].
     #[inline]
     pub fn contains32(&self, cp: u32) -> bool {
         self.set.contains32(cp)
-    }
-
-    /// Check if the set contains the code point corresponding to the Rust character.
-    #[inline]
-    pub fn contains_char(&self, ch: char) -> bool {
-        self.set.contains_char(ch)
     }
 }
 

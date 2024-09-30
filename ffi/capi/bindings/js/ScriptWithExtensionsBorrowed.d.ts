@@ -13,11 +13,11 @@ export class ScriptWithExtensionsBorrowed {
 
     get ffiValue(): pointer;
 
-    getScriptVal(codePoint: number): number;
+    getScriptVal(ch: codepoint): number;
 
-    getScriptExtensionsVal(codePoint: number): ScriptExtensionsSet;
+    getScriptExtensionsVal(ch: codepoint): ScriptExtensionsSet;
 
-    hasScript(codePoint: number, script: number): boolean;
+    hasScript(ch: codepoint, script: number): boolean;
 
     getScriptExtensionsSet(script: number): CodePointSetData;
 }

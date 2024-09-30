@@ -22,21 +22,22 @@ pub mod ffi {
 
     impl UnicodeSetData {
         /// Checks whether the string is in the set.
-        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains, FnInStruct)]
-        pub fn contains(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains_str, FnInStruct)]
+        #[diplomat::attr(supports = method_overloading, rename = "contains")]
+        pub fn contains_str(&self, s: &DiplomatStr) -> bool {
             let Ok(s) = core::str::from_utf8(s) else {
                 return false;
             };
-            self.0.as_borrowed().contains(s)
+            self.0.as_borrowed().contains_str(s)
         }
         /// Checks whether the code point is in the set.
-        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains_char, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::UnicodeSetDataBorrowed::contains32,
             FnInStruct,
             hidden
         )]
-        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
             self.0.as_borrowed().contains32(cp)
         }
 

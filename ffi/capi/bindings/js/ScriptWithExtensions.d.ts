@@ -17,9 +17,9 @@ export class ScriptWithExtensions {
 
     static create(provider: DataProvider): ScriptWithExtensions;
 
-    getScriptVal(codePoint: number): number;
+    getScriptVal(ch: codepoint): number;
 
-    hasScript(codePoint: number, script: number): boolean;
+    hasScript(ch: codepoint, script: number): boolean;
 
     get asBorrowed(): ScriptWithExtensionsBorrowed;
 
