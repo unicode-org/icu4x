@@ -152,7 +152,7 @@ mod litemap;
 #[cfg(feature = "alloc")]
 pub(crate) mod nonconst;
 
-use bytestr::ByteStr;
+pub use bytestr::ByteStr;
 
 use super::ZeroTrieSimpleAscii;
 

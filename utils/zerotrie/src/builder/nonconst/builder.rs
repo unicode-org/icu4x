@@ -12,7 +12,6 @@ use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::ZeroTrieBuildError;
 use crate::options::*;
 use crate::varint;
-use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
 /// A low-level builder for ZeroTrie. Supports all options.
@@ -101,12 +100,11 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         let items = Vec::<(K, usize)>::from_iter(iter);
         let mut items = items
             .iter()
-            .map(|(k, v)| (k.as_ref(), *v))
-            .collect::<Vec<(&[u8], usize)>>();
-        items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
-        let ascii_str_slice = items.as_slice();
-        let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
-        Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
+            .map(|(k, v)| (ByteStr::from_bytes(k.as_ref()), *v))
+            .collect::<Vec<(&ByteStr, usize)>>();
+        items.sort_by(|a, b| cmp_keys_values(*a, *b));
+        let byte_str_slice = items.as_slice();
+        Self::from_sorted_tuple_slice(byte_str_slice, options)
     }
 
     /// Builds a ZeroTrie with the given items and options. Assumes that the items are sorted,
@@ -119,28 +117,15 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
-        let mut items = Cow::Borrowed(items);
-        if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
-            // We need to re-sort the items with our custom comparator.
-            items.to_mut().sort_by(|a, b| {
-                cmp_keys_values(&options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
-            });
-        }
-        Self::from_sorted_tuple_slice_impl(&items, options)
-    }
-
-    /// Internal constructor that does not re-sort the items.
-    fn from_sorted_tuple_slice_impl(
-        items: &[(&ByteStr, usize)],
-        options: ZeroTrieBuilderOptions,
-    ) -> Result<Self, ZeroTrieBuildError> {
         for ab in items.windows(2) {
-            debug_assert!(cmp_keys_values(
-                &options,
-                (ab[0].0.as_bytes(), ab[0].1),
-                (ab[1].0.as_bytes(), ab[1].1)
-            )
-            .is_lt());
+            debug_assert!(
+                cmp_keys_values(
+                    (&ab[0].0, ab[0].1),
+                    (&ab[1].0, ab[1].1)
+                )
+                .is_lt(),
+                "{ab:?}"
+            );
         }
         let mut result = Self {
             data: S::atbs_new_empty(),
@@ -403,16 +388,8 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 }
 
 fn cmp_keys_values(
-    options: &ZeroTrieBuilderOptions,
-    a: (&[u8], usize),
-    b: (&[u8], usize),
+    a: (&ByteStr, usize),
+    b: (&ByteStr, usize),
 ) -> Ordering {
-    if matches!(options.case_sensitivity, CaseSensitivity::Sensitive) {
-        a.0.cmp(b.0)
-    } else {
-        let a_iter = a.0.iter().map(|x| x.to_ascii_lowercase());
-        let b_iter = b.0.iter().map(|x| x.to_ascii_lowercase());
-        Iterator::cmp(a_iter, b_iter)
-    }
-    .then_with(|| a.1.cmp(&b.1))
+    a.0.cmp(b.0).then_with(|| a.1.cmp(&b.1))
 }

@@ -56,6 +56,7 @@ extern crate alloc;
 
 mod builder;
 mod byte_phf;
+mod comparison;
 pub mod cursor;
 mod error;
 #[macro_use]
@@ -73,6 +74,7 @@ pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;
 pub use crate::zerotrie::ZeroTrieSimpleAscii;
 pub use error::ZeroTrieBuildError;
+pub use builder::ByteStr;
 
 #[cfg(feature = "alloc")]
 pub use crate::zerotrie::ZeroTrieStringIterator;

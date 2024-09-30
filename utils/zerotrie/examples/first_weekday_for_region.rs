@@ -20,7 +20,6 @@ mod weekday {
 
 // This data originated from CLDR 41.
 static DATA: &[(&str, usize)] = &[
-    ("001", weekday::MON),
     ("AD", weekday::MON),
     ("AE", weekday::SAT),
     ("AF", weekday::SAT),
@@ -129,6 +128,7 @@ static DATA: &[(&str, usize)] = &[
     ("NP", weekday::SUN),
     ("NZ", weekday::MON),
     ("OM", weekday::SAT),
+    ("001", weekday::MON),
     ("PA", weekday::SUN),
     ("PE", weekday::SUN),
     ("PH", weekday::SUN),

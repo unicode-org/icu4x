@@ -117,7 +117,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
             match prev {
                 None => (),
                 Some(prev) => {
-                    if !prev.is_less_then(ascii_str) {
+                    if !prev.is_less_than(ascii_str) {
                         panic!("Strings in ByteStr constructor are not sorted");
                     }
                 }

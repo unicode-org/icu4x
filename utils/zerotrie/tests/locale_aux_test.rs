@@ -10,8 +10,10 @@ use writeable::Writeable;
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
+use zerotrie::ByteStr;
 
 mod testdata {
+    use zerotrie::ByteStr;
     include!("data/data.rs");
 }
 
@@ -91,7 +93,7 @@ fn test_aux_split() {
     let mut total_simpleascii_len = 0;
     let mut total_perfecthash_len = 0;
     let mut total_vzv_len = 0;
-    let mut unique_locales = BTreeSet::new();
+    let mut unique_locales = BTreeSet::<Box<ByteStr>>::new();
     for private in aux_keys.iter() {
         let current_locales: Vec<Locale> = locales
             .iter()
@@ -102,10 +104,10 @@ fn test_aux_split() {
                 l
             })
             .collect();
-        let litemap: LiteMap<Vec<u8>, usize> = current_locales
+        let litemap: LiteMap<Box<ByteStr>, usize> = current_locales
             .iter()
             .map(|l| {
-                (l.write_to_string().into_owned().into_bytes(), {
+                (ByteStr::from_boxed_bytes(l.write_to_string().into_owned().into_bytes().into_boxed_slice()), {
                     cumulative_index += 1;
                     cumulative_index - 1
                 })
@@ -118,8 +120,8 @@ fn test_aux_split() {
         let trie = ZeroTriePerfectHash::try_from(&litemap).unwrap();
         total_perfecthash_len += trie.byte_len();
 
-        for k in litemap.iter_keys() {
-            unique_locales.insert(k.clone());
+        for (k, _) in litemap.into_iter() {
+            unique_locales.insert(k);
         }
 
         let strs: Vec<String> = current_locales

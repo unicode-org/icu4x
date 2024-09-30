@@ -13,8 +13,10 @@ use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroHashMap;
 #[cfg(feature = "bench")]
 use zerovec::ZeroMap;
+use zerotrie::ByteStr;
 
 mod testdata {
+    use zerotrie::ByteStr;
     include!("../tests/data/data.rs");
 }
 
@@ -137,7 +139,7 @@ fn get_subtags_bench_large(c: &mut Criterion) {
 fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
     mut g: criterion::BenchmarkGroup<M>,
     strings: &[&str],
-    litemap: LiteMap<&[u8], usize>,
+    litemap: LiteMap<&ByteStr, usize>,
 ) {
     g.bench_function("SimpleAscii", |b| {
         let trie = ZeroTrieSimpleAscii::try_from(&litemap).unwrap();
@@ -171,7 +173,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/usize", |b| {
-        let zm: ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
+        let zm: ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (a.as_bytes(), b)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&zm).get_copied(key.as_bytes());
@@ -182,7 +184,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/u8", |b| {
-        let zm: ZeroMap<[u8], u8> = litemap.iter().map(|(k, v)| (*k, *v as u8)).collect();
+        let zm: ZeroMap<[u8], u8> = litemap.iter().map(|(k, v)| (k.as_bytes(), *v as u8)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&zm).get_copied(key.as_bytes());
@@ -193,7 +195,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("HashMap", |b| {
-        let hm: HashMap<&[u8], usize> = litemap.iter().map(|(a, b)| (*a, *b)).collect();
+        let hm: HashMap<&[u8], usize> = litemap.iter().map(|(a, b)| (a.as_bytes(), *b)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&hm).get(key.as_bytes());
@@ -206,7 +208,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
     g.bench_function("ZeroHashMap/usize", |b| {
         let zhm: ZeroHashMap<[u8], usize> = litemap
             .iter()
-            .map(|(a, b)| (*a, b))
+            .map(|(a, b)| (a.as_bytes(), b))
             .collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
@@ -220,7 +222,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("ZeroHashMap/u8", |b| {
-        let zhm: ZeroHashMap<[u8], u8> = litemap.iter().map(|(k, v)| (*k, *v as u8)).collect();
+        let zhm: ZeroHashMap<[u8], u8> = litemap.iter().map(|(k, v)| (k.as_bytes(), *v as u8)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&zhm).get(key.as_bytes()).copied();
