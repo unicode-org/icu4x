@@ -143,7 +143,6 @@ mod constants {
     pub(super) const CHUNK_MASK: u32 = 0x7;
 }
 
-#[derive(Default)]
 struct UnpackedPatterns<'a> {
     pub(super) has_explicit_medium: bool,
     pub(super) has_explicit_short: bool,
@@ -210,9 +209,7 @@ impl VariantPatternIndex {
     }
 }
 
-#[derive(Default)]
 enum VariantIndices {
-    #[default]
     OnePatternPerVariant,
     IndicesPerVariant([VariantPatternIndex; 6]),
 }
@@ -259,10 +256,7 @@ impl<'a> UnpackedPatterns<'a> {
 
     #[cfg(feature = "datagen")]
     pub(super) fn from_packed(packed: &'a PackedPatternsV1<'_>) -> Self {
-        let mut unpacked = Self::default();
-        unpacked.has_explicit_medium = (packed.header & constants::M_DIFFERS) != 0;
-        unpacked.has_explicit_short = (packed.header & constants::S_DIFFERS) != 0;
-        unpacked.variant_indices = if (packed.header & constants::Q_BIT) != 0 {
+        let variant_indices = if (packed.header & constants::Q_BIT) != 0 {
             VariantIndices::OnePatternPerVariant
         } else {
             VariantIndices::IndicesPerVariant([
@@ -274,7 +268,7 @@ impl<'a> UnpackedPatterns<'a> {
                 VariantPatternIndex::from_header_with_shift(packed.header, 18),
             ])
         };
-        unpacked.elements = packed
+        let elements = packed
             .elements
             .iter()
             .map(|plural_elements| {
@@ -287,7 +281,12 @@ impl<'a> UnpackedPatterns<'a> {
                 })
             })
             .collect();
-        unpacked
+        Self {
+            has_explicit_medium: (packed.header & constants::M_DIFFERS) != 0,
+            has_explicit_short: (packed.header & constants::S_DIFFERS) != 0,
+            variant_indices,
+            elements,
+        }
     }
 }
 
@@ -297,23 +296,19 @@ impl PackedPatternsBuilder<'_> {
         self.simplify();
 
         // Initialize the elements vector with the standard patterns.
-        let mut unpacked = UnpackedPatterns::default();
-        unpacked
-            .elements
-            .push(self.standard.long.as_ref().map(Pattern::as_ref));
+        let mut elements = Vec::new();
+        let mut has_explicit_medium = false;
+        let mut has_explicit_short = false;
+        elements.push(self.standard.long.as_ref().map(Pattern::as_ref));
         let mut s_offset = 0;
         if self.standard.medium != self.standard.long {
-            unpacked
-                .elements
-                .push(self.standard.medium.as_ref().map(Pattern::as_ref));
-            unpacked.has_explicit_medium = true;
+            elements.push(self.standard.medium.as_ref().map(Pattern::as_ref));
+            has_explicit_medium = true;
             s_offset += 1;
         }
         if self.standard.short != self.standard.medium {
-            unpacked
-                .elements
-                .push(self.standard.short.as_ref().map(Pattern::as_ref));
-            unpacked.has_explicit_short = true;
+            elements.push(self.standard.short.as_ref().map(Pattern::as_ref));
+            has_explicit_short = true;
             s_offset += 1;
         }
 
@@ -342,13 +337,11 @@ impl PackedPatternsBuilder<'_> {
         {
             if let Some(pattern) = pattern {
                 if pattern != fallback {
-                    *chunk = match unpacked.elements.iter().position(|p| p == *pattern) {
+                    *chunk = match elements.iter().position(|p| p == *pattern) {
                         Some(i) => i as u32 + 1,
                         None => {
-                            unpacked
-                                .elements
-                                .push(pattern.as_ref().map(Pattern::as_ref));
-                            unpacked.elements.len() as u32
+                            elements.push(pattern.as_ref().map(Pattern::as_ref));
+                            elements.len() as u32
                         }
                     }
                 }
@@ -357,21 +350,26 @@ impl PackedPatternsBuilder<'_> {
 
         // Check to see if we need to switch to Q=1 mode. We need to do this
         // if any of the calculated chunk values is too big (larger than 7).
-        if let Some(chunks) = VariantPatternIndex::try_from_chunks_u32(chunks) {
+        let variant_indices = if let Some(chunks) = VariantPatternIndex::try_from_chunks_u32(chunks)
+        {
             // per-cell offsets
-            unpacked.variant_indices = VariantIndices::IndicesPerVariant(chunks);
+            VariantIndices::IndicesPerVariant(chunks)
         } else {
             // one pattern per table cell
-            unpacked.elements.truncate(s_offset + 1);
-            unpacked
-                .elements
-                .extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(
-                    |(pattern, fallback)| pattern.unwrap_or(fallback).as_ref().map(Pattern::as_ref),
-                ));
-            unpacked.variant_indices = VariantIndices::OnePatternPerVariant;
-        }
+            elements.truncate(s_offset + 1);
+            elements.extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(
+                |(pattern, fallback)| pattern.unwrap_or(fallback).as_ref().map(Pattern::as_ref),
+            ));
+            VariantIndices::OnePatternPerVariant
+        };
 
         // Now we can build the data representation
+        let unpacked = UnpackedPatterns {
+            has_explicit_medium,
+            has_explicit_short,
+            variant_indices,
+            elements,
+        };
         unpacked.build()
     }
 
@@ -551,34 +549,33 @@ mod _serde {
             use serde::de::Error as _;
             if deserializer.is_human_readable() {
                 let human = <PackedPatternsHuman>::deserialize(deserializer)?;
-                let mut unpacked = UnpackedPatterns::default();
-                unpacked.has_explicit_medium = human.has_explicit_medium;
-                unpacked.has_explicit_short = human.has_explicit_short;
-                match (
+                let variant_indices = match (
                     human.has_one_pattern_per_variant,
                     human.variant_pattern_indices,
                 ) {
-                    (true, None) => {
-                        unpacked.variant_indices = VariantIndices::OnePatternPerVariant;
-                    }
-                    (false, Some(chunks)) => {
-                        unpacked.variant_indices = VariantIndices::IndicesPerVariant(
-                            VariantPatternIndex::try_from_chunks_u32(chunks).ok_or_else(|| {
-                                D::Error::custom("variant pattern index out of range")
-                            })?,
-                        );
-                    }
+                    (true, None) => VariantIndices::OnePatternPerVariant,
+                    (false, Some(chunks)) => VariantIndices::IndicesPerVariant(
+                        VariantPatternIndex::try_from_chunks_u32(chunks).ok_or_else(|| {
+                            D::Error::custom("variant pattern index out of range")
+                        })?,
+                    ),
                     _ => {
                         return Err(D::Error::custom(
                             "must have either one pattern per variant or indices",
                         ))
                     }
-                }
-                unpacked.elements = human
+                };
+                let elements = human
                     .elements
                     .iter()
                     .map(|pattern| PluralElements::new(pattern.to_runtime_pattern()))
                     .collect();
+                let unpacked = UnpackedPatterns {
+                    has_explicit_medium: human.has_explicit_medium,
+                    has_explicit_short: human.has_explicit_short,
+                    variant_indices,
+                    elements,
+                };
                 Ok(unpacked.build())
             } else {
                 let machine = <PackedPatternsMachine>::deserialize(deserializer)?;
@@ -599,9 +596,11 @@ mod _serde {
             use serde::ser::Error as _;
             if serializer.is_human_readable() {
                 let unpacked = UnpackedPatterns::from_packed(self);
-                let mut human = PackedPatternsHuman::default();
-                human.has_explicit_medium = unpacked.has_explicit_medium;
-                human.has_explicit_short = unpacked.has_explicit_short;
+                let mut human = PackedPatternsHuman {
+                    has_explicit_medium: unpacked.has_explicit_medium,
+                    has_explicit_short: unpacked.has_explicit_short,
+                    ..Default::default()
+                };
                 match unpacked.variant_indices {
                     VariantIndices::OnePatternPerVariant => {
                         human.has_one_pattern_per_variant = true;
