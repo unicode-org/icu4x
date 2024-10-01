@@ -43,8 +43,8 @@ pub fn get_default_prefs(lid: &Option<LanguageIdentifier>) -> DateTimeFormatReso
 
 pub fn resolve_options(options: &DateTimeFormatOptions) -> DateTimeFormatResolvedOptions {
     DateTimeFormatResolvedOptions {
-        date_length: options.date_length.unwrap_or(length::Date::Short),
-        time_length: options.time_length.unwrap_or(length::Time::Short),
+        date_length: options.date_length.unwrap_or(DateLength::Short),
+        time_length: options.time_length.unwrap_or(TimeLength::Short),
         day_period: DayPeriod::Short,
         locale_matcher: LocaleMatcher::BestFit,
         time_zone: options.time_zone.unwrap_or(false),

@@ -3,9 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
-macro_rules! struct_keyword {
-    ($name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
+/// TODO
+#[doc(hidden)]
+macro_rules! __struct_keyword {
+    ($(#[$doc:meta])* $name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
         #[derive(Debug, Clone, Eq, PartialEq)]
+        #[allow(clippy::exhaustive_structs)] // TODO
+        $(#[$doc])*
         pub struct $name(pub $value);
 
         impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
@@ -24,7 +28,7 @@ macro_rules! struct_keyword {
             }
         }
 
-        impl $crate::preferences::PreferenceKey for $name {
+        impl $crate::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
                 Some(icu_locale_core::extensions::unicode::key!($ext_key))
             }
@@ -37,18 +41,21 @@ macro_rules! struct_keyword {
         }
     };
 }
+pub use __struct_keyword as struct_keyword;
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use core::str::FromStr;
     use icu_locale_core::{
         extensions::unicode,
         subtags::{subtag, Subtag},
     };
-    use std::str::FromStr;
 
     #[test]
     fn struct_keywords_test() {
         struct_keyword!(
+            /// TODO
             DummyKeyword,
             "dk",
             Subtag,

@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
-macro_rules! options {
+/// TODO
+#[doc(hidden)]
+macro_rules! __options {
     ($name:ident,
      $resolved_name:ident,
      {$($key:ident => $pref:ty),*}
@@ -35,3 +37,6 @@ macro_rules! options {
         }
     )
 }
+
+#[doc(inline)]
+pub use __options as options;

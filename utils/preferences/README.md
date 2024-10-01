@@ -18,7 +18,6 @@ of ingesting preferences across all of [`ICU4X`].
 ```rust
 use icu_preferences::{
   preferences,
-  preferences::PreferenceKey,
   extensions::unicode::keywords::HourCycle,
 };
 use icu_locale_core::LanguageIdentifier;
@@ -31,7 +30,7 @@ preferences!(
     ExampleComponentPreferences,
     ExampleComponentResolvedPreferences,
     {
-        hour_cycle => HourCycle
+        hour_cycle: HourCycle
     }
 );
 

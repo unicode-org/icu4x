@@ -4,34 +4,38 @@
 
 #![allow(non_snake_case)]
 
-use crate::enum_keyword;
+use crate::extensions::unicode::enum_keyword;
 
 // https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml
-enum_keyword!(IslamicCalendarAlgorithm {
-    "umalqura" => Umalqura,
-    "tbla" => Tbla,
-    "civil" => Civil,
-    "rgsa" => Rgsa
-});
-
-enum_keyword!(CalendarAlgorithm {
-    "buddhist" => Buddhist,
-    "chinese" => Chinese,
-    "coptic" => Coptic,
-    "dangi" => Dangi,
-    "ethioaa" => Ethioaa,
-    "ethiopic" => Ethiopic,
-    "gregory" => Gregory,
-    "hebrew" => Hebrew,
-    "indian" => Indian,
-    "islamic" => Islamic(IslamicCalendarAlgorithm) {
+enum_keyword!(
+    /// TODO
+    IslamicCalendarAlgorithm {
         "umalqura" => Umalqura,
         "tbla" => Tbla,
         "civil" => Civil,
         "rgsa" => Rgsa
-    },
-    "iso8601" => Iso8601,
-    "japanese" => Japanese,
-    "persian" => Persian,
-    "roc" => Roc
+});
+
+enum_keyword!(
+    /// TODO
+    CalendarAlgorithm {
+        "buddhist" => Buddhist,
+        "chinese" => Chinese,
+        "coptic" => Coptic,
+        "dangi" => Dangi,
+        "ethioaa" => Ethioaa,
+        "ethiopic" => Ethiopic,
+        "gregory" => Gregory,
+        "hebrew" => Hebrew,
+        "indian" => Indian,
+        "islamic" => Islamic(IslamicCalendarAlgorithm) {
+            "umalqura" => Umalqura,
+            "tbla" => Tbla,
+            "civil" => Civil,
+            "rgsa" => Rgsa
+        },
+        "iso8601" => Iso8601,
+        "japanese" => Japanese,
+        "persian" => Persian,
+        "roc" => Roc
 }, "ca");

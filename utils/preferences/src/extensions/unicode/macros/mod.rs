@@ -4,3 +4,6 @@
 
 mod enum_keyword;
 mod struct_keyword;
+
+pub use enum_keyword::{enum_keyword, enum_keyword_inner};
+pub use struct_keyword::struct_keyword;

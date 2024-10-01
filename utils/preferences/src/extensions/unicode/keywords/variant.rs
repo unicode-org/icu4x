@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::enum_keyword;
+use crate::extensions::unicode::enum_keyword;
 
-enum_keyword!(CommonVariantType {
-    "posix" => Posix,
+enum_keyword!(
+    /// TODO
+    CommonVariantType {
+        "posix" => Posix,
 }, "va");

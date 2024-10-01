@@ -107,29 +107,25 @@ fn dtf_prefs_default_region() {
 
 #[test]
 fn dtf_options_default() {
-    use icu_datetime::options::length;
-
     let loc: Locale = "en".parse().unwrap();
 
     let options = DateTimeFormatOptions {
         ..Default::default()
     };
     let dtf = DateTimeFormat::new(loc.into(), options);
-    assert_eq!(dtf.resolved_options().date_length, length::Date::Short);
+    assert_eq!(dtf.resolved_options().date_length, DateLength::Short);
 }
 
 #[test]
 fn dtf_options_manual() {
-    use icu_datetime::options::length;
-
     let loc: Locale = "en".parse().unwrap();
 
     let options = DateTimeFormatOptions {
-        date_length: Some(length::Date::Medium),
+        date_length: Some(DateLength::Medium),
         ..Default::default()
     };
     let dtf = DateTimeFormat::new(loc.into(), options);
-    assert_eq!(dtf.resolved_options().date_length, length::Date::Medium);
+    assert_eq!(dtf.resolved_options().date_length, DateLength::Medium);
 }
 
 #[test]
@@ -180,7 +176,7 @@ fn dtf_prefs_unknown_ue_value_skipped() {
 fn dtf_prefs_into_locale() {
     let loc: Locale = "en-u-hc-h23-ca-buddhist".parse().unwrap();
     let prefs: DateTimeFormatPreferences = loc.into();
-    let loc2: Locale = prefs.into();
+    let loc2 = prefs.into_locale();
 
     assert_eq!(loc2.to_string(), "en-u-ca-buddhist-hc-h23");
 }
@@ -195,7 +191,7 @@ fn dtf_prefs_ca_islamic() {
         prefs.calendar,
         Some(keywords::CalendarAlgorithm::Islamic(None))
     );
-    let loc2: Locale = prefs.into();
+    let loc2 = prefs.into_locale();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 
     let loc: Locale = "en-u-ca-islamic-civil".parse().unwrap();
@@ -206,7 +202,7 @@ fn dtf_prefs_ca_islamic() {
             keywords::IslamicCalendarAlgorithm::Civil
         )))
     );
-    let loc2: Locale = prefs.into();
+    let loc2 = prefs.into_locale();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic-civil");
 
     let loc: Locale = "en-u-ca-islamic-foo".parse().unwrap();
@@ -215,6 +211,6 @@ fn dtf_prefs_ca_islamic() {
         prefs.calendar,
         Some(keywords::CalendarAlgorithm::Islamic(None))
     );
-    let loc2: Locale = prefs.into();
+    let loc2 = prefs.into_locale();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 }

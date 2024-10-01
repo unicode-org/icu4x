@@ -5,13 +5,15 @@
 use core::ops::Deref;
 
 use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::struct_keyword;
+use crate::extensions::unicode::struct_keyword;
+use alloc::string::ToString;
 use icu_locale_core::{
     extensions::unicode::{SubdivisionId, Value},
     subtags::Subtag,
 };
 
 struct_keyword!(
+    /// TODO
     RegionalSubdivision,
     "sd",
     SubdivisionId,
@@ -22,6 +24,7 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionalSubdivision| {
+        #[allow(clippy::unwrap_used)] // TODO
         Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );
