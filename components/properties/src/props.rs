@@ -2905,10 +2905,10 @@ make_emoji_set! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::UnicodeSetData;
+    /// use icu::properties::EmojiSetData;
     /// use icu::properties::props::BasicEmoji;
     ///
-    /// let basic_emoji = UnicodeSetData::new::<BasicEmoji>();
+    /// let basic_emoji = EmojiSetData::new::<BasicEmoji>();
     ///
     /// assert!(!basic_emoji.contains('\u{0020}'));
     /// assert!(!basic_emoji.contains('\n'));
