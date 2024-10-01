@@ -9,7 +9,7 @@ use data_provider::{get_default_prefs, resolve_options};
 use icu_locale_core::extensions::unicode;
 use icu_preferences::{
     extensions::unicode::{errors::PreferencesParseError, keywords},
-    options, preferences,
+    options, preferences, PreferenceKey,
 };
 use options::{DayPeriod, LocaleMatcher};
 use tinystr::TinyAsciiStr;
@@ -17,7 +17,7 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct DatePattern(pub TinyAsciiStr<8>);
 
-impl preferences::PreferenceKey for DatePattern {}
+impl PreferenceKey for DatePattern {}
 
 impl TryFrom<unicode::Value> for DatePattern {
     type Error = PreferencesParseError;

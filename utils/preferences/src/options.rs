@@ -4,7 +4,8 @@
 
 #[macro_export]
 /// TODO
-macro_rules! options {
+#[doc(hidden)]
+macro_rules! __options {
     ($name:ident,
      $resolved_name:ident,
      {$($key:ident => $pref:ty),*}
@@ -36,3 +37,6 @@ macro_rules! options {
         }
     )
 }
+
+#[doc(inline)]
+pub use __options as options;

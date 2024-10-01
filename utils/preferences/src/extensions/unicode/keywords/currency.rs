@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::struct_keyword;
+use crate::extensions::unicode::struct_keyword;
 use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 

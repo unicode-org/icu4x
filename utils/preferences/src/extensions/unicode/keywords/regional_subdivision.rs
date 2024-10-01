@@ -5,7 +5,7 @@
 use core::ops::Deref;
 
 use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::struct_keyword;
+use crate::extensions::unicode::struct_keyword;
 use alloc::string::ToString;
 use icu_locale_core::{
     extensions::unicode::{SubdivisionId, Value},

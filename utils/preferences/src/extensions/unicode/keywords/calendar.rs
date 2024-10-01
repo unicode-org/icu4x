@@ -4,7 +4,7 @@
 
 #![allow(non_snake_case)]
 
-use crate::enum_keyword;
+use crate::extensions::unicode::enum_keyword;
 
 // https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml
 enum_keyword!(

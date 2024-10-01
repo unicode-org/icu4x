@@ -4,7 +4,8 @@
 
 #[macro_export]
 /// TODO
-macro_rules! enum_keyword_inner {
+#[doc(hidden)]
+macro_rules! __enum_keyword_inner {
     ($name:ident, $variant:ident) => {
         $name::$variant
     };
@@ -16,10 +17,13 @@ macro_rules! enum_keyword_inner {
         }
     }};
 }
+#[doc(inline)]
+pub use __enum_keyword_inner as enum_keyword_inner;
 
 #[macro_export]
 /// TODO
-macro_rules! enum_keyword {
+#[doc(hidden)]
+macro_rules! __enum_keyword {
     ($(#[$doc:meta])* $name:ident {
         $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }) => {
@@ -66,7 +70,7 @@ macro_rules! enum_keyword {
                     $(
                         $key => {
                             let _ = s.remove_subtag(0).unwrap();
-                            $crate::enum_keyword_inner!($name, $variant$(, s, $v2)?)
+                            $crate::__enum_keyword_inner!($name, $variant$(, s, $v2)?)
                         }
                     )*
                     _ => {
@@ -87,9 +91,9 @@ macro_rules! enum_keyword {
     ($(#[$doc:meta])* $name:ident {
         $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }, $ext_key:literal) => {
-        $crate::enum_keyword!($(#[$doc])* $name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
+        $crate::__enum_keyword!($(#[$doc])* $name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
 
-        impl $crate::preferences::PreferenceKey for $name {
+        impl $crate::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
                 Some(icu_locale_core::extensions::unicode::key!($ext_key))
             }
@@ -104,9 +108,11 @@ macro_rules! enum_keyword {
         }
     };
 }
+pub use __enum_keyword as enum_keyword;
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use core::str::FromStr;
     use icu_locale_core::extensions::unicode;
 
