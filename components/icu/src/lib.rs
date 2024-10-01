@@ -191,6 +191,10 @@ pub use icu_timezone as timezone;
 #[cfg(feature = "experimental")]
 pub use icu_experimental as experimental;
 
+#[doc(inline)]
+#[cfg(feature = "experimental")]
+pub use icu_pattern as pattern;
+
 #[cfg(feature = "datagen")]
 mod datagen;
 #[cfg(feature = "datagen")]

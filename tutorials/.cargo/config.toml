@@ -26,6 +26,7 @@ icu_experimental = { path = "../components/experimental" }
 icu_list = { path = "../components/list" }
 icu_locale = { path = "../components/locale" }
 icu_normalizer = { path = "../components/normalizer" }
+icu_pattern = { path = "../components/pattern" }
 icu_plurals = { path = "../components/plurals" }
 icu_properties = { path = "../components/properties" }
 icu_segmenter = { path = "../components/segmenter" }
@@ -69,7 +70,6 @@ databake = { path = "../utils/databake" }
 databake-derive = { path = "../utils/databake/derive" }
 deduplicating_array = { path = "../utils/deduplicating_array" }
 fixed_decimal = { path = "../utils/fixed_decimal" }
-icu_pattern = { path = "../utils/pattern" }
 ixdtf = { path = "../utils/ixdtf" }
 litemap = { path = "../utils/litemap" }
 tinystr = { path = "../utils/tinystr" }
