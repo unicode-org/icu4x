@@ -124,12 +124,6 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
-    // TODO(#3736): Remove this workaround when cldr-json has transform rules
-    std::fs::rename(
-        out_root.join("tests/data/cldr/cldr-transforms-full"),
-        out_root.join("tests/data/cldr-transforms-full"),
-    )?;
-
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     let mut cldr_data = Vec::new();
     extract(
@@ -143,29 +137,6 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/cldr"),
         &mut cldr_data,
     )?;
-
-    // TODO(#3736): Remove this workaround when cldr-json has transform rules
-    std::fs::rename(
-        out_root.join("tests/data/cldr-transforms-full"),
-        out_root.join("tests/data/cldr/cldr-transforms-full"),
-    )?;
-    let transform_index = cldr_data.len();
-    for entry in
-        std::fs::read_dir(out_root.join("tests/data/cldr/cldr-transforms-full/main")).unwrap()
-    {
-        for entry in std::fs::read_dir(entry.unwrap().path()).unwrap() {
-            cldr_data.push(
-                entry
-                    .unwrap()
-                    .path()
-                    .strip_prefix(out_root.join("tests/data/cldr"))
-                    .unwrap()
-                    .to_string_lossy()
-                    .replace('\\', "/"),
-            );
-        }
-    }
-    cldr_data[transform_index..].sort();
 
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     let mut icuexport_data = Vec::new();

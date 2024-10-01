@@ -51,6 +51,20 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-units-full/main/$LOCALES/units.json",
     "cldr-person-names-full/main/$LOCALES/personNames.json",
+    "cldr-transforms/transforms/Any-Publishing.json",
+    "cldr-transforms/transforms/Any-Publishing.txt",
+    "cldr-transforms/transforms/Bengali-Arabic.json",
+    "cldr-transforms/transforms/Bengali-Arabic.txt",
+    "cldr-transforms/transforms/Bengali-InterIndic.json",
+    "cldr-transforms/transforms/Bengali-InterIndic.txt",
+    "cldr-transforms/transforms/de-ASCII.json",
+    "cldr-transforms/transforms/de-ASCII.txt",
+    "cldr-transforms/transforms/Greek-Latin-BGN.json",
+    "cldr-transforms/transforms/Greek-Latin-BGN.txt",
+    "cldr-transforms/transforms/InterIndic-Arabic.json",
+    "cldr-transforms/transforms/InterIndic-Arabic.txt",
+    "cldr-transforms/transforms/Latin-ASCII.json",
+    "cldr-transforms/transforms/Latin-ASCII.txt",
 ];
 
 const ICUEXPORTDATA_GLOB: &[&str] = &[
