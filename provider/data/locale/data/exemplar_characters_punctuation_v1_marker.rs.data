@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 717B for the lookup data structure (157 data identifiers)
-/// * 15217B[^1] for the actual data (88 unique structs)
+/// * 15215B[^1] for the actual data (88 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -542,7 +542,7 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                             #[allow(unused_unsafe)]
                             icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"!\0\0\0$\0\0\0&\0\0\0+\0\0\0,\0\0\x000\0\0\0:\0\0\0<\0\0\0?\0\0\0A\0\0\0[\0\0\0\\\0\0\0]\0\0\0^\0\0\0\xA7\0\0\0\xA8\0\0\0\xBB\0\0\0\xBC\0\0\0\x10 \0\0\x12 \0\0\x13 \0\0\x15 \0\0\x18 \0\0\x1A \0\0\x1C \0\0\x1E \0\0  \0\0\" \0\0& \0\0' \0\x002 \0\x003 \0\0") }, 32u32)
                         },
-                        unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\xE2\x80\xB3\xC2\xAB") },
+                        unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE2\x80\xB3\xC2\xAB") },
                     )),
                     icu::locale::provider::ExemplarCharactersV1(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                         unsafe {

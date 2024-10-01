@@ -279,7 +279,7 @@ fn make_blob_v3() -> Vec<u8> {
     put_payloads::<MarkerD>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 32980);
+    assert_eq!(blob.len(), 32974);
     assert!(blob.len() > 100);
     blob
 }

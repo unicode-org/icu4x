@@ -124,13 +124,17 @@ use super::*;
 /// `VarZeroVec<T>`, when used with non-human-readable serializers (like `bincode`), will
 /// serialize to a specially formatted list of bytes. The format is:
 ///
-/// - 4 bytes for `length` (interpreted as a little-endian u32)
-/// - `4 * length` bytes of `indices` (interpreted as little-endian u32)
+/// -  2 bytes for `length` (interpreted as a little-endian u16)
+/// - `2 * (length - 1)` bytes of `indices` (interpreted as little-endian u16s)
 /// - Remaining bytes for actual `data`
 ///
-/// Each element in the `indices` array points to the starting index of its corresponding
-/// data part in the `data` list. The ending index can be calculated from the starting index
-/// of the next element (or the length of the slice if dealing with the last element).
+/// The format is tweakable by setting the `F` parameter, by default it uses u16 indices and lengths but other
+/// `VarZeroVecFormat` types can set other sizes.
+///
+/// Each element in the `indices` array points to the ending index of its corresponding
+/// data part in the `data` list. The starting index can be calculated from the ending index
+/// of the next element (or 0 for the first element). The last ending index, not stored in the array, is
+/// the length of the `data` segment.
 ///
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 ///

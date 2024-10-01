@@ -14,10 +14,6 @@ use core::marker::PhantomData;
 use core::mem;
 use core::ops::Range;
 
-// Also used by owned.rs
-pub(super) const METADATA_WIDTH: usize = 0;
-pub(super) const MAX_INDEX: usize = u32::MAX as usize;
-
 /// This trait allows switching between different possible internal
 /// representations of VarZeroVec.
 ///
@@ -182,6 +178,7 @@ pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
     len: u32,
     /// The list of indices into the `things` slice
+    /// Since the first element is always at things[0], the first element of the indices array is for the *second* element
     indices: &'a [u8],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
@@ -219,10 +216,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
-    /// - There must be at least `4*length + 4` bytes total, to form the array `indices` of indices
-    /// - `indices[i]..indices[i+1]` must index into a valid section of
+    /// - There must be at least `4*(length - 1) + 4` bytes total, to form the array `indices` of indices
+    /// - `0..indices[0]` must index into a valid section of
     ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
-    /// - `indices[len - 1]..things.len()` must index into a valid section of
+    /// - `indices[i - 1]..indices[i]` must index into a valid section of
+    ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
+    /// - `indices[len - 2]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
@@ -266,20 +265,23 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         len: u32,
         slice: &'a [u8],
     ) -> Result<Self, VarZeroVecFormatError> {
+        let len_minus_one = len.checked_sub(1);
         // The empty VZV is special-cased to the empty slice
-        if len == 0 {
+        let Some(len_minus_one) = len_minus_one else {
             return Ok(VarZeroVecComponents {
                 len: 0,
                 indices: &[],
                 things: &[],
                 marker: PhantomData,
             });
-        }
+        };
+        // The indices array is one element shorter since the first index is always 0,
+        // so we use len_minus_one
         let indices_bytes = slice
-            .get(METADATA_WIDTH..METADATA_WIDTH + F::Index::SIZE * (len as usize))
+            .get(..F::Index::SIZE * (len_minus_one as usize))
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
-            .get(F::Index::SIZE * (len as usize) + METADATA_WIDTH..)
+            .get(F::Index::SIZE * (len_minus_one as usize)..)
             .ok_or(VarZeroVecFormatError::Metadata)?;
 
         let borrowed = VarZeroVecComponents {
@@ -312,6 +314,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
+        // MSRV Rust 1.79: Use split_at_unchecked
         let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
         // Safety: F::Len allows all byte sequences
         let len_ule = F::Len::from_byte_slice_unchecked(len_bytes);
@@ -335,18 +338,20 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// The len,bytes must have previously successfully run through
     /// [`VarZeroVecComponents::parse_byte_slice_with_length()`]
     pub unsafe fn from_bytes_unchecked_with_length(len: u32, slice: &'a [u8]) -> Self {
+        let len_minus_one = len.checked_sub(1);
         // The empty VZV is special-cased to the empty slice
-        if len == 0 {
+        let Some(len_minus_one) = len_minus_one else {
             return VarZeroVecComponents {
                 len: 0,
                 indices: &[],
                 things: &[],
                 marker: PhantomData,
             };
-        }
-        let indices_bytes =
-            slice.get_unchecked(METADATA_WIDTH..METADATA_WIDTH + F::Index::SIZE * (len as usize));
-        let things = slice.get_unchecked(METADATA_WIDTH + F::Index::SIZE * (len as usize)..);
+        };
+        // The indices array is one element shorter since the first index is always 0,
+        // so we use len_minus_one
+        let indices_bytes = slice.get_unchecked(..F::Index::SIZE * (len_minus_one as usize));
+        let things = slice.get_unchecked(F::Index::SIZE * (len_minus_one as usize)..);
 
         VarZeroVecComponents {
             len,
@@ -365,7 +370,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Returns `true` if the vector contains no elements.
     #[inline]
     pub fn is_empty(self) -> bool {
-        self.indices.is_empty()
+        self.len == 0
     }
 
     /// Get the idx'th element out of this slice. Returns `None` if out of bounds.
@@ -394,11 +399,17 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
     pub(crate) unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
-        let start = self.indices_slice().get_unchecked(idx).iule_to_usize();
+        let start = if let Some(idx_minus_one) = idx.checked_sub(1) {
+            self.indices_slice()
+                .get_unchecked(idx_minus_one)
+                .iule_to_usize()
+        } else {
+            0
+        };
         let end = if idx + 1 == self.len() {
             self.things.len()
         } else {
-            self.indices_slice().get_unchecked(idx + 1).iule_to_usize()
+            self.indices_slice().get_unchecked(idx).iule_to_usize()
         };
         debug_assert!(start <= end);
         start..end
@@ -422,7 +433,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     #[inline]
     #[allow(clippy::len_zero)] // more explicit to enforce safety invariants
     fn check_indices_and_things(self) -> Result<(), VarZeroVecFormatError> {
-        assert_eq!(self.len(), self.indices_slice().len());
         if self.len() == 0 {
             if self.things.len() > 0 {
                 return Err(VarZeroVecFormatError::Metadata);
@@ -430,18 +440,23 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 return Ok(());
             }
         }
+        let indices_slice = self.indices_slice();
+        assert_eq!(self.len(), indices_slice.len() + 1);
         // Safety: i is in bounds (assertion above)
-        let mut start = (unsafe { *self.indices_slice().get_unchecked(0) }).iule_to_usize();
-        if start != 0 {
-            return Err(VarZeroVecFormatError::Metadata);
-        }
+        let mut start = 0;
         for i in 0..self.len() {
-            let end = if i == self.len() - 1 {
-                self.things.len()
+            // The indices array is offset by 1: indices[0] is the end of the first
+            // element and the start of the next, since the start of the first element
+            // is always things[0]. So to get the end we get element `i`.
+            let end = if let Some(end) = indices_slice.get(i) {
+                end.iule_to_usize()
             } else {
-                // Safety: i+1 is in bounds (assertion above)
-                (unsafe { *self.indices_slice().get_unchecked(i + 1) }).iule_to_usize()
+                // This only happens at i = self.len() - 1 = indices_slice.len() + 1 - 1
+                // = indices_slice.len(). This is the last `end`, which is always the size of
+                // `things` and thus never stored in the array
+                self.things.len()
             };
+
             if start > end {
                 return Err(VarZeroVecFormatError::Metadata);
             }
@@ -459,17 +474,27 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
-        self.indices_slice()
-            .iter()
-            .copied()
-            .map(IntegerULE::iule_to_usize)
+        // The indices array doesn't contain 0 or len, we need to graft it on
+        // However we don't want to graft it on for an empty vector.
+        let (begin, end) = if self.is_empty() {
+            (None, None)
+        } else {
+            (Some(0), Some(self.things.len()))
+        };
+        begin
+            .into_iter()
+            .chain(
+                self.indices_slice()
+                    .iter()
+                    .copied()
+                    .map(IntegerULE::iule_to_usize),
+            )
             .zip(
                 self.indices_slice()
                     .iter()
                     .copied()
                     .map(IntegerULE::iule_to_usize)
-                    .skip(1)
-                    .chain([self.things.len()]),
+                    .chain(end),
             )
             .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
             .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
@@ -507,7 +532,7 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
-        self.binary_search_impl(|probe| probe.cmp(needle), self.indices_slice())
+        self.binary_search_by(|probe| probe.cmp(needle))
     }
 
     pub fn binary_search_in_range(
@@ -515,8 +540,7 @@ where
         needle: &T,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices_slice().get(range)?;
-        Some(self.binary_search_impl(|probe| probe.cmp(needle), indices_slice))
+        self.binary_search_in_range_by(|probe| probe.cmp(needle), range)
     }
 }
 
@@ -529,58 +553,74 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
     /// the primitive function [`binary_search_by`](slice::binary_search_by).
     pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
-        self.binary_search_impl(predicate, self.indices_slice())
+        // Safety: 0 and len are in range
+        unsafe { self.binary_search_in_range_unchecked(predicate, 0..self.len()) }
     }
 
+    // Binary search within a range.
+    // Values returned are relative to the range start!
     pub fn binary_search_in_range_by(
         &self,
         predicate: impl FnMut(&T) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices_slice().get(range)?;
-        Some(self.binary_search_impl(predicate, indices_slice))
+        if range.end > self.len() {
+            return None;
+        }
+        if range.end < range.start {
+            return None;
+        }
+        // Safety: We bounds checked above: end is in-bounds or len, and start is <= end
+        let range_absolute =
+            unsafe { self.binary_search_in_range_unchecked(predicate, range.clone()) };
+        // The values returned are relative to the range start
+        Some(
+            range_absolute
+                .map(|o| o - range.start)
+                .map_err(|e| e - range.start),
+        )
     }
 
-    /// Binary searches a sorted `VarZeroVecComponents<T>` with the given predicate. For more information, see
-    /// the primitive function [`binary_search`](slice::binary_search).
-    fn binary_search_impl(
+    /// Safety: range must be in range for the slice (start <= len, end <= len, start <= end)
+    unsafe fn binary_search_in_range_unchecked(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[F::Index],
+        range: Range<usize>,
     ) -> Result<usize, usize> {
-        // This code is an absolute atrocity. This code is not a place of honor. This
-        // code is known to the State of California to cause cancer.
-        //
-        // Unfortunately, the stdlib's `binary_search*` functions can only operate on slices.
-        // We do not have a slice. We have something we can .get() and index on, but that is not
-        // a slice.
-        //
-        // The `binary_search*` functions also do not have a variant where they give you the element's
-        // index, which we could otherwise use to directly index `self`.
-        // We do have `self.indices`, but these are indices into a byte buffer, which cannot in
-        // isolation be used to recoup the logical index of the element they refer to.
-        //
-        // However, `binary_search_by()` provides references to the elements of the slice being iterated.
-        // Since the layout of Rust slices is well-defined, we can do pointer arithmetic on these references
-        // to obtain the index being used by the search.
-        //
-        // It's worth noting that the slice we choose to search is irrelevant, as long as it has the appropriate
-        // length. `self.indices` is defined to have length `self.len()`, so it is convenient to use
-        // here and does not require additional allocations.
-        //
-        // The alternative to doing this is to implement our own binary search. This is significantly less fun.
+        // Function invariant: size is always end - start
+        let mut start = range.start;
+        let mut end = range.end;
+        let mut size;
 
-        // Note: We always use zero_index relative to the whole indices array, even if we are
-        // only searching a subslice of it.
-        let zero_index = self.indices.as_ptr() as *const _ as usize;
-        indices_slice.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned F::Index::SIZE values, so we divide by F::Index::SIZE
-            // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / F::Index::SIZE;
-            // safety: we know this is in bounds
-            let actual_probe = unsafe { self.get_unchecked(index) };
-            predicate(actual_probe)
-        })
+        // Loop invariant: 0 <= start < end <= len
+        // This invariant is initialized by the function safety invariants and the loop condition
+        while start < end {
+            size = end - start;
+            // This establishes mid < end (which implies mid < len)
+            // size is end - start. start + size is end (which is <= len).
+            // mid = start + size/2 will be less than end
+            let mid = start + size / 2;
+
+            // Safety: mid is < end <= len, so in-range
+            let cmp = predicate(self.get_unchecked(mid));
+
+            match cmp {
+                Ordering::Less => {
+                    // This retains the loop invariant since it
+                    // increments start, and we already have 0 <= start
+                    // start < end is enforced by the loop condition
+                    start = mid + 1;
+                }
+                Ordering::Greater => {
+                    // mid < end, so this decreases end.
+                    // This means end <= len is still true, and
+                    // end > start is enforced by the loop condition
+                    end = mid;
+                }
+                Ordering::Equal => return Ok(mid),
+            }
+        }
+        Err(start)
     }
 }
 
@@ -622,36 +662,39 @@ where
     }
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = METADATA_WIDTH;
+    let mut idx_offset: usize = 0;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = idx_offset + elements.len() * F::Index::SIZE;
+    let first_dat_offset: usize = idx_offset + (elements.len() - 1) * F::Index::SIZE;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
-    for element in elements.iter() {
+    for (i, element) in elements.iter().enumerate() {
         let element_len = element.encode_var_ule_len();
 
-        let idx_limit = idx_offset + F::Index::SIZE;
-        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-        let idx_slice = &mut output[idx_offset..idx_limit];
-        // VZV expects data offsets to be stored relative to the first data block
-        let idx = dat_offset - first_dat_offset;
-        assert!(idx <= MAX_INDEX);
-        #[allow(clippy::expect_used)] // this function is explicitly panicky
-        let bytes_to_write = F::Index::iule_from_usize(idx).expect(F::Index::TOO_LARGE_ERROR);
-        idx_slice.copy_from_slice(ULE::as_byte_slice(&[bytes_to_write]));
+        // The first index is always 0. We don't write it, or update the idx offset.
+        if i != 0 {
+            let idx_limit = idx_offset + F::Index::SIZE;
+            #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+            let idx_slice = &mut output[idx_offset..idx_limit];
+            // VZV expects data offsets to be stored relative to the first data block
+            let idx = dat_offset - first_dat_offset;
+            assert!(idx <= F::Index::MAX_VALUE as usize);
+            #[allow(clippy::expect_used)] // this function is explicitly panicky
+            let bytes_to_write = F::Index::iule_from_usize(idx).expect(F::Index::TOO_LARGE_ERROR);
+            idx_slice.copy_from_slice(ULE::as_byte_slice(&[bytes_to_write]));
+
+            idx_offset = idx_limit;
+        }
 
         let dat_limit = dat_offset + element_len;
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
-
-        idx_offset = idx_limit;
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, METADATA_WIDTH + F::Index::SIZE * elements.len());
+    debug_assert_eq!(idx_offset, F::Index::SIZE * (elements.len() - 1));
     assert_eq!(dat_offset, output.len());
 }
 
@@ -687,13 +730,14 @@ where
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
-    if elements.is_empty() {
+    let elements_len = elements.len();
+    let Some(elements_len_minus_one) = elements_len.checked_sub(1) else {
+        // Empty vec is optimized to an empty byte representation
         return Some(0);
-    }
-    let idx_len: u32 = u32::try_from(elements.len())
+    };
+    let idx_len: u32 = u32::try_from(elements_len_minus_one)
         .ok()?
-        .checked_mul(F::Index::SIZE as u32)?
-        .checked_add(METADATA_WIDTH as u32)?;
+        .checked_mul(F::Index::SIZE as u32)?;
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())

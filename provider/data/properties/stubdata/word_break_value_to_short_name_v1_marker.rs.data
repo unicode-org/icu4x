@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 132B[^1] for the singleton data struct
+/// * 130B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -16,7 +16,7 @@ macro_rules! __impl_word_break_value_to_short_name_v1_marker {
         #[clippy::msrv = "1.71.1"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::WordBreakValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x17\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x10\0\x12\0\x18\0\x1A\0\x1C\0\x1E\0 \0\"\0$\0&\0(\0+\0-\x000\x003\0XXLEFOKAMLMNNUEXCRExtendLFMBNLRIHLSQDQEBEBGEMGAZZWJWSegSpace") } };
+            pub const SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::WordBreakValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x17\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\x0E\0\x10\0\x12\0\x18\0\x1A\0\x1C\0\x1E\0 \0\"\0$\0&\0(\0+\0-\x000\x003\0XXLEFOKAMLMNNUEXCRExtendLFMBNLRIHLSQDQEBEBGEMGAZZWJWSegSpace") } };
         }
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::properties::provider::WordBreakValueToShortNameV1Marker> for $provider {

@@ -108,7 +108,6 @@ fn test_format() {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     run_driver(exporter, &HelloWorldProvider);
-    std::fs::write("./tests/data/v3.postcard", blob.as_slice()).unwrap();
     assert_eq!(BLOB_V3, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
@@ -136,7 +135,7 @@ fn test_format_bigger() {
     let hash = hasher.finish();
 
     assert_eq!(
-        hash, 15551798874510060652,
+        hash, 2996389886987900285,
         "V2Bigger format appears to have changed!"
     );
 
