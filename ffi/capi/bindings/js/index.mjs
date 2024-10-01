@@ -124,7 +124,7 @@ export { PropertyValueNameToEnumMapper } from "./PropertyValueNameToEnumMapper.m
 
 export { CodePointSetData } from "./CodePointSetData.mjs"
 
-export { UnicodeSetData } from "./UnicodeSetData.mjs"
+export { EmojiSetData } from "./EmojiSetData.mjs"
 
 export { DataProvider } from "./DataProvider.mjs"
 

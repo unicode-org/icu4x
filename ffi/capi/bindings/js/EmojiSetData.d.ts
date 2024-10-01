@@ -8,13 +8,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html) for more information.
+*See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html) for more information.
 *
-*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html#method.new) for more information.
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html#method.new) for more information.
 *
-*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
 */
-export class UnicodeSetData {
+export class EmojiSetData {
     
 
     get ffiValue(): pointer;
@@ -23,5 +23,5 @@ export class UnicodeSetData {
 
     contains(cp: codepoint): boolean;
 
-    static loadBasicEmoji(provider: DataProvider): UnicodeSetData;
+    static loadBasic(provider: DataProvider): EmojiSetData;
 }

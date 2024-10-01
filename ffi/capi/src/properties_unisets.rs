@@ -15,14 +15,14 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
-    #[diplomat::rust_link(icu::properties::UnicodeSetData, Struct)]
-    #[diplomat::rust_link(icu::properties::UnicodeSetData::new, FnInStruct)]
-    #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed, Struct)]
-    pub struct UnicodeSetData(pub icu_properties::EmojiSetData);
+    #[diplomat::rust_link(icu::properties::EmojiSetData, Struct)]
+    #[diplomat::rust_link(icu::properties::EmojiSetData::new, FnInStruct)]
+    #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed, Struct)]
+    pub struct EmojiSetData(pub icu_properties::EmojiSetData);
 
-    impl UnicodeSetData {
+    impl EmojiSetData {
         /// Checks whether the string is in the set.
-        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains_str, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains_str, FnInStruct)]
         #[diplomat::attr(supports = method_overloading, rename = "contains")]
         pub fn contains_str(&self, s: &DiplomatStr) -> bool {
             let Ok(s) = core::str::from_utf8(s) else {
@@ -31,9 +31,9 @@ pub mod ffi {
             self.0.as_borrowed().contains_str(s)
         }
         /// Checks whether the code point is in the set.
-        #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed::contains, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::UnicodeSetDataBorrowed::contains32,
+            icu::properties::EmojiSetDataBorrowed::contains32,
             FnInStruct,
             hidden
         )]
@@ -42,9 +42,9 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic_emoji")]
-        pub fn load_basic_emoji(provider: &DataProvider) -> Result<Box<UnicodeSetData>, DataError> {
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic")]
+        pub fn load_basic(provider: &DataProvider) -> Result<Box<EmojiSetData>, DataError> {
+            Ok(Box::new(EmojiSetData(call_constructor_unstable!(
                 icu_properties::EmojiSetData::new::<BasicEmoji> [r => Ok(r.static_to_owned())],
                 icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>,
                 provider,
