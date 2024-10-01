@@ -13,7 +13,7 @@
   - `icu_locale`
     - New crate
   - `icu_locale_core`
-    - New crate, split out of `icu_locid`
+    - New crate, renamed from `icu_locid`
     - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
   - `icu_locid_transform`
   - `icu_plurals`
@@ -35,6 +35,7 @@
     - `calendrical_calculations`:
     - `databake`
     - `fixed_decimal`
+      - `FixedDecimal::concatenated_end()` now returns both `self` and `other` in the error case. (https://github.com/unicode-org/icu4x/pull/5623)
     - `icu_pattern`
     - `litemap`
     - `yoke`

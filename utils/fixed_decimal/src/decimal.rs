@@ -2221,7 +2221,7 @@ impl FixedDecimal {
     ///
     /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
     /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
-    /// passing ownership of `other` back to the caller.
+    /// containing (self, other).
     ///
     /// The magnitude range of `self` will be increased if `other` covers a larger range.
     ///
@@ -2237,10 +2237,13 @@ impl FixedDecimal {
     ///
     /// assert_eq!("123.456", result.to_string());
     /// ```
-    pub fn concatenated_end(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
+    pub fn concatenated_end(
+        mut self,
+        other: FixedDecimal,
+    ) -> Result<Self, (FixedDecimal, FixedDecimal)> {
         match self.concatenate_end(other) {
             Ok(()) => Ok(self),
-            Err(err) => Err(err),
+            Err(err) => Err((self, err)),
         }
     }
 
