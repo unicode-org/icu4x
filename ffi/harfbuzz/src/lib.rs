@@ -48,8 +48,7 @@ use icu_properties::provider::{
     BidiMirroringGlyphV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
     ScriptValueToShortNameV1Marker,
 };
-use icu_properties::script::ScriptMapper;
-use icu_properties::CodePointMapData;
+use icu_properties::{CodePointMapData, PropertyNamesShort};
 use icu_provider::prelude::*;
 
 use harfbuzz_traits::{
@@ -105,8 +104,8 @@ impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = CodePointMapData::<Script>::new().get(ch);
-        ScriptMapper::new()
-            .get(script)
+        PropertyNamesShort::<Script>::new()
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }
@@ -301,7 +300,7 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_mapper: ScriptMapper,
+    script_names: PropertyNamesShort<Script>,
 }
 
 impl ScriptData {
@@ -311,10 +310,10 @@ impl ScriptData {
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
         let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
-        let script_mapper = ScriptMapper::try_new_unstable(provider)?;
+        let script_names = PropertyNamesShort::try_new_unstable(provider)?;
         Ok(Self {
             script: script_set,
-            script_mapper,
+            script_names,
         })
     }
 
@@ -337,9 +336,9 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        self.script_mapper
+        self.script_names
             .as_borrowed()
-            .get(script)
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }

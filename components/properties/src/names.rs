@@ -65,11 +65,18 @@ pub struct PropertyParser<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyParser::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct PropertyParserBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     markers: PhantomData<fn() -> T>,
 }
+
+impl<T> Clone for PropertyParserBorrowed<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+impl<T> Copy for PropertyParserBorrowed<'_, T> {}
 
 impl<T> PropertyParser<T> {
     /// Creates a new instance of `PropertyParser<T>` using compiled data.
@@ -324,25 +331,29 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// ```
 pub struct PropertyNamesLong<T: NamedEnumeratedProperty> {
     map: DataPayload<ErasedMarker<T::DataStructLong>>,
-    markers: PhantomData<fn(T) -> ()>,
 }
 
 impl<T: NamedEnumeratedProperty> core::fmt::Debug for PropertyNamesLong<T> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("PropertyNamesLong")
             // .field("map", &self.map)
-            .field("markers", &self.markers)
             .finish()
     }
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyNamesLong::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct PropertyNamesLongBorrowed<'a, T: NamedEnumeratedProperty> {
     map: &'a T::DataStructLong,
-    markers: PhantomData<fn(T) -> ()>,
 }
+
+impl<T: NamedEnumeratedProperty> Clone for PropertyNamesLongBorrowed<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+impl<T: NamedEnumeratedProperty> Copy for PropertyNamesLongBorrowed<'_, T> {}
 
 impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     /// Creates a new instance of `PropertyNamesLong<T>`.
@@ -355,7 +366,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     pub fn new() -> PropertyNamesLongBorrowed<'static, T> {
         PropertyNamesLongBorrowed {
             map: T::SINGLETON_LONG,
-            markers: PhantomData,
         }
     }
 
@@ -365,7 +375,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     ) -> Result<Self, DataError> {
         Ok(Self {
             map: provider.load(Default::default())?.payload.cast(),
-            markers: PhantomData,
         })
     }
 
@@ -380,7 +389,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
                 &*(self.map.get() as *const <T::DataStructLong as Yokeable>::Output
                     as *const T::DataStructLong)
             },
-            markers: PhantomData,
         }
     }
 }
@@ -418,7 +426,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
     pub const fn static_to_owned(self) -> PropertyNamesLong<T> {
         PropertyNamesLong {
             map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
         }
     }
 }
@@ -445,25 +452,30 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
 /// ```
 pub struct PropertyNamesShort<T: NamedEnumeratedProperty> {
     map: DataPayload<ErasedMarker<T::DataStructShort>>,
-    markers: PhantomData<fn(T) -> ()>,
 }
 
 impl<T: NamedEnumeratedProperty> core::fmt::Debug for PropertyNamesShort<T> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("PropertyNamesShort")
             // .field("map", &self.map)
-            .field("markers", &self.markers)
             .finish()
     }
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyNamesShort::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct PropertyNamesShortBorrowed<'a, T: NamedEnumeratedProperty> {
     map: &'a T::DataStructShort,
-    markers: PhantomData<fn(T) -> ()>,
 }
+
+impl<T: NamedEnumeratedProperty> Clone for PropertyNamesShortBorrowed<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<T: NamedEnumeratedProperty> Copy for PropertyNamesShortBorrowed<'_, T> {}
 
 impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     /// Creates a new instance of `PropertyNamesShort<T>`.
@@ -476,17 +488,15 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     pub fn new() -> PropertyNamesShortBorrowed<'static, T> {
         PropertyNamesShortBorrowed {
             map: T::SINGLETON_SHORT,
-            markers: PhantomData,
         }
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_long_unstable(
+    pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarkerShort> + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self {
             map: provider.load(Default::default())?.payload.cast(),
-            markers: PhantomData,
         })
     }
 
@@ -501,7 +511,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
                 &*(self.map.get() as *const <T::DataStructShort as Yokeable>::Output
                     as *const T::DataStructShort)
             },
-            markers: PhantomData,
         }
     }
 }
@@ -531,6 +540,40 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'_, T> {
     }
 }
 
+impl PropertyNamesShortBorrowed<'_, Script> {
+    /// Gets the "name" of a script property as a `icu::locale::subtags::Script`.
+    ///
+    /// This method is available only on `PropertyNamesShortBorrowed<Script>`.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::PropertyNamesShort;
+    /// use icu::properties::props::Script;
+    /// use icu::locale::subtags::script;
+    ///
+    /// let lookup = PropertyNamesShort::<Script>::new();
+    /// assert_eq!(lookup.get_locale_script(Script::Brahmi), Some(script!("Brah")));
+    /// assert_eq!(lookup.get_locale_script(Script::Hangul), Some(script!("Hang")));
+    /// ```
+    ///
+    /// For the reverse direction, use property parsing as normal:
+    /// ```
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::Script;
+    /// use icu::locale::subtags::script;
+    ///
+    /// let parser = PropertyParser::<Script>::new();
+    /// assert_eq!(parser.get_strict(script!("Brah").as_str()), Some(Script::Brahmi));
+    /// assert_eq!(parser.get_strict(script!("Hang").as_str()), Some(Script::Hangul));
+    /// ```
+    #[inline]
+    pub fn get_locale_script(&self, property: Script) -> Option<icu_locale_core::subtags::Script> {
+        let prop = usize::try_from(property.to_u32()).ok()?;
+        self.map.map.get(prop).and_then(|o| o.0)
+    }
+}
+
 impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyNamesShortBorrowed<'static>`] into a [`PropertyNamesShort`].
     ///
@@ -538,105 +581,6 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'static, T> {
     /// compile-time optimizations that are possible with [`PropertyNamesShortBorrowed`].
     pub const fn static_to_owned(self) -> PropertyNamesShort<T> {
         PropertyNamesShort {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-/// A struct capable of converting `icu::properties::props::Script` to `icu::locale::subtags::Script`.
-///
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`ScriptMapperBorrowed`].
-///
-/// For the reverse direction, use [`PropertyParser`].
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::script::ScriptMapper;
-/// use icu::properties::props::Script;
-/// use icu::locale::subtags::script;
-///
-/// let lookup = ScriptMapper::new();
-/// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-/// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-/// ```
-#[derive(Debug)]
-pub struct ScriptMapper {
-    map: DataPayload<ScriptValueToShortNameV1Marker>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`ScriptMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct ScriptMapperBorrowed<'a> {
-    map: &'a PropertyScriptToIcuScriptMapV1<'a>,
-}
-
-impl ScriptMapper {
-    /// Creates a new instance of `ScriptMapper` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
-    pub fn new() -> ScriptMapperBorrowed<'static> {
-        ScriptMapperBorrowed {
-            map: crate::provider::Baked::SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER,
-        }
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable(
-        provider: &(impl DataProvider<ScriptValueToShortNameV1Marker> + ?Sized),
-    ) -> Result<Self, DataError> {
-        Ok(Self {
-            map: provider.load(Default::default())?.payload,
-        })
-    }
-
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> ScriptMapperBorrowed<'_> {
-        ScriptMapperBorrowed {
-            map: self.map.get(),
-        }
-    }
-}
-
-impl ScriptMapperBorrowed<'_> {
-    /// Get the property name given a value
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu::properties::script::ScriptMapper;
-    /// use icu::properties::props::Script;
-    /// use icu::locale::subtags::script;
-    ///
-    /// let lookup = ScriptMapper::new();
-    /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-    /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-    /// ```
-    #[inline]
-    pub fn get(&self, property: Script) -> Option<icu_locale_core::subtags::Script> {
-        let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).and_then(|o| o.0)
-    }
-}
-
-impl ScriptMapperBorrowed<'static> {
-    /// Cheaply converts a [`ScriptMapperBorrowed<'static>`] into a [`ScriptMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`ScriptMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`ScriptMapperBorrowed`].
-    pub const fn static_to_owned(self) -> ScriptMapper {
-        ScriptMapper {
             map: DataPayload::from_static_ref(self.map),
         }
     }

@@ -109,6 +109,7 @@ icu::properties::PropertyNamesShort#Struct
 icu::properties::PropertyNamesShort::new#FnInStruct
 icu::properties::PropertyNamesShortBorrowed#Struct
 icu::properties::PropertyNamesShortBorrowed::get#FnInStruct
+icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
 icu::properties::props::CanonicalCombiningClass#Struct
@@ -119,10 +120,6 @@ icu::properties::props::GeneralCategoryGroup::empty#FnInStruct
 icu::properties::props::GeneralCategoryGroup::intersection#FnInStruct
 icu::properties::props::GeneralCategoryGroup::union#FnInStruct
 icu::properties::props::GeneralCategoryOutOfBoundsError#Struct
-icu::properties::script::ScriptMapper#Struct
-icu::properties::script::ScriptMapper::new#FnInStruct
-icu::properties::script::ScriptMapperBorrowed#Struct
-icu::properties::script::ScriptMapperBorrowed::get#FnInStruct
 icu::segmenter::SentenceBreakOptions#Struct
 icu::segmenter::WordBreakOptions#Struct
 icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
