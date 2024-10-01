@@ -18,7 +18,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::UnicodeSetData, Struct)]
     #[diplomat::rust_link(icu::properties::UnicodeSetData::new, FnInStruct)]
     #[diplomat::rust_link(icu::properties::UnicodeSetDataBorrowed, Struct)]
-    pub struct UnicodeSetData(pub icu_properties::UnicodeSetData);
+    pub struct UnicodeSetData(pub icu_properties::EmojiSetData);
 
     impl UnicodeSetData {
         /// Checks whether the string is in the set.
@@ -45,8 +45,8 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic_emoji")]
         pub fn load_basic_emoji(provider: &DataProvider) -> Result<Box<UnicodeSetData>, DataError> {
             Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::UnicodeSetData::new::<BasicEmoji> [r => Ok(r.static_to_owned())],
-                icu_properties::UnicodeSetData::try_new_unstable::<BasicEmoji>,
+                icu_properties::EmojiSetData::new::<BasicEmoji> [r => Ok(r.static_to_owned())],
+                icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>,
                 provider,
             )?)))
         }

@@ -9,32 +9,32 @@ use icu_provider::prelude::*;
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
-pub struct UnicodeSetData {
+pub struct EmojiSetData {
     data: DataPayload<ErasedMarker<PropertyUnicodeSetV1<'static>>>,
 }
 
-impl UnicodeSetData {
-    /// Creates a new [`UnicodeSetData`] for a [`UnicodeSetProperty`].
+impl EmojiSetData {
+    /// Creates a new [`EmojiSetData`] for a [`EmojiSet`].
     ///
-    /// See the documentation on [`UnicodeSetProperty`] implementations for details.
+    /// See the documentation on [`EmojiSet`] implementations for details.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
-    pub const fn new<P: UnicodeSetProperty>() -> UnicodeSetDataBorrowed<'static> {
-        UnicodeSetDataBorrowed { set: P::SINGLETON }
+    pub const fn new<P: EmojiSet>() -> EmojiSetDataBorrowed<'static> {
+        EmojiSetDataBorrowed { set: P::SINGLETON }
     }
 
     /// A version of `new()` that uses custom data provided by a [`DataProvider`].
     ///
     /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`UnicodeSetData::as_borrowed`].
-    pub fn try_new_unstable<P: UnicodeSetProperty>(
+    /// the borrowed version, accessible through [`EmojiSetData::as_borrowed`].
+    pub fn try_new_unstable<P: EmojiSet>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
-    ) -> Result<UnicodeSetData, DataError> {
-        Ok(UnicodeSetData::from_data(
+    ) -> Result<EmojiSetData, DataError> {
+        Ok(EmojiSetData::from_data(
             provider.load(Default::default())?.payload,
         ))
     }
@@ -44,8 +44,8 @@ impl UnicodeSetData {
     /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> UnicodeSetDataBorrowed<'_> {
-        UnicodeSetDataBorrowed {
+    pub fn as_borrowed(&self) -> EmojiSetDataBorrowed<'_> {
+        EmojiSetDataBorrowed {
             set: self.data.get(),
         }
     }
@@ -65,7 +65,7 @@ impl UnicodeSetData {
         set: CodePointInversionListAndStringList<'static>,
     ) -> Self {
         let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
-        UnicodeSetData::from_data(
+        EmojiSetData::from_data(
             DataPayload::<ErasedMarker<PropertyUnicodeSetV1<'static>>>::from_owned(set),
         )
     }
@@ -102,13 +102,13 @@ impl UnicodeSetData {
 }
 
 /// A borrowed wrapper around code point set data, returned by
-/// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
+/// [`EmojiSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
-pub struct UnicodeSetDataBorrowed<'a> {
+pub struct EmojiSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }
 
-impl<'a> UnicodeSetDataBorrowed<'a> {
+impl<'a> EmojiSetDataBorrowed<'a> {
     /// Check if the set contains the string. Strings consisting of one character
     /// are treated as a character/code point.
     ///
@@ -131,20 +131,20 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
     }
 }
 
-impl UnicodeSetDataBorrowed<'static> {
-    /// Cheaply converts a [`UnicodeSetDataBorrowed<'static>`] into a [`UnicodeSetData`].
+impl EmojiSetDataBorrowed<'static> {
+    /// Cheaply converts a [`EmojiSetDataBorrowed<'static>`] into a [`EmojiSetData`].
     ///
-    /// Note: Due to branching and indirection, using [`UnicodeSetData`] might inhibit some
-    /// compile-time optimizations that are possible with [`UnicodeSetDataBorrowed`].
-    pub const fn static_to_owned(self) -> UnicodeSetData {
-        UnicodeSetData {
+    /// Note: Due to branching and indirection, using [`EmojiSetData`] might inhibit some
+    /// compile-time optimizations that are possible with [`EmojiSetDataBorrowed`].
+    pub const fn static_to_owned(self) -> EmojiSetData {
+        EmojiSetData {
             data: DataPayload::from_static_ref(self.set),
         }
     }
 }
 
-/// TODO
-pub trait UnicodeSetProperty: crate::private::Sealed {
+/// An Emoji set as defined by [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/#Emoji_Sets>).
+pub trait EmojiSet: crate::private::Sealed {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyUnicodeSetV1<'static>>;
     #[doc(hidden)]

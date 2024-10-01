@@ -2867,9 +2867,9 @@ make_binary_property! {
 
 }
 
-pub use crate::unicode_set::UnicodeSetProperty;
+pub use crate::emoji::EmojiSet;
 
-macro_rules! make_string_set_property {
+macro_rules! make_emoji_set {
     (
         ident: $marker_name:ident;
         data_marker: $data_marker:ty;
@@ -2884,7 +2884,7 @@ macro_rules! make_string_set_property {
 
         impl crate::private::Sealed for $marker_name {}
 
-        impl UnicodeSetProperty for $marker_name {
+        impl EmojiSet for $marker_name {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
             const SINGLETON: &'static crate::provider::PropertyUnicodeSetV1<'static> =
@@ -2893,7 +2893,7 @@ macro_rules! make_string_set_property {
     }
 }
 
-make_string_set_property! {
+make_emoji_set! {
     ident: BasicEmoji;
     data_marker: crate::provider::BasicEmojiV1Marker;
     singleton: SINGLETON_BASIC_EMOJI_V1_MARKER;
