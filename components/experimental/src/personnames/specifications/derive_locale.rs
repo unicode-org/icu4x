@@ -4,7 +4,8 @@
 
 use icu_locale_core::subtags::script;
 use icu_locale_core::{subtags, Locale};
-use icu_properties::script::{ScriptMapperBorrowed, ScriptWithExtensionsBorrowed};
+use icu_properties::props::Script;
+use icu_properties::{script::ScriptWithExtensionsBorrowed, PropertyNamesShortBorrowed};
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
@@ -44,7 +45,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
-    scripts: ScriptMapperBorrowed,
+    scripts: PropertyNamesShortBorrowed<Script>,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
@@ -55,7 +56,7 @@ where
     }
     let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
 
-    let locid_script = scripts.get(name_script).unwrap();
+    let locid_script = scripts.get_locale_script(name_script).unwrap();
     person_name.name_locale().map_or_else(
         || {
             let mut effective_locale = Locale::default();
@@ -171,7 +172,7 @@ mod tests {
     #[test]
     fn test_likely_person_names_locale() {
         let swe = icu_properties::script::ScriptWithExtensions::new();
-        let scripts = icu_properties::script::ScriptMapper::new();
+        let scripts = icu_properties::PropertyNamesShort::<icu_properties::props::Script>::new();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))

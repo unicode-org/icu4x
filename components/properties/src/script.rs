@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data and APIs for supporting both Script and Script_Extensions property
+//! Data and APIs for supporting Script_Extensions property
 //! values in an efficient structure.
 
 use crate::props::Script;
@@ -13,9 +13,6 @@ use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
-
-#[doc(inline)]
-pub use crate::names::{ScriptMapper, ScriptMapperBorrowed};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
