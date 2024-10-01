@@ -13,7 +13,10 @@ use crate::{
     NeoSkeletonLength,
 };
 use alloc::vec::Vec;
-use icu_plurals::{provider::PluralElementsPackedULE, PluralElements};
+use icu_plurals::{
+    provider::{FourBitMetadata, PluralElementsPackedULE},
+    PluralElements,
+};
 use zerovec::{VarZeroVec, ZeroSlice};
 
 use crate::pattern::runtime::Pattern;
@@ -140,6 +143,153 @@ mod constants {
     pub(super) const CHUNK_MASK: u32 = 0x7;
 }
 
+struct UnpackedPatterns<'a> {
+    pub(super) has_explicit_medium: bool,
+    pub(super) has_explicit_short: bool,
+    pub(super) variant_indices: VariantIndices,
+    pub(super) elements: Vec<PluralElements<Pattern<'a>>>,
+}
+
+#[repr(u8)]
+#[derive(Copy, Clone)]
+enum VariantPatternIndex {
+    Inherit = 0,
+    I0 = 1,
+    I1 = 2,
+    I2 = 3,
+    I3 = 4,
+    I4 = 5,
+    I5 = 6,
+    I6 = 7,
+}
+
+impl VariantPatternIndex {
+    #[cfg(feature = "datagen")]
+    pub(super) fn from_header_with_shift(header: u32, shift: u32) -> Self {
+        match Self::try_from_u32((header >> shift) & constants::CHUNK_MASK) {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, "unreachable");
+                Self::Inherit
+            }
+        }
+    }
+
+    fn try_from_u32(u: u32) -> Option<Self> {
+        match u {
+            0 => Some(Self::Inherit),
+            1 => Some(Self::I0),
+            2 => Some(Self::I1),
+            3 => Some(Self::I2),
+            4 => Some(Self::I3),
+            5 => Some(Self::I4),
+            6 => Some(Self::I5),
+            7 => Some(Self::I6),
+            _ => None,
+        }
+    }
+
+    pub(super) fn try_from_chunks_u32(chunks: [u32; 6]) -> Option<[Self; 6]> {
+        let [c0, c1, c2, c3, c4, c5] = chunks;
+        Some([
+            Self::try_from_u32(c0)?,
+            Self::try_from_u32(c1)?,
+            Self::try_from_u32(c2)?,
+            Self::try_from_u32(c3)?,
+            Self::try_from_u32(c4)?,
+            Self::try_from_u32(c5)?,
+        ])
+    }
+
+    pub(super) fn to_chunks_u32(chunks: [Self; 6]) -> [u32; 6] {
+        let [c0, c1, c2, c3, c4, c5] = chunks;
+        [
+            c0 as u32, c1 as u32, c2 as u32, c3 as u32, c4 as u32, c5 as u32,
+        ]
+    }
+}
+
+enum VariantIndices {
+    OnePatternPerVariant,
+    IndicesPerVariant([VariantPatternIndex; 6]),
+}
+
+impl<'a> UnpackedPatterns<'a> {
+    pub(super) fn build(&self) -> PackedPatternsV1<'static> {
+        let mut header = 0u32;
+        if self.has_explicit_medium {
+            header |= constants::M_DIFFERS;
+        }
+        if self.has_explicit_short {
+            header |= constants::S_DIFFERS;
+        }
+        match self.variant_indices {
+            VariantIndices::OnePatternPerVariant => {
+                header |= constants::Q_BIT;
+            }
+            VariantIndices::IndicesPerVariant(chunks) => {
+                let mut shift = 3;
+                for chunk_u32 in VariantPatternIndex::to_chunks_u32(chunks).iter() {
+                    debug_assert!(*chunk_u32 <= constants::CHUNK_MASK);
+                    header |= *chunk_u32 << shift;
+                    shift += 3;
+                }
+            }
+        }
+        let elements: Vec<PluralElements<(FourBitMetadata, &ZeroSlice<PatternItem>)>> = self
+            .elements
+            .iter()
+            .map(|plural_elements| {
+                plural_elements.as_ref().map(|pattern| {
+                    (
+                        pattern.metadata.to_four_bit_metadata(),
+                        pattern.items.as_slice(),
+                    )
+                })
+            })
+            .collect();
+        PackedPatternsV1 {
+            header,
+            elements: elements.as_slice().into(),
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    pub(super) fn from_packed(packed: &'a PackedPatternsV1<'_>) -> Self {
+        let variant_indices = if (packed.header & constants::Q_BIT) != 0 {
+            VariantIndices::OnePatternPerVariant
+        } else {
+            VariantIndices::IndicesPerVariant([
+                VariantPatternIndex::from_header_with_shift(packed.header, 3),
+                VariantPatternIndex::from_header_with_shift(packed.header, 6),
+                VariantPatternIndex::from_header_with_shift(packed.header, 9),
+                VariantPatternIndex::from_header_with_shift(packed.header, 12),
+                VariantPatternIndex::from_header_with_shift(packed.header, 15),
+                VariantPatternIndex::from_header_with_shift(packed.header, 18),
+            ])
+        };
+        let elements = packed
+            .elements
+            .iter()
+            .map(|plural_elements| {
+                plural_elements.decode().map(|(metadata, items)| {
+                    PatternBorrowed {
+                        metadata: PatternMetadata::from_u8(metadata.get()),
+                        items,
+                    }
+                    .as_pattern()
+                })
+            })
+            .collect();
+        Self {
+            has_explicit_medium: (packed.header & constants::M_DIFFERS) != 0,
+            has_explicit_short: (packed.header & constants::S_DIFFERS) != 0,
+            variant_indices,
+            elements,
+        }
+    }
+}
+
 impl PackedPatternsBuilder<'_> {
     /// Builds a packed pattern representation from the builder.
     pub fn build(mut self) -> PackedPatternsV1<'static> {
@@ -147,17 +297,18 @@ impl PackedPatternsBuilder<'_> {
 
         // Initialize the elements vector with the standard patterns.
         let mut elements = Vec::new();
-        elements.push(&self.standard.long);
-        let mut header = 0;
+        let mut has_explicit_medium = false;
+        let mut has_explicit_short = false;
+        elements.push(self.standard.long.as_ref().map(Pattern::as_ref));
         let mut s_offset = 0;
         if self.standard.medium != self.standard.long {
-            elements.push(&self.standard.medium);
-            header |= constants::M_DIFFERS;
+            elements.push(self.standard.medium.as_ref().map(Pattern::as_ref));
+            has_explicit_medium = true;
             s_offset += 1;
         }
         if self.standard.short != self.standard.medium {
-            elements.push(&self.standard.short);
-            header |= constants::S_DIFFERS;
+            elements.push(self.standard.short.as_ref().map(Pattern::as_ref));
+            has_explicit_short = true;
             s_offset += 1;
         }
 
@@ -186,10 +337,10 @@ impl PackedPatternsBuilder<'_> {
         {
             if let Some(pattern) = pattern {
                 if pattern != fallback {
-                    *chunk = match elements.iter().position(|p| p == pattern) {
+                    *chunk = match elements.iter().position(|p| p == *pattern) {
                         Some(i) => i as u32 + 1,
                         None => {
-                            elements.push(pattern);
+                            elements.push(pattern.as_ref().map(Pattern::as_ref));
                             elements.len() as u32
                         }
                     }
@@ -199,43 +350,27 @@ impl PackedPatternsBuilder<'_> {
 
         // Check to see if we need to switch to Q=1 mode. We need to do this
         // if any of the calculated chunk values is too big (larger than 7).
-        //
-        // Calculate the max chunk using Iterator::max, which won't fail
-        // because the array is length 6 (nonempty), but we need to unwrap:
-        // <https://github.com/rust-lang/rust/issues/78504>
-        #[allow(clippy::unwrap_used)]
-        if *chunks.iter().max().unwrap() > constants::CHUNK_MASK {
-            // one pattern per table cell
-            header |= constants::Q_BIT;
-            elements.truncate(s_offset + 1);
-            elements.extend(
-                variant_patterns
-                    .into_iter()
-                    .zip(fallbacks.iter())
-                    .map(|(pattern, fallback)| pattern.unwrap_or(fallback)),
-            );
-        } else {
+        let variant_indices = if let Some(chunks) = VariantPatternIndex::try_from_chunks_u32(chunks)
+        {
             // per-cell offsets
-            let mut shift = 3;
-            for chunk in chunks.iter() {
-                header |= chunk << shift;
-                shift += 3;
-            }
-        }
+            VariantIndices::IndicesPerVariant(chunks)
+        } else {
+            // one pattern per table cell
+            elements.truncate(s_offset + 1);
+            elements.extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(
+                |(pattern, fallback)| pattern.unwrap_or(fallback).as_ref().map(Pattern::as_ref),
+            ));
+            VariantIndices::OnePatternPerVariant
+        };
 
         // Now we can build the data representation
-        let elements = elements
-            .iter()
-            .map(|plural_elements| {
-                plural_elements
-                    .as_ref()
-                    .map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))
-            })
-            .collect::<Vec<_>>();
-        PackedPatternsV1 {
-            header,
-            elements: VarZeroVec::from(&elements),
-        }
+        let unpacked = UnpackedPatterns {
+            has_explicit_medium,
+            has_explicit_short,
+            variant_indices,
+            elements,
+        };
+        unpacked.build()
     }
 
     fn simplify(&mut self) {
@@ -362,6 +497,138 @@ impl PackedPatternsV1<'_> {
     }
 }
 
+#[cfg(feature = "serde")]
+mod _serde {
+    use super::*;
+    use crate::pattern::reference;
+    use zerovec::VarZeroSlice;
+
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    struct PackedPatternsMachine<'data> {
+        pub header: u32,
+        #[serde(borrow)]
+        pub elements: &'data VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
+    }
+
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[derive(Default)]
+    struct PackedPatternsHuman {
+        #[cfg_attr(
+            feature = "serde",
+            serde(default, skip_serializing_if = "core::ops::Not::not")
+        )]
+        pub(super) has_explicit_medium: bool,
+        #[cfg_attr(
+            feature = "serde",
+            serde(default, skip_serializing_if = "core::ops::Not::not")
+        )]
+        pub(super) has_explicit_short: bool,
+        #[cfg_attr(
+            feature = "serde",
+            serde(default, skip_serializing_if = "core::ops::Not::not")
+        )]
+        pub(super) has_one_pattern_per_variant: bool,
+        #[cfg_attr(
+            feature = "serde",
+            serde(default, skip_serializing_if = "Option::is_none")
+        )]
+        pub(super) variant_pattern_indices: Option<[u32; 6]>,
+        pub(super) elements: Vec<reference::Pattern>,
+    }
+
+    impl<'de, 'data> serde::Deserialize<'de> for PackedPatternsV1<'data>
+    where
+        'de: 'data,
+    {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            use serde::de::Error as _;
+            if deserializer.is_human_readable() {
+                let human = <PackedPatternsHuman>::deserialize(deserializer)?;
+                let variant_indices = match (
+                    human.has_one_pattern_per_variant,
+                    human.variant_pattern_indices,
+                ) {
+                    (true, None) => VariantIndices::OnePatternPerVariant,
+                    (false, Some(chunks)) => VariantIndices::IndicesPerVariant(
+                        VariantPatternIndex::try_from_chunks_u32(chunks).ok_or_else(|| {
+                            D::Error::custom("variant pattern index out of range")
+                        })?,
+                    ),
+                    _ => {
+                        return Err(D::Error::custom(
+                            "must have either one pattern per variant or indices",
+                        ))
+                    }
+                };
+                let elements = human
+                    .elements
+                    .iter()
+                    .map(|pattern| PluralElements::new(pattern.to_runtime_pattern()))
+                    .collect();
+                let unpacked = UnpackedPatterns {
+                    has_explicit_medium: human.has_explicit_medium,
+                    has_explicit_short: human.has_explicit_short,
+                    variant_indices,
+                    elements,
+                };
+                Ok(unpacked.build())
+            } else {
+                let machine = <PackedPatternsMachine>::deserialize(deserializer)?;
+                Ok(Self {
+                    header: machine.header,
+                    elements: machine.elements.as_varzerovec(),
+                })
+            }
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl serde::Serialize for PackedPatternsV1<'_> {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            use serde::ser::Error as _;
+            if serializer.is_human_readable() {
+                let unpacked = UnpackedPatterns::from_packed(self);
+                let mut human = PackedPatternsHuman {
+                    has_explicit_medium: unpacked.has_explicit_medium,
+                    has_explicit_short: unpacked.has_explicit_short,
+                    ..Default::default()
+                };
+                match unpacked.variant_indices {
+                    VariantIndices::OnePatternPerVariant => {
+                        human.has_one_pattern_per_variant = true;
+                    }
+                    VariantIndices::IndicesPerVariant(chunks) => {
+                        let chunks = VariantPatternIndex::to_chunks_u32(chunks);
+                        human.variant_pattern_indices = Some(chunks);
+                    }
+                }
+                human.elements = Vec::with_capacity(unpacked.elements.len());
+                for pattern_elements in unpacked.elements.into_iter() {
+                    let pattern = pattern_elements
+                        .try_into_other()
+                        .ok_or_else(|| S::Error::custom("cannot yet serialize plural patterns"))?;
+                    human.elements.push(reference::Pattern::from(&pattern));
+                }
+                human.serialize(serializer)
+            } else {
+                let machine = PackedPatternsMachine {
+                    header: self.header,
+                    elements: &self.elements,
+                };
+                machine.serialize(serializer)
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 pub mod tests {
     use super::*;
@@ -379,16 +646,20 @@ pub mod tests {
         "y MMMM",
     ];
 
-    #[test]
-    fn test_basic() {
-        let patterns = PATTERN_STRS
+    fn get_patterns() -> Vec<Pattern<'static>> {
+        PATTERN_STRS
             .iter()
             .map(|s| {
                 s.parse::<reference::Pattern>()
                     .unwrap()
                     .to_runtime_pattern()
             })
-            .collect::<Vec<_>>();
+            .collect::<Vec<_>>()
+    }
+
+    #[test]
+    fn test_basic() {
+        let patterns = get_patterns();
         let mut it = patterns.iter().cloned();
         let lms0 = LengthPluralElements {
             long: PluralElements::new(it.next().unwrap()),
@@ -500,5 +771,46 @@ pub mod tests {
             let recovered_builder = packed.to_builder();
             assert_eq!(builder, recovered_builder);
         }
+    }
+
+    #[cfg(feature = "datagen")]
+    #[test]
+    fn test_serde() {
+        let patterns = get_patterns();
+        let lms0a = LengthPluralElements {
+            long: PluralElements::new(patterns[0].clone()),
+            medium: PluralElements::new(patterns[0].clone()),
+            short: PluralElements::new(patterns[1].clone()),
+        };
+        let lms1 = LengthPluralElements {
+            long: PluralElements::new(patterns[3].clone()),
+            medium: PluralElements::new(patterns[4].clone()),
+            short: PluralElements::new(patterns[5].clone()),
+        };
+
+        let builder = PackedPatternsBuilder {
+            standard: lms0a,
+            variant0: Some(lms1),
+            variant1: None,
+        };
+        let packed = builder.clone().build();
+
+        let bincode_bytes = bincode::serialize(&packed).unwrap();
+        assert_eq!(
+            bincode_bytes.as_slice(),
+            &[
+                26, 11, 0, 0, 74, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 16, 0, 26, 0, 30, 0, 46, 0, 0,
+                128, 32, 1, 0, 0, 47, 128, 64, 1, 0, 0, 47, 128, 16, 1, 2, 128, 114, 2, 0, 0, 58,
+                128, 128, 2, 0, 128, 80, 1, 0, 128, 80, 1, 0, 0, 32, 128, 32, 3, 0, 0, 32, 128, 64,
+                1, 0, 128, 64, 2, 0, 0, 46, 128, 32, 2, 0, 0, 46, 128, 16, 2
+            ][..]
+        );
+        let bincode_recovered = bincode::deserialize::<PackedPatternsV1>(&bincode_bytes).unwrap();
+        assert_eq!(builder, bincode_recovered.to_builder());
+
+        let json_str = serde_json::to_string(&packed).unwrap();
+        assert_eq!(json_str, "{\"has_explicit_short\":true,\"variant_pattern_indices\":[3,4,5,0,0,0],\"elements\":[\"M/d/y\",\"HH:mm\",\"E\",\"E MMM d\",\"dd.MM.yy\"]}");
+        let json_recovered = serde_json::from_str::<PackedPatternsV1>(&json_str).unwrap();
+        assert_eq!(builder, json_recovered.to_builder());
     }
 }

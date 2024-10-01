@@ -108,6 +108,10 @@ impl<'data> Pattern<'data> {
             metadata: self.metadata,
         }
     }
+
+    pub fn as_ref(&self) -> Pattern<'_> {
+        self.as_borrowed().as_pattern()
+    }
 }
 
 impl PatternULE {
