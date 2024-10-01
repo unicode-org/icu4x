@@ -34,6 +34,7 @@ icu_properties = { workspace = true }
 icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
 icu_experimental = { workspace = true, optional = true }
+icu_pattern = { workspace = true, optional = true }
 
 # For markers_from_bin
 icu_provider_registry = { workspace = true, optional = true }
@@ -63,6 +64,7 @@ default = [
     "icu_segmenter/default",
     "icu_timezone/default",
     "icu_experimental?/default",
+    "icu_pattern?/default",
 ]
 std = [
     "icu_calendar/std",
@@ -79,6 +81,7 @@ std = [
     "icu_segmenter/std",
     "icu_timezone/std",
     "icu_experimental?/std",
+    "icu_pattern?/std",
 ]
 serde = [
     "icu_calendar/serde",
@@ -95,6 +98,7 @@ serde = [
     "icu_segmenter/serde",
     "icu_timezone/serde",
     "icu_experimental?/serde",
+    "icu_pattern?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
@@ -142,6 +146,7 @@ experimental = [
     "icu_datetime_experimental",
     "icu_plurals_experimental",
     "dep:icu_experimental",
+    "dep:icu_pattern",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging", "icu_datetime/logging"]
