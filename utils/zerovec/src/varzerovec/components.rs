@@ -314,6 +314,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
+        // MSRV Rust 1.79: Use split_at_unchecked
         let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
         // Safety: F::Len allows all byte sequences
         let len_ule = F::Len::from_byte_slice_unchecked(len_bytes);
