@@ -71,7 +71,6 @@ members = [
     "utils/fixed_decimal",
     "utils/ixdtf",
     "utils/litemap",
-    "utils/preferences",
     "utils/resb",
     "utils/env_preferences",
     "utils/tinystr",
