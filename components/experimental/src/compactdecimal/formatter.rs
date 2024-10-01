@@ -342,10 +342,10 @@ impl CompactDecimalFormatter {
         &self,
         value: f64,
     ) -> Result<FormattedCompactDecimal<'_>, fixed_decimal::LimitError> {
-        use fixed_decimal::FloatPrecision::Floating;
+        use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = FixedDecimal::try_from_f64(value, Floating)?;
+        let partly_rounded = FixedDecimal::try_from_f64(value, RoundTrip)?;
         Ok(self.format_fixed_decimal(partly_rounded))
     }
 

@@ -68,8 +68,8 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
   /// Throws [FixedDecimalLimitError] on failure.
-  factory FixedDecimal.fromDoubleWithFloatingPrecision(double f) {
-    final result = _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
+  factory FixedDecimal.fromDoubleWithRoundTripPrecision(double f) {
+    final result = _icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1(f);
     if (!result.isOk) {
       throw FixedDecimalLimitError();
     }
@@ -267,9 +267,9 @@ external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_
 external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, int digits);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1(double f);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_string_mv1')

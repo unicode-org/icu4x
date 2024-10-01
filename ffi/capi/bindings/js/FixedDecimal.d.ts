@@ -23,7 +23,7 @@ export class FixedDecimal {
 
     static fromNumberWithSignificantDigits(f: number, digits: number): FixedDecimal;
 
-    static fromNumberWithFloatingPrecision(f: number): FixedDecimal;
+    static fromNumberWithRoundTripPrecision(f: number): FixedDecimal;
 
     static fromString(v: string): FixedDecimal;
 
