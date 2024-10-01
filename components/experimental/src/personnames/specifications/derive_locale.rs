@@ -79,8 +79,6 @@ fn find_script<N>(
 where
     N: PersonName,
 {
-    use icu_properties::props::Script;
-
     person_name
         .available_name_fields()
         .iter()
