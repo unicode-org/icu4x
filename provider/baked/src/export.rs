@@ -672,7 +672,7 @@ impl DataExporter for BakedExporter {
         }
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         log::info!("Writing macros module...");
 
         let data = core::mem::take(&mut self.impl_data)
@@ -771,7 +771,7 @@ impl DataExporter for BakedExporter {
 
         self.print_deps();
 
-        Ok(())
+        Ok(Default::default())
     }
 }
 

@@ -103,7 +103,7 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         self.close_internal()
     }
 }
@@ -144,7 +144,7 @@ impl BlobExporter<'_> {
         FinalizedBuffers { vzv, remap }
     }
 
-    fn close_internal(&mut self) -> Result<(), DataError> {
+    fn close_internal(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
 
         let all_markers = self.all_markers.lock().expect("poison");
@@ -200,6 +200,6 @@ impl BlobExporter<'_> {
             }
         }
 
-        Ok(())
+        Ok(Default::default())
     }
 }

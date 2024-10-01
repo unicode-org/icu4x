@@ -533,7 +533,7 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    match cli.format {
+    let _metadata = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
@@ -598,7 +598,7 @@ fn main() -> eyre::Result<()> {
                 },
             )?
         })?,
-    }
+    };
 
     Ok(())
 }

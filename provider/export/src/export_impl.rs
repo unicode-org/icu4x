@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
+use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -27,27 +27,11 @@ impl<T: IntoIterator> IntoParallelIterator for T {}
 use rayon::prelude::*;
 
 impl ExportDriver {
-    /// Exports data from the given provider to the given exporter.
-    ///
-    /// See
-    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
-    /// [`BlobExporter`](icu_provider_blob::export),
-    /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](icu_provider_baked::export).
-    pub fn export(
-        self,
-        provider: &impl ExportableProvider,
-        mut sink: impl DataExporter,
-    ) -> Result<(), DataError> {
-        self.export_dyn(provider, &mut sink)
-    }
-
-    // Avoids multiple monomorphizations
-    fn export_dyn(
+    pub(crate) fn export_dyn(
         self,
         provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
-    ) -> Result<(), DataError> {
+    ) -> Result<ExportMetadata, DataError> {
         let Self {
             markers,
             requested_families,
@@ -263,7 +247,9 @@ impl ExportDriver {
             Ok(())
         })?;
 
-        sink.close()
+        let exporter = sink.close()?;
+
+        Ok(ExportMetadata { exporter })
     }
 }
 
