@@ -229,7 +229,7 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         self.0.flush(marker, metadata)
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         self.0.close()
     }
 }
@@ -278,7 +278,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         Ok(())
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
@@ -333,6 +333,6 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             writeln!(&mut self.fingerprints, "{line}")?;
         }
 
-        Ok(())
+        Ok(Default::default())
     }
 }

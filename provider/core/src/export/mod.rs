@@ -49,10 +49,15 @@ pub trait DataExporter: Sync {
     /// This function has to be called before the object is dropped (after all
     /// markers have been fully dumped). This conceptually takes ownership, so
     /// clients *may not* interact with this object after close has been called.
-    fn close(&mut self) -> Result<(), DataError> {
-        Ok(())
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
+        Ok(ExporterCloseMetadata)
     }
 }
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Default)]
+/// Contains information about a successful export.
+pub struct ExporterCloseMetadata;
 
 /// Metadata for [`DataExporter::flush`]
 #[non_exhaustive]
@@ -86,7 +91,7 @@ impl DataExporter for Box<dyn DataExporter> {
         (**self).flush(marker, metadata)
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         (**self).close()
     }
 }
@@ -193,7 +198,10 @@ impl DataExporter for MultiExporter {
         self.0.iter().try_for_each(|e| e.flush(marker, metadata))
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
-        self.0.iter_mut().try_for_each(|e| e.close())
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
+        self.0.iter_mut().try_fold(ExporterCloseMetadata, |m, e| {
+            e.close()?;
+            Ok(m)
+        })
     }
 }
