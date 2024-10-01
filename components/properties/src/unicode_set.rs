@@ -124,7 +124,7 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
         self.set.contains(ch)
     }
 
-    /// See [`Self::contains_char`].
+    /// See [`Self::contains`].
     #[inline]
     pub fn contains32(&self, cp: u32) -> bool {
         self.set.contains32(cp)
