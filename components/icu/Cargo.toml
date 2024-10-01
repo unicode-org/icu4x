@@ -146,6 +146,7 @@ experimental = [
     "icu_datetime_experimental",
     "icu_plurals_experimental",
     "dep:icu_experimental",
+    "dep:icu_pattern",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging", "icu_datetime/logging"]
