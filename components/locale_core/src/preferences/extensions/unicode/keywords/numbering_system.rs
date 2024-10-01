@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::extensions::unicode::struct_keyword;
-use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
+use crate::preferences::extensions::unicode::errors::PreferencesParseError;
+use crate::preferences::extensions::unicode::struct_keyword;
+use crate::{extensions::unicode::Value, subtags::Subtag};
 
 struct_keyword!(
     /// TODO
@@ -18,6 +18,6 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: NumberingSystem| {
-        icu_locale_core::extensions::unicode::Value::from_subtag(Some(input.0))
+        crate::extensions::unicode::Value::from_subtag(Some(input.0))
     }
 );

@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::extensions::unicode::struct_keyword;
-use alloc::string::ToString;
-use icu_locale_core::{
+use crate::preferences::extensions::unicode::errors::PreferencesParseError;
+use crate::preferences::extensions::unicode::struct_keyword;
+use crate::{
     extensions::unicode::{SubdivisionId, Value},
     subtags::Subtag,
 };
+use alloc::string::ToString;
 
 struct_keyword!(
     /// TODO
@@ -30,9 +30,9 @@ struct_keyword!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locale_core::extensions::unicode;
-    use icu_locale_core::extensions::unicode::subdivision_suffix;
-    use icu_locale_core::subtags::region;
+    use crate::extensions::unicode;
+    use crate::extensions::unicode::subdivision_suffix;
+    use crate::subtags::region;
 
     #[test]
     fn region_override_test() {

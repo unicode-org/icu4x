@@ -4,12 +4,12 @@
 
 mod dtf;
 
+use icu_locale_core::preferences::extensions::unicode::keywords;
 use icu_locale_core::{
     locale,
     subtags::{language, region},
     Locale,
 };
-use icu_preferences::extensions::unicode::keywords;
 use tinystr::tinystr;
 
 use dtf::*;
@@ -183,7 +183,7 @@ fn dtf_prefs_into_locale() {
 
 #[test]
 fn dtf_prefs_ca_islamic() {
-    use icu_preferences::extensions::unicode::keywords;
+    use icu_locale_core::preferences::extensions::unicode::keywords;
 
     let loc: Locale = "en-u-ca-islamic".parse().unwrap();
     let prefs: DateTimeFormatPreferences = loc.into();

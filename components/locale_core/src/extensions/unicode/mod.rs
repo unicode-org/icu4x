@@ -42,6 +42,7 @@ pub use attributes::Attributes;
 #[doc(inline)]
 pub use key::{key, Key};
 pub use keywords::Keywords;
+#[doc(inline)]
 pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
 pub use value::{value, Value};

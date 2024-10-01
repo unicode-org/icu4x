@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use icu_locale_core::preferences::extensions::unicode::keywords;
 use icu_locale_core::{langid, subtags::subtag, LanguageIdentifier};
-use icu_preferences::extensions::unicode::keywords;
 use tinystr::tinystr;
 
 struct DefaultPrefs {

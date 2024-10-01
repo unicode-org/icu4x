@@ -7,4 +7,5 @@
 pub mod errors;
 pub mod keywords;
 mod macros;
+#[doc(inline)]
 pub use macros::*;

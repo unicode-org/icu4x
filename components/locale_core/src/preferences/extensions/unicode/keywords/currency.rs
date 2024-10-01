@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode::errors::PreferencesParseError;
-use crate::extensions::unicode::struct_keyword;
-use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
+use crate::preferences::extensions::unicode::errors::PreferencesParseError;
+use crate::preferences::extensions::unicode::struct_keyword;
+use crate::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 
 struct_keyword!(
@@ -22,7 +22,7 @@ struct_keyword!(
         Err(PreferencesParseError::InvalidKeywordValue)
     },
     |input: CurrencyType| {
-        icu_locale_core::extensions::unicode::Value::from_subtag(Some(
+        crate::extensions::unicode::Value::from_subtag(Some(
             Subtag::from_tinystr_unvalidated(input.0.resize()),
         ))
     }

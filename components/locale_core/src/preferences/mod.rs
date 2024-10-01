@@ -2,10 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! # `icu_preferences`
-//!
-//! `icu_preferences` is a utility crate of the [`ICU4X`] project.
-//!
 //! This API provides necessary functionality for building user preferences structs with ability
 //! to `merge` information between the struct and a [`Locale`] and facilitate resolution of the
 //! attributes against default values.
@@ -16,11 +12,11 @@
 //! # Examples:
 //!
 //! ```
-//! use icu_preferences::{
+//! use icu::locale::preferences::{
 //!   preferences,
 //!   extensions::unicode::keywords::HourCycle,
 //! };
-//! use icu_locale_core::LanguageIdentifier;
+//! use icu::locale::LanguageIdentifier;
 //!
 //! pub fn get_defaults(lid: &Option<LanguageIdentifier>) -> ExampleComponentResolvedPreferences {
 //!     unimplemented!()
@@ -52,44 +48,23 @@
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`Locale`]: icu_locale_core::Locale
+//! [`Locale`]: crate::Locale
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![no_std]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
-
-extern crate alloc;
-
-/// TODO
 pub mod extensions;
 mod options;
 
+#[doc(inline)]
 pub use options::options;
-
-#[doc(hidden)]
-pub use icu_locale_core;
 
 /// TODO
 pub trait PreferenceKey {
     /// TODO
-    fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
+    fn unicode_extension_key() -> Option<crate::extensions::unicode::Key> {
         None
     }
 
     /// TODO
-    fn matches_ue_key(key: &icu_locale_core::extensions::unicode::Key) -> bool {
+    fn matches_ue_key(key: &crate::extensions::unicode::Key) -> bool {
         Self::unicode_extension_key() == Some(*key)
     }
 
@@ -99,7 +74,7 @@ pub trait PreferenceKey {
     }
 
     /// TODO
-    fn unicode_extension_value(&self) -> Option<icu_locale_core::extensions::unicode::Value> {
+    fn unicode_extension_value(&self) -> Option<crate::extensions::unicode::Value> {
         None
     }
 }
@@ -124,7 +99,7 @@ macro_rules! __preferences {
         #[non_exhaustive]
         pub struct $name {
             #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: Option<$crate::icu_locale_core::LanguageIdentifier>,
+            pub lid: Option<$crate::LanguageIdentifier>,
             $(
                 $(#[$key_doc])*
                 pub $key: Option<$pref>,
@@ -136,7 +111,7 @@ macro_rules! __preferences {
         #[doc = concat!("The resolved version of `", stringify!($name), "`.")]
         pub struct $resolved_name {
             #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: $crate::icu_locale_core::LanguageIdentifier,
+            pub lid: $crate::LanguageIdentifier,
 
             $(
                 $(#[$key_doc])*
@@ -144,9 +119,9 @@ macro_rules! __preferences {
             )*
         }
 
-        impl From<$crate::icu_locale_core::Locale> for $name {
-            fn from(loc: $crate::icu_locale_core::Locale) -> Self {
-                use $crate::PreferenceKey;
+        impl From<$crate::Locale> for $name {
+            fn from(loc: $crate::Locale) -> Self {
+                use $crate::preferences::PreferenceKey;
 
                 let lid = Some(loc.id);
 
@@ -177,10 +152,10 @@ macro_rules! __preferences {
 
         impl $name {
             /// Constructs a `Locale` corresponding to these preferences.
-            pub fn into_locale(self) -> $crate::icu_locale_core::Locale {
-                use $crate::PreferenceKey;
+            pub fn into_locale(self) -> $crate::Locale {
+                use $crate::preferences::PreferenceKey;
                 let id = self.lid.unwrap_or_default();
-                let mut extensions = $crate::icu_locale_core::extensions::Extensions::new();
+                let mut extensions = $crate::extensions::Extensions::new();
                 $(
                     if let Some(value) = &self.$key {
                         if let Some(ue) = <$pref>::unicode_extension_key() {
@@ -189,7 +164,7 @@ macro_rules! __preferences {
                         }
                     }
                 )*
-                $crate::icu_locale_core::Locale {
+                $crate::Locale {
                     id,
                     extensions
                 }
@@ -206,7 +181,7 @@ macro_rules! __preferences {
 
             /// TODO
             pub fn remove_custom(&mut self) {
-                use $crate::PreferenceKey;
+                use $crate::preferences::PreferenceKey;
                 $(
                     if let Some(k) = &self.$key {
                         if k.is_custom() {
@@ -235,8 +210,8 @@ pub use __preferences as preferences;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::extensions::unicode::enum_keyword;
-    use icu_locale_core::Locale;
+    use crate::preferences::extensions::unicode::enum_keyword;
+    use crate::Locale;
 
     #[test]
     fn test_preferences() {

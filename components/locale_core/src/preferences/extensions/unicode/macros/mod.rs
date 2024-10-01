@@ -5,5 +5,7 @@
 mod enum_keyword;
 mod struct_keyword;
 
+#[doc(inline)]
 pub use enum_keyword::{enum_keyword, enum_keyword_inner};
+#[doc(inline)]
 pub use struct_keyword::struct_keyword;

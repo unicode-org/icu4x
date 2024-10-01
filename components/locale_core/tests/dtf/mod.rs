@@ -7,7 +7,7 @@ mod options;
 
 use data_provider::{get_default_prefs, resolve_options};
 use icu_locale_core::extensions::unicode;
-use icu_preferences::{
+use icu_locale_core::preferences::{
     extensions::unicode::{errors::PreferencesParseError, keywords},
     options, preferences, PreferenceKey,
 };

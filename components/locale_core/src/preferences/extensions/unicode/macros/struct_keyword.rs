@@ -12,30 +12,30 @@ macro_rules! __struct_keyword {
         $(#[$doc])*
         pub struct $name(pub $value);
 
-        impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
-            type Error = $crate::extensions::unicode::errors::PreferencesParseError;
+        impl TryFrom<$crate::extensions::unicode::Value> for $name {
+            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
 
             fn try_from(
-                input: icu_locale_core::extensions::unicode::Value,
+                input: $crate::extensions::unicode::Value,
             ) -> Result<Self, Self::Error> {
                 $try_from(input)
             }
         }
 
-        impl From<$name> for icu_locale_core::extensions::unicode::Value {
-            fn from(input: $name) -> icu_locale_core::extensions::unicode::Value {
+        impl From<$name> for $crate::extensions::unicode::Value {
+            fn from(input: $name) -> $crate::extensions::unicode::Value {
                 $into(input)
             }
         }
 
-        impl $crate::PreferenceKey for $name {
-            fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
-                Some(icu_locale_core::extensions::unicode::key!($ext_key))
+        impl $crate::preferences::PreferenceKey for $name {
+            fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
+                Some($crate::extensions::unicode::key!($ext_key))
             }
 
             fn unicode_extension_value(
                 &self,
-            ) -> Option<icu_locale_core::extensions::unicode::Value> {
+            ) -> Option<$crate::extensions::unicode::Value> {
                 Some(self.clone().into())
             }
         }
@@ -46,11 +46,11 @@ pub use __struct_keyword as struct_keyword;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::str::FromStr;
-    use icu_locale_core::{
+    use crate::{
         extensions::unicode,
         subtags::{subtag, Subtag},
     };
+    use core::str::FromStr;
 
     #[test]
     fn struct_keywords_test() {
@@ -65,7 +65,7 @@ mod tests {
                         return Ok(DummyKeyword(subtag));
                     }
                 }
-                Err(crate::extensions::unicode::errors::PreferencesParseError::InvalidKeywordValue)
+                Err(crate::preferences::extensions::unicode::errors::PreferencesParseError::InvalidKeywordValue)
             },
             |input: DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
         );

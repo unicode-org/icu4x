@@ -39,7 +39,7 @@ macro_rules! __enum_keyword {
 
         impl $name {
             /// TODO
-            pub fn extend_value(self, input: &mut icu_locale_core::extensions::unicode::Value) {
+            pub fn extend_value(self, input: &mut $crate::extensions::unicode::Value) {
                 match self {
                     $(
                         // This is circumventing a limitation of the macro_rules - we need to have a conditional
@@ -48,7 +48,7 @@ macro_rules! __enum_keyword {
                         // complaints.
                         #[allow(non_snake_case)]
                         Self::$variant $(($v2))? => {
-                            input.push_subtag(icu_locale_core::subtags::subtag!($key));
+                            input.push_subtag($crate::subtags::subtag!($key));
 
                             $(
                                 if let Some(v2) = $v2 {
@@ -61,10 +61,10 @@ macro_rules! __enum_keyword {
             }
             }
 
-        impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
-            type Error = $crate::extensions::unicode::errors::PreferencesParseError;
+        impl TryFrom<$crate::extensions::unicode::Value> for $name {
+            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
 
-            fn try_from(mut s: icu_locale_core::extensions::unicode::Value) -> Result<Self, Self::Error> {
+            fn try_from(mut s: $crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
                 let first_subtag = s.get_subtag(0).unwrap();
                 Ok(match first_subtag.as_str() {
                     $(
@@ -80,9 +80,9 @@ macro_rules! __enum_keyword {
             }
         }
 
-        impl From<$name>  for icu_locale_core::extensions::unicode::Value {
-            fn from(input: $name) -> icu_locale_core::extensions::unicode::Value {
-                let mut result = icu_locale_core::extensions::unicode::Value::default();
+        impl From<$name>  for $crate::extensions::unicode::Value {
+            fn from(input: $name) -> $crate::extensions::unicode::Value {
+                let mut result = $crate::extensions::unicode::Value::default();
                 input.extend_value(&mut result);
                 result
             }
@@ -93,16 +93,16 @@ macro_rules! __enum_keyword {
     }, $ext_key:literal) => {
         $crate::__enum_keyword!($(#[$doc])* $name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
 
-        impl $crate::PreferenceKey for $name {
-            fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
-                Some(icu_locale_core::extensions::unicode::key!($ext_key))
+        impl $crate::preferences::PreferenceKey for $name {
+            fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
+                Some($crate::extensions::unicode::key!($ext_key))
             }
 
             fn is_custom(&self) -> bool {
                 false
             }
 
-            fn unicode_extension_value(&self) -> Option<icu_locale_core::extensions::unicode::Value> {
+            fn unicode_extension_value(&self) -> Option<$crate::extensions::unicode::Value> {
                 Some(self.clone().into())
             }
         }
@@ -113,8 +113,8 @@ pub use __enum_keyword as enum_keyword;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::extensions::unicode;
     use core::str::FromStr;
-    use icu_locale_core::extensions::unicode;
 
     #[test]
     fn enum_keywords_test() {

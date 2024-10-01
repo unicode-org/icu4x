@@ -4,8 +4,8 @@
 
 mod dtf;
 
+use icu_locale_core::preferences::extensions::unicode::keywords;
 use icu_locale_core::{locale, LanguageIdentifier};
-use icu_preferences::extensions::unicode::keywords;
 
 use dtf::*;
 
