@@ -175,6 +175,7 @@ icu::plurals::PluralElements::map#FnInStruct
 icu::plurals::PluralElements::new#FnInStruct
 icu::plurals::PluralElements::one#FnInStruct
 icu::plurals::PluralElements::other#FnInStruct
+icu::plurals::PluralElements::try_into_other#FnInStruct
 icu::plurals::PluralElements::two#FnInStruct
 icu::plurals::PluralElements::with_explicit_one_value#FnInStruct
 icu::plurals::PluralElements::with_explicit_zero_value#FnInStruct
