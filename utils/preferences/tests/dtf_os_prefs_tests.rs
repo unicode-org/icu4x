@@ -20,10 +20,8 @@ fn get_os_dtf_preferences(lid: &LanguageIdentifier) -> Option<dtf::DateTimeForma
 }
 
 fn get_os_dtf_options() -> Option<dtf::DateTimeFormatOptions> {
-    use icu_datetime::options::length;
-
     Some(dtf::DateTimeFormatOptions {
-        date_length: Some(length::Date::Long),
+        date_length: Some(DateLength::Long),
         time_zone: Some(true),
         ..Default::default()
     })
@@ -36,7 +34,7 @@ fn dtf_get_os_prefs() {
     let loc = locale!("en-US");
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
-    let mut prefs: DateTimeFormatPreferences = loc.into();
+    let mut prefs = DateTimeFormatPreferences::from(loc);
     if let Some(os_prefs) = os_prefs {
         prefs.extend(os_prefs);
     }
@@ -125,12 +123,10 @@ fn dtf_call_override_locale_override_os_prefs() {
 
 #[test]
 fn dtf_options_override_os_options() {
-    use icu_datetime::options::length;
-
     let loc = locale!("en");
 
     let dev_options = DateTimeFormatOptions {
-        date_length: Some(length::Date::Medium),
+        date_length: Some(DateLength::Medium),
         ..Default::default()
     };
 
@@ -144,7 +140,7 @@ fn dtf_options_override_os_options() {
     let dtf = DateTimeFormat::new(loc.into(), options);
 
     // This is taken from dev options
-    assert_eq!(dtf.resolved_options().date_length, length::Date::Medium);
+    assert_eq!(dtf.resolved_options().date_length, DateLength::Medium);
 
     // Dev didn't specify time zone field presence, so this is taken from os_prefs
     assert!(dtf.resolved_options().time_zone);

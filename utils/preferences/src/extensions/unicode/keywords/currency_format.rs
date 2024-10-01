@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-crate::enum_keyword!(CurrencyFormatStyle {
-    "standard" => Standard,
-    "account" => Account
+crate::enum_keyword!(
+    /// TODO
+    CurrencyFormatStyle {
+        "standard" => Standard,
+        "account" => Account
 }, "cf");

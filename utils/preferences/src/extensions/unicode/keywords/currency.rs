@@ -8,6 +8,7 @@ use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 
 struct_keyword!(
+    /// TODO
     CurrencyType,
     "cu",
     TinyAsciiStr<3>,

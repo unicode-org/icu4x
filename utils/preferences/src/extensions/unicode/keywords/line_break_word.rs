@@ -4,9 +4,11 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(LineBreakWordHandling {
-    "normal" => Normal,
-    "breakall" => BreakAll,
-    "keepall" => KeepAll,
-    "phrase" => Phrase,
+enum_keyword!(
+    /// TODO
+    LineBreakWordHandling {
+        "normal" => Normal,
+        "breakall" => BreakAll,
+        "keepall" => KeepAll,
+        "phrase" => Phrase,
 }, "lw");

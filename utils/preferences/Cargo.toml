@@ -24,6 +24,3 @@ all-features = true
 [dependencies]
 icu_locale_core = { workspace = true }
 tinystr = { workspace = true }
-
-[dev-dependencies]
-icu_datetime = { workspace = true }

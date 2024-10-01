@@ -4,6 +4,8 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(CommonVariantType {
-    "posix" => Posix,
+enum_keyword!(
+    /// TODO
+    CommonVariantType {
+        "posix" => Posix,
 }, "va");

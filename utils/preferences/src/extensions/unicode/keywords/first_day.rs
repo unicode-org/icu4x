@@ -4,12 +4,14 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(FirstDay {
-    "sun" => Sun,
-    "mon" => Mon,
-    "tue" => Tue,
-    "wed" => Wed,
-    "thu" => Thu,
-    "fri" => Fri,
-    "sat" => Sat
+enum_keyword!(
+    /// TODO
+    FirstDay {
+        "sun" => Sun,
+        "mon" => Mon,
+        "tue" => Tue,
+        "wed" => Wed,
+        "thu" => Thu,
+        "fri" => Fri,
+        "sat" => Sat
 }, "fw");

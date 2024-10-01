@@ -2,64 +2,74 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::extensions::unicode::Key;
+#[doc(hidden)]
+pub use icu_locale_core;
 
+/// TODO
 pub trait PreferenceKey {
-    fn unicode_extension_key() -> Option<Key> {
+    /// TODO
+    fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
         None
     }
 
-    fn matches_ue_key(key: &Key) -> bool {
+    /// TODO
+    fn matches_ue_key(key: &icu_locale_core::extensions::unicode::Key) -> bool {
         Self::unicode_extension_key() == Some(*key)
     }
 
+    /// TODO
     fn is_custom(&self) -> bool {
         false
     }
 
+    /// TODO
     fn unicode_extension_value(&self) -> Option<icu_locale_core::extensions::unicode::Value> {
         None
     }
 }
 
 #[macro_export]
+/// TODO
 macro_rules! preferences {
-    ($name:ident,
-     $resolved_name:ident,
-     {$($key:ident => $pref:ty),*}
+    (
+        $(#[$doc:meta])*
+        $name:ident,
+        $resolved_name:ident,
+        {
+            $(
+                $(#[$key_doc:meta])*
+                $key:ident: $pref:ty
+            ),*
+        }
      ) => (
-        #[derive(Default, Debug)]
+        #[derive(Default, Debug, Clone)]
+        $(#[$doc])*
         #[non_exhaustive]
         pub struct $name {
-            pub lid: Option<icu_locale_core::LanguageIdentifier>,
+            #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
+            pub lid: Option<$crate::preferences::icu_locale_core::LanguageIdentifier>,
             $(
+                $(#[$key_doc])*
                 pub $key: Option<$pref>,
             )*
         }
 
         #[non_exhaustive]
         #[derive(Debug, Clone)]
+        #[doc = concat!("The resolved version of `", stringify!($name), "`.")]
         pub struct $resolved_name {
-            pub lid: icu_locale_core::LanguageIdentifier,
+            #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
+            pub lid: $crate::preferences::icu_locale_core::LanguageIdentifier,
 
             $(
+                $(#[$key_doc])*
                 pub $key: $pref,
             )*
         }
 
-        impl From<(icu_locale_core::LanguageIdentifier, $resolved_name)> for $resolved_name {
-            fn from(input: (icu_locale_core::LanguageIdentifier, $resolved_name)) -> Self {
-                Self {
-                    lid: input.0,
-                    $(
-                        $key: input.1.$key,
-                    )*
-                }
-            }
-        }
-
-        impl From<icu_locale_core::Locale> for $name {
-            fn from(loc: icu_locale_core::Locale) -> Self {
+        impl From<$crate::preferences::icu_locale_core::Locale> for $name {
+            fn from(loc: $crate::preferences::icu_locale_core::Locale) -> Self {
+                use $crate::preferences::PreferenceKey;
 
                 let lid = Some(loc.id);
 
@@ -88,34 +98,27 @@ macro_rules! preferences {
             }
         }
 
-        #[allow(non_local_definitions)] // Locale is in a different crate
-        impl From<$name> for icu_locale_core::Locale {
-            fn from(input: $name) -> icu_locale_core::Locale {
-                let id = input.lid.unwrap_or_default();
-                let mut extensions = icu_locale_core::extensions::Extensions::new();
+        impl $name {
+            /// Constructs a `Locale` corresponding to these preferences.
+            pub fn into_locale(self) -> $crate::preferences::icu_locale_core::Locale {
+                use $crate::preferences::PreferenceKey;
+                let id = self.lid.unwrap_or_default();
+                let mut extensions = $crate::preferences::icu_locale_core::extensions::Extensions::new();
                 $(
-                    if let Some(value) = input.$key {
+                    if let Some(value) = &self.$key {
                         if let Some(ue) = <$pref>::unicode_extension_key() {
                             let val = value.unicode_extension_value().unwrap();
                             extensions.unicode.keywords.set(ue, val);
                         }
                     }
                 )*
-                icu_locale_core::Locale {
+                $crate::preferences::icu_locale_core::Locale {
                     id,
                     extensions
                 }
             }
-        }
 
-        #[allow(non_local_definitions)] // Locale is in a different crate
-        impl From<&$resolved_name> for icu_locale_core::Locale {
-            fn from(_input: &$resolved_name) -> icu_locale_core::Locale {
-                todo!()
-            }
-        }
-
-        impl $name {
+            /// TODO
             pub fn extend(&mut self, other: $name) {
                 $(
                     if let Some(value) = other.$key {
@@ -124,7 +127,9 @@ macro_rules! preferences {
                 )*
             }
 
+            /// TODO
             pub fn remove_custom(&mut self) {
+                use $crate::preferences::PreferenceKey;
                 $(
                     if let Some(k) = &self.$key {
                         if k.is_custom() {
@@ -136,6 +141,7 @@ macro_rules! preferences {
         }
 
         impl $resolved_name {
+            /// TODO
             pub fn extend(&mut self, prefs: $name) {
                 $(
                     if let Some(v) = prefs.$key {
@@ -155,21 +161,25 @@ mod tests {
 
     #[test]
     fn test_preferences() {
+        #![allow(dead_code)]
+
         enum_keyword!(DummyKeyword {
             "default" => Default,
         }, "ab");
 
         preferences!(
+            /// Preferences for the dummy formatter
             DummyPreferences,
             DummyResolvedPreferences,
             {
-                dummy_keyword => DummyKeyword
+                /// Controls how dummyly the formatter behaves
+                dummy_keyword: DummyKeyword
             }
         );
 
         let loc: Locale = "und-u-ab-default-cd-foo".parse().unwrap();
 
-        let prefs: DummyPreferences = loc.into();
+        let prefs = DummyPreferences::from(loc);
         assert_eq!(prefs.dummy_keyword, Some(DummyKeyword::Default));
     }
 }

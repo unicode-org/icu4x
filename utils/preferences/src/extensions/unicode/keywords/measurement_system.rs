@@ -4,8 +4,10 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(MeasurementSystem {
-    "metric" => Metric,
-    "ussystem" => USSystem,
-    "uksystem" => UKSystem
+enum_keyword!(
+    /// TODO
+    MeasurementSystem {
+        "metric" => Metric,
+        "ussystem" => USSystem,
+        "uksystem" => UKSystem
 }, "ms");

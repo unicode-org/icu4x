@@ -4,11 +4,13 @@
 
 use crate::extensions::unicode::errors::PreferencesParseError;
 use crate::struct_keyword;
+use alloc::vec::Vec;
+use core::str::FromStr;
 use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::subtags::Script;
-use std::str::FromStr;
 
 struct_keyword!(
+    /// TODO
     DictionaryBreakScriptExclusions,
     "dx",
     Vec<Script>,

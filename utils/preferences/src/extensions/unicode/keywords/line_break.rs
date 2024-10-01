@@ -4,8 +4,10 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(LineBreakStyle {
-    "strict" => Strict,
-    "normal" => Normal,
-    "loose" => Loose,
+enum_keyword!(
+    /// TODO
+    LineBreakStyle {
+        "strict" => Strict,
+        "normal" => Normal,
+        "loose" => Loose,
 }, "lb");

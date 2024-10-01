@@ -1463,7 +1463,6 @@ dependencies = [
 name = "icu_preferences"
 version = "0.0.0"
 dependencies = [
- "icu_datetime",
  "icu_locale_core",
  "tinystr",
 ]

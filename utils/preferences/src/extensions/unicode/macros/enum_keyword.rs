@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
+/// TODO
 macro_rules! enum_keyword_inner {
     ($name:ident, $variant:ident) => {
         $name::$variant
@@ -17,40 +18,44 @@ macro_rules! enum_keyword_inner {
 }
 
 #[macro_export]
+/// TODO
 macro_rules! enum_keyword {
-    ($name:ident {
+    ($(#[$doc:meta])* $name:ident {
         $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }) => {
         #[non_exhaustive]
-        #[derive(Debug, Clone, Eq, PartialEq)]
+        #[derive(Debug, Clone, Eq, PartialEq, Copy)]
+        $(#[$doc])*
         pub enum $name {
-            $($variant
-              $((Option<$v2>))?
+            $(
+                /// TODO
+                $variant $((Option<$v2>))?
             ),*
         }
 
         impl $name {
-           pub fn extend_value(self, input: &mut icu_locale_core::extensions::unicode::Value) {
-               match self {
-                   $(
-                       // This is circumventing a limitation of the macro_rules - we need to have a conditional
-                       // $()? case here for when the variant has a value, and macro_rules require us to
-                       // reference the $v2 inside it, but in match case it becomes a variable, so clippy
-                       // complaints.
-                       #[allow(non_snake_case)]
-                       Self::$variant $(($v2))? => {
-                           input.push_subtag(icu_locale_core::subtags::subtag!($key));
+            /// TODO
+            pub fn extend_value(self, input: &mut icu_locale_core::extensions::unicode::Value) {
+                match self {
+                    $(
+                        // This is circumventing a limitation of the macro_rules - we need to have a conditional
+                        // $()? case here for when the variant has a value, and macro_rules require us to
+                        // reference the $v2 inside it, but in match case it becomes a variable, so clippy
+                        // complaints.
+                        #[allow(non_snake_case)]
+                        Self::$variant $(($v2))? => {
+                            input.push_subtag(icu_locale_core::subtags::subtag!($key));
 
-                           $(
-                               if let Some(v2) = $v2 {
-                                   v2.extend_value(input);
-                               }
-                           )?
-                       },
-                   )*
-               }
-           }
-        }
+                            $(
+                                if let Some(v2) = $v2 {
+                                    v2.extend_value(input);
+                                }
+                            )?
+                        },
+                    )*
+                }
+            }
+            }
 
         impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
             type Error = $crate::extensions::unicode::errors::PreferencesParseError;
@@ -79,10 +84,10 @@ macro_rules! enum_keyword {
             }
         }
     };
-    ($name:ident {
+    ($(#[$doc:meta])* $name:ident {
         $($key:expr => $variant:ident $(($v2:ident) {$($subk:expr => $subv:ident),*})?),* $(,)?
     }, $ext_key:literal) => {
-        $crate::enum_keyword!($name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
+        $crate::enum_keyword!($(#[$doc])* $name {$($key => $variant $(($v2) {$($subk => $subv),*})?),*});
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<icu_locale_core::extensions::unicode::Key> {
@@ -102,8 +107,8 @@ macro_rules! enum_keyword {
 
 #[cfg(test)]
 mod tests {
+    use core::str::FromStr;
     use icu_locale_core::extensions::unicode;
-    use std::str::FromStr;
 
     #[test]
     fn enum_keywords_test() {

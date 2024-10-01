@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! TODO
+
 mod calendar;
 mod collation;
 mod currency;
+mod currency_format;
 mod dictionary_break;
 mod emoji;
 mod first_day;
@@ -23,6 +26,7 @@ mod variant;
 pub use calendar::{CalendarAlgorithm, IslamicCalendarAlgorithm};
 pub use collation::CollationType;
 pub use currency::CurrencyType;
+pub use currency_format::CurrencyFormatStyle;
 pub use dictionary_break::DictionaryBreakScriptExclusions;
 pub use emoji::EmojiPresentationStyle;
 pub use first_day::FirstDay;

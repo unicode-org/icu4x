@@ -4,9 +4,11 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(HourCycle {
-    "h11" => H11,
-    "h12" => H12,
-    "h23" => H23,
-    "h24" => H24,
+enum_keyword!(
+    /// TODO
+    HourCycle {
+        "h11" => H11,
+        "h12" => H12,
+        "h23" => H23,
+        "h24" => H24,
 }, "hc");

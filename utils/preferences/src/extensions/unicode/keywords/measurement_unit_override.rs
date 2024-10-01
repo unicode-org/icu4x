@@ -4,8 +4,10 @@
 
 use crate::enum_keyword;
 
-enum_keyword!(MeasurementUnitOverride {
-    "celsius" => Celsius,
-    "kelvin" => Kelvin,
-    "fahrenhe" => Fahrenheit,
+enum_keyword!(
+    /// TODO
+    MeasurementUnitOverride {
+        "celsius" => Celsius,
+        "kelvin" => Kelvin,
+        "fahrenhe" => Fahrenheit,
 }, "mu");

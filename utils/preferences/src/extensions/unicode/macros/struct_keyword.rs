@@ -3,9 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[macro_export]
+/// TODO
 macro_rules! struct_keyword {
-    ($name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
+    ($(#[$doc:meta])* $name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
         #[derive(Debug, Clone, Eq, PartialEq)]
+        #[allow(clippy::exhaustive_structs)] // TODO
+        $(#[$doc])*
         pub struct $name(pub $value);
 
         impl TryFrom<icu_locale_core::extensions::unicode::Value> for $name {
@@ -40,15 +43,16 @@ macro_rules! struct_keyword {
 
 #[cfg(test)]
 mod tests {
+    use core::str::FromStr;
     use icu_locale_core::{
         extensions::unicode,
         subtags::{subtag, Subtag},
     };
-    use std::str::FromStr;
 
     #[test]
     fn struct_keywords_test() {
         struct_keyword!(
+            /// TODO
             DummyKeyword,
             "dk",
             Subtag,
