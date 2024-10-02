@@ -281,9 +281,6 @@ lazy_static::lazy_static! {
         "icu::properties::CodePointMapData::from_code_point_trie",
         "icu::properties::CodePointMapData::to_code_point_trie",
         "icu::properties::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::UnicodeSetData::as_code_point_inversion_list_string_list",
-        "icu::properties::UnicodeSetData::from_code_point_inversion_list_string_list",
-        "icu::properties::UnicodeSetData::to_code_point_inversion_list_string_list",
         "icu::properties::EmojiSetData::as_code_point_inversion_list_string_list",
         "icu::properties::EmojiSetData::from_code_point_inversion_list_string_list",
         "icu::properties::EmojiSetData::to_code_point_inversion_list_string_list",
@@ -342,8 +339,6 @@ lazy_static::lazy_static! {
         "icu::properties::script::ScriptMapperBorrowed::static_to_owned",
         "icu::properties::script::ScriptWithExtensions::as_borrowed",
         "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
-        "icu::properties::UnicodeSetData::as_borrowed",
-        "icu::properties::UnicodeSetDataBorrowed::static_to_owned",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
