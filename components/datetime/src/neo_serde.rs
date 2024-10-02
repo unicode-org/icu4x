@@ -77,11 +77,7 @@ enum FieldSetField {
     Second = 18,
     // Zone Fields
     ZoneGeneric = 32,
-    ZoneGenericShort = 33,
-    ZoneGenericLong = 34,
     ZoneSpecific = 35,
-    ZoneSpecificShort = 36,
-    ZoneSpecificLong = 37,
     ZoneLocation = 38,
     ZoneOffset = 39,
 }

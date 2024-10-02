@@ -25,8 +25,6 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    pub length: Option<icu_datetime::options::length::Bag>,
-    pub components: Option<icu_datetime::options::components::Bag>,
     pub semantic: Option<icu_datetime::neo_skeleton::NeoSkeleton>,
     pub preferences: Option<icu_datetime::options::preferences::Bag>,
 }

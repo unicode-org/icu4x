@@ -4,16 +4,6 @@
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric-day-of-month",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "long-generic"
-                },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGeneric"],
                     "length": "long"
@@ -32,16 +22,6 @@
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric-day-of-month",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "short-generic"
-                },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGeneric"],
                     "length": "long"
@@ -60,16 +40,6 @@
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric-day-of-month",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "short-specific"
-                },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecific"],
                     "length": "long"
@@ -88,16 +58,6 @@
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric-day-of-month",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "long-specific"
-                },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecific"],
                     "length": "long"
@@ -116,16 +76,6 @@
         "input": {
             "value": "2020-01-21T08:25:07.000+05:00",
             "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric-day-of-month",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "offset"
-                },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneOffset"],
                     "length": "long"
@@ -136,32 +86,6 @@
         "output": {
             "values": {
                 "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
-            }
-        }
-    },
-    {
-        "description": "Date time example that includes a week-of for a locale with plural variants as well as one with non default WeekData",
-        "input": {
-            "locale": "en",
-            "value": "2016-04-17T08:25:07.000+05:00",
-            "options": {
-                "components": {
-                    "year": "numeric",
-                    "week": "numeric-week-of-year",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "offset"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "week 17 of 2016, 08:25:07 GMT+05:00",
-                "en-AU": "week 16 of 2016, 08:25:07 GMT+05:00",
-                "en-GB": "week 15 of 2016, 08:25:07 GMT+05:00",
-                "fil": "linggo 17 ng 2016, 08:25:07 GMT+05:00",
-                "en-ZA": "week 17 of 2016, 08:25:07 GMT+05:00"
             }
         }
     }
