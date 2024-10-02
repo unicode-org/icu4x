@@ -1438,8 +1438,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzGenericShortV1Marker::bind(provider),
             &tz::MzSpecificLongV1Marker::bind(provider),
             &tz::MzSpecificShortV1Marker::bind(provider),
-            Some(&ExternalLoaderUnstable(provider)),
-            Some(&ExternalLoaderUnstable(provider)),
+            &ExternalLoaderUnstable(provider),
+            &ExternalLoaderUnstable(provider),
             locale,
             pattern
                 .iter_items()
@@ -1511,8 +1511,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificShortV1Marker::bind(&crate::provider::Baked),
-            Some(&ExternalLoaderCompiledData),
-            Some(&ExternalLoaderCompiledData),
+            &ExternalLoaderCompiledData,
+            &ExternalLoaderCompiledData,
             locale,
             pattern
                 .iter_items()
@@ -1939,6 +1939,9 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         loader: &impl FixedDecimalFormatterLoader,
         locale: &DataLocale,
     ) -> Result<(), DataError> {
+        if self.fixed_decimal_formatter.is_some() {
+            return Ok(());
+        }
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
         self.fixed_decimal_formatter =
@@ -1976,8 +1979,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
-        fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
-        week_calculator_loader: Option<&impl WeekCalculatorLoader>,
+        fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
+        week_calculator_loader: &impl WeekCalculatorLoader,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = FieldForDataLoading>,
     ) -> Result<(), LoadError> {
@@ -2007,10 +2010,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         ResolvedNeoTimeZoneSkeleton::SpecificShort => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                             self.load_time_zone_specific_short_names(
                                 mz_specific_short_provider,
                                 locale,
@@ -2020,10 +2023,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         ResolvedNeoTimeZoneSkeleton::SpecificLong => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                             self.load_time_zone_specific_long_names(
                                 mz_specific_long_provider,
                                 locale,
@@ -2033,10 +2036,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         ResolvedNeoTimeZoneSkeleton::GenericShort => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                             self.load_time_zone_generic_short_names(
                                 mz_generic_short_provider,
                                 locale,
@@ -2051,10 +2054,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         ResolvedNeoTimeZoneSkeleton::GenericLong => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                             self.load_time_zone_generic_long_names(
                                 mz_generic_long_provider,
                                 locale,
@@ -2070,10 +2073,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         | ResolvedNeoTimeZoneSkeleton::Location => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                             self.load_time_zone_exemplar_city_names(
                                 exemplar_cities_provider,
                                 locale,
@@ -2083,10 +2086,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         | ResolvedNeoTimeZoneSkeleton::OffsetLong => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader.unwrap(),
+                                fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .unwrap();
+                            .map_err(LoadError::Data)?;
                         }
                         ResolvedNeoTimeZoneSkeleton::Isox
                         | ResolvedNeoTimeZoneSkeleton::Isoxx
@@ -2148,22 +2151,16 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             };
         }
 
-        if let Some(field) = week_field {
+        if week_field.is_some() {
             self.set_week_calculator(
-                WeekCalculatorLoader::load(
-                    week_calculator_loader.ok_or(LoadError::MissingNames(field))?,
-                    locale,
-                )
-                .map_err(LoadError::Data)?,
+                WeekCalculatorLoader::load(week_calculator_loader, locale)
+                    .map_err(LoadError::Data)?,
             );
         }
 
-        if let Some(field) = numeric_field.or(week_field) {
-            self.load_fixed_decimal_formatter(
-                fixed_decimal_formatter_loader.ok_or(LoadError::MissingNames(field))?,
-                locale,
-            )
-            .map_err(LoadError::Data)?;
+        if numeric_field.or(week_field).is_some() {
+            self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, locale)
+                .map_err(LoadError::Data)?;
         }
 
         Ok(())
