@@ -232,6 +232,6 @@ pub(crate) trait ZoneSymbols<'data> {
 
 impl<'data> ZoneSymbols<'data> for () {
     fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data> {
-        TimeZoneDataPayloadsBorrowed::empty()
+        TimeZoneDataPayloadsBorrowed::default()
     }
 }

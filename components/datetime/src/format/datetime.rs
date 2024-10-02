@@ -12,10 +12,7 @@ use crate::provider::date_time::{
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::time_zone::{
-    Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
-    FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
-    GenericNonLocationShortFormat, Iso8601Format, LocalizedOffsetFormat,
-    SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
+    FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
     TimeZoneFormatterUnit,
 };
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
@@ -671,7 +668,12 @@ where
     ) -> fmt::Result {
         match offset {
             Some(offset) => w.with_part(Part::ERROR, |w| {
-                Iso8601Format::default_for_fallback().format_infallible(w, offset)
+                Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }
+                .format_infallible(w, offset)
             }),
             None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
         }
@@ -712,174 +714,159 @@ where
 
 /// Given a [`ResolvedNeoTimeZoneSkeleton`], select the formatter units
 fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZoneFormatterUnit>; 3] {
-    // Select which formatters to try based on the field.
-    let mut formatters = (
-        None,
-        None,
-        // Friendly Localized offset Format (requires "essentials" data)
-        Some(TimeZoneFormatterUnit::WithFallback(
-            FallbackTimeZoneFormatterUnit::LocalizedOffset(LocalizedOffsetFormat {}),
-        )),
-    );
     match time_zone {
         // `z..zzz`
-        ResolvedNeoTimeZoneSkeleton::SpecificShort => {
-            formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationShort(
-                SpecificNonLocationShortFormat {},
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::SpecificShort => [
+            Some(TimeZoneFormatterUnit::SpecificNonLocationShort),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            None,
+        ],
         // `zzzz`
-        ResolvedNeoTimeZoneSkeleton::SpecificLong => {
-            formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationLong(
-                SpecificNonLocationLongFormat {},
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::SpecificLong => [
+            Some(TimeZoneFormatterUnit::SpecificNonLocationLong),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            None,
+        ],
         // 'v'
-        ResolvedNeoTimeZoneSkeleton::GenericShort => {
-            formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationShort(
-                GenericNonLocationShortFormat {},
-            ));
-            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
-                GenericLocationFormat {},
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::GenericShort => [
+            Some(TimeZoneFormatterUnit::GenericNonLocationShort),
+            Some(TimeZoneFormatterUnit::GenericLocation),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+        ],
         // 'vvvv'
-        ResolvedNeoTimeZoneSkeleton::GenericLong => {
-            formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationLong(
-                GenericNonLocationLongFormat {},
-            ));
-            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
-                GenericLocationFormat {},
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::GenericLong => [
+            Some(TimeZoneFormatterUnit::GenericNonLocationLong),
+            Some(TimeZoneFormatterUnit::GenericLocation),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+        ],
         // 'VVV'
-        ResolvedNeoTimeZoneSkeleton::City => {
-            formatters.0 = Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
-        }
+        ResolvedNeoTimeZoneSkeleton::City => [
+            Some(TimeZoneFormatterUnit::ExemplarCity),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            None,
+        ],
         // 'VVVV'
-        ResolvedNeoTimeZoneSkeleton::Location => {
-            formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(
-                GenericLocationFormat {},
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::Location => [
+            Some(TimeZoneFormatterUnit::GenericLocation),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            None,
+        ],
         // `O`
+        // TODO: For now, use the long format. This should be GMT-8
         ResolvedNeoTimeZoneSkeleton::OffsetShort => {
-            // TODO: For now, use the long format. This should be GMT-8
+            [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
         }
         // `OOOO`, `ZZZZ`
         ResolvedNeoTimeZoneSkeleton::OffsetLong => {
-            // no-op
+            [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
         }
         // 'V'
-        ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}));
-        }
+        ResolvedNeoTimeZoneSkeleton::Bcp47Id => [
+            Some(TimeZoneFormatterUnit::Bcp47Id),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            None,
+        ],
         // 'X'
-        ResolvedNeoTimeZoneSkeleton::IsoX => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Optional,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::IsoX => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Optional,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'XX'
-        ResolvedNeoTimeZoneSkeleton::IsoXX => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::IsoXX => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'XXX'
-        ResolvedNeoTimeZoneSkeleton::IsoXXX => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::IsoXXX => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::UtcExtended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'XXXX'
-        ResolvedNeoTimeZoneSkeleton::IsoXXXX => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::IsoXXXX => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            })),
+            None,
+            None,
+        ],
         // 'XXXXX', 'ZZZZZ'
-        ResolvedNeoTimeZoneSkeleton::IsoXXXXX => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::IsoXXXXX => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::UtcExtended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            })),
+            None,
+            None,
+        ],
         // 'x'
-        ResolvedNeoTimeZoneSkeleton::Isox => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Optional,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::Isox => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Optional,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'xx'
-        ResolvedNeoTimeZoneSkeleton::Isoxx => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::Isoxx => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'xxx'
-        ResolvedNeoTimeZoneSkeleton::Isoxxx => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::Isoxxx => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::Extended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            })),
+            None,
+            None,
+        ],
         // 'xxxx', 'Z', 'ZZ', 'ZZZ'
-        ResolvedNeoTimeZoneSkeleton::Isoxxxx => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }),
-            ));
-        }
+        ResolvedNeoTimeZoneSkeleton::Isoxxxx => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            })),
+            None,
+            None,
+        ],
         // 'xxxxx', 'ZZZZZ'
-        ResolvedNeoTimeZoneSkeleton::Isoxxxxx => {
-            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }),
-            ));
-        }
-    };
-    // TODO:
-    // `VV` "America/Los_Angeles"
-    // Generic Partial Location: "Pacific Time (Los Angeles)"
-    // All `x` and `X` formats
-    [formatters.0, formatters.1, formatters.2]
+        ResolvedNeoTimeZoneSkeleton::Isoxxxxx => [
+            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                format: IsoFormat::Extended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            })),
+            None,
+            None,
+        ],
+    }
 }
 
 /// Perform the formatting given all of the resolved parameters
@@ -892,13 +879,8 @@ fn do_write_zone<W>(
 where
     W: writeable::PartsWrite + ?Sized,
 {
-    let [mut f0, mut f1, mut f2] = units;
-    Ok(loop {
-        let Some(formatter) = f0.take().or_else(|| f1.take()).or_else(|| f2.take()) else {
-            break Err(());
-        };
+    for formatter in units.into_iter().flatten() {
         match formatter.format(w, input, payloads)? {
-            Ok(()) => break Ok(()),
             Err(FormatTimeZoneError::MissingInputField(_)) => {
                 // The time zone input doesn't have the fields for this formatter.
                 // TODO: What behavior makes the most sense here?
@@ -916,8 +898,11 @@ where
                 // We can keep trying other formatters.
                 continue;
             }
+            Ok(()) => return Ok(Ok(())),
         }
-    })
+    }
+
+    Ok(Err(()))
 }
 
 #[cfg(test)]
