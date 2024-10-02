@@ -56,7 +56,7 @@ fn get_basic_bench(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    g.bench_function("ZeroMap/usize", |b| {
+    g.bench_function("ZeroMap/u32", |b| {
         let zm: ZeroMap<[u8], u32> = data.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
             for (key, expected) in black_box(data) {
@@ -154,7 +154,7 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
     });
 
     #[cfg(feature = "bench")]
-    g.bench_function("ZeroMap/usize", |b| {
+    g.bench_function("ZeroMap/u32", |b| {
         let zm: ZeroMap<[u8], u32> = litemap.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
