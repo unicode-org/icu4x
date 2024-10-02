@@ -122,7 +122,7 @@ macro_rules! impl_iterable_data_provider {
 }
 
 impl_iterable_data_provider!(
-    TimeZoneFormatsV1Marker,
+    TimeZoneEssentialsV1Marker,
     ExemplarCitiesV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
@@ -155,7 +155,7 @@ mod tests {
 
         let provider = SourceDataProvider::new_testing();
 
-        let time_zone_formats: DataResponse<TimeZoneFormatsV1Marker> = provider
+        let time_zone_formats: DataResponse<TimeZoneEssentialsV1Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()

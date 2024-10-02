@@ -26,6 +26,7 @@ fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
 icu_locale_core = { workspace = true }
+icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
@@ -74,6 +75,7 @@ serde = [
     "dep:serde",
     "icu_calendar/serde",
     "icu_decimal/serde",
+    "icu_pattern/serde",
     "icu_plurals/serde",
     "icu_provider/serde",
     "icu_timezone/serde",
@@ -87,6 +89,7 @@ datagen = [
     "dep:databake",
     "dep:litemap",
     "icu_calendar/datagen",
+    "icu_pattern/databake",
     "icu_plurals/datagen",
     "icu_timezone/datagen",
     "serde",

@@ -10,12 +10,11 @@ use crate::{
     provider,
 };
 use alloc::borrow::Cow;
-use alloc::string::String;
 use core::fmt;
 use icu_timezone::TimeZoneBcp47Id;
 use icu_timezone::UtcOffset;
 use tinystr::tinystr;
-use writeable::{adapters::CoreWriteAsPartsWrite, Writeable};
+use writeable::Writeable;
 
 /// All time zone styles that this crate can format
 #[derive(Debug, Copy, Clone)]
@@ -57,7 +56,7 @@ impl ResolvedNeoTimeZoneSkeleton {
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneFormatsV1<'a>>,
+    pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
@@ -500,45 +499,40 @@ impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
             sink.write_str(&zone_formats.offset_zero_format)?;
             Ok(())
         } else {
-            // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-            let mut scratch = String::new();
-            sink.write_str(
-                &zone_formats
-                    .offset_format
-                    .replace(
-                        "{0}",
-                        if offset.is_positive() {
-                            &zone_formats.hour_format.0
-                        } else {
-                            &zone_formats.hour_format.1
-                        },
-                    )
-                    // support all combos of "(HH|H):mm" by replacing longest patterns first.
-                    .replace("HH", {
-                        scratch.clear();
-                        let _infallible = format_offset_hours(
-                            &mut CoreWriteAsPartsWrite(&mut scratch),
-                            offset,
-                            ZeroPadding::On,
-                        );
-                        &scratch
-                    })
-                    .replace("mm", {
-                        scratch.clear();
-                        let _infallible =
-                            format_offset_minutes(&mut CoreWriteAsPartsWrite(&mut scratch), offset);
-                        &scratch
-                    })
-                    .replace('H', {
-                        scratch.clear();
-                        let _infallible = format_offset_hours(
-                            &mut CoreWriteAsPartsWrite(&mut scratch),
-                            offset,
-                            ZeroPadding::Off,
-                        );
-                        &scratch
-                    }),
-            )?;
+            struct FormattedHour<'a> {
+                format_str: &'a str,
+                offset: UtcOffset,
+            }
+
+            impl Writeable for FormattedHour<'_> {
+                fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+                    &self,
+                    sink: &mut S,
+                ) -> fmt::Result {
+                    for c in self.format_str.chars() {
+                        match c {
+                            'H' => format_offset_hours(sink, self.offset, ZeroPadding::On)?,
+                            'h' => format_offset_hours(sink, self.offset, ZeroPadding::Off)?,
+                            'm' => format_offset_minutes(sink, self.offset)?,
+                            c => sink.write_char(c)?,
+                        }
+                    }
+                    Ok(())
+                }
+            }
+
+            zone_formats
+                .offset_format
+                .interpolate([FormattedHour {
+                    format_str: if offset.is_positive() {
+                        &zone_formats.hour_format.0
+                    } else {
+                        &zone_formats.hour_format.1
+                    },
+                    offset,
+                }])
+                .write_to(sink)?;
+
             Ok(())
         })
     }
@@ -574,16 +568,20 @@ impl FormatTimeZone for GenericLocationFormat {
         let Some(zone_formats) = data_payloads.zone_formats else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-        let formatted_time_zone: Option<alloc::string::String> = data_payloads
+        let Some(location) = data_payloads
             .exemplar_cities
             .as_ref()
             .and_then(|cities| input.time_zone_id.and_then(|id| cities.0.get(&id)))
-            .map(|location| zone_formats.region_format.replace("{0}", location));
-        Ok(match formatted_time_zone {
-            Some(ftz) => Ok(sink.write_str(&ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
-        })
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        zone_formats
+            .region_format
+            .interpolate([location])
+            .write_to(sink)?;
+
+        Ok(Ok(()))
     }
 }
 

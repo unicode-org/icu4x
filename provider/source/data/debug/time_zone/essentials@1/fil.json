@@ -1,0 +1,53 @@
+{
+  "hour_format": [
+    "+H:m",
+    "-H:m"
+  ],
+  "offset_format": [
+    {
+      "Literal": "GMT"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "offset_zero_format": "GMT",
+  "region_format": [
+    {
+      "Literal": "Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "region_format_st": [
+    {
+      "Literal": "Standard na Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Literal": "Daylight Time ng "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "fallback_format": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

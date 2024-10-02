@@ -42,8 +42,8 @@ include!("japanese_extended_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("persian_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("roc_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("time_neo_skeleton_patterns_v1_marker.rs.data");
+include!("time_zone_essentials_v1_marker.rs.data");
 include!("exemplar_cities_v1_marker.rs.data");
-include!("time_zone_formats_v1_marker.rs.data");
 include!("metazone_generic_names_long_v1_marker.rs.data");
 include!("metazone_generic_names_short_v1_marker.rs.data");
 include!("metazone_specific_names_long_v1_marker.rs.data");
@@ -120,8 +120,8 @@ macro_rules! impl_data_provider {
         impl_persian_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_roc_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_time_neo_skeleton_patterns_v1_marker!($provider);
+        impl_time_zone_essentials_v1_marker!($provider);
         impl_exemplar_cities_v1_marker!($provider);
-        impl_time_zone_formats_v1_marker!($provider);
         impl_metazone_generic_names_long_v1_marker!($provider);
         impl_metazone_generic_names_short_v1_marker!($provider);
         impl_metazone_specific_names_long_v1_marker!($provider);
@@ -178,8 +178,8 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::time_zones::TimeZoneEssentialsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::TimeZoneEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
