@@ -11,6 +11,7 @@ use core::{
 use super::RangeError;
 use crate::codepointinvlist::utils::deconstruct_range;
 use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use potential_utf::PotentialCodePoint;
 use zerovec::ZeroVec;
 
 fn try_from_range<'data>(
@@ -18,8 +19,11 @@ fn try_from_range<'data>(
 ) -> Result<CodePointInversionList<'data>, RangeError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
-        let set = [from, till];
-        let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&set);
+        let set = [
+            PotentialCodePoint::from_u24(from),
+            PotentialCodePoint::from_u24(till),
+        ];
+        let inv_list: ZeroVec<PotentialCodePoint> = ZeroVec::alloc_from_slice(&set);
         #[allow(clippy::unwrap_used)] // valid
         Ok(CodePointInversionList::try_from_inversion_list(inv_list).unwrap())
     } else {
@@ -168,7 +172,7 @@ mod tests {
             0xC000..=0xFFFF,
         ];
         let expected =
-            CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+            CodePointInversionList::try_clone_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
         let actual = CodePointInversionList::from_iter(ranges);
         assert_eq!(expected, actual);
     }

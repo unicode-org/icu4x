@@ -1166,6 +1166,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_properties",
  "postcard",
+ "potential_utf",
  "serde",
  "serde_json",
  "toml",
