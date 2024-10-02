@@ -58,7 +58,7 @@ impl ResolvedNeoTimeZoneSkeleton {
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
+    pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
@@ -414,11 +414,11 @@ impl FormatOffset for LongLocalizedOffsetFormat {
         offset: UtcOffset,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         Ok(if offset.is_zero() {
-            sink.write_str(&zone_formats.offset_zero_format)?;
+            sink.write_str(&essentials.offset_zero_format)?;
             Ok(())
         } else {
             struct FormattedHour<'a> {
@@ -443,13 +443,13 @@ impl FormatOffset for LongLocalizedOffsetFormat {
                 }
             }
 
-            zone_formats
+            essentials
                 .offset_format
                 .interpolate([FormattedHour {
                     format_str: if offset.is_positive() {
-                        &zone_formats.hour_format.0
+                        &essentials.hour_format.0
                     } else {
-                        &zone_formats.hour_format.1
+                        &essentials.hour_format.1
                     },
                     offset,
                 }])
@@ -476,11 +476,11 @@ impl FormatOffset for ShortLocalizedOffsetFormat {
         offset: UtcOffset,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         Ok(if offset.is_zero() {
-            sink.write_str(&zone_formats.offset_zero_format)?;
+            sink.write_str(&essentials.offset_zero_format)?;
             Ok(())
         } else {
             struct FormattedHour<'a> {
@@ -514,13 +514,13 @@ impl FormatOffset for ShortLocalizedOffsetFormat {
                 }
             }
 
-            zone_formats
+            essentials
                 .offset_format
                 .interpolate([FormattedHour {
                     format_str: if offset.is_positive() {
-                        &zone_formats.hour_format.0
+                        &essentials.hour_format.0
                     } else {
-                        &zone_formats.hour_format.1
+                        &essentials.hour_format.1
                     },
                     offset,
                 }])
@@ -547,7 +547,7 @@ impl FormatTimeZone for GenericLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
@@ -558,7 +558,7 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
-        zone_formats
+        essentials
             .region_format
             .interpolate([location])
             .write_to(sink)?;
@@ -586,7 +586,7 @@ impl FormatTimeZone for SpecificLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
@@ -598,14 +598,14 @@ impl FormatTimeZone for SpecificLocationFormat {
         };
 
         Ok(if zone_variant == ZoneVariant::daylight() {
-            zone_formats
+            essentials
                 .region_format_dt
                 .interpolate([location])
                 .write_to(sink)?;
 
             Ok(())
         } else if zone_variant == ZoneVariant::standard() {
-            zone_formats
+            essentials
                 .region_format_st
                 .interpolate([location])
                 .write_to(sink)?;
@@ -613,7 +613,7 @@ impl FormatTimeZone for SpecificLocationFormat {
             Ok(())
         } else {
             sink.with_part(writeable::Part::ERROR, |sink| {
-                zone_formats
+                essentials
                     .region_format
                     .interpolate([location])
                     .write_to(sink)

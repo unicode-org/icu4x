@@ -2522,7 +2522,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
 impl<'data> ZoneSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
     fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
         TimeZoneDataPayloadsBorrowed {
-            zone_formats: self.zone_essentials.get_option(),
+            essentials: self.zone_essentials.get_option(),
             exemplar_cities: self.exemplar_cities.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
