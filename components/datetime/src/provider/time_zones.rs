@@ -7,7 +7,6 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
 pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
@@ -75,7 +74,7 @@ pub struct TimeZoneEssentialsV1<'data> {
     /// e.g. daylight, standard.
     // CURRENLY UNUSED
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub region_format_variants: ZeroMap<'data, TinyStr8, SinglePlaceholderPattern>,
+    pub region_format_variants: ZeroMap<'data, ZoneVariant, SinglePlaceholderPattern>,
     /// Metazone Name with Location Pattern.
     // CURRENLY UNUSED
     #[cfg_attr(

@@ -21,7 +21,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Placeholder": "Singleton"
       },
@@ -29,7 +29,7 @@
         "Literal": " 𑄘𑄨𑄝𑄪𑄌𑄴𑄎𑄳𑄠 𑄃𑄧𑄇𑄴𑄖𑄧𑄖𑄴"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Placeholder": "Singleton"
       },

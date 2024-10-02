@@ -21,7 +21,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Literal": "Daylight Time ng "
       },
@@ -29,7 +29,7 @@
         "Placeholder": "Singleton"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Literal": "Standard na Oras sa "
       },

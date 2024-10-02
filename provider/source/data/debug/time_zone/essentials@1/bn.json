@@ -21,7 +21,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Placeholder": "Singleton"
       },
@@ -29,7 +29,7 @@
         "Literal": " দিবালোক সময়"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Placeholder": "Singleton"
       },

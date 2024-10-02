@@ -18,7 +18,6 @@ use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use tinystr::TinyStr8;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -75,12 +74,13 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 region_format_variants: time_zone_names
                     .region_format_variants
                     .iter()
-                    .map(|(key, value)| {
-                        (
-                            key.parse::<TinyStr8>()
-                                .expect("Time-zone variant was not compatible with TinyStr8"),
-                            Cow::Owned(value.0.clone()),
-                        )
+                    .filter_map(|(key, value)| {
+                        let key = match key.as_str() {
+                            "daylight" => ZoneVariant::daylight(),
+                            "standard" => ZoneVariant::standard(),
+                            _ => return None,
+                        };
+                        Some((key, Cow::Owned(value.0.clone())))
                     })
                     .collect(),
                 fallback_format: Cow::Owned(time_zone_names.fallback_format.0.clone()),

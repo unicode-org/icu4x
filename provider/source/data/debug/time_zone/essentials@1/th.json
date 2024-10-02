@@ -21,7 +21,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Literal": "เวลาออมแสง"
       },
@@ -29,7 +29,7 @@
         "Placeholder": "Singleton"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Literal": "เวลามาตรฐาน"
       },

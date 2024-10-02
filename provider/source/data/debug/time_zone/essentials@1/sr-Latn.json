@@ -18,7 +18,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Placeholder": "Singleton"
       },
@@ -26,7 +26,7 @@
         "Literal": ", letnje vreme"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Placeholder": "Singleton"
       },

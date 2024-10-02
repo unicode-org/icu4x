@@ -21,7 +21,7 @@
     }
   ],
   "region_format_variants": {
-    "daylight": [
+    "dt": [
       {
         "Literal": "توقيت "
       },
@@ -32,7 +32,7 @@
         "Literal": " الصيفي"
       }
     ],
-    "standard": [
+    "st": [
       {
         "Literal": "توقيت "
       },
