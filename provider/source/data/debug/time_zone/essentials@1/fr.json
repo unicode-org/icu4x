@@ -1,0 +1,55 @@
+{
+  "hour_format": [
+    "+H:m",
+    "−H:m"
+  ],
+  "offset_format": [
+    {
+      "Literal": "UTC"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "offset_zero_format": "UTC",
+  "region_format": [
+    {
+      "Literal": "heure : "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "region_format_variants": {
+    "daylight": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " (heure d’été)"
+      }
+    ],
+    "standard": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " (heure standard)"
+      }
+    ]
+  },
+  "fallback_format": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

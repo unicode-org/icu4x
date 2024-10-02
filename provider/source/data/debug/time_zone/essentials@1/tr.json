@@ -1,0 +1,55 @@
+{
+  "hour_format": [
+    "+H:m",
+    "-H:m"
+  ],
+  "offset_format": [
+    {
+      "Literal": "GMT"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "offset_zero_format": "GMT",
+  "region_format": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Saati"
+    }
+  ],
+  "region_format_variants": {
+    "daylight": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " Yaz Saati"
+      }
+    ],
+    "standard": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " Standart Saati"
+      }
+    ]
+  },
+  "fallback_format": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

@@ -32,9 +32,12 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
         .or_else(|| zone_format.0.get("standard"))
 }
 
-impl DataProvider<TimeZoneFormatsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneFormatsV1Marker>, DataError> {
-        self.check_req::<TimeZoneFormatsV1Marker>(req)?;
+impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimeZoneEssentialsV1Marker>, DataError> {
+        self.check_req::<TimeZoneEssentialsV1Marker>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -49,20 +52,26 @@ impl DataProvider<TimeZoneFormatsV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
-            // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
+            // e.g. "+HH:mm;-hh:mm" -> ("+H:m", "-h:m")
             let index = hour_format.rfind(';').unwrap();
-            let positive = hour_format[0..index].to_owned();
-            let negative = hour_format[index + 1..].to_owned();
+            let positive = hour_format[0..index]
+                .replace("H", "h")
+                .replace("hh", "H")
+                .replace("mm", "m");
+            let negative = hour_format[index + 1..]
+                .replace("H", "h")
+                .replace("hh", "H")
+                .replace("mm", "m");
             (Cow::Owned(positive), Cow::Owned(negative))
         }
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(TimeZoneFormatsV1 {
+            payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
                 hour_format: parse_hour_format(&time_zone_names.hour_format),
-                offset_format: time_zone_names.gmt_format.clone().into(),
+                offset_format: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero_format: time_zone_names.gmt_zero_format.clone().into(),
-                region_format: time_zone_names.region_format.clone().into(),
+                region_format: Cow::Owned(time_zone_names.region_format.0.clone()),
                 region_format_variants: time_zone_names
                     .region_format_variants
                     .iter()
@@ -70,11 +79,11 @@ impl DataProvider<TimeZoneFormatsV1Marker> for SourceDataProvider {
                         (
                             key.parse::<TinyStr8>()
                                 .expect("Time-zone variant was not compatible with TinyStr8"),
-                            value.clone(),
+                            Cow::Owned(value.0.clone()),
                         )
                     })
                     .collect(),
-                fallback_format: time_zone_names.fallback_format.clone().into(),
+                fallback_format: Cow::Owned(time_zone_names.fallback_format.0.clone()),
             }),
         })
     }

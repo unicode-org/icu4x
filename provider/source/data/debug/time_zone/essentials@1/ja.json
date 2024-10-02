@@ -1,0 +1,55 @@
+{
+  "hour_format": [
+    "+H:m",
+    "-H:m"
+  ],
+  "offset_format": [
+    {
+      "Literal": "GMT"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "offset_zero_format": "GMT",
+  "region_format": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "時間"
+    }
+  ],
+  "region_format_variants": {
+    "daylight": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "夏時間"
+      }
+    ],
+    "standard": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "標準時"
+      }
+    ]
+  },
+  "fallback_format": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": "（"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "）"
+    }
+  ]
+}
