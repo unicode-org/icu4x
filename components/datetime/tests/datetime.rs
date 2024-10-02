@@ -453,7 +453,6 @@ fn test_time_zone_format_configs() {
         for TimeZoneExpectation {
             patterns: _,
             configs,
-            fallback_formats,
             expected,
         } in &test.expectations
         {
@@ -463,7 +462,7 @@ fn test_time_zone_format_configs() {
                     continue;
                 }
                 let (skeleton, length) = config_input.to_semantic_skeleton();
-                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                for expect in expected {
                     let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
                         &data_locale,
                         skeleton,
@@ -477,13 +476,11 @@ fn test_time_zone_format_configs() {
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
-                    config: `{:?}`,\n\
-                    fallback: `{:?}`\n
+                    config: `{:?}`,\n
                     ",
                         data_locale,
                         test.datetime,
                         config_input,
-                        fallback_format
                     );
                 }
             }
@@ -524,13 +521,12 @@ fn test_time_zone_patterns() {
         for TimeZoneExpectation {
             patterns,
             configs: _,
-            fallback_formats,
             expected,
         } in &test.expectations
         {
             for pattern_input in patterns {
                 let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
-                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                for expect in expected.iter() {
                     println!(".");
                     let mut pattern_formatter =
                         TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
@@ -548,12 +544,10 @@ fn test_time_zone_patterns() {
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
-                    pattern:  `{}`\n\
-                    fallback: `{:?}`\n",
+                    pattern:  `{}`",
                         locale,
                         test.datetime,
                         pattern_input,
-                        fallback_format,
                     );
                 }
             }
