@@ -12,7 +12,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["PDT"]
       },
       {
@@ -22,7 +21,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Pacific Daylight Time"]
       },
       {
@@ -34,7 +32,6 @@
         "configs": [
 
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["-0700"]
       },
       {
@@ -46,7 +43,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT-07:00"]
       },
       {
@@ -62,7 +58,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["-07:00"]
       },
       {
@@ -72,7 +67,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["PT"]
       },
       {
@@ -82,7 +76,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Pacific Time"]
       },
       {
@@ -90,7 +83,6 @@
           "VVV"
         ],
         "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Los Angeles"]
       },
       {
@@ -100,7 +92,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Los Angeles Time"]
       },
       {
@@ -117,7 +108,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["-07"]
       },
       {
@@ -136,7 +126,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["-0700"]
       },
       {
@@ -155,7 +144,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["-07:00"]
       }
     ]
@@ -169,7 +157,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+01:00"]
       },
       {
@@ -177,7 +164,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["British Summer Time"]
       },
       {
@@ -185,7 +171,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+01:00"]
       },
       {
@@ -199,7 +184,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01:00"]
       },
       {
@@ -207,7 +191,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT"]
       },
       {
@@ -215,7 +198,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Greenwich Mean Time"]
       },
       {
@@ -223,7 +205,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["London Time"]
       },
       {
@@ -237,7 +218,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01"]
       },
       {
@@ -251,7 +231,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0100"]
       },
       {
@@ -265,7 +244,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01:00"]
       }
     ]
@@ -279,7 +257,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+01:00"]
       },
       {
@@ -287,7 +264,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Irish Standard Time"]
       },
       {
@@ -295,7 +271,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+01:00"]
       },
       {
@@ -309,7 +284,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01:00"]
       },
       {
@@ -317,7 +291,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT"]
       },
       {
@@ -325,7 +298,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Greenwich Mean Time"]
       },
       {
@@ -333,7 +305,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Dublin Time"]
       },
       {
@@ -347,7 +318,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01"]
       },
       {
@@ -361,7 +331,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0100"]
       },
       {
@@ -375,7 +344,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+01:00"]
       }
     ]
@@ -393,7 +361,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["JST"]
       },
       {
@@ -403,7 +370,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["日本標準時"]
       },
       {
@@ -421,7 +387,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0900"]
       },
       {
@@ -433,7 +398,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+09:00"]
       },
       {
@@ -449,7 +413,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+09:00"]
       },
       {
@@ -459,7 +422,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["JST"]
       },
       {
@@ -469,7 +431,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["日本時間"]
       },
       {
@@ -477,7 +438,6 @@
           "VVV"
         ],
         "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["東京"]
       },
       {
@@ -487,7 +447,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["東京時間"]
       },
       {
@@ -504,7 +463,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+09"]
       },
       {
@@ -523,7 +481,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0900"]
       },
       {
@@ -542,7 +499,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+09:00"]
       }
     ]
@@ -560,7 +516,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT"]
       },
       {
@@ -570,7 +525,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Среднее время по Гринвичу"]
       },
       {
@@ -588,7 +542,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0000"]
       },
       {
@@ -600,7 +553,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT"]
       },
       {
@@ -616,7 +568,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Z"]
       },
       {
@@ -626,7 +577,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Тролль"]
       },
       {
@@ -636,7 +586,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Среднее время по Гринвичу"]
       },
       {
@@ -644,7 +593,6 @@
           "VVV"
         ],
         "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Тролль"]
       },
       {
@@ -654,7 +602,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Тролль"]
       },
       {
@@ -670,7 +617,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Z"]
       },
       {
@@ -686,7 +632,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+00"]
       },
       {
@@ -703,7 +648,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Z"]
       },
       {
@@ -720,7 +664,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0000"]
       },
       {
@@ -737,7 +680,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Z"]
       },
       {
@@ -754,7 +696,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+00:00"]
       }
     ]
@@ -772,7 +713,6 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+05:45"]
       },
       {
@@ -782,7 +722,6 @@
         "configs": [
           "SpecificNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Непал време"]
       },
       {
@@ -800,7 +739,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0545"]
       },
       {
@@ -812,7 +750,6 @@
         "configs": [
           "LocalizedOffset"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["GMT+05:45"]
       },
       {
@@ -828,7 +765,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+05:45"]
       },
       {
@@ -838,7 +774,6 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Катманду"]
       },
       {
@@ -848,7 +783,6 @@
         "configs": [
           "GenericNonLocationLong"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Непал време"]
       },
       {
@@ -856,7 +790,6 @@
           "VVV"
         ],
         "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Катманду"]
       },
       {
@@ -866,7 +799,6 @@
         "configs": [
           "GenericLocation"
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["Катманду"]
       },
       {
@@ -883,7 +815,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0545"]
       },
       {
@@ -902,7 +833,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+0545"]
       },
       {
@@ -921,7 +851,6 @@
             ]
           }
         ],
-        "fallback_formats": ["LocalizedOffset"],
         "expected": ["+05:45"]
       }
     ]

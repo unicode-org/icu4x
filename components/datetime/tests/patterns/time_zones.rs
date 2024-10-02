@@ -19,7 +19,6 @@ pub struct TimeZoneTest {
 pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
     pub configs: Vec<TimeZoneFormatterConfig>,
-    pub fallback_formats: Vec<FallbackFormat>,
     pub expected: Vec<String>,
 }
 
