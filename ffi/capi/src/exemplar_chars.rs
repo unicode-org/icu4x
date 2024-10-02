@@ -22,18 +22,19 @@ pub mod ffi {
     impl ExemplarCharacters {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(
-            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains,
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains_str,
             FnInStruct
         )]
-        pub fn contains(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::attr(supports = method_overloading, rename = "contains")]
+        pub fn contains_str(&self, s: &DiplomatStr) -> bool {
             let Ok(s) = core::str::from_utf8(s) else {
                 return false;
             };
-            self.0.as_borrowed().contains(s)
+            self.0.as_borrowed().contains_str(s)
         }
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(
-            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains_char,
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains,
             FnInStruct
         )]
         #[diplomat::rust_link(
@@ -41,7 +42,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
             self.0.as_borrowed().contains32(cp)
         }
 

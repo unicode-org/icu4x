@@ -85,7 +85,7 @@ where
         .filter(|&name_field| name_field.kind == kind)
         .find_map(|&name_field| {
             person_name.get(name_field).chars().find_map(|c| {
-                let char_script = swe.get_script_val(c as u32);
+                let char_script = swe.get_script_val(c);
                 match char_script {
                     Script::Common | Script::Unknown | Script::Inherited => None,
                     _ => Some(char_script),

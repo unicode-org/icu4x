@@ -142,17 +142,17 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains("bmp_max"));
-    /// assert!(cpilsl.contains(""));
-    /// assert!(cpilsl.contains("A"));
-    /// assert!(cpilsl.contains("ቔ"));  // U+1254 ETHIOPIC SYLLABLE QHEE
-    /// assert!(!cpilsl.contains("bazinga!"));
+    /// assert!(cpilsl.contains_str("bmp_max"));
+    /// assert!(cpilsl.contains_str(""));
+    /// assert!(cpilsl.contains_str("A"));
+    /// assert!(cpilsl.contains_str("ቔ"));  // U+1254 ETHIOPIC SYLLABLE QHEE
+    /// assert!(!cpilsl.contains_str("bazinga!"));
     /// ```
-    pub fn contains(&self, s: &str) -> bool {
+    pub fn contains_str(&self, s: &str) -> bool {
         let mut chars = s.chars();
         if let Some(first_char) = chars.next() {
             if chars.next().is_none() {
-                return self.contains_char(first_char);
+                return self.contains(first_char);
             }
         }
         self.str_list.binary_search(s).is_ok()
@@ -196,11 +196,11 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains_char('A'));
-    /// assert!(cpilsl.contains_char('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
-    /// assert!(!cpilsl.contains_char('\u{1_0000}'));
-    /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
-    pub fn contains_char(&self, ch: char) -> bool {
+    /// assert!(cpilsl.contains('A'));
+    /// assert!(cpilsl.contains('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
+    /// assert!(!cpilsl.contains('\u{1_0000}'));
+    /// assert!(!cpilsl.contains('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
+    pub fn contains(&self, ch: char) -> bool {
         self.contains32(ch as u32)
     }
 
@@ -353,14 +353,14 @@ mod tests {
         assert_eq!(cpilsl_1, cpilsl_2);
 
         assert!(cpilsl_1.has_strings());
-        assert!(cpilsl_1.contains("abc"));
-        assert!(cpilsl_1.contains("xyz"));
-        assert!(!cpilsl_1.contains("def"));
+        assert!(cpilsl_1.contains_str("abc"));
+        assert!(cpilsl_1.contains_str("xyz"));
+        assert!(!cpilsl_1.contains_str("def"));
 
         assert_eq!(1, cpilsl_1.cp_inv_list.size());
-        assert!(cpilsl_1.contains_char('a'));
-        assert!(!cpilsl_1.contains_char('0'));
-        assert!(!cpilsl_1.contains_char('q'));
+        assert!(cpilsl_1.contains('a'));
+        assert!(!cpilsl_1.contains('0'));
+        assert!(!cpilsl_1.contains('q'));
 
         assert_eq!(3, cpilsl_1.size());
     }

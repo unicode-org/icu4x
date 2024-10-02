@@ -142,17 +142,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
         self.set.contains(ch)
     }
 
-    /// Check if the set contains a character as a UTF32 code unit
-    ///
-    /// ```rust
-    /// use icu::properties::CodePointSetData;
-    /// use icu::properties::props::Alphabetic;
-    ///
-    /// let alphabetic = CodePointSetData::new::<Alphabetic>();
-    ///
-    /// assert!(!alphabetic.contains32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
+    /// See [`Self::contains`].
     #[inline]
     pub fn contains32(self, ch: u32) -> bool {
         self.set.contains32(ch)

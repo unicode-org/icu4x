@@ -1484,7 +1484,7 @@ where
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
-/// assert!(set.contains_char('z'));
+/// assert!(set.contains('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
 /// ```
@@ -1539,7 +1539,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// let (set, consumed) = parse_with_variables(source, &variable_map).unwrap();
 /// assert_eq!(consumed, source.len());
 /// assert!(set.code_points().contains_range('d'..='z'));
-/// assert!(set.contains("Hello World"));
+/// assert!(set.contains_str("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
 #[cfg(feature = "compiled_data")]
 pub fn parse_with_variables(
@@ -1788,7 +1788,7 @@ mod tests {
         for s in strings {
             expected_size += 1;
             assert!(
-                cpinvlistandstrlist.contains(s),
+                cpinvlistandstrlist.contains_str(s),
                 "missing string \"{}\" from parsed set \"{}\"",
                 s.escape_debug(),
                 source.escape_debug()

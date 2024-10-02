@@ -18,9 +18,9 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    bool icu4x_UnicodeSetData_contains_mv1(const icu4x::capi::UnicodeSetData* self, diplomat::capi::DiplomatStringView s);
+    bool icu4x_UnicodeSetData_contains_str_mv1(const icu4x::capi::UnicodeSetData* self, diplomat::capi::DiplomatStringView s);
     
-    bool icu4x_UnicodeSetData_contains_char_mv1(const icu4x::capi::UnicodeSetData* self, char32_t cp);
+    bool icu4x_UnicodeSetData_contains_mv1(const icu4x::capi::UnicodeSetData* self, char32_t cp);
     
     typedef struct icu4x_UnicodeSetData_load_basic_emoji_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_basic_emoji_mv1_result;
     icu4x_UnicodeSetData_load_basic_emoji_mv1_result icu4x_UnicodeSetData_load_basic_emoji_mv1(const icu4x::capi::DataProvider* provider);
@@ -33,13 +33,13 @@ namespace capi {
 } // namespace
 
 inline bool icu4x::UnicodeSetData::contains(std::string_view s) const {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_contains_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_UnicodeSetData_contains_str_mv1(this->AsFFI(),
     {s.data(), s.size()});
   return result;
 }
 
-inline bool icu4x::UnicodeSetData::contains_char(char32_t cp) const {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_contains_char_mv1(this->AsFFI(),
+inline bool icu4x::UnicodeSetData::contains(char32_t cp) const {
+  auto result = icu4x::capi::icu4x_UnicodeSetData_contains_mv1(this->AsFFI(),
     cp);
   return result;
 }

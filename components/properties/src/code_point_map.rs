@@ -162,19 +162,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
         self.map.get32(ch as u32)
     }
 
-    /// Get the value this map has associated with code point `ch`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::CodePointMapData;
-    /// use icu::properties::props::GeneralCategory;
-    ///
-    /// let gc = CodePointMapData::<GeneralCategory>::new();
-    ///
-    /// assert_eq!(gc.get32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
-    /// assert_eq!(gc.get32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
-    /// ```
+    /// See [`Self::get`].
     pub fn get32(self, ch: u32) -> T {
         self.map.get32(ch)
     }

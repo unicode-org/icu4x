@@ -13,8 +13,8 @@
 namespace icu4x {
 namespace capi {
     struct CodePointRangeIteratorResult {
-      uint32_t start;
-      uint32_t end;
+      char32_t start;
+      char32_t end;
       bool done;
     };
     
@@ -25,8 +25,8 @@ namespace capi {
 
 namespace icu4x {
 struct CodePointRangeIteratorResult {
-  uint32_t start;
-  uint32_t end;
+  char32_t start;
+  char32_t end;
   bool done;
 
   inline icu4x::capi::CodePointRangeIteratorResult AsFFI() const;

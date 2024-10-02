@@ -23,11 +23,11 @@
 //! let exemplars_main = ExemplarCharacters::try_new_main(&locale)
 //!     .expect("locale should be present");
 //!
-//! assert!(exemplars_main.contains_char('a'));
-//! assert!(exemplars_main.contains_char('z'));
-//! assert!(exemplars_main.contains("a"));
-//! assert!(!exemplars_main.contains("ä"));
-//! assert!(!exemplars_main.contains("ng"));
+//! assert!(exemplars_main.contains('a'));
+//! assert!(exemplars_main.contains('z'));
+//! assert!(exemplars_main.contains_str("a"));
+//! assert!(!exemplars_main.contains_str("ä"));
+//! assert!(!exemplars_main.contains_str("ng"));
 //! ```
 
 use crate::provider::*;
@@ -152,12 +152,12 @@ impl ExemplarCharacters {
         /// let exemplars_main = ExemplarCharacters::try_new_main(&locale!("en").into())
         ///     .expect("locale should be present");
         ///
-        /// assert!(exemplars_main.contains_char('a'));
-        /// assert!(exemplars_main.contains_char('z'));
-        /// assert!(exemplars_main.contains("a"));
-        /// assert!(!exemplars_main.contains("ä"));
-        /// assert!(!exemplars_main.contains("ng"));
-        /// assert!(!exemplars_main.contains("A"));
+        /// assert!(exemplars_main.contains('a'));
+        /// assert!(exemplars_main.contains('z'));
+        /// assert!(exemplars_main.contains_str("a"));
+        /// assert!(!exemplars_main.contains_str("ä"));
+        /// assert!(!exemplars_main.contains_str("ng"));
+        /// assert!(!exemplars_main.contains_str("A"));
         /// ```
         pub fn try_new_main();
     );
@@ -184,12 +184,12 @@ impl ExemplarCharacters {
         ///     ExemplarCharacters::try_new_auxiliary(&locale!("en").into())
         ///     .expect("locale should be present");
         ///
-        /// assert!(!exemplars_auxiliary.contains_char('a'));
-        /// assert!(!exemplars_auxiliary.contains_char('z'));
-        /// assert!(!exemplars_auxiliary.contains("a"));
-        /// assert!(exemplars_auxiliary.contains("ä"));
-        /// assert!(!exemplars_auxiliary.contains("ng"));
-        /// assert!(!exemplars_auxiliary.contains("A"));
+        /// assert!(!exemplars_auxiliary.contains('a'));
+        /// assert!(!exemplars_auxiliary.contains('z'));
+        /// assert!(!exemplars_auxiliary.contains_str("a"));
+        /// assert!(exemplars_auxiliary.contains_str("ä"));
+        /// assert!(!exemplars_auxiliary.contains_str("ng"));
+        /// assert!(!exemplars_auxiliary.contains_str("A"));
         /// ```
         pub fn try_new_auxiliary();
     );
@@ -216,13 +216,13 @@ impl ExemplarCharacters {
         ///     ExemplarCharacters::try_new_punctuation(&locale!("en").into())
         ///     .expect("locale should be present");
         ///
-        /// assert!(!exemplars_punctuation.contains_char('0'));
-        /// assert!(!exemplars_punctuation.contains_char('9'));
-        /// assert!(!exemplars_punctuation.contains_char('%'));
-        /// assert!(exemplars_punctuation.contains_char(','));
-        /// assert!(exemplars_punctuation.contains_char('.'));
-        /// assert!(exemplars_punctuation.contains_char('!'));
-        /// assert!(exemplars_punctuation.contains_char('?'));
+        /// assert!(!exemplars_punctuation.contains('0'));
+        /// assert!(!exemplars_punctuation.contains('9'));
+        /// assert!(!exemplars_punctuation.contains('%'));
+        /// assert!(exemplars_punctuation.contains(','));
+        /// assert!(exemplars_punctuation.contains('.'));
+        /// assert!(exemplars_punctuation.contains('!'));
+        /// assert!(exemplars_punctuation.contains('?'));
         /// ```
         pub fn try_new_punctuation();
     );
@@ -249,13 +249,13 @@ impl ExemplarCharacters {
         ///     ExemplarCharacters::try_new_numbers(&locale!("en").into())
         ///     .expect("locale should be present");
         ///
-        /// assert!(exemplars_numbers.contains_char('0'));
-        /// assert!(exemplars_numbers.contains_char('9'));
-        /// assert!(exemplars_numbers.contains_char('%'));
-        /// assert!(exemplars_numbers.contains_char(','));
-        /// assert!(exemplars_numbers.contains_char('.'));
-        /// assert!(!exemplars_numbers.contains_char('!'));
-        /// assert!(!exemplars_numbers.contains_char('?'));
+        /// assert!(exemplars_numbers.contains('0'));
+        /// assert!(exemplars_numbers.contains('9'));
+        /// assert!(exemplars_numbers.contains('%'));
+        /// assert!(exemplars_numbers.contains(','));
+        /// assert!(exemplars_numbers.contains('.'));
+        /// assert!(!exemplars_numbers.contains('!'));
+        /// assert!(!exemplars_numbers.contains('?'));
         /// ```
         pub fn try_new_numbers();
     );
@@ -282,12 +282,12 @@ impl ExemplarCharacters {
         ///     ExemplarCharacters::try_new_index(&locale!("en").into())
         ///     .expect("locale should be present");
         ///
-        /// assert!(!exemplars_index.contains_char('a'));
-        /// assert!(!exemplars_index.contains_char('z'));
-        /// assert!(!exemplars_index.contains("a"));
-        /// assert!(!exemplars_index.contains("ä"));
-        /// assert!(!exemplars_index.contains("ng"));
-        /// assert!(exemplars_index.contains("A"));
+        /// assert!(!exemplars_index.contains('a'));
+        /// assert!(!exemplars_index.contains('z'));
+        /// assert!(!exemplars_index.contains_str("a"));
+        /// assert!(!exemplars_index.contains_str("ä"));
+        /// assert!(!exemplars_index.contains_str("ng"));
+        /// assert!(exemplars_index.contains_str("A"));
         /// ```
         pub fn try_new_index();
     );

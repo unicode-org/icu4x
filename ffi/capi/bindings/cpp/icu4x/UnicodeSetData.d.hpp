@@ -30,7 +30,7 @@ public:
 
   inline bool contains(std::string_view s) const;
 
-  inline bool contains_char(char32_t cp) const;
+  inline bool contains(char32_t cp) const;
 
   inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_basic_emoji(const icu4x::DataProvider& provider);
 

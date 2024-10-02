@@ -629,9 +629,9 @@ pub enum PropertyUnicodeSetV1<'data> {
 
 impl<'data> PropertyUnicodeSetV1<'data> {
     #[inline]
-    pub(crate) fn contains(&self, s: &str) -> bool {
+    pub(crate) fn contains_str(&self, s: &str) -> bool {
         match *self {
-            Self::CPInversionListStrList(ref l) => l.contains(s),
+            Self::CPInversionListStrList(ref l) => l.contains_str(s),
         }
     }
 
@@ -643,9 +643,9 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn contains_char(&self, ch: char) -> bool {
+    pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
-            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
+            Self::CPInversionListStrList(ref l) => l.contains(ch),
         }
     }
 

@@ -457,9 +457,9 @@ impl GeneralCategoryGroup {
     /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ')));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
-    /// assert_eq!(gc.get32(0x0301), GeneralCategory::NonspacingMark);
-    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get32(0x0301)));
-    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get32(0x0301)));
+    /// assert_eq!(gc.get('\u{0301}'), GeneralCategory::NonspacingMark);
+    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get('\u{0301}')));
+    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get('\u{0301}')));
     ///
     /// assert_eq!(gc.get('0'), GeneralCategory::DecimalNumber);
     /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0')));
@@ -479,9 +479,9 @@ impl GeneralCategoryGroup {
     /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ')));
     ///
     /// // U+E007F CANCEL TAG
-    /// assert_eq!(gc.get32(0xE007F), GeneralCategory::Format);
-    /// assert!(GeneralCategoryGroup::Other.contains(gc.get32(0xE007F)));
-    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get32(0xE007F)));
+    /// assert_eq!(gc.get('\u{E007F}'), GeneralCategory::Format);
+    /// assert!(GeneralCategoryGroup::Other.contains(gc.get('\u{E007F}')));
+    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get('\u{E007F}')));
     /// ```
     pub const fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
@@ -1312,7 +1312,7 @@ make_enumerated_property! {
     /// use icu::properties::{maps, CanonicalCombiningClass};
     ///
     /// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-    /// assert_eq!(maps::canonical_combining_class().get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+    /// assert_eq!(maps::canonical_combining_class().get('\u{0301}'), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
 }
 
@@ -1389,7 +1389,7 @@ make_enumerated_property! {
     /// use icu::properties::{maps, IndicSyllabicCategory};
     ///
     /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
-    /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
+    /// assert_eq!(maps::indic_syllabic_category().get('\u{0900}'), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
     /// ```
 }
 
@@ -1548,7 +1548,7 @@ make_binary_property! {
     ///
     /// let bidi_control = CodePointSetData::new::<BidiControl>();
     ///
-    /// assert!(bidi_control.contains32(0x200F));  // RIGHT-TO-LEFT MARK
+    /// assert!(bidi_control.contains('\u{200F}'));  // RIGHT-TO-LEFT MARK
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
     /// ```
 
@@ -1843,7 +1843,7 @@ make_binary_property! {
     ///
     /// let default_ignorable_code_point = CodePointSetData::new::<DefaultIgnorableCodePoint>();
     ///
-    /// assert!(default_ignorable_code_point.contains32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
+    /// assert!(default_ignorable_code_point.contains('\u{180B}'));  // MONGOLIAN FREE VARIATION SELECTOR ONE
     /// assert!(!default_ignorable_code_point.contains('E'));
     /// ```
 
@@ -1914,7 +1914,7 @@ make_binary_property! {
     /// let emoji_component = CodePointSetData::new::<EmojiComponent>();
     ///
     /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
-    /// assert!(emoji_component.contains32(0x20E3));  // COMBINING ENCLOSING KEYCAP
+    /// assert!(emoji_component.contains('\u{20E3}'));  // COMBINING ENCLOSING KEYCAP
     /// assert!(emoji_component.contains('7'));
     /// assert!(!emoji_component.contains('T'));
     /// ```
@@ -1938,8 +1938,8 @@ make_binary_property! {
     ///
     /// let emoji_modifier = CodePointSetData::new::<EmojiModifier>();
     ///
-    /// assert!(emoji_modifier.contains32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
-    /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
+    /// assert!(emoji_modifier.contains('\u{1F3FD}'));  // EMOJI MODIFIER FITZPATRICK TYPE-4
+    /// assert!(!emoji_modifier.contains('\u{200C}'));  // ZERO WIDTH NON-JOINER
     /// ```
 
 }
@@ -2178,7 +2178,7 @@ make_binary_property! {
     /// assert!(id_continue.contains('_'));
     /// assert!(id_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!id_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(id_continue.contains('\u{FC5E}'));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
 }
@@ -2231,7 +2231,7 @@ make_binary_property! {
     /// assert!(!id_start.contains('_'));
     /// assert!(id_start.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!id_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(id_start.contains('\u{FC5E}'));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
 }
@@ -2253,8 +2253,8 @@ make_binary_property! {
     ///
     /// let ids_binary_operator = CodePointSetData::new::<IdsBinaryOperator>();
     ///
-    /// assert!(ids_binary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
-    /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// assert!(ids_binary_operator.contains('\u{2FF5}'));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_binary_operator.contains('\u{3006}'));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
 }
@@ -2276,11 +2276,11 @@ make_binary_property! {
     ///
     /// let ids_trinary_operator = CodePointSetData::new::<IdsTrinaryOperator>();
     ///
-    /// assert!(ids_trinary_operator.contains32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
-    /// assert!(ids_trinary_operator.contains32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
-    /// assert!(!ids_trinary_operator.contains32(0x2FF4));
-    /// assert!(!ids_trinary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
-    /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// assert!(ids_trinary_operator.contains('\u{2FF2}'));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
+    /// assert!(ids_trinary_operator.contains('\u{2FF3}'));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
+    /// assert!(!ids_trinary_operator.contains('\u{2FF4}'));
+    /// assert!(!ids_trinary_operator.contains('\u{2FF5}'));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_trinary_operator.contains('\u{3006}'));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
 }
@@ -2303,9 +2303,9 @@ make_binary_property! {
     ///
     /// let join_control = CodePointSetData::new::<JoinControl>();
     ///
-    /// assert!(join_control.contains32(0x200C));  // ZERO WIDTH NON-JOINER
-    /// assert!(join_control.contains32(0x200D));  // ZERO WIDTH JOINER
-    /// assert!(!join_control.contains32(0x200E));
+    /// assert!(join_control.contains('\u{200C}'));  // ZERO WIDTH NON-JOINER
+    /// assert!(join_control.contains('\u{200D}'));  // ZERO WIDTH JOINER
+    /// assert!(!join_control.contains('\u{200E}'));
     /// ```
 
 }
@@ -2400,9 +2400,9 @@ make_binary_property! {
     ///
     /// let noncharacter_code_point = CodePointSetData::new::<NoncharacterCodePoint>();
     ///
-    /// assert!(noncharacter_code_point.contains32(0xFDD0));
-    /// assert!(noncharacter_code_point.contains32(0xFFFF));
-    /// assert!(!noncharacter_code_point.contains32(0x10000));
+    /// assert!(noncharacter_code_point.contains('\u{FDD0}'));
+    /// assert!(noncharacter_code_point.contains('\u{FFFF}'));
+    /// assert!(!noncharacter_code_point.contains('\u{10000}'));
     /// ```
 
 }
@@ -2497,9 +2497,9 @@ make_binary_property! {
     /// let pattern_white_space = CodePointSetData::new::<PatternWhiteSpace>();
     ///
     /// assert!(pattern_white_space.contains(' '));
-    /// assert!(pattern_white_space.contains32(0x2029));  // PARAGRAPH SEPARATOR
-    /// assert!(pattern_white_space.contains32(0x000A));  // NEW LINE
-    /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
+    /// assert!(pattern_white_space.contains('\u{2029}'));  // PARAGRAPH SEPARATOR
+    /// assert!(pattern_white_space.contains('\u{000A}'));  // NEW LINE
+    /// assert!(!pattern_white_space.contains('\u{00A0}'));  // NO-BREAK SPACE
     /// ```
 
 }
@@ -2763,11 +2763,11 @@ make_binary_property! {
     ///
     /// let variation_selector = CodePointSetData::new::<VariationSelector>();
     ///
-    /// assert!(variation_selector.contains32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
-    /// assert!(!variation_selector.contains32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
-    /// assert!(variation_selector.contains32(0xFE0F));  // VARIATION SELECTOR-16
-    /// assert!(!variation_selector.contains32(0xFE10));  // PRESENTATION FORM FOR VERTICAL COMMA
-    /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
+    /// assert!(variation_selector.contains('\u{180D}'));  // MONGOLIAN FREE VARIATION SELECTOR THREE
+    /// assert!(!variation_selector.contains('\u{303E}'));  // IDEOGRAPHIC VARIATION INDICATOR
+    /// assert!(variation_selector.contains('\u{FE0F}'));  // VARIATION SELECTOR-16
+    /// assert!(!variation_selector.contains('\u{FE10}'));  // PRESENTATION FORM FOR VERTICAL COMMA
+    /// assert!(variation_selector.contains('\u{E01EF}'));  // VARIATION SELECTOR-256
     /// ```
 
 }
@@ -2791,9 +2791,9 @@ make_binary_property! {
     /// let white_space = CodePointSetData::new::<WhiteSpace>();
     ///
     /// assert!(white_space.contains(' '));
-    /// assert!(white_space.contains32(0x000A));  // NEW LINE
-    /// assert!(white_space.contains32(0x00A0));  // NO-BREAK SPACE
-    /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
+    /// assert!(white_space.contains('\u{000A}'));  // NEW LINE
+    /// assert!(white_space.contains('\u{00A0}'));  // NO-BREAK SPACE
+    /// assert!(!white_space.contains('\u{200B}'));  // ZERO WIDTH SPACE
     /// ```
 
 }
@@ -2833,7 +2833,7 @@ make_binary_property! {
     /// assert!(xid_continue.contains('_'));
     /// assert!(xid_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!xid_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(!xid_continue.contains('\u{FC5E}'));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
 }
@@ -2862,7 +2862,7 @@ make_binary_property! {
     /// assert!(!xid_start.contains('_'));
     /// assert!(xid_start.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!xid_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(!xid_start.contains('\u{FC5E}'));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
 }
@@ -2910,12 +2910,12 @@ make_string_set_property! {
     ///
     /// let basic_emoji = UnicodeSetData::new::<BasicEmoji>();
     ///
-    /// assert!(!basic_emoji.contains32(0x0020));
-    /// assert!(!basic_emoji.contains_char('\n'));
-    /// assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
-    /// assert!(basic_emoji.contains("\u{1F983}"));
-    /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
-    /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
+    /// assert!(!basic_emoji.contains('\u{0020}'));
+    /// assert!(!basic_emoji.contains('\n'));
+    /// assert!(basic_emoji.contains('🦃')); // U+1F983 TURKEY
+    /// assert!(basic_emoji.contains_str("\u{1F983}"));
+    /// assert!(basic_emoji.contains_str("\u{1F6E4}\u{FE0F}")); // railway track
+    /// assert!(!basic_emoji.contains_str("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
 }
 

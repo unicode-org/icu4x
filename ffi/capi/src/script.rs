@@ -46,8 +46,13 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_val,
             FnInStruct
         )]
-        pub fn get_script_val(&self, code_point: u32) -> u16 {
-            self.0.as_borrowed().get_script_val(code_point).0
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_val32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_script_val(&self, ch: DiplomatChar) -> u16 {
+            self.0.as_borrowed().get_script_val32(ch).0
         }
 
         /// Check if the Script_Extensions property of the given code point covers the given script
@@ -55,10 +60,15 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensionsBorrowed::has_script,
             FnInStruct
         )]
-        pub fn has_script(&self, code_point: u32, script: u16) -> bool {
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::has_script32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn has_script(&self, ch: DiplomatChar, script: u16) -> bool {
             self.0
                 .as_borrowed()
-                .has_script(code_point, icu_properties::props::Script(script))
+                .has_script32(ch, icu_properties::props::Script(script))
         }
 
         /// Borrow this object for a slightly faster variant with more operations
@@ -94,27 +104,41 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_val,
             FnInStruct
         )]
-        pub fn get_script_val(&self, code_point: u32) -> u16 {
-            self.0.get_script_val(code_point).0
+        /// Get the Script property value for a code point
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_val32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_script_val(&self, ch: DiplomatChar) -> u16 {
+            self.0.get_script_val32(ch).0
         }
         /// Get the Script property value for a code point
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_val,
             FnInStruct
         )]
-        pub fn get_script_extensions_val(&self, code_point: u32) -> Box<ScriptExtensionsSet<'a>> {
-            Box::new(ScriptExtensionsSet(
-                self.0.get_script_extensions_val(code_point),
-            ))
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_val32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_script_extensions_val(&self, ch: DiplomatChar) -> Box<ScriptExtensionsSet<'a>> {
+            Box::new(ScriptExtensionsSet(self.0.get_script_extensions_val32(ch)))
         }
         /// Check if the Script_Extensions property of the given code point covers the given script
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::has_script,
             FnInStruct
         )]
-        pub fn has_script(&self, code_point: u32, script: u16) -> bool {
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::has_script32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn has_script(&self, ch: DiplomatChar, script: u16) -> bool {
             self.0
-                .has_script(code_point, icu_properties::props::Script(script))
+                .has_script32(ch, icu_properties::props::Script(script))
         }
 
         /// Build the CodePointSetData corresponding to a codepoints matching a particular script

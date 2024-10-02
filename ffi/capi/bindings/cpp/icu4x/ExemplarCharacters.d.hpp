@@ -32,7 +32,7 @@ public:
 
   inline bool contains(std::string_view s) const;
 
-  inline bool contains_char(char32_t cp) const;
+  inline bool contains(char32_t cp) const;
 
   inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_main(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
