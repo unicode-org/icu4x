@@ -718,7 +718,7 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         // `z..zzz`
         ResolvedNeoTimeZoneSkeleton::SpecificShort => [
             Some(TimeZoneFormatterUnit::SpecificNonLocationShort),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
             None,
         ],
         // `zzzz`
@@ -731,7 +731,7 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         ResolvedNeoTimeZoneSkeleton::GenericShort => [
             Some(TimeZoneFormatterUnit::GenericNonLocationShort),
             Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
+            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
         ],
         // 'vvvv'
         ResolvedNeoTimeZoneSkeleton::GenericLong => [

@@ -6,7 +6,7 @@ use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::format::neo::FieldForDataLoading;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{Alignment, FractionalSecondDigits, NeoTimeZoneStyle};
+use crate::neo_skeleton::{Alignment, FractionalSecondDigits};
 use crate::neo_skeleton::{
     EraDisplay, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
@@ -500,7 +500,7 @@ impl ZonePatternSelectionData {
         components: NeoTimeZoneSkeleton,
         is_only_field: bool,
     ) -> Self {
-        let length = if is_only_field || components.style == NeoTimeZoneStyle::Offset {
+        let length = if is_only_field {
             length.get::<Self>()
         } else {
             NeoSkeletonLength::Short

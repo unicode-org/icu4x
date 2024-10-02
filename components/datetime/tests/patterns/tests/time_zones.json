@@ -166,7 +166,7 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "expected": ["GMT+01:00"]
+        "expected": ["GMT+1"]
       },
       {
         "patterns": [],
@@ -266,7 +266,7 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "expected": ["GMT+01:00"]
+        "expected": ["GMT+1"]
       },
       {
         "patterns": [],
@@ -732,7 +732,7 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "expected": ["GMT+05:45"]
+        "expected": ["GMT+5:45"]
       },
       {
         "patterns": [
