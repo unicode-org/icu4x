@@ -20,24 +20,22 @@
       "Placeholder": "Singleton"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Literal": "Daylight Time ng "
-      },
-      {
-        "Placeholder": "Singleton"
-      }
-    ],
-    "st": [
-      {
-        "Literal": "Standard na Oras sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Literal": "Standard na Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Literal": "Daylight Time ng "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

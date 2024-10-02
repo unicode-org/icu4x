@@ -64,7 +64,8 @@ pub(crate) struct TimeZoneNames {
     pub(crate) gmt_format: PatternString<SinglePlaceholder>,
     pub(crate) gmt_zero_format: String,
     pub(crate) region_format: PatternString<SinglePlaceholder>,
-    pub(crate) region_format_variants: BTreeMap<String, PatternString<SinglePlaceholder>>,
+    pub(crate) region_format_dt: PatternString<SinglePlaceholder>,
+    pub(crate) region_format_st: PatternString<SinglePlaceholder>,
     pub(crate) fallback_format: PatternString<DoublePlaceholder>,
     pub(crate) zone: Zones,
     pub(crate) metazone: Option<Metazones>,
@@ -100,12 +101,11 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                 time_zone_names.fallback_format = value;
             } else if key.starts_with("regionFormat") {
                 let value = map.next_value::<PatternString<SinglePlaceholder>>()?;
-                if key.contains('-') {
-                    // key is of the form: "regionFormat-type-variant"
-                    let variant = key.split('-').last().unwrap();
-                    time_zone_names
-                        .region_format_variants
-                        .insert(variant.into(), value);
+                // key is of the form: "regionFormat-type-variant"
+                if key.ends_with("-standard") {
+                    time_zone_names.region_format_st = value;
+                } else if key.ends_with("-daylight") {
+                    time_zone_names.region_format_dt = value;
                 } else {
                     time_zone_names.region_format = value
                 }

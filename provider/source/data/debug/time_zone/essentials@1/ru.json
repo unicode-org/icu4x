@@ -17,24 +17,22 @@
       "Placeholder": "Singleton"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": ", летнее время"
-      }
-    ],
-    "st": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": ", стандартное время"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", стандартное время"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", летнее время"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

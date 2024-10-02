@@ -17,24 +17,22 @@
       "Placeholder": "Singleton"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": ", letnje vreme"
-      }
-    ],
-    "st": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": ", standardno vreme"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", standardno vreme"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", letnje vreme"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

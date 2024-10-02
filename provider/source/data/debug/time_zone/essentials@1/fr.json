@@ -20,24 +20,22 @@
       "Placeholder": "Singleton"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " (heure d’été)"
-      }
-    ],
-    "st": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " (heure standard)"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (heure standard)"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (heure d’été)"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

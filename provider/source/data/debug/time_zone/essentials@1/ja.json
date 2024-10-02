@@ -20,24 +20,22 @@
       "Literal": "時間"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "夏時間"
-      }
-    ],
-    "st": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "標準時"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "標準時"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "夏時間"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

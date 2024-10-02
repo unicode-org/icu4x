@@ -71,18 +71,8 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 offset_format: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero_format: time_zone_names.gmt_zero_format.clone().into(),
                 region_format: Cow::Owned(time_zone_names.region_format.0.clone()),
-                region_format_variants: time_zone_names
-                    .region_format_variants
-                    .iter()
-                    .filter_map(|(key, value)| {
-                        let key = match key.as_str() {
-                            "daylight" => ZoneVariant::daylight(),
-                            "standard" => ZoneVariant::standard(),
-                            _ => return None,
-                        };
-                        Some((key, Cow::Owned(value.0.clone())))
-                    })
-                    .collect(),
+                region_format_st: Cow::Owned(time_zone_names.region_format_st.0.clone()),
+                region_format_dt: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
                 fallback_format: Cow::Owned(time_zone_names.fallback_format.0.clone()),
             }),
         })

@@ -70,11 +70,26 @@ pub struct TimeZoneEssentialsV1<'data> {
         )
     )]
     pub region_format: Cow<'data, SinglePlaceholderPattern>,
-    /// The format strings for region format variants
-    /// e.g. daylight, standard.
+    /// The format string for a region's standard time.
     // CURRENLY UNUSED
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub region_format_variants: ZeroMap<'data, ZoneVariant, SinglePlaceholderPattern>,
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+        )
+    )]
+    pub region_format_st: Cow<'data, SinglePlaceholderPattern>,
+    /// The format string for a region's daylight time.
+    // CURRENLY UNUSED
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+        )
+    )]
+    pub region_format_dt: Cow<'data, SinglePlaceholderPattern>,
     /// Metazone Name with Location Pattern.
     // CURRENLY UNUSED
     #[cfg_attr(

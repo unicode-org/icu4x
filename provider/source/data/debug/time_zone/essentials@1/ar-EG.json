@@ -20,30 +20,28 @@
       "Placeholder": "Singleton"
     }
   ],
-  "region_format_variants": {
-    "dt": [
-      {
-        "Literal": "توقيت "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " الصيفي"
-      }
-    ],
-    "st": [
-      {
-        "Literal": "توقيت "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " الرسمي"
-      }
-    ]
-  },
+  "region_format_st": [
+    {
+      "Literal": "توقيت "
+    },
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " الرسمي"
+    }
+  ],
+  "region_format_dt": [
+    {
+      "Literal": "توقيت "
+    },
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " الصيفي"
+    }
+  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"
