@@ -5,11 +5,11 @@
 #include <icu4x/CodePointMapData16.hpp>
 #include <icu4x/CodePointMapData8.hpp>
 #include <icu4x/CodePointSetData.hpp>
+#include <icu4x/EmojiSetData.hpp>
 #include <icu4x/ExemplarCharacters.hpp>
 #include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/PropertyValueNameToEnumMapper.hpp>
-#include <icu4x/UnicodeSetData.hpp>
 
 #include <iostream>
 
@@ -93,7 +93,7 @@ int main() {
         return result;
     }
 
-    std::unique_ptr<UnicodeSetData> basic_emoji = UnicodeSetData::load_basic_emoji(*dp.get()).ok().value();
+    std::unique_ptr<EmojiSetData> basic_emoji = EmojiSetData::load_basic(*dp.get()).ok().value();
     std::string letter = u8"hello";
 
     if (!basic_emoji->contains(U'🔥')) {

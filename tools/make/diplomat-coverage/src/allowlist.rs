@@ -284,6 +284,9 @@ lazy_static::lazy_static! {
         "icu::properties::UnicodeSetData::as_code_point_inversion_list_string_list",
         "icu::properties::UnicodeSetData::from_code_point_inversion_list_string_list",
         "icu::properties::UnicodeSetData::to_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::to_code_point_inversion_list_string_list",
 
         // We do not plan to have FFI for this in 2.0
         "icu_provider_adapters::empty::EmptyDataProvider",
@@ -327,6 +330,8 @@ lazy_static::lazy_static! {
         "icu::properties::CodePointMapDataBorrowed::static_to_owned",
         "icu::properties::CodePointSetData::as_borrowed",
         "icu::properties::CodePointSetDataBorrowed::static_to_owned",
+        "icu::properties::EmojiSetData::as_borrowed",
+        "icu::properties::EmojiSetDataBorrowed::static_to_owned",
         "icu::properties::PropertyNamesLong::as_borrowed",
         "icu::properties::PropertyNamesShort::as_borrowed",
         "icu::properties::PropertyNamesLongBorrowed::static_to_owned",

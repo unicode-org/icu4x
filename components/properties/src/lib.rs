@@ -73,8 +73,8 @@ mod code_point_set;
 pub use code_point_set::{CodePointSetData, CodePointSetDataBorrowed};
 mod code_point_map;
 pub use code_point_map::{CodePointMapData, CodePointMapDataBorrowed};
-mod unicode_set;
-pub use unicode_set::{UnicodeSetData, UnicodeSetDataBorrowed};
+mod emoji;
+pub use emoji::{EmojiSetData, EmojiSetDataBorrowed};
 mod names;
 pub use names::{
     PropertyNamesLong, PropertyNamesLongBorrowed, PropertyNamesShort, PropertyNamesShortBorrowed,

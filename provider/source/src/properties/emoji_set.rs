@@ -74,11 +74,11 @@ expand!((BasicEmojiV1Marker, "Basic_Emoji"));
 
 #[test]
 fn test_basic() {
-    use icu::properties::{props::BasicEmoji, UnicodeSetData};
+    use icu::properties::{props::BasicEmoji, EmojiSetData};
 
     let provider = SourceDataProvider::new_testing();
 
-    let basic_emoji = UnicodeSetData::try_new_unstable::<BasicEmoji>(&provider).unwrap();
+    let basic_emoji = EmojiSetData::try_new_unstable::<BasicEmoji>(&provider).unwrap();
     let basic_emoji = basic_emoji
         .as_code_point_inversion_list_string_list()
         .unwrap();

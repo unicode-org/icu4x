@@ -9,17 +9,17 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html) for more information.
+*See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html) for more information.
 *
-*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html#method.new) for more information.
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html#method.new) for more information.
 *
-*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
 */
-const UnicodeSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_UnicodeSetData_destroy_mv1(ptr);
+const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_EmojiSetData_destroy_mv1(ptr);
 });
 
-export class UnicodeSetData {
+export class EmojiSetData {
     // Internal ptr reference:
     #ptr = null;
 
@@ -29,7 +29,7 @@ export class UnicodeSetData {
     
     constructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("UnicodeSetData is an Opaque type. You cannot call its constructor.");
+            console.error("EmojiSetData is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -38,7 +38,7 @@ export class UnicodeSetData {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            UnicodeSetData_box_destroy_registry.register(this, this.#ptr);
+            EmojiSetData_box_destroy_registry.register(this, this.#ptr);
         }
     }
 
@@ -51,7 +51,7 @@ export class UnicodeSetData {
         
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
-        const result = wasm.icu4x_UnicodeSetData_contains_str_mv1(this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_EmojiSetData_contains_str_mv1(this.ffiValue, ...sSlice.splat());
     
         try {
             return result;
@@ -63,7 +63,7 @@ export class UnicodeSetData {
     }
 
     contains(cp) {
-        const result = wasm.icu4x_UnicodeSetData_contains_mv1(this.ffiValue, cp);
+        const result = wasm.icu4x_EmojiSetData_contains_mv1(this.ffiValue, cp);
     
         try {
             return result;
@@ -72,17 +72,17 @@ export class UnicodeSetData {
         finally {}
     }
 
-    static loadBasicEmoji(provider) {
+    static loadBasic(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_UnicodeSetData_load_basic_emoji_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_EmojiSetData_load_basic_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new UnicodeSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new EmojiSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
