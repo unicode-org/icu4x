@@ -673,12 +673,12 @@ impl FormatTimeZone for SpecificLocationFormat {
     }
 }
 
-// PT (Los Angeles)
+// Pacific Time (Los Angeles)
 struct GenericPartialLocationLongFormat;
 
 impl FormatTimeZone for GenericPartialLocationLongFormat {
     /// Writes the time zone in a long generic partial location format as defined by the UTS-35 spec.
-    /// e.g. PT (Los Angeles)
+    /// e.g. Pacific Time (Los Angeles)
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
