@@ -882,5 +882,48 @@
         "expected": ["+05:45"]
       }
     ]
+  },
+  {
+    "locale": "bn",
+    "datetime": "2021-01-11T12:00:00.000+05:45[Asia/Kathmandu]",
+    "expectations": [
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
+        "expected": ["+0545"]
+      },
+      {
+        "patterns": [
+          "O",
+          "ZZZZ"
+        ],
+        "configs": [
+          "LocalizedOffsetShort"
+        ],
+        "fallback_formats": ["LocalizedOffset"],
+        "expected": ["GMT +৫:৪৫"]
+      },
+      {
+        "patterns": [
+          "OOOO"
+        ],
+        "configs": [
+          "LocalizedOffsetLong"
+        ],
+        "expected": ["GMT +০৫:৪৫"]
+      }
+    ]
   }
 ]

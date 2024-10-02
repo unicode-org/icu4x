@@ -2002,10 +2002,15 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             let field = match item {
                 FieldForDataLoading::Field(field) => field,
                 FieldForDataLoading::TimeZone(time_zone) => {
-                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                     match time_zone {
                         // `z..zzz`
                         ResolvedNeoTimeZoneSkeleton::SpecificShort => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
                             self.load_time_zone_specific_short_names(
                                 mz_specific_short_provider,
                                 locale,
@@ -2013,6 +2018,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         // `zzzz`
                         ResolvedNeoTimeZoneSkeleton::SpecificLong => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
                             self.load_time_zone_specific_long_names(
                                 mz_specific_long_provider,
                                 locale,
@@ -2020,6 +2031,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         // 'v'
                         ResolvedNeoTimeZoneSkeleton::GenericShort => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
                             self.load_time_zone_generic_short_names(
                                 mz_generic_short_provider,
                                 locale,
@@ -2032,6 +2049,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         // 'vvvv'
                         ResolvedNeoTimeZoneSkeleton::GenericLong => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
                             self.load_time_zone_generic_long_names(
                                 mz_generic_long_provider,
                                 locale,
@@ -2045,14 +2068,27 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
                         ResolvedNeoTimeZoneSkeleton::City
                         | ResolvedNeoTimeZoneSkeleton::Location => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
                             self.load_time_zone_exemplar_city_names(
                                 exemplar_cities_provider,
                                 locale,
                             )?;
                         }
                         ResolvedNeoTimeZoneSkeleton::OffsetShort
-                        | ResolvedNeoTimeZoneSkeleton::OffsetLong
-                        | ResolvedNeoTimeZoneSkeleton::Isox
+                        | ResolvedNeoTimeZoneSkeleton::OffsetLong => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader.unwrap(),
+                                locale,
+                            )
+                            .unwrap();
+                        }
+                        ResolvedNeoTimeZoneSkeleton::Isox
                         | ResolvedNeoTimeZoneSkeleton::Isoxx
                         | ResolvedNeoTimeZoneSkeleton::Isoxxx
                         | ResolvedNeoTimeZoneSkeleton::Isoxxxx
@@ -2063,7 +2099,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         | ResolvedNeoTimeZoneSkeleton::IsoXXXX
                         | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
                         | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-                            // all data needed for this is in time zone essentials
+                            // no data required
                         }
                     };
                     continue;

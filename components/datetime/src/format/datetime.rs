@@ -655,7 +655,7 @@ pub(crate) fn try_write_zone<'data, W, ZS>(
     field_length: FieldLength,
     input: &ExtractedInput,
     zone_symbols: Option<&ZS>,
-    _fdf: Option<&FixedDecimalFormatter>,
+    fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -699,7 +699,7 @@ where
             Some(time_zone) => {
                 let payloads = zs.get_payloads();
                 let units = select_zone_units(time_zone);
-                match do_write_zone(units, input, payloads, w)? {
+                match do_write_zone(units, input, payloads, fdf, w)? {
                     Ok(()) => Ok(()),
                     Err(()) => {
                         write_time_zone_missing(input.offset, w)?;
@@ -875,13 +875,14 @@ fn do_write_zone<W>(
     units: [Option<TimeZoneFormatterUnit>; 3],
     input: &ExtractedInput,
     payloads: TimeZoneDataPayloadsBorrowed,
+    fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), ()>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
     for formatter in units.into_iter().flatten() {
-        match formatter.format(w, input, payloads)? {
+        match formatter.format(w, input, payloads, fdf)? {
             Err(FormatTimeZoneError::MissingInputField(_)) => {
                 // The time zone input doesn't have the fields for this formatter.
                 // TODO: What behavior makes the most sense here?
@@ -894,6 +895,12 @@ where
                 continue;
             }
             Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                // We don't have the necessary data for this formatter.
+                // TODO: What behavior makes the most sense here?
+                // We can keep trying other formatters.
+                continue;
+            }
+            Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
                 // We don't have the necessary data for this formatter.
                 // TODO: What behavior makes the most sense here?
                 // We can keep trying other formatters.
