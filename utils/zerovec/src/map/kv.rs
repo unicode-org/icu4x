@@ -4,7 +4,6 @@
 
 use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 use crate::ule::*;
-use crate::vecs::{FlexZeroSlice, FlexZeroVec};
 use crate::vecs::{VarZeroSlice, VarZeroVec};
 use crate::zerovec::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
@@ -65,13 +64,6 @@ impl_sized_kv!(i128);
 impl_sized_kv!(char);
 impl_sized_kv!(f32);
 impl_sized_kv!(f64);
-
-impl<'a> ZeroMapKV<'a> for usize {
-    type Container = FlexZeroVec<'a>;
-    type Slice = FlexZeroSlice;
-    type GetType = [u8];
-    type OwnedType = usize;
-}
 
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where

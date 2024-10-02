@@ -213,7 +213,6 @@
 
 extern crate alloc;
 
-mod flexzerovec;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
 mod map;
@@ -237,8 +236,6 @@ pub use crate::map::map::ZeroMap;
 pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
-
-pub(crate) use flexzerovec::chunk_to_usize;
 
 #[doc(hidden)] // macro use
 pub mod __zerovec_internal_reexport {
@@ -294,8 +291,6 @@ pub mod vecs {
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
     pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat, VarZeroVecOwned};
-
-    pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }
 
 // Proc macro reexports
@@ -547,12 +542,10 @@ mod tests {
         check_size_of!(56 | 48, ZeroMap<str, u32>);
         check_size_of!(64 | 48, ZeroMap<str, str>);
         check_size_of!(120 | 96, ZeroMap2d<str, str, str>);
-        check_size_of!(32 | 24, vecs::FlexZeroVec);
 
         check_size_of!(24, Option<ZeroVec<u8>>);
         check_size_of!(32 | 24, Option<VarZeroVec<str>>);
         check_size_of!(64 | 56 | 48, Option<ZeroMap<str, str>>);
         check_size_of!(120 | 104 | 96, Option<ZeroMap2d<str, str, str>>);
-        check_size_of!(32 | 24, Option<vecs::FlexZeroVec>);
     }
 }
