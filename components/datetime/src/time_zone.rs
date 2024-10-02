@@ -9,7 +9,6 @@ use crate::{
     input::ExtractedInput,
     provider,
 };
-use alloc::borrow::Cow;
 use core::fmt;
 use icu_timezone::UtcOffset;
 use icu_timezone::{TimeZoneBcp47Id, ZoneVariant};
@@ -319,8 +318,8 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
     }
 }
 
-// Pacific Standard Time
-struct SpecificNonLocationLongFormat;
+// PDT
+struct SpecificNonLocationShortFormat;
 
 impl FormatTimeZone for SpecificNonLocationShortFormat {
     /// Writes the time zone in short specific non-location format as defined by the UTS-35 spec.
@@ -359,8 +358,8 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
     }
 }
 
-// PDT
-struct SpecificNonLocationShortFormat;
+// Pacific Standard Time
+struct SpecificNonLocationLongFormat;
 
 impl FormatTimeZone for SpecificNonLocationLongFormat {
     /// Writes the time zone in long specific non-location format as defined by the UTS-35 spec.
@@ -690,6 +689,7 @@ impl Iso8601Format {
     }
 }
 
+// Writes the exemplar city associated with this time zone.
 // It is only used for pattern in special case and not public to users.
 struct ExemplarCityFormat;
 
@@ -700,30 +700,29 @@ impl FormatTimeZone for ExemplarCityFormat {
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        // Writes the exemplar city associated with this time zone.
-        let formatted_exemplar_city = data_payloads
-            .exemplar_cities
-            .as_ref()
-            .and_then(|cities| input.time_zone_id.and_then(|id| cities.0.get(&id)));
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_exemplar_city {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => {
-                // Writes the unknown city "Etc/Unknown" for the current locale.
-                //
-                // If there is no localized form of "Etc/Unknown" for the current locale,
-                // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
-                //
-                // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
-                // is unable to produce a localized form of the time zone's exemplar city in the current locale.
-                let formatted_unknown_city = data_payloads
-                    .exemplar_cities
-                    .as_ref()
-                    .and_then(|cities| cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
-                    .unwrap_or(&Cow::Borrowed("Unknown"));
-                Ok(sink.write_str(formatted_unknown_city)?)
-            }
-        })
+        let city = exemplar_cities
+            .0
+            .get(&time_zone_id)
+            // Writes the unknown city "Etc/Unknown" for the current locale.
+            //
+            // If there is no localized form of "Etc/Unknown" for the current locale,
+            // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
+            //
+            // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
+            // is unable to produce a localized form of the time zone's exemplar city in the current locale.
+            .or_else(|| exemplar_cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
+            .unwrap_or("Unknown");
+
+        sink.write_str(city)?;
+
+        Ok(Ok(()))
     }
 }
 
@@ -737,13 +736,13 @@ impl FormatTimeZone for Bcp47IdFormat {
         input: &ExtractedInput,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        Ok(match input.time_zone_id {
-            Some(bcp47_id) => {
-                sink.write_str(&bcp47_id)?;
-                Ok(())
-            }
-            None => Err(FormatTimeZoneError::MissingInputField("time_zone_id")),
-        })
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+
+        sink.write_str(&time_zone_id)?;
+
+        Ok(Ok(()))
     }
 }
 
