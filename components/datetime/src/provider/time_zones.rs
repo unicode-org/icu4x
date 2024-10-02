@@ -71,7 +71,6 @@ pub struct TimeZoneEssentialsV1<'data> {
     )]
     pub region_format: Cow<'data, SinglePlaceholderPattern>,
     /// The format string for a region's standard time.
-    // CURRENLY UNUSED
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -81,7 +80,6 @@ pub struct TimeZoneEssentialsV1<'data> {
     )]
     pub region_format_st: Cow<'data, SinglePlaceholderPattern>,
     /// The format string for a region's daylight time.
-    // CURRENLY UNUSED
     #[cfg_attr(
         feature = "serde",
         serde(

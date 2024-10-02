@@ -61,7 +61,8 @@ pub enum TimeZoneFormatterConfig {
     GenericLocation,
     SpecificNonLocationLong,
     SpecificNonLocationShort,
-    LocalizedOffset,
+    LocalizedOffsetLong,
+    LocalizedOffsetShort,
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
 }
 
@@ -89,9 +90,13 @@ impl TimeZoneFormatterConfig {
                 skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
                 NeoSkeletonLength::Short
             }
-            TimeZoneFormatterConfig::LocalizedOffset => {
+            TimeZoneFormatterConfig::LocalizedOffsetLong => {
                 skeleton.style = NeoTimeZoneStyle::Offset;
                 NeoSkeletonLength::Long
+            }
+            TimeZoneFormatterConfig::LocalizedOffsetShort => {
+                skeleton.style = NeoTimeZoneStyle::Offset;
+                NeoSkeletonLength::Short
             }
             TimeZoneFormatterConfig::Iso8601(
                 IsoFormat::UtcBasic,

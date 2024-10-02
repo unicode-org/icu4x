@@ -2539,7 +2539,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::offset(),
     description = "UTC offset time zone",
     sample_length = Medium,
-    sample = "GMT-05:00", // TODO: Implement short localized offset
+    sample = "GMT-5",
     zone_essentials = yes,
 );
 

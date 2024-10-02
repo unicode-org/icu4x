@@ -37,11 +37,20 @@
       {
         "patterns": [
           "O",
-          "OOOO",
           "ZZZZ"
         ],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetShort"
+        ],
+        "fallback_formats": ["LocalizedOffset"],
+        "expected": ["GMT-7"]
+      },
+      {
+        "patterns": [
+          "OOOO"
+        ],
+        "configs": [
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT-07:00"]
       },
@@ -169,7 +178,7 @@
       {
         "patterns": [],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT+01:00"]
       },
@@ -269,7 +278,7 @@
       {
         "patterns": [],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT+01:00"]
       },
@@ -392,11 +401,20 @@
       {
         "patterns": [
           "O",
-          "OOOO",
           "ZZZZ"
         ],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetShort"
+        ],
+        "fallback_formats": ["LocalizedOffset"],
+        "expected": ["GMT+9"]
+      },
+      {
+        "patterns": [
+          "OOOO"
+        ],
+        "configs": [
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT+09:00"]
       },
@@ -551,7 +569,8 @@
           "ZZZZ"
         ],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetShort",
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT"]
       },
@@ -744,11 +763,20 @@
       {
         "patterns": [
           "O",
-          "OOOO",
           "ZZZZ"
         ],
         "configs": [
-          "LocalizedOffset"
+          "LocalizedOffsetShort"
+        ],
+        "fallback_formats": ["LocalizedOffset"],
+        "expected": ["GMT+5:45"]
+      },
+      {
+        "patterns": [
+          "OOOO"
+        ],
+        "configs": [
+          "LocalizedOffsetLong"
         ],
         "expected": ["GMT+05:45"]
       },

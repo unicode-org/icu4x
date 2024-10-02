@@ -751,12 +751,13 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
             None,
         ],
-        // `O`
-        // TODO: For now, use the long format. This should be GMT-8
-        ResolvedNeoTimeZoneSkeleton::OffsetShort => {
-            [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
-        }
-        // `OOOO`, `ZZZZ`
+        // `O`, `ZZZZ`
+        ResolvedNeoTimeZoneSkeleton::OffsetShort => [
+            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
+            None,
+            None,
+        ],
+        // `OOOO`
         ResolvedNeoTimeZoneSkeleton::OffsetLong => {
             [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
         }
