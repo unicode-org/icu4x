@@ -159,7 +159,9 @@ pub(super) enum TimeZoneFormatterUnit {
     #[allow(dead_code)]
     SpecificLocation,
     #[allow(dead_code)]
-    GenericPartialLocation,
+    GenericPartialLocationLong,
+    #[allow(dead_code)]
+    GenericPartialLocationShort,
     #[default]
     LocalizedOffsetLong,
     LocalizedOffsetShort,
@@ -242,8 +244,11 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
             Self::SpecificLocation => {
                 SpecificLocationFormat.format(sink, input, data_payloads, fdf)
             }
-            Self::GenericPartialLocation => {
-                GenericPartialLocationFormat.format(sink, input, data_payloads, fdf)
+            Self::GenericPartialLocationLong => {
+                GenericPartialLocationLongFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::GenericPartialLocationShort => {
+                GenericPartialLocationShortFormat.format(sink, input, data_payloads, fdf)
             }
             Self::LocalizedOffsetLong => {
                 LongLocalizedOffsetFormat.format(sink, input, data_payloads, fdf)
@@ -668,12 +673,12 @@ impl FormatTimeZone for SpecificLocationFormat {
     }
 }
 
-// Pacific Time (Los Angeles)
-struct GenericPartialLocationFormat;
+// PT (Los Angeles)
+struct GenericPartialLocationLongFormat;
 
-impl FormatTimeZone for GenericPartialLocationFormat {
-    /// Writes the time zone in a specific location format as defined by the UTS-35 spec.
-    /// e.g. Pacific Time (Los Angeles)
+impl FormatTimeZone for GenericPartialLocationLongFormat {
+    /// Writes the time zone in a long generic partial location format as defined by the UTS-35 spec.
+    /// e.g. PT (Los Angeles)
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
@@ -696,6 +701,57 @@ impl FormatTimeZone for GenericPartialLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(non_locations) = data_payloads.mz_generic_long.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+        let Some(non_location) = non_locations
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| non_locations.defaults.get(&metazone_id))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        essentials
+            .fallback_format
+            .interpolate((location, non_location))
+            .write_to(sink)?;
+
+        Ok(Ok(()))
+    }
+}
+
+// PT (Los Angeles)
+struct GenericPartialLocationShortFormat;
+
+impl FormatTimeZone for GenericPartialLocationShortFormat {
+    /// Writes the time zone in a short generic partial location format as defined by the UTS-35 spec.
+    /// e.g. PT (Los Angeles)
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+
+        let Some(essentials) = data_payloads.essentials else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(non_locations) = data_payloads.mz_generic_short.as_ref() else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
