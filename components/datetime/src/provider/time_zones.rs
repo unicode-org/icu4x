@@ -89,7 +89,6 @@ pub struct TimeZoneEssentialsV1<'data> {
     )]
     pub region_format_dt: Cow<'data, SinglePlaceholderPattern>,
     /// Metazone Name with Location Pattern.
-    // CURRENLY UNUSED
     #[cfg_attr(
         feature = "serde",
         serde(
