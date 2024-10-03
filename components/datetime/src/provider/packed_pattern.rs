@@ -115,7 +115,10 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// postcard and other size-optimized serialization formats.
 ///
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(
+    // Time patterns
+    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
+)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]

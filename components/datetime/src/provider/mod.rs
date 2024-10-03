@@ -17,10 +17,11 @@
 
 pub mod calendar;
 pub(crate) mod date_time;
-pub mod packed_pattern;
+pub mod neo;
+pub(crate) mod packed_pattern;
 pub mod time_zones;
 
-pub mod neo;
+pub use packed_pattern::*;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -113,7 +114,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::WeekdayNamesV1Marker::INFO,
     neo::DayPeriodNamesV1Marker::INFO,
     neo::GluePatternV1Marker::INFO,
-    neo::TimeNeoSkeletonPatternsV1Marker::INFO,
+    TimeNeoSkeletonPatternsV1Marker::INFO,
     neo::BuddhistYearNamesV1Marker::INFO,
     neo::ChineseYearNamesV1Marker::INFO,
     neo::CopticYearNamesV1Marker::INFO,

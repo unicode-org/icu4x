@@ -635,9 +635,7 @@ impl AsULE for SkeletonDataIndex {
     marker(JapaneseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanese/skeleton@1"),
     marker(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanext/skeleton@1"),
     marker(PersianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/persian/skeleton@1"),
-    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1"),
-    // Time patterns
-    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
+    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

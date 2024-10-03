@@ -13,7 +13,7 @@ use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
 use icu::datetime::pattern::runtime::PatternPlurals;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
+use icu::datetime::provider::TimeNeoSkeletonPatternsV1Marker;
 use icu::datetime::provider::neo::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;

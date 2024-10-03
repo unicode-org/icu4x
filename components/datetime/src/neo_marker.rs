@@ -321,7 +321,7 @@ use core::marker::PhantomData;
 use crate::{
     format::neo::*,
     neo_skeleton::*,
-    provider::{neo::*, time_zones::tz},
+    provider::{neo::*, time_zones::tz, *},
     CldrCalendar,
 };
 use icu_calendar::{
@@ -996,7 +996,7 @@ pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the any-calendar-kind input field.
     type NanoSecondInput: Into<Option<NanoSecond>>;
     /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
     /// Marker for loading day period names.
     type DayPeriodNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
@@ -1134,7 +1134,7 @@ impl TimeMarkers for NeoNeverMarker {
     type MinuteInput = NeverField;
     type SecondInput = NeverField;
     type NanoSecondInput = NeverField;
-    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 

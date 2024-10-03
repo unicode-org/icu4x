@@ -14,12 +14,15 @@ use crate::neo_skeleton::{
 use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
-use crate::provider::neo::*;
+use crate::provider::{neo::*, PackedPatternsV1, PackedSkeletonVariant};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+pub(crate) type ErasedPackedPatterns = ErasedMarker<PackedPatternsV1<'static>>;
 
 pub(crate) struct RawNeoOptions {
     pub(crate) length: Option<NeoSkeletonLength>,
@@ -82,7 +85,7 @@ pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
         skeleton: NeoTimeSkeleton,
         hour_cycle: Option<HourCycle>,
-        payload: DataPayload<SkeletaV1Marker>,
+        payload: DataPayload<ErasedPackedPatterns>,
     },
 }
 
@@ -386,7 +389,7 @@ impl OverlapPatternSelectionData {
 
 impl TimePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
-        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         length: MaybeLength,
         components: NeoTimeComponents,
@@ -450,10 +453,7 @@ impl TimePatternSelectionData {
             } => {
                 payload
                     .get()
-                    .get_pattern(PatternSelectionOptions {
-                        length: skeleton.length,
-                        should_display_era: None,
-                    })
+                    .get(skeleton.length, PackedSkeletonVariant::Standard)
                     .items
             }
         };
@@ -470,10 +470,9 @@ impl TimePatternSelectionData {
                 hour_cycle,
                 payload,
             } => TimePatternDataBorrowed::Resolved(
-                payload.get().get_pattern(PatternSelectionOptions {
-                    length: skeleton.length,
-                    should_display_era: None,
-                }),
+                payload
+                    .get()
+                    .get(skeleton.length, PackedSkeletonVariant::Standard),
                 skeleton.alignment,
                 *hour_cycle,
                 skeleton.fractional_second_digits,
@@ -540,7 +539,7 @@ impl DateTimeZonePatternSelectionData {
     #[allow(clippy::too_many_arguments)] // private function with lots of generics
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         components: NeoComponents,
