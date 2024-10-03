@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::vec::VarZeroVecInner;
 use super::{VarZeroSlice, VarZeroVec, VarZeroVecFormat};
 use crate::ule::*;
 use alloc::boxed::Box;
@@ -99,7 +100,7 @@ where
             ))
         } else {
             let deserialized = VarZeroVec::<'a, T, F>::deserialize(deserializer)?;
-            let borrowed = if let VarZeroVec::Borrowed(b) = deserialized {
+            let borrowed = if let VarZeroVec(VarZeroVecInner::Borrowed(b)) = deserialized {
                 b
             } else {
                 return Err(de::Error::custom(

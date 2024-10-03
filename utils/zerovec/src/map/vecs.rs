@@ -4,6 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
+use crate::varzerovec::vec::VarZeroVecInner;
 use crate::vecs::VarZeroVecFormat;
 use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
@@ -487,7 +488,7 @@ where
         if cap == 0 {
             VarZeroVec::new()
         } else {
-            VarZeroVec::Owned(VarZeroVecOwned::with_capacity(cap))
+            Self::from(VarZeroVecOwned::with_capacity(cap))
         }
     }
     fn zvl_clear(&mut self) {
@@ -505,7 +506,7 @@ where
         b.as_varzerovec()
     }
     fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T, F>> {
-        if let VarZeroVec::Borrowed(b) = *self {
+        if let Self(VarZeroVecInner::Borrowed(b)) = *self {
             Some(b)
         } else {
             None
@@ -520,7 +521,7 @@ where
         for &i in permutation.iter() {
             result.push(self.get(i).unwrap());
         }
-        *self = VarZeroVec::Owned(result);
+        *self = Self(VarZeroVecInner::Owned(result));
     }
 }
 
@@ -560,7 +561,7 @@ mod test {
         zv.zvl_permute(&mut permutation);
         assert_eq!(&zv, &[44, 33, 22, 11, 77, 66, 55]);
 
-        let mut vzv: VarZeroVec<str> = VarZeroVec::Owned(
+        let mut vzv: VarZeroVec<str> = VarZeroVec::from(
             VarZeroVecOwned::try_from_elements(&["11", "22", "33", "44", "55", "66", "77"])
                 .unwrap(),
         );

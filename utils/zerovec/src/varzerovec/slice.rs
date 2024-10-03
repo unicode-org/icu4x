@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::components::VarZeroVecComponents;
+use super::vec::VarZeroVecInner;
 use super::*;
 use crate::ule::*;
 use alloc::boxed::Box;
@@ -260,7 +261,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
     pub const fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T, F> {
-        VarZeroVec::Borrowed(self)
+        VarZeroVec(VarZeroVecInner::Borrowed(self))
     }
 
     /// Parse a VarZeroSlice from a slice of the appropriate format
