@@ -1,11 +1,14 @@
 {
-  "index_info": {
-    "has_long": true,
-    "has_medium": false,
-    "has_plurals": false,
-    "has_eras": false
-  },
-  "patterns": [
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
     "cccc h:mm a",
     "ccc h:mm a"
   ]

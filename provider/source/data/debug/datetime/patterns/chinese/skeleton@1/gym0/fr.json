@@ -1,16 +1,18 @@
 {
-  "index_info": {
-    "has_long": true,
-    "has_medium": true,
-    "has_plurals": false,
-    "has_eras": true
-  },
-  "patterns": [
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    4,
+    0,
+    2
+  ],
+  "elements": [
     "MMMM U",
-    "r(U) MMMM",
-    "MMM U",
     "MMM U",
     "M/y",
-    "MMM U"
+    "r(U) MMMM"
   ]
 }
