@@ -136,7 +136,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///    CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
@@ -167,7 +167,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///     CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///     CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
@@ -190,7 +190,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///    CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
@@ -269,8 +269,7 @@ mod tests {
     #[test]
     fn test_size_has_strings() {
         let cp_slice = &[0, 1, 0x7F, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -283,8 +282,7 @@ mod tests {
     #[test]
     fn test_empty_string_allowed() {
         let cp_slice = &[0, 1, 0x7F, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -297,8 +295,7 @@ mod tests {
     #[test]
     fn test_invalid_string() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["a"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -313,8 +310,7 @@ mod tests {
     #[test]
     fn test_invalid_string_list_has_duplicate() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["abc", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -329,8 +325,7 @@ mod tests {
     #[test]
     fn test_invalid_string_list_not_sorted() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["xyz", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 

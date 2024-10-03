@@ -172,7 +172,7 @@ mod tests {
             0xC000..=0xFFFF,
         ];
         let expected =
-            CodePointInversionList::try_clone_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+            CodePointInversionList::try_from_u32_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
         let actual = CodePointInversionList::from_iter(ranges);
         assert_eq!(expected, actual);
     }
