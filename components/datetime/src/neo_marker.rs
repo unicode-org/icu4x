@@ -309,7 +309,7 @@
 //! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
-//!     "GMT+05:30"
+//!     "GMT+5:30"
 //! );
 //! ```
 
@@ -2458,7 +2458,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
-    ///     "GMT-03:00"
+    ///     "GMT-3"
     /// );
     /// ```
     NeoTimeZoneSpecificMarker,
@@ -2539,7 +2539,7 @@ impl_zone_marker!(
     NeoTimeZoneSkeleton::offset(),
     description = "UTC offset time zone",
     sample_length = Medium,
-    sample = "GMT-05:00", // TODO: Implement short localized offset
+    sample = "GMT-5",
     zone_essentials = yes,
 );
 

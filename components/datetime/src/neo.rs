@@ -675,8 +675,8 @@ where
             &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-            Some(loader), // fixed decimal formatter
-            Some(loader), // week calculator
+            loader, // fixed decimal formatter
+            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -1373,8 +1373,8 @@ where
             &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-            Some(loader), // fixed decimal formatter
-            Some(loader), // week calculator
+            loader, // fixed decimal formatter
+            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;

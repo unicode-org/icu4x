@@ -9,10 +9,11 @@ use crate::{
     input::ExtractedInput,
     provider,
 };
-use alloc::borrow::Cow;
 use core::fmt;
-use icu_timezone::TimeZoneBcp47Id;
+use fixed_decimal::FixedDecimal;
+use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::UtcOffset;
+use icu_timezone::{TimeZoneBcp47Id, ZoneVariant};
 use tinystr::tinystr;
 use writeable::Writeable;
 
@@ -41,6 +42,9 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     IsoXXX,
     IsoXXXX,
     IsoXXXXX,
+    // TODO:
+    // `VV` "America/Los_Angeles"
+    // Generic Partial Location: "Pacific Time (Los Angeles)"
 }
 
 impl ResolvedNeoTimeZoneSkeleton {
@@ -53,10 +57,10 @@ impl ResolvedNeoTimeZoneSkeleton {
 }
 
 /// A container contains all data payloads for time zone formatting (borrowed version).
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    pub(crate) zone_formats: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
+    pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
@@ -67,19 +71,6 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
-}
-
-impl<'a> TimeZoneDataPayloadsBorrowed<'a> {
-    pub(crate) fn empty() -> Self {
-        TimeZoneDataPayloadsBorrowed {
-            zone_formats: None,
-            exemplar_cities: None,
-            mz_generic_long: None,
-            mz_generic_short: None,
-            mz_specific_long: None,
-            mz_specific_short: None,
-        }
-    }
 }
 
 /// Determines which ISO-8601 format should be used to format the timezone offset.
@@ -129,17 +120,6 @@ pub enum IsoSeconds {
     Never,
 }
 
-/// Whether a field should be zero-padded in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-pub(crate) enum ZeroPadding {
-    /// Add zero-padding.
-    On,
-
-    /// Do not add zero-padding.
-    Off,
-}
-
 /// An enum for time zone fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
@@ -168,96 +148,32 @@ impl From<FallbackFormat> for TimeZoneFormatterOptions {
     }
 }
 
-// Pacific Time
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct GenericNonLocationLongFormat {}
-
-// PT
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct GenericNonLocationShortFormat {}
-
-// Pacific Standard Time
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct SpecificNonLocationLongFormat {}
-
-// PDT
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct SpecificNonLocationShortFormat {}
-
-// Los Angeles Time
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct GenericLocationFormat {}
-
-// GMT-07:00
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct LocalizedOffsetFormat {}
-
-// -07:00
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) struct Iso8601Format {
-    pub(crate) format: IsoFormat,
-    pub(crate) minutes: IsoMinutes,
-    pub(crate) seconds: IsoSeconds,
-}
-
-impl Iso8601Format {
-    pub(crate) fn default_for_fallback() -> Self {
-        Self {
-            format: IsoFormat::Basic,
-            minutes: IsoMinutes::Required,
-            seconds: IsoSeconds::Optional,
-        }
-    }
-}
-
-// It is only used for pattern in special case and not public to users.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct ExemplarCityFormat {}
-
-// It is only used for pattern in special case and not public to users.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct Bcp47IdFormat {}
-
 // An enum for time zone format unit.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub(super) enum TimeZoneFormatterUnit {
-    GenericNonLocationLong(GenericNonLocationLongFormat),
-    GenericNonLocationShort(GenericNonLocationShortFormat),
-    SpecificNonLocationLong(SpecificNonLocationLongFormat),
-    SpecificNonLocationShort(SpecificNonLocationShortFormat),
-    GenericLocation(GenericLocationFormat),
-    ExemplarCity(ExemplarCityFormat),
-    Bcp47Id(Bcp47IdFormat),
-    WithFallback(FallbackTimeZoneFormatterUnit),
-}
-
-impl Default for TimeZoneFormatterUnit {
-    fn default() -> Self {
-        TimeZoneFormatterUnit::WithFallback(FallbackTimeZoneFormatterUnit::LocalizedOffset(
-            LocalizedOffsetFormat {},
-        ))
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) enum FallbackTimeZoneFormatterUnit {
-    LocalizedOffset(LocalizedOffsetFormat),
+    GenericNonLocationLong,
+    GenericNonLocationShort,
+    SpecificNonLocationLong,
+    SpecificNonLocationShort,
+    GenericLocation,
+    #[allow(dead_code)]
+    SpecificLocation,
+    #[allow(dead_code)]
+    GenericPartialLocationLong,
+    #[allow(dead_code)]
+    GenericPartialLocationShort,
+    #[default]
+    LocalizedOffsetLong,
+    LocalizedOffsetShort,
     Iso8601(Iso8601Format),
-}
-
-/// Load a fallback format for timezone. The fallback format will be executed if there are no
-/// matching format results.
-impl From<FallbackFormat> for FallbackTimeZoneFormatterUnit {
-    fn from(value: FallbackFormat) -> Self {
-        match value {
-            FallbackFormat::LocalizedOffset => Self::LocalizedOffset(LocalizedOffsetFormat {}),
-        }
-    }
+    ExemplarCity,
+    Bcp47Id,
 }
 
 #[derive(Debug)]
 pub(super) enum FormatTimeZoneError {
     MissingZoneSymbols,
+    MissingFixedDecimalFormatter,
     NameNotFound,
     #[allow(dead_code)] // the field is not being read but it may be useful
     MissingInputField(&'static str),
@@ -271,16 +187,36 @@ pub(super) trait FormatTimeZone {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error>;
 }
 
-pub(super) trait FormatTimeZoneWithFallback {
+pub(super) trait FormatOffset {
     fn format_offset<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         offset: UtcOffset,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error>;
+}
+
+impl<T> FormatTimeZone for T
+where
+    T: FormatOffset,
+{
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(offset) = input.offset else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("offset")));
+        };
+        self.format_offset(sink, offset, data_payloads, fdf)
+    }
 }
 
 impl FormatTimeZone for TimeZoneFormatterUnit {
@@ -289,47 +225,46 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         match self {
-            Self::GenericNonLocationLong(unit) => unit.format(sink, input, data_payloads),
-            Self::GenericNonLocationShort(unit) => unit.format(sink, input, data_payloads),
-            Self::SpecificNonLocationLong(unit) => unit.format(sink, input, data_payloads),
-            Self::SpecificNonLocationShort(unit) => unit.format(sink, input, data_payloads),
-            Self::GenericLocation(unit) => unit.format(sink, input, data_payloads),
-            Self::WithFallback(unit) => unit.format(sink, input, data_payloads),
-            Self::ExemplarCity(unit) => unit.format(sink, input, data_payloads),
-            Self::Bcp47Id(unit) => unit.format(sink, input, data_payloads),
+            Self::GenericNonLocationLong => {
+                GenericNonLocationLongFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::GenericNonLocationShort => {
+                GenericNonLocationShortFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::SpecificNonLocationLong => {
+                SpecificNonLocationLongFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::SpecificNonLocationShort => {
+                SpecificNonLocationShortFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::GenericLocation => GenericLocationFormat.format(sink, input, data_payloads, fdf),
+            Self::SpecificLocation => {
+                SpecificLocationFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::GenericPartialLocationLong => {
+                GenericPartialLocationLongFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::GenericPartialLocationShort => {
+                GenericPartialLocationShortFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::LocalizedOffsetLong => {
+                LongLocalizedOffsetFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::LocalizedOffsetShort => {
+                ShortLocalizedOffsetFormat.format(sink, input, data_payloads, fdf)
+            }
+            Self::Iso8601(iso) => iso.format(sink, input, data_payloads, fdf),
+            Self::ExemplarCity => ExemplarCityFormat.format(sink, input, data_payloads, fdf),
+            Self::Bcp47Id => Bcp47IdFormat.format(sink, input, data_payloads, fdf),
         }
     }
 }
 
-impl FormatTimeZone for FallbackTimeZoneFormatterUnit {
-    fn format<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        input: &ExtractedInput,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        match self {
-            Self::LocalizedOffset(unit) => unit.format(sink, input, data_payloads),
-            Self::Iso8601(unit) => unit.format(sink, input, data_payloads),
-        }
-    }
-}
-
-impl FormatTimeZoneWithFallback for FallbackTimeZoneFormatterUnit {
-    fn format_offset<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        offset: UtcOffset,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        match self {
-            Self::LocalizedOffset(unit) => unit.format_offset(sink, offset, data_payloads),
-            Self::Iso8601(unit) => unit.format_offset(sink, offset, data_payloads),
-        }
-    }
-}
+// Pacific Time
+struct GenericNonLocationLongFormat;
 
 impl FormatTimeZone for GenericNonLocationLongFormat {
     /// Writes the time zone in long generic non-location format as defined by the UTS-35 spec.
@@ -340,30 +275,34 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_generic_long
-            .as_ref()
-            .and_then(|metazones| {
-                input
-                    .time_zone_id
-                    .and_then(|tz| metazones.overrides.get(&tz))
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_generic_long
-                    .as_ref()
-                    .and_then(|metazones| {
-                        input.metazone_id.and_then(|mz| metazones.defaults.get(&mz))
-                    })
-            });
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(names) = data_payloads.mz_generic_long.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_time_zone {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
-        })
+        let Some(name) = names
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| names.defaults.get(&metazone_id))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        sink.write_str(name)?;
+
+        Ok(Ok(()))
     }
 }
+
+// PT
+struct GenericNonLocationShortFormat;
 
 impl FormatTimeZone for GenericNonLocationShortFormat {
     /// Writes the time zone in short generic non-location format as defined by the UTS-35 spec.
@@ -374,30 +313,34 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_generic_short
-            .as_ref()
-            .and_then(|metazones| {
-                input
-                    .time_zone_id
-                    .and_then(|tz| metazones.overrides.get(&tz))
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_generic_short
-                    .as_ref()
-                    .and_then(|metazones| {
-                        input.metazone_id.and_then(|mz| metazones.defaults.get(&mz))
-                    })
-            });
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(names) = data_payloads.mz_generic_short.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_time_zone {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
-        })
+        let Some(name) = names
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| names.defaults.get(&metazone_id))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        sink.write_str(name)?;
+
+        Ok(Ok(()))
     }
 }
+
+// PDT
+struct SpecificNonLocationShortFormat;
 
 impl FormatTimeZone for SpecificNonLocationShortFormat {
     /// Writes the time zone in short specific non-location format as defined by the UTS-35 spec.
@@ -408,36 +351,37 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_specific_short
-            .as_ref()
-            .and_then(|metazones| {
-                input.time_zone_id.and_then(|tz| {
-                    input
-                        .zone_variant
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
-                })
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_specific_short
-                    .as_ref()
-                    .and_then(|metazones| {
-                        input.metazone_id.and_then(|mz| {
-                            input
-                                .zone_variant
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
-                        })
-                    })
-            });
+        let Some(zone_variant) = input.zone_variant else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+        };
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(names) = data_payloads.mz_specific_short.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_time_zone {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
-        })
+        let Some(name) = names
+            .overrides
+            .get_2d(&time_zone_id, &zone_variant)
+            .or_else(|| names.defaults.get_2d(&metazone_id, &zone_variant))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        sink.write_str(name)?;
+
+        Ok(Ok(()))
     }
 }
+
+// Pacific Standard Time
+struct SpecificNonLocationLongFormat;
 
 impl FormatTimeZone for SpecificNonLocationLongFormat {
     /// Writes the time zone in long specific non-location format as defined by the UTS-35 spec.
@@ -448,38 +392,39 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_specific_long
-            .as_ref()
-            .and_then(|metazones| {
-                input.time_zone_id.and_then(|tz| {
-                    input
-                        .zone_variant
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
-                })
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_specific_long
-                    .as_ref()
-                    .and_then(|metazones| {
-                        input.metazone_id.and_then(|mz| {
-                            input
-                                .zone_variant
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
-                        })
-                    })
-            });
+        let Some(zone_variant) = input.zone_variant else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+        };
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(names) = data_payloads.mz_specific_long.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_time_zone {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => Err(FormatTimeZoneError::NameNotFound),
-        })
+        let Some(name) = names
+            .overrides
+            .get_2d(&time_zone_id, &zone_variant)
+            .or_else(|| names.defaults.get_2d(&metazone_id, &zone_variant))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        sink.write_str(name)?;
+
+        Ok(Ok(()))
     }
 }
 
-impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
+// UTC+7:00
+struct LongLocalizedOffsetFormat;
+
+impl FormatOffset for LongLocalizedOffsetFormat {
     /// Writes the time zone in localized offset format according to the CLDR localized hour format.
     /// This goes explicitly against the UTS-35 spec, which specifies long or short localized
     /// offset formats regardless of locale.
@@ -491,16 +436,21 @@ impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
         sink: &mut W,
         offset: UtcOffset,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(fdf) = fdf else {
+            return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
+        };
         Ok(if offset.is_zero() {
-            sink.write_str(&zone_formats.offset_zero_format)?;
+            sink.write_str(&essentials.offset_zero_format)?;
             Ok(())
         } else {
             struct FormattedHour<'a> {
                 format_str: &'a str,
+                fdf: &'a FixedDecimalFormatter,
                 offset: UtcOffset,
             }
 
@@ -509,11 +459,20 @@ impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
                     &self,
                     sink: &mut S,
                 ) -> fmt::Result {
+                    let hours = (self.offset.offset_seconds() / 3600).unsigned_abs();
+                    let minutes = (self.offset.offset_seconds() / 60 % 60).unsigned_abs();
+
                     for c in self.format_str.chars() {
                         match c {
-                            'H' => format_offset_hours(sink, self.offset, ZeroPadding::On)?,
-                            'h' => format_offset_hours(sink, self.offset, ZeroPadding::Off)?,
-                            'm' => format_offset_minutes(sink, self.offset)?,
+                            'H' => self
+                                .fdf
+                                .format(&FixedDecimal::from(hours).padded_start(2))
+                                .write_to(sink)?,
+                            'h' => self.fdf.format(&FixedDecimal::from(hours)).write_to(sink)?,
+                            'm' => self
+                                .fdf
+                                .format(&FixedDecimal::from(minutes).padded_start(2))
+                                .write_to(sink)?,
                             c => sink.write_char(c)?,
                         }
                     }
@@ -521,14 +480,15 @@ impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
                 }
             }
 
-            zone_formats
+            essentials
                 .offset_format
                 .interpolate([FormattedHour {
                     format_str: if offset.is_positive() {
-                        &zone_formats.hour_format.0
+                        &essentials.hour_format.0
                     } else {
-                        &zone_formats.hour_format.1
+                        &essentials.hour_format.1
                     },
+                    fdf,
                     offset,
                 }])
                 .write_to(sink)?;
@@ -538,22 +498,88 @@ impl FormatTimeZoneWithFallback for LocalizedOffsetFormat {
     }
 }
 
-impl FormatTimeZone for LocalizedOffsetFormat {
-    fn format<W: writeable::PartsWrite + ?Sized>(
+// UTC+7
+struct ShortLocalizedOffsetFormat;
+
+impl FormatOffset for ShortLocalizedOffsetFormat {
+    /// Writes the time zone in localized offset format according to the CLDR localized hour format.
+    /// This goes explicitly against the UTS-35 spec, which specifies long or short localized
+    /// offset formats regardless of locale.
+    ///
+    /// You can see more information about our decision to resolve this conflict here:
+    /// <https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing>
+    fn format_offset<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        offset: UtcOffset,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        match input
-            .offset
-            .ok_or(FormatTimeZoneError::MissingInputField("offset"))
-        {
-            Ok(offset) => self.format_offset(sink, offset, data_payloads),
-            Err(e) => Ok(Err(e)),
-        }
+        let Some(essentials) = data_payloads.essentials else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(fdf) = fdf else {
+            return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
+        };
+        Ok(if offset.is_zero() {
+            sink.write_str(&essentials.offset_zero_format)?;
+            Ok(())
+        } else {
+            struct FormattedHour<'a> {
+                format_str: &'a str,
+                fdf: &'a FixedDecimalFormatter,
+                offset: UtcOffset,
+            }
+
+            impl Writeable for FormattedHour<'_> {
+                fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+                    &self,
+                    sink: &mut S,
+                ) -> fmt::Result {
+                    let hours = (self.offset.offset_seconds() / 3600).unsigned_abs();
+                    let minutes = (self.offset.offset_seconds() / 60 % 60).unsigned_abs();
+
+                    let mut between_hours_and_minutes = false;
+                    for c in self.format_str.chars() {
+                        match c {
+                            'h' | 'H' => {
+                                self.fdf.format(&hours.into()).write_to(sink)?;
+                                between_hours_and_minutes = true;
+                            }
+                            'm' => {
+                                if minutes != 0 {
+                                    self.fdf.format(&minutes.into()).write_to(sink)?;
+                                }
+                                between_hours_and_minutes = false;
+                            }
+                            _c if between_hours_and_minutes && minutes == 0 => {}
+                            c => sink.write_char(c)?,
+                        }
+                    }
+                    Ok(())
+                }
+            }
+
+            essentials
+                .offset_format
+                .interpolate([FormattedHour {
+                    format_str: if offset.is_positive() {
+                        &essentials.hour_format.0
+                    } else {
+                        &essentials.hour_format.1
+                    },
+                    fdf,
+                    offset,
+                }])
+                .write_to(sink)?;
+
+            Ok(())
+        })
     }
 }
+
+// Los Angeles Time
+struct GenericLocationFormat;
 
 impl FormatTimeZone for GenericLocationFormat {
     /// Writes the time zone in generic location format as defined by the UTS-35 spec.
@@ -564,19 +590,23 @@ impl FormatTimeZone for GenericLocationFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_formats) = data_payloads.zone_formats else {
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(location) = data_payloads
-            .exemplar_cities
-            .as_ref()
-            .and_then(|cities| input.time_zone_id.and_then(|id| cities.0.get(&id)))
-        else {
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
-        zone_formats
+        essentials
             .region_format
             .interpolate([location])
             .write_to(sink)?;
@@ -585,7 +615,174 @@ impl FormatTimeZone for GenericLocationFormat {
     }
 }
 
-impl FormatTimeZoneWithFallback for Iso8601Format {
+// Los Angeles Daylight Time
+struct SpecificLocationFormat;
+
+impl FormatTimeZone for SpecificLocationFormat {
+    /// Writes the time zone in a specific location format as defined by the UTS-35 spec.
+    /// e.g. France Time
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(zone_variant) = input.zone_variant else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+        };
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(essentials) = data_payloads.essentials else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        Ok(if zone_variant == ZoneVariant::daylight() {
+            essentials
+                .region_format_dt
+                .interpolate([location])
+                .write_to(sink)?;
+
+            Ok(())
+        } else if zone_variant == ZoneVariant::standard() {
+            essentials
+                .region_format_st
+                .interpolate([location])
+                .write_to(sink)?;
+
+            Ok(())
+        } else {
+            sink.with_part(writeable::Part::ERROR, |sink| {
+                essentials
+                    .region_format
+                    .interpolate([location])
+                    .write_to(sink)
+            })?;
+
+            Err(FormatTimeZoneError::MissingInputField("zone_offset"))
+        })
+    }
+}
+
+// Pacific Time (Los Angeles)
+struct GenericPartialLocationLongFormat;
+
+impl FormatTimeZone for GenericPartialLocationLongFormat {
+    /// Writes the time zone in a long generic partial location format as defined by the UTS-35 spec.
+    /// e.g. Pacific Time (Los Angeles)
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+
+        let Some(essentials) = data_payloads.essentials else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(non_locations) = data_payloads.mz_generic_long.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+        let Some(non_location) = non_locations
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| non_locations.defaults.get(&metazone_id))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        essentials
+            .fallback_format
+            .interpolate((location, non_location))
+            .write_to(sink)?;
+
+        Ok(Ok(()))
+    }
+}
+
+// PT (Los Angeles)
+struct GenericPartialLocationShortFormat;
+
+impl FormatTimeZone for GenericPartialLocationShortFormat {
+    /// Writes the time zone in a short generic partial location format as defined by the UTS-35 spec.
+    /// e.g. PT (Los Angeles)
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(metazone_id) = input.metazone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        };
+
+        let Some(essentials) = data_payloads.essentials else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+        let Some(non_locations) = data_payloads.mz_generic_short.as_ref() else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+        let Some(non_location) = non_locations
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| non_locations.defaults.get(&metazone_id))
+        else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
+        };
+
+        essentials
+            .fallback_format
+            .interpolate((location, non_location))
+            .write_to(sink)?;
+
+        Ok(Ok(()))
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(crate) struct Iso8601Format {
+    pub(crate) format: IsoFormat,
+    pub(crate) minutes: IsoMinutes,
+    pub(crate) seconds: IsoSeconds,
+}
+
+impl FormatOffset for Iso8601Format {
     /// Writes a [`UtcOffset`](crate::input::UtcOffset) in ISO-8601 format according to the
     /// given formatting options.
     ///
@@ -602,6 +799,7 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
         sink: &mut W,
         offset: UtcOffset,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         self.format_infallible(sink, offset).map(|()| Ok(()))
     }
@@ -613,6 +811,16 @@ impl Iso8601Format {
         sink: &mut W,
         offset: UtcOffset,
     ) -> Result<(), fmt::Error> {
+        fn format_time_segment<W: writeable::PartsWrite + ?Sized>(
+            sink: &mut W,
+            n: u32,
+        ) -> fmt::Result {
+            if n < 10 {
+                sink.write_char('0')?;
+            }
+            n.write_to(sink)
+        }
+
         if offset.is_zero() && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended) {
             return sink.write_char('Z');
         }
@@ -621,7 +829,7 @@ impl Iso8601Format {
 
         sink.write_char(if offset.is_positive() { '+' } else { '-' })?;
 
-        format_offset_hours(sink, offset, ZeroPadding::On)?;
+        format_time_segment(sink, (offset.offset_seconds() / 3600).unsigned_abs())?;
 
         if self.minutes == IsoMinutes::Required
             || (self.minutes == IsoMinutes::Optional && offset.has_minutes())
@@ -629,36 +837,23 @@ impl Iso8601Format {
             if extended_format {
                 sink.write_char(':')?;
             }
-            format_offset_minutes(sink, offset)?;
+            format_time_segment(sink, (offset.offset_seconds() % 3600 / 60).unsigned_abs())?;
         }
 
         if self.seconds == IsoSeconds::Optional && offset.has_seconds() {
             if extended_format {
                 sink.write_char(':')?;
             }
-            format_offset_seconds(sink, offset)?;
+            format_time_segment(sink, (offset.offset_seconds() % 3600 % 60).unsigned_abs())?;
         }
 
         Ok(())
     }
 }
 
-impl FormatTimeZone for Iso8601Format {
-    fn format<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        input: &ExtractedInput,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        match input
-            .offset
-            .ok_or(FormatTimeZoneError::MissingInputField("offset"))
-        {
-            Ok(offset) => self.format_offset(sink, offset, data_payloads),
-            Err(e) => Ok(Err(e)),
-        }
-    }
-}
+// Writes the exemplar city associated with this time zone.
+// It is only used for pattern in special case and not public to users.
+struct ExemplarCityFormat;
 
 impl FormatTimeZone for ExemplarCityFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
@@ -666,33 +861,36 @@ impl FormatTimeZone for ExemplarCityFormat {
         sink: &mut W,
         input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        // Writes the exemplar city associated with this time zone.
-        let formatted_exemplar_city = data_payloads
-            .exemplar_cities
-            .as_ref()
-            .and_then(|cities| input.time_zone_id.and_then(|id| cities.0.get(&id)));
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        Ok(match formatted_exemplar_city {
-            Some(ftz) => Ok(sink.write_str(ftz)?),
-            None => {
-                // Writes the unknown city "Etc/Unknown" for the current locale.
-                //
-                // If there is no localized form of "Etc/Unknown" for the current locale,
-                // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
-                //
-                // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
-                // is unable to produce a localized form of the time zone's exemplar city in the current locale.
-                let formatted_unknown_city = data_payloads
-                    .exemplar_cities
-                    .as_ref()
-                    .and_then(|cities| cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
-                    .unwrap_or(&Cow::Borrowed("Unknown"));
-                Ok(sink.write_str(formatted_unknown_city)?)
-            }
-        })
+        let city = exemplar_cities
+            .0
+            .get(&time_zone_id)
+            // Writes the unknown city "Etc/Unknown" for the current locale.
+            //
+            // If there is no localized form of "Etc/Unknown" for the current locale,
+            // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
+            //
+            // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
+            // is unable to produce a localized form of the time zone's exemplar city in the current locale.
+            .or_else(|| exemplar_cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
+            .unwrap_or("Unknown");
+
+        sink.write_str(city)?;
+
+        Ok(Ok(()))
     }
 }
+
+// It is only used for pattern in special case and not public to users.
+struct Bcp47IdFormat;
 
 impl FormatTimeZone for Bcp47IdFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
@@ -700,60 +898,14 @@ impl FormatTimeZone for Bcp47IdFormat {
         sink: &mut W,
         input: &ExtractedInput,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        Ok(match input.time_zone_id {
-            Some(bcp47_id) => {
-                sink.write_str(&bcp47_id)?;
-                Ok(())
-            }
-            None => Err(FormatTimeZoneError::MissingInputField("time_zone_id")),
-        })
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+
+        sink.write_str(&time_zone_id)?;
+
+        Ok(Ok(()))
     }
-}
-
-/// Formats a time segment with optional zero-padding.
-fn format_time_segment<W: writeable::PartsWrite + ?Sized>(
-    sink: &mut W,
-    n: u8,
-    padding: ZeroPadding,
-) -> fmt::Result {
-    debug_assert!((0..60).contains(&n));
-    if padding == ZeroPadding::On && n < 10 {
-        sink.write_char('0')?;
-    }
-    n.write_to(sink)
-}
-
-fn format_offset_hours<W: writeable::PartsWrite + ?Sized>(
-    sink: &mut W,
-    offset: UtcOffset,
-    padding: ZeroPadding,
-) -> fmt::Result {
-    format_time_segment(
-        sink,
-        (offset.offset_seconds() / 3600).unsigned_abs() as u8,
-        padding,
-    )
-}
-
-fn format_offset_minutes<W: writeable::PartsWrite + ?Sized>(
-    sink: &mut W,
-    offset: UtcOffset,
-) -> fmt::Result {
-    format_time_segment(
-        sink,
-        (offset.offset_seconds() % 3600 / 60).unsigned_abs() as u8,
-        ZeroPadding::On,
-    )
-}
-
-fn format_offset_seconds<W: writeable::PartsWrite + ?Sized>(
-    sink: &mut W,
-    offset: UtcOffset,
-) -> fmt::Result {
-    format_time_segment(
-        sink,
-        (offset.offset_seconds() % 3600 % 60).unsigned_abs() as u8,
-        ZeroPadding::On,
-    )
 }
