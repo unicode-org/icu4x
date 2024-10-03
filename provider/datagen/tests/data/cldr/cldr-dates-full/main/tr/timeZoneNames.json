@@ -2,9 +2,6 @@
   "main": {
     "tr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "tr"
       },
       "dates": {
@@ -333,9 +330,6 @@
               },
               "Chita": {
                 "exemplarCity": "Çita"
-              },
-              "Choibalsan": {
-                "exemplarCity": "Çoybalsan"
               },
               "Colombo": {
                 "exemplarCity": "Kolombo"
@@ -763,13 +757,6 @@
                 "daylight": "Çin Yaz Saati"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "Çoybalsan Saati",
-                "standard": "Çoybalsan Standart Saati",
-                "daylight": "Çoybalsan Yaz Saati"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "Christmas Adası Saati"
@@ -1018,6 +1005,11 @@
                 "generic": "Petropavlovsk-Kamçatski Saati",
                 "standard": "Petropavlovsk-Kamçatski Standart Saati",
                 "daylight": "Petropavlovsk-Kamçatski Yaz Saati"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "Kazakistan Saati"
               }
             },
             "Kazakhstan_Eastern": {

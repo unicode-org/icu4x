@@ -109,6 +109,13 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
+                static II: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
+                    unsafe {
+                        #[allow(unused_unsafe)]
+                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 17u32)
+                    },
+                    unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xEA\x8B\x8D\xEA\x91\x8D\xEA\x8C\x95\xEA\x87\x96\xEA\x89\xAC\xEA\x83\x98\xEA\x8F\x83\xEA\x89\x86\xEA\x88\xAC") },
+                ));
                 static FR_LU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -137,13 +144,6 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static GU: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0\xE6\n\0\0\xF0\n\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
                 static AS: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
                     unsafe {
                         #[allow(unused_unsafe)]
@@ -169,13 +169,6 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
                     unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\n\0\0p\n\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
-                    },
-                    zerovec::VarZeroVec::new(),
-                ));
-                static ML: <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(
-                    unsafe {
-                        #[allow(unused_unsafe)]
-                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"%\0\0\0&\0\0\0+\0\0\0/\0\0\x000\0\0\0:\0\0\0f\r\0\0p\r\0\0\x11 \0\0\x12 \0\x000 \0\x001 \0\0") }, 27u32)
                     },
                     zerovec::VarZeroVec::new(),
                 ));
@@ -242,8 +235,8 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
                     },
                     zerovec::VarZeroVec::new(),
                 ));
-                static VALUES: [&<icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable; 95usize] = [&AF, &AR, &AR_DZ, &AR_DZ, &AR_DZ, &AR_DZ, &AR_DZ, &AR_SA, &AR_SA, &AR_DZ, &AS, &AF, &AF, &BGC, &BGC, &BLO, &AS, &AF, &AF, &AF, &AF, &DE_CH, &DE_CH, &AF, &AF, &AF, &EO, &AF, &EO, &EU, &FA, &FF_ADLM, &EO, &EU, &FR, &FR_LU, &FR_LU, &GU, &AR_DZ, &BGC, &AF, &AF, &IE, &DE_CH, &AF, &AF, &AF, &KN, &BGC, &KS, &KXV_DEVA, &KXV_ORYA, &KXV_TELU, &AF, &LIJ, &EO, &AF, &ML, &AS, &BGC, &MY, &BGC, &EO, &NQO, &OR, &PA, &AF, &AF, &PS, &AF, &BGC, &RM, &AF, &BGC, &AF, &SAT, &AF, &EU, &AF, &EO, &AR, &AF, &TA, &TE, &AF, &AF, &FR_LU, &KS, &AF, &AF, &BGC, &YUE, &YUE, &YUE, &YUE];
-                static KEYS: [&str; 95usize] = ["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "gu", "he", "hi", "hu", "hy", "ie", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "ml", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"];
+                static VALUES: [&<icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::Yokeable; 94usize] = [&AF, &AR, &AR_DZ, &AR_DZ, &AR_DZ, &AR_DZ, &AR_DZ, &AR_SA, &AR_SA, &AR_DZ, &AS, &AF, &AF, &BGC, &BGC, &BLO, &AS, &AF, &AF, &AF, &AF, &DE_CH, &DE_CH, &AF, &AF, &AF, &EO, &AF, &EO, &EU, &FA, &FF_ADLM, &EO, &EU, &FR, &FR_LU, &FR_LU, &AR_DZ, &BGC, &AF, &AF, &IE, &II, &DE_CH, &AF, &AF, &AF, &KN, &BGC, &KS, &KXV_DEVA, &KXV_ORYA, &KXV_TELU, &AF, &LIJ, &EO, &AF, &AS, &BGC, &MY, &BGC, &EO, &NQO, &OR, &PA, &AF, &AF, &PS, &AF, &BGC, &RM, &AF, &BGC, &AF, &SAT, &AF, &EU, &AF, &EO, &AR, &AF, &TA, &TE, &AF, &AF, &FR_LU, &KS, &AF, &AF, &BGC, &YUE, &YUE, &YUE, &YUE];
+                static KEYS: [&str; 94usize] = ["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "he", "hi", "hu", "hy", "ie", "ii", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
@@ -276,7 +269,7 @@ macro_rules! __impliterable_props_exemplarchars_numbers_v1 {
         #[clippy::msrv = "1.67"]
         impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "gu", "he", "hi", "hu", "hy", "ie", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "ml", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+                Ok(["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "he", "hi", "hu", "hy", "ie", "ii", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
             }
         }
     };

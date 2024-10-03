@@ -2,9 +2,6 @@
   "main": {
     "es-AR": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es",
         "territory": "AR"
       },
@@ -66,6 +63,7 @@
           "bin": "bini",
           "bkm": "kom",
           "bla": "siksiká",
+          "blo": "anii",
           "bm": "bambara",
           "bn": "bengalí",
           "bo": "tibetano",
@@ -295,6 +293,7 @@
           "kv": "komi",
           "kw": "córnico",
           "kwk": "kwakʼwala",
+          "kxv": "kuvi",
           "ky": "kirguís",
           "la": "latín",
           "lad": "ladino",
@@ -305,6 +304,7 @@
           "lez": "lezgiano",
           "lg": "ganda",
           "li": "limburgués",
+          "lij": "genovés",
           "lil": "lillooet",
           "lkt": "lakota",
           "lmo": "lombardo",
@@ -320,7 +320,6 @@
           "lua": "luba-lulua",
           "lui": "luiseño",
           "lun": "lunda",
-          "luo": "luo",
           "lus": "mizo",
           "luy": "luyia",
           "lv": "letón",
@@ -503,6 +502,7 @@
           "swb": "comorense",
           "syc": "siríaco clásico",
           "syr": "siríaco",
+          "szl": "silesio",
           "ta": "tamil",
           "tce": "tutchone meridional",
           "te": "telugu",
@@ -550,9 +550,10 @@
           "und": "lengua desconocida",
           "ur": "urdu",
           "uz": "uzbeko",
-          "vai": "vai",
           "ve": "venda",
+          "vec": "véneto",
           "vi": "vietnamita",
+          "vmw": "makua",
           "vo": "volapük",
           "vot": "vótico",
           "vun": "vunjo",
@@ -566,6 +567,7 @@
           "wuu": "wu",
           "xal": "calmuco",
           "xh": "xhosa",
+          "xnr": "kangri",
           "xog": "soga",
           "yao": "yao",
           "yap": "yapés",

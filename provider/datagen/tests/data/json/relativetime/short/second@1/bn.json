@@ -5,14 +5,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": " সেকেন্ড পূর্বে",
+      "pattern": " সেকেন্ড আগে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": " সেকেন্ড পূর্বে",
+      "pattern": " সেকেন্ড আগে",
       "index": 0
     }
   },

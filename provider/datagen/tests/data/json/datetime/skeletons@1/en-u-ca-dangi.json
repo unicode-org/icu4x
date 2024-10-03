@@ -7,7 +7,6 @@
   "GyMMMMd": "MMMM d, r(U)",
   "GyMMMMdE": "E, MMMM d, r(U)",
   "y": "r(U)",
-  "yMd": "r-MM-dd",
   "yyyy": "r(U)",
   "yyyyM": "M/r",
   "yyyyMd": "M/d/r",

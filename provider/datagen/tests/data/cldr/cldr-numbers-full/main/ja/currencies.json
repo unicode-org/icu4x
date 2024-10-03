@@ -2,9 +2,6 @@
   "main": {
     "ja": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ja"
       },
       "numbers": {
@@ -732,7 +729,8 @@
             "symbol-alt-narrow": "レイ"
           },
           "RSD": {
-            "displayName": "ディナール (セルビア)"
+            "displayName": "セルビア ディナール",
+            "displayName-count-other": "セルビア ディナール"
           },
           "RUB": {
             "displayName": "ロシア ルーブル",
@@ -869,7 +867,8 @@
             "displayName": "タンザニア シリング"
           },
           "UAH": {
-            "displayName": "ウクライナ グリブナ",
+            "displayName": "ウクライナ フリヴニャ",
+            "displayName-count-other": "ウクライナ フリヴニャ",
             "symbol-alt-narrow": "₴"
           },
           "UAK": {

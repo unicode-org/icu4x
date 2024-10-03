@@ -264,6 +264,12 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         &self,
         iana_id: &'s str,
     ) -> Option<(Cow<'s, str>, TimeZoneBcp47Id)> {
+        if iana_id.to_ascii_uppercase() == "MET" {
+            return Some((
+                Cow::Owned("Europe/Brussels".into()),
+                TimeZoneBcp47Id(tinystr::tinystr!(8, "bebru")),
+            ));
+        }
         // Note: We collect the cursors into a stack so that we start probing
         // nearby the input IANA identifier. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
@@ -341,6 +347,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         iana_id: &'s str,
         mut cursor_fn: impl FnMut(&ZeroAsciiIgnoreCaseTrieCursor<'l>),
     ) -> Option<(IanaTrieValue, Cow<'s, str>)> {
+        if iana_id.to_ascii_uppercase() == "MET" {
+            return Some((IanaTrieValue(100), Cow::Owned("MET".into())));
+        }
         let mut cursor = self.data.map.cursor();
         let mut string = Cow::Borrowed(iana_id);
         let mut i = 0;

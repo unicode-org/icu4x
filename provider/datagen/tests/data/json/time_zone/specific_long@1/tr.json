@@ -147,10 +147,6 @@
       "dt": "Çin Yaz Saati",
       "st": "Çin Standart Saati"
     },
-    "choi": {
-      "dt": "Çoybalsan Yaz Saati",
-      "st": "Çoybalsan Standart Saati"
-    },
     "chri": {
       "st": "Christmas Adası Saati"
     },
@@ -299,6 +295,9 @@
     },
     "kawe": {
       "st": "Batı Kazakistan Saati"
+    },
+    "kaza": {
+      "st": "Kazakistan Saati"
     },
     "kore": {
       "dt": "Kore Yaz Saati",

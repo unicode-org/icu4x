@@ -2,9 +2,6 @@
   "main": {
     "cs": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "cs"
       },
       "dates": {
@@ -348,9 +345,6 @@
               },
               "Chita": {
                 "exemplarCity": "Čita"
-              },
-              "Choibalsan": {
-                "exemplarCity": "Čojbalsan"
               },
               "Colombo": {
                 "exemplarCity": "Kolombo"
@@ -859,13 +853,6 @@
                 "daylight": "čínský letní čas"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "čojbalsanský čas",
-                "standard": "čojbalsanský standardní čas",
-                "daylight": "čojbalsanský letní čas"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "čas Vánočního ostrova"
@@ -1119,6 +1106,11 @@
                 "generic": "petropavlovsko-kamčatský čas",
                 "standard": "petropavlovsko-kamčatský standardní čas",
                 "daylight": "petropavlovsko-kamčatský letní čas"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "kazachstánský čas"
               }
             },
             "Kazakhstan_Eastern": {
