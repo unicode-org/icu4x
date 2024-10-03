@@ -17,10 +17,14 @@
 
 pub mod calendar;
 pub(crate) mod date_time;
-pub mod packed_pattern;
+pub mod neo;
+pub(crate) mod packed_pattern;
 pub mod time_zones;
 
-pub mod neo;
+pub use packed_pattern::*;
+
+pub(crate) type ErasedPackedPatterns =
+    icu_provider::marker::ErasedMarker<PackedPatternsV1<'static>>;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -113,7 +117,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::WeekdayNamesV1Marker::INFO,
     neo::DayPeriodNamesV1Marker::INFO,
     neo::GluePatternV1Marker::INFO,
-    neo::TimeNeoSkeletonPatternsV1Marker::INFO,
+    TimeNeoSkeletonPatternsV1Marker::INFO,
     neo::BuddhistYearNamesV1Marker::INFO,
     neo::ChineseYearNamesV1Marker::INFO,
     neo::CopticYearNamesV1Marker::INFO,
@@ -140,17 +144,17 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::JapaneseExtendedMonthNamesV1Marker::INFO,
     neo::PersianMonthNamesV1Marker::INFO,
     neo::RocMonthNamesV1Marker::INFO,
-    neo::BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::ChineseDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::CopticDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::DangiDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::EthiopianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::HebrewDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::IndianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::IslamicDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::JapaneseDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::PersianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::RocDateNeoSkeletonPatternsV1Marker::INFO,
+    BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
+    ChineseDateNeoSkeletonPatternsV1Marker::INFO,
+    CopticDateNeoSkeletonPatternsV1Marker::INFO,
+    DangiDateNeoSkeletonPatternsV1Marker::INFO,
+    EthiopianDateNeoSkeletonPatternsV1Marker::INFO,
+    GregorianDateNeoSkeletonPatternsV1Marker::INFO,
+    HebrewDateNeoSkeletonPatternsV1Marker::INFO,
+    IndianDateNeoSkeletonPatternsV1Marker::INFO,
+    IslamicDateNeoSkeletonPatternsV1Marker::INFO,
+    JapaneseDateNeoSkeletonPatternsV1Marker::INFO,
+    JapaneseExtendedDateNeoSkeletonPatternsV1Marker::INFO,
+    PersianDateNeoSkeletonPatternsV1Marker::INFO,
+    RocDateNeoSkeletonPatternsV1Marker::INFO,
 ];

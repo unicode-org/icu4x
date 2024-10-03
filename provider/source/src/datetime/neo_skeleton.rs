@@ -13,9 +13,9 @@ use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
 use icu::datetime::pattern::runtime::PatternPlurals;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
-use icu::datetime::provider::neo::*;
+use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
+use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 
 use super::supported_cals;
@@ -30,7 +30,7 @@ impl SourceDataProvider {
         should_include_era: impl Fn(&C) -> bool,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>,
+        M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
@@ -56,21 +56,13 @@ impl SourceDataProvider {
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
         should_include_era: impl Fn(&C) -> bool,
-    ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
+    ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
         let date_lengths_v1 = DateLengthsV1::from(&data);
         let time_lengths_v1 = TimeLengthsV1::from(&data);
         let skeleton_patterns = DateSkeletonPatternsV1::from(&data);
 
-        let mut patterns = vec![];
-
-        let mut skeleton_data_index = SkeletonDataIndex {
-            has_long: true,
-            has_medium: true,
-            has_plurals: false,
-            has_eras: false,
-        };
         let long_medium_short = [
             NeoSkeletonLength::Long,
             NeoSkeletonLength::Medium,
@@ -116,80 +108,56 @@ impl SourceDataProvider {
             .iter()
             .any(|pp| matches!(pp.0, PatternPlurals::MultipleVariants(_)))
         {
-            // Expand all variants to vector of length 6
-            fn expand_pp_to_vec(
+            // Expand all variants to PluralElements
+            fn expand_pp_to_pe(
                 pp: PatternPlurals,
-            ) -> Vec<icu::datetime::pattern::runtime::Pattern> {
+            ) -> PluralElements<icu::datetime::pattern::runtime::Pattern> {
                 match pp {
-                    PatternPlurals::MultipleVariants(variants) => vec![
-                        variants.zero.unwrap_or_else(|| variants.other.clone()),
-                        variants.one.unwrap_or_else(|| variants.other.clone()),
-                        variants.two.unwrap_or_else(|| variants.other.clone()),
-                        variants.few.unwrap_or_else(|| variants.other.clone()),
-                        variants.many.unwrap_or_else(|| variants.other.clone()),
-                        variants.other,
-                    ],
-                    PatternPlurals::SinglePattern(pattern) => vec![
-                        pattern.clone(),
-                        pattern.clone(),
-                        pattern.clone(),
-                        pattern.clone(),
-                        pattern.clone(),
-                        pattern,
-                    ],
+                    PatternPlurals::MultipleVariants(variants) => {
+                        PluralElements::new(variants.other)
+                            .with_zero_value(variants.zero.clone())
+                            .with_one_value(variants.one.clone())
+                            .with_two_value(variants.two.clone())
+                            .with_few_value(variants.few.clone())
+                            .with_many_value(variants.many.clone())
+                    }
+                    PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
                 }
             }
-            skeleton_data_index.has_plurals = true;
-            long_medium_short.map(|(pp, pp_with_era)| {
-                (
-                    expand_pp_to_vec(pp),
-                    match pp_with_era {
-                        Some(pp_with_era) => expand_pp_to_vec(pp_with_era),
-                        None => vec![],
-                    },
-                )
-            })
+            long_medium_short
+                .map(|(pp, pp_with_era)| (expand_pp_to_pe(pp), pp_with_era.map(expand_pp_to_pe)))
         } else {
             // Take a single variant of each pattern
             long_medium_short.map(|(pp, pp_with_era)| {
                 (
                     match pp {
                         PatternPlurals::MultipleVariants(_) => unreachable!(),
-                        PatternPlurals::SinglePattern(pattern) => vec![pattern],
+                        PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
                     },
                     match pp_with_era {
                         Some(PatternPlurals::MultipleVariants(_)) => unreachable!(),
-                        Some(PatternPlurals::SinglePattern(pattern)) => vec![pattern],
-                        None => vec![],
+                        Some(PatternPlurals::SinglePattern(pattern)) => {
+                            Some(PluralElements::new(pattern))
+                        }
+                        None => None,
                     },
                 )
             })
         };
-        skeleton_data_index.has_eras = !long.1.is_empty();
-        // Assert that the presense of the era pattern is the same in all lengths
-        // TODO: Enable this assertion
-        // assert_eq!(skeleton_data_index.has_eras, !medium.1.is_empty());
-        // assert_eq!(skeleton_data_index.has_eras, !short.1.is_empty());
-        // TODO: Remove the era patterns if the are equivalent to the non-era patterns?
-        if long == medium {
-            skeleton_data_index.has_long = false;
-        } else {
-            patterns.extend(long.0);
-            patterns.extend(long.1);
-        }
-        if medium == short {
-            skeleton_data_index.has_medium = false;
-        } else {
-            patterns.extend(medium.0);
-            patterns.extend(medium.1);
-        }
-        patterns.extend(short.0);
-        patterns.extend(short.1);
-
-        Ok(PackedSkeletonDataV1 {
-            index_info: skeleton_data_index,
-            patterns: (&patterns).into(),
-        })
+        let builder = PackedPatternsBuilder {
+            standard: LengthPluralElements {
+                long: long.0.clone(),
+                medium: medium.0.clone(),
+                short: short.0.clone(),
+            },
+            variant0: None,
+            variant1: Some(LengthPluralElements {
+                long: long.1.unwrap_or(long.0),
+                medium: medium.1.unwrap_or(medium.0),
+                short: short.1.unwrap_or(short.0),
+            }),
+        };
+        Ok(builder.build())
     }
 
     fn neo_time_skeleton_supported_locales(

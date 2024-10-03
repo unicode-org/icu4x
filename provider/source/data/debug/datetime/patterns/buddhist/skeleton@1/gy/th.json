@@ -1,11 +1,13 @@
 {
-  "index_info": {
-    "has_long": false,
-    "has_medium": false,
-    "has_plurals": false,
-    "has_eras": true
-  },
-  "patterns": [
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    2,
+    2,
+    2
+  ],
+  "elements": [
     "G y",
     "GGG y"
   ]
