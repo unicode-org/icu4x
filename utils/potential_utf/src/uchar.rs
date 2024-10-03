@@ -113,7 +113,7 @@ impl PotentialCodePoint {
     /// Can be removed once const traits are a thing
     #[inline]
     #[cfg(feature = "zerovec")]
-    pub const fn const_to_unaligned(self) -> zerovec::ule::RawBytesULE<3> {
+    pub const fn to_unaligned(self) -> zerovec::ule::RawBytesULE<3> {
         zerovec::ule::RawBytesULE(self.0)
     }
 }

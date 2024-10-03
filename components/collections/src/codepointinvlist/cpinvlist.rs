@@ -20,10 +20,10 @@ use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
 const BMP_MAX: u32 = 0xFFFF;
 
 /// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
-const BMP_INV_LIST_VEC: ZeroVec<PotentialCodePoint> = zerovec!(PotentialCodePoint; PotentialCodePoint::const_to_unaligned; [PotentialCodePoint::from_u24(0x0), PotentialCodePoint::from_u24(BMP_MAX + 1)]);
+const BMP_INV_LIST_VEC: ZeroVec<PotentialCodePoint> = zerovec!(PotentialCodePoint; PotentialCodePoint::to_unaligned; [PotentialCodePoint::from_u24(0x0), PotentialCodePoint::from_u24(BMP_MAX + 1)]);
 
 /// Represents the inversion list for all of the code points in the Unicode range.
-const ALL_VEC: ZeroVec<PotentialCodePoint> = zerovec!(PotentialCodePoint; PotentialCodePoint::const_to_unaligned; [PotentialCodePoint::from_u24(0x0), PotentialCodePoint::from_u24((char::MAX as u32) + 1)]);
+const ALL_VEC: ZeroVec<PotentialCodePoint> = zerovec!(PotentialCodePoint; PotentialCodePoint::to_unaligned; [PotentialCodePoint::from_u24(0x0), PotentialCodePoint::from_u24((char::MAX as u32) + 1)]);
 
 /// A membership wrapper for [`CodePointInversionList`].
 ///
