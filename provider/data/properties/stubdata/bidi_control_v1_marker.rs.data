@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 64B[^1] for the singleton data struct
+/// * 56B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -18,7 +18,7 @@ macro_rules! __impl_bidi_control_v1_marker {
             #[doc(hidden)]
             pub const SINGLETON_BIDI_CONTROL_V1_MARKER: &'static <icu::properties::provider::BidiControlV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
-                icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x1C\x06\0\0\x1D\x06\0\0\x0E \0\0\x10 \0\0* \0\0/ \0\0f \0\0j \0\0") }, 12u32)
+                icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x1C\x06\0\x1D\x06\0\x0E \0\x10 \0* \0/ \0f \0j \0") }, 12u32)
             });
         }
         #[clippy::msrv = "1.71.1"]
