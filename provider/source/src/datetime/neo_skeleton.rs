@@ -124,15 +124,8 @@ impl SourceDataProvider {
                     PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
                 }
             }
-            long_medium_short.map(|(pp, pp_with_era)| {
-                (
-                    expand_pp_to_pe(pp),
-                    match pp_with_era {
-                        Some(pp_with_era) => Some(expand_pp_to_pe(pp_with_era)),
-                        None => None,
-                    },
-                )
-            })
+            long_medium_short
+                .map(|(pp, pp_with_era)| (expand_pp_to_pe(pp), pp_with_era.map(expand_pp_to_pe)))
         } else {
             // Take a single variant of each pattern
             long_medium_short.map(|(pp, pp_with_era)| {
