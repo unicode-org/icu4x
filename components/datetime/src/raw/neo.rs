@@ -14,15 +14,12 @@ use crate::neo_skeleton::{
 use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
-use crate::provider::{neo::*, PackedPatternsV1, PackedSkeletonVariant};
+use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
-use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
-
-pub(crate) type ErasedPackedPatterns = ErasedMarker<PackedPatternsV1<'static>>;
 
 pub(crate) struct RawNeoOptions {
     pub(crate) length: Option<NeoSkeletonLength>,
@@ -56,7 +53,7 @@ impl MaybeLength {
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
         skeleton: NeoDateSkeleton,
-        payload: DataPayload<SkeletaV1Marker>,
+        payload: DataPayload<ErasedPackedPatterns>,
     },
     // TODO(#4478): add support for optional eras
 }
@@ -76,7 +73,7 @@ pub(crate) enum OverlapPatternSelectionData {
         date_skeleton: NeoDateSkeleton,
         time_skeleton: NeoTimeSkeleton,
         hour_cycle: Option<HourCycle>,
-        payload: DataPayload<SkeletaV1Marker>,
+        payload: DataPayload<ErasedPackedPatterns>,
     },
 }
 
@@ -190,7 +187,7 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
 
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
-        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         length: MaybeLength,
         components: NeoDateComponents,
@@ -226,10 +223,7 @@ impl DatePatternSelectionData {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 payload
                     .get()
-                    .get_pattern(PatternSelectionOptions {
-                        length: skeleton.length,
-                        should_display_era: Some(true),
-                    })
+                    .get(skeleton.length, PackedSkeletonVariant::Variant1)
                     .items
             }
         };
@@ -242,15 +236,15 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                let should_display_era = match skeleton.era_display {
-                    Some(EraDisplay::Always) => true,
-                    Some(EraDisplay::Auto) | None => input.should_display_era(),
+                let variant = match skeleton.era_display {
+                    Some(EraDisplay::Always) => PackedSkeletonVariant::Variant1,
+                    Some(EraDisplay::Auto) | None => match input.should_display_era() {
+                        true => PackedSkeletonVariant::Variant1,
+                        false => PackedSkeletonVariant::Standard,
+                    }
                 };
                 DatePatternDataBorrowed::Resolved(
-                    payload.get().get_pattern(PatternSelectionOptions {
-                        length: skeleton.length,
-                        should_display_era: Some(should_display_era),
-                    }),
+                    payload.get().get(skeleton.length, variant),
                     skeleton.alignment,
                 )
             }
@@ -314,7 +308,7 @@ impl<'a> DatePatternDataBorrowed<'a> {
 
 impl OverlapPatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
-        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         date_skeleton: NeoDateSkeleton,
         time_skeleton: NeoTimeSkeleton,
@@ -348,10 +342,7 @@ impl OverlapPatternSelectionData {
             } => {
                 payload
                     .get()
-                    .get_pattern(PatternSelectionOptions {
-                        length: date_skeleton.length,
-                        should_display_era: Some(true),
-                    })
+                    .get(date_skeleton.length, PackedSkeletonVariant::Variant1)
                     .items
             }
         };
@@ -369,15 +360,15 @@ impl OverlapPatternSelectionData {
                 hour_cycle,
                 payload,
             } => {
-                let should_display_era = match date_skeleton.era_display {
-                    Some(EraDisplay::Always) => true,
-                    Some(EraDisplay::Auto) | None => input.should_display_era(),
+                let variant = match date_skeleton.era_display {
+                    Some(EraDisplay::Always) => PackedSkeletonVariant::Variant1,
+                    Some(EraDisplay::Auto) | None => match input.should_display_era() {
+                        true => PackedSkeletonVariant::Variant1,
+                        false => PackedSkeletonVariant::Standard,
+                    }
                 };
                 TimePatternDataBorrowed::Resolved(
-                    payload.get().get_pattern(PatternSelectionOptions {
-                        length: date_skeleton.length,
-                        should_display_era: Some(should_display_era),
-                    }),
+                    payload.get().get(date_skeleton.length, variant),
                     time_skeleton.alignment,
                     *hour_cycle,
                     time_skeleton.fractional_second_digits,
@@ -538,7 +529,7 @@ impl<'a> ZonePatternDataBorrowed<'a> {
 impl DateTimeZonePatternSelectionData {
     #[allow(clippy::too_many_arguments)] // private function with lots of generics
     pub(crate) fn try_new_with_skeleton(
-        date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,

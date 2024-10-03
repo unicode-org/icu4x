@@ -13,7 +13,7 @@ use icu_calendar::{
 };
 use icu_provider::prelude::*;
 
-use crate::provider::neo::*;
+use crate::provider::{neo::*, *};
 use core::marker::PhantomData;
 use icu_provider::marker::NeverMarker;
 
@@ -45,7 +45,7 @@ pub trait CldrCalendar: InternalCldrCalendar {
     type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
 
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
+    type SkeletaV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
 }
 
 /// A calendar that can never exist.
@@ -59,7 +59,7 @@ pub enum NeverCalendar {}
 impl CldrCalendar for NeverCalendar {
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
-    type SkeletaV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type SkeletaV1Marker = NeverMarker<PackedPatternsV1<'static>>;
 }
 
 impl CldrCalendar for Buddhist {
@@ -379,7 +379,7 @@ macro_rules! impl_load_any_calendar {
 impl_load_any_calendar!([
     (YearNamesV1Marker, YearNamesV1Marker),
     (MonthNamesV1Marker, MonthNamesV1Marker),
-    (SkeletaV1Marker, SkeletaV1Marker)
+    (ErasedPackedPatterns, SkeletaV1Marker)
 ], [
     Buddhist,
     Chinese,

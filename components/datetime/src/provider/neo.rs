@@ -621,22 +621,7 @@ impl AsULE for SkeletonDataIndex {
     }
 }
 
-#[icu_provider::data_struct(
-    // date patterns
-    marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),
-    marker(ChineseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/chinese/skeleton@1"),
-    marker(CopticDateNeoSkeletonPatternsV1Marker, "datetime/patterns/coptic/skeleton@1"),
-    marker(DangiDateNeoSkeletonPatternsV1Marker, "datetime/patterns/dangi/skeleton@1"),
-    marker(EthiopianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/ethiopic/skeleton@1"),
-    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
-    marker(HebrewDateNeoSkeletonPatternsV1Marker, "datetime/patterns/hebrew/skeleton@1"),
-    marker(IndianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/indian/skeleton@1"),
-    marker(IslamicDateNeoSkeletonPatternsV1Marker, "datetime/patterns/islamic/skeleton@1"),
-    marker(JapaneseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanese/skeleton@1"),
-    marker(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanext/skeleton@1"),
-    marker(PersianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/persian/skeleton@1"),
-    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1")
-)]
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]

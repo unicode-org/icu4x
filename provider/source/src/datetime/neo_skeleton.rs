@@ -13,8 +13,7 @@ use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
 use icu::datetime::pattern::runtime::PatternPlurals;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::TimeNeoSkeletonPatternsV1Marker;
-use icu::datetime::provider::neo::*;
+use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 
@@ -30,7 +29,7 @@ impl SourceDataProvider {
         should_include_era: impl Fn(&C) -> bool,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>,
+        M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
@@ -56,7 +55,7 @@ impl SourceDataProvider {
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
         should_include_era: impl Fn(&C) -> bool,
-    ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
+    ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
         let date_lengths_v1 = DateLengthsV1::from(&data);
@@ -186,7 +185,7 @@ impl SourceDataProvider {
         patterns.extend(short.0);
         patterns.extend(short.1);
 
-        Ok(PackedSkeletonDataV1 {
+        Ok(PackedPatternsV1 {
             index_info: skeleton_data_index,
             patterns: (&patterns).into(),
         })

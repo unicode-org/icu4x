@@ -962,7 +962,7 @@ pub trait DateInputMarkers: private::Sealed {
 /// (data markers only).
 pub trait TypedDateDataMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
     /// Marker for loading year names.
     type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
     /// Marker for loading month names.
@@ -975,7 +975,7 @@ pub trait TypedDateDataMarkers<C>: private::Sealed {
 /// (data markers only).
 pub trait DateDataMarkers: private::Sealed {
     /// Cross-calendar data markers for date skeleta.
-    type Skel: CalMarkers<SkeletaV1Marker>;
+    type Skel: CalMarkers<ErasedPackedPatterns>;
     /// Cross-calendar data markers for year names.
     type Year: CalMarkers<YearNamesV1Marker>;
     /// Cross-calendar data markers for month names.
@@ -1116,7 +1116,7 @@ impl DateInputMarkers for NeoNeverMarker {
 }
 
 impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
@@ -1378,7 +1378,7 @@ macro_rules! datetime_marker_helper {
         C::SkeletaV1Marker
     };
     (@dates/typed,) => {
-        NeverMarker<PackedSkeletonDataV1<'static>>
+        NeverMarker<PackedPatternsV1<'static>>
     };
     (@calmarkers, yes) => {
         FullDataCalMarkers
@@ -1402,7 +1402,7 @@ macro_rules! datetime_marker_helper {
         TimeNeoSkeletonPatternsV1Marker
     };
     (@times,) => {
-        NeverMarker<PackedSkeletonDataV1<'static>>
+        NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
         GluePatternV1Marker
