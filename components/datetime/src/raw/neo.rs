@@ -241,7 +241,7 @@ impl DatePatternSelectionData {
                     Some(EraDisplay::Auto) | None => match input.should_display_era() {
                         true => PackedSkeletonVariant::Variant1,
                         false => PackedSkeletonVariant::Standard,
-                    }
+                    },
                 };
                 DatePatternDataBorrowed::Resolved(
                     payload.get().get(skeleton.length, variant),
@@ -365,7 +365,7 @@ impl OverlapPatternSelectionData {
                     Some(EraDisplay::Auto) | None => match input.should_display_era() {
                         true => PackedSkeletonVariant::Variant1,
                         false => PackedSkeletonVariant::Standard,
-                    }
+                    },
                 };
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(date_skeleton.length, variant),

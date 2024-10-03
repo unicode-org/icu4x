@@ -21,9 +21,9 @@ use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
 use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
+use crate::provider::ErasedPackedPatterns;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
-use crate::provider::ErasedPackedPatterns;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::{
