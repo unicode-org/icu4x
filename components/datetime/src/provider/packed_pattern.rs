@@ -4,6 +4,7 @@
 
 //! Data structures for packing of datetime patterns.
 
+use crate::pattern::runtime::Pattern;
 use crate::{
     helpers::size_test,
     pattern::{
@@ -17,9 +18,8 @@ use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
     PluralElements,
 };
+use icu_provider::prelude::*;
 use zerovec::{VarZeroVec, ZeroSlice};
-
-use crate::pattern::runtime::Pattern;
 
 /// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,6 +46,8 @@ pub struct PackedPatternsBuilder<'a> {
 size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 
 /// Main data struct for packed datetime patterns.
+///
+#[doc = packed_skeleton_data_size!()]
 ///
 /// ## Variants
 ///
@@ -113,8 +115,10 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// postcard and other size-optimized serialization formats.
 ///
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
-#[doc = packed_skeleton_data_size!()]
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 pub struct PackedPatternsV1<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
