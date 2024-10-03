@@ -15,9 +15,9 @@ ALL_HEADERS := $(wildcard ${HEADERS}/*)
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-16
-LLD := lld-16
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2023-08-08"
+CLANG := clang-17
+LLD := lld-17
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2024-01-01"
 
 baked_data/macros.rs:
 	cargo install --path ../../../provider/icu4x-datagen --root target

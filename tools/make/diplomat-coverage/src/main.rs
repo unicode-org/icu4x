@@ -99,13 +99,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
             std::process::Command::new("rustup")
-                .args(["install", "nightly-2023-08-08"])
+                .args(["install", "nightly-2024-01-01"])
                 .output()
                 .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2023-08-08",
+                    "nightly-2024-01-01",
                     "cargo",
                     "rustdoc",
                     "-Zsparse-registry",
@@ -357,7 +357,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Macro(_) => {
                         insert_ty(types, path, ast::DocType::Macro);
                     }
-                    ItemEnum::Typedef(_) => {
+                    ItemEnum::TypeAlias(_) => {
                         insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {
