@@ -95,18 +95,35 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let bcp47_tzids = self.compute_canonical_tzids_btreemap()?;
+        let bcp47_tzids = &self
+            .cldr()?
+            .bcp47()
+            .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>("timezone.json")?
+            .keyword
+            .u
+            .time_zones
+            .values;
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(ExemplarCitiesV1(
                 bcp47_tzids
                     .iter()
-                    .filter_map(|(bcp47, iana)| {
-                        let mut iana_parts = iana.split('/');
-                        let continent = iana_parts.next().expect("split non-empty");
-                        let location_or_subregion = iana_parts.next()?;
-                        let location_in_subregion = iana_parts.next();
+                    .filter_map(|(bcp47, bcp47_tzid_data)| {
+                        bcp47_tzid_data
+                            .alias
+                            .as_ref()
+                            .map(|aliases| (bcp47, aliases))
+                    })
+                    // Montreal is meant to be deprecated, but pre-43 the deprecation
+                    // fallback was not set, which is why it might show up here.
+                    .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                    .filter_map(|(bcp47, aliases)| {
+                        let alias = aliases.split(' ').next().expect("split non-empty");
+                        let mut alias_parts = alias.split('/');
+                        let continent = alias_parts.next().expect("split non-empty");
+                        let location_or_subregion = alias_parts.next()?;
+                        let location_in_subregion = alias_parts.next();
 
                         Some((
                             bcp47,
@@ -114,16 +131,14 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                                 .zone
                                 .0
                                 .get(continent)
-                                .and_then(|region| {
-                                    match region.0.get(location_or_subregion)? {
-                                        LocationOrSubRegion::Location(place) => Some(place),
-                                        LocationOrSubRegion::SubRegion(region) => {
-                                            region.get(location_in_subregion?)
-                                        }
-                                    }?
-                                    .exemplar_city
-                                    .clone()
+                                .and_then(|x| x.0.get(location_or_subregion))
+                                .and_then(|x| match x {
+                                    LocationOrSubRegion::Location(place) => Some(place),
+                                    LocationOrSubRegion::SubRegion(region) => {
+                                        region.get(location_in_subregion?)
+                                    }
                                 })
+                                .and_then(|p| p.exemplar_city.clone())
                                 .or_else(|| {
                                     (continent != "Etc").then(|| {
                                         location_in_subregion
