@@ -6,12 +6,14 @@
     0,
     0,
     0,
-    0,
-    0
+    4,
+    5
   ],
   "elements": [
     "EEEE, d MMMM y г.",
     "E, d MMM y г.",
-    "ccc, dd.MM.y г."
+    "ccc, dd.MM.y г.",
+    "E, d MMM y г. GGG",
+    "E, dd MMM y г. GGG"
   ]
 }

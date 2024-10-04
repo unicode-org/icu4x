@@ -5,11 +5,12 @@
     0,
     0,
     0,
-    0,
-    0
+    3,
+    3
   ],
   "elements": [
     "r(U) MMMM d, EEEE",
-    "E, dd.MM.y"
+    "E, dd.MM.y",
+    "E, dd MMM U"
   ]
 }

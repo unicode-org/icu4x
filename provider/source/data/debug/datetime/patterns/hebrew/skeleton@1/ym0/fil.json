@@ -4,12 +4,14 @@
     0,
     0,
     0,
-    0,
-    0,
-    0
+    3,
+    4,
+    4
   ],
   "elements": [
     "MMMM y G",
-    "MMM y G"
+    "MMM y G",
+    "MMMM y GGG",
+    "MMM y GGG"
   ]
 }

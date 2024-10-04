@@ -6,12 +6,14 @@
     0,
     0,
     0,
-    0,
-    0
+    4,
+    5
   ],
   "elements": [
     "EEEE، d MMMM y",
     "E، dd‏/MM‏/y",
-    "E، d‏/M‏/y"
+    "E، d‏/M‏/y",
+    "E، dd MMM y GGG",
+    "E، d MMM y GGG"
   ]
 }

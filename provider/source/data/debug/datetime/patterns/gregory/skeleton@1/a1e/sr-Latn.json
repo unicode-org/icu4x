@@ -5,11 +5,12 @@
     0,
     0,
     0,
-    0,
-    0
+    3,
+    3
   ],
   "elements": [
     "EEEE, d. MMMM y.",
-    "E, d. M. y."
+    "E, d. M. y.",
+    "E, d. MMM y. GGG"
   ]
 }
