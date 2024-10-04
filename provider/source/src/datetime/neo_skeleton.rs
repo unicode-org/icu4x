@@ -11,7 +11,7 @@ use icu::datetime::neo_skeleton::{
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
-use icu::datetime::pattern::runtime::PatternPlurals;
+use icu::datetime::pattern::runtime::{self, PatternPlurals};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
@@ -27,7 +27,6 @@ impl SourceDataProvider {
         calendar: Either<&Value, &str>,
         from_id_str: impl Fn(&DataMarkerAttributes) -> Option<C>,
         to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
-        should_include_era: impl Fn(&C) -> bool,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
@@ -41,7 +40,6 @@ impl SourceDataProvider {
             calendar,
             neo_components,
             to_components_bag,
-            should_include_era,
         )?;
         Ok(DataResponse {
             metadata: Default::default(),
@@ -55,7 +53,6 @@ impl SourceDataProvider {
         calendar: Either<&Value, &str>,
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
-        should_include_era: impl Fn(&C) -> bool,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -63,98 +60,97 @@ impl SourceDataProvider {
         let time_lengths_v1 = TimeLengthsV1::from(&data);
         let skeleton_patterns = DateSkeletonPatternsV1::from(&data);
 
-        let long_medium_short = [
+        fn expand_pp_to_pe(
+            pp: PatternPlurals,
+        ) -> PluralElements<icu::datetime::pattern::runtime::Pattern> {
+            match pp {
+                PatternPlurals::MultipleVariants(variants) => PluralElements::new(variants.other)
+                    .with_zero_value(variants.zero.clone())
+                    .with_one_value(variants.one.clone())
+                    .with_two_value(variants.two.clone())
+                    .with_few_value(variants.few.clone())
+                    .with_many_value(variants.many.clone()),
+                PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
+            }
+        }
+
+        let [long, medium, short] = [
             NeoSkeletonLength::Long,
             NeoSkeletonLength::Medium,
             NeoSkeletonLength::Short,
         ]
         .map(|length| to_components_bag(length, &neo_components, &date_lengths_v1))
         .map(|bag| {
-            let pattern =
-                bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1);
-            // TODO: use should_include_era
-            let pattern_with_era = if should_include_era(&neo_components) {
-                match bag {
-                    DateTimeFormatterOptions::Components(
-                        components @ components::Bag { era: None, .. },
-                    ) => {
-                        // TODO(#4478): Use CLDR data when it becomes available
-                        // TODO: Set the length to NeoSkeletonLength? Or not, because
-                        // the era should normally be displayed as short?
-                        let mut components_with_era = components;
-                        components_with_era.era = Some(components::Text::Short);
-                        Some(
+            let pattern = expand_pp_to_pe(bag.select_pattern(
+                &skeleton_patterns,
+                &date_lengths_v1,
+                &time_lengths_v1,
+            ));
+            match bag {
+                DateTimeFormatterOptions::Components(
+                    components @ components::Bag {
+                        era: None,
+                        year: Some(_),
+                        ..
+                    },
+                ) => {
+                    // TODO(#4478): Use CLDR data when it becomes available
+                    // TODO: Set the length to NeoSkeletonLength? Or not, because
+                    // the era should normally be displayed as short?
+                    let mut components_with_full_year = components;
+                    components_with_full_year.year = Some(components::Year::Numeric);
+                    let mut components_with_era = components_with_full_year;
+                    components_with_era.era = Some(components::Text::Short);
+                    (
+                        pattern,
+                        Some(expand_pp_to_pe(
+                            DateTimeFormatterOptions::Components(components_with_full_year)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )),
+                        Some(expand_pp_to_pe(
                             DateTimeFormatterOptions::Components(components_with_era)
                                 .select_pattern(
                                     &skeleton_patterns,
                                     &date_lengths_v1,
                                     &time_lengths_v1,
                                 ),
-                        )
-                    }
-                    _ => None,
+                        )),
+                    )
                 }
-            } else {
-                None
-            };
-            // Assert that if there are multiple variants in `pattern_with_era`, then
-            // there are also multiple variants in `pattern`
-            if matches!(pattern_with_era, Some(PatternPlurals::MultipleVariants(_))) {
-                assert!(matches!(pattern, PatternPlurals::MultipleVariants(_)));
+                _ => (pattern, None, None),
             }
-            (pattern, pattern_with_era)
         });
-        let [long, medium, short] = if long_medium_short
-            .iter()
-            .any(|pp| matches!(pp.0, PatternPlurals::MultipleVariants(_)))
-        {
-            // Expand all variants to PluralElements
-            fn expand_pp_to_pe(
-                pp: PatternPlurals,
-            ) -> PluralElements<icu::datetime::pattern::runtime::Pattern> {
-                match pp {
-                    PatternPlurals::MultipleVariants(variants) => {
-                        PluralElements::new(variants.other)
-                            .with_zero_value(variants.zero.clone())
-                            .with_one_value(variants.one.clone())
-                            .with_two_value(variants.two.clone())
-                            .with_few_value(variants.few.clone())
-                            .with_many_value(variants.many.clone())
-                    }
-                    PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
-                }
-            }
-            long_medium_short
-                .map(|(pp, pp_with_era)| (expand_pp_to_pe(pp), pp_with_era.map(expand_pp_to_pe)))
-        } else {
-            // Take a single variant of each pattern
-            long_medium_short.map(|(pp, pp_with_era)| {
-                (
-                    match pp {
-                        PatternPlurals::MultipleVariants(_) => unreachable!(),
-                        PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
-                    },
-                    match pp_with_era {
-                        Some(PatternPlurals::MultipleVariants(_)) => unreachable!(),
-                        Some(PatternPlurals::SinglePattern(pattern)) => {
-                            Some(PluralElements::new(pattern))
-                        }
-                        None => None,
-                    },
-                )
-            })
-        };
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
-                long: long.0.clone(),
-                medium: medium.0.clone(),
-                short: short.0.clone(),
+                long: long.0.as_ref().map(runtime::Pattern::as_ref),
+                medium: medium.0.as_ref().map(runtime::Pattern::as_ref),
+                short: short.0.as_ref().map(runtime::Pattern::as_ref),
             },
-            variant0: None,
+            variant0: Some(LengthPluralElements {
+                long: long
+                    .1
+                    .unwrap_or(long.0.as_ref().map(runtime::Pattern::as_ref)),
+                medium: medium
+                    .1
+                    .unwrap_or(medium.0.as_ref().map(runtime::Pattern::as_ref)),
+                short: short
+                    .1
+                    .unwrap_or(short.0.as_ref().map(runtime::Pattern::as_ref)),
+            }),
             variant1: Some(LengthPluralElements {
-                long: long.1.unwrap_or(long.0),
-                medium: medium.1.unwrap_or(medium.0),
-                short: short.1.unwrap_or(short.0),
+                long: long
+                    .2
+                    .unwrap_or(long.0.as_ref().map(runtime::Pattern::as_ref)),
+                medium: medium
+                    .2
+                    .unwrap_or(medium.0.as_ref().map(runtime::Pattern::as_ref)),
+                short: short
+                    .2
+                    .unwrap_or(short.0.as_ref().map(runtime::Pattern::as_ref)),
             }),
         };
         Ok(builder.build())
@@ -368,7 +364,6 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
             Either::Right("generic"),
             NeoTimeComponents::from_id_str,
             gen_time_components,
-            |_| false,
         )
     }
 }
@@ -392,13 +387,6 @@ macro_rules! impl_neo_skeleton_datagen {
                         })
                     },
                     gen_date_components,
-                    |neo_components| match neo_components {
-                        NeoComponents::Date(date_components) => date_components.has_full_year(),
-                        NeoComponents::DateTime(day_components, _) => {
-                            day_components.has_full_year()
-                        }
-                        _ => unreachable!(),
-                    },
                 )
             }
         }
@@ -424,3 +412,47 @@ impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1Marker, "japanese");
 impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "japanext");
 impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1Marker, "persian");
 impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1Marker, "roc");
+
+#[test]
+fn test_en_year_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                NeoDayComponents::YearMonthDay.id_str(),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    4,
+    5,
+    6,
+    7
+  ],
+  "elements": [
+    "MMMM d, y",
+    "MMM d, y",
+    "M/d/yy",
+    "M/d/y",
+    "MMMM d, y GGG",
+    "MMM d, y GGG",
+    "M/d/y GGG"
+  ]
+}"#
+    );
+}
