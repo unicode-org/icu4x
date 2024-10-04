@@ -119,34 +119,39 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
                     .filter_map(|(bcp47, aliases)| {
-                        let alias = aliases.split(' ').next().expect("split non-empty");
-                        let mut alias_parts = alias.split('/');
-                        let continent = alias_parts.next().expect("split non-empty");
-                        let location_or_subregion = alias_parts.next()?;
-                        let location_in_subregion = alias_parts.next();
-
-                        Some((
-                            bcp47,
-                            time_zone_names
-                                .zone
-                                .0
-                                .get(continent)
-                                .and_then(|x| x.0.get(location_or_subregion))
-                                .and_then(|x| match x {
-                                    LocationOrSubRegion::Location(place) => Some(place),
-                                    LocationOrSubRegion::SubRegion(region) => {
-                                        region.get(location_in_subregion?)
-                                    }
-                                })
-                                .and_then(|p| p.exemplar_city.clone())
-                                .or_else(|| {
-                                    (continent != "Etc").then(|| {
-                                        location_in_subregion
-                                            .unwrap_or(location_or_subregion)
-                                            .replace('_', " ")
+                        aliases
+                            .split(' ')
+                            .filter_map(|alias| {
+                                let mut alias_parts = alias.split('/');
+                                let continent = alias_parts.next().expect("split non-empty");
+                                let location_or_subregion = alias_parts.next()?;
+                                let location_in_subregion = alias_parts.next();
+                                time_zone_names
+                                    .zone
+                                    .0
+                                    .get(continent)
+                                    .and_then(|x| x.0.get(location_or_subregion))
+                                    .and_then(|x| match x {
+                                        LocationOrSubRegion::Location(place) => Some(place),
+                                        LocationOrSubRegion::SubRegion(region) => {
+                                            region.get(location_in_subregion?)
+                                        }
                                     })
-                                })?,
-                        ))
+                                    .and_then(|p| p.exemplar_city.clone())
+                            })
+                            .next()
+                            .or_else(|| {
+                                let canonical_alias =
+                                    aliases.split(' ').next().expect("split non-empty");
+                                let mut alias_parts = canonical_alias.split('/');
+                                (alias_parts.next() != Some("Etc")).then(|| {
+                                    alias_parts
+                                        .next_back()
+                                        .expect("split non-empty")
+                                        .replace('_', " ")
+                                })
+                            })
+                            .map(|name| (bcp47, name))
                     })
                     .collect(),
             )),
