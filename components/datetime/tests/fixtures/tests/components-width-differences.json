@@ -34,7 +34,7 @@
                 "semantic": {
                     "fieldSet": ["year"],
                     "length": "medium",
-                    "eraDisplay": "always"
+                    "yearStyle": "always"
                 }
             }
         },
@@ -99,7 +99,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day"],
                     "length": "short",
-                    "eraDisplay": "full"
+                    "yearStyle": "full"
                 }
             }
         },

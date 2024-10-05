@@ -8,7 +8,7 @@ use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{Alignment, FractionalSecondDigits};
 use crate::neo_skeleton::{
-    EraDisplay, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
+    YearStyle, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::options::preferences::HourCycle;
@@ -24,7 +24,7 @@ use zerovec::ZeroSlice;
 pub(crate) struct RawNeoOptions {
     pub(crate) length: Option<NeoSkeletonLength>,
     pub(crate) alignment: Option<Alignment>,
-    pub(crate) era_display: Option<EraDisplay>,
+    pub(crate) year_style: Option<YearStyle>,
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
@@ -192,7 +192,7 @@ impl DatePatternSelectionData {
         length: MaybeLength,
         components: NeoDateComponents,
         alignment: Option<Alignment>,
-        era_display: Option<EraDisplay>,
+        year_style: Option<YearStyle>,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
@@ -208,7 +208,7 @@ impl DatePatternSelectionData {
                 length: length.get::<Self>(),
                 components,
                 alignment,
-                era_display,
+                year_style,
             },
             payload,
         })
@@ -236,7 +236,7 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                let year_style = skeleton.era_display.unwrap_or(EraDisplay::Auto);
+                let year_style = skeleton.year_style.unwrap_or(YearStyle::Auto);
                 let variant = input.resolve_year_style(year_style);
                 DatePatternDataBorrowed::Resolved(
                     payload.get().get(skeleton.length, variant),
@@ -248,7 +248,7 @@ impl DatePatternSelectionData {
 }
 
 impl ExtractedInput {
-    fn resolve_year_style(&self, year_style: EraDisplay) -> PackedSkeletonVariant {
+    fn resolve_year_style(&self, year_style: YearStyle) -> PackedSkeletonVariant {
         use icu_calendar::AnyCalendarKind;
         enum YearDistance {
             /// A nearby year that could be rendered with partial-precision format.
@@ -259,7 +259,7 @@ impl ExtractedInput {
             Distant,
         }
 
-        if matches!(year_style, EraDisplay::Always) {
+        if matches!(year_style, YearStyle::Always) {
             return PackedSkeletonVariant::Variant1;
         }
         let year_distance = match self.any_calendar_kind {
@@ -296,15 +296,15 @@ impl ExtractedInput {
                 Some(_) => YearDistance::Near,
             },
             Some(_) => {
-                debug_assert!(false, "unknown calendar during era display resolution");
+                debug_assert!(false, "unknown calendar during year style resolution");
                 YearDistance::Distant
             }
         };
 
         match (year_style, year_distance) {
-            (EraDisplay::Always, _) | (_, YearDistance::Distant) => PackedSkeletonVariant::Variant1,
-            (EraDisplay::Full, _) | (_, YearDistance::Medium) => PackedSkeletonVariant::Variant0,
-            (EraDisplay::Auto, YearDistance::Near) => PackedSkeletonVariant::Standard,
+            (YearStyle::Always, _) | (_, YearDistance::Distant) => PackedSkeletonVariant::Variant1,
+            (YearStyle::Full, _) | (_, YearDistance::Medium) => PackedSkeletonVariant::Variant0,
+            (YearStyle::Auto, YearDistance::Near) => PackedSkeletonVariant::Standard,
         }
     }
 }
@@ -374,7 +374,7 @@ impl OverlapPatternSelectionData {
                 hour_cycle,
                 payload,
             } => {
-                let year_style = date_skeleton.era_display.unwrap_or(EraDisplay::Auto);
+                let year_style = date_skeleton.year_style.unwrap_or(YearStyle::Auto);
                 let variant = input.resolve_year_style(year_style);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(date_skeleton.length, variant),
@@ -549,7 +549,7 @@ impl DateTimeZonePatternSelectionData {
         let RawNeoOptions {
             length,
             alignment,
-            era_display,
+            year_style,
             fractional_second_digits,
         } = options;
         let length = MaybeLength(length);
@@ -561,7 +561,7 @@ impl DateTimeZonePatternSelectionData {
                     length,
                     components,
                     alignment,
-                    era_display,
+                    year_style,
                 )?;
                 Ok(Self::Date(selection))
             }
@@ -591,7 +591,7 @@ impl DateTimeZonePatternSelectionData {
                         length,
                         components: NeoDateComponents::Day(day_components),
                         alignment,
-                        era_display,
+                        year_style,
                     };
                     let time_skeleton = NeoTimeSkeleton {
                         length,
@@ -624,7 +624,7 @@ impl DateTimeZonePatternSelectionData {
                     length,
                     NeoDateComponents::Day(day_components),
                     alignment,
-                    era_display,
+                    year_style,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
@@ -645,7 +645,7 @@ impl DateTimeZonePatternSelectionData {
                     length,
                     date_components,
                     alignment,
-                    era_display,
+                    year_style,
                 )?;
                 let zone =
                     ZonePatternSelectionData::new_with_skeleton(length, zone_components, false);
@@ -674,7 +674,7 @@ impl DateTimeZonePatternSelectionData {
                     length,
                     NeoDateComponents::Day(day_components),
                     alignment,
-                    era_display,
+                    year_style,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,

@@ -87,7 +87,7 @@ pub enum Alignment {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[non_exhaustive]
-pub enum EraDisplay {
+pub enum YearStyle {
     /// Display the century and/or era when needed to disambiguate the year,
     /// based on locale preferences.
     ///
@@ -933,7 +933,7 @@ pub struct NeoDateSkeleton {
     /// Alignment option.
     pub alignment: Option<Alignment>,
     /// Era display option.
-    pub era_display: Option<EraDisplay>,
+    pub year_style: Option<YearStyle>,
 }
 
 impl NeoDateSkeleton {
@@ -946,7 +946,7 @@ impl NeoDateSkeleton {
             length,
             components,
             alignment: None,
-            era_display: None,
+            year_style: None,
         }
     }
 
@@ -973,7 +973,7 @@ impl NeoDateSkeleton {
             length,
             components: NeoDateComponents::Day(day_components),
             alignment: None,
-            era_display: None,
+            year_style: None,
         }
     }
 }
@@ -1018,7 +1018,7 @@ pub struct NeoDateTimeSkeleton {
     /// Alignment option.
     pub alignment: Option<Alignment>,
     /// Era display option.
-    pub era_display: Option<EraDisplay>,
+    pub year_style: Option<YearStyle>,
     /// Fractional second digits option.
     pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
@@ -1034,7 +1034,7 @@ impl NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(date, time),
             alignment: None,
-            era_display: None,
+            year_style: None,
             fractional_second_digits: None,
         }
     }
@@ -1056,7 +1056,7 @@ pub struct NeoSkeleton {
     /// Alignment option.
     pub alignment: Option<Alignment>,
     /// Era display option.
-    pub era_display: Option<EraDisplay>,
+    pub year_style: Option<YearStyle>,
     /// Fractional second digits option.
     pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
@@ -1067,7 +1067,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
             length: value.length,
             components: value.components.into(),
             alignment: value.alignment,
-            era_display: value.era_display,
+            year_style: value.year_style,
             fractional_second_digits: None,
         }
     }
@@ -1079,7 +1079,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
             length: value.length,
             components: value.components.into(),
             alignment: value.alignment,
-            era_display: None,
+            year_style: None,
             fractional_second_digits: value.fractional_second_digits,
         }
     }
@@ -1091,7 +1091,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
             length: value.length,
             components: value.components.into(),
             alignment: value.alignment,
-            era_display: value.era_display,
+            year_style: value.year_style,
             fractional_second_digits: value.fractional_second_digits,
         }
     }
@@ -1110,7 +1110,7 @@ impl NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(day_components, time_components),
             alignment: None,
-            era_display: None,
+            year_style: None,
             fractional_second_digits: None,
         }
     }

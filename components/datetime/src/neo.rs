@@ -166,8 +166,8 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     /// When to display the era field in the formatted string,
     /// if required for the chosen field set.
     ///
-    /// See [`EraDisplay`](crate::neo_skeleton::EraDisplay).
-    pub era_display: R::EraDisplayOption,
+    /// See [`YearStyle`](crate::neo_skeleton::YearStyle).
+    pub year_style: R::YearStyleOption,
     /// How many fractional seconds to display,
     /// if seconds are included in the field set.
     ///
@@ -183,7 +183,7 @@ where
         Self {
             length: options.length.into(),
             alignment: options.alignment.into(),
-            era_display: options.era_display.into(),
+            year_style: options.year_style.into(),
             fractional_second_digits: options.fractional_second_digits.into(),
         }
     }
@@ -194,7 +194,7 @@ where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
     R::AlignmentOption: Default,
-    R::EraDisplayOption: Default,
+    R::YearStyleOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
@@ -202,7 +202,7 @@ where
         NeoOptions {
             length: value.into(),
             alignment: Default::default(),
-            era_display: Default::default(),
+            year_style: Default::default(),
             fractional_second_digits: Default::default(),
         }
     }
@@ -215,7 +215,7 @@ where
     R: DateTimeMarkers,
     R::LengthOption: Default,
     R::AlignmentOption: Default,
-    R::EraDisplayOption: Default,
+    R::YearStyleOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
@@ -223,7 +223,7 @@ where
         NeoOptions {
             length: Default::default(),
             alignment: Default::default(),
-            era_display: Default::default(),
+            year_style: Default::default(),
             fractional_second_digits: Default::default(),
         }
     }
@@ -236,13 +236,13 @@ impl RawNeoOptions {
         FSet: DateTimeMarkers,
         FSet: NeoGetField<FSet::LengthOption>,
         FSet: NeoGetField<FSet::AlignmentOption>,
-        FSet: NeoGetField<FSet::EraDisplayOption>,
+        FSet: NeoGetField<FSet::YearStyleOption>,
         FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
     {
         Self {
             length: NeoGetField::<FSet::LengthOption>::get_field(&field_set).into(),
             alignment: NeoGetField::<FSet::AlignmentOption>::get_field(&field_set).into(),
-            era_display: NeoGetField::<FSet::EraDisplayOption>::get_field(&field_set).into(),
+            year_style: NeoGetField::<FSet::YearStyleOption>::get_field(&field_set).into(),
             fractional_second_digits: NeoGetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 &field_set,
             )
@@ -273,7 +273,7 @@ where
     FSet::Z: ZoneMarkers,
     FSet: NeoGetField<FSet::LengthOption>,
     FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::EraDisplayOption>,
+    FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with

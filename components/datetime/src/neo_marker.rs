@@ -56,7 +56,7 @@
 //!
 //! ## Year Style
 //!
-//! The precision of the rendered year can be adjusted using the [`EraDisplay`] option.
+//! The precision of the rendered year can be adjusted using the [`YearStyle`] option.
 //!
 //! ```
 //! use icu::calendar::Date;
@@ -64,7 +64,7 @@
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
-//! use icu::datetime::neo_skeleton::EraDisplay;
+//! use icu::datetime::neo_skeleton::YearStyle;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -74,7 +74,7 @@
 //!         &locale!("en-US").into(),
 //!         {
 //!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
-//!             options.era_display = Some(EraDisplay::Auto);
+//!             options.year_style = Some(YearStyle::Auto);
 //!             options
 //!         }
 //!     )
@@ -106,7 +106,7 @@
 //!         &locale!("en-US").into(),
 //!         {
 //!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
-//!             options.era_display = Some(EraDisplay::Full);
+//!             options.year_style = Some(YearStyle::Full);
 //!             options
 //!         }
 //!     )
@@ -137,7 +137,7 @@
 //!         &locale!("en-US").into(),
 //!         {
 //!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
-//!             options.era_display = Some(EraDisplay::Always);
+//!             options.year_style = Some(YearStyle::Always);
 //!             options
 //!         }
 //!     )
@@ -935,7 +935,7 @@ impl From<NeverField> for Option<Alignment> {
     }
 }
 
-impl From<NeverField> for Option<EraDisplay> {
+impl From<NeverField> for Option<YearStyle> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -1085,8 +1085,8 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Type of the alignment option in the constructor.
     type AlignmentOption: Into<Option<Alignment>>;
-    /// Type of the era display option in the constructor.
-    type EraDisplayOption: Into<Option<EraDisplay>>;
+    /// Type of the year style option in the constructor.
+    type YearStyleOption: Into<Option<YearStyle>>;
     /// Type of the fractional seconds display option in the constructor.
     type FractionalSecondDigitsOption: Into<Option<FractionalSecondDigits>>;
     /// Marker for loading the date/time glue pattern.
@@ -1236,7 +1236,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date
     type AlignmentOption = D::AlignmentOption;
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
@@ -1273,7 +1273,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
     type AlignmentOption = Option<Alignment>; // always needed for time
-    type EraDisplayOption = NeverField; // no year in a time-only format
+    type YearStyleOption = NeverField; // no year in a time-only format
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
@@ -1310,7 +1310,7 @@ where
     type Z = Z;
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
     type AlignmentOption = Z::AlignmentOption; // no date or time: inherit from zone
-    type EraDisplayOption = NeverField; // no year in a zone-only format
+    type YearStyleOption = NeverField; // no year in a zone-only format
     type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1350,7 +1350,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1394,7 +1394,7 @@ where
     type Z = Z;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1462,8 +1462,8 @@ macro_rules! datetime_marker_helper {
     (@option/length, Short) => {
         NeoSkeletonLength
     };
-    (@option/eradisplay, yes) => {
-        Option<EraDisplay>
+    (@option/yearstyle, yes) => {
+        Option<YearStyle>
     };
     (@option/alignment, yes) => {
         Option<Alignment>
@@ -1642,10 +1642,10 @@ macro_rules! impl_get_field {
             }
         }
     };
-    ($type:path, era_display, yes) => {
-        impl NeoGetField<Option<EraDisplay>> for $type {
-            fn get_field(&self) -> Option<EraDisplay> {
-                self.era_display
+    ($type:path, year_style, yes) => {
+        impl NeoGetField<Option<YearStyle>> for $type {
+            fn get_field(&self) -> Option<YearStyle> {
+                self.year_style
             }
         }
     };
@@ -1664,7 +1664,7 @@ macro_rules! impl_marker_with_options {
         $type:ident,
         $(sample_length: $sample_length:ident,)?
         $(alignment: $alignment_yes:ident,)?
-        $(era_display: $eradisplay_yes:ident,)?
+        $(year_style: $yearstyle_yes:ident,)?
         $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
     ) => {
         $(#[$attr])*
@@ -1686,8 +1686,8 @@ macro_rules! impl_marker_with_options {
             $(
                 /// When to display the era field in the formatted string.
                 ///
-                /// See: [`EraDisplay`]
-                pub era_display: datetime_marker_helper!(@option/eradisplay, $eradisplay_yes),
+                /// See: [`YearStyle`]
+                pub year_style: datetime_marker_helper!(@option/yearstyle, $yearstyle_yes),
             )?
             $(
                 /// How many fractional seconds to display.
@@ -1705,7 +1705,7 @@ macro_rules! impl_marker_with_options {
                         alignment: yes_to!(None, $alignment_yes),
                     )?
                     $(
-                        era_display: yes_to!(None, $eradisplay_yes),
+                        year_style: yes_to!(None, $yearstyle_yes),
                     )?
                     $(
                         fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
@@ -1721,7 +1721,7 @@ macro_rules! impl_marker_with_options {
             impl_get_field!($type, alignment, $alignment_yes);
         )?
         $(
-            impl_get_field!($type, era_display, $eradisplay_yes);
+            impl_get_field!($type, year_style, $yearstyle_yes);
         )?
         $(
             impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
@@ -1823,7 +1823,7 @@ macro_rules! impl_date_marker {
             $type,
             sample_length: $sample_length,
             $(alignment: $option_alignment_yes,)?
-            $(era_display: $year_yes,)?
+            $(year_style: $year_yes,)?
         );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -1867,7 +1867,7 @@ macro_rules! impl_date_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $($year_yes)?);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -2043,7 +2043,7 @@ macro_rules! impl_time_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $($nanosecond_yes)?);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -2191,7 +2191,7 @@ macro_rules! impl_zone_marker {
             type Z = Self;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -2745,7 +2745,7 @@ impl DateTimeMarkers for NeoDateComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2782,7 +2782,7 @@ impl DateTimeMarkers for NeoTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2823,7 +2823,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type Z = Self;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2851,7 +2851,7 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
@@ -2879,7 +2879,7 @@ impl DateTimeMarkers for NeoComponents {
     type Z = NeoTimeZoneSkeleton;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

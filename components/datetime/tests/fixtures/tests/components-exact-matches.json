@@ -10,7 +10,7 @@
                 "semantic": {
                     "fieldSet": ["year"],
                     "length": "short",
-                    "eraDisplay": "full"
+                    "yearStyle": "full"
                 }
             }
         },
@@ -32,7 +32,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month"],
                     "length": "short",
-                    "eraDisplay": "full"
+                    "yearStyle": "full"
                 }
             }
         },
@@ -55,7 +55,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day"],
                     "length": "short",
-                    "eraDisplay": "full"
+                    "yearStyle": "full"
                 }
             }
         },
@@ -79,7 +79,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday"],
                     "length": "short",
-                    "eraDisplay": "full"
+                    "yearStyle": "full"
                 }
             }
         },

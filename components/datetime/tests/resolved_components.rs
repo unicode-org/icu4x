@@ -6,7 +6,7 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
     neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
-        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
+        Alignment, YearStyle, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
         NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
     },
     options::{components, preferences},
@@ -94,7 +94,7 @@ fn test_date_and_time() {
         NeoTimeComponents::Auto,
     );
     let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.era_display = Some(EraDisplay::Always);
+    options.year_style = Some(YearStyle::Always);
     options.fractional_second_digits = Some(FractionalSecondDigits::F4);
     options.alignment = Some(Alignment::Column);
 
