@@ -279,20 +279,20 @@ impl ExtractedInput {
             | Some(AnyCalendarKind::Japanese)
             | Some(AnyCalendarKind::JapaneseExtended)
             | Some(AnyCalendarKind::Persian)
-            | Some(AnyCalendarKind::Roc) => YearDistance::Distant,
+            | Some(AnyCalendarKind::Roc) => YearDistance::Medium,
             Some(AnyCalendarKind::Chinese)
             | Some(AnyCalendarKind::Dangi)
             | Some(AnyCalendarKind::Iso) => YearDistance::Near,
             Some(AnyCalendarKind::Gregorian) => match self.year {
                 None => YearDistance::Distant,
                 Some(year) if year.era_year_or_extended() < 1000 => YearDistance::Distant,
-                Some(year) if year.era_year_or_extended() < 1950 && year.era_year_or_extended() >= 2050 => YearDistance::Medium,
                 Some(year)
                     if year.formatting_era()
                         != Some(icu_calendar::types::Era(tinystr::tinystr!(16, "ce"))) =>
                 {
                     YearDistance::Distant
                 }
+                Some(year) if year.era_year_or_extended() < 1950 || year.era_year_or_extended() >= 2050 => YearDistance::Medium,
                 Some(_) => YearDistance::Near,
             },
             Some(_) => {
