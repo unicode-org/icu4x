@@ -308,10 +308,6 @@ fn gen_date_components(
         filtered_components.era = date_bag.era;
         filtered_components.year = date_bag.year;
     }
-    if date_components.has_full_year() {
-        // override the year field to be a full year
-        filtered_components.year = Some(components::Year::Numeric);
-    }
     if date_components.has_month() {
         filtered_components.month = date_bag.month;
     }
