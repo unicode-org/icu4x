@@ -440,12 +440,7 @@ pub enum NeoCalendarPeriodComponents {
 
 impl NeoCalendarPeriodComponents {
     /// All values of this enum.
-    pub const VALUES: &'static [Self] = &[
-        Self::Month,
-        Self::YearMonth,
-        Self::Year,
-        Self::YearWeek,
-    ];
+    pub const VALUES: &'static [Self] = &[Self::Month, Self::YearMonth, Self::Year, Self::YearWeek];
 
     const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
     const YEAR_MONTH: &'static DataMarkerAttributes =

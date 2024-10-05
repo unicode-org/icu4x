@@ -5,9 +5,9 @@
 //! Serde definitions for semantic skeleta
 
 use crate::neo_skeleton::{
-    Alignment, YearStyle, FractionalSecondDigits, NeoComponents, NeoDateComponents,
-    NeoCalendarPeriodComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
-    NeoTimeZoneStyle,
+    Alignment, FractionalSecondDigits, NeoCalendarPeriodComponents, NeoComponents,
+    NeoDateComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
+    NeoTimeZoneStyle, YearStyle,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -398,9 +398,9 @@ impl TryFrom<FieldSetSerde> for NeoComponents {
         let time = value.time_only();
         let zone = value.zone_only();
         match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
-            (true, false, false) => {
-                NeoDateComponents::try_from(date).map(NeoComponents::from).or_else(|_| NeoCalendarPeriodComponents::try_from(date).map(NeoComponents::from))
-            },
+            (true, false, false) => NeoDateComponents::try_from(date)
+                .map(NeoComponents::from)
+                .or_else(|_| NeoCalendarPeriodComponents::try_from(date).map(NeoComponents::from)),
             (false, true, false) => Ok(NeoComponents::Time(time.try_into()?)),
             (false, false, true) => Ok(NeoComponents::Zone(zone.try_into()?)),
             (true, true, false) => Ok(NeoComponents::DateTime(date.try_into()?, time.try_into()?)),

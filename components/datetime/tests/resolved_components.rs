@@ -6,8 +6,8 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
     neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
-        Alignment, YearStyle, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoSkeletonLength, NeoTimeComponents,
+        Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
+        NeoSkeletonLength, NeoTimeComponents, YearStyle,
     },
     options::{components, preferences},
 };

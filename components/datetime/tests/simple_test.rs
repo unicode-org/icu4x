@@ -7,8 +7,8 @@ use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents,
-    NeoSkeletonLength, NeoTimeComponents,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoSkeletonLength,
+    NeoTimeComponents,
 };
 use icu_datetime::options::length;
 use icu_locale_core::{locale, Locale};
@@ -124,12 +124,9 @@ fn neo_date_lengths() {
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter = TypedNeoFormatter::try_new_with_components(
-                &locale,
-                day_components,
-                length.into(),
-            )
-            .unwrap();
+            let formatter =
+                TypedNeoFormatter::try_new_with_components(&locale, day_components, length.into())
+                    .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(

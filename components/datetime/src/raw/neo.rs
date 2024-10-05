@@ -8,8 +8,7 @@ use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{Alignment, FractionalSecondDigits};
 use crate::neo_skeleton::{
-    YearStyle, NeoComponents, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeZoneSkeleton,
+    NeoComponents, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton, YearStyle,
 };
 use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::PatternMetadata;
@@ -172,17 +171,11 @@ impl DatePatternSelectionData {
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    attributes,
-                    locale,
-                ),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, locale),
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonDate {
-            options,
-            payload,
-        })
+        Ok(Self::SkeletonDate { options, payload })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
@@ -263,7 +256,12 @@ impl ExtractedInput {
                 {
                     YearDistance::Distant
                 }
-                Some(year) if year.era_year_or_extended() < 1950 || year.era_year_or_extended() >= 2050 => YearDistance::Medium,
+                Some(year)
+                    if year.era_year_or_extended() < 1950
+                        || year.era_year_or_extended() >= 2050 =>
+                {
+                    YearDistance::Medium
+                }
                 Some(_) => YearDistance::Near,
             },
             Some(_) => {
@@ -304,10 +302,7 @@ impl OverlapPatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonDateTime {
-            options,
-            payload,
-        })
+        Ok(Self::SkeletonDateTime { options, payload })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
@@ -317,9 +312,7 @@ impl OverlapPatternSelectionData {
     ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             OverlapPatternSelectionData::SkeletonDateTime {
-                options,
-                payload,
-                ..
+                options, payload, ..
             } => {
                 payload
                     .get()
@@ -335,10 +328,7 @@ impl OverlapPatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
-            OverlapPatternSelectionData::SkeletonDateTime {
-                options,
-                payload,
-            } => {
+            OverlapPatternSelectionData::SkeletonDateTime { options, payload } => {
                 let year_style = options.year_style.unwrap_or(YearStyle::Auto);
                 let variant = input.resolve_year_style(year_style);
                 TimePatternDataBorrowed::Resolved(
@@ -392,10 +382,7 @@ impl TimePatternSelectionData {
                     .payload
             }
         };
-        Ok(Self::SkeletonTime {
-            options,
-            payload,
-        })
+        Ok(Self::SkeletonTime { options, payload })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
@@ -421,17 +408,16 @@ impl TimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
-            TimePatternSelectionData::SkeletonTime {
-                options,
-                payload,
-            } => TimePatternDataBorrowed::Resolved(
-                payload
-                    .get()
-                    .get(options.length, PackedSkeletonVariant::Standard),
-                options.alignment,
-                options.hour_cycle,
-                options.fractional_second_digits,
-            ),
+            TimePatternSelectionData::SkeletonTime { options, payload } => {
+                TimePatternDataBorrowed::Resolved(
+                    payload
+                        .get()
+                        .get(options.length, PackedSkeletonVariant::Standard),
+                    options.alignment,
+                    options.hour_cycle,
+                    options.fractional_second_digits,
+                )
+            }
         }
     }
 }
@@ -615,7 +601,7 @@ impl DateTimeZonePatternSelectionData {
                     zone,
                     glue,
                 })
-            },
+            }
         }
     }
 

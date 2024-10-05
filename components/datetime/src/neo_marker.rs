@@ -1909,7 +1909,6 @@ macro_rules! impl_date_marker {
     };
 }
 
-
 /// Implements a field set of calendar period fields.
 ///
 /// Several arguments to this macro are required, and the rest are optional.
