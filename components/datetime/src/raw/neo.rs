@@ -236,13 +236,8 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                let variant = match skeleton.era_display {
-                    Some(EraDisplay::Always) => PackedSkeletonVariant::Variant1,
-                    Some(EraDisplay::Auto) | None => match input.should_display_era() {
-                        true => PackedSkeletonVariant::Variant1,
-                        false => PackedSkeletonVariant::Standard,
-                    },
-                };
+                let year_style = skeleton.era_display.unwrap_or(EraDisplay::Auto);
+                let variant = input.resolve_year_style(year_style);
                 DatePatternDataBorrowed::Resolved(
                     payload.get().get(skeleton.length, variant),
                     skeleton.alignment,
@@ -253,11 +248,23 @@ impl DatePatternSelectionData {
 }
 
 impl ExtractedInput {
-    fn should_display_era(&self) -> bool {
+    fn resolve_year_style(&self, year_style: EraDisplay) -> PackedSkeletonVariant {
         use icu_calendar::AnyCalendarKind;
-        match self.any_calendar_kind {
+        enum YearDistance {
+            /// A nearby year that could be rendered with partial-precision format.
+            Near,
+            /// A year with implied era but for which partial-precision should not be used.
+            Medium,
+            /// A year for which the era should always be displayed.
+            Distant,
+        }
+
+        if matches!(year_style, EraDisplay::Always) {
+            return PackedSkeletonVariant::Variant1;
+        }
+        let year_distance = match self.any_calendar_kind {
             // Unknown calendar: always display the era
-            None => true,
+            None => YearDistance::Distant,
             // TODO(#4478): This is extremely oversimplistic and it should be data-driven.
             Some(AnyCalendarKind::Buddhist)
             | Some(AnyCalendarKind::Coptic)
@@ -272,25 +279,32 @@ impl ExtractedInput {
             | Some(AnyCalendarKind::Japanese)
             | Some(AnyCalendarKind::JapaneseExtended)
             | Some(AnyCalendarKind::Persian)
-            | Some(AnyCalendarKind::Roc) => true,
+            | Some(AnyCalendarKind::Roc) => YearDistance::Distant,
             Some(AnyCalendarKind::Chinese)
             | Some(AnyCalendarKind::Dangi)
-            | Some(AnyCalendarKind::Iso) => false,
+            | Some(AnyCalendarKind::Iso) => YearDistance::Near,
             Some(AnyCalendarKind::Gregorian) => match self.year {
-                None => true,
-                Some(year) if year.era_year_or_extended() < 1000 => true,
+                None => YearDistance::Distant,
+                Some(year) if year.era_year_or_extended() < 1000 => YearDistance::Distant,
+                Some(year) if year.era_year_or_extended() < 1950 && year.era_year_or_extended() >= 2050 => YearDistance::Medium,
                 Some(year)
                     if year.formatting_era()
                         != Some(icu_calendar::types::Era(tinystr::tinystr!(16, "ce"))) =>
                 {
-                    true
+                    YearDistance::Distant
                 }
-                Some(_) => false,
+                Some(_) => YearDistance::Near,
             },
             Some(_) => {
                 debug_assert!(false, "unknown calendar during era display resolution");
-                true
+                YearDistance::Distant
             }
+        };
+
+        match (year_style, year_distance) {
+            (EraDisplay::Always, _) | (_, YearDistance::Distant) => PackedSkeletonVariant::Variant1,
+            (EraDisplay::Full, _) | (_, YearDistance::Medium) => PackedSkeletonVariant::Variant0,
+            (EraDisplay::Auto, YearDistance::Near) => PackedSkeletonVariant::Standard,
         }
     }
 }
@@ -360,13 +374,8 @@ impl OverlapPatternSelectionData {
                 hour_cycle,
                 payload,
             } => {
-                let variant = match date_skeleton.era_display {
-                    Some(EraDisplay::Always) => PackedSkeletonVariant::Variant1,
-                    Some(EraDisplay::Auto) | None => match input.should_display_era() {
-                        true => PackedSkeletonVariant::Variant1,
-                        false => PackedSkeletonVariant::Standard,
-                    },
-                };
+                let year_style = date_skeleton.era_display.unwrap_or(EraDisplay::Auto);
+                let variant = input.resolve_year_style(year_style);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(date_skeleton.length, variant),
                     time_skeleton.alignment,

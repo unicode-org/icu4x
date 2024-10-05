@@ -98,6 +98,7 @@ pub enum EraDisplay {
     /// - `77 AD`
     /// - `2024`
     Auto,
+    Full,
     /// Always display the era.
     ///
     /// Examples:
