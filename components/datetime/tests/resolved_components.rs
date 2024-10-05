@@ -7,7 +7,7 @@ use icu_datetime::{
     neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
         Alignment, YearStyle, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+        NeoSkeletonLength, NeoTimeComponents,
     },
     options::{components, preferences},
 };
@@ -33,7 +33,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto));
+    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Auto);
     let length = NeoSkeletonLength::Medium;
 
     let mut components_bag = components::Bag::default();
@@ -90,7 +90,7 @@ fn test_length_time_preferences() {
 #[test]
 fn test_date_and_time() {
     let field_set = NeoDateTimeComponents::DateTime(
-        NeoDayComponents::YearMonthDayWeekday,
+        NeoDateComponents::YearMonthDayWeekday,
         NeoTimeComponents::Auto,
     );
     let mut options = NeoOptions::from(NeoSkeletonLength::Medium);

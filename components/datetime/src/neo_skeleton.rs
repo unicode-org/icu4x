@@ -946,10 +946,10 @@ impl NeoDateSkeleton {
     #[doc(hidden)] // the types involved in this mapping may change
     #[cfg(feature = "datagen")]
     pub fn from_date_length(date_length: length::Date) -> Self {
-        let (day_components, length) = Self::day_from_date_length(date_length);
+        let (date_components, length) = Self::day_from_date_length(date_length);
         NeoDateSkeleton {
             length,
-            components: NeoDateComponents::Day(day_components),
+            components: date_components,
             alignment: None,
             year_style: None,
         }

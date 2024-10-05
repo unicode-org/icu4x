@@ -7,7 +7,7 @@ use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDayComponents,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents,
     NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
@@ -126,7 +126,7 @@ fn neo_date_lengths() {
         ] {
             let formatter = TypedNeoFormatter::try_new_with_components(
                 &locale,
-                NeoDateComponents::Day(day_components),
+                day_components,
                 length.into(),
             )
             .unwrap();
@@ -160,7 +160,7 @@ fn overlap_patterns() {
         TestCase {
             locale: locale!("en-US"),
             components: NeoComponents::DateTime(
-                NeoDayComponents::Weekday,
+                NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -169,7 +169,7 @@ fn overlap_patterns() {
         TestCase {
             locale: locale!("en-US"),
             components: NeoComponents::DateTime(
-                NeoDayComponents::MonthDayWeekday,
+                NeoDateComponents::MonthDayWeekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -180,7 +180,7 @@ fn overlap_patterns() {
         TestCase {
             locale: locale!("ru"),
             components: NeoComponents::DateTime(
-                NeoDayComponents::Weekday,
+                NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -188,7 +188,7 @@ fn overlap_patterns() {
         },
         TestCase {
             locale: locale!("ru"),
-            components: NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Weekday)),
+            components: NeoComponents::Date(NeoDateComponents::Weekday),
             length: NeoSkeletonLength::Medium,
             expected: "пт",
         },
@@ -236,19 +236,19 @@ fn test_5387() {
     let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
     let formatter_auto = TypedNeoFormatter::try_new_with_components(
         &locale!("en").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinute),
         NeoSkeletonLength::Medium.into(),
     )
     .unwrap();
     let formatter_h12 = TypedNeoFormatter::try_new_with_components(
         &locale!("en-u-hc-h12").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinute),
         NeoSkeletonLength::Medium.into(),
     )
     .unwrap();
     let formatter_h24 = TypedNeoFormatter::try_new_with_components(
         &locale!("en-u-hc-h23").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinute),
         NeoSkeletonLength::Medium.into(),
     )
     .unwrap();

@@ -6,7 +6,7 @@
 
 use crate::neo_skeleton::{
     Alignment, YearStyle, FractionalSecondDigits, NeoComponents, NeoDateComponents,
-    NeoDayComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
+    NeoCalendarPeriodComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
     NeoTimeZoneStyle,
 };
 use alloc::vec::Vec;
@@ -245,24 +245,24 @@ impl<'de> Deserialize<'de> for FieldSetSerde {
     }
 }
 
-impl From<NeoDayComponents> for FieldSetSerde {
-    fn from(value: NeoDayComponents) -> Self {
+impl From<NeoDateComponents> for FieldSetSerde {
+    fn from(value: NeoDateComponents) -> Self {
         match value {
-            NeoDayComponents::Day => Self::DAY,
-            NeoDayComponents::MonthDay => Self::MONTH_DAY,
-            NeoDayComponents::YearMonthDay => Self::YEAR_MONTH_DAY,
-            NeoDayComponents::DayWeekday => Self::DAY_WEEKDAY,
-            NeoDayComponents::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY,
-            NeoDayComponents::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
-            NeoDayComponents::Weekday => Self::WEEKDAY,
+            NeoDateComponents::Day => Self::DAY,
+            NeoDateComponents::MonthDay => Self::MONTH_DAY,
+            NeoDateComponents::YearMonthDay => Self::YEAR_MONTH_DAY,
+            NeoDateComponents::DayWeekday => Self::DAY_WEEKDAY,
+            NeoDateComponents::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY,
+            NeoDateComponents::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
+            NeoDateComponents::Weekday => Self::WEEKDAY,
             // TODO: support auto?
-            NeoDayComponents::Auto => Self::YEAR_MONTH_DAY,
-            NeoDayComponents::AutoWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
+            NeoDateComponents::Auto => Self::YEAR_MONTH_DAY,
+            NeoDateComponents::AutoWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
         }
     }
 }
 
-impl TryFrom<FieldSetSerde> for NeoDayComponents {
+impl TryFrom<FieldSetSerde> for NeoDateComponents {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
@@ -278,24 +278,20 @@ impl TryFrom<FieldSetSerde> for NeoDayComponents {
     }
 }
 
-impl From<NeoDateComponents> for FieldSetSerde {
-    fn from(value: NeoDateComponents) -> Self {
+impl From<NeoCalendarPeriodComponents> for FieldSetSerde {
+    fn from(value: NeoCalendarPeriodComponents) -> Self {
         match value {
-            NeoDateComponents::Day(day) => FieldSetSerde::from(day),
-            NeoDateComponents::Month => Self::MONTH,
-            NeoDateComponents::YearMonth => Self::YEAR_MONTH,
-            NeoDateComponents::Year => Self::YEAR,
-            NeoDateComponents::YearWeek => Self::YEAR_WEEK,
+            NeoCalendarPeriodComponents::Month => Self::MONTH,
+            NeoCalendarPeriodComponents::YearMonth => Self::YEAR_MONTH,
+            NeoCalendarPeriodComponents::Year => Self::YEAR,
+            NeoCalendarPeriodComponents::YearWeek => Self::YEAR_WEEK,
         }
     }
 }
 
-impl TryFrom<FieldSetSerde> for NeoDateComponents {
+impl TryFrom<FieldSetSerde> for NeoCalendarPeriodComponents {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        if let Ok(result) = NeoDayComponents::try_from(value) {
-            return Ok(Self::Day(result));
-        }
         match value {
             FieldSetSerde::MONTH => Ok(Self::Month),
             FieldSetSerde::YEAR_MONTH => Ok(Self::YearMonth),
@@ -376,6 +372,7 @@ impl From<NeoComponents> for FieldSetSerde {
     fn from(value: NeoComponents) -> Self {
         match value {
             NeoComponents::Date(date) => FieldSetSerde::from(date),
+            NeoComponents::CalendarPeriod(calendar_period) => FieldSetSerde::from(calendar_period),
             NeoComponents::Time(time) => FieldSetSerde::from(time),
             NeoComponents::Zone(zone) => FieldSetSerde::from(zone),
             NeoComponents::DateTime(day, time) => {
@@ -401,7 +398,9 @@ impl TryFrom<FieldSetSerde> for NeoComponents {
         let time = value.time_only();
         let zone = value.zone_only();
         match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
-            (true, false, false) => Ok(NeoComponents::Date(date.try_into()?)),
+            (true, false, false) => {
+                NeoDateComponents::try_from(date).map(NeoComponents::from).or_else(|_| NeoCalendarPeriodComponents::try_from(date).map(NeoComponents::from))
+            },
             (false, true, false) => Ok(NeoComponents::Time(time.try_into()?)),
             (false, false, true) => Ok(NeoComponents::Zone(zone.try_into()?)),
             (true, true, false) => Ok(NeoComponents::DateTime(date.try_into()?, time.try_into()?)),
@@ -421,7 +420,7 @@ impl TryFrom<FieldSetSerde> for NeoComponents {
 fn test_basic() {
     let skeleton = NeoSkeleton {
         components: NeoComponents::DateTimeZone(
-            NeoDayComponents::YearMonthDayWeekday,
+            NeoDateComponents::YearMonthDayWeekday,
             NeoTimeComponents::HourMinute,
             NeoTimeZoneSkeleton::generic(),
         ),
