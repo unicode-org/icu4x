@@ -90,7 +90,7 @@ fn test_length_time_preferences() {
 #[test]
 fn test_date_and_time() {
     let field_set = NeoDateTimeComponents::DateTime(
-        NeoDayComponents::EraYearMonthDayWeekday,
+        NeoDayComponents::YearMonthDayWeekday,
         NeoTimeComponents::Auto,
     );
     let mut options = NeoOptions::from(NeoSkeletonLength::Medium);

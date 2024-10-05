@@ -14,7 +14,7 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month", "day", "weekday", "hour", "minute", "second"],
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
                     "length": "long",
                     "eraDisplay": "always"
                 },
@@ -100,7 +100,7 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month", "day", "weekday", "hour", "minute", "second"],
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
                     "length": "long",
                     "eraDisplay": "always"
                 },

@@ -54,26 +54,26 @@
 //! );
 //! ```
 //!
-//! ## Era Display
+//! ## Year Style
 //!
-//! The era field can be toggled on and off using the [`EraDisplay`] option.
+//! The precision of the rendered year can be adjusted using the [`EraDisplay`] option.
 //!
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
-//! use icu::datetime::neo_marker::NeoEraYearMonthDayMarker;
+//! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 //! use icu::datetime::neo_skeleton::EraDisplay;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter =
-//!     TypedNeoFormatter::<Gregorian, NeoEraYearMonthDayMarker>::try_new(
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
 //!             options.era_display = Some(EraDisplay::Auto);
 //!             options
 //!         }
@@ -84,23 +84,59 @@
 //! // such as years before year 0 and small year numbers:
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
-//!     "Jan 1, 1001 BC"
+//!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
-//!     "Jan 1, 77 AD"
+//!     "1/1/77 AD"
 //! );
 //! // Era elided for modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-//!     "Dec 20, 2023"
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900"
+//! );
+//! // Era and century both elided for nearby years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/25"
 //! );
 //!
 //! let formatter =
-//!     TypedNeoFormatter::<Gregorian, NeoEraYearMonthDayMarker>::try_new(
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             options.era_display = Some(EraDisplay::Full);
+//!             options
+//!         }
+//!     )
+//!     .unwrap();
+//!
+//! // Era still displayed in cases with ambiguity:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     "1/1/1001 BC"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     "1/1/77 AD"
+//! );
+//! // Era elided for modern years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900"
+//! );
+//! // But now we always get a full-precision year:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/2025"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+//!         &locale!("en-US").into(),
+//!         {
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
 //!             options.era_display = Some(EraDisplay::Always);
 //!             options
 //!         }
@@ -110,16 +146,20 @@
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
-//!     "Jan 1, 1001 BC"
+//!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
-//!     "Jan 1, 77 AD"
+//!     "1/1/77 AD"
 //! );
 //! // But now it is shown even on modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-//!     "Dec 20, 2023 AD"
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900 AD"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/2025 AD"
 //! );
 //! ```
 //!
@@ -2303,22 +2343,6 @@ impl_day_marker!(
     years = yes,
     months = yes,
     weekdays = yes,
-    input_year = yes,
-    input_month = yes,
-    input_day_of_month = yes,
-    input_any_calendar_kind = yes,
-    option_alignment = yes,
-);
-
-// TODO: Rename this to FullYear instead of EraYear
-impl_day_marker!(
-    NeoEraYearMonthDayMarker,
-    NeoDayComponents::EraYearMonthDay,
-    description = "year, month, and day (year always with full precision)",
-    sample_length = Medium,
-    sample = "May 17, 2024",
-    years = yes,
-    months = yes,
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,

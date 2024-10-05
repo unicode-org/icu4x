@@ -64,7 +64,6 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
 #[serde(rename_all = "camelCase")]
 enum FieldSetField {
     // Day and Date Fields
-    FullYear = 0,
     Year = 1,
     Month = 2,
     Day = 3,
@@ -88,7 +87,6 @@ enum FieldSetField {
 
 impl FieldSetField {
     const VALUES: &'static [FieldSetField] = &[
-        FullYear,
         Year,
         Month,
         Day,
@@ -148,19 +146,15 @@ impl FieldSetSerde {
     const DAY: Self = Self::from_fields(&[Day]);
     const MONTH_DAY: Self = Self::from_fields(&[Month, Day]);
     const YEAR_MONTH_DAY: Self = Self::from_fields(&[Year, Month, Day]);
-    const FULLYEAR_MONTH_DAY: Self = Self::from_fields(&[FullYear, Month, Day]);
     const DAY_WEEKDAY: Self = Self::from_fields(&[Day, Weekday]);
     const MONTH_DAY_WEEKDAY: Self = Self::from_fields(&[Month, Day, Weekday]);
     const YEAR_MONTH_DAY_WEEKDAY: Self = Self::from_fields(&[Year, Month, Day, Weekday]);
-    const FULLYEAR_MONTH_DAY_WEEKDAY: Self = Self::from_fields(&[FullYear, Month, Day, Weekday]);
     const WEEKDAY: Self = Self::from_fields(&[Weekday]);
 
     // Date Components
     const MONTH: Self = Self::from_fields(&[Month]);
     const YEAR_MONTH: Self = Self::from_fields(&[Year, Month]);
-    const FULLYEAR_MONTH: Self = Self::from_fields(&[FullYear, Month]);
     const YEAR: Self = Self::from_fields(&[Year]);
-    const FULLYEAR: Self = Self::from_fields(&[FullYear]);
     const YEAR_WEEK: Self = Self::from_fields(&[Year, WeekOfYear]);
 
     // Time Components
@@ -257,11 +251,9 @@ impl From<NeoDayComponents> for FieldSetSerde {
             NeoDayComponents::Day => Self::DAY,
             NeoDayComponents::MonthDay => Self::MONTH_DAY,
             NeoDayComponents::YearMonthDay => Self::YEAR_MONTH_DAY,
-            NeoDayComponents::EraYearMonthDay => Self::FULLYEAR_MONTH_DAY,
             NeoDayComponents::DayWeekday => Self::DAY_WEEKDAY,
             NeoDayComponents::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY,
             NeoDayComponents::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
-            NeoDayComponents::EraYearMonthDayWeekday => Self::FULLYEAR_MONTH_DAY_WEEKDAY,
             NeoDayComponents::Weekday => Self::WEEKDAY,
             // TODO: support auto?
             NeoDayComponents::Auto => Self::YEAR_MONTH_DAY,
@@ -277,11 +269,9 @@ impl TryFrom<FieldSetSerde> for NeoDayComponents {
             FieldSetSerde::DAY => Ok(Self::Day),
             FieldSetSerde::MONTH_DAY => Ok(Self::MonthDay),
             FieldSetSerde::YEAR_MONTH_DAY => Ok(Self::YearMonthDay),
-            FieldSetSerde::FULLYEAR_MONTH_DAY => Ok(Self::EraYearMonthDay),
             FieldSetSerde::DAY_WEEKDAY => Ok(Self::DayWeekday),
             FieldSetSerde::MONTH_DAY_WEEKDAY => Ok(Self::MonthDayWeekday),
             FieldSetSerde::YEAR_MONTH_DAY_WEEKDAY => Ok(Self::YearMonthDayWeekday),
-            FieldSetSerde::FULLYEAR_MONTH_DAY_WEEKDAY => Ok(Self::EraYearMonthDayWeekday),
             FieldSetSerde::WEEKDAY => Ok(Self::Weekday),
             _ => Err(Error::InvalidFields),
         }
@@ -294,9 +284,7 @@ impl From<NeoDateComponents> for FieldSetSerde {
             NeoDateComponents::Day(day) => FieldSetSerde::from(day),
             NeoDateComponents::Month => Self::MONTH,
             NeoDateComponents::YearMonth => Self::YEAR_MONTH,
-            NeoDateComponents::EraYearMonth => Self::FULLYEAR_MONTH,
             NeoDateComponents::Year => Self::YEAR,
-            NeoDateComponents::EraYear => Self::FULLYEAR,
             NeoDateComponents::YearWeek => Self::YEAR_WEEK,
         }
     }
@@ -311,9 +299,7 @@ impl TryFrom<FieldSetSerde> for NeoDateComponents {
         match value {
             FieldSetSerde::MONTH => Ok(Self::Month),
             FieldSetSerde::YEAR_MONTH => Ok(Self::YearMonth),
-            FieldSetSerde::FULLYEAR_MONTH => Ok(Self::EraYearMonth),
             FieldSetSerde::YEAR => Ok(Self::Year),
-            FieldSetSerde::FULLYEAR => Ok(Self::EraYear),
             FieldSetSerde::YEAR_WEEK => Ok(Self::YearWeek),
             _ => Err(Error::InvalidFields),
         }
