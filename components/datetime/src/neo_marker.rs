@@ -961,12 +961,6 @@ pub trait HasConstDateComponents {
     const COMPONENTS: NeoDateComponents;
 }
 
-/// A trait associating [`NeoDayComponents`].
-pub trait HasConstDayComponents {
-    /// The associated components.
-    const COMPONENTS: NeoDayComponents;
-}
-
 /// A trait associating [`NeoTimeComponents`].
 pub trait HasConstTimeComponents {
     /// The associated components.
@@ -1193,7 +1187,7 @@ impl ZoneMarkers for NeoNeverMarker {
 
 /// A struct that supports formatting both a date and a time.
 ///
-/// It should be composed from types implementing [`HasConstDayComponents`]
+/// It should be composed from types implementing [`HasConstDateComponents`]
 /// and [`HasConstTimeComponents`].
 #[derive(Debug)]
 pub struct DateTimeCombo<D, T, Z> {
@@ -1334,7 +1328,7 @@ where
 
 impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: HasConstDayComponents,
+    D: HasConstDateComponents,
     T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
@@ -1375,7 +1369,7 @@ where
 
 impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
 where
-    D: HasConstDayComponents,
+    D: HasConstDateComponents,
     T: HasConstTimeComponents,
     Z: HasConstZoneComponent,
 {
@@ -1729,19 +1723,11 @@ macro_rules! impl_marker_with_options {
     };
 }
 
-/// Implements a field set of time fields.
-///
-/// Several arguments to this macro are required, and the rest are optional.
-/// The optional arguments should be written as `key = yes,` if that parameter
-/// should be included.
-///
-/// Documentation for each option is shown inline below.
-macro_rules! impl_date_marker {
+/// Internal helper macro used by [`impl_date_marker`] and [`impl_calendar_period_marker`]
+macro_rules! impl_date_or_calendar_period_marker {
     (
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -1838,9 +1824,6 @@ macro_rules! impl_date_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
         }
-        impl HasConstDateComponents for $type {
-            const COMPONENTS: NeoDateComponents = $components;
-        }
         impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
@@ -1871,9 +1854,6 @@ macro_rules! impl_date_marker {
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
-        }
     };
 }
 
@@ -1884,7 +1864,7 @@ macro_rules! impl_date_marker {
 /// should be included.
 ///
 /// See [`impl_date_marker`].
-macro_rules! impl_day_marker {
+macro_rules! impl_date_marker {
     (
         $type:ident,
         $components:expr,
@@ -1903,9 +1883,8 @@ macro_rules! impl_day_marker {
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
-        impl_date_marker!(
+        impl_date_or_calendar_period_marker!(
             $type,
-            NeoDateComponents::Day($components),
             description = $description,
             sample_length = $sample_length,
             sample = $sample,
@@ -1921,8 +1900,53 @@ macro_rules! impl_day_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl HasConstDayComponents for $type {
-            const COMPONENTS: NeoDayComponents = $components;
+        impl HasConstDateComponents for $type {
+            const COMPONENTS: NeoDateComponents = $components;
+        }
+        impl HasConstComponents for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+        }
+    };
+}
+
+
+/// Implements a field set of calendar period fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// See [`impl_date_marker`].
+macro_rules! impl_calendar_period_marker {
+    (
+        $type:ident,
+        $components:expr,
+        description = $description:literal,
+        sample_length = $sample_length:ident,
+        sample = $sample:literal,
+        $(years = $years_yes:ident,)?
+        $(months = $months_yes:ident,)?
+        $(dates = $dates_yes:ident,)?
+        $(input_year = $year_yes:ident,)?
+        $(input_month = $month_yes:ident,)?
+        $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        $(option_alignment = $option_alignment_yes:ident,)?
+    ) => {
+        impl_date_or_calendar_period_marker!(
+            $type,
+            description = $description,
+            sample_length = $sample_length,
+            sample = $sample,
+            $(years = $years_yes,)?
+            $(months = $months_yes,)?
+            $(dates = $dates_yes,)?
+            $(input_year = $year_yes,)?
+            $(input_month = $month_yes,)?
+            $(input_any_calendar_kind = $any_calendar_kind_yes,)?
+            $(option_alignment = $option_alignment_yes,)?
+        );
+        impl HasConstComponents for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::CalendarPeriod($components);
         }
     };
 }
@@ -2334,9 +2358,9 @@ macro_rules! impl_zoneddatetime_marker {
     }
 }
 
-impl_day_marker!(
+impl_date_marker!(
     NeoYearMonthDayMarker,
-    NeoDayComponents::YearMonthDay,
+    NeoDateComponents::YearMonthDay,
     description = "year, month, and day (year might be abbreviated)",
     sample_length = Short,
     sample = "5/17/24",
@@ -2350,9 +2374,9 @@ impl_day_marker!(
     option_alignment = yes,
 );
 
-impl_day_marker!(
+impl_date_marker!(
     NeoMonthDayMarker,
-    NeoDayComponents::MonthDay,
+    NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = Medium,
     sample = "May 17",
@@ -2363,9 +2387,9 @@ impl_day_marker!(
     option_alignment = yes,
 );
 
-impl_day_marker!(
+impl_date_marker!(
     NeoAutoDateMarker,
-    NeoDayComponents::Auto,
+    NeoDateComponents::Auto,
     description = "locale-dependent date fields",
     sample_length = Medium,
     sample = "May 17, 2024",
@@ -2438,9 +2462,9 @@ impl_datetime_marker!(
     time = NeoHourMinuteMarker,
 );
 
-impl_date_marker!(
+impl_calendar_period_marker!(
     NeoYearMonthMarker,
-    NeoDateComponents::YearMonth,
+    NeoCalendarPeriodComponents::YearMonth,
     description = "year and month (era elided when possible)",
     sample_length = Medium,
     sample = "May 2024",

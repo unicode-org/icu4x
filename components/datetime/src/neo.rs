@@ -181,10 +181,17 @@ where
 {
     fn from(options: NeoOptions<R>) -> Self {
         Self {
-            length: options.length.into(),
+            length: match options.length.into() {
+                Some(length) => length,
+                None => {
+                    debug_assert!(false, "unreachable");
+                    NeoSkeletonLength::Medium
+                }
+            },
             alignment: options.alignment.into(),
             year_style: options.year_style.into(),
             fractional_second_digits: options.fractional_second_digits.into(),
+            hour_cycle: None,
         }
     }
 }
@@ -231,7 +238,7 @@ where
 
 impl RawNeoOptions {
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn from_field_set<FSet>(field_set: FSet) -> Self
+    pub(crate) fn from_field_set_and_locale<FSet>(field_set: FSet, locale: &DataLocale) -> Self
     where
         FSet: DateTimeMarkers,
         FSet: NeoGetField<FSet::LengthOption>,
@@ -239,14 +246,25 @@ impl RawNeoOptions {
         FSet: NeoGetField<FSet::YearStyleOption>,
         FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
     {
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(HourCycle::from_locale_value);
         Self {
-            length: NeoGetField::<FSet::LengthOption>::get_field(&field_set).into(),
+            length: match NeoGetField::<FSet::LengthOption>::get_field(&field_set).into() {
+                Some(length) => length,
+                None => {
+                    debug_assert!(false, "unreachable");
+                    NeoSkeletonLength::Medium
+                }
+            },
             alignment: NeoGetField::<FSet::AlignmentOption>::get_field(&field_set).into(),
             year_style: NeoGetField::<FSet::YearStyleOption>::get_field(&field_set).into(),
             fractional_second_digits: NeoGetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 &field_set,
             )
             .into(),
+            hour_cycle,
         }
     }
 }
@@ -333,7 +351,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             FSet::COMPONENTS,
-            RawNeoOptions::from_field_set(options),
+            RawNeoOptions::from_field_set_and_locale(options, locale),
         )
     }
 }
@@ -650,10 +668,14 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let hour_cycle = locale
+        // TODO: Remove this when NeoOptions is gone
+        let mut options = options;
+        options.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
+        // END TODO
+
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -661,7 +683,6 @@ where
             locale,
             components,
             options,
-            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -1346,12 +1367,16 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
-        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
-        let kind = calendar.kind();
-        let hour_cycle = locale
+        // TODO: Remove this when NeoOptions is gone
+        let mut options = options;
+        options.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
+        // END TODO
+
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
+        let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -1359,7 +1384,6 @@ where
             locale,
             components,
             options,
-            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
