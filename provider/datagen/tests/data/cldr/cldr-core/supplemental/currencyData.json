@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "currencyData": {
       "fractions": {
@@ -3526,9 +3526,14 @@
             }
           },
           {
+            "ZWG": {
+              "_from": "2024-06-25"
+            }
+          },
+          {
             "ZWL": {
               "_from": "2009-02-02",
-              "_to": "2009-04-12"
+              "_to": "2024-08-31"
             }
           },
           {

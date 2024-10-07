@@ -144,10 +144,6 @@
       "dt": "Kina, letnje vreme",
       "st": "Kinesko standardno vreme"
     },
-    "choi": {
-      "dt": "Čojbalsan, letnje vreme",
-      "st": "Čojbalsan, standardno vreme"
-    },
     "chri": {
       "st": "Božićno ostrvo vreme"
     },
@@ -296,6 +292,9 @@
     },
     "kawe": {
       "st": "Zapadno-kazahstansko vreme"
+    },
+    "kaza": {
+      "st": "Kazahstansko vreme"
     },
     "kore": {
       "dt": "Korejsko letnje vreme",

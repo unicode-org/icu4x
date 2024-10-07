@@ -17,7 +17,7 @@ macro_rules! __impl_plurals_ranges_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"B") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
                     },
                 };
-                static FA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                static AK: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
@@ -71,8 +71,8 @@ macro_rules! __impl_plurals_ranges_v1 {
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                     },
                 };
-                static VALUES: [&<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable; 25usize] = [&AF, &AR, &AF, &AF, &AF, &AF, &AF, &AF, &FA, &AF, &HE, &AF, &KA, &LV, &MK, &AF, &FA, &AF, &RO, &FA, &AF, &SL, &AF, &UND, &AF];
-                static KEYS: [&str; 25usize] = ["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"];
+                static VALUES: [&<icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable; 26usize] = [&AF, &AK, &AR, &AF, &AF, &AF, &AF, &AF, &AF, &AK, &AF, &HE, &AF, &KA, &LV, &MK, &AF, &AK, &AF, &RO, &AK, &AF, &SL, &AF, &UND, &AF];
+                static KEYS: [&str; 26usize] = ["af", "ak", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
@@ -105,7 +105,7 @@ macro_rules! __impliterable_plurals_ranges_v1 {
         #[clippy::msrv = "1.67"]
         impl icu_provider::datagen::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+                Ok(["af", "ak", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
             }
         }
     };

@@ -1,6 +1,6 @@
 {
   "Gy": "G y",
-  "GyMd": "d/M/y GGGGG",
+  "GyMd": "GGGGG dd.MM.y",
   "GyMMM": "G MMM y",
   "GyMMMd": "G d MMM y",
   "GyMMMdE": "G d MMM y E",

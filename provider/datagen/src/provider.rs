@@ -62,7 +62,7 @@ icu_provider::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "45.0.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "46.0.0-BETA2";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-05-16/75.x";

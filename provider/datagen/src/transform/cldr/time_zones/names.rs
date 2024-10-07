@@ -84,6 +84,8 @@ impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
         #[allow(clippy::unwrap_used)] // structures are derived from each other
         let map: BTreeMap<Vec<u8>, usize> = iana2bcp
             .iter()
+            // Clashes with Mexico/ prefix, which cannot be stored in the trie
+            .filter(|(iana, _)| !matches!(iana.as_str(), "MET"))
             .map(|(iana, bcp)| {
                 let is_canonical = bcp2iana.get(bcp) == Some(iana);
                 let index = bcp47_ids.binary_search(bcp).unwrap();

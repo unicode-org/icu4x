@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "dates": {
@@ -133,13 +130,13 @@
                   "sat": "Sab"
                 },
                 "short": {
-                  "sun": "Li",
-                  "mon": "Lu",
-                  "tue": "Ma",
-                  "wed": "Mi",
-                  "thu": "Hu",
-                  "fri": "Bi",
-                  "sat": "Sa"
+                  "sun": "Lin",
+                  "mon": "Lun",
+                  "tue": "Mar",
+                  "wed": "Miy",
+                  "thu": "Huw",
+                  "fri": "Biy",
+                  "sat": "Sab"
                 },
                 "wide": {
                   "sun": "Linggo",
@@ -171,13 +168,13 @@
                   "sat": "Sab"
                 },
                 "short": {
-                  "sun": "Li",
-                  "mon": "Lu",
-                  "tue": "Ma",
-                  "wed": "Mi",
-                  "thu": "Hu",
-                  "fri": "Bi",
-                  "sat": "Sa"
+                  "sun": "Lin",
+                  "mon": "Lun",
+                  "tue": "Mar",
+                  "wed": "Miy",
+                  "thu": "Huw",
+                  "fri": "Biy",
+                  "sat": "Sab"
                 },
                 "wide": {
                   "sun": "Linggo",
@@ -239,9 +236,9 @@
                   "am": "AM",
                   "noon": "tanghaling-tapat",
                   "pm": "PM",
-                  "morning1": "nang umaga",
+                  "morning1": "ng umaga",
                   "morning2": "madaling-araw",
-                  "afternoon1": "tanghali",
+                  "afternoon1": "ng hapon",
                   "evening1": "ng gabi",
                   "night1": "ng gabi"
                 },
@@ -250,10 +247,10 @@
                   "am": "am",
                   "noon": "tanghaling-tapat",
                   "pm": "pm",
-                  "morning1": "umaga",
+                  "morning1": "ng umaga",
                   "morning2": "madaling-araw",
-                  "afternoon1": "sa hapon",
-                  "evening1": "sa gabi",
+                  "afternoon1": "ng hapon",
+                  "evening1": "ng gabi",
                   "night1": "ng gabi"
                 },
                 "wide": {
@@ -261,9 +258,9 @@
                   "am": "AM",
                   "noon": "tanghaling-tapat",
                   "pm": "PM",
-                  "morning1": "nang umaga",
+                  "morning1": "ng umaga",
                   "morning2": "madaling-araw",
-                  "afternoon1": "tanghali",
+                  "afternoon1": "ng hapon",
                   "evening1": "ng gabi",
                   "night1": "ng gabi"
                 }
@@ -406,11 +403,11 @@
               "intervalFormats": {
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
-                  "B": "h B – h B",
+                  "B": "h B – h B",
                   "h": "h – h B"
                 },
                 "Bhm": {
-                  "B": "h:mm B – h:mm B",
+                  "B": "h:mm B – h:mm B",
                   "h": "h:mm – h:mm B",
                   "m": "h:mm – h:mm B"
                 },

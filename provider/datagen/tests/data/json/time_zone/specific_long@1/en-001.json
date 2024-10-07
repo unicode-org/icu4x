@@ -147,10 +147,6 @@
       "dt": "China Daylight Time",
       "st": "China Standard Time"
     },
-    "choi": {
-      "dt": "Choibalsan Summer Time",
-      "st": "Choibalsan Standard Time"
-    },
     "chri": {
       "st": "Christmas Island Time"
     },
@@ -303,6 +299,9 @@
     },
     "kawe": {
       "st": "West Kazakhstan Time"
+    },
+    "kaza": {
+      "st": "Kazakhstan Time"
     },
     "kore": {
       "dt": "Korean Daylight Time",

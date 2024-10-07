@@ -2,143 +2,10 @@
   "language_script": [
     [
       [
-        "aae",
-        "Grek"
+        "arc",
+        "Hatr"
       ],
-      "IT"
-    ],
-    [
-      [
-        "aaf",
-        "Arab"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "abl",
-        "Latn"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "acy",
-        "Arab"
-      ],
-      "CY"
-    ],
-    [
-      [
-        "acy",
-        "Grek"
-      ],
-      "CY"
-    ],
-    [
-      [
-        "adi",
-        "Tibt"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "agj",
-        "Arab"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "ahk",
-        "Mymr"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "ahk",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "ain",
-        "Latn"
-      ],
-      "JP"
-    ],
-    [
-      [
-        "aiw",
-        "Arab"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "aiw",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "akb",
-        "Batk"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "amf",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "amw",
-        "Arab"
-      ],
-      "SY"
-    ],
-    [
-      [
-        "amw",
-        "Armi"
-      ],
-      "SY"
-    ],
-    [
-      [
-        "amw",
-        "Latn"
-      ],
-      "SY"
-    ],
-    [
-      [
-        "anu",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "anu",
-        "Latn"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "aot",
-        "Latn"
-      ],
-      "IN"
+      "IQ"
     ],
     [
       [
@@ -156,451 +23,10 @@
     ],
     [
       [
-        "atb",
-        "Lisu"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "auj",
-        "Latn"
-      ],
-      "LY"
-    ],
-    [
-      [
-        "auj",
-        "Tfng"
-      ],
-      "LY"
-    ],
-    [
-      [
-        "azb",
-        "Cyrl"
-      ],
-      "AZ"
-    ],
-    [
-      [
-        "azb",
-        "Latn"
-      ],
-      "AZ"
-    ],
-    [
-      [
-        "bca",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "bcq",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "bea",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "bex",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "bfa",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "bfs",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "bfu",
-        "Takr"
+        "bap",
+        "Krai"
       ],
       "IN"
-    ],
-    [
-      [
-        "bhd",
-        "Arab"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "bhd",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "bhh",
-        "Hebr"
-      ],
-      "IL"
-    ],
-    [
-      [
-        "bhh",
-        "Latn"
-      ],
-      "IL"
-    ],
-    [
-      [
-        "bht",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "bht",
-        "Latn"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "bji",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "blr",
-        "Tale"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "blr",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "boz",
-        "Arab"
-      ],
-      "ML"
-    ],
-    [
-      [
-        "bqf",
-        "Arab"
-      ],
-      "GN"
-    ],
-    [
-      [
-        "brb",
-        "Laoo"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "brb",
-        "Latn"
-      ],
-      "VN"
-    ],
-    [
-      [
-        "bru",
-        "Laoo"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "bru",
-        "Thai"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "bsk",
-        "Latn"
-      ],
-      "PK"
-    ],
-    [
-      [
-        "bst",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "bsv",
-        "Arab"
-      ],
-      "GN"
-    ],
-    [
-      [
-        "bsw",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "bts",
-        "Batk"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "btx",
-        "Batk"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "bud",
-        "Brai"
-      ],
-      "TG"
-    ],
-    [
-      [
-        "bwe",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "bwo",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "bxm",
-        "Latn"
-      ],
-      "MN"
-    ],
-    [
-      [
-        "bxm",
-        "Mong"
-      ],
-      "MN"
-    ],
-    [
-      [
-        "bxu",
-        "Cyrl"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "bxu",
-        "Latn"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "caf",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "cbk",
-        "Brai"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "cdf",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "cdh",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "cdm",
-        "Latn"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "cdo",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "cdo",
-        "Latn"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "cfm",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "chn",
-        "Dupl"
-      ],
-      "US"
-    ],
-    [
-      [
-        "cia",
-        "Arab"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "cia",
-        "Hang"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "ciw",
-        "Cans"
-      ],
-      "US"
-    ],
-    [
-      [
-        "cjs",
-        "Cyrl"
-      ],
-      "RU"
-    ],
-    [
-      [
-        "cjy",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "ckm",
-        "Glag"
-      ],
-      "HR"
-    ],
-    [
-      [
-        "clk",
-        "Tibt"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "cmo",
-        "Khmr"
-      ],
-      "KH"
-    ],
-    [
-      [
-        "cnp",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "crj",
-        "Latn"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "crx",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "csh",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "csp",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "ctg",
-        "Arab"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "ctg",
-        "Latn"
-      ],
-      "BD"
     ],
     [
       [
@@ -611,230 +37,6 @@
     ],
     [
       [
-        "cvg",
-        "Tibt"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "czh",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "dag",
-        "Arab"
-      ],
-      "GH"
-    ],
-    [
-      [
-        "dbj",
-        "Arab"
-      ],
-      "MY"
-    ],
-    [
-      [
-        "der",
-        "Latn"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "din",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "dis",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "dng",
-        "Arab"
-      ],
-      "KG"
-    ],
-    [
-      [
-        "dsq",
-        "Arab"
-      ],
-      "ML"
-    ],
-    [
-      [
-        "dta",
-        "Cyrl"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "dta",
-        "Hans"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "duh",
-        "Gujr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "dwr",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "eko",
-        "Arab"
-      ],
-      "MZ"
-    ],
-    [
-      [
-        "ems",
-        "Cyrl"
-      ],
-      "US"
-    ],
-    [
-      [
-        "ess",
-        "Cyrl"
-      ],
-      "US"
-    ],
-    [
-      [
-        "evn",
-        "Latn"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "evn",
-        "Mong"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "fuh",
-        "Arab"
-      ],
-      "NE"
-    ],
-    [
-      [
-        "gac",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "gax",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "gba",
-        "Arab"
-      ],
-      "CF"
-    ],
-    [
-      [
-        "gbk",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "gbl",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "gdb",
-        "Telu"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "gdl",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "gha",
-        "Latn"
-      ],
-      "LY"
-    ],
-    [
-      [
-        "gha",
-        "Tfng"
-      ],
-      "LY"
-    ],
-    [
-      [
-        "gjn",
-        "Arab"
-      ],
-      "GH"
-    ],
-    [
-      [
-        "gmv",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "gof",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "gra",
-        "Gujr"
-      ],
-      "IN"
-    ],
-    [
-      [
         "grc",
         "Linb"
       ],
@@ -842,568 +44,15 @@
     ],
     [
       [
-        "gru",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "guk",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "gyl",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "haj",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "har",
-        "Arab"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "har",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "hdy",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "hii",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "hkh",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "hkh",
-        "Latn"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "hmn",
-        "Bopo"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "hmn",
-        "Hmng"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "hmz",
-        "Plrd"
-      ],
-      "CN"
-    ],
-    [
-      [
         "hnj",
-        "Laoo"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "hrm",
         "Hmng"
       ],
-      "CN"
-    ],
-    [
-      [
-        "hut",
-        "Tibt"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "igs",
-        "Grek"
-      ],
-      "001"
-    ],
-    [
-      [
-        "ikt",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "ili",
-        "Arab"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "ili",
-        "Cyrl"
-      ],
-      "KZ"
-    ],
-    [
-      [
-        "iru",
-        "Mlym"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "isk",
-        "Cyrl"
-      ],
-      "TJ"
-    ],
-    [
-      [
-        "ium",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "ium",
-        "Laoo"
-      ],
       "LA"
-    ],
-    [
-      [
-        "ium",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "jct",
-        "Latn"
-      ],
-      "UA"
-    ],
-    [
-      [
-        "jdt",
-        "Hebr"
-      ],
-      "RU"
-    ],
-    [
-      [
-        "jdt",
-        "Latn"
-      ],
-      "AZ"
-    ],
-    [
-      [
-        "jeh",
-        "Laoo"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "jge",
-        "Hebr"
-      ],
-      "IL"
-    ],
-    [
-      [
-        "jkm",
-        "Brai"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "jkm",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "jnj",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "jns",
-        "Latn"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "jns",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "jra",
-        "Khmr"
-      ],
-      "KH"
-    ],
-    [
-      [
-        "jrb",
-        "Arab"
-      ],
-      "MA"
-    ],
-    [
-      [
-        "kbp",
-        "Brai"
-      ],
-      "TG"
-    ],
-    [
-      [
-        "kbr",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "kdr",
-        "Cyrl"
-      ],
-      "UA"
-    ],
-    [
-      [
-        "kex",
-        "Gujr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kff",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kff",
-        "Orya"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kff",
-        "Telu"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kfi",
-        "Knda"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kfk",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kfx",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "khr",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kjp",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "kke",
-        "Arab"
-      ],
-      "GN"
-    ],
-    [
-      [
-        "kls",
-        "Arab"
-      ],
-      "PK"
-    ],
-    [
-      [
-        "kmc",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "knk",
-        "Arab"
-      ],
-      "SL"
-    ],
-    [
-      [
-        "kns",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "kqy",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "kr",
-        "Arab"
-      ],
-      "NG"
-    ],
-    [
-      [
-        "ksw",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "ktb",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "kvq",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "kxc",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "kxd",
-        "Arab"
-      ],
-      "BN"
-    ],
-    [
-      [
-        "kxf",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "kyu",
-        "Latn"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "kyu",
-        "Mymr"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "kyw",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "kyw",
-        "Orya"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lae",
-        "Tibt"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lax",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lbf",
-        "Tibt"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "lbj",
-        "Arab"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lbn",
-        "Laoo"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "lbo",
-        "Latn"
-      ],
-      "US"
-    ],
-    [
-      [
-        "lfn",
-        "Cyrl"
-      ],
-      "001"
-    ],
-    [
-      [
-        "lgg",
-        "Arab"
-      ],
-      "UG"
     ],
     [
       [
         "lif",
         "Limb"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lmk",
-        "Mymr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "lot",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "loy",
-        "Tibt"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "lpo",
-        "Lisu"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "lus",
-        "Beng"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "lus",
-        "Brai"
       ],
       "IN"
     ],
@@ -1416,363 +65,6 @@
     ],
     [
       [
-        "maw",
-        "Arab"
-      ],
-      "GH"
-    ],
-    [
-      [
-        "mde",
-        "Latn"
-      ],
-      "TD"
-    ],
-    [
-      [
-        "mdx",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mdy",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "meo",
-        "Arab"
-      ],
-      "MY"
-    ],
-    [
-      [
-        "mey",
-        "Arab"
-      ],
-      "MR"
-    ],
-    [
-      [
-        "mfg",
-        "Arab"
-      ],
-      "GN"
-    ],
-    [
-      [
-        "mfi",
-        "Latn"
-      ],
-      "CM"
-    ],
-    [
-      [
-        "mfx",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mgd",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "mjl",
-        "Takr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "mjt",
-        "Beng"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "mjx",
-        "Beng"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "mki",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "mlf",
-        "Latn"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "mlq",
-        "Arab"
-      ],
-      "SN"
-    ],
-    [
-      [
-        "mmd",
-        "Hans"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "mmd",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "moy",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mpe",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mqx",
-        "Bugi"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "mrg",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "mrg",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "mrw",
-        "Arab"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "mur",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "muz",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mvf",
-        "Phag"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "mvz",
-        "Arab"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "mwt",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "mym",
-        "Latn"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "nbt",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "ncb",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "ncq",
-        "Thai"
-      ],
-      "LA"
-    ],
-    [
-      [
-        "nct",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "niv",
-        "Latn"
-      ],
-      "RU"
-    ],
-    [
-      [
-        "njz",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "nki",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "nmm",
-        "Tibt"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "nmo",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "nng",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "nru",
-        "Hans"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "nru",
-        "Hant"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "nup",
-        "Arab"
-      ],
-      "NG"
-    ],
-    [
-      [
-        "nwc",
-        "Brah"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "nwc",
-        "Deva"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "nwc",
-        "Sidd"
-      ],
-      "NP"
-    ],
-    [
-      [
-        "ojb",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "ojw",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "ola",
-        "Tibt"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "onp",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "osc",
-        "Latn"
-      ],
-      "IT"
-    ],
-    [
-      [
         "pal",
         "Phlp"
       ],
@@ -1780,873 +72,19 @@
     ],
     [
       [
-        "pcc",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "pce",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "pcg",
-        "Knda"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pcg",
-        "Taml"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pci",
-        "Orya"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pdu",
-        "Mymr"
-      ],
-      "MM"
-    ],
-    [
-      [
-        "pi",
-        "Brah"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pi",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pi",
-        "Khar"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pi",
-        "Khmr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pi",
-        "Mymr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pi",
-        "Thai"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pkh",
-        "Deva"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "prx",
-        "Tibt"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "pyu",
-        "Hani"
-      ],
-      "TW"
-    ],
-    [
-      [
-        "qwm",
-        "Cyrl"
-      ],
-      "RU"
-    ],
-    [
-      [
-        "qwm",
-        "Runr"
-      ],
-      "RU"
-    ],
-    [
-      [
-        "rah",
-        "Latn"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "rei",
-        "Telu"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "rml",
-        "Cyrl"
-      ],
-      "BY"
-    ],
-    [
-      [
-        "rmn",
-        "Cyrl"
-      ],
-      "BG"
-    ],
-    [
-      [
-        "rmn",
-        "Grek"
-      ],
-      "GR"
-    ],
-    [
-      [
-        "rom",
-        "Cyrl"
-      ],
-      "BG"
-    ],
-    [
-      [
-        "rup",
-        "Grek"
-      ],
-      "GR"
-    ],
-    [
-      [
-        "rut",
-        "Latn"
-      ],
-      "AZ"
-    ],
-    [
-      [
-        "sam",
-        "Hebr"
-      ],
-      "PS"
-    ],
-    [
-      [
-        "sam",
-        "Syrc"
-      ],
-      "PS"
-    ],
-    [
-      [
-        "sbu",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "sce",
-        "Arab"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "scs",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "sek",
-        "Cans"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "sgh",
-        "Arab"
-      ],
-      "AF"
-    ],
-    [
-      [
-        "sgh",
-        "Latn"
-      ],
-      "TJ"
-    ],
-    [
-      [
-        "shk",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "shu",
-        "Latn"
-      ],
-      "TD"
-    ],
-    [
-      [
-        "shy",
-        "Arab"
-      ],
-      "DZ"
-    ],
-    [
-      [
-        "shy",
-        "Tfng"
-      ],
-      "DZ"
-    ],
-    [
-      [
-        "sjp",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "sng",
-        "Brai"
-      ],
-      "CD"
-    ],
-    [
-      [
-        "soa",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "sqt",
-        "Latn"
-      ],
-      "YE"
-    ],
-    [
-      [
-        "sse",
-        "Arab"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "sss",
-        "Thai"
-      ],
-      "TH"
-    ],
-    [
-      [
-        "stv",
-        "Arab"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "suq",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "suv",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "suv",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "sva",
-        "Cyrl"
-      ],
-      "GE"
-    ],
-    [
-      [
-        "sva",
-        "Latn"
-      ],
-      "GE"
-    ],
-    [
-      [
-        "sxu",
-        "Runr"
-      ],
-      "DE"
-    ],
-    [
-      [
-        "taq",
-        "Tfng"
-      ],
-      "ML"
-    ],
-    [
-      [
-        "tay",
-        "Hans"
-      ],
-      "TW"
-    ],
-    [
-      [
-        "tay",
-        "Hant"
-      ],
-      "TW"
-    ],
-    [
-      [
-        "tbk",
-        "Hano"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "tbk",
-        "Latn"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "tda",
-        "Arab"
-      ],
-      "NE"
-    ],
-    [
-      [
-        "tda",
-        "Latn"
-      ],
-      "NE"
-    ],
-    [
-      [
-        "tdb",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "tdb",
-        "Kthi"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "tgt",
-        "Hano"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "tgt",
-        "Tagb"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "thp",
-        "Dupl"
-      ],
-      "CA"
-    ],
-    [
-      [
-        "thv",
-        "Arab"
-      ],
-      "DZ"
-    ],
-    [
-      [
-        "thv",
-        "Tfng"
-      ],
-      "DZ"
-    ],
-    [
-      [
-        "thz",
-        "Tfng"
-      ],
-      "NE"
-    ],
-    [
-      [
-        "tli",
-        "Cyrl"
-      ],
-      "US"
-    ],
-    [
-      [
-        "tpe",
-        "Beng"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "trp",
-        "Beng"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "twh",
-        "Tavt"
-      ],
-      "VN"
-    ],
-    [
-      [
-        "tyt",
-        "Tavt"
-      ],
-      "VN"
-    ],
-    [
-      [
         "unr",
         "Deva"
       ],
       "NP"
-    ],
-    [
-      [
-        "usi",
-        "Beng"
-      ],
-      "BD"
-    ],
-    [
-      [
-        "uum",
-        "Cyrl"
-      ],
-      "GE"
-    ],
-    [
-      [
-        "vas",
-        "Gujr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "vav",
-        "Gujr"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "vkp",
-        "Deva"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "vwa",
-        "Mymr"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "wbl",
-        "Arab"
-      ],
-      "AF"
-    ],
-    [
-      [
-        "wbl",
-        "Cyrl"
-      ],
-      "TJ"
-    ],
-    [
-      [
-        "wmw",
-        "Arab"
-      ],
-      "MZ"
-    ],
-    [
-      [
-        "wof",
-        "Arab"
-      ],
-      "GM"
-    ],
-    [
-      [
-        "wtw",
-        "Bugi"
-      ],
-      "ID"
-    ],
-    [
-      [
-        "xnz",
-        "Arab"
-      ],
-      "EG"
-    ],
-    [
-      [
-        "xom",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "xon",
-        "Brai"
-      ],
-      "GH"
-    ],
-    [
-      [
-        "xub",
-        "Knda"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "xub",
-        "Mlym"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "xum",
-        "Ital"
-      ],
-      "IT"
-    ],
-    [
-      [
-        "yal",
-        "Arab"
-      ],
-      "GN"
-    ],
-    [
-      [
-        "ybe",
-        "Ougr"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "yea",
-        "Knda"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "yka",
-        "Arab"
-      ],
-      "PH"
-    ],
-    [
-      [
-        "ymk",
-        "Arab"
-      ],
-      "MZ"
-    ],
-    [
-      [
-        "ywq",
-        "Yiii"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "ywu",
-        "Yiii"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "zau",
-        "Arab"
-      ],
-      "IN"
-    ],
-    [
-      [
-        "zay",
-        "Ethi"
-      ],
-      "ET"
-    ],
-    [
-      [
-        "zen",
-        "Arab"
-      ],
-      "MR"
-    ],
-    [
-      [
-        "zhd",
-        "Latn"
-      ],
-      "VN"
-    ],
-    [
-      [
-        "zhn",
-        "Hani"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "zlj",
-        "Latn"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "zne",
-        "Arab"
-      ],
-      "SS"
-    ],
-    [
-      [
-        "zqe",
-        "Latn"
-      ],
-      "CN"
-    ],
-    [
-      [
-        "zyj",
-        "Hani"
-      ],
-      "CN"
     ]
   ],
   "language_region": [
-    [
-      [
-        "ahk",
-        "TH"
-      ],
-      "Latn"
-    ],
-    [
-      [
-        "avu",
-        "SD"
-      ],
-      "Latn"
-    ],
-    [
-      [
-        "cmo",
-        "KH"
-      ],
-      "Latn"
-    ],
-    [
-      [
-        "fuh",
-        "BF"
-      ],
-      "Latn"
-    ],
-    [
-      [
-        "hnj",
-        "AU"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "CN"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "FR"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "GF"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "LA"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "MM"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "SR"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "TH"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "hnj",
-        "VN"
-      ],
-      "Laoo"
-    ],
-    [
-      [
-        "jrb",
-        "MA"
-      ],
-      "Arab"
-    ],
-    [
-      [
-        "lwo",
-        "ZA"
-      ],
-      "Latn"
-    ],
     [
       [
         "man",
         "GN"
       ],
       "Nkoo"
-    ],
-    [
-      [
-        "ndy",
-        "TD"
-      ],
-      "Latn"
-    ],
-    [
-      [
-        "rom",
-        "BG"
-      ],
-      "Cyrl"
-    ],
-    [
-      [
-        "scl",
-        "IN"
-      ],
-      "Arab"
-    ],
-    [
-      [
-        "sti",
-        "KH"
-      ],
-      "Latn"
     ],
     [
       [
@@ -3285,6 +723,10 @@
       "Latn",
       "AG"
     ],
+    "aii": [
+      "Syrc",
+      "IQ"
+    ],
     "aij": [
       "Hebr",
       "IL"
@@ -3360,10 +802,6 @@
     "ajz": [
       "Latn",
       "IN"
-    ],
-    "ak": [
-      "Latn",
-      "GH"
     ],
     "akb": [
       "Latn",
@@ -3690,6 +1128,10 @@
       "CO"
     ],
     "anp": [
+      "Deva",
+      "IN"
+    ],
+    "anq": [
       "Deva",
       "IN"
     ],
@@ -4056,6 +1498,10 @@
     "aso": [
       "Latn",
       "PG"
+    ],
+    "asr": [
+      "Deva",
+      "IN"
     ],
     "ass": [
       "Latn",
@@ -4556,10 +2002,6 @@
     "baj": [
       "Latn",
       "ID"
-    ],
-    "bal": [
-      "Arab",
-      "PK"
     ],
     "ban": [
       "Latn",
@@ -5218,7 +2660,7 @@
       "CM"
     ],
     "bht": [
-      "Takr",
+      "Deva",
       "IN"
     ],
     "bhu": [
@@ -5448,6 +2890,10 @@
     "bkj": [
       "Latn",
       "CF"
+    ],
+    "bkk": [
+      "Tibt",
+      "IN"
     ],
     "bkl": [
       "Latn",
@@ -6109,6 +3555,10 @@
       "Latn",
       "CR"
     ],
+    "bro": [
+      "Tibt",
+      "BT"
+    ],
     "brp": [
       "Latn",
       "ID"
@@ -6136,6 +3586,10 @@
     "brv": [
       "Laoo",
       "LA"
+    ],
+    "brw": [
+      "Knda",
+      "IN"
     ],
     "bry": [
       "Latn",
@@ -6899,7 +4353,7 @@
     ],
     "caj": [
       "Latn",
-      "AR"
+      "BO"
     ],
     "cak": [
       "Latn",
@@ -7673,6 +5127,10 @@
       "Cans",
       "CA"
     ],
+    "cra": [
+      "Latn",
+      "ET"
+    ],
     "crb": [
       "Latn",
       "VC"
@@ -7865,6 +5323,10 @@
       "Latn",
       "MX"
     ],
+    "cty": [
+      "Taml",
+      "IN"
+    ],
     "ctz": [
       "Latn",
       "MX"
@@ -7929,6 +5391,10 @@
       "Latn",
       "MX"
     ],
+    "cuy": [
+      "Latn",
+      "MX"
+    ],
     "cvg": [
       "Latn",
       "IN"
@@ -7956,6 +5422,10 @@
     "cwt": [
       "Latn",
       "SN"
+    ],
+    "cxh": [
+      "Latn",
+      "NG"
     ],
     "cya": [
       "Latn",
@@ -8292,6 +5762,10 @@
     "dgk": [
       "Latn",
       "CF"
+    ],
+    "dgl": [
+      "Arab",
+      "SD"
     ],
     "dgn": [
       "Latn",
@@ -8809,6 +6283,10 @@
       "Latn",
       "TD"
     ],
+    "dsk": [
+      "Latn",
+      "NG"
+    ],
     "dsn": [
       "Latn",
       "ID"
@@ -9041,6 +6519,10 @@
       "Latn",
       "SN"
     ],
+    "dyr": [
+      "Latn",
+      "NG"
+    ],
     "dyu": [
       "Latn",
       "BF"
@@ -9054,6 +6536,10 @@
       "BT"
     ],
     "dza": [
+      "Latn",
+      "NG"
+    ],
+    "dzd": [
       "Latn",
       "NG"
     ],
@@ -9108,10 +6594,6 @@
     "ecy": [
       "Cprt",
       "CY"
-    ],
-    "ee": [
-      "Latn",
-      "GH"
     ],
     "efa": [
       "Latn",
@@ -9369,6 +6851,10 @@
       "Latn",
       "AU"
     ],
+    "ers": [
+      "Latn",
+      "CN"
+    ],
     "ert": [
       "Latn",
       "ID"
@@ -9444,6 +6930,10 @@
     "etz": [
       "Latn",
       "ID"
+    ],
+    "eud": [
+      "Latn",
+      "MX"
     ],
     "eve": [
       "Cyrl",
@@ -9800,10 +7290,6 @@
     "fwe": [
       "Latn",
       "NA"
-    ],
-    "gaa": [
-      "Latn",
-      "GH"
     ],
     "gab": [
       "Latn",
@@ -10229,6 +7715,10 @@
       "Latn",
       "SB"
     ],
+    "gho": [
+      "Tfng",
+      "MA"
+    ],
     "ghr": [
       "Arab",
       "PK"
@@ -10425,6 +7915,10 @@
       "Latn",
       "DE"
     ],
+    "gml": [
+      "Latf",
+      "DE"
+    ],
     "gmm": [
       "Latn",
       "CM"
@@ -10573,6 +8067,10 @@
       "Latn",
       "PG"
     ],
+    "goj": [
+      "Deva",
+      "IN"
+    ],
     "gok": [
       "Deva",
       "IN"
@@ -10581,12 +8079,8 @@
       "Latn",
       "LR"
     ],
-    "gom": [
-      "Deva",
-      "IN"
-    ],
     "gon": [
-      "Telu",
+      "Deva",
       "IN"
     ],
     "goo": [
@@ -11198,7 +8692,7 @@
       "US"
     ],
     "hif": [
-      "Latn",
+      "Deva",
       "FJ"
     ],
     "hig": [
@@ -11873,10 +9367,6 @@
       "Latn",
       "AU"
     ],
-    "ii": [
-      "Yiii",
-      "CN"
-    ],
     "iin": [
       "Latn",
       "AU"
@@ -11904,6 +9394,10 @@
     "ik": [
       "Latn",
       "US"
+    ],
+    "ikh": [
+      "Latn",
+      "NG"
     ],
     "iki": [
       "Latn",
@@ -12288,6 +9782,10 @@
     "izh": [
       "Latn",
       "RU"
+    ],
+    "izm": [
+      "Latn",
+      "NG"
     ],
     "izr": [
       "Latn",
@@ -12881,6 +10379,10 @@
       "Latn",
       "AU"
     ],
+    "kbg": [
+      "Tibt",
+      "IN"
+    ],
     "kbh": [
       "Latn",
       "CO"
@@ -13045,6 +10547,10 @@
       "Latn",
       "CD"
     ],
+    "kcy": [
+      "Arab",
+      "DZ"
+    ],
     "kcz": [
       "Latn",
       "TZ"
@@ -13201,6 +10707,10 @@
       "Latn",
       "TG"
     ],
+    "kev": [
+      "Mlym",
+      "IN"
+    ],
     "kew": [
       "Latn",
       "PG"
@@ -13239,6 +10749,10 @@
     ],
     "kff": [
       "Latn",
+      "IN"
+    ],
+    "kfg": [
+      "Knda",
       "IN"
     ],
     "kfh": [
@@ -13282,6 +10796,10 @@
       "IN"
     ],
     "kfs": [
+      "Deva",
+      "IN"
+    ],
+    "kfu": [
       "Deva",
       "IN"
     ],
@@ -13420,6 +10938,10 @@
     "khn": [
       "Deva",
       "IN"
+    ],
+    "kho": [
+      "Brah",
+      "IR"
     ],
     "khp": [
       "Latn",
@@ -13648,6 +11170,10 @@
     "kjy": [
       "Latn",
       "PG"
+    ],
+    "kjz": [
+      "Tibt",
+      "BT"
     ],
     "kka": [
       "Latn",
@@ -13996,6 +11522,10 @@
     "knm": [
       "Latn",
       "BR"
+    ],
+    "knn": [
+      "Deva",
+      "IN"
     ],
     "kno": [
       "Latn",
@@ -14521,6 +12051,10 @@
       "Latn",
       "AU"
     ],
+    "kte": [
+      "Deva",
+      "NP"
+    ],
     "ktf": [
       "Latn",
       "CD"
@@ -14887,7 +12421,7 @@
     ],
     "kwy": [
       "Latn",
-      "CD"
+      "AO"
     ],
     "kwz": [
       "Latn",
@@ -15240,10 +12774,6 @@
     "lbb": [
       "Latn",
       "PG"
-    ],
-    "lbc": [
-      "Lisu",
-      "CN"
     ],
     "lbe": [
       "Cyrl",
@@ -15965,6 +13495,10 @@
       "Latn",
       "ID"
     ],
+    "lng": [
+      "Latn",
+      "HU"
+    ],
     "lnh": [
       "Latn",
       "MY"
@@ -16197,6 +13731,10 @@
       "Arab",
       "PK"
     ],
+    "ltc": [
+      "Hant",
+      "CN"
+    ],
     "ltg": [
       "Latn",
       "LV"
@@ -16328,6 +13866,10 @@
     "lvk": [
       "Latn",
       "SB"
+    ],
+    "lvl": [
+      "Latn",
+      "CD"
     ],
     "lvu": [
       "Latn",
@@ -16847,7 +14389,7 @@
     ],
     "mey": [
       "Latn",
-      "MR"
+      "SN"
     ],
     "mez": [
       "Latn",
@@ -16935,7 +14477,7 @@
     ],
     "mfv": [
       "Latn",
-      "GW"
+      "SN"
     ],
     "mfw": [
       "Latn",
@@ -16956,6 +14498,10 @@
     "mg": [
       "Latn",
       "MG"
+    ],
+    "mga": [
+      "Latg",
+      "IE"
     ],
     "mgb": [
       "Latn",
@@ -17596,6 +15142,10 @@
     "mnb": [
       "Latn",
       "ID"
+    ],
+    "mnc": [
+      "Mong",
+      "CN"
     ],
     "mnd": [
       "Latn",
@@ -18336,6 +15886,10 @@
     "mvd": [
       "Latn",
       "ID"
+    ],
+    "mve": [
+      "Arab",
+      "PK"
     ],
     "mvf": [
       "Mong",
@@ -20093,6 +17647,10 @@
       "Latn",
       "MY"
     ],
+    "nrn": [
+      "Runr",
+      "GB"
+    ],
     "nrp": [
       "Latn",
       "IT"
@@ -20152,10 +17710,6 @@
     "nsn": [
       "Latn",
       "PG"
-    ],
-    "nso": [
-      "Latn",
-      "ZA"
     ],
     "nsq": [
       "Latn",
@@ -20533,6 +18087,10 @@
       "Latn",
       "AU"
     ],
+    "nyw": [
+      "Thai",
+      "TH"
+    ],
     "nyx": [
       "Latn",
       "AU"
@@ -20564,6 +18122,10 @@
     "nzm": [
       "Latn",
       "IN"
+    ],
+    "nzr": [
+      "Latn",
+      "NG"
     ],
     "nzu": [
       "Latn",
@@ -20653,6 +18215,10 @@
       "Latn",
       "NG"
     ],
+    "ofs": [
+      "Latn",
+      "NL"
+    ],
     "ofu": [
       "Latn",
       "NG"
@@ -20680,6 +18246,10 @@
     "oht": [
       "Xsux",
       "TR"
+    ],
+    "ohu": [
+      "Latn",
+      "HU"
     ],
     "oia": [
       "Latn",
@@ -20817,10 +18387,6 @@
       "Latn",
       "AO"
     ],
-    "om": [
-      "Latn",
-      "ET"
-    ],
     "oma": [
       "Latn",
       "US"
@@ -20872,6 +18438,10 @@
     "omw": [
       "Latn",
       "PG"
+    ],
+    "omx": [
+      "Mymr",
+      "MM"
     ],
     "ona": [
       "Latn",
@@ -21136,6 +18706,10 @@
     "oue": [
       "Latn",
       "PG"
+    ],
+    "oui": [
+      "Ougr",
+      "CN"
     ],
     "oum": [
       "Latn",
@@ -21554,6 +19128,10 @@
       "PK"
     ],
     "pht": [
+      "Thai",
+      "TH"
+    ],
+    "phu": [
       "Thai",
       "TH"
     ],
@@ -22153,6 +19731,10 @@
       "Arab",
       "PK"
     ],
+    "psu": [
+      "Brah",
+      "IN"
+    ],
     "psw": [
       "Latn",
       "VU"
@@ -22247,7 +19829,7 @@
     ],
     "puq": [
       "Latn",
-      "PE"
+      "BO"
     ],
     "pur": [
       "Latn",
@@ -22491,7 +20073,7 @@
     ],
     "qwm": [
       "Latn",
-      "RU"
+      "HU"
     ],
     "qws": [
       "Latn",
@@ -22981,6 +20563,10 @@
       "Latn",
       "SB"
     ],
+    "rrm": [
+      "Latn",
+      "NZ"
+    ],
     "rro": [
       "Latn",
       "PG"
@@ -23068,10 +20654,6 @@
     "ruz": [
       "Latn",
       "NG"
-    ],
-    "rw": [
-      "Latn",
-      "RW"
     ],
     "rwa": [
       "Latn",
@@ -23400,6 +20982,10 @@
     "sdq": [
       "Latn",
       "ID"
+    ],
+    "sdr": [
+      "Beng",
+      "BD"
     ],
     "sds": [
       "Arab",
@@ -24505,10 +22091,6 @@
       "Latn",
       "PG"
     ],
-    "st": [
-      "Latn",
-      "ZA"
-    ],
     "sta": [
       "Latn",
       "ZM"
@@ -24658,7 +22240,7 @@
       "BR"
     ],
     "suz": [
-      "Deva",
+      "Sunu",
       "NP"
     ],
     "sva": [
@@ -24778,7 +22360,7 @@
       "NG"
     ],
     "sxu": [
-      "Latn",
+      "Runr",
       "DE"
     ],
     "sxw": [
@@ -25304,6 +22886,10 @@
     "tey": [
       "Latn",
       "SD"
+    ],
+    "tez": [
+      "Latn",
+      "NE"
     ],
     "tfi": [
       "Latn",
@@ -25845,10 +23431,6 @@
       "Latn",
       "VE"
     ],
-    "tn": [
-      "Latn",
-      "ZA"
-    ],
     "tna": [
       "Latn",
       "BO"
@@ -26385,6 +23967,10 @@
       "Latn",
       "ID"
     ],
+    "ttz": [
+      "Deva",
+      "NP"
+    ],
     "tua": [
       "Latn",
       "PG"
@@ -26781,6 +24367,10 @@
       "Latn",
       "PG"
     ],
+    "uby": [
+      "Latn",
+      "TR"
+    ],
     "uda": [
       "Latn",
       "NG"
@@ -26794,7 +24384,7 @@
       "IN"
     ],
     "udi": [
-      "Aghb",
+      "Cyrl",
       "RU"
     ],
     "udj": [
@@ -26948,6 +24538,10 @@
     "ulw": [
       "Latn",
       "NI"
+    ],
+    "uly": [
+      "Latn",
+      "NG"
     ],
     "uma": [
       "Latn",
@@ -27348,6 +24942,10 @@
     "viv": [
       "Latn",
       "PG"
+    ],
+    "vjk": [
+      "Deva",
+      "IN"
     ],
     "vka": [
       "Latn",
@@ -27941,6 +25539,10 @@
       "Latn",
       "PG"
     ],
+    "wle": [
+      "Ethi",
+      "ET"
+    ],
     "wlg": [
       "Latn",
       "AU"
@@ -28257,6 +25859,10 @@
       "Arab",
       "AF"
     ],
+    "wtb": [
+      "Latn",
+      "TZ"
+    ],
     "wtf": [
       "Latn",
       "PG"
@@ -28384,6 +25990,10 @@
     "xab": [
       "Latn",
       "NG"
+    ],
+    "xag": [
+      "Aghb",
+      "AZ"
     ],
     "xai": [
       "Latn",
@@ -28636,6 +26246,10 @@
     "xke": [
       "Latn",
       "ID"
+    ],
+    "xkf": [
+      "Tibt",
+      "BT"
     ],
     "xkg": [
       "Latn",
@@ -29109,6 +26723,10 @@
       "Latn",
       "MX"
     ],
+    "xtq": [
+      "Brah",
+      "IR"
+    ],
     "xts": [
       "Latn",
       "MX"
@@ -29313,6 +26931,10 @@
       "Latn",
       "CL"
     ],
+    "yah": [
+      "Latn",
+      "TJ"
+    ],
     "yai": [
       "Cyrl",
       "TJ"
@@ -29441,6 +27063,10 @@
       "Latn",
       "CO"
     ],
+    "ycr": [
+      "Latn",
+      "TW"
+    ],
     "yda": [
       "Latn",
       "AU"
@@ -29475,7 +27101,7 @@
     ],
     "yej": [
       "Grek",
-      "IL"
+      "GR"
     ],
     "yel": [
       "Latn",
@@ -29592,6 +27218,10 @@
     "ykg": [
       "Cyrl",
       "RU"
+    ],
+    "ykh": [
+      "Cyrl",
+      "MN"
     ],
     "yki": [
       "Latn",
@@ -29739,7 +27369,7 @@
     ],
     "yol": [
       "Latn",
-      "GB"
+      "IE"
     ],
     "yom": [
       "Latn",
@@ -30105,6 +27735,10 @@
       "Hani",
       "CN"
     ],
+    "zem": [
+      "Latn",
+      "NG"
+    ],
     "zen": [
       "Tfng",
       "MR"
@@ -30228,6 +27862,10 @@
     "zlq": [
       "Hani",
       "CN"
+    ],
+    "zlu": [
+      "Latn",
+      "NG"
     ],
     "zma": [
       "Latn",
@@ -30489,6 +28127,10 @@
       "Hani",
       "CN"
     ],
+    "zrg": [
+      "Orya",
+      "IN"
+    ],
     "zrn": [
       "Latn",
       "TD"
@@ -30581,6 +28223,10 @@
       "Latn",
       "CM"
     ],
+    "zwa": [
+      "Ethi",
+      "ET"
+    ],
     "zyg": [
       "Hani",
       "CN"
@@ -30652,9 +28298,23 @@
     [
       [
         "Cyrl",
+        "AF"
+      ],
+      "kaa"
+    ],
+    [
+      [
+        "Cyrl",
         "GE"
       ],
       "ab"
+    ],
+    [
+      [
+        "Cyrl",
+        "IR"
+      ],
+      "kaa"
     ],
     [
       [
@@ -30707,185 +28367,10 @@
     ],
     [
       [
-        "Laoo",
-        "AU"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "CN"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "FR"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "GF"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "MM"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "SR"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "TH"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "US"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Laoo",
-        "VN"
-      ],
-      "hnj"
-    ],
-    [
-      [
-        "Latn",
-        "AS"
-      ],
-      "sm"
-    ],
-    [
-      [
-        "Latn",
-        "BI"
-      ],
-      "rn"
-    ],
-    [
-      [
-        "Latn",
-        "BQ"
-      ],
-      "pap"
-    ],
-    [
-      [
-        "Latn",
-        "CW"
-      ],
-      "pap"
-    ],
-    [
-      [
-        "Latn",
-        "DJ"
-      ],
-      "aa"
-    ],
-    [
-      [
-        "Latn",
-        "GH"
-      ],
-      "ak"
-    ],
-    [
-      [
-        "Latn",
-        "GL"
-      ],
-      "kl"
-    ],
-    [
-      [
-        "Latn",
-        "HT"
-      ],
-      "ht"
-    ],
-    [
-      [
-        "Latn",
-        "LS"
-      ],
-      "st"
-    ],
-    [
-      [
-        "Latn",
-        "MG"
-      ],
-      "mg"
-    ],
-    [
-      [
-        "Latn",
-        "ML"
-      ],
-      "bm"
-    ],
-    [
-      [
         "Latn",
         "MM"
       ],
       "kac"
-    ],
-    [
-      [
-        "Latn",
-        "MU"
-      ],
-      "mfe"
-    ],
-    [
-      [
-        "Latn",
-        "NO"
-      ],
-      "nb"
-    ],
-    [
-      [
-        "Latn",
-        "PG"
-      ],
-      "tpi"
-    ],
-    [
-      [
-        "Latn",
-        "PW"
-      ],
-      "pau"
-    ],
-    [
-      [
-        "Latn",
-        "PY"
-      ],
-      "gn"
     ],
     [
       [
@@ -30897,72 +28382,9 @@
     [
       [
         "Latn",
-        "RW"
-      ],
-      "rw"
-    ],
-    [
-      [
-        "Latn",
-        "SJ"
-      ],
-      "nb"
-    ],
-    [
-      [
-        "Latn",
-        "SL"
-      ],
-      "kri"
-    ],
-    [
-      [
-        "Latn",
-        "TK"
-      ],
-      "tkl"
-    ],
-    [
-      [
-        "Latn",
-        "TV"
-      ],
-      "tvl"
-    ],
-    [
-      [
-        "Latn",
         "TW"
       ],
       "trv"
-    ],
-    [
-      [
-        "Latn",
-        "VU"
-      ],
-      "bi"
-    ],
-    [
-      [
-        "Latn",
-        "WS"
-      ],
-      "sm"
-    ],
-    [
-      [
-        "Latn",
-        "ZM"
-      ],
-      "bem"
-    ],
-    [
-      [
-        "Latn",
-        "ZW"
-      ],
-      "sn"
     ],
     [
       [
@@ -30977,6 +28399,13 @@
         "TH"
       ],
       "mnw"
+    ],
+    [
+      [
+        "Nkoo",
+        "ML"
+      ],
+      "bm"
     ],
     [
       [
@@ -31009,8 +28438,8 @@
   ],
   "script": {
     "Aghb": [
-      "udi",
-      "RU"
+      "xag",
+      "AZ"
     ],
     "Ahom": [
       "aho",
@@ -31076,6 +28505,10 @@
       "cop",
       "EG"
     ],
+    "Cpmn": [
+      "und",
+      "CY"
+    ],
     "Cprt": [
       "grc",
       "CY"
@@ -31108,9 +28541,17 @@
       "got",
       "UA"
     ],
+    "Gukh": [
+      "gvr",
+      "NP"
+    ],
     "Hano": [
       "hnn",
       "PH"
+    ],
+    "Hatr": [
+      "arc",
+      "IQ"
     ],
     "Hluw": [
       "hlu",
@@ -31118,7 +28559,7 @@
     ],
     "Hmng": [
       "hnj",
-      "US"
+      "LA"
     ],
     "Hmnp": [
       "hnj",
@@ -31143,6 +28584,10 @@
     "Kits": [
       "zkt",
       "CN"
+    ],
+    "Krai": [
+      "bap",
+      "IN"
     ],
     "Lana": [
       "nod",
@@ -31244,6 +28689,10 @@
       "sga",
       "IE"
     ],
+    "Onao": [
+      "unr",
+      "IN"
+    ],
     "Orkh": [
       "otk",
       "MN"
@@ -31251,6 +28700,10 @@
     "Osge": [
       "osa",
       "US"
+    ],
+    "Ougr": [
+      "oui",
+      "CN"
     ],
     "Palm": [
       "arc",
@@ -31332,6 +28785,10 @@
       "cmg",
       "MN"
     ],
+    "Sunu": [
+      "suz",
+      "NP"
+    ],
     "Sylo": [
       "syl",
       "BD"
@@ -31400,10 +28857,6 @@
       "akk",
       "IQ"
     ],
-    "Yiii": [
-      "ii",
-      "CN"
-    ],
     "Zanb": [
       "cmg",
       "MN"
@@ -31434,20 +28887,12 @@
       "aa",
       "Latn"
     ],
-    "GH": [
-      "ak",
-      "Latn"
-    ],
     "GL": [
       "kl",
       "Latn"
     ],
     "HT": [
       "ht",
-      "Latn"
-    ],
-    "LS": [
-      "st",
       "Latn"
     ],
     "MG": [
@@ -31480,10 +28925,6 @@
     ],
     "PY": [
       "gn",
-      "Latn"
-    ],
-    "RW": [
-      "rw",
       "Latn"
     ],
     "SJ": [

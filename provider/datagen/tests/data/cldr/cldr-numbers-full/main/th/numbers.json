@@ -2,9 +2,6 @@
   "main": {
     "th": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "th"
       },
       "numbers": {

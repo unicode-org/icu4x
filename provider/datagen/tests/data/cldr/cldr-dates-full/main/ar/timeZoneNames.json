@@ -2,9 +2,6 @@
   "main": {
     "ar": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar"
       },
       "dates": {
@@ -883,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "تشيتا"
               },
-              "Choibalsan": {
-                "exemplarCity": "تشوبالسان"
-              },
               "Colombo": {
                 "exemplarCity": "كولومبو"
               },
@@ -1545,13 +1539,6 @@
                 "daylight": "توقيت الصين الصيفي"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "توقيت شويبالسان",
-                "standard": "توقيت شويبالسان الرسمي",
-                "daylight": "التوقيت الصيفي لشويبالسان"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "توقيت جزر الكريسماس"
@@ -1803,6 +1790,11 @@
                 "generic": "توقيت كامشاتكا",
                 "standard": "توقيت بيتروبافلوفسك-كامتشاتسكي",
                 "daylight": "توقيت بيتروبافلوفسك-كامتشاتسكي الصيفي"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "توقيت كازاخستان"
               }
             },
             "Kazakhstan_Eastern": {

@@ -3,7 +3,7 @@
     "full": "EEEE, d. MMMM y.",
     "long": "d. MMMM y.",
     "medium": "d. M. y.",
-    "short": "d.M.yy."
+    "short": "d. M. y."
   },
   "length_combinations": {
     "full": "{1} {0}",

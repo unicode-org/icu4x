@@ -2,9 +2,6 @@
   "main": {
     "ja": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ja"
       },
       "dates": {
@@ -883,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "チタ"
               },
-              "Choibalsan": {
-                "exemplarCity": "チョイバルサン"
-              },
               "Colombo": {
                 "exemplarCity": "コロンボ"
               },
@@ -1578,13 +1572,6 @@
                 "daylight": "中国夏時間"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "チョイバルサン時間",
-                "standard": "チョイバルサン標準時",
-                "daylight": "チョイバルサン夏時間"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "クリスマス島時間"
@@ -1837,6 +1824,11 @@
                 "generic": "ペトロパブロフスク・カムチャツキー時間",
                 "standard": "ペトロパブロフスク・カムチャツキー標準時",
                 "daylight": "ペトロパブロフスク・カムチャツキー夏時間"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "カザフスタン時間"
               }
             },
             "Kazakhstan_Eastern": {

@@ -2,9 +2,6 @@
   "main": {
     "sr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr"
       },
       "dates": {
@@ -883,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "Чита"
               },
-              "Choibalsan": {
-                "exemplarCity": "Чојбалсан"
-              },
               "Colombo": {
                 "exemplarCity": "Коломбо"
               },
@@ -1573,13 +1567,6 @@
                 "daylight": "Кина, летње време"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "Чојбалсан време",
-                "standard": "Чојбалсан, стандардно време",
-                "daylight": "Чојбалсан, летње време"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "Божићно острво време"
@@ -1846,6 +1833,11 @@
                 "generic": "Петропавловско-камчатско време",
                 "standard": "Петропавловско-камчатско стандардно време",
                 "daylight": "Петропавловско-камчатско летње рачунање времена"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "Казахстанско време"
               }
             },
             "Kazakhstan_Eastern": {
