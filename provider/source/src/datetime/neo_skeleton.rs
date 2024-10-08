@@ -7,7 +7,7 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoComponents, NeoDateComponents, NeoSkeletonLength, NeoTimeComponents,
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
@@ -263,10 +263,9 @@ fn gen_date_components(
 ) -> DateTimeFormatterOptions {
     let (date_components, time_components) = match neo_components {
         NeoComponents::Date(date_components) => (*date_components, None),
-        NeoComponents::DateTime(day_components, time_components) => (
-            NeoDateComponents::Day(*day_components),
-            Some(*time_components),
-        ),
+        NeoComponents::DateTime(date_components, time_components) => {
+            (*date_components, Some(*time_components))
+        }
         _ => unreachable!("available attributes only Date or DateTime"),
     };
     // Pull the field lengths from the date length patterns, and then use
@@ -280,19 +279,13 @@ fn gen_date_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    if matches!(
-        date_components,
-        NeoDateComponents::Day(NeoDayComponents::Auto)
-    ) {
+    if matches!(date_components, NeoDateComponents::Auto) {
         return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
             length.to_date_style(),
         ));
     }
     if length == NeoSkeletonLength::Long
-        && matches!(
-            date_components,
-            NeoDateComponents::Day(NeoDayComponents::AutoWeekday)
-        )
+        && matches!(date_components, NeoDateComponents::AutoWeekday)
     {
         return DateTimeFormatterOptions::Length(length::Bag::from_date_style(length::Date::Full));
     }
@@ -417,7 +410,7 @@ fn test_en_year_patterns() {
     let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoDayComponents::YearMonthDay.id_str(),
+                NeoDateComponents::YearMonthDay.id_str(),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),
