@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -13,10 +14,10 @@ use utf8_iter::Utf8CharIndices;
 
 /// Options to tailor sentence breaking behavior.
 #[non_exhaustive]
-#[derive(Clone, PartialEq, Eq, Debug, Default)]
-pub struct SentenceBreakOptions {
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct SentenceBreakOptions<'a> {
     /// Content locale for sentence segmenter.
-    pub content_locale: Option<DataLocale>,
+    pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
 /// Implements the [`Iterator`] trait over the sentence boundaries of the given string.
@@ -184,6 +185,7 @@ impl SentenceSegmenter {
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {
+            let locale = DataLocale::from(locale);
             let req = DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 metadata: {

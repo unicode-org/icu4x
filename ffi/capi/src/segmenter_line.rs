@@ -115,7 +115,7 @@ pub mod ffi {
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(content_locale.to_datalocale());
+            options.content_locale = Some(&content_locale.0.id);
 
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_auto_with_options [r => Ok(r)],
@@ -137,7 +137,7 @@ pub mod ffi {
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(content_locale.to_datalocale());
+            options.content_locale = Some(&content_locale.0.id);
 
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_lstm_with_options [r => Ok(r)],
@@ -162,7 +162,7 @@ pub mod ffi {
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(content_locale.to_datalocale());
+            options.content_locale = Some(&content_locale.0.id);
 
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_dictionary_with_options [r => Ok(r)],
@@ -262,7 +262,7 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions {
+impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions<'_> {
     fn from(other: ffi::LineBreakOptionsV2) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
         options.strictness = other
