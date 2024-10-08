@@ -54,27 +54,27 @@
 //! );
 //! ```
 //!
-//! ## Era Display
+//! ## Year Style
 //!
-//! The era field can be toggled on and off using the [`EraDisplay`] option.
+//! The precision of the rendered year can be adjusted using the [`YearStyle`] option.
 //!
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
-//! use icu::datetime::neo_marker::NeoEraYearMonthDayMarker;
-//! use icu::datetime::neo_skeleton::EraDisplay;
+//! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+//! use icu::datetime::neo_skeleton::YearStyle;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter =
-//!     TypedNeoFormatter::<Gregorian, NeoEraYearMonthDayMarker>::try_new(
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-//!             options.era_display = Some(EraDisplay::Auto);
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             options.year_style = Some(YearStyle::Auto);
 //!             options
 //!         }
 //!     )
@@ -84,24 +84,29 @@
 //! // such as years before year 0 and small year numbers:
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
-//!     "Jan 1, 1001 BC"
+//!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
-//!     "Jan 1, 77 AD"
+//!     "1/1/77 AD"
 //! );
 //! // Era elided for modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-//!     "Dec 20, 2023"
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900"
+//! );
+//! // Era and century both elided for nearby years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/25"
 //! );
 //!
 //! let formatter =
-//!     TypedNeoFormatter::<Gregorian, NeoEraYearMonthDayMarker>::try_new(
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-//!             options.era_display = Some(EraDisplay::Always);
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             options.year_style = Some(YearStyle::Full);
 //!             options
 //!         }
 //!     )
@@ -110,16 +115,51 @@
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
-//!     "Jan 1, 1001 BC"
+//!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
-//!     "Jan 1, 77 AD"
+//!     "1/1/77 AD"
+//! );
+//! // Era elided for modern years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900"
+//! );
+//! // But now we always get a full-precision year:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/2025"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+//!         &locale!("en-US").into(),
+//!         {
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             options.year_style = Some(YearStyle::Always);
+//!             options
+//!         }
+//!     )
+//!     .unwrap();
+//!
+//! // Era still displayed in cases with ambiguity:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     "1/1/1001 BC"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     "1/1/77 AD"
 //! );
 //! // But now it is shown even on modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-//!     "Dec 20, 2023 AD"
+//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     "1/1/1900 AD"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     "1/1/2025 AD"
 //! );
 //! ```
 //!
@@ -895,7 +935,7 @@ impl From<NeverField> for Option<Alignment> {
     }
 }
 
-impl From<NeverField> for Option<EraDisplay> {
+impl From<NeverField> for Option<YearStyle> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -919,12 +959,6 @@ pub trait HasConstComponents {
 pub trait HasConstDateComponents {
     /// The associated components.
     const COMPONENTS: NeoDateComponents;
-}
-
-/// A trait associating [`NeoDayComponents`].
-pub trait HasConstDayComponents {
-    /// The associated components.
-    const COMPONENTS: NeoDayComponents;
 }
 
 /// A trait associating [`NeoTimeComponents`].
@@ -1045,8 +1079,8 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Type of the alignment option in the constructor.
     type AlignmentOption: Into<Option<Alignment>>;
-    /// Type of the era display option in the constructor.
-    type EraDisplayOption: Into<Option<EraDisplay>>;
+    /// Type of the year style option in the constructor.
+    type YearStyleOption: Into<Option<YearStyle>>;
     /// Type of the fractional seconds display option in the constructor.
     type FractionalSecondDigitsOption: Into<Option<FractionalSecondDigits>>;
     /// Marker for loading the date/time glue pattern.
@@ -1153,7 +1187,7 @@ impl ZoneMarkers for NeoNeverMarker {
 
 /// A struct that supports formatting both a date and a time.
 ///
-/// It should be composed from types implementing [`HasConstDayComponents`]
+/// It should be composed from types implementing [`HasConstDateComponents`]
 /// and [`HasConstTimeComponents`].
 #[derive(Debug)]
 pub struct DateTimeCombo<D, T, Z> {
@@ -1196,7 +1230,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date
     type AlignmentOption = D::AlignmentOption;
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
@@ -1233,7 +1267,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
     type AlignmentOption = Option<Alignment>; // always needed for time
-    type EraDisplayOption = NeverField; // no year in a time-only format
+    type YearStyleOption = NeverField; // no year in a time-only format
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
@@ -1270,7 +1304,7 @@ where
     type Z = Z;
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
     type AlignmentOption = Z::AlignmentOption; // no date or time: inherit from zone
-    type EraDisplayOption = NeverField; // no year in a zone-only format
+    type YearStyleOption = NeverField; // no year in a zone-only format
     type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1294,7 +1328,7 @@ where
 
 impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
 where
-    D: HasConstDayComponents,
+    D: HasConstDateComponents,
     T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
@@ -1310,7 +1344,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1335,7 +1369,7 @@ where
 
 impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
 where
-    D: HasConstDayComponents,
+    D: HasConstDateComponents,
     T: HasConstTimeComponents,
     Z: HasConstZoneComponent,
 {
@@ -1354,7 +1388,7 @@ where
     type Z = Z;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
-    type EraDisplayOption = D::EraDisplayOption;
+    type YearStyleOption = D::YearStyleOption;
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
@@ -1422,8 +1456,8 @@ macro_rules! datetime_marker_helper {
     (@option/length, Short) => {
         NeoSkeletonLength
     };
-    (@option/eradisplay, yes) => {
-        Option<EraDisplay>
+    (@option/yearstyle, yes) => {
+        Option<YearStyle>
     };
     (@option/alignment, yes) => {
         Option<Alignment>
@@ -1602,10 +1636,10 @@ macro_rules! impl_get_field {
             }
         }
     };
-    ($type:path, era_display, yes) => {
-        impl NeoGetField<Option<EraDisplay>> for $type {
-            fn get_field(&self) -> Option<EraDisplay> {
-                self.era_display
+    ($type:path, year_style, yes) => {
+        impl NeoGetField<Option<YearStyle>> for $type {
+            fn get_field(&self) -> Option<YearStyle> {
+                self.year_style
             }
         }
     };
@@ -1624,7 +1658,7 @@ macro_rules! impl_marker_with_options {
         $type:ident,
         $(sample_length: $sample_length:ident,)?
         $(alignment: $alignment_yes:ident,)?
-        $(era_display: $eradisplay_yes:ident,)?
+        $(year_style: $yearstyle_yes:ident,)?
         $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
     ) => {
         $(#[$attr])*
@@ -1646,8 +1680,8 @@ macro_rules! impl_marker_with_options {
             $(
                 /// When to display the era field in the formatted string.
                 ///
-                /// See: [`EraDisplay`]
-                pub era_display: datetime_marker_helper!(@option/eradisplay, $eradisplay_yes),
+                /// See: [`YearStyle`]
+                pub year_style: datetime_marker_helper!(@option/yearstyle, $yearstyle_yes),
             )?
             $(
                 /// How many fractional seconds to display.
@@ -1665,7 +1699,7 @@ macro_rules! impl_marker_with_options {
                         alignment: yes_to!(None, $alignment_yes),
                     )?
                     $(
-                        era_display: yes_to!(None, $eradisplay_yes),
+                        year_style: yes_to!(None, $yearstyle_yes),
                     )?
                     $(
                         fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
@@ -1681,7 +1715,7 @@ macro_rules! impl_marker_with_options {
             impl_get_field!($type, alignment, $alignment_yes);
         )?
         $(
-            impl_get_field!($type, era_display, $eradisplay_yes);
+            impl_get_field!($type, year_style, $yearstyle_yes);
         )?
         $(
             impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
@@ -1689,19 +1723,11 @@ macro_rules! impl_marker_with_options {
     };
 }
 
-/// Implements a field set of time fields.
-///
-/// Several arguments to this macro are required, and the rest are optional.
-/// The optional arguments should be written as `key = yes,` if that parameter
-/// should be included.
-///
-/// Documentation for each option is shown inline below.
-macro_rules! impl_date_marker {
+/// Internal helper macro used by [`impl_date_marker`] and [`impl_calendar_period_marker`]
+macro_rules! impl_date_or_calendar_period_marker {
     (
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -1783,7 +1809,7 @@ macro_rules! impl_date_marker {
             $type,
             sample_length: $sample_length,
             $(alignment: $option_alignment_yes,)?
-            $(era_display: $year_yes,)?
+            $(year_style: $year_yes,)?
         );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -1797,9 +1823,6 @@ macro_rules! impl_date_marker {
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
-        }
-        impl HasConstDateComponents for $type {
-            const COMPONENTS: NeoDateComponents = $components;
         }
         impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
@@ -1827,12 +1850,9 @@ macro_rules! impl_date_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $($year_yes)?);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
-        }
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
         }
     };
 }
@@ -1844,7 +1864,7 @@ macro_rules! impl_date_marker {
 /// should be included.
 ///
 /// See [`impl_date_marker`].
-macro_rules! impl_day_marker {
+macro_rules! impl_date_marker {
     (
         $type:ident,
         $components:expr,
@@ -1863,9 +1883,8 @@ macro_rules! impl_day_marker {
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
-        impl_date_marker!(
+        impl_date_or_calendar_period_marker!(
             $type,
-            NeoDateComponents::Day($components),
             description = $description,
             sample_length = $sample_length,
             sample = $sample,
@@ -1881,8 +1900,52 @@ macro_rules! impl_day_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl HasConstDayComponents for $type {
-            const COMPONENTS: NeoDayComponents = $components;
+        impl HasConstDateComponents for $type {
+            const COMPONENTS: NeoDateComponents = $components;
+        }
+        impl HasConstComponents for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+        }
+    };
+}
+
+/// Implements a field set of calendar period fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// See [`impl_date_marker`].
+macro_rules! impl_calendar_period_marker {
+    (
+        $type:ident,
+        $components:expr,
+        description = $description:literal,
+        sample_length = $sample_length:ident,
+        sample = $sample:literal,
+        $(years = $years_yes:ident,)?
+        $(months = $months_yes:ident,)?
+        $(dates = $dates_yes:ident,)?
+        $(input_year = $year_yes:ident,)?
+        $(input_month = $month_yes:ident,)?
+        $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        $(option_alignment = $option_alignment_yes:ident,)?
+    ) => {
+        impl_date_or_calendar_period_marker!(
+            $type,
+            description = $description,
+            sample_length = $sample_length,
+            sample = $sample,
+            $(years = $years_yes,)?
+            $(months = $months_yes,)?
+            $(dates = $dates_yes,)?
+            $(input_year = $year_yes,)?
+            $(input_month = $month_yes,)?
+            $(input_any_calendar_kind = $any_calendar_kind_yes,)?
+            $(option_alignment = $option_alignment_yes,)?
+        );
+        impl HasConstComponents for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::CalendarPeriod($components);
         }
     };
 }
@@ -2003,7 +2066,7 @@ macro_rules! impl_time_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $($nanosecond_yes)?);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -2151,7 +2214,7 @@ macro_rules! impl_zone_marker {
             type Z = Self;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -2294,9 +2357,9 @@ macro_rules! impl_zoneddatetime_marker {
     }
 }
 
-impl_day_marker!(
+impl_date_marker!(
     NeoYearMonthDayMarker,
-    NeoDayComponents::YearMonthDay,
+    NeoDateComponents::YearMonthDay,
     description = "year, month, and day (year might be abbreviated)",
     sample_length = Short,
     sample = "5/17/24",
@@ -2310,25 +2373,9 @@ impl_day_marker!(
     option_alignment = yes,
 );
 
-// TODO: Rename this to FullYear instead of EraYear
-impl_day_marker!(
-    NeoEraYearMonthDayMarker,
-    NeoDayComponents::EraYearMonthDay,
-    description = "year, month, and day (year always with full precision)",
-    sample_length = Medium,
-    sample = "May 17, 2024",
-    years = yes,
-    months = yes,
-    input_year = yes,
-    input_month = yes,
-    input_day_of_month = yes,
-    input_any_calendar_kind = yes,
-    option_alignment = yes,
-);
-
-impl_day_marker!(
+impl_date_marker!(
     NeoMonthDayMarker,
-    NeoDayComponents::MonthDay,
+    NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = Medium,
     sample = "May 17",
@@ -2339,9 +2386,9 @@ impl_day_marker!(
     option_alignment = yes,
 );
 
-impl_day_marker!(
+impl_date_marker!(
     NeoAutoDateMarker,
-    NeoDayComponents::Auto,
+    NeoDateComponents::Auto,
     description = "locale-dependent date fields",
     sample_length = Medium,
     sample = "May 17, 2024",
@@ -2414,9 +2461,9 @@ impl_datetime_marker!(
     time = NeoHourMinuteMarker,
 );
 
-impl_date_marker!(
+impl_calendar_period_marker!(
     NeoYearMonthMarker,
-    NeoDateComponents::YearMonth,
+    NeoCalendarPeriodComponents::YearMonth,
     description = "year and month (era elided when possible)",
     sample_length = Medium,
     sample = "May 2024",
@@ -2721,7 +2768,58 @@ impl DateTimeMarkers for NeoDateComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue,);
+}
+
+impl private::Sealed for NeoCalendarPeriodComponents {}
+
+impl IsRuntimeComponents for NeoCalendarPeriodComponents {}
+
+impl DateTimeNamesMarker for NeoCalendarPeriodComponents {
+    type YearNames = datetime_marker_helper!(@names/year, yes);
+    type MonthNames = datetime_marker_helper!(@names/month, yes);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday,);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+}
+
+impl DateInputMarkers for NeoCalendarPeriodComponents {
+    type YearInput = datetime_marker_helper!(@input/year, yes);
+    type MonthInput = datetime_marker_helper!(@input/month, yes);
+    type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
+    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
+    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
+    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
+}
+
+impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoCalendarPeriodComponents {
+    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
+    type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
+    type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
+    type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays,);
+}
+
+impl DateDataMarkers for NeoCalendarPeriodComponents {
+    type Skel = datetime_marker_helper!(@calmarkers, yes);
+    type Year = datetime_marker_helper!(@calmarkers, yes);
+    type Month = datetime_marker_helper!(@calmarkers, yes);
+    type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays,);
+}
+
+impl DateTimeMarkers for NeoCalendarPeriodComponents {
+    type D = Self;
+    type T = NeoNeverMarker;
+    type Z = NeoNeverMarker;
+    type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2758,7 +2856,7 @@ impl DateTimeMarkers for NeoTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2799,7 +2897,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type Z = Self;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
@@ -2827,7 +2925,7 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
@@ -2855,7 +2953,7 @@ impl DateTimeMarkers for NeoComponents {
     type Z = NeoTimeZoneSkeleton;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

@@ -5,11 +5,12 @@
     0,
     0,
     0,
-    0,
-    0
+    3,
+    3
   ],
   "elements": [
     "y年M月d日EEEE",
-    "y/MM/dd(E)"
+    "y/MM/dd(E)",
+    "GGGy年MM月dd日(E)"
   ]
 }

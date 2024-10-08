@@ -4,14 +4,16 @@
   "variant_pattern_indices": [
     0,
     0,
+    4,
     0,
-    0,
-    0,
-    0
+    5,
+    5
   ],
   "elements": [
     "MMMM GGG y",
     "MMM y",
-    "M/yy"
+    "M/yy",
+    "M/y",
+    "MMM GGG y"
   ]
 }

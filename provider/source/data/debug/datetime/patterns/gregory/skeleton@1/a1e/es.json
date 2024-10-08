@@ -4,14 +4,16 @@
   "variant_pattern_indices": [
     0,
     0,
+    4,
     0,
-    0,
-    0,
-    0
+    5,
+    5
   ],
   "elements": [
     "EEEE, d 'de' MMMM 'de' y",
     "EEE, d MMM y",
-    "EEE, d/M/yy"
+    "EEE, d/M/yy",
+    "EEE, d/M/y",
+    "E, d MMM y GGG"
   ]
 }

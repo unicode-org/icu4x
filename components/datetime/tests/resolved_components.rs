@@ -6,8 +6,8 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
     neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
-        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+        Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
+        NeoSkeletonLength, NeoTimeComponents, YearStyle,
     },
     options::{components, preferences},
 };
@@ -33,7 +33,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto));
+    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Auto);
     let length = NeoSkeletonLength::Medium;
 
     let mut components_bag = components::Bag::default();
@@ -90,11 +90,11 @@ fn test_length_time_preferences() {
 #[test]
 fn test_date_and_time() {
     let field_set = NeoDateTimeComponents::DateTime(
-        NeoDayComponents::EraYearMonthDayWeekday,
+        NeoDateComponents::YearMonthDayWeekday,
         NeoTimeComponents::Auto,
     );
     let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.era_display = Some(EraDisplay::Always);
+    options.year_style = Some(YearStyle::Always);
     options.fractional_second_digits = Some(FractionalSecondDigits::F4);
     options.alignment = Some(Alignment::Column);
 

@@ -301,7 +301,7 @@ fn assert_fixture_element<A>(
 
     let mut options = NeoOptions::from(skeleton.length);
     options.alignment = skeleton.alignment;
-    options.era_display = skeleton.era_display;
+    options.year_style = skeleton.year_style;
     options.fractional_second_digits = skeleton.fractional_second_digits;
 
     let dtf =
@@ -363,7 +363,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
 
         let mut options = NeoOptions::from(skeleton.length);
         options.alignment = skeleton.alignment;
-        options.era_display = skeleton.era_display;
+        options.year_style = skeleton.year_style;
         options.fractional_second_digits = skeleton.fractional_second_digits;
 
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&fx.input.value);

@@ -5,13 +5,15 @@
     0,
     0,
     0,
-    0,
-    0,
-    0
+    4,
+    5,
+    5
   ],
   "elements": [
     "MMMM y",
     "MM‏/y",
-    "M‏/y"
+    "M‏/y",
+    "MMMM y GGG",
+    "MMM y GGG"
   ]
 }

@@ -59,7 +59,7 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// - Variant 1: Year With Era
 ///
 /// Variants should be used when the pattern could depend on the value being
-/// formatted. For example, with [`EraDisplay::Auto`], any of these three
+/// formatted. For example, with [`YearStyle::Auto`], any of these three
 /// patterns could be selected based on the year value.
 ///
 /// ## Representation
@@ -114,7 +114,7 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// making the header int suitable for varint packing, such as that used by
 /// postcard and other size-optimized serialization formats.
 ///
-/// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
+/// [`YearStyle::Auto`]: crate::neo_skeleton::YearStyle::Auto
 #[icu_provider::data_struct(
     // Date patterns
     marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),

@@ -166,8 +166,8 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     /// When to display the era field in the formatted string,
     /// if required for the chosen field set.
     ///
-    /// See [`EraDisplay`](crate::neo_skeleton::EraDisplay).
-    pub era_display: R::EraDisplayOption,
+    /// See [`YearStyle`](crate::neo_skeleton::YearStyle).
+    pub year_style: R::YearStyleOption,
     /// How many fractional seconds to display,
     /// if seconds are included in the field set.
     ///
@@ -181,10 +181,17 @@ where
 {
     fn from(options: NeoOptions<R>) -> Self {
         Self {
-            length: options.length.into(),
+            length: match options.length.into() {
+                Some(length) => length,
+                None => {
+                    debug_assert!(false, "unreachable");
+                    NeoSkeletonLength::Medium
+                }
+            },
             alignment: options.alignment.into(),
-            era_display: options.era_display.into(),
+            year_style: options.year_style.into(),
             fractional_second_digits: options.fractional_second_digits.into(),
+            hour_cycle: None,
         }
     }
 }
@@ -194,7 +201,7 @@ where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
     R::AlignmentOption: Default,
-    R::EraDisplayOption: Default,
+    R::YearStyleOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
@@ -202,7 +209,7 @@ where
         NeoOptions {
             length: value.into(),
             alignment: Default::default(),
-            era_display: Default::default(),
+            year_style: Default::default(),
             fractional_second_digits: Default::default(),
         }
     }
@@ -215,7 +222,7 @@ where
     R: DateTimeMarkers,
     R::LengthOption: Default,
     R::AlignmentOption: Default,
-    R::EraDisplayOption: Default,
+    R::YearStyleOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
@@ -223,7 +230,7 @@ where
         NeoOptions {
             length: Default::default(),
             alignment: Default::default(),
-            era_display: Default::default(),
+            year_style: Default::default(),
             fractional_second_digits: Default::default(),
         }
     }
@@ -231,22 +238,33 @@ where
 
 impl RawNeoOptions {
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn from_field_set<FSet>(field_set: FSet) -> Self
+    pub(crate) fn from_field_set_and_locale<FSet>(field_set: FSet, locale: &DataLocale) -> Self
     where
         FSet: DateTimeMarkers,
         FSet: NeoGetField<FSet::LengthOption>,
         FSet: NeoGetField<FSet::AlignmentOption>,
-        FSet: NeoGetField<FSet::EraDisplayOption>,
+        FSet: NeoGetField<FSet::YearStyleOption>,
         FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
     {
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(HourCycle::from_locale_value);
         Self {
-            length: NeoGetField::<FSet::LengthOption>::get_field(&field_set).into(),
+            length: match NeoGetField::<FSet::LengthOption>::get_field(&field_set).into() {
+                Some(length) => length,
+                None => {
+                    debug_assert!(false, "unreachable");
+                    NeoSkeletonLength::Medium
+                }
+            },
             alignment: NeoGetField::<FSet::AlignmentOption>::get_field(&field_set).into(),
-            era_display: NeoGetField::<FSet::EraDisplayOption>::get_field(&field_set).into(),
+            year_style: NeoGetField::<FSet::YearStyleOption>::get_field(&field_set).into(),
             fractional_second_digits: NeoGetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 &field_set,
             )
             .into(),
+            hour_cycle,
         }
     }
 }
@@ -273,7 +291,7 @@ where
     FSet::Z: ZoneMarkers,
     FSet: NeoGetField<FSet::LengthOption>,
     FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::EraDisplayOption>,
+    FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
@@ -333,7 +351,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             FSet::COMPONENTS,
-            RawNeoOptions::from_field_set(options),
+            RawNeoOptions::from_field_set_and_locale(options, locale),
         )
     }
 }
@@ -482,7 +500,29 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::YearMonth,
+    ///     NeoDateComponents::DayWeekday,
+    ///     NeoSkeletonLength::Medium.into(),
+    /// )
+    /// .unwrap();
+    /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
+    ///
+    /// assert_try_writeable_eq!(fmt.format(&dt), "mié 10");
+    /// ```
+    ///
+    /// Calendar period components:
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoCalendarPeriodComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
@@ -520,7 +560,7 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
@@ -529,7 +569,7 @@ where
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDayComponents::Weekday,
+    ///         NeoDateComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),
     ///     NeoSkeletonLength::Long.into(),
@@ -650,10 +690,14 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let hour_cycle = locale
+        // TODO: Remove this when NeoOptions is gone
+        let mut options = options;
+        options.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
+        // END TODO
+
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -661,7 +705,6 @@ where
             locale,
             components,
             options,
-            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -1031,7 +1074,28 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::YearMonth,
+    ///     NeoDateComponents::DayWeekday,
+    ///     NeoSkeletonLength::Medium.into(),
+    /// )
+    /// .unwrap();
+    /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
+    ///
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "mié 10");
+    /// ```
+    ///
+    /// Calendar period components:
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = NeoFormatter::try_new_with_components(
+    ///     &locale!("es-MX").into(),
+    ///     NeoCalendarPeriodComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
@@ -1067,7 +1131,7 @@ where
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
@@ -1076,7 +1140,7 @@ where
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDayComponents::Weekday,
+    ///         NeoDateComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
     ///     ),
     ///     NeoSkeletonLength::Long.into(),
@@ -1346,12 +1410,16 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
-        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
-        let kind = calendar.kind();
-        let hour_cycle = locale
+        // TODO: Remove this when NeoOptions is gone
+        let mut options = options;
+        options.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
+        // END TODO
+
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
+        let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -1359,7 +1427,6 @@ where
             locale,
             components,
             options,
-            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();

@@ -4,12 +4,14 @@
     0,
     0,
     0,
-    0,
-    0,
-    0
+    3,
+    4,
+    4
   ],
   "elements": [
     "d. MMMM y.",
-    "d. M. y."
+    "d. M. y.",
+    "d. MMMM y. GGG",
+    "d.M.y. GGG"
   ]
 }
