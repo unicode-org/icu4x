@@ -45,7 +45,7 @@ export default {
 				}
 			}
 			
-			return segments.join("<span class=\"seg-delim\"> . </span>");
+			return segments.join(" . ");
 		},
 		funcName: "WordSegmenter.segment",
 		parameters: [
