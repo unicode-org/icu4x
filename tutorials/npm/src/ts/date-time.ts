@@ -1,4 +1,4 @@
-import { DataProvider, DateLength, DateTime, DateTimeFormatter, Locale, TimeLength, Calendar } from "icu4x";
+import { DataProvider, DateTimeLength, DateTime, DateTimeFormatter, Locale, TimeLength, Calendar } from "icu4x";
 import { Ok, Result, result, unwrap } from "./index";
 
 export class DateTimeDemo {
@@ -10,8 +10,7 @@ export class DateTimeDemo {
     #dateTimeStr: string;
     #locale: Result<Locale>;
     #calendar: Result<Calendar>;
-    #dateLength: DateLength;
-    #timeLength: TimeLength;
+    #dateTimeLength: DateTimeLength;
 
     #formatter: Result<DateTimeFormatter>;
     #dateTime: Result<DateTime> | null;
@@ -22,8 +21,7 @@ export class DateTimeDemo {
 
         this.#locale = Ok(Locale.fromString("en"));
         this.#calendar = Ok(Calendar.createForLocale(dataProvider, unwrap(this.#locale)));
-        this.#dateLength = DateLength.Short;
-        this.#timeLength = TimeLength.Short;
+        this.#dateTimeLength = DateTimeLength.Short;
         this.#dateTime = null;
         this.#dateTimeStr = "";
         this.#calendarStr = "from-locale";
@@ -60,13 +58,8 @@ export class DateTimeDemo {
         this.#updateDateTime();
     }
 
-    setDateLength(dateLength: string): void {
-        this.#dateLength = DateLength[dateLength];
-        this.#updateFormatter()
-    }
-
-    setTimeLength(timeLength: string): void {
-        this.#timeLength = TimeLength[timeLength];
+    setDateTimeLength(dateTimeLength: string): void {
+        this.#dateTimeLength = DateTimeLength[dateTimeLength];
         this.#updateFormatter()
     }
 
@@ -79,7 +72,7 @@ export class DateTimeDemo {
     #updateDateTime(): void {
         const date = new Date(this.#dateTimeStr);
 
-        this.#dateTime = result(() => DateTime.createFromIsoInCalendar(
+        this.#dateTime = result(() => DateTime.fromIsoInCalendar(
             date.getFullYear(),
             date.getMonth() + 1,
             date.getDate(),
@@ -92,11 +85,10 @@ export class DateTimeDemo {
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => DateTimeFormatter.createWithLengths(
+        this.#formatter = result(() => DateTimeFormatter.createWithLength(
             this.#dataProvider,
             unwrap(this.#locale),
-            this.#dateLength,
-            this.#timeLength,
+            this.#dateTimeLength
         ));
         this.#render();
     }
@@ -106,7 +98,7 @@ export class DateTimeDemo {
             const formatter = unwrap(this.#formatter);
             if (this.#dateTime !== null) {
                 const dateTime = unwrap(this.#dateTime);
-                this.#displayFn(formatter.format_datetime(dateTime));
+                this.#displayFn(formatter.formatDatetime(dateTime));
             } else {
                 this.#displayFn("");
             }
@@ -154,13 +146,7 @@ export function setup(dataProvider: DataProvider): void {
 
     for (let input of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-date-length"]')) {
         input?.addEventListener('input', () => {
-            dateTimeDemo.setDateLength(input.value)
-        });
-    }
-
-    for (let input of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-time-length"]')) {
-        input?.addEventListener('input', () => {
-            dateTimeDemo.setTimeLength(input.value)
+            dateTimeDemo.setDateTimeLength(input.value)
         });
     }
 
