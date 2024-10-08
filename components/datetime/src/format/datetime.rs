@@ -739,12 +739,6 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             Some(TimeZoneFormatterUnit::GenericLocation),
             Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
         ],
-        // 'VVV'
-        ResolvedNeoTimeZoneSkeleton::City => [
-            Some(TimeZoneFormatterUnit::ExemplarCity),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-            None,
-        ],
         // 'VVVV'
         ResolvedNeoTimeZoneSkeleton::Location => [
             Some(TimeZoneFormatterUnit::GenericLocation),

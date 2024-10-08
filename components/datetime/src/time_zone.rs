@@ -13,14 +13,12 @@ use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::UtcOffset;
-use icu_timezone::{TimeZoneBcp47Id, ZoneVariant};
-use tinystr::tinystr;
+use icu_timezone::ZoneVariant;
 use writeable::Writeable;
 
 /// All time zone styles that this crate can format
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ResolvedNeoTimeZoneSkeleton {
-    City,
     Location,
     GenericShort,
     GenericLong,
@@ -44,7 +42,7 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     IsoXXXXX,
     // TODO:
     // `VV` "America/Los_Angeles"
-    // Generic Partial Location: "Pacific Time (Los Angeles)"
+    // `VVV` "Los Angeles"
 }
 
 impl ResolvedNeoTimeZoneSkeleton {
@@ -166,7 +164,6 @@ pub(super) enum TimeZoneFormatterUnit {
     LocalizedOffsetLong,
     LocalizedOffsetShort,
     Iso8601(Iso8601Format),
-    ExemplarCity,
     Bcp47Id,
 }
 
@@ -257,7 +254,6 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
                 ShortLocalizedOffsetFormat.format(sink, input, data_payloads, fdf)
             }
             Self::Iso8601(iso) => iso.format(sink, input, data_payloads, fdf),
-            Self::ExemplarCity => ExemplarCityFormat.format(sink, input, data_payloads, fdf),
             Self::Bcp47Id => Bcp47IdFormat.format(sink, input, data_payloads, fdf),
         }
     }
@@ -848,44 +844,6 @@ impl Iso8601Format {
         }
 
         Ok(())
-    }
-}
-
-// Writes the exemplar city associated with this time zone.
-// It is only used for pattern in special case and not public to users.
-struct ExemplarCityFormat;
-
-impl FormatTimeZone for ExemplarCityFormat {
-    fn format<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        input: &ExtractedInput,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-        _fdf: Option<&FixedDecimalFormatter>,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(time_zone_id) = input.time_zone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
-        };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
-
-        let city = exemplar_cities
-            .0
-            .get(&time_zone_id)
-            // Writes the unknown city "Etc/Unknown" for the current locale.
-            //
-            // If there is no localized form of "Etc/Unknown" for the current locale,
-            // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
-            //
-            // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
-            // is unable to produce a localized form of the time zone's exemplar city in the current locale.
-            .or_else(|| exemplar_cities.0.get(&TimeZoneBcp47Id(tinystr!(8, "unk"))))
-            .unwrap_or("Unknown");
-
-        sink.write_str(city)?;
-
-        Ok(Ok(()))
     }
 }
 
