@@ -299,18 +299,11 @@ fn assert_fixture_element<A>(
         zone: CustomTimeZone::utc(),
     };
 
-    let mut options = NeoOptions::from(skeleton.length);
-    options.alignment = skeleton.alignment;
-    options.year_style = skeleton.year_style;
-    options.fractional_second_digits = skeleton.fractional_second_digits;
-
-    let dtf =
-        TypedNeoFormatter::try_new_with_components(&locale.into(), skeleton.components, options)
-            .expect(description);
+    let dtf = TypedNeoFormatter::try_new_with_components(&locale.into(), skeleton.clone())
+        .expect(description);
 
     let any_dtf =
-        NeoFormatter::try_new_with_components(&locale.into(), skeleton.components, options)
-            .expect(description);
+        NeoFormatter::try_new_with_components(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(

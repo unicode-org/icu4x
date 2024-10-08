@@ -967,10 +967,10 @@ pub trait HasConstTimeComponents {
     const COMPONENTS: NeoTimeComponents;
 }
 
-/// A trait associating [`NeoTimeZoneSkeleton`].
+/// A trait associating [`NeoTimeZoneStyle`].
 pub trait HasConstZoneComponent {
     /// The associated component.
-    const COMPONENT: NeoTimeZoneSkeleton;
+    const COMPONENT: NeoTimeZoneStyle;
 }
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
@@ -2194,7 +2194,7 @@ macro_rules! impl_zone_marker {
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
         }
         impl HasConstZoneComponent for $type {
-            const COMPONENT: NeoTimeZoneSkeleton = $components;
+            const COMPONENT: NeoTimeZoneStyle = $components;
         }
         impl ZoneMarkers for $type {
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
@@ -2509,7 +2509,7 @@ impl_zone_marker!(
     /// );
     /// ```
     NeoTimeZoneSpecificMarker,
-    NeoTimeZoneSkeleton::specific(),
+    NeoTimeZoneStyle::Specific,
     description = "specific time zone, or raw offset if unavailable",
     sample_length = Long,
     sample = "Central Daylight Time",
@@ -2573,7 +2573,7 @@ impl_zone_marker!(
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     NeoTimeZoneSpecificShortMarker,
-    NeoTimeZoneSkeleton::specific(),
+    NeoTimeZoneStyle::Specific,
     description = "specific time zone (only short), or raw offset if unavailable",
     sample_length = Short,
     sample = "CDT",
@@ -2583,7 +2583,7 @@ impl_zone_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneOffsetMarker,
-    NeoTimeZoneSkeleton::offset(),
+    NeoTimeZoneStyle::Offset,
     description = "UTC offset time zone",
     sample_length = Medium,
     sample = "GMT-5",
@@ -2624,7 +2624,7 @@ impl_zone_marker!(
     /// );
     /// ```
     NeoTimeZoneGenericMarker,
-    NeoTimeZoneSkeleton::generic(),
+    NeoTimeZoneStyle::Generic,
     description = "generic time zone, or location if unavailable",
     sample_length = Long,
     sample = "Central Time",
@@ -2689,7 +2689,7 @@ impl_zone_marker!(
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     NeoTimeZoneGenericShortMarker,
-    NeoTimeZoneSkeleton::generic(),
+    NeoTimeZoneStyle::Generic,
     description = "generic time zone (only short), or location if unavailable",
     sample_length = Short,
     sample = "CT",
@@ -2700,7 +2700,7 @@ impl_zone_marker!(
 
 impl_zone_marker!(
     NeoTimeZoneLocationMarker,
-    NeoTimeZoneSkeleton::location(),
+    NeoTimeZoneStyle::Location,
     description = "location time zone",
     sample_length = Long,
     sample = "Chicago Time",
@@ -2773,6 +2773,11 @@ impl DateTimeMarkers for NeoDateComponents {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
+impl_get_field!(NeoDateSkeleton, never);
+impl_get_field!(NeoDateSkeleton, length, yes);
+impl_get_field!(NeoDateSkeleton, alignment, yes);
+impl_get_field!(NeoDateSkeleton, year_style, yes);
+
 impl private::Sealed for NeoCalendarPeriodComponents {}
 
 impl IsRuntimeComponents for NeoCalendarPeriodComponents {}
@@ -2824,6 +2829,11 @@ impl DateTimeMarkers for NeoCalendarPeriodComponents {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
+impl_get_field!(NeoCalendarPeriodSkeleton, never);
+impl_get_field!(NeoCalendarPeriodSkeleton, length, yes);
+impl_get_field!(NeoCalendarPeriodSkeleton, alignment, yes);
+impl_get_field!(NeoCalendarPeriodSkeleton, year_style, yes);
+
 impl private::Sealed for NeoTimeComponents {}
 
 impl IsRuntimeComponents for NeoTimeComponents {}
@@ -2861,11 +2871,16 @@ impl DateTimeMarkers for NeoTimeComponents {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl private::Sealed for NeoTimeZoneSkeleton {}
+impl_get_field!(NeoTimeSkeleton, never);
+impl_get_field!(NeoTimeSkeleton, length, yes);
+impl_get_field!(NeoTimeSkeleton, alignment, yes);
+impl_get_field!(NeoTimeSkeleton, fractional_second_digits, yes);
 
-impl IsRuntimeComponents for NeoTimeZoneSkeleton {}
+impl private::Sealed for NeoTimeZoneStyle {}
 
-impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
+impl IsRuntimeComponents for NeoTimeZoneStyle {}
+
+impl DateTimeNamesMarker for NeoTimeZoneStyle {
     type YearNames = datetime_marker_helper!(@names/year,);
     type MonthNames = datetime_marker_helper!(@names/month,);
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
@@ -2878,7 +2893,7 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
 }
 
-impl ZoneMarkers for NeoTimeZoneSkeleton {
+impl ZoneMarkers for NeoTimeZoneStyle {
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
@@ -2891,7 +2906,7 @@ impl ZoneMarkers for NeoTimeZoneSkeleton {
     type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, yes);
 }
 
-impl DateTimeMarkers for NeoTimeZoneSkeleton {
+impl DateTimeMarkers for NeoTimeZoneStyle {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
@@ -2901,6 +2916,9 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
+
+impl_get_field!(NeoTimeZoneSkeleton, never);
+impl_get_field!(NeoTimeZoneSkeleton, length, yes);
 
 impl private::Sealed for NeoDateTimeComponents {}
 
@@ -2930,6 +2948,12 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
+impl_get_field!(NeoDateTimeSkeleton, never);
+impl_get_field!(NeoDateTimeSkeleton, length, yes);
+impl_get_field!(NeoDateTimeSkeleton, alignment, yes);
+impl_get_field!(NeoDateTimeSkeleton, year_style, yes);
+impl_get_field!(NeoDateTimeSkeleton, fractional_second_digits, yes);
+
 impl private::Sealed for NeoComponents {}
 
 impl IsRuntimeComponents for NeoComponents {}
@@ -2957,3 +2981,9 @@ impl DateTimeMarkers for NeoComponents {
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
+
+impl_get_field!(NeoSkeleton, never);
+impl_get_field!(NeoSkeleton, length, yes);
+impl_get_field!(NeoSkeleton, alignment, yes);
+impl_get_field!(NeoSkeleton, year_style, yes);
+impl_get_field!(NeoSkeleton, fractional_second_digits, yes);

@@ -4,7 +4,7 @@
 
 use crate::fields::{self, FieldLength};
 use crate::fields::{Field, FieldSymbol};
-use crate::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
+use crate::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneStyle};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 
 macro_rules! time_zone_style_registry {
@@ -12,22 +12,22 @@ macro_rules! time_zone_style_registry {
         $cb! {
             // Styles with function only for None-length
             [
-                (specific, SpecificNonLocation),
+                (specific, Specific),
                 (offset, Offset),
-                (generic, NonLocation),
+                (generic, Generic),
                 (location, Location),
             ],
             // Skeleton to resolved (for exhaustive match)
             [
-                (SpecificNonLocation, Short, SpecificShort),
-                (SpecificNonLocation, Medium, SpecificShort),
-                (SpecificNonLocation, Long, SpecificLong),
+                (Specific, Short, SpecificShort),
+                (Specific, Medium, SpecificShort),
+                (Specific, Long, SpecificLong),
                 (Offset, Short, OffsetShort),
                 (Offset, Medium, OffsetShort),
                 (Offset, Long, OffsetLong),
-                (NonLocation, Short, GenericShort),
-                (NonLocation, Medium, GenericShort),
-                (NonLocation, Long, GenericLong),
+                (Generic, Short, GenericShort),
+                (Generic, Medium, GenericShort),
+                (Generic, Long, GenericLong),
                 (Location, Short, Location),
                 (Location, Medium, Location),
                 (Location, Long, Location),
@@ -72,27 +72,6 @@ macro_rules! time_zone_style_registry {
         }
     };
 }
-
-macro_rules! make_constructors {
-    (
-        [$(($fn1:ident, $style1:ident)),+,],
-        [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
-        [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
-        [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
-    ) => {
-        $(
-            impl NeoTimeZoneSkeleton {
-                pub(crate) const fn $fn1() -> Self {
-                    Self {
-                        style: NeoTimeZoneStyle::$style1,
-                    }
-                }
-            }
-        )+
-    };
-}
-
-time_zone_style_registry!(make_constructors);
 
 macro_rules! make_resolved_to_field_match {
     (
