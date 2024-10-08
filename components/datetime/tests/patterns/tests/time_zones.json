@@ -936,6 +936,7 @@
           "zz",
           "zzz",
           "ZZZZ",
+          "v",
           "O"
         ],
         "configs": [],
@@ -944,7 +945,9 @@
       {
         "patterns": [
           "zzzz",
-          "OOOO"
+          "OOOO",
+          "vvvv",
+          "VVVV"
         ],
         "configs": [],
         "expected": ["GMT-07:00"]
@@ -964,15 +967,6 @@
         ],
         "configs": [],
         "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv",
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
       }
     ]
   },
@@ -1036,19 +1030,13 @@
           "ZZZZ",
           "ZZZZZ",
           "O",
-          "OOOO"
-        ],
-        "configs": [],
-        "expected": ["{GMT+?}"]
-      },
-      {
-        "patterns": [
+          "OOOO",
           "v",
           "vvvv",
           "VVVV"
         ],
         "configs": [],
-        "expected": ["Unknown City Time"]
+        "expected": ["{GMT+?}"]
       }
     ]
   },

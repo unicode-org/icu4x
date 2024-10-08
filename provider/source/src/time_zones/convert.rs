@@ -118,6 +118,8 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // Montreal is meant to be deprecated, but pre-43 the deprecation
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                    // Ignore the unknown time zone
+                    .filter(|(bcp47, _)| bcp47.0 != "unk")
                     .filter_map(|(bcp47, aliases)| {
                         aliases
                             .split(' ')

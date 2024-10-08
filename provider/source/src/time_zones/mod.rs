@@ -34,6 +34,10 @@ impl SourceDataProvider {
         let mut bcp47_tzids = BTreeMap::new();
         for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
             if let Some(alias) = &bcp47_tzid_data.alias {
+                if bcp47_tzid.as_str() == "unk" {
+                    // ignore the unknown time zone
+                    continue;
+                }
                 for data_value in alias.split(' ') {
                     bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
                 }
@@ -59,7 +63,9 @@ impl SourceDataProvider {
 
         let mut canonical_tzids = BTreeMap::new();
         for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
-            if Some(true) == bcp47_tzid_data.deprecated {
+            if bcp47_tzid.as_str() == "unk" {
+                // ignore the unknown time zone
+            } else if Some(true) == bcp47_tzid_data.deprecated {
                 // skip
             } else if let Some(iana) = &bcp47_tzid_data.iana {
                 canonical_tzids.insert(*bcp47_tzid, iana.clone());
