@@ -114,7 +114,7 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                 .localedisplaynames
                 .regions
                 .iter()
-                .filter(|&(k, v)| {
+                .filter(|&(k, _)| {
                     /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
                     const ALT_SUBSTRING: &str = "-alt-";
                     /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
@@ -123,12 +123,11 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                 })
                 .filter_map(|(region, value)| {
                     Some((
-                        icu::locale::subtags::Region::try_from_str(region)
-                            .ok()
-                            .filter(|r| primary_zones_values.contains(r))?,
+                        icu::locale::subtags::Region::try_from_str(region).ok()?,
                         value.as_str(),
                     ))
                 })
+                .filter(|(r, _)| primary_zones_values.contains(r))
                 .collect()
         };
 
