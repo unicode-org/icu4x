@@ -58,8 +58,8 @@ impl ResolvedNeoTimeZoneSkeleton {
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
     pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
-    /// The exemplar cities for time zones.
-    pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
+    /// The locations for time zones.
+    pub(crate) locations: Option<&'a provider::time_zones::LocationsV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
     /// The generic short metazone names, e.g. PT
@@ -436,23 +436,20 @@ impl GenericLocationFormat {
             sink.write_str("Unknown")?;
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             // `unk` for `und`
             sink.write_str("Unknown")?;
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
 
-        let location = exemplar_cities.0.get(&time_zone_id).unwrap_or_else(|| {
-            exemplar_cities
-                .0
-                .get(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
-                .unwrap_or("Unknown")
-        });
-
-        essentials
-            .region_format
-            .interpolate([location])
-            .write_to(sink)?;
+        if let Some(location) = locations.zones.get(&time_zone_id) {
+            essentials
+                .region_format
+                .interpolate([location])
+                .write_to(sink)?;
+        } else {
+            sink.write_str(&locations.unknown)?;
+        }
 
         Ok(Ok(()))
     }
@@ -479,34 +476,25 @@ impl SpecificLocationFormat {
             sink.write_str("Unknown")?;
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             // `unk` for `und`
             sink.write_str("Unknown")?;
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
 
-        let location = exemplar_cities.0.get(&time_zone_id).unwrap_or_else(|| {
-            exemplar_cities
-                .0
-                .get(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
-                .unwrap_or("Unknown")
-        });
-
-        Ok(if zone_variant == ZoneVariant::daylight() {
-            essentials
-                .region_format_dt
-                .interpolate([location])
-                .write_to(sink)?;
-
-            Ok(())
+        if let Some(location) = locations.zones.get(&time_zone_id) {
+            if zone_variant == ZoneVariant::daylight() {
+                &essentials.region_format_dt
+            } else {
+                &essentials.region_format_st
+            }
+            .interpolate([location])
+            .write_to(sink)?;
         } else {
-            essentials
-                .region_format_st
-                .interpolate([location])
-                .write_to(sink)?;
+            sink.write_str(&locations.unknown)?;
+        }
 
-            Ok(())
-        })
+        Ok(Ok(()))
     }
 }
 
@@ -569,14 +557,14 @@ impl GenericPartialLocation {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
         let Some(non_locations) = names else {
             return Ok(Err(DateTimeWriteError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+        let Some(location) = locations.zones.get(&time_zone_id) else {
             // UTS-35 fallback, not an error
             return GenericLocationFormat.format(sink, time_zone_id, data_payloads);
         };

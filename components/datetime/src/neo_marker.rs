@@ -330,7 +330,7 @@
 //!
 //! // "uschi" - has metazone symbol data for generic_non_location_short
 //! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap();
+//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
@@ -1053,7 +1053,7 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
-    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
+    type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
     /// Marker for loading generic short time zone names.
     type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
@@ -1182,7 +1182,7 @@ impl ZoneMarkers for NeoNeverMarker {
     type TimeZoneMetazoneInput = NeverField;
     type TimeZoneVariantInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
-    type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
+    type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
@@ -1520,8 +1520,8 @@ macro_rules! datetime_marker_helper {
     (@data/zone/essentials, yes) => {
         tz::EssentialsV1Marker
     };
-    (@data/zone/exemplar_cities, yes) => {
-        tz::ExemplarCitiesV1Marker
+    (@data/zone/locations, yes) => {
+        tz::LocationsV1Marker
     };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker
@@ -1538,8 +1538,8 @@ macro_rules! datetime_marker_helper {
     (@data/zone/essentials,) => {
         NeverMarker<tz::EssentialsV1<'static>>
     };
-    (@data/zone/exemplar_cities,) => {
-        NeverMarker<tz::ExemplarCitiesV1<'static>>
+    (@data/zone/locations,) => {
+        NeverMarker<tz::LocationsV1<'static>>
     };
     (@data/zone/generic_long,) => {
         NeverMarker<tz::MzGenericV1<'static>>
@@ -1568,8 +1568,8 @@ macro_rules! datetime_marker_helper {
     (@names/zone/essentials, yes) => {
         tz::EssentialsV1Marker
     };
-    (@names/zone/exemplar_cities, yes) => {
-        tz::ExemplarCitiesV1Marker
+    (@names/zone/locations, yes) => {
+        tz::LocationsV1Marker
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker
@@ -1822,7 +1822,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type WeekdayNames = datetime_marker_helper!(@names/weekday, $($weekdays_yes)?);
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2047,7 +2047,7 @@ macro_rules! impl_time_marker {
             type WeekdayNames = datetime_marker_helper!(@names/weekday,);
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $($dayperiods_yes)?);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2103,7 +2103,7 @@ macro_rules! impl_zone_marker {
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
         // Whether exemplar cities can occur.
-        $(zone_exemplar_cities = $zone_exemplar_cities_yes:ident,)?
+        $(zone_locations = $zone_locations_yes:ident,)?
         // Whether generic long formats can occur.
         $(zone_generic_long = $zone_generic_long_yes:ident,)?
         // Whether generic short formats can occur.
@@ -2191,7 +2191,7 @@ macro_rules! impl_zone_marker {
             type WeekdayNames = datetime_marker_helper!(@names/weekday,);
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $($zone_essentials_yes)?);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, $($zone_exemplar_cities_yes)?);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations, $($zone_locations_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
@@ -2206,7 +2206,7 @@ macro_rules! impl_zone_marker {
             type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
-            type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $($zone_exemplar_cities_yes)?);
+            type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
@@ -2633,7 +2633,7 @@ impl_zone_marker!(
     sample_length = Long,
     sample = "Central Time",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
+    zone_locations = yes,
     zone_generic_long = yes,
     zone_generic_short = yes,
 );
@@ -2698,7 +2698,7 @@ impl_zone_marker!(
     sample_length = Short,
     sample = "CT",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
+    zone_locations = yes,
     zone_generic_short = yes,
 );
 
@@ -2709,7 +2709,7 @@ impl_zone_marker!(
     sample_length = Long,
     sample = "Chicago Time",
     zone_essentials = yes,
-    zone_exemplar_cities = yes,
+    zone_locations = yes,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
@@ -2736,7 +2736,7 @@ impl DateTimeNamesMarker for NeoDateComponents {
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2787,7 +2787,7 @@ impl DateTimeNamesMarker for NeoCalendarPeriodComponents {
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2838,7 +2838,7 @@ impl DateTimeNamesMarker for NeoTimeComponents {
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2875,7 +2875,7 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, yes);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations, yes);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
@@ -2888,7 +2888,7 @@ impl ZoneMarkers for NeoTimeZoneSkeleton {
     type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
-    type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, yes);
+    type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, yes);
     type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, yes);
     type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, yes);
     type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, yes);
@@ -2916,7 +2916,7 @@ impl DateTimeNamesMarker for NeoDateTimeComponents {
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations,);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -2944,7 +2944,7 @@ impl DateTimeNamesMarker for NeoComponents {
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, yes);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/locations, yes);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);

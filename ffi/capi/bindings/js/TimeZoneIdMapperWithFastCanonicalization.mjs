@@ -67,11 +67,10 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+        wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
-            return result === 0 ? null : write.readString8();
+            return write.readString8();
         }
         
         finally {

@@ -18,11 +18,11 @@ export class TimeZoneIdMapper {
 
     static create(provider: DataProvider): TimeZoneIdMapper;
 
-    ianaToBcp47(value: string): string | null;
+    ianaToBcp47(value: string): string;
 
-    normalizeIana(value: string): string | null;
+    normalizeIana(value: string): string;
 
-    canonicalizeIana(value: string): string | null;
+    canonicalizeIana(value: string): string;
 
-    findCanonicalIanaFromBcp47(value: string): string | null;
+    findCanonicalIanaFromBcp47(value: string): string;
 }
