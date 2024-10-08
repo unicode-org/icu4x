@@ -119,39 +119,39 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
                     .filter_map(|(bcp47, aliases)| {
-                        let alias = aliases.split(' ').next().expect("split non-empty");
-                        let mut alias_parts = alias.split('/');
-                        let continent = alias_parts.next().expect("split non-empty");
-                        let location_or_subregion = alias_parts.next()?;
-                        let location_in_subregion = alias_parts.next();
-
-                        Some((
-                            bcp47,
-                            time_zone_names
-                                .zone
-                                .0
-                                .get(continent)
-                                .and_then(|x| x.0.get(location_or_subregion))
-                                .and_then(|x| match x {
-                                    LocationOrSubRegion::Location(place) => Some(place),
-                                    LocationOrSubRegion::SubRegion(region) => {
-                                        region.get(location_in_subregion?)
-                                    }
-                                })
-                                .and_then(|p| {
-                                    let this = &p;
-                                    this.exemplar_city.clone()
-                                })
-                                .or_else(|| {
-                                    (continent != "Etc").then(|| {
-                                        alias
-                                            .split('/')
-                                            .next_back()
-                                            .expect("split non-empty")
-                                            .replace('_', " ")
+                        aliases
+                            .split(' ')
+                            .filter_map(|alias| {
+                                let mut alias_parts = alias.split('/');
+                                let continent = alias_parts.next().expect("split non-empty");
+                                let location_or_subregion = alias_parts.next()?;
+                                let location_in_subregion = alias_parts.next();
+                                time_zone_names
+                                    .zone
+                                    .0
+                                    .get(continent)
+                                    .and_then(|x| x.0.get(location_or_subregion))
+                                    .and_then(|x| match x {
+                                        LocationOrSubRegion::Location(place) => Some(place),
+                                        LocationOrSubRegion::SubRegion(region) => {
+                                            region.get(location_in_subregion?)
+                                        }
                                     })
-                                })?,
-                        ))
+                                    .and_then(|p| p.exemplar_city.clone())
+                            })
+                            .next()
+                            .or_else(|| {
+                                let canonical_alias =
+                                    aliases.split(' ').next().expect("split non-empty");
+                                let mut alias_parts = canonical_alias.split('/');
+                                (alias_parts.next() != Some("Etc")).then(|| {
+                                    alias_parts
+                                        .next_back()
+                                        .expect("split non-empty")
+                                        .replace('_', " ")
+                                })
+                            })
+                            .map(|name| (bcp47, name))
                     })
                     .collect(),
             )),
@@ -202,10 +202,10 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
                             })
                             .collect::<Vec<_>>(),
                     })
-                    .flat_map(|(iana, periods)| match bcp47_tzid_data.get(&iana) {
-                        Some(&bcp47) => periods.iter().map(move |period| {
-                            (
-                                bcp47,
+                    .flat_map(|(iana, periods)| {
+                        periods.iter().flat_map(move |period| {
+                            Some((
+                                bcp47_tzid_data.get(&iana)?,
                                 period
                                     .uses_meta_zone
                                     .from
@@ -217,9 +217,8 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
                                     )
                                     .minutes_since_local_unix_epoch(),
                                 meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
-                            )
-                        }),
-                        None => panic!("Cannot find bcp47 for {iana:?}."),
+                            ))
+                        })
                     })
                     .collect(),
             )),
@@ -396,7 +395,10 @@ macro_rules! long_short_impls {
                 let time_zone_names_resource = &self
                     .cldr()?
                     .dates("gregorian")
-                    .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(req.id.locale, "timeZoneNames.json")?
+                    .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
+                        req.id.locale,
+                        "timeZoneNames.json",
+                    )?
                     .main
                     .value
                     .dates
@@ -407,67 +409,67 @@ macro_rules! long_short_impls {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(
-                        MetazoneGenericNamesV1 {
-                            defaults: match &time_zone_names_resource.metazone {
-                                None => Default::default(),
-                                Some(metazones) => metazones
-                                    .0
-                                    .iter()
-                                    .filter_map(|(key, metazone)| match meta_zone_id_data.get(key) {
-                                        Some(meta_zone_short_id) => metazone
-                                            .$field
-                                            .as_ref()
-                                            .and_then(type_fallback)
-                                            .map(|format| (meta_zone_short_id.clone(), format.clone())),
-                                        None => panic!("Cannot find short id of meta zone for {key:?}."),
-                                    })
-                                    .collect(),
-                            },
-                            overrides: time_zone_names_resource
-                                .zone
+                    payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+                        defaults: match &time_zone_names_resource.metazone {
+                            None => Default::default(),
+                            Some(metazones) => metazones
                                 .0
                                 .iter()
-                                .flat_map(|(key, region)| {
-                                    region
-                                        .0
-                                        .iter()
-                                        .flat_map(move |(inner_key, place_or_region)| {
-                                            let iana = format!("{key}/{inner_key}");
-                                            match place_or_region {
-                                                LocationOrSubRegion::Location(place) => {
-                                                    match bcp47_tzid_data.get(&iana) {
-                                                        Some(bcp47) => place
-                                                            .$field
-                                                            .clone()
-                                                            .and_then(|zf| type_fallback(&zf).cloned())
-                                                            .map(|format| vec![(bcp47, format)])
-                                                            .unwrap_or_default(),
-                                                        None => panic!("Cannot find bcp47 for {iana:?}."),
-                                                    }
-                                                }
-                                                LocationOrSubRegion::SubRegion(region) => region
-                                                    .iter()
-                                                    .filter_map(|(inner_key, place)| {
-                                                        let iana = format!("{iana}/{inner_key}");
-                                                        match bcp47_tzid_data.get(&iana) {
-                                                            Some(bcp47) => place
-                                                                .$field
-                                                                .clone()
-                                                                .and_then(|zf| type_fallback(&zf).cloned())
-                                                                .map(|format| (bcp47, format)),
-                                                            None => {
-                                                                panic!("Cannot find bcp47 for {iana:?}.")
-                                                            }
-                                                        }
-                                                    })
-                                                    .collect::<Vec<_>>(),
-                                            }
-                                        })
+                                .filter_map(|(key, metazone)| {
+                                    metazone.$field.as_ref().and_then(type_fallback).and_then(
+                                        |format| {
+                                            Some((
+                                                meta_zone_id_data.get(key)?.clone(),
+                                                format.clone(),
+                                            ))
+                                        },
+                                    )
                                 })
                                 .collect(),
                         },
-                    ),
+                        overrides: time_zone_names_resource
+                            .zone
+                            .0
+                            .iter()
+                            .flat_map(|(key, region)| {
+                                region
+                                    .0
+                                    .iter()
+                                    .flat_map(move |(inner_key, place_or_region)| {
+                                        let iana = format!("{key}/{inner_key}");
+                                        match place_or_region {
+                                            LocationOrSubRegion::Location(place) => place
+                                                .$field
+                                                .clone()
+                                                .and_then(|zf| type_fallback(&zf).cloned())
+                                                .and_then(|format| {
+                                                    Some(vec![(
+                                                        bcp47_tzid_data.get(&iana)?,
+                                                        format,
+                                                    )])
+                                                })
+                                                .unwrap_or_default(),
+                                            LocationOrSubRegion::SubRegion(region) => region
+                                                .iter()
+                                                .filter_map(|(inner_key, place)| {
+                                                    let iana = format!("{iana}/{inner_key}");
+                                                    place
+                                                        .$field
+                                                        .clone()
+                                                        .and_then(|zf| type_fallback(&zf).cloned())
+                                                        .and_then(|format| {
+                                                            Some((
+                                                                bcp47_tzid_data.get(&iana)?,
+                                                                format,
+                                                            ))
+                                                        })
+                                                })
+                                                .collect::<Vec<_>>(),
+                                        }
+                                    })
+                            })
+                            .collect(),
+                    }),
                 })
             }
         }
@@ -479,7 +481,10 @@ macro_rules! long_short_impls {
                 let time_zone_names_resource = &self
                     .cldr()?
                     .dates("gregorian")
-                    .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(req.id.locale, "timeZoneNames.json")?
+                    .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
+                        req.id.locale,
+                        "timeZoneNames.json",
+                    )?
                     .main
                     .value
                     .dates
@@ -490,76 +495,63 @@ macro_rules! long_short_impls {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(
-                        MetazoneSpecificNamesV1 {
-                            defaults: match &time_zone_names_resource.metazone {
-                                None => Default::default(),
-                                Some(metazones) => metazones
-                                    .0
-                                    .iter()
-                                    .filter_map(|(key, metazone)| match meta_zone_id_data.get(key) {
-                                        Some(&meta_zone_short_id) => metazone
-                                            .$field
-                                            .as_ref()
-                                            .map(|zone_format| (meta_zone_short_id, zone_format.clone())),
-                                        None => panic!("Cannot find short id of meta zone for {key:?}."),
-                                    })
-                                    .flat_map(|(meta, zone_format)| {
-                                        convert_cldr_zone_variant(zone_format.0)
-                                            .map(move |(variant, value)| (meta, variant, value))
-                                    })
-                                    .collect(),
-                            },
-                            overrides: time_zone_names_resource
-                                .zone
+                    payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+                        defaults: match &time_zone_names_resource.metazone {
+                            None => Default::default(),
+                            Some(metazones) => metazones
                                 .0
                                 .iter()
-                                .flat_map(|(key, region)| {
-                                    region
-                                        .0
-                                        .iter()
-                                        .flat_map(move |(inner_key, place_or_region)| {
-                                            let iana = format!("{key}/{inner_key}");
-                                            match place_or_region {
-                                                LocationOrSubRegion::Location(place) => {
-                                                    match bcp47_tzid_data.get(&iana) {
-                                                        Some(&bcp47) => [place]
-                                                            .into_iter()
-                                                            .filter_map(|place| {
-                                                                place
-                                                                    .$field
-                                                                    .clone()
-                                                                    .map(|zone_format| (bcp47, zone_format))
-                                                            })
-                                                            .collect::<Vec<_>>(),
-                                                        None => panic!("Cannot find bcp47 for {iana:?}."),
-                                                    }
-                                                }
-                                                LocationOrSubRegion::SubRegion(region) => region
-                                                    .iter()
-                                                    .filter_map(|(inner_key, place)| {
-                                                        let iana = format!("{iana}/{inner_key}");
-                                                        match bcp47_tzid_data.get(&iana) {
-                                                            Some(&bcp47) => place
-                                                                .$field
-                                                                .clone()
-                                                                .map(|format| (bcp47, format)),
-                                                            None => {
-                                                                panic!("Cannot find bcp47 for {iana:?}.")
-                                                            }
-                                                        }
-                                                    })
-                                                    .collect::<Vec<_>>(),
-                                            }
-                                        })
+                                .filter_map(|(key, metazone)| {
+                                    metazone.$field.as_ref().and_then(|zone_format| {
+                                        Some((meta_zone_id_data.get(key)?, zone_format.clone()))
+                                    })
                                 })
-                                .flat_map(|(bcp47, zone_format)| {
+                                .flat_map(|(meta, zone_format)| {
                                     convert_cldr_zone_variant(zone_format.0)
-                                        .map(move |(variant, value)| (bcp47, variant, value))
+                                        .map(move |(variant, value)| (meta, variant, value))
                                 })
                                 .collect(),
-                        }
-                    ),
+                        },
+                        overrides: time_zone_names_resource
+                            .zone
+                            .0
+                            .iter()
+                            .flat_map(|(key, region)| {
+                                region
+                                    .0
+                                    .iter()
+                                    .flat_map(move |(inner_key, place_or_region)| {
+                                        let iana = format!("{key}/{inner_key}");
+                                        match place_or_region {
+                                            LocationOrSubRegion::Location(place) => [place]
+                                                .into_iter()
+                                                .filter_map(|place| {
+                                                    place.$field.clone().and_then(|zone_format| {
+                                                        Some((
+                                                            bcp47_tzid_data.get(&iana)?,
+                                                            zone_format,
+                                                        ))
+                                                    })
+                                                })
+                                                .collect::<Vec<_>>(),
+                                            LocationOrSubRegion::SubRegion(region) => region
+                                                .iter()
+                                                .filter_map(|(inner_key, place)| {
+                                                    let iana = format!("{iana}/{inner_key}");
+                                                    place.$field.clone().and_then(|format| {
+                                                        Some((bcp47_tzid_data.get(&iana)?, format))
+                                                    })
+                                                })
+                                                .collect::<Vec<_>>(),
+                                        }
+                                    })
+                            })
+                            .flat_map(|(bcp47, zone_format)| {
+                                convert_cldr_zone_variant(zone_format.0)
+                                    .map(move |(variant, value)| (bcp47, variant, value))
+                            })
+                            .collect(),
+                    }),
                 })
             }
         }
@@ -583,15 +575,15 @@ fn convert_cldr_zone_variant(
 ) -> impl Iterator<Item = (ZoneVariant, String)> {
     kvs.into_iter()
         .filter(|(variant, _)| variant != "generic")
-        .map(move |(variant, value)| {
-            (
+        .flat_map(move |(variant, value)| {
+            Some((
                 match variant.as_str() {
                     "standard" => ZoneVariant::standard(),
                     "daylight" => ZoneVariant::daylight(),
-                    _ => panic!("Time-zone variant was not compatible with ZoneVariant: {variant}"),
+                    _ => return None,
                 },
                 value,
-            )
+            ))
         })
 }
 
