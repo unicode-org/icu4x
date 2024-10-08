@@ -96,13 +96,9 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let primary_zones = self
-            .compute_primary_zones()?;
+        let primary_zones = self.compute_primary_zones()?;
 
-        let primary_zones_values = primary_zones
-            .values()
-            .copied()
-            .collect::<BTreeSet<_>>();
+        let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
         let region_display_names = if req.id.locale.is_default() {
             None
