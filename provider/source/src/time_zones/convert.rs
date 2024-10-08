@@ -18,6 +18,7 @@ use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -95,6 +96,24 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
+        let primary_zones = self
+            .compute_primary_zones()?
+            .into_values()
+            .collect::<BTreeSet<_>>();
+
+        let region_display_names = if req.id.locale.is_default() {
+            None
+        } else {
+            Some(
+                self.cldr()?
+                    .displaynames()
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        req.id.locale,
+                        "territories.json",
+                    )?,
+            )
+        };
+
         let bcp47_tzids = &self
             .cldr()?
             .bcp47()
@@ -106,8 +125,8 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1(
-                bcp47_tzids
+            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+                cities: bcp47_tzids
                     .iter()
                     .filter_map(|(bcp47, bcp47_tzid_data)| {
                         bcp47_tzid_data
@@ -154,6 +173,47 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                             .map(|name| (bcp47, name))
                     })
                     .collect(),
+                regions: region_display_names
+                    .map(|r| {
+                        r.main
+                            .value
+                            .localedisplaynames
+                            .regions
+                            .iter()
+                            // Old CLDR versions may contain trivial entries, so filter
+                            .filter(|&(k, v)| {
+                                /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
+                                const ALT_SUBSTRING: &str = "-alt-";
+                                /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
+                                const SHORT_SUBSTRING: &str = "-alt-short";
+                                k != v && !k.contains(ALT_SUBSTRING) && !k.contains(SHORT_SUBSTRING)
+                            })
+                            .filter_map(|(region, value)| {
+                                Some((
+                                    icu::locale::subtags::Region::try_from_str(region)
+                                        .ok()
+                                        .filter(|r| primary_zones.contains(r))?
+                                        .into_tinystr()
+                                        .to_unvalidated(),
+                                    value.as_str(),
+                                ))
+                            })
+                            .collect()
+                    })
+                    .unwrap_or_default(),
+            }),
+        })
+    }
+}
+
+impl DataProvider<PrimaryZonesV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PrimaryZonesV1Marker>, DataError> {
+        self.check_req::<PrimaryZonesV1Marker>(req)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(PrimaryZonesV1(
+                self.compute_primary_zones()?.iter().collect(),
             )),
         })
     }
@@ -230,7 +290,7 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1Marker>, DataError> {
         self.check_req::<ZoneOffsetPeriodV1Marker>(req)?;
 
-        let tzdb = self.tzdb()?.get()?;
+        let tzdb = self.tzdb()?.transitions()?;
 
         Ok(DataResponse {
             metadata: Default::default(),

@@ -75,6 +75,7 @@ serde = [
     "dep:serde",
     "icu_calendar/serde",
     "icu_decimal/serde",
+    "icu_locale_core/serde",
     "icu_pattern/serde",
     "icu_plurals/serde",
     "icu_provider/serde",

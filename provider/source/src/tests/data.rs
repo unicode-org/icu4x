@@ -691,7 +691,7 @@ impl SourceDataProvider {
                         ("tz-tag/southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice()),
                         ("tz-tag/zone.tab", include_bytes!("../../tests/data/tzdb/zone.tab").as_slice())
                     ].into_iter().collect(),
-                ), cache: Default::default() })),
+                ), transitions: Default::default(), zone_tab: Default::default() })),
                 ..SourceDataProvider::new_custom()
             })
             .clone()

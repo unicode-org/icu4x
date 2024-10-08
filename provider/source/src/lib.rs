@@ -200,7 +200,8 @@ impl SourceDataProvider {
         Ok(Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new(root)?,
-                cache: Default::default(),
+                transitions: Default::default(),
+                zone_tab: Default::default(),
             })),
             ..self
         })
@@ -271,7 +272,8 @@ impl SourceDataProvider {
                 root: AbstractFs::new_from_url(format!(
                     "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
                 )),
-                cache: Default::default(),
+                transitions: Default::default(),
+                zone_tab: Default::default(),
             })),
             ..self
         }
