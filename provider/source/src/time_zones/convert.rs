@@ -97,8 +97,11 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         let primary_zones = self
-            .compute_primary_zones()?
-            .into_values()
+            .compute_primary_zones()?;
+
+        let primary_zones_values = primary_zones
+            .values()
+            .copied()
             .collect::<BTreeSet<_>>();
 
         let region_display_names = if req.id.locale.is_default() {
@@ -137,6 +140,8 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // Montreal is meant to be deprecated, but pre-43 the deprecation
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                    // Skip exemplar cities for primary zones, those use region names
+                    .filter(|(bcp47, _)| !primary_zones.contains_key(bcp47))
                     .filter_map(|(bcp47, aliases)| {
                         aliases
                             .split(' ')
@@ -192,7 +197,7 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                                 Some((
                                     icu::locale::subtags::Region::try_from_str(region)
                                         .ok()
-                                        .filter(|r| primary_zones.contains(r))?
+                                        .filter(|r| primary_zones_values.contains(r))?
                                         .into_tinystr()
                                         .to_unvalidated(),
                                     value.as_str(),
