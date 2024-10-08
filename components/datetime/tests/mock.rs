@@ -56,13 +56,15 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
-    let datetime_iso = CustomZonedDateTime::try_iso_from_str(input).unwrap_or_else(|_| {
-        let datetime = DateTime::try_iso_from_str(input).unwrap();
-        CustomZonedDateTime {
-            date: datetime.date,
-            time: datetime.time,
-            zone: CustomTimeZone::new_empty(),
-        }
-    });
+    let datetime_iso = CustomZonedDateTime::try_iso_from_str(input)
+        .or_else(|_| CustomZonedDateTime::try_iso_from_str(input.split('[').next().unwrap()))
+        .or_else(|_| {
+            DateTime::try_iso_from_str(input).map(|dt| CustomZonedDateTime {
+                date: dt.date,
+                time: dt.time,
+                zone: CustomTimeZone::new_empty(),
+            })
+        })
+        .unwrap();
     datetime_iso.to_calendar(Gregorian)
 }
