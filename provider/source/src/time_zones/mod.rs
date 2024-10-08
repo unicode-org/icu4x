@@ -223,12 +223,12 @@ mod tests {
                 .unwrap()
         );
         assert_eq!(
-            "Micronesia",
+            "Ireland",
             exemplar_cities
                 .payload
                 .get()
                 .regions
-                .get(&tinystr!(3, "fm").into())
+                .get(&tinystr!(3, "IE").into())
                 .unwrap()
         );
 
