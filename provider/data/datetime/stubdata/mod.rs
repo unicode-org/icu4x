@@ -46,7 +46,6 @@ include!("time_zone_essentials_v1_marker.rs.data");
 include!("exemplar_cities_v1_marker.rs.data");
 include!("metazone_generic_names_long_v1_marker.rs.data");
 include!("metazone_generic_names_short_v1_marker.rs.data");
-include!("primary_zones_v1_marker.rs.data");
 include!("metazone_specific_names_long_v1_marker.rs.data");
 include!("metazone_specific_names_short_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
@@ -125,7 +124,6 @@ macro_rules! impl_data_provider {
         impl_exemplar_cities_v1_marker!($provider);
         impl_metazone_generic_names_long_v1_marker!($provider);
         impl_metazone_generic_names_short_v1_marker!($provider);
-        impl_primary_zones_v1_marker!($provider);
         impl_metazone_specific_names_long_v1_marker!($provider);
         impl_metazone_specific_names_short_v1_marker!($provider);
     };
@@ -184,7 +182,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::time_zones::PrimaryZonesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::PrimaryZonesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),

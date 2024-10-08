@@ -48,7 +48,6 @@ const _: () = {
     make_provider!(Baked);
 
     impl_exemplar_cities_v1_marker!(Baked);
-    impl_primary_zones_v1_marker!(Baked);
     impl_metazone_generic_names_long_v1_marker!(Baked);
     impl_metazone_generic_names_short_v1_marker!(Baked);
     impl_metazone_specific_names_long_v1_marker!(Baked);
@@ -110,7 +109,6 @@ use icu_provider::prelude::*;
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::ExemplarCitiesV1Marker::INFO,
-    time_zones::PrimaryZonesV1Marker::INFO,
     time_zones::MetazoneGenericNamesLongV1Marker::INFO,
     time_zones::MetazoneGenericNamesShortV1Marker::INFO,
     time_zones::MetazoneSpecificNamesLongV1Marker::INFO,

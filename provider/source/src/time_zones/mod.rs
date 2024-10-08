@@ -167,7 +167,6 @@ macro_rules! impl_iterable_data_provider {
 impl_iterable_data_provider!(
     TimeZoneEssentialsV1Marker,
     ExemplarCitiesV1Marker,
-    PrimaryZonesV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,
@@ -218,7 +217,7 @@ mod tests {
             exemplar_cities
                 .payload
                 .get()
-                .cities
+                .0
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
                 .unwrap()
         );
@@ -227,8 +226,8 @@ mod tests {
             exemplar_cities
                 .payload
                 .get()
-                .regions
-                .get(&tinystr!(3, "IE").into())
+                .0
+                .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
         );
 

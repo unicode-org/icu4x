@@ -5,10 +5,8 @@
 //! Data provider structs for time zones.
 
 use alloc::borrow::Cow;
-use icu_locale_core::subtags::Region;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{ZeroMap, ZeroMap2d};
 
 pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
@@ -24,8 +22,6 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
     pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
-    pub(crate) use super::PrimaryZonesV1;
-    pub(crate) use super::PrimaryZonesV1Marker;
     pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
     pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
 }
@@ -117,33 +113,8 @@ pub struct TimeZoneEssentialsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct ExemplarCitiesV1<'data> {
-    /// Display names for time zones (which are cities)
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub cities: ZeroMap<'data, TimeZoneBcp47Id, str>,
-    /// Display names for regions
-    // TODO: Use RegionDisplayNamesV1
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub regions: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, str>,
-}
-
-/// The regions for which a timezone is unique.
-///
-/// If a time zone is not included here, it means there are other time zones in the same region.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(PrimaryZonesV1Marker, "time_zone/primary_zones@1", singleton))]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct PrimaryZonesV1<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TimeZoneBcp47Id, Region>,
+pub struct ExemplarCitiesV1<'data>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TimeZoneBcp47Id, str>,
 );
 
 /// An ICU4X mapping to generic metazone names.

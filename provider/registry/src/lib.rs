@@ -43,7 +43,6 @@ macro_rules! registry(
             icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker = "time_zone/specific_short@1",
             icu::datetime::provider::time_zones::TimeZoneEssentialsV1Marker = "time_zone/essentials@1",
             icu::datetime::provider::time_zones::ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1",
-            icu::datetime::provider::time_zones::PrimaryZonesV1Marker = "time_zone/primary_zones@1",
             icu::decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
             icu::list::provider::AndListV2Marker = "list/and@2",
             icu::list::provider::OrListV2Marker = "list/or@2",

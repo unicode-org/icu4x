@@ -61,8 +61,6 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
-    /// Primary time zones
-    pub(crate) primary_zones: Option<&'a provider::time_zones::PrimaryZonesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
     /// The generic short metazone names, e.g. PT
@@ -596,23 +594,12 @@ impl FormatTimeZone for GenericLocationFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(primary_zones) = data_payloads.primary_zones else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let location = if let Some(region) = primary_zones.0.get(&time_zone_id) {
-            exemplar_cities
-                .regions
-                .get(&region.into_tinystr().to_unvalidated())
-                .unwrap_or(region.as_str())
-        } else {
-            let Some(city) = exemplar_cities.cities.get(&time_zone_id) else {
-                return Ok(Err(FormatTimeZoneError::NameNotFound));
-            };
-            city
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
         essentials
@@ -647,23 +634,12 @@ impl FormatTimeZone for SpecificLocationFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(primary_zones) = data_payloads.primary_zones else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let location = if let Some(region) = primary_zones.0.get(&time_zone_id) {
-            exemplar_cities
-                .regions
-                .get(&region.into_tinystr().to_unvalidated())
-                .unwrap_or(region.as_str())
-        } else {
-            let Some(city) = exemplar_cities.cities.get(&time_zone_id) else {
-                return Ok(Err(FormatTimeZoneError::NameNotFound));
-            };
-            city
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
         Ok(if zone_variant == ZoneVariant::daylight() {
@@ -717,9 +693,6 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(primary_zones) = data_payloads.primary_zones else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -727,18 +700,9 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let location = if let Some(region) = primary_zones.0.get(&time_zone_id) {
-            exemplar_cities
-                .regions
-                .get(&region.into_tinystr().to_unvalidated())
-                .unwrap_or(region.as_str())
-        } else {
-            let Some(city) = exemplar_cities.cities.get(&time_zone_id) else {
-                return Ok(Err(FormatTimeZoneError::NameNotFound));
-            };
-            city
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
-
         let Some(non_location) = non_locations
             .overrides
             .get(&time_zone_id)
@@ -780,9 +744,6 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(primary_zones) = data_payloads.primary_zones else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(exemplar_cities) = data_payloads.exemplar_cities else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -790,16 +751,8 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let location = if let Some(region) = primary_zones.0.get(&time_zone_id) {
-            exemplar_cities
-                .regions
-                .get(&region.into_tinystr().to_unvalidated())
-                .unwrap_or(region.as_str())
-        } else {
-            let Some(city) = exemplar_cities.cities.get(&time_zone_id) else {
-                return Ok(Err(FormatTimeZoneError::NameNotFound));
-            };
-            city
+        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
         let Some(non_location) = non_locations
             .overrides

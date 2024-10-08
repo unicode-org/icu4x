@@ -101,16 +101,35 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
         let region_display_names = if req.id.locale.is_default() {
-            None
+            BTreeMap::default()
         } else {
-            Some(
-                self.cldr()?
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        req.id.locale,
-                        "territories.json",
-                    )?,
-            )
+            self.cldr()?
+                .displaynames()
+                .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                    req.id.locale,
+                    "territories.json",
+                )?
+                .main
+                .value
+                .localedisplaynames
+                .regions
+                .iter()
+                .filter(|&(k, v)| {
+                    /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
+                    const ALT_SUBSTRING: &str = "-alt-";
+                    /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
+                    const SHORT_SUBSTRING: &str = "-alt-short";
+                    !k.contains(ALT_SUBSTRING) && !k.contains(SHORT_SUBSTRING)
+                })
+                .filter_map(|(region, value)| {
+                    Some((
+                        icu::locale::subtags::Region::try_from_str(region)
+                            .ok()
+                            .filter(|r| primary_zones_values.contains(r))?,
+                        value.as_str(),
+                    ))
+                })
+                .collect()
         };
 
         let bcp47_tzids = &self
@@ -124,8 +143,8 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
-                cities: bcp47_tzids
+            payload: DataPayload::from_owned(ExemplarCitiesV1(
+                bcp47_tzids
                     .iter()
                     .filter_map(|(bcp47, bcp47_tzid_data)| {
                         bcp47_tzid_data
@@ -136,85 +155,53 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // Montreal is meant to be deprecated, but pre-43 the deprecation
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
-                    // Skip exemplar cities for primary zones, those use region names
-                    .filter(|(bcp47, _)| !primary_zones.contains_key(bcp47))
                     .filter_map(|(bcp47, aliases)| {
-                        aliases
-                            .split(' ')
-                            .filter_map(|alias| {
-                                let mut alias_parts = alias.split('/');
-                                let continent = alias_parts.next().expect("split non-empty");
-                                let location_or_subregion = alias_parts.next()?;
-                                let location_in_subregion = alias_parts.next();
-                                time_zone_names
-                                    .zone
-                                    .0
-                                    .get(continent)
-                                    .and_then(|x| x.0.get(location_or_subregion))
-                                    .and_then(|x| match x {
-                                        LocationOrSubRegion::Location(place) => Some(place),
-                                        LocationOrSubRegion::SubRegion(region) => {
-                                            region.get(location_in_subregion?)
-                                        }
-                                    })
-                                    .and_then(|p| p.exemplar_city.clone())
-                            })
-                            .next()
-                            .or_else(|| {
-                                let canonical_alias =
-                                    aliases.split(' ').next().expect("split non-empty");
-                                let mut alias_parts = canonical_alias.split('/');
-                                (alias_parts.next() != Some("Etc")).then(|| {
-                                    alias_parts
-                                        .next_back()
-                                        .expect("split non-empty")
-                                        .replace('_', " ")
+                        if let Some(region) = primary_zones.get(bcp47) {
+                            Some((
+                                *bcp47,
+                                region_display_names
+                                    .get(region)
+                                    .copied()
+                                    .unwrap_or(region.as_str())
+                                    .to_string(),
+                            ))
+                        } else {
+                            aliases
+                                .split(' ')
+                                .filter_map(|alias| {
+                                    let mut alias_parts = alias.split('/');
+                                    let continent = alias_parts.next().expect("split non-empty");
+                                    let location_or_subregion = alias_parts.next()?;
+                                    let location_in_subregion = alias_parts.next();
+                                    time_zone_names
+                                        .zone
+                                        .0
+                                        .get(continent)
+                                        .and_then(|x| x.0.get(location_or_subregion))
+                                        .and_then(|x| match x {
+                                            LocationOrSubRegion::Location(place) => Some(place),
+                                            LocationOrSubRegion::SubRegion(region) => {
+                                                region.get(location_in_subregion?)
+                                            }
+                                        })
+                                        .and_then(|p| p.exemplar_city.clone())
                                 })
-                            })
-                            .map(|name| (bcp47, name))
+                                .next()
+                                .or_else(|| {
+                                    let canonical_alias =
+                                        aliases.split(' ').next().expect("split non-empty");
+                                    let mut alias_parts = canonical_alias.split('/');
+                                    (alias_parts.next() != Some("Etc")).then(|| {
+                                        alias_parts
+                                            .next_back()
+                                            .expect("split non-empty")
+                                            .replace('_', " ")
+                                    })
+                                })
+                                .map(|name| (*bcp47, name))
+                        }
                     })
                     .collect(),
-                regions: region_display_names
-                    .map(|r| {
-                        r.main
-                            .value
-                            .localedisplaynames
-                            .regions
-                            .iter()
-                            // Old CLDR versions may contain trivial entries, so filter
-                            .filter(|&(k, v)| {
-                                /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
-                                const ALT_SUBSTRING: &str = "-alt-";
-                                /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
-                                const SHORT_SUBSTRING: &str = "-alt-short";
-                                k != v && !k.contains(ALT_SUBSTRING) && !k.contains(SHORT_SUBSTRING)
-                            })
-                            .filter_map(|(region, value)| {
-                                Some((
-                                    icu::locale::subtags::Region::try_from_str(region)
-                                        .ok()
-                                        .filter(|r| primary_zones_values.contains(r))?
-                                        .into_tinystr()
-                                        .to_unvalidated(),
-                                    value.as_str(),
-                                ))
-                            })
-                            .collect()
-                    })
-                    .unwrap_or_default(),
-            }),
-        })
-    }
-}
-
-impl DataProvider<PrimaryZonesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PrimaryZonesV1Marker>, DataError> {
-        self.check_req::<PrimaryZonesV1Marker>(req)?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(PrimaryZonesV1(
-                self.compute_primary_zones()?.iter().collect(),
             )),
         })
     }
