@@ -7,7 +7,8 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength,
+    NeoTimeComponents,
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
@@ -200,6 +201,12 @@ impl SourceDataProvider {
                     .iter()
                     .copied()
                     .map(NeoDateComponents::id_str)
+                    .chain(
+                        NeoCalendarPeriodComponents::VALUES
+                            .iter()
+                            .copied()
+                            .map(NeoCalendarPeriodComponents::id_str),
+                    )
                     .chain(NeoComponents::attributes_with_overrides().iter().copied())
                     .map(move |attrs| {
                         DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
@@ -261,13 +268,6 @@ fn gen_date_components(
     neo_components: &NeoComponents,
     date_lengths_v1: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
-    let (date_components, time_components) = match neo_components {
-        NeoComponents::Date(date_components) => (*date_components, None),
-        NeoComponents::DateTime(date_components, time_components) => {
-            (*date_components, Some(*time_components))
-        }
-        _ => unreachable!("available attributes only Date or DateTime"),
-    };
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
     //
@@ -279,13 +279,16 @@ fn gen_date_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    if matches!(date_components, NeoDateComponents::Auto) {
+    if matches!(neo_components, NeoComponents::Date(NeoDateComponents::Auto)) {
         return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
             length.to_date_style(),
         ));
     }
     if length == NeoSkeletonLength::Long
-        && matches!(date_components, NeoDateComponents::AutoWeekday)
+        && matches!(
+            neo_components,
+            NeoComponents::Date(NeoDateComponents::AutoWeekday)
+        )
     {
         return DateTimeFormatterOptions::Length(length::Bag::from_date_style(length::Date::Full));
     }
@@ -297,14 +300,14 @@ fn gen_date_components(
     };
     let date_bag = components::Bag::from(date_pattern);
     let mut filtered_components = components::Bag::empty();
-    if date_components.has_year() {
+    if neo_components.has_year() {
         filtered_components.era = date_bag.era;
         filtered_components.year = date_bag.year;
     }
-    if date_components.has_month() {
+    if neo_components.has_month() {
         filtered_components.month = date_bag.month;
     }
-    if date_components.has_month() && !date_components.has_year() && !date_components.has_day() {
+    if neo_components.has_month() && !neo_components.has_year() && !neo_components.has_day() {
         // standalone month: use the skeleton length
         filtered_components.month = match length {
             NeoSkeletonLength::Long => Some(components::Month::Long),
@@ -313,14 +316,14 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if date_components.has_day() {
+    if neo_components.has_day() {
         filtered_components.day = date_bag.day;
     }
-    if date_components.has_day() && !date_components.has_month() {
+    if neo_components.has_day() && !neo_components.has_month() {
         // override the day field to use the skeleton day length
         filtered_components.day = Some(components::Day::NumericDayOfMonth);
     }
-    if date_components.has_weekday() {
+    if neo_components.has_weekday() {
         // Not all length patterns have the weekday
         filtered_components.weekday = match length {
             NeoSkeletonLength::Long => Some(components::Text::Long),
@@ -329,16 +332,14 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if let Some(time_components) = time_components {
-        if time_components.has_hour() {
-            filtered_components.hour = Some(components::Numeric::Numeric);
-        }
-        if time_components.has_minute() {
-            filtered_components.minute = Some(components::Numeric::Numeric);
-        }
-        if time_components.has_second() {
-            filtered_components.second = Some(components::Numeric::Numeric);
-        }
+    if neo_components.has_hour() {
+        filtered_components.hour = Some(components::Numeric::Numeric);
+    }
+    if neo_components.has_minute() {
+        filtered_components.minute = Some(components::Numeric::Numeric);
+    }
+    if neo_components.has_second() {
+        filtered_components.second = Some(components::Numeric::Numeric);
     }
     DateTimeFormatterOptions::Components(filtered_components)
 }
@@ -371,9 +372,14 @@ macro_rules! impl_neo_skeleton_datagen {
                     req,
                     Either::Left(&value!($calendar)),
                     |id_str| {
-                        NeoComponents::from_id_str(id_str).or_else(|| {
-                            NeoDateComponents::from_id_str(id_str).map(NeoComponents::Date)
-                        })
+                        NeoComponents::from_id_str(id_str)
+                            .or_else(|| {
+                                NeoDateComponents::from_id_str(id_str).map(NeoComponents::Date)
+                            })
+                            .or_else(|| {
+                                NeoCalendarPeriodComponents::from_id_str(id_str)
+                                    .map(NeoComponents::CalendarPeriod)
+                            })
                     },
                     gen_date_components,
                 )

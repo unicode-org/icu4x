@@ -841,6 +841,108 @@ impl NeoComponents {
             _ => None,
         }
     }
+
+    /// Whether this field set contains the year.
+    pub fn has_year(self) -> bool {
+        match self {
+            NeoComponents::Date(date_components) => date_components.has_year(),
+            NeoComponents::CalendarPeriod(calendar_period_components) => {
+                calendar_period_components.has_year()
+            }
+            NeoComponents::Time(_) => todo!(),
+            NeoComponents::Zone(_) => todo!(),
+            NeoComponents::DateTime(date_components, _) => date_components.has_year(),
+            NeoComponents::DateZone(date_components, _) => date_components.has_year(),
+            NeoComponents::TimeZone(_, _) => todo!(),
+            NeoComponents::DateTimeZone(date_components, _, _) => date_components.has_year(),
+        }
+    }
+
+    /// Whether this field set contains the month.
+    pub fn has_month(self) -> bool {
+        match self {
+            NeoComponents::Date(date_components) => date_components.has_month(),
+            NeoComponents::CalendarPeriod(calendar_period_components) => {
+                calendar_period_components.has_month()
+            }
+            NeoComponents::Time(_) => todo!(),
+            NeoComponents::Zone(_) => todo!(),
+            NeoComponents::DateTime(date_components, _) => date_components.has_month(),
+            NeoComponents::DateZone(date_components, _) => date_components.has_month(),
+            NeoComponents::TimeZone(_, _) => todo!(),
+            NeoComponents::DateTimeZone(date_components, _, _) => date_components.has_month(),
+        }
+    }
+
+    /// Whether this field set contains the day of the month.
+    pub fn has_day(self) -> bool {
+        match self {
+            NeoComponents::Date(date_components) => date_components.has_day(),
+            NeoComponents::CalendarPeriod(_) => false,
+            NeoComponents::Time(_) => todo!(),
+            NeoComponents::Zone(_) => todo!(),
+            NeoComponents::DateTime(date_components, _) => date_components.has_day(),
+            NeoComponents::DateZone(date_components, _) => date_components.has_day(),
+            NeoComponents::TimeZone(_, _) => todo!(),
+            NeoComponents::DateTimeZone(date_components, _, _) => date_components.has_day(),
+        }
+    }
+
+    /// Whether this field set contains the weekday.
+    pub fn has_weekday(self) -> bool {
+        match self {
+            NeoComponents::Date(date_components) => date_components.has_weekday(),
+            NeoComponents::CalendarPeriod(_) => false,
+            NeoComponents::Time(_) => todo!(),
+            NeoComponents::Zone(_) => todo!(),
+            NeoComponents::DateTime(date_components, _) => date_components.has_weekday(),
+            NeoComponents::DateZone(date_components, _) => date_components.has_weekday(),
+            NeoComponents::TimeZone(_, _) => todo!(),
+            NeoComponents::DateTimeZone(date_components, _, _) => date_components.has_weekday(),
+        }
+    }
+
+    /// Whether this field set contains the hour.
+    pub fn has_hour(self) -> bool {
+        match self {
+            NeoComponents::Date(_) => false,
+            NeoComponents::CalendarPeriod(_) => false,
+            NeoComponents::Time(time_components) => time_components.has_hour(),
+            NeoComponents::Zone(_) => false,
+            NeoComponents::DateTime(_, time_components) => time_components.has_hour(),
+            NeoComponents::DateZone(_, _) => false,
+            NeoComponents::TimeZone(time_components, _) => time_components.has_hour(),
+            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_hour(),
+        }
+    }
+
+    /// Whether this field set contains the minute.
+    pub fn has_minute(self) -> bool {
+        match self {
+            NeoComponents::Date(_) => false,
+            NeoComponents::CalendarPeriod(_) => false,
+            NeoComponents::Time(time_components) => time_components.has_minute(),
+            NeoComponents::Zone(_) => false,
+            NeoComponents::DateTime(_, time_components) => time_components.has_minute(),
+            NeoComponents::DateZone(_, _) => false,
+            NeoComponents::TimeZone(time_components, _) => time_components.has_minute(),
+            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_minute(),
+        }
+    }
+
+    /// Whether this field set contains the second.
+    pub fn has_second(self) -> bool {
+        match self {
+            NeoComponents::Date(_) => false,
+            NeoComponents::CalendarPeriod(_) => false,
+            NeoComponents::Time(time_components) => time_components.has_second(),
+            NeoComponents::Zone(_) => false,
+            NeoComponents::DateTime(_, time_components) => time_components.has_second(),
+            NeoComponents::DateZone(_, _) => false,
+            NeoComponents::TimeZone(time_components, _) => time_components.has_second(),
+            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_second(),
+        }
+    }
 }
 
 /// Specification of the time zone display style.
