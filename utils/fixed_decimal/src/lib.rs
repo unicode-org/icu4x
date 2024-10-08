@@ -57,6 +57,7 @@ mod integer;
 mod ops;
 mod scientific;
 mod uint_iterator;
+mod variations;
 
 #[cfg(feature = "ryu")]
 pub use decimal::FloatPrecision;
