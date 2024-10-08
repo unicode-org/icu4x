@@ -1043,16 +1043,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///     .include_time_zone_exemplar_city_names()
     ///     .unwrap();
     ///
-    /// // Create a pattern with symbol `VVV`:
-    /// let pattern_str = "'Your time zone is:' VVV";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&zone_london_winter),
-    ///     "Your time zone is: London",
-    /// );
-    ///
-    /// // Now try `VVVV`:
+    /// // Try `VVVV`:
     /// let pattern_str = "'Your time zone is:' VVVV";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
@@ -2113,9 +2104,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )?;
                             self.load_time_zone_primaries(zone_primaries_provider)?;
                         }
-                        // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
-                        ResolvedNeoTimeZoneSkeleton::City
-                        | ResolvedNeoTimeZoneSkeleton::Location => {
+                        // 'VVVV' (note: `V..VV` are for identifiers only)
+                        ResolvedNeoTimeZoneSkeleton::Location => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,

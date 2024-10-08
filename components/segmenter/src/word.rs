@@ -11,15 +11,16 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
 /// Options to tailor word breaking behavior.
 #[non_exhaustive]
-#[derive(Clone, PartialEq, Eq, Debug, Default)]
-pub struct WordBreakOptions {
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct WordBreakOptions<'a> {
     /// Content locale for word segmenter
-    pub content_locale: Option<DataLocale>,
+    pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
@@ -280,6 +281,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {
@@ -405,6 +407,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {
@@ -522,6 +525,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {

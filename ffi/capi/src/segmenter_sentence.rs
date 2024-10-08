@@ -164,10 +164,10 @@ pub mod ffi {
     }
 }
 
-impl From<&crate::locale_core::ffi::Locale> for icu_segmenter::SentenceBreakOptions {
-    fn from(other: &crate::locale_core::ffi::Locale) -> Self {
+impl<'a> From<&'a crate::locale_core::ffi::Locale> for icu_segmenter::SentenceBreakOptions<'a> {
+    fn from(other: &'a crate::locale_core::ffi::Locale) -> Self {
         let mut options = icu_segmenter::SentenceBreakOptions::default();
-        options.content_locale = Some(other.to_datalocale());
+        options.content_locale = Some(&other.0.id);
         options
     }
 }
