@@ -1015,7 +1015,7 @@
     ]
   },
   {
-    "locale": "en",
+    "locale": "fr",
     "datetime": "2021-07-11T12:00:00.000[Etc/Unknown]",
     "expectations": [
       {
@@ -1024,11 +1024,7 @@
           "zz",
           "zzz",
           "zzzz",
-          "Z",
-          "ZZ",
-          "ZZZ",
           "ZZZZ",
-          "ZZZZZ",
           "O",
           "OOOO",
           "v",
@@ -1036,12 +1032,21 @@
           "VVVV"
         ],
         "configs": [],
-        "expected": ["{GMT+?}"]
+        "expected": ["UTC+{O}"]
+      },
+      {
+        "patterns": [
+          "ZZ",
+          "ZZZ",
+          "ZZZZZ"
+        ],
+        "configs": [],
+        "expected": ["{X}"]
       }
     ]
   },
   {
-    "locale": "en",
+    "locale": "fr",
     "datetime": "2021-07-11T12:00:00.000",
     "expectations": [
       {
@@ -1050,11 +1055,7 @@
           "zz",
           "zzz",
           "zzzz",
-          "Z",
-          "ZZ",
-          "ZZZ",
           "ZZZZ",
-          "ZZZZZ",
           "O",
           "OOOO",
           "v",
@@ -1062,7 +1063,17 @@
           "VVVV"
         ],
         "configs": [],
-        "expected": ["{GMT+?}"]
+        "expected": ["UTC+{O}"]
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ",
+          "ZZZZZ"
+        ],
+        "configs": [],
+        "expected": ["{X}"]
       }
     ]
   }

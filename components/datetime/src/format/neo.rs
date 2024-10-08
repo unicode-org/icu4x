@@ -380,11 +380,11 @@ size_test!(
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but the `TypedDateTimeNames` is configured to format only time zones!
-/// // Further, the time zone we provide doesn't contain any offset into!
+/// // Further, the time zone we provide doesn't contain any offset info!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {X}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -396,7 +396,8 @@ size_test!(
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
 ///         (42, 45, Part::ERROR), // {a}
-///         (46, 53, Part::ERROR), // {GMT+?}
+///         (46, 49, Part::ERROR), // {X}, missing zone names
+///         (46, 49, Part::ERROR), // {X}, missing offset
 ///     ]
 /// );
 /// ```

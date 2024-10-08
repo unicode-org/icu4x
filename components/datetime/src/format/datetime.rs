@@ -11,11 +11,7 @@ use crate::provider::date_time::{
     DateSymbols, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::time_zone::{
-    FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
-    TimeZoneFormatterUnit,
-};
-use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -25,7 +21,6 @@ use icu_calendar::types::{
 use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
-use icu_timezone::UtcOffset;
 use writeable::{Part, Writeable};
 
 /// Apply length to input number and write to result using fixed_decimal_format.
@@ -119,19 +114,6 @@ where
     for item in pattern_items {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
-            PatternItem::Field(Field {
-                symbol: fields::FieldSymbol::TimeZone(time_zone_field),
-                length,
-            }) => {
-                r = r.and(try_write_zone(
-                    time_zone_field,
-                    length,
-                    input,
-                    zone_symbols,
-                    fixed_decimal_format,
-                    w,
-                )?)
-            }
             PatternItem::Field(field) => {
                 r = r.and(try_write_field(
                     field,
@@ -139,6 +121,7 @@ where
                     input,
                     date_symbols,
                     time_symbols,
+                    zone_symbols,
                     week_data,
                     fixed_decimal_format,
                     w,
@@ -212,12 +195,13 @@ pub enum DateTimeWriteError {
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_field<'data, W, DS, TS>(
+pub(crate) fn try_write_field<'data, W, DS, TS, ZS>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
+    zone_symbols: Option<&ZS>,
     week_data: Option<&WeekCalculator>,
     fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
@@ -226,6 +210,7 @@ where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
+    ZS: ZoneSymbols<'data>,
 {
     // Writes an error string for the given symbol
     fn write_value_missing(
@@ -592,9 +577,23 @@ where
                 }
             }
         },
-        (FieldSymbol::TimeZone(_), _) => {
-            debug_assert!(false, "unreachable: time zone formatted in its own fn");
-            Err(DateTimeWriteError::UnsupportedField(field))
+        (FieldSymbol::TimeZone(symbol), length) => {
+            let Some(resolved_field) = ResolvedNeoTimeZoneSkeleton::from_field(symbol, length)
+            else {
+                w.with_part(Part::ERROR, |w| {
+                    w.write_str("{unsupported:")?;
+                    w.write_char(char::from(field.symbol))?;
+                    w.write_str("}")
+                })?;
+                return Ok(Err(DateTimeWriteError::UnsupportedField(field)));
+            };
+
+            resolved_field.format(
+                w,
+                input,
+                zone_symbols.map(|zs| zs.get_payloads()).unwrap_or_default(),
+                fdf,
+            )?
         }
         (FieldSymbol::Day(_) | FieldSymbol::Second(Second::Millisecond), _) => {
             w.with_part(Part::ERROR, |w| {
@@ -647,264 +646,6 @@ impl ExtractedInput {
         };
         Ok((year, icu_calendar::types::WeekOfYear(week_of.week as u32)))
     }
-}
-
-// #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_zone<'data, W, ZS>(
-    field_symbol: fields::TimeZone,
-    field_length: FieldLength,
-    input: &ExtractedInput,
-    zone_symbols: Option<&ZS>,
-    fdf: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
-where
-    W: writeable::PartsWrite + ?Sized,
-    ZS: ZoneSymbols<'data>,
-{
-    fn write_time_zone_missing(
-        offset: Option<UtcOffset>,
-        w: &mut (impl writeable::PartsWrite + ?Sized),
-    ) -> fmt::Result {
-        match offset {
-            Some(offset) => w.with_part(Part::ERROR, |w| {
-                Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }
-                .format_infallible(w, offset)
-            }),
-            None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
-        }
-    }
-
-    // for errors only:
-    let field = Field {
-        symbol: FieldSymbol::TimeZone(field_symbol),
-        length: field_length,
-    };
-
-    // TODO: Implement proper formatting logic here
-    Ok(match zone_symbols {
-        None => {
-            write_time_zone_missing(input.offset, w)?;
-            Err(DateTimeWriteError::MissingZoneSymbols)
-        }
-        Some(zs) => match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
-            None => {
-                write_time_zone_missing(input.offset, w)?;
-                Err(DateTimeWriteError::UnsupportedField(field))
-            }
-            Some(time_zone) => {
-                let payloads = zs.get_payloads();
-                let units = select_zone_units(time_zone);
-                match do_write_zone(units, input, payloads, fdf, w)? {
-                    Ok(()) => Ok(()),
-                    Err(()) => {
-                        write_time_zone_missing(input.offset, w)?;
-                        // Return an error since offset data was missing
-                        Err(DateTimeWriteError::MissingZoneSymbols)
-                    }
-                }
-            }
-        },
-    })
-}
-
-/// Given a [`ResolvedNeoTimeZoneSkeleton`], select the formatter units
-fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZoneFormatterUnit>; 3] {
-    match time_zone {
-        // `z..zzz`
-        ResolvedNeoTimeZoneSkeleton::SpecificShort => [
-            Some(TimeZoneFormatterUnit::SpecificNonLocationShort),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
-            None,
-        ],
-        // `zzzz`
-        ResolvedNeoTimeZoneSkeleton::SpecificLong => [
-            Some(TimeZoneFormatterUnit::SpecificNonLocationLong),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-            None,
-        ],
-        // 'v'
-        ResolvedNeoTimeZoneSkeleton::GenericShort => [
-            Some(TimeZoneFormatterUnit::GenericNonLocationShort),
-            Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
-        ],
-        // 'vvvv'
-        ResolvedNeoTimeZoneSkeleton::GenericLong => [
-            Some(TimeZoneFormatterUnit::GenericNonLocationLong),
-            Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-        ],
-        // 'VVVV'
-        ResolvedNeoTimeZoneSkeleton::Location => [
-            Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-            None,
-        ],
-        // `O`, `ZZZZ`
-        ResolvedNeoTimeZoneSkeleton::OffsetShort => [
-            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
-            None,
-            None,
-        ],
-        // `OOOO`
-        ResolvedNeoTimeZoneSkeleton::OffsetLong => {
-            [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
-        }
-        // 'V'
-        ResolvedNeoTimeZoneSkeleton::Bcp47Id => [
-            Some(TimeZoneFormatterUnit::Bcp47Id),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-            None,
-        ],
-        // 'X'
-        ResolvedNeoTimeZoneSkeleton::IsoX => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::UtcBasic,
-                minutes: IsoMinutes::Optional,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'XX'
-        ResolvedNeoTimeZoneSkeleton::IsoXX => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::UtcBasic,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'XXX'
-        ResolvedNeoTimeZoneSkeleton::IsoXXX => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::UtcExtended,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'XXXX'
-        ResolvedNeoTimeZoneSkeleton::IsoXXXX => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::UtcBasic,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
-            })),
-            None,
-            None,
-        ],
-        // 'XXXXX', 'ZZZZZ'
-        ResolvedNeoTimeZoneSkeleton::IsoXXXXX => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::UtcExtended,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
-            })),
-            None,
-            None,
-        ],
-        // 'x'
-        ResolvedNeoTimeZoneSkeleton::Isox => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::Basic,
-                minutes: IsoMinutes::Optional,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'xx'
-        ResolvedNeoTimeZoneSkeleton::Isoxx => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::Basic,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'xxx'
-        ResolvedNeoTimeZoneSkeleton::Isoxxx => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::Extended,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
-            })),
-            None,
-            None,
-        ],
-        // 'xxxx', 'Z', 'ZZ', 'ZZZ'
-        ResolvedNeoTimeZoneSkeleton::Isoxxxx => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::Basic,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
-            })),
-            None,
-            None,
-        ],
-        // 'xxxxx', 'ZZZZZ'
-        ResolvedNeoTimeZoneSkeleton::Isoxxxxx => [
-            Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                format: IsoFormat::Extended,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
-            })),
-            None,
-            None,
-        ],
-    }
-}
-
-/// Perform the formatting given all of the resolved parameters
-fn do_write_zone<W>(
-    units: [Option<TimeZoneFormatterUnit>; 3],
-    input: &ExtractedInput,
-    payloads: TimeZoneDataPayloadsBorrowed,
-    fdf: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), ()>, fmt::Error>
-where
-    W: writeable::PartsWrite + ?Sized,
-{
-    for formatter in units.into_iter().flatten() {
-        match formatter.format(w, input, payloads, fdf)? {
-            Err(FormatTimeZoneError::MissingInputField(_)) => {
-                // The time zone input doesn't have the fields for this formatter.
-                // TODO: What behavior makes the most sense here?
-                // We can keep trying other formatters.
-                continue;
-            }
-            Err(FormatTimeZoneError::NameNotFound) => {
-                // Expected common case: data is loaded, but this time zone's
-                // name was not found in the data.
-                continue;
-            }
-            Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                // We don't have the necessary data for this formatter.
-                // TODO: What behavior makes the most sense here?
-                // We can keep trying other formatters.
-                continue;
-            }
-            Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
-                // We don't have the necessary data for this formatter.
-                // TODO: What behavior makes the most sense here?
-                // We can keep trying other formatters.
-                continue;
-            }
-            Ok(()) => return Ok(Ok(())),
-        }
-    }
-
-    Ok(Err(()))
 }
 
 #[cfg(test)]

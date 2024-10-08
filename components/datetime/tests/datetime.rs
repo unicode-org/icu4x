@@ -503,7 +503,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     .unwrap();
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
-        "{GMT+?}",
+        "GMT+{O}",
         Err(DateTimeWriteError::MissingZoneSymbols)
     );
 }
@@ -541,8 +541,13 @@ fn test_time_zone_patterns() {
                         .include_for_pattern(&parsed_pattern)
                         .unwrap()
                         .format(&zoned_datetime);
-                    let expected_result = if expect.starts_with('{') {
-                        Err(DateTimeWriteError::MissingZoneSymbols)
+                    let expected_result = if expect.contains("{") {
+                        Err(match pattern_input.as_str() {
+                            "v" | "vvvv" => DateTimeWriteError::MissingInputField("metazone"),
+                            "VVVV" => DateTimeWriteError::MissingInputField("time_zone_id"),
+                            "ZZZZ" | "O" | "OOOO" => DateTimeWriteError::MissingZoneSymbols,
+                            _ => DateTimeWriteError::MissingInputField("zone_offset"),
+                        })
                     } else {
                         Ok(())
                     };
