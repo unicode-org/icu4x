@@ -525,6 +525,10 @@ fn test_time_zone_patterns() {
         } in &test.expectations
         {
             for pattern_input in patterns {
+                if pattern_input == "VVV" {
+                    // TODO(#5658): 'VVV' format not yet supported
+                    continue;
+                }
                 let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
                 for expect in expected.iter() {
                     println!(".");

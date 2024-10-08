@@ -20,7 +20,6 @@ use writeable::Writeable;
 /// All time zone styles that this crate can format
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ResolvedNeoTimeZoneSkeleton {
-    City,
     Location,
     GenericShort,
     GenericLong,
@@ -44,6 +43,7 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     IsoXXXXX,
     // TODO:
     // `VV` "America/Los_Angeles"
+    // `VVV` "Los Angeles"
     // Generic Partial Location: "Pacific Time (Los Angeles)"
 }
 
@@ -166,6 +166,7 @@ pub(super) enum TimeZoneFormatterUnit {
     LocalizedOffsetLong,
     LocalizedOffsetShort,
     Iso8601(Iso8601Format),
+    #[allow(dead_code)]
     ExemplarCity,
     Bcp47Id,
 }

@@ -57,7 +57,6 @@ macro_rules! time_zone_style_registry {
                 (GenericShort, LowerV, One), // 'v'
                 (GenericLong, LowerV, Wide), // 'vvvv'
                 (Bcp47Id, UpperV, One), // 'V'
-                (City, UpperV, Abbreviated), // 'VVV'
                 (Location, UpperV, Wide), // 'VVVV'
                 (Isoxxxx, UpperZ, One), // 'Z'
                 (IsoXXXXX, UpperZ, Narrow), // 'ZZZZZ'
