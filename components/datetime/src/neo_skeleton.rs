@@ -999,6 +999,13 @@ impl NeoTimeZoneStyle {
     }
 }
 
+impl NeoTimeZoneSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(length: NeoSkeletonLength, style: NeoTimeZoneStyle) -> Self {
+        Self { length, style }
+    }
+}
+
 /// A skeleton for formatting parts of a date (without time or time zone).
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
@@ -1030,28 +1037,14 @@ impl NeoDateSkeleton {
     /// Converts a [`length::Date`] to a [`NeoDateComponents`] and [`NeoSkeletonLength`].
     #[doc(hidden)] // the types involved in this mapping may change
     #[cfg(feature = "datagen")]
-    pub fn day_from_date_length(
-        date_length: length::Date,
-    ) -> (NeoDateComponents, NeoSkeletonLength) {
-        match date_length {
+    pub fn from_date_length(date_length: length::Date) -> NeoDateSkeleton {
+        let (components, length) = match date_length {
             length::Date::Full => (NeoDateComponents::AutoWeekday, NeoSkeletonLength::Long),
             length::Date::Long => (NeoDateComponents::Auto, NeoSkeletonLength::Long),
             length::Date::Medium => (NeoDateComponents::Auto, NeoSkeletonLength::Medium),
             length::Date::Short => (NeoDateComponents::Auto, NeoSkeletonLength::Short),
-        }
-    }
-
-    /// Converts a [`length::Date`] to a [`NeoDateSkeleton`].
-    #[doc(hidden)] // the types involved in this mapping may change
-    #[cfg(feature = "datagen")]
-    pub fn from_date_length(date_length: length::Date) -> Self {
-        let (date_components, length) = Self::day_from_date_length(date_length);
-        NeoDateSkeleton {
-            length,
-            components: date_components,
-            alignment: None,
-            year_style: None,
-        }
+        };
+        NeoDateSkeleton::for_length_and_components(length, components)
     }
 }
 
@@ -1133,12 +1126,11 @@ impl NeoDateTimeSkeleton {
     /// Creates a skeleton from its length and components.
     pub fn for_length_and_components(
         length: NeoSkeletonLength,
-        date: NeoDateComponents,
-        time: NeoTimeComponents,
+        components: NeoDateTimeComponents,
     ) -> Self {
         Self {
             length,
-            components: NeoDateTimeComponents::DateTime(date, time),
+            components,
             alignment: None,
             year_style: None,
             fractional_second_digits: None,
@@ -1203,6 +1195,19 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
     }
 }
 
+impl NeoSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(length: NeoSkeletonLength, components: NeoComponents) -> Self {
+        Self {
+            length,
+            components,
+            alignment: None,
+            year_style: None,
+            fractional_second_digits: None,
+        }
+    }
+}
+
 impl NeoDateTimeSkeleton {
     #[doc(hidden)] // mostly internal; maps from old API to new API
     #[cfg(feature = "datagen")]
@@ -1210,11 +1215,11 @@ impl NeoDateTimeSkeleton {
         date_length: crate::options::length::Date,
         time_length: crate::options::length::Time,
     ) -> Self {
-        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
         let time_components = NeoTimeComponents::from_time_length(time_length);
         NeoDateTimeSkeleton {
-            length,
-            components: NeoDateTimeComponents::DateTime(day_components, time_components),
+            length: date_skeleton.length,
+            components: NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
             alignment: None,
             year_style: None,
             fractional_second_digits: None,

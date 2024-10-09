@@ -14,7 +14,7 @@ use crate::neo_marker::{
     NeverField, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
-use crate::neo_skeleton::NeoDateTimeComponents;
+use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
     DateSymbols, GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
@@ -401,7 +401,7 @@ size_test!(
 /// );
 /// ```
 #[derive(Debug)]
-pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = NeoDateTimeComponents> {
+pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = NeoDateTimeSkeleton> {
     locale: DataLocale,
     inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,

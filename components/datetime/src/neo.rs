@@ -53,7 +53,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &ExternalLoaderAny(provider),
                 locale,
                 RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.into(),
+                skeleton.get_field(),
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -71,7 +71,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &ExternalLoaderBuffer(provider),
                 locale,
                 RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.into(),
+                skeleton.get_field(),
             )
         }
     };
@@ -542,7 +542,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.into(),
+            skeleton.get_field(),
         )
     }
 
@@ -587,7 +587,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.into(),
+            skeleton.get_field(),
         )
     }
 }
@@ -1166,7 +1166,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.into(),
+            skeleton.get_field(),
         )
     }
 
@@ -1266,7 +1266,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.into(),
+            skeleton.get_field(),
         )
     }
 }

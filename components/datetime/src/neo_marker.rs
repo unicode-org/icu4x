@@ -1737,9 +1737,7 @@ macro_rules! impl_marker_with_options {
             }
         }
         impl_get_field!($type, never);
-        $(
-            impl_get_field!($type, length, $alignment_yes);
-        )?
+        impl_get_field!($type, length, yes);
         $(
             impl_get_field!($type, alignment, $alignment_yes);
         )?
@@ -2750,13 +2748,19 @@ impl_zoneddatetime_marker!(
 );
 
 /// Trait for components that can be formatted at runtime.
-pub trait IsRuntimeComponents: private::Sealed + Into<NeoComponents> {}
+pub trait IsRuntimeComponents: private::Sealed + NeoGetField<NeoComponents> {}
 
-impl private::Sealed for NeoDateComponents {}
+impl NeoGetField<NeoComponents> for NeoDateSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.components.into()
+    }
+}
 
-impl IsRuntimeComponents for NeoDateComponents {}
+impl private::Sealed for NeoDateSkeleton {}
 
-impl DateTimeNamesMarker for NeoDateComponents {
+impl IsRuntimeComponents for NeoDateSkeleton {}
+
+impl DateTimeNamesMarker for NeoDateSkeleton {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
@@ -2769,7 +2773,7 @@ impl DateTimeNamesMarker for NeoDateComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
-impl DateInputMarkers for NeoDateComponents {
+impl DateInputMarkers for NeoDateSkeleton {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
@@ -2778,21 +2782,21 @@ impl DateInputMarkers for NeoDateComponents {
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
-impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoDateComponents {
+impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoDateSkeleton {
     type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl DateDataMarkers for NeoDateComponents {
+impl DateDataMarkers for NeoDateSkeleton {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, yes);
 }
 
-impl DateTimeMarkers for NeoDateComponents {
+impl DateTimeMarkers for NeoDateSkeleton {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
@@ -2808,11 +2812,17 @@ impl_get_field!(NeoDateSkeleton, length, yes);
 impl_get_field!(NeoDateSkeleton, alignment, yes);
 impl_get_field!(NeoDateSkeleton, year_style, yes);
 
-impl private::Sealed for NeoCalendarPeriodComponents {}
+impl private::Sealed for NeoCalendarPeriodSkeleton {}
 
-impl IsRuntimeComponents for NeoCalendarPeriodComponents {}
+impl NeoGetField<NeoComponents> for NeoCalendarPeriodSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.components.into()
+    }
+}
 
-impl DateTimeNamesMarker for NeoCalendarPeriodComponents {
+impl IsRuntimeComponents for NeoCalendarPeriodSkeleton {}
+
+impl DateTimeNamesMarker for NeoCalendarPeriodSkeleton {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
@@ -2825,7 +2835,7 @@ impl DateTimeNamesMarker for NeoCalendarPeriodComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
-impl DateInputMarkers for NeoCalendarPeriodComponents {
+impl DateInputMarkers for NeoCalendarPeriodSkeleton {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
@@ -2834,21 +2844,21 @@ impl DateInputMarkers for NeoCalendarPeriodComponents {
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
-impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoCalendarPeriodComponents {
+impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoCalendarPeriodSkeleton {
     type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
     type YearNamesV1Marker = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays,);
 }
 
-impl DateDataMarkers for NeoCalendarPeriodComponents {
+impl DateDataMarkers for NeoCalendarPeriodSkeleton {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays,);
 }
 
-impl DateTimeMarkers for NeoCalendarPeriodComponents {
+impl DateTimeMarkers for NeoCalendarPeriodSkeleton {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
@@ -2864,11 +2874,17 @@ impl_get_field!(NeoCalendarPeriodSkeleton, length, yes);
 impl_get_field!(NeoCalendarPeriodSkeleton, alignment, yes);
 impl_get_field!(NeoCalendarPeriodSkeleton, year_style, yes);
 
-impl private::Sealed for NeoTimeComponents {}
+impl private::Sealed for NeoTimeSkeleton {}
 
-impl IsRuntimeComponents for NeoTimeComponents {}
+impl NeoGetField<NeoComponents> for NeoTimeSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.components.into()
+    }
+}
 
-impl DateTimeNamesMarker for NeoTimeComponents {
+impl IsRuntimeComponents for NeoTimeSkeleton {}
+
+impl DateTimeNamesMarker for NeoTimeSkeleton {
     type YearNames = datetime_marker_helper!(@names/year,);
     type MonthNames = datetime_marker_helper!(@names/month,);
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
@@ -2881,7 +2897,7 @@ impl DateTimeNamesMarker for NeoTimeComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
-impl TimeMarkers for NeoTimeComponents {
+impl TimeMarkers for NeoTimeSkeleton {
     type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, yes);
     type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
     type HourInput = datetime_marker_helper!(@input/hour, yes);
@@ -2890,7 +2906,7 @@ impl TimeMarkers for NeoTimeComponents {
     type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
 }
 
-impl DateTimeMarkers for NeoTimeComponents {
+impl DateTimeMarkers for NeoTimeSkeleton {
     type D = NeoNeverMarker;
     type T = Self;
     type Z = NeoNeverMarker;
@@ -2906,11 +2922,17 @@ impl_get_field!(NeoTimeSkeleton, length, yes);
 impl_get_field!(NeoTimeSkeleton, alignment, yes);
 impl_get_field!(NeoTimeSkeleton, fractional_second_digits, yes);
 
-impl private::Sealed for NeoTimeZoneStyle {}
+impl private::Sealed for NeoTimeZoneSkeleton {}
 
-impl IsRuntimeComponents for NeoTimeZoneStyle {}
+impl NeoGetField<NeoComponents> for NeoTimeZoneSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.style.into()
+    }
+}
 
-impl DateTimeNamesMarker for NeoTimeZoneStyle {
+impl IsRuntimeComponents for NeoTimeZoneSkeleton {}
+
+impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type YearNames = datetime_marker_helper!(@names/year,);
     type MonthNames = datetime_marker_helper!(@names/month,);
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
@@ -2923,7 +2945,7 @@ impl DateTimeNamesMarker for NeoTimeZoneStyle {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
 }
 
-impl ZoneMarkers for NeoTimeZoneStyle {
+impl ZoneMarkers for NeoTimeZoneSkeleton {
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
@@ -2936,7 +2958,7 @@ impl ZoneMarkers for NeoTimeZoneStyle {
     type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, yes);
 }
 
-impl DateTimeMarkers for NeoTimeZoneStyle {
+impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
@@ -2950,11 +2972,17 @@ impl DateTimeMarkers for NeoTimeZoneStyle {
 impl_get_field!(NeoTimeZoneSkeleton, never);
 impl_get_field!(NeoTimeZoneSkeleton, length, yes);
 
-impl private::Sealed for NeoDateTimeComponents {}
+impl private::Sealed for NeoDateTimeSkeleton {}
 
-impl IsRuntimeComponents for NeoDateTimeComponents {}
+impl NeoGetField<NeoComponents> for NeoDateTimeSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.components.into()
+    }
+}
 
-impl DateTimeNamesMarker for NeoDateTimeComponents {
+impl IsRuntimeComponents for NeoDateTimeSkeleton {}
+
+impl DateTimeNamesMarker for NeoDateTimeSkeleton {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
@@ -2967,9 +2995,9 @@ impl DateTimeNamesMarker for NeoDateTimeComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
-impl DateTimeMarkers for NeoDateTimeComponents {
-    type D = NeoDateComponents;
-    type T = NeoTimeComponents;
+impl DateTimeMarkers for NeoDateTimeSkeleton {
+    type D = NeoDateSkeleton;
+    type T = NeoTimeSkeleton;
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
@@ -2984,11 +3012,17 @@ impl_get_field!(NeoDateTimeSkeleton, alignment, yes);
 impl_get_field!(NeoDateTimeSkeleton, year_style, yes);
 impl_get_field!(NeoDateTimeSkeleton, fractional_second_digits, yes);
 
-impl private::Sealed for NeoComponents {}
+impl private::Sealed for NeoSkeleton {}
 
-impl IsRuntimeComponents for NeoComponents {}
+impl NeoGetField<NeoComponents> for NeoSkeleton {
+    fn get_field(&self) -> NeoComponents {
+        self.components
+    }
+}
 
-impl DateTimeNamesMarker for NeoComponents {
+impl IsRuntimeComponents for NeoSkeleton {}
+
+impl DateTimeNamesMarker for NeoSkeleton {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
@@ -3001,9 +3035,9 @@ impl DateTimeNamesMarker for NeoComponents {
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
 }
 
-impl DateTimeMarkers for NeoComponents {
-    type D = NeoDateComponents;
-    type T = NeoTimeComponents;
+impl DateTimeMarkers for NeoSkeleton {
+    type D = NeoDateSkeleton;
+    type T = NeoTimeSkeleton;
     type Z = NeoTimeZoneSkeleton;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
