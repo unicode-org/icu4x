@@ -297,3 +297,17 @@ pub struct DataBlock {
     /// A series of [`UtLocalIndicator`] objects.
     pub ut_local_indicators: Vec<UtLocalIndicator>,
 }
+
+impl DataBlock {
+    /// Retrieves the timezone designation at index `idx`.
+    pub fn time_zone_designation(&self, mut idx: usize) -> Option<&str> {
+        self.time_zone_designations.iter().find_map(|d| {
+            if idx <= d.len() {
+                Some(&d[idx..])
+            } else {
+                idx -= d.len() + 1;
+                None
+            }
+        })
+    }
+}
