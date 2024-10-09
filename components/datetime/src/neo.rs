@@ -247,6 +247,7 @@ impl RawNeoOptions {
         FSet: NeoGetField<FSet::YearStyleOption>,
         FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
     {
+        // TODO: Return an error if there are more options than field set
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
