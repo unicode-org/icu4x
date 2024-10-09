@@ -4,7 +4,11 @@
 
 use super::*;
 use icu_locale_core::preferences::extensions::unicode::keywords;
-use icu_locale_core::{langid, subtags::subtag, LanguageIdentifier};
+use icu_locale_core::{
+    subtags::{language, region, subtag},
+    LanguageIdentifier,
+};
+use icu_provider::DataLocale;
 use tinystr::tinystr;
 
 struct DefaultPrefs {
@@ -14,14 +18,19 @@ struct DefaultPrefs {
 
 const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     und: DateTimeFormatResolvedPreferences {
-        lid: LanguageIdentifier::default(),
+        data_locale: DataLocale::default(),
         hour_cycle: keywords::HourCycle::H23,
         calendar: keywords::CalendarAlgorithm::Gregory,
         numbering_system: keywords::NumberingSystem(subtag!("latn")),
         date_pattern: DatePattern(tinystr!(8, "Y-m-d")),
     },
     list: &[DateTimeFormatResolvedPreferences {
-        lid: langid!("en-US"),
+        data_locale: {
+            let mut dl = DataLocale::default();
+            dl.language = language!("en");
+            dl.region = Some(region!("US"));
+            dl
+        },
         hour_cycle: keywords::HourCycle::H12,
         calendar: keywords::CalendarAlgorithm::Gregory,
         numbering_system: keywords::NumberingSystem(subtag!("latn")),
@@ -29,14 +38,11 @@ const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     }],
 };
 
-pub fn get_default_prefs(lid: &Option<LanguageIdentifier>) -> DateTimeFormatResolvedPreferences {
-    lid.as_ref()
-        .and_then(|lid| {
-            DEFAULT_PREFS
-                .list
-                .iter()
-                .find(|dtfrp| dtfrp.lid.language == lid.language)
-        })
+pub fn get_default_prefs(lid: &LanguageIdentifier) -> DateTimeFormatResolvedPreferences {
+    DEFAULT_PREFS
+        .list
+        .iter()
+        .find(|dtfrp| dtfrp.data_locale.language == lid.language)
         .cloned()
         .unwrap_or(DEFAULT_PREFS.und)
 }

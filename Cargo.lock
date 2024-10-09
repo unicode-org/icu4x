@@ -1224,7 +1224,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "getrandom",
- "icu",
  "icu_benchmark_macros",
  "icu_decimal_data",
  "icu_locale_core",
