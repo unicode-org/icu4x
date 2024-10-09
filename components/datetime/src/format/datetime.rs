@@ -586,114 +586,270 @@ where
             match ResolvedNeoTimeZoneSkeleton::from_field(symbol, length) {
                 // `z..zzz`
                 Some(ResolvedNeoTimeZoneSkeleton::SpecificShort) => {
-                    SpecificNonLocationFormat.format_short(w, input, payloads, fdf)?
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    let Some(metazone_id) = input.metazone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("metazone_id")));
+                    };
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    let Some(zone_variant) = input.zone_variant else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_variant")));
+                    };
+                    SpecificNonLocationFormat.format_short(
+                        w,
+                        time_zone_id,
+                        metazone_id,
+                        offset,
+                        zone_variant,
+                        payloads,
+                        fdf,
+                    )?
                 }
                 // `zzzz`
                 Some(ResolvedNeoTimeZoneSkeleton::SpecificLong) => {
-                    SpecificNonLocationFormat.format_long(w, input, payloads, fdf)?
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    let Some(metazone_id) = input.metazone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("metazone_id")));
+                    };
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    let Some(zone_variant) = input.zone_variant else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_variant")));
+                    };
+                    SpecificNonLocationFormat.format_long(
+                        w,
+                        time_zone_id,
+                        metazone_id,
+                        offset,
+                        zone_variant,
+                        payloads,
+                        fdf,
+                    )?
                 }
                 // 'v'
                 Some(ResolvedNeoTimeZoneSkeleton::GenericShort) => {
-                    GenericNonLocationFormat.format_short(w, input, payloads)?
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    let Some(metazone_id) = input.metazone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("metazone_id")));
+                    };
+                    GenericNonLocationFormat.format_short(w, time_zone_id, metazone_id, payloads)?
                 }
                 // 'vvvv'
                 Some(ResolvedNeoTimeZoneSkeleton::GenericLong) => {
-                    GenericNonLocationFormat.format_long(w, input, payloads)?
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    let Some(metazone_id) = input.metazone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("metazone_id")));
+                    };
+                    GenericNonLocationFormat.format_long(w, time_zone_id, metazone_id, payloads)?
                 }
                 // 'VVVV'
                 Some(ResolvedNeoTimeZoneSkeleton::Location) => {
-                    GenericLocationFormat.format(w, input, payloads)?
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    GenericLocationFormat.format(w, time_zone_id, payloads)?
                 }
                 // `O`, `ZZZZ`
-                Some(ResolvedNeoTimeZoneSkeleton::OffsetShort) => LocalizedOffsetFormat.format(
-                    w,
-                    input,
-                    payloads,
-                    fdf,
-                    Minutes::Optional,
-                    Seconds::Never,
-                )?,
+                Some(ResolvedNeoTimeZoneSkeleton::OffsetShort) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    LocalizedOffsetFormat.format(
+                        w,
+                        offset,
+                        payloads,
+                        fdf,
+                        Minutes::Optional,
+                        Seconds::Never,
+                    )?
+                }
                 // `OOOO`
-                Some(ResolvedNeoTimeZoneSkeleton::OffsetLong) => LocalizedOffsetFormat.format(
-                    w,
-                    input,
-                    payloads,
-                    fdf,
-                    Minutes::Required,
-                    Seconds::Never,
-                )?,
+                Some(ResolvedNeoTimeZoneSkeleton::OffsetLong) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    LocalizedOffsetFormat.format(
+                        w,
+                        offset,
+                        payloads,
+                        fdf,
+                        Minutes::Required,
+                        Seconds::Never,
+                    )?
+                }
                 // 'V'
-                Some(ResolvedNeoTimeZoneSkeleton::Bcp47Id) => Bcp47IdFormat.format(w, input)?,
+                Some(ResolvedNeoTimeZoneSkeleton::Bcp47Id) => {
+                    let Some(time_zone_id) = input.time_zone_id else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("time_zone_id")));
+                    };
+                    Bcp47IdFormat.format(w, time_zone_id)?
+                }
                 // 'X'
-                Some(ResolvedNeoTimeZoneSkeleton::IsoX) => Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: Minutes::Optional,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::IsoX) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::UtcBasic,
+                        minutes: Minutes::Optional,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'XX'
-                Some(ResolvedNeoTimeZoneSkeleton::IsoXX) => Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::IsoXX) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::UtcBasic,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'XXX'
-                Some(ResolvedNeoTimeZoneSkeleton::IsoXXX) => Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::IsoXXX) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::UtcExtended,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'XXXX'
-                Some(ResolvedNeoTimeZoneSkeleton::IsoXXXX) => Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Optional,
+                Some(ResolvedNeoTimeZoneSkeleton::IsoXXXX) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::UtcBasic,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Optional,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'XXXXX', 'ZZZZZ'
-                Some(ResolvedNeoTimeZoneSkeleton::IsoXXXXX) => Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Optional,
+                Some(ResolvedNeoTimeZoneSkeleton::IsoXXXXX) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::UtcExtended,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Optional,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'x'
-                Some(ResolvedNeoTimeZoneSkeleton::Isox) => Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: Minutes::Optional,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::Isox) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::Basic,
+                        minutes: Minutes::Optional,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'xx'
-                Some(ResolvedNeoTimeZoneSkeleton::Isoxx) => Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::Isoxx) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::Basic,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'xxx'
-                Some(ResolvedNeoTimeZoneSkeleton::Isoxxx) => Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Never,
+                Some(ResolvedNeoTimeZoneSkeleton::Isoxxx) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::Extended,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Never,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'xxxx', 'Z', 'ZZ', 'ZZZ'
-                Some(ResolvedNeoTimeZoneSkeleton::Isoxxxx) => Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Optional,
+                Some(ResolvedNeoTimeZoneSkeleton::Isoxxxx) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::Basic,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Optional,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 // 'xxxxx', 'ZZZZZ'
-                Some(ResolvedNeoTimeZoneSkeleton::Isoxxxxx) => Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: Minutes::Required,
-                    seconds: Seconds::Optional,
+                Some(ResolvedNeoTimeZoneSkeleton::Isoxxxxx) => {
+                    let Some(offset) = input.offset else {
+                        write_value_missing(w, field)?;
+                        return Ok(Err(DateTimeWriteError::MissingInputField("zone_offset")));
+                    };
+                    Iso8601Format {
+                        format: IsoFormat::Extended,
+                        minutes: Minutes::Required,
+                        seconds: Seconds::Optional,
+                    }
+                    .format(w, offset)?;
+                    Ok(())
                 }
-                .format(w, input)?,
                 None => {
                     w.with_part(Part::ERROR, |w| {
                         w.write_str("{unsupported:")?;

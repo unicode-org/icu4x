@@ -501,7 +501,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     .unwrap();
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
-        "{GMT+?}",
+        "{O}",
         Err(DateTimeWriteError::MissingInputField("zone_offset"))
     );
 }

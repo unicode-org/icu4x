@@ -934,7 +934,13 @@
         "patterns": [
           "z",
           "zz",
-          "zzz",
+          "zzz"
+        ],
+        "configs": [],
+        "expected": ["{z}"]
+      },
+      {
+        "patterns": [
           "ZZZZ",
           "O"
         ],
@@ -943,7 +949,6 @@
       },
       {
         "patterns": [
-          "zzzz",
           "OOOO"
         ],
         "configs": [],
@@ -985,6 +990,13 @@
           "z",
           "zz",
           "zzz",
+          "zzzz"
+        ],
+        "configs": [],
+        "expected": ["{z}"]
+      },
+      {
+        "patterns": [
           "ZZZZ",
           "O"
         ],
@@ -993,7 +1005,6 @@
       },
       {
         "patterns": [
-          "zzzz",
           "OOOO"
         ],
         "configs": [],
@@ -1018,7 +1029,13 @@
       {
         "patterns": [
           "v",
-          "vvvv",
+          "vvvv"
+        ],
+        "configs": [],
+        "expected": ["{v}"]
+      },
+      {
+        "patterns": [
           "VVVV"
         ],
         "configs": [],
@@ -1035,17 +1052,29 @@
           "z",
           "zz",
           "zzz",
-          "zzzz",
+          "zzzz"
+        ],
+        "configs": [],
+        "expected": ["{z}"]
+      },
+      {
+        "patterns": [
           "Z",
           "ZZ",
           "ZZZ",
           "ZZZZ",
-          "ZZZZZ",
+          "ZZZZZ"
+        ],
+        "configs": [],
+        "expected": ["{Z}"]
+      },
+      {
+        "patterns": [
           "O",
           "OOOO"
         ],
         "configs": [],
-        "expected": ["{GMT+?}"]
+        "expected": ["{O}"]
       },
       {
         "patterns": [
