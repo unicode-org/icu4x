@@ -62,7 +62,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00").ok().value();
+    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00");
     int32_t offset = time_zone->offset_seconds().value();
     if (offset != -18000) {
         std::cout << "GMT offset doesn't parse" << std::endl;
@@ -71,29 +71,29 @@ int main() {
     std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
-    time_zone->try_set_iana_time_zone_id(*mapper.get(), "america/chicago").ok().value();
-    std::string time_zone_id_return = time_zone->time_zone_id().value();
+    time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
+    std::string time_zone_id_return = time_zone->time_zone_id();
     if (time_zone_id_return != "uschi") {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
         return 1;
     }
-    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().ok().value();
+    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
     if (normalized_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
         return 1;
     }
-    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().ok().value();
+    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().value();
     if (canonicalied_iana_id != "Asia/Kolkata") {
         std::cout << "Time zone ID does not canonicalize: " << canonicalied_iana_id << std::endl;
         return 1;
     }
-    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").ok().value();
+    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").value();
     if (slow_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
         return 1;
     }
     std::unique_ptr<TimeZoneIdMapperWithFastCanonicalization> reverse_mapper = TimeZoneIdMapperWithFastCanonicalization::create(*dp.get()).ok().value();
-    std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").ok().value();
+    std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").value();
     if (fast_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;
         return 1;

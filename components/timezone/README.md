@@ -94,21 +94,20 @@ use icu::timezone::TimeZoneIdMapper;
 use tinystr::{tinystr, TinyAsciiStr};
 
 // Create a time zone for America/Chicago at UTC-6:
-let mut time_zone = CustomTimeZone::new_empty();
-time_zone.offset = "-0600".parse().ok();
+let mut time_zone = CustomTimeZone::new_with_offset("-0600".parse().unwrap());
 let mapper = TimeZoneIdMapper::new();
 time_zone.time_zone_id =
-    mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+    mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap_or(TimeZoneBcp47Id::unknown());
 
 // Alternatively, set it directly from the BCP-47 ID
-assert_eq!(time_zone.time_zone_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+assert_eq!(time_zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
 
 // Compute the metazone at January 1, 2022:
 let mzc = MetazoneCalculator::new();
 let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 time_zone.maybe_calculate_metazone(&mzc, &datetime);
 
-assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
+assert_eq!("amce", time_zone.metazone_id.unwrap().unwrap().0.as_str());
 ```
 
 <!-- cargo-rdme end -->

@@ -19,10 +19,9 @@
 
 
 
-typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {CustomTimeZone* ok; }; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
-icu4x_CustomTimeZone_from_string_mv1_result icu4x_CustomTimeZone_from_string_mv1(DiplomatStringView s);
+CustomTimeZone* icu4x_CustomTimeZone_from_string_mv1(DiplomatStringView s);
 
-CustomTimeZone* icu4x_CustomTimeZone_empty_mv1(void);
+CustomTimeZone* icu4x_CustomTimeZone_unknown_mv1(void);
 
 CustomTimeZone* icu4x_CustomTimeZone_utc_mv1(void);
 
@@ -51,21 +50,13 @@ icu4x_CustomTimeZone_offset_has_minutes_mv1_result icu4x_CustomTimeZone_offset_h
 typedef struct icu4x_CustomTimeZone_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_seconds_mv1_result;
 icu4x_CustomTimeZone_offset_has_seconds_mv1_result icu4x_CustomTimeZone_offset_has_seconds_mv1(const CustomTimeZone* self);
 
-typedef struct icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result;
-icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_time_zone_id_mv1(CustomTimeZone* self, DiplomatStringView id);
+void icu4x_CustomTimeZone_set_time_zone_id_mv1(CustomTimeZone* self, DiplomatStringView id);
 
-typedef struct icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result;
-icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(CustomTimeZone* self, const TimeZoneIdMapper* mapper, DiplomatStringView id);
+void icu4x_CustomTimeZone_set_iana_time_zone_id_mv1(CustomTimeZone* self, const TimeZoneIdMapper* mapper, DiplomatStringView id);
 
-void icu4x_CustomTimeZone_clear_time_zone_id_mv1(CustomTimeZone* self);
+void icu4x_CustomTimeZone_time_zone_id_mv1(const CustomTimeZone* self, DiplomatWrite* write);
 
-typedef struct icu4x_CustomTimeZone_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_time_zone_id_mv1_result;
-icu4x_CustomTimeZone_time_zone_id_mv1_result icu4x_CustomTimeZone_time_zone_id_mv1(const CustomTimeZone* self, DiplomatWrite* write);
-
-typedef struct icu4x_CustomTimeZone_try_set_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_metazone_id_mv1_result;
-icu4x_CustomTimeZone_try_set_metazone_id_mv1_result icu4x_CustomTimeZone_try_set_metazone_id_mv1(CustomTimeZone* self, DiplomatStringView id);
-
-void icu4x_CustomTimeZone_clear_metazone_id_mv1(CustomTimeZone* self);
+void icu4x_CustomTimeZone_set_metazone_id_mv1(CustomTimeZone* self, DiplomatStringView id);
 
 typedef struct icu4x_CustomTimeZone_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_metazone_id_mv1_result;
 icu4x_CustomTimeZone_metazone_id_mv1_result icu4x_CustomTimeZone_metazone_id_mv1(const CustomTimeZone* self, DiplomatWrite* write);

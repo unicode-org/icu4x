@@ -2,9 +2,7 @@
 import type { IsoDateTime } from "./IsoDateTime"
 import type { MetazoneCalculator } from "./MetazoneCalculator"
 import type { TimeZoneIdMapper } from "./TimeZoneIdMapper"
-import type { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
-import type { TimeZoneUnknownError } from "./TimeZoneUnknownError"
 import type { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -18,7 +16,7 @@ export class CustomTimeZone {
 
     static fromString(s: string): CustomTimeZone;
 
-    static empty(): CustomTimeZone;
+    static unknown(): CustomTimeZone;
 
     static utc(): CustomTimeZone;
 
@@ -40,17 +38,13 @@ export class CustomTimeZone {
 
     get offsetHasSeconds(): boolean | null;
 
-    trySetTimeZoneId(id: string): void;
+    setTimeZoneId(id: string): void;
 
-    trySetIanaTimeZoneId(mapper: TimeZoneIdMapper, id: string): void;
+    setIanaTimeZoneId(mapper: TimeZoneIdMapper, id: string): void;
 
-    clearTimeZoneId(): void;
+    get timeZoneId(): string;
 
-    get timeZoneId(): string | null;
-
-    trySetMetazoneId(id: string): void;
-
-    clearMetazoneId(): void;
+    setMetazoneId(id: string): void;
 
     get metazoneId(): string | null;
 

@@ -283,11 +283,12 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names
-            .overrides
-            .get(&time_zone_id)
-            .or_else(|| names.defaults.get(&metazone_id))
-        else {
+        let Some(name) = metazone_id.and_then(|mz| {
+            names
+                .overrides
+                .get(&time_zone_id)
+                .or_else(|| names.defaults.get(&mz))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -321,11 +322,12 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names
-            .overrides
-            .get(&time_zone_id)
-            .or_else(|| names.defaults.get(&metazone_id))
-        else {
+        let Some(name) = metazone_id.and_then(|mz| {
+            names
+                .overrides
+                .get(&time_zone_id)
+                .or_else(|| names.defaults.get(&mz))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -362,11 +364,12 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names
-            .overrides
-            .get_2d(&time_zone_id, &zone_variant)
-            .or_else(|| names.defaults.get_2d(&metazone_id, &zone_variant))
-        else {
+        let Some(name) = metazone_id.and_then(|mz| {
+            names
+                .overrides
+                .get_2d(&time_zone_id, &zone_variant)
+                .or_else(|| names.defaults.get_2d(&mz, &zone_variant))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -403,11 +406,12 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names
-            .overrides
-            .get_2d(&time_zone_id, &zone_variant)
-            .or_else(|| names.defaults.get_2d(&metazone_id, &zone_variant))
-        else {
+        let Some(name) = metazone_id.and_then(|mz| {
+            names
+                .overrides
+                .get_2d(&time_zone_id, &zone_variant)
+                .or_else(|| names.defaults.get_2d(&mz, &zone_variant))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -599,9 +603,15 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
-        };
+        let location = exemplar_cities
+            .0
+            .get(&time_zone_id)
+            .or_else(|| {
+                exemplar_cities
+                    .0
+                    .get(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
+            })
+            .unwrap_or("Unknown");
 
         essentials
             .region_format
@@ -704,11 +714,12 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
         let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
-        let Some(non_location) = non_locations
-            .overrides
-            .get(&time_zone_id)
-            .or_else(|| non_locations.defaults.get(&metazone_id))
-        else {
+        let Some(non_location) = metazone_id.and_then(|mz| {
+            non_locations
+                .overrides
+                .get(&time_zone_id)
+                .or_else(|| non_locations.defaults.get(&mz))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -755,11 +766,12 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
         let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
-        let Some(non_location) = non_locations
-            .overrides
-            .get(&time_zone_id)
-            .or_else(|| non_locations.defaults.get(&metazone_id))
-        else {
+        let Some(non_location) = metazone_id.and_then(|mz| {
+            non_locations
+                .overrides
+                .get(&time_zone_id)
+                .or_else(|| non_locations.defaults.get(&mz))
+        }) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 

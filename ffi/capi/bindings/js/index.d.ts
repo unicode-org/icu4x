@@ -10,11 +10,7 @@ export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
-
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
-
-export { TimeZoneUnknownError } from "./TimeZoneUnknownError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
