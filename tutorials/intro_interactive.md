@@ -165,7 +165,7 @@ let iso_date = get_current_date();
 
 // Create and use an ICU4X date formatter:
 let date_formatter =
-    NeoFormatter::<NeoAutoDateMarker>::try_new(&(&locale).into(), NeoSkeletonLength::Medium.into())
+    NeoFormatter::try_new(&(&locale).into(), NeoSkeletonLength::Medium.into())
         .expect("should have data for specified locale");
 println!(
     "Date: {}",

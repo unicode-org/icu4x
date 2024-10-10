@@ -1406,7 +1406,7 @@ where
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
+    /// let formatter = NeoFormatter::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -1429,7 +1429,7 @@ where
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
+    /// let formatter = NeoFormatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )
@@ -1480,7 +1480,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
+    /// let formatter = NeoFormatter::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -1503,7 +1503,7 @@ where
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
+    /// let formatter = NeoFormatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )

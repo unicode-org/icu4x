@@ -2584,7 +2584,7 @@ impl_zone_marker!(
     ///     NeoTimeZoneSpecificShortMarker,
     /// >;
     ///
-    /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
+    /// let fmt = NeoFormatter::try_new(
     ///     &locale!("en-US").into(),
     ///     MyDateTimeZoneSet::with_length(NeoSkeletonLength::Long),
     /// )
@@ -2700,7 +2700,7 @@ impl_zone_marker!(
     ///     NeoTimeZoneGenericShortMarker,
     /// >;
     ///
-    /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
+    /// let fmt = NeoFormatter::try_new(
     ///     &locale!("en-US").into(),
     ///     MyDateTimeZoneSet::with_length(NeoSkeletonLength::Long),
     /// )

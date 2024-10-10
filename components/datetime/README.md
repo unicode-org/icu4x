@@ -36,7 +36,7 @@ use writeable::assert_try_writeable_eq;
 
 // You can work with a formatter that can select the calendar at runtime:
 let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-let dtf = NeoFormatter::<NeoYearMonthDayHourMinuteMarker>::try_new(
+let dtf = NeoFormatter::try_new(
     &locale.into(),
     NeoSkeletonLength::Medium.into()
 )

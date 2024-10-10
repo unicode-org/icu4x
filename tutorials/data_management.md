@@ -109,7 +109,7 @@ impl_data_provider!(MyDataProvider);
 fn main() {
     let baked_provider = MyDataProvider;
 
-    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
+    let dtf = NeoFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("ja data should be available");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
@@ -171,7 +171,7 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
+    let dtf = NeoFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("blob should contain required markers and `ja` data");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
