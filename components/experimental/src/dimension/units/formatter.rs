@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
@@ -152,7 +152,10 @@ impl UnitsFormatter {
     }
 
     /// Formats a [`FixedDecimal`] value for the given unit.
-    pub fn format_fixed_decimal<'l>(&'l self, value: &'l FixedDecimal) -> FormattedUnit<'l> {
+    pub fn format_fixed_decimal<'l>(
+        &'l self,
+        value: &'l UnsignedFixedDecimal,
+    ) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),

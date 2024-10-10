@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{FixedDecimal, Sign};
+use fixed_decimal::{Sign, UnsignedFixedDecimal};
 use icu_decimal::{
     options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV1Marker, FixedDecimalFormatter,
 };
@@ -362,7 +362,7 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: FixedDecimal) -> FormattedRelativeTime<'_> {
+    pub fn format(&self, value: UnsignedFixedDecimal) -> FormattedRelativeTime<'_> {
         let is_negative = value.sign() == Sign::Negative;
         FormattedRelativeTime {
             options: &self.options,

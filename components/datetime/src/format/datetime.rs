@@ -18,7 +18,7 @@ use crate::time_zone::{
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 
 use core::fmt::{self, Write};
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use icu_calendar::types::{
     Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
 };
@@ -32,7 +32,7 @@ use writeable::{Part, Writeable};
 fn try_write_number<W>(
     result: &mut W,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    mut num: FixedDecimal,
+    mut num: UnsignedFixedDecimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -546,9 +546,10 @@ where
                 }
                 (Some(second), Some(ns)) => {
                     // Formatting with fractional seconds
-                    let mut s = FixedDecimal::from(usize::from(second));
-                    let _infallible =
-                        s.concatenate_end(FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9));
+                    let mut s = UnsignedFixedDecimal::from(usize::from(second));
+                    let _infallible = s.concatenate_end(
+                        UnsignedFixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
+                    );
                     debug_assert!(_infallible.is_ok());
                     let position = -(decimal_second as i16);
                     s.trunc(position);
@@ -973,7 +974,7 @@ mod tests {
                 try_write_number(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
                     Some(&fixed_decimal_format),
-                    FixedDecimal::from(*value),
+                    UnsignedFixedDecimal::from(*value),
                     *length,
                 )
                 .unwrap()

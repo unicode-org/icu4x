@@ -7,15 +7,15 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
-use fixed_decimal::FixedDecimal;
 use fixed_decimal::Sign;
+use fixed_decimal::UnsignedFixedDecimal;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l UnsignedFixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }

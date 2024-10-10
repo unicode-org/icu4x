@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, UnsignedFixedDecimal};
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
 
@@ -62,7 +62,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
         } else {
             let plural_map = self.plural_map.as_ref().ok_or(core::fmt::Error)?;
             let chosen_pattern = (|| {
-                if self.value.significand() == &FixedDecimal::from(1) {
+                if self.value.significand() == &UnsignedFixedDecimal::from(1) {
                     if let Some(pattern) = plural_map.get1(&Count::Explicit1) {
                         return Some(pattern);
                     }

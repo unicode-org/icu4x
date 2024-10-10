@@ -14,7 +14,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
-    pub struct FixedDecimal(pub fixed_decimal::FixedDecimal);
+    pub struct FixedDecimal(pub fixed_decimal::UnsignedFixedDecimal);
 
     /// The sign of a FixedDecimal, as shown in formatting.
     #[diplomat::rust_link(fixed_decimal::Sign, Enum)]
@@ -72,7 +72,7 @@ pub mod ffi {
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_int32(v: i32) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
+            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -82,7 +82,7 @@ pub mod ffi {
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_uint32(v: u32) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
+            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -92,7 +92,7 @@ pub mod ffi {
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_int64(v: i64) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
+            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -101,7 +101,7 @@ pub mod ffi {
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_uint64(v: u64) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
+            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer-valued float
@@ -115,7 +115,7 @@ pub mod ffi {
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Integer;
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from_f64(f, precision)?,
+                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -132,7 +132,7 @@ pub mod ffi {
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Magnitude(magnitude);
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from_f64(f, precision)?,
+                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -148,7 +148,7 @@ pub mod ffi {
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::SignificantDigits(digits);
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from_f64(f, precision)?,
+                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -164,7 +164,7 @@ pub mod ffi {
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::RoundTrip;
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from_f64(f, precision)?,
+                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -175,7 +175,7 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from_utf8(v)?,
+                fixed_decimal::UnsignedFixedDecimal::try_from_utf8(v)?,
             )))
         }
 

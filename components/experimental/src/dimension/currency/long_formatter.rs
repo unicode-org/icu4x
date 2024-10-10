@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
@@ -158,7 +158,7 @@ impl LongCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l FixedDecimal,
+        value: &'l UnsignedFixedDecimal,
         currency_code: CurrencyCode,
     ) -> LongFormattedCurrency<'l> {
         LongFormattedCurrency {

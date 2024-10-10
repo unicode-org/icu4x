@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, UnsignedFixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
@@ -225,7 +225,7 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &FixedDecimal, exp: u8) -> PluralOperands {
+    fn from_significand_and_exponent(dec: &UnsignedFixedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
         let mag_range = dec.magnitude_range();
@@ -286,10 +286,10 @@ impl PluralOperands {
     }
 }
 
-impl From<&FixedDecimal> for PluralOperands {
+impl From<&UnsignedFixedDecimal> for PluralOperands {
     /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
-    fn from(dec: &FixedDecimal) -> Self {
+    fn from(dec: &UnsignedFixedDecimal) -> Self {
         Self::from_significand_and_exponent(dec, 0)
     }
 }

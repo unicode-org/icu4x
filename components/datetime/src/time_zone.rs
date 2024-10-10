@@ -10,7 +10,7 @@ use crate::{
     provider,
 };
 use core::fmt;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::UtcOffset;
 use icu_timezone::ZoneVariant;
@@ -462,12 +462,15 @@ impl FormatOffset for LongLocalizedOffsetFormat {
                         match c {
                             'H' => self
                                 .fdf
-                                .format(&FixedDecimal::from(hours).padded_start(2))
+                                .format(&UnsignedFixedDecimal::from(hours).padded_start(2))
                                 .write_to(sink)?,
-                            'h' => self.fdf.format(&FixedDecimal::from(hours)).write_to(sink)?,
+                            'h' => self
+                                .fdf
+                                .format(&UnsignedFixedDecimal::from(hours))
+                                .write_to(sink)?,
                             'm' => self
                                 .fdf
-                                .format(&FixedDecimal::from(minutes).padded_start(2))
+                                .format(&UnsignedFixedDecimal::from(minutes).padded_start(2))
                                 .write_to(sink)?,
                             c => sink.write_char(c)?,
                         }
