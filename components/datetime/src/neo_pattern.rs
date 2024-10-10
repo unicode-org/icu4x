@@ -57,7 +57,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// let data_pattern =
 ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 ///         &locale!("es-MX").into(),
-///         NeoSkeletonLength::Medium.into(),
+///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
 ///     )
 ///     .unwrap()
 ///     // The pattern can depend on the datetime being formatted.

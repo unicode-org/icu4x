@@ -111,43 +111,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 $fset::COMPONENTS,
             )
         }
-    }; // (S: $skel:path | $compts:path, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:ty),+) => {
-       //     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
-       //     pub fn $any_fn<S, P>(
-       //         provider: &P,
-       //         locale: &DataLocale,
-       //         $($arg: $ty),+
-       //     ) -> Result<Self, LoadError>
-       //     where
-       //         S: ?Sized + $skel + $compts,
-       //         P: AnyProvider + ?Sized,
-       //     {
-       //         Self::$internal_fn::<S, _, _>(
-       //             &provider.as_downcasting(),
-       //             &ExternalLoaderAny(provider),
-       //             locale,
-       //             $($arg),+
-       //         )
-       //     }
-       //     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
-       //     #[cfg(feature = "serde")]
-       //     pub fn $buffer_fn<S, P>(
-       //         provider: &P,
-       //         locale: &DataLocale,
-       //         $($arg: $ty),+
-       //     ) -> Result<Self, LoadError>
-       //     where
-       //         S: ?Sized + $skel + $compts,
-       //         P: BufferProvider + ?Sized,
-       //     {
-       //         Self::$internal_fn::<S, _, _>(
-       //             &provider.as_deserializing(),
-       //             &ExternalLoaderBuffer(provider),
-       //             locale,
-       //             $($arg),+
-       //         )
-       //     }
-       // };
+    };
 }
 
 /// Options bag for datetime formatting.
@@ -432,14 +396,17 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::DayWeekday,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoDateSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoDateComponents::DayWeekday,
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
@@ -454,14 +421,17 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
+    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoCalendarPeriodComponents::YearMonth,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoCalendarPeriodSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoCalendarPeriodComponents::YearMonth,
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
@@ -477,13 +447,16 @@ where
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoTimeSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoTimeComponents::Hour
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -498,6 +471,7 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -506,11 +480,13 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::HourMinute,
+    ///     NeoDateTimeSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Long,
+    ///         NeoDateTimeComponents::DateTime(
+    ///             NeoDateComponents::Weekday,
+    ///             NeoTimeComponents::HourMinute,
+    ///         ),
     ///     ),
-    ///     NeoSkeletonLength::Long.into(),
     /// )
     /// .unwrap();
     /// let dt =
@@ -688,7 +664,7 @@ where
     /// let formatter =
     ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
     ///         &locale!("es-MX").into(),
-    ///         NeoSkeletonLength::Long.into(),
+    ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
     ///     .unwrap();
     ///
@@ -709,7 +685,7 @@ where
     /// let formatter =
     ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
     ///         &locale!("es-MX").into(),
-    ///         NeoSkeletonLength::Long.into(),
+    ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
     ///     .unwrap();
     ///
@@ -743,9 +719,9 @@ size_test!(
 ///
 #[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
-pub struct NeoFormatter<R: DateTimeNamesMarker> {
+pub struct NeoFormatter<FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
-    names: RawDateTimeNames<R>,
+    names: RawDateTimeNames<FSet>,
     calendar: AnyCalendar,
 }
 
@@ -791,8 +767,10 @@ where
     /// let locale = locale!("en-u-ca-hebrew");
     ///
     /// let formatter =
-    ///     NeoFormatter::<NeoYearMonthDayMarker>::try_new(&locale.into(), length.into())
-    ///         .unwrap();
+    ///     NeoFormatter::try_new(
+    ///         &locale.into(), NeoYearMonthDayMarker::with_length(length)
+    ///     )
+    ///     .unwrap();
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).unwrap();
     ///
@@ -1009,14 +987,17 @@ where
     /// use icu::calendar::Date;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::DayWeekday,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoDateSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoDateComponents::DayWeekday,
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
@@ -1030,14 +1011,17 @@ where
     /// use icu::calendar::Date;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
+    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoCalendarPeriodComponents::YearMonth,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoCalendarPeriodSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoCalendarPeriodComponents::YearMonth,
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
@@ -1052,13 +1036,16 @@ where
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour,
-    ///     NeoSkeletonLength::Medium.into(),
+    ///     NeoTimeSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoTimeComponents::Hour,
+    ///     ),
     /// )
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -1072,6 +1059,7 @@ where
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
@@ -1080,11 +1068,13 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::HourMinute,
+    ///     NeoDateTimeSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Long,
+    ///         NeoDateTimeComponents::DateTime(
+    ///             NeoDateComponents::Weekday,
+    ///             NeoTimeComponents::HourMinute,
+    ///         ),
     ///     ),
-    ///     NeoSkeletonLength::Long.into(),
     /// )
     /// .unwrap();
     /// let dt = DateTime::try_new_iso_datetime(2024, 1, 10, 16, 20, 0).unwrap();
@@ -1419,7 +1409,7 @@ where
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
     /// .unwrap();
     ///
@@ -1493,7 +1483,7 @@ where
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
     /// .unwrap();
     ///

@@ -36,16 +36,16 @@
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-//! let dtf = NeoFormatter::<NeoYearMonthDayHourMinuteMarker>::try_new(
+//! let dtf = NeoFormatter::try_new(
 //!     &locale.into(),
-//!     NeoSkeletonLength::Medium.into()
+//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium)
 //! )
 //! .expect("should successfully create NeoFormatter instance");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedNeoFormatter::<Gregorian, NeoYearMonthDayHourMinuteMarker>::try_new(
+//! let typed_dtf = TypedNeoFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en").into(),
-//!     NeoSkeletonLength::Medium.into(),
+//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
 //! )
 //! .expect("should successfully create TypedNeoFormatter instance");
 //!

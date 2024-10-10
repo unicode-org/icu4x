@@ -26,7 +26,7 @@
 //! let plain_formatter =
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //!
@@ -34,7 +34,7 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
 //!             options.alignment = Some(Alignment::Column);
 //!             options
 //!         }
@@ -73,7 +73,7 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
 //!             options.year_style = Some(YearStyle::Auto);
 //!             options
 //!         }
@@ -105,7 +105,7 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
 //!             options.year_style = Some(YearStyle::Full);
 //!             options
 //!         }
@@ -136,7 +136,7 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
 //!             options.year_style = Some(YearStyle::Always);
 //!             options
 //!         }
@@ -182,7 +182,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("en-US-u-hc-h12").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -193,7 +193,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("en-US-u-hc-h23").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -204,7 +204,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("fr-FR-u-hc-h12").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -215,7 +215,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("fr-FR-u-hc-h23").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -238,7 +238,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("und-u-hc-h11").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -249,7 +249,7 @@
 //! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("und-u-hc-h24").into(),
-//!         NeoSkeletonLength::Short.into(),
+//!         NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
@@ -278,7 +278,7 @@
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteSecondMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             let mut options = NeoHourMinuteSecondMarker::with_length(NeoSkeletonLength::Short);
 //!             options.fractional_second_digits = Some(FractionalSecondDigits::F2);
 //!             options
 //!         }
@@ -323,7 +323,7 @@
 //! // Set up the formatter
 //! let mut tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGenericMarker>::try_new(
 //!     &locale!("en").into(),
-//!     NeoSkeletonLength::Short.into(),
+//!     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
 //! )
 //! .unwrap();
 //!
@@ -1673,11 +1673,8 @@ macro_rules! yes_to {
 
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
-    () => {
-        stringify!(Default::default())
-    };
-    ($length:ident) => {
-        concat!("NeoSkeletonLength::", stringify!($length), ".into()")
+    ($type:ty, $length:ident) => {
+        concat!(stringify!($type), "::with_length(NeoSkeletonLength::", stringify!($length), ")")
     };
 }
 
@@ -1799,7 +1796,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use writeable::assert_try_writeable_eq;
             #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
@@ -1823,7 +1820,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             ///
             #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
@@ -2024,7 +2021,7 @@ macro_rules! impl_time_marker {
             ///
             #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -2048,7 +2045,7 @@ macro_rules! impl_time_marker {
             ///
             #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
@@ -2154,7 +2151,7 @@ macro_rules! impl_zone_marker {
             ///
             #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             ///
@@ -2187,7 +2184,7 @@ macro_rules! impl_zone_marker {
             ///
             #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
             ///     &locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
             ///
@@ -2277,7 +2274,7 @@ macro_rules! impl_datetime_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
         /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -2301,7 +2298,7 @@ macro_rules! impl_datetime_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
         /// let dt = DateTime::try_new_gregorian_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -2342,7 +2339,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
         ///
@@ -2368,7 +2365,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
         ///
@@ -2519,7 +2516,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Short.into(),
+    ///     NeoTimeZoneSpecificMarker::with_length(NeoSkeletonLength::Short),
     /// )
     /// .unwrap();
     ///
@@ -2571,7 +2568,7 @@ impl_zone_marker!(
     ///
     /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     MyDateTimeZoneSet::with_length(NeoSkeletonLength::Long),
     /// )
     /// .unwrap();
     ///
@@ -2595,7 +2592,7 @@ impl_zone_marker!(
     ///
     /// let result = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     NeoTimeZoneSpecificShortMarker::with_length(NeoSkeletonLength::Long),
     /// );
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
@@ -2634,7 +2631,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Short.into(),
+    ///     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
     /// )
     /// .unwrap();
     ///
@@ -2687,7 +2684,7 @@ impl_zone_marker!(
     ///
     /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     MyDateTimeZoneSet::with_length(NeoSkeletonLength::Long),
     /// )
     /// .unwrap();
     ///
@@ -2711,7 +2708,7 @@ impl_zone_marker!(
     ///
     /// let result = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     NeoTimeZoneGenericShortMarker::with_length(NeoSkeletonLength::Long),
     /// );
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));

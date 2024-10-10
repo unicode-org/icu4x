@@ -325,13 +325,13 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoComponents;
+/// use icu::datetime::neo_skeleton::NeoSkeleton;
 /// use icu::locale::locale;
 /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
-/// // Create an instance that can format all fields (NeoComponents):
-/// let mut names: TypedDateTimeNames<Gregorian, NeoComponents> =
+/// // Create an instance that can format all fields (NeoSkeleton):
+/// let mut names: TypedDateTimeNames<Gregorian, NeoSkeleton> =
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
