@@ -43,7 +43,7 @@ let dtf = NeoFormatter::try_new(
 .expect("should successfully create NeoFormatter instance");
 
 // Or one that selects a calendar at compile time:
-let typed_dtf = TypedNeoFormatter::<Gregorian, NeoYearMonthDayHourMinuteMarker>::try_new(
+let typed_dtf = TypedNeoFormatter::<Gregorian, _>::try_new(
     &locale!("en").into(),
     NeoSkeletonLength::Medium.into(),
 )

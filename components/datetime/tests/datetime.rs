@@ -479,7 +479,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     };
 
     let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
-    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetMarker>::try_new(
+    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )

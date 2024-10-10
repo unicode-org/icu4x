@@ -661,7 +661,7 @@ where
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
+    ///     TypedNeoFormatter::<Buddhist, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
@@ -682,7 +682,7 @@ where
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+    ///     TypedNeoFormatter::<Gregorian, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )

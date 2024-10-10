@@ -54,16 +54,15 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
 /// // Load data that resolves to the same pattern:
-/// let data_pattern =
-///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-///         &locale!("es-MX").into(),
-///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
-///     )
-///     .unwrap()
-///     // The pattern can depend on the datetime being formatted.
-///     // For this example, we'll choose the local Unix epoch.
-///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
-///     .pattern();
+/// let data_pattern = TypedNeoFormatter::<Gregorian, _>::try_new(
+///     &locale!("es-MX").into(),
+///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
+/// )
+/// .unwrap()
+/// // The pattern can depend on the datetime being formatted.
+/// // For this example, we'll choose the local Unix epoch.
+/// .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
+/// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
 ///
