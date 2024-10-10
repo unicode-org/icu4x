@@ -989,7 +989,7 @@ pub struct NeoTimeZoneSkeleton {
     pub length: NeoSkeletonLength,
     /// The style, _i.e._, with `length`=[`NeoSkeletonLength::Short`], whether to format as
     /// “GMT−8” ([`NeoTimeZoneStyle::Offset`]) or “PT”
-    /// ([`NeoTimeZoneStyle::NonLocation`]).
+    /// ([`NeoTimeZoneStyle::Generic`]).
     pub style: NeoTimeZoneStyle,
 }
 

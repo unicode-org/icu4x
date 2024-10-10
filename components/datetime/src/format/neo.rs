@@ -283,6 +283,7 @@ size_test!(
 /// To support all fields including time zones, use [`NeoComponents`].
 ///
 /// [`NeoComponents`]: crate::neo_skeleton::NeoComponents
+/// [`NeoDateTimeComponents`]: crate::neo_skeleton::NeoDateTimeComponents
 ///
 /// # Examples
 ///
