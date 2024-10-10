@@ -281,12 +281,11 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter =
-    ///     TypedNeoFormatter::try_new(
-    ///         &locale!("es-MX").into(),
-    ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
-    ///     )
-    ///     .unwrap();
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("es-MX").into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
+    /// )
+    /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
@@ -455,7 +454,7 @@ where
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
-    ///         NeoTimeComponents::Hour
+    ///         NeoTimeComponents::Hour,
     ///     ),
     /// )
     /// .unwrap();
@@ -470,9 +469,9 @@ where
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;
@@ -766,11 +765,11 @@ where
     /// let length = NeoSkeletonLength::Medium;
     /// let locale = locale!("en-u-ca-hebrew");
     ///
-    /// let formatter =
-    ///     NeoFormatter::try_new(
-    ///         &locale.into(), NeoYearMonthDayMarker::with_length(length)
-    ///     )
-    ///     .unwrap();
+    /// let formatter = NeoFormatter::try_new(
+    ///     &locale.into(),
+    ///     NeoYearMonthDayMarker::with_length(length),
+    /// )
+    /// .unwrap();
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).unwrap();
     ///
@@ -1058,9 +1057,9 @@ where
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::locale::locale;

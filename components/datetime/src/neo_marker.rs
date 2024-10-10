@@ -34,22 +34,26 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(
+//!                 NeoSkeletonLength::Short,
+//!             );
 //!             options.alignment = Some(Alignment::Column);
 //!             options
-//!         }
+//!         },
 //!     )
 //!     .unwrap();
 //!
 //! // By default, en-US does not pad the month and day with zeros.
 //! assert_try_writeable_eq!(
-//!     plain_formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     plain_formatter
+//!         .format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
 //!     "1/1/25"
 //! );
 //!
 //! // The column alignment option hints that they should be padded.
 //! assert_try_writeable_eq!(
-//!     column_formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     column_formatter
+//!         .format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
 //!     "01/01/25"
 //! );
 //! ```
@@ -64,8 +68,8 @@
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
-//! use icu::datetime::neo_skeleton::YearStyle;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::neo_skeleton::YearStyle;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
@@ -73,10 +77,12 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(
+//!                 NeoSkeletonLength::Short,
+//!             );
 //!             options.year_style = Some(YearStyle::Auto);
 //!             options
-//!         }
+//!         },
 //!     )
 //!     .unwrap();
 //!
@@ -105,10 +111,12 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(
+//!                 NeoSkeletonLength::Short,
+//!             );
 //!             options.year_style = Some(YearStyle::Full);
 //!             options
-//!         }
+//!         },
 //!     )
 //!     .unwrap();
 //!
@@ -136,10 +144,12 @@
 //!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
+//!             let mut options = NeoYearMonthDayMarker::with_length(
+//!                 NeoSkeletonLength::Short,
+//!             );
 //!             options.year_style = Some(YearStyle::Always);
 //!             options
-//!         }
+//!         },
 //!     )
 //!     .unwrap();
 //!
@@ -268,8 +278,8 @@
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteSecondMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -278,10 +288,13 @@
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteSecondMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
-//!             let mut options = NeoHourMinuteSecondMarker::with_length(NeoSkeletonLength::Short);
-//!             options.fractional_second_digits = Some(FractionalSecondDigits::F2);
+//!             let mut options = NeoHourMinuteSecondMarker::with_length(
+//!                 NeoSkeletonLength::Short,
+//!             );
+//!             options.fractional_second_digits =
+//!                 Some(FractionalSecondDigits::F2);
 //!             options
-//!         }
+//!         },
 //!     )
 //!     .unwrap();
 //!
@@ -1674,7 +1687,12 @@ macro_rules! yes_to {
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
     ($type:ty, $length:ident) => {
-        concat!(stringify!($type), "::with_length(NeoSkeletonLength::", stringify!($length), ")")
+        concat!(
+            stringify!($type),
+            "::with_length(NeoSkeletonLength::",
+            stringify!($length),
+            ")"
+        )
     };
 }
 

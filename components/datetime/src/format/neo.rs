@@ -912,23 +912,31 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
-    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
-    ///
-    /// names
-    ///     .include_time_zone_essentials()
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
     ///     .unwrap();
+    ///
+    /// names.include_time_zone_essentials().unwrap();
     ///
     /// // Create a pattern with symbol `OOOO`:
     /// let pattern_str = "'Your time zone is:' OOOO";
@@ -1009,25 +1017,27 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_exemplar_city_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_exemplar_city_names().unwrap();
     ///
     /// // Try `VVVV`:
     /// let pattern_str = "'Your time zone is:' VVVV";
@@ -1073,26 +1083,32 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
-    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_generic_long_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_generic_long_names().unwrap();
     ///
     /// // Create a pattern with symbol `vvvv`:
     /// let pattern_str = "'Your time zone is:' vvvv";
@@ -1142,26 +1158,32 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
-    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_generic_short_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_generic_short_names().unwrap();
     ///
     /// // Create a pattern with symbol `v`:
     /// let pattern_str = "'Your time zone is:' v";
@@ -1211,26 +1233,32 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
-    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_specific_long_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_specific_long_names().unwrap();
     ///
     /// // Create a pattern with symbol `zzzz`:
     /// let pattern_str = "'Your time zone is:' zzzz";
@@ -1280,26 +1308,32 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
-    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_specific_short_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_specific_short_names().unwrap();
     ///
     /// // Create a pattern with symbol `z`:
     /// let pattern_str = "'Your time zone is:' z";
@@ -2323,26 +2357,32 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
-    /// let mut london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian);
+    /// let mut london_winter = CustomZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .to_calendar(Gregorian);
+    /// let mut london_summer = CustomZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// )
+    /// .unwrap()
+    /// .to_calendar(Gregorian);
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///         &locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// names
-    ///     .include_time_zone_essentials()
-    ///     .unwrap();
-    /// names
-    ///     .include_time_zone_specific_short_names()
-    ///     .unwrap();
+    /// names.include_time_zone_essentials().unwrap();
+    /// names.include_time_zone_specific_short_names().unwrap();
     ///
     /// // Create a pattern with symbol `z`:
     /// let pattern_str = "'Your time zone is:' z";

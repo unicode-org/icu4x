@@ -337,7 +337,9 @@ impl NeoDateComponents {
     /// use icu_provider::prelude::*;
     ///
     /// assert_eq!(
-    ///     NeoDateComponents::from_id_str(DataMarkerAttributes::from_str_or_panic("ym0de")),
+    ///     NeoDateComponents::from_id_str(
+    ///         DataMarkerAttributes::from_str_or_panic("ym0de")
+    ///     ),
     ///     Some(NeoDateComponents::YearMonthDayWeekday)
     /// );
     /// ```
