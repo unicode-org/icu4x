@@ -6,7 +6,7 @@ use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
 use crate::{variations::Signed, UnsignedFixedDecimal};
-use crate::{ParseError, Sign};
+use crate::{ParseError, Sign, SignDisplay};
 
 pub type SignedFixedDecimal = Signed<UnsignedFixedDecimal>;
 
@@ -67,6 +67,126 @@ impl SignedFixedDecimal {
     /// ```
     pub fn sign(&self) -> Sign {
         self.sign
+    }
+
+    /// Clears all the fields and sets the number to zero.
+    fn clear(&mut self) {
+        self.value.clear();
+        self.sign = Sign::None;
+    }
+
+    /// Changes the sign of this number to the one given.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// let mut dec = SignedFixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Negative);
+    /// assert_eq!("-1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Positive);
+    /// assert_eq!("+1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::None);
+    /// assert_eq!("1729", dec.to_string());
+    /// ```
+    pub fn set_sign(&mut self, sign: Sign) {
+        self.sign = sign;
+    }
+
+    /// Returns this number with the sign changed to the one given.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// assert_eq!(
+    ///     "+1729",
+    ///     SignedFixedDecimal::from(1729)
+    ///         .with_sign(Sign::Positive)
+    ///         .to_string()
+    /// );
+    /// assert_eq!(
+    ///     "1729",
+    ///     SignedFixedDecimal::from(-1729).with_sign(Sign::None).to_string()
+    /// );
+    /// assert_eq!(
+    ///     "-1729",
+    ///     SignedFixedDecimal::from(1729)
+    ///         .with_sign(Sign::Negative)
+    ///         .to_string()
+    /// );
+    /// ```
+    pub fn with_sign(mut self, sign: Sign) -> Self {
+        self.set_sign(sign);
+        self
+    }
+
+    /// Sets the sign of this number according to the given sign display strategy.
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
+    ///
+    /// let mut dec = SignedFixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    /// dec.apply_sign_display(Always);
+    /// assert_eq!("+1729", dec.to_string());
+    /// ```
+    pub fn apply_sign_display(&mut self, sign_display: SignDisplay) {
+        use Sign::*;
+        match sign_display {
+            SignDisplay::Auto => {
+                if self.sign != Negative {
+                    self.sign = None
+                }
+            }
+            SignDisplay::Always => {
+                if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Never => self.sign = None,
+            SignDisplay::ExceptZero => {
+                if self.value.is_zero() {
+                    self.sign = None
+                } else if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Negative => {
+                if self.sign != Negative || self.value.is_zero() {
+                    self.sign = None
+                }
+            }
+        }
+    }
+
+    /// Returns this number with its sign set according to the given sign display strategy.
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
+    ///
+    /// assert_eq!(
+    ///     "+1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign_display(ExceptZero)
+    ///         .to_string()
+    /// );
+    /// ```
+    pub fn with_sign_display(mut self, sign_display: SignDisplay) -> Self {
+        self.apply_sign_display(sign_display);
+        self
     }
 }
 
