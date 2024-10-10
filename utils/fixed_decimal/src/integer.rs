@@ -7,9 +7,9 @@ use core::fmt;
 
 use core::str::FromStr;
 
-use crate::FixedDecimal;
 use crate::LimitError;
 use crate::ParseError;
+use crate::UnsignedFixedDecimal;
 
 /// A [`FixedInteger`] is a [`FixedDecimal`] with no fractional part.
 ///
@@ -40,9 +40,9 @@ use crate::ParseError;
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Default)]
-pub struct FixedInteger(FixedDecimal);
+pub struct FixedInteger(UnsignedFixedDecimal);
 
-impl From<FixedInteger> for FixedDecimal {
+impl From<FixedInteger> for UnsignedFixedDecimal {
     fn from(value: FixedInteger) -> Self {
         value.0
     }
@@ -77,9 +77,9 @@ impl writeable::Writeable for FixedInteger {
     }
 }
 
-impl TryFrom<FixedDecimal> for FixedInteger {
+impl TryFrom<UnsignedFixedDecimal> for FixedInteger {
     type Error = LimitError;
-    fn try_from(value: FixedDecimal) -> Result<Self, Self::Error> {
+    fn try_from(value: UnsignedFixedDecimal) -> Result<Self, Self::Error> {
         if value.magnitude_range().start() != &0 {
             Err(LimitError)
         } else {
@@ -95,7 +95,7 @@ impl FixedInteger {
     }
 
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        FixedInteger::try_from(FixedDecimal::try_from_utf8(code_units)?)
+        FixedInteger::try_from(UnsignedFixedDecimal::try_from_utf8(code_units)?)
             .map_err(|LimitError| ParseError::Limit)
     }
 }
