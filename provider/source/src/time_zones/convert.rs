@@ -18,6 +18,7 @@ use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -95,6 +96,41 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
+        let primary_zones = self.compute_primary_zones()?;
+
+        let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
+
+        let region_display_names = if req.id.locale.is_default() {
+            BTreeMap::default()
+        } else {
+            self.cldr()?
+                .displaynames()
+                .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                    req.id.locale,
+                    "territories.json",
+                )?
+                .main
+                .value
+                .localedisplaynames
+                .regions
+                .iter()
+                .filter(|&(k, _)| {
+                    /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
+                    const ALT_SUBSTRING: &str = "-alt-";
+                    /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
+                    const SHORT_SUBSTRING: &str = "-alt-short";
+                    !k.contains(ALT_SUBSTRING) && !k.contains(SHORT_SUBSTRING)
+                })
+                .filter_map(|(region, value)| {
+                    Some((
+                        icu::locale::subtags::Region::try_from_str(region).ok()?,
+                        value.as_str(),
+                    ))
+                })
+                .filter(|(r, _)| primary_zones_values.contains(r))
+                .collect()
+        };
+
         let bcp47_tzids = &self
             .cldr()?
             .bcp47()
@@ -119,39 +155,50 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                     // fallback was not set, which is why it might show up here.
                     .filter(|(bcp47, _)| bcp47.0 != "camtr")
                     .filter_map(|(bcp47, aliases)| {
-                        aliases
-                            .split(' ')
-                            .filter_map(|alias| {
-                                let mut alias_parts = alias.split('/');
-                                let continent = alias_parts.next().expect("split non-empty");
-                                let location_or_subregion = alias_parts.next()?;
-                                let location_in_subregion = alias_parts.next();
-                                time_zone_names
-                                    .zone
-                                    .0
-                                    .get(continent)
-                                    .and_then(|x| x.0.get(location_or_subregion))
-                                    .and_then(|x| match x {
-                                        LocationOrSubRegion::Location(place) => Some(place),
-                                        LocationOrSubRegion::SubRegion(region) => {
-                                            region.get(location_in_subregion?)
-                                        }
-                                    })
-                                    .and_then(|p| p.exemplar_city.clone())
-                            })
-                            .next()
-                            .or_else(|| {
-                                let canonical_alias =
-                                    aliases.split(' ').next().expect("split non-empty");
-                                let mut alias_parts = canonical_alias.split('/');
-                                (alias_parts.next() != Some("Etc")).then(|| {
-                                    alias_parts
-                                        .next_back()
-                                        .expect("split non-empty")
-                                        .replace('_', " ")
+                        if let Some(region) = primary_zones.get(bcp47) {
+                            Some((
+                                *bcp47,
+                                region_display_names
+                                    .get(region)
+                                    .copied()
+                                    .unwrap_or(region.as_str())
+                                    .to_string(),
+                            ))
+                        } else {
+                            aliases
+                                .split(' ')
+                                .filter_map(|alias| {
+                                    let mut alias_parts = alias.split('/');
+                                    let continent = alias_parts.next().expect("split non-empty");
+                                    let location_or_subregion = alias_parts.next()?;
+                                    let location_in_subregion = alias_parts.next();
+                                    time_zone_names
+                                        .zone
+                                        .0
+                                        .get(continent)
+                                        .and_then(|x| x.0.get(location_or_subregion))
+                                        .and_then(|x| match x {
+                                            LocationOrSubRegion::Location(place) => Some(place),
+                                            LocationOrSubRegion::SubRegion(region) => {
+                                                region.get(location_in_subregion?)
+                                            }
+                                        })
+                                        .and_then(|p| p.exemplar_city.clone())
                                 })
-                            })
-                            .map(|name| (bcp47, name))
+                                .next()
+                                .or_else(|| {
+                                    let canonical_alias =
+                                        aliases.split(' ').next().expect("split non-empty");
+                                    let mut alias_parts = canonical_alias.split('/');
+                                    (alias_parts.next() != Some("Etc")).then(|| {
+                                        alias_parts
+                                            .next_back()
+                                            .expect("split non-empty")
+                                            .replace('_', " ")
+                                    })
+                                })
+                                .map(|name| (*bcp47, name))
+                        }
                     })
                     .collect(),
             )),
@@ -230,7 +277,7 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1Marker>, DataError> {
         self.check_req::<ZoneOffsetPeriodV1Marker>(req)?;
 
-        let tzdb = self.tzdb()?.get()?;
+        let tzdb = self.tzdb()?.transitions()?;
 
         Ok(DataResponse {
             metadata: Default::default(),

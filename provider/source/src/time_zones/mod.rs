@@ -7,6 +7,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::time_zones::*;
 use icu::timezone::provider::*;
+use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
@@ -102,6 +103,48 @@ impl SourceDataProvider {
         meta_zone_ids.insert("Yukon".to_owned(), MetazoneId(tinystr!(4, "yuko")));
         Ok(meta_zone_ids)
     }
+
+    fn compute_primary_zones(&self) -> Result<BTreeMap<TimeZoneBcp47Id, Region>, DataError> {
+        let primary_zones = self
+            .cldr()?
+            .core()
+            .read_and_parse::<cldr_serde::time_zones::primary_zones::Resource>(
+                "supplemental/primaryZones.json",
+            )?
+            .supplemental
+            .primary_zones
+            .iter()
+            .map(|(&region, iana)| (iana, region))
+            .collect::<BTreeMap<_, _>>();
+
+        let bcp47_tzids = self.compute_canonical_tzids_btreemap()?;
+
+        let zone_tab = self.tzdb()?.zone_tab()?;
+        let mut zones_per_region: BTreeMap<icu::locale::subtags::Region, usize> = BTreeMap::new();
+
+        for &region in bcp47_tzids.values().flat_map(|iana| zone_tab.get(iana)) {
+            *zones_per_region.entry(region).or_default() += 1;
+        }
+
+        Ok(bcp47_tzids
+            .iter()
+            // Montreal is meant to be deprecated, but pre-43 the deprecation
+            // fallback was not set, which is why it might show up here.
+            .filter(|(bcp47, _)| bcp47.0 != "camtr")
+            .filter_map(|(bcp47, canonical_iana)| {
+                Some((
+                    *bcp47,
+                    primary_zones.get(canonical_iana).copied().or_else(|| {
+                        let region = *zone_tab.get(canonical_iana)?;
+                        if zones_per_region.get(&region).copied().unwrap_or_default() > 1 {
+                            return None;
+                        }
+                        Some(region)
+                    })?,
+                ))
+            })
+            .collect())
+    }
 }
 
 macro_rules! impl_iterable_data_provider {
@@ -176,6 +219,15 @@ mod tests {
                 .get()
                 .0
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
+                .unwrap()
+        );
+        assert_eq!(
+            "Ireland",
+            exemplar_cities
+                .payload
+                .get()
+                .0
+                .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
         );
 
