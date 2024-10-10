@@ -14,7 +14,6 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct TimeZoneIdMapperWithFastCanonicalization; }
 class TimeZoneIdMapperWithFastCanonicalization;
-struct TimeZoneInvalidIdError;
 class DataError;
 }
 
@@ -31,9 +30,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
+  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
-  inline diplomat::result<std::string, icu4x::TimeZoneInvalidIdError> canonical_iana_from_bcp47(std::string_view value) const;
+  inline std::optional<std::string> canonical_iana_from_bcp47(std::string_view value) const;
 
   inline const icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI() const;
   inline icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* AsFFI();

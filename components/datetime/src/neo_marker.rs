@@ -330,7 +330,7 @@
 //!
 //! // "uschi" - has metazone symbol data for generic_non_location_short
 //! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap();
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
@@ -339,26 +339,21 @@
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
 //! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "ushnl")));
+//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
 //! );
 //!
-//! // If we don't calculate the metazone, it falls back to generic location
+//! // The metazone is required for this format
 //! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "ushnl")));
+//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
+//! // don't calculate metazone
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
-//!     "Honolulu Time"
-//! );
-//!
-//! // If we don't set a zone at all, there's no fallback to the offset
-//! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "Unknown City Time",
+//!     "{v}",
+//!     Err(DateTimeWriteError::MissingInputField("metazone_id"))
 //! );
 //! ```
 
@@ -742,15 +737,15 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<TimeZoneBcp47I
 {
     #[inline]
     fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        self.zone.time_zone_id
+        Some(self.zone.time_zone_id)
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<MetazoneId>>
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<Option<MetazoneId>>>
     for CustomZonedDateTime<A>
 {
     #[inline]
-    fn get_field(&self) -> Option<MetazoneId> {
+    fn get_field(&self) -> Option<Option<MetazoneId>> {
         self.zone.metazone_id
     }
 }
@@ -774,13 +769,13 @@ impl NeoGetField<Option<UtcOffset>> for CustomTimeZone {
 impl NeoGetField<Option<TimeZoneBcp47Id>> for CustomTimeZone {
     #[inline]
     fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        self.time_zone_id
+        Some(self.time_zone_id)
     }
 }
 
-impl NeoGetField<Option<MetazoneId>> for CustomTimeZone {
+impl NeoGetField<Option<Option<MetazoneId>>> for CustomTimeZone {
     #[inline]
-    fn get_field(&self) -> Option<MetazoneId> {
+    fn get_field(&self) -> Option<Option<MetazoneId>> {
         self.metazone_id
     }
 }
@@ -916,7 +911,7 @@ impl From<NeverField> for Option<TimeZoneBcp47Id> {
     }
 }
 
-impl From<NeverField> for Option<MetazoneId> {
+impl From<NeverField> for Option<Option<MetazoneId>> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -1052,7 +1047,7 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
     /// Marker for resolving the time zone metazone input field.
-    type TimeZoneMetazoneInput: Into<Option<MetazoneId>>;
+    type TimeZoneMetazoneInput: Into<Option<Option<MetazoneId>>>;
     /// Marker for resolving the time zone variant input field.
     type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
     /// Marker for loading core time zone data.
@@ -1514,7 +1509,7 @@ macro_rules! datetime_marker_helper {
         Option<TimeZoneBcp47Id>
     };
     (@input/timezone/metazone, yes) => {
-        Option<MetazoneId>
+        Option<Option<MetazoneId>>
     };
     (@input/timezone/variant, yes) => {
         Option<ZoneVariant>

@@ -8,11 +8,7 @@ export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
-
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
-
-export { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
