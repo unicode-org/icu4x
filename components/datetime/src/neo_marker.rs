@@ -303,6 +303,7 @@
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::NeverCalendar;
+//! use icu::datetime::DateTimeWriteError;
 //! use icu::locale::locale;
 //! use tinystr::tinystr;
 //! use writeable::assert_try_writeable_eq;
@@ -345,11 +346,19 @@
 //!     "HST"
 //! );
 //!
-//! // Raw offset - used when metazone is not available
+//! // If we don't calculate the metazone, it falls back to generic location
+//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
+//! time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "ushnl")));
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "Honolulu Time"
+//! );
+//!
+//! // If we don't set a zone at all, there's no fallback to the offset
 //! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
-//!     "GMT+5:30"
+//!     "Unknown City Time",
 //! );
 //! ```
 

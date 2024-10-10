@@ -258,7 +258,7 @@ impl SourceDataProvider {{
                     [
                         {tzdb_data}
                     ].into_iter().collect(),
-                ), cache: Default::default() }})),
+                ), transitions: Default::default(), zone_tab: Default::default() }})),
                 ..SourceDataProvider::new_custom()
             }})
             .clone()

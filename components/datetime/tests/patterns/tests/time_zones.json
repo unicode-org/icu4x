@@ -214,7 +214,7 @@
         "configs": [
           "GenericLocation"
         ],
-        "expected": ["London Time"]
+        "expected": ["United Kingdom Time"]
       },
       {
         "patterns": [],
@@ -314,7 +314,7 @@
         "configs": [
           "GenericLocation"
         ],
-        "expected": ["Dublin Time"]
+        "expected": ["Ireland Time"]
       },
       {
         "patterns": [],
@@ -465,7 +465,7 @@
         "configs": [
           "GenericLocation"
         ],
-        "expected": ["東京時間"]
+        "expected": ["日本時間"]
       },
       {
         "patterns": [
@@ -802,7 +802,7 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "expected": ["Катманду"]
+        "expected": ["Непал"]
       },
       {
         "patterns": [
@@ -827,7 +827,7 @@
         "configs": [
           "GenericLocation"
         ],
-        "expected": ["Катманду"]
+        "expected": ["Непал"]
       },
       {
         "patterns": [
@@ -923,6 +923,170 @@
           "LocalizedOffsetLong"
         ],
         "expected": ["GMT +০৫:৪৫"]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz",
+          "ZZZZ",
+          "O"
+        ],
+        "configs": [],
+        "expected": ["GMT-7"]
+      },
+      {
+        "patterns": [
+          "zzzz",
+          "OOOO"
+        ],
+        "configs": [],
+        "expected": ["GMT-07:00"]
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "configs": [],
+        "expected": ["-0700"]
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "configs": [],
+        "expected": ["-07:00"]
+      },
+      {
+        "patterns": [
+          "v",
+          "vvvv",
+          "VVVV"
+        ],
+        "configs": [],
+        "expected": ["Unknown City Time"]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-07:00",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz",
+          "ZZZZ",
+          "O"
+        ],
+        "configs": [],
+        "expected": ["GMT-7"]
+      },
+      {
+        "patterns": [
+          "zzzz",
+          "OOOO"
+        ],
+        "configs": [],
+        "expected": ["GMT-07:00"]
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "configs": [],
+        "expected": ["-0700"]
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "configs": [],
+        "expected": ["-07:00"]
+      },
+      {
+        "patterns": [
+          "v",
+          "vvvv",
+          "VVVV"
+        ],
+        "configs": [],
+        "expected": ["Unknown City Time"]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000[Etc/Unknown]",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz",
+          "zzzz",
+          "Z",
+          "ZZ",
+          "ZZZ",
+          "ZZZZ",
+          "ZZZZZ",
+          "O",
+          "OOOO"
+        ],
+        "configs": [],
+        "expected": ["{GMT+?}"]
+      },
+      {
+        "patterns": [
+          "v",
+          "vvvv",
+          "VVVV"
+        ],
+        "configs": [],
+        "expected": ["Unknown City Time"]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz",
+          "zzzz",
+          "Z",
+          "ZZ",
+          "ZZZ",
+          "ZZZZ",
+          "ZZZZZ",
+          "O",
+          "OOOO"
+        ],
+        "configs": [],
+        "expected": ["{GMT+?}"]
+      },
+      {
+        "patterns": [
+          "v",
+          "vvvv",
+          "VVVV"
+        ],
+        "configs": [],
+        "expected": ["Unknown City Time"]
       }
     ]
   }

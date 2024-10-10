@@ -12,8 +12,8 @@ use crate::{
 use core::fmt;
 use fixed_decimal::UnsignedFixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
-use icu_timezone::UtcOffset;
 use icu_timezone::ZoneVariant;
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset};
 use writeable::Writeable;
 
 /// All time zone styles that this crate can format
@@ -591,9 +591,10 @@ impl FormatTimeZone for GenericLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(time_zone_id) = input.time_zone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
-        };
+        let time_zone_id = input
+            .time_zone_id
+            .unwrap_or(TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
+
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -861,9 +862,9 @@ impl FormatTimeZone for Bcp47IdFormat {
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(time_zone_id) = input.time_zone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
-        };
+        let time_zone_id = input
+            .time_zone_id
+            .unwrap_or(TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
 
         sink.write_str(&time_zone_id)?;
 
