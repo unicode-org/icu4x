@@ -2,9 +2,7 @@
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { MetazoneCalculator } from "./MetazoneCalculator.mjs"
 import { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
-import { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
 import { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
-import { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
 import { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -48,27 +46,19 @@ export class CustomTimeZone {
         
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_CustomTimeZone_from_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
+        const result = wasm.icu4x_CustomTimeZone_from_string_mv1(...sSlice.splat());
     
         try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneUnknownError(diplomatRuntime.internalConstructor);
-                throw new globalThis.Error('TimeZoneUnknownError', { cause });
-            }
-            return new CustomTimeZone(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
-    static empty() {
-        const result = wasm.icu4x_CustomTimeZone_empty_mv1();
+    static unknown() {
+        const result = wasm.icu4x_CustomTimeZone_unknown_mv1();
     
         try {
             return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
@@ -217,60 +207,38 @@ export class CustomTimeZone {
         }
     }
 
-    trySetTimeZoneId(id) {
+    setTimeZoneId(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        
-        const result = wasm.icu4x_CustomTimeZone_try_set_time_zone_id_mv1(this.ffiValue, ...idSlice.splat());
-    
-        try {
-            if (result !== 1) {
-                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
-                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
-            }
-    
-        }
-        
-        finally {
-            functionCleanupArena.free();
-        }
-    }
-
-    trySetIanaTimeZoneId(mapper, id) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        
-        const result = wasm.icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(this.ffiValue, mapper.ffiValue, ...idSlice.splat());
-    
-        try {
-            if (result !== 1) {
-                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
-                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
-            }
-    
-        }
-        
-        finally {
-            functionCleanupArena.free();
-        }
-    }
-
-    clearTimeZoneId() {wasm.icu4x_CustomTimeZone_clear_time_zone_id_mv1(this.ffiValue);
+        wasm.icu4x_CustomTimeZone_set_time_zone_id_mv1(this.ffiValue, ...idSlice.splat());
     
         try {}
         
-        finally {}
+        finally {
+            functionCleanupArena.free();
+        }
+    }
+
+    setIanaTimeZoneId(mapper, id) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
+        wasm.icu4x_CustomTimeZone_set_iana_time_zone_id_mv1(this.ffiValue, mapper.ffiValue, ...idSlice.splat());
+    
+        try {}
+        
+        finally {
+            functionCleanupArena.free();
+        }
     }
 
     get timeZoneId() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_CustomTimeZone_time_zone_id_mv1(this.ffiValue, write.buffer);
+        wasm.icu4x_CustomTimeZone_time_zone_id_mv1(this.ffiValue, write.buffer);
     
         try {
-            return result === 0 ? null : write.readString8();
+            return write.readString8();
         }
         
         finally {
@@ -278,31 +246,17 @@ export class CustomTimeZone {
         }
     }
 
-    trySetMetazoneId(id) {
+    setMetazoneId(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        
-        const result = wasm.icu4x_CustomTimeZone_try_set_metazone_id_mv1(this.ffiValue, ...idSlice.splat());
+        wasm.icu4x_CustomTimeZone_set_metazone_id_mv1(this.ffiValue, ...idSlice.splat());
     
-        try {
-            if (result !== 1) {
-                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
-                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
-            }
-    
-        }
+        try {}
         
         finally {
             functionCleanupArena.free();
         }
-    }
-
-    clearMetazoneId() {wasm.icu4x_CustomTimeZone_clear_metazone_id_mv1(this.ffiValue);
-    
-        try {}
-        
-        finally {}
     }
 
     get metazoneId() {

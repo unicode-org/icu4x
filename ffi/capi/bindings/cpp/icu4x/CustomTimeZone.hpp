@@ -13,9 +13,7 @@
 #include "IsoDateTime.hpp"
 #include "MetazoneCalculator.hpp"
 #include "TimeZoneIdMapper.hpp"
-#include "TimeZoneInvalidIdError.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
-#include "TimeZoneUnknownError.hpp"
 #include "ZoneOffsetCalculator.hpp"
 
 
@@ -23,10 +21,9 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {icu4x::capi::CustomTimeZone* ok; }; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
-    icu4x_CustomTimeZone_from_string_mv1_result icu4x_CustomTimeZone_from_string_mv1(diplomat::capi::DiplomatStringView s);
+    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_from_string_mv1(diplomat::capi::DiplomatStringView s);
     
-    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_empty_mv1(void);
+    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_unknown_mv1(void);
     
     icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_utc_mv1(void);
     
@@ -55,21 +52,13 @@ namespace capi {
     typedef struct icu4x_CustomTimeZone_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_seconds_mv1_result;
     icu4x_CustomTimeZone_offset_has_seconds_mv1_result icu4x_CustomTimeZone_offset_has_seconds_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result;
-    icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
+    void icu4x_CustomTimeZone_set_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
     
-    typedef struct icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result;
-    icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::TimeZoneIdMapper* mapper, diplomat::capi::DiplomatStringView id);
+    void icu4x_CustomTimeZone_set_iana_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::TimeZoneIdMapper* mapper, diplomat::capi::DiplomatStringView id);
     
-    void icu4x_CustomTimeZone_clear_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self);
+    void icu4x_CustomTimeZone_time_zone_id_mv1(const icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_CustomTimeZone_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_time_zone_id_mv1_result;
-    icu4x_CustomTimeZone_time_zone_id_mv1_result icu4x_CustomTimeZone_time_zone_id_mv1(const icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
-    
-    typedef struct icu4x_CustomTimeZone_try_set_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_metazone_id_mv1_result;
-    icu4x_CustomTimeZone_try_set_metazone_id_mv1_result icu4x_CustomTimeZone_try_set_metazone_id_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
-    
-    void icu4x_CustomTimeZone_clear_metazone_id_mv1(icu4x::capi::CustomTimeZone* self);
+    void icu4x_CustomTimeZone_set_metazone_id_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
     
     typedef struct icu4x_CustomTimeZone_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_metazone_id_mv1_result;
     icu4x_CustomTimeZone_metazone_id_mv1_result icu4x_CustomTimeZone_metazone_id_mv1(const icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
@@ -103,13 +92,13 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError> icu4x::CustomTimeZone::from_string(std::string_view s) {
+inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::from_string(std::string_view s) {
   auto result = icu4x::capi::icu4x_CustomTimeZone_from_string_mv1({s.data(), s.size()});
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Ok<std::unique_ptr<icu4x::CustomTimeZone>>(std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Err<icu4x::TimeZoneUnknownError>(icu4x::TimeZoneUnknownError {}));
+  return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::empty() {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_empty_mv1();
+inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::unknown() {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_unknown_mv1();
   return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
 }
 
@@ -163,39 +152,28 @@ inline std::optional<bool> icu4x::CustomTimeZone::offset_has_seconds() const {
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
-inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> icu4x::CustomTimeZone::try_set_time_zone_id(std::string_view id) {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_time_zone_id_mv1(this->AsFFI(),
+inline void icu4x::CustomTimeZone::set_time_zone_id(std::string_view id) {
+  icu4x::capi::icu4x_CustomTimeZone_set_time_zone_id_mv1(this->AsFFI(),
     {id.data(), id.size()});
-  return result.is_ok ? diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
 }
 
-inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> icu4x::CustomTimeZone::try_set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id) {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(this->AsFFI(),
+inline void icu4x::CustomTimeZone::set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id) {
+  icu4x::capi::icu4x_CustomTimeZone_set_iana_time_zone_id_mv1(this->AsFFI(),
     mapper.AsFFI(),
     {id.data(), id.size()});
-  return result.is_ok ? diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
 }
 
-inline void icu4x::CustomTimeZone::clear_time_zone_id() {
-  icu4x::capi::icu4x_CustomTimeZone_clear_time_zone_id_mv1(this->AsFFI());
-}
-
-inline std::optional<std::string> icu4x::CustomTimeZone::time_zone_id() const {
+inline std::string icu4x::CustomTimeZone::time_zone_id() const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_CustomTimeZone_time_zone_id_mv1(this->AsFFI(),
+  icu4x::capi::icu4x_CustomTimeZone_time_zone_id_mv1(this->AsFFI(),
     &write);
-  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+  return output;
 }
 
-inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> icu4x::CustomTimeZone::try_set_metazone_id(std::string_view id) {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_metazone_id_mv1(this->AsFFI(),
+inline void icu4x::CustomTimeZone::set_metazone_id(std::string_view id) {
+  icu4x::capi::icu4x_CustomTimeZone_set_metazone_id_mv1(this->AsFFI(),
     {id.data(), id.size()});
-  return result.is_ok ? diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
-}
-
-inline void icu4x::CustomTimeZone::clear_metazone_id() {
-  icu4x::capi::icu4x_CustomTimeZone_clear_metazone_id_mv1(this->AsFFI());
 }
 
 inline std::optional<std::string> icu4x::CustomTimeZone::metazone_id() const {

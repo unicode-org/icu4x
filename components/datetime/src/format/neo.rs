@@ -383,7 +383,7 @@ size_test!(
 /// // Further, the time zone we provide doesn't contain any offset into!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
-///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
+///     names.with_pattern(&pattern).format(&CustomTimeZone::unknown()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
