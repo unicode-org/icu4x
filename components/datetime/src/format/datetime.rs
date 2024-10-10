@@ -918,9 +918,9 @@ mod tests {
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
+        let dtf = NeoFormatter::try_new(
             &locale.into(),
-            NeoSkeletonLength::Medium.into(),
+            NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
         )
         .expect("DateTimeFormat construction succeeds");
 

@@ -47,8 +47,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = {
                             TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
                                 &locale.into(),
-                                skeleton.components,
-                                skeleton.length.into(),
+                                skeleton,
                             )
                             .expect("Failed to create TypedNeoFormatter.")
                         };

@@ -40,8 +40,11 @@ use icu::calendar::DateTime;
 use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
 use icu::locale::locale;
 
-let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new(&locale!("es").into(), NeoSkeletonLength::Long.into())
-    .expect("locale should be present in compiled data");
+let dtf = NeoFormatter::try_new(
+    &locale!("es").into(),
+    NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Long)
+)
+.expect("locale should be present in compiled data");
 
 let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
 let date = date.to_any();

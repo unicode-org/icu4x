@@ -31,7 +31,7 @@
 //! use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
 //! use icu::locale::locale;
 //!
-//! let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
+//! let dtf = NeoFormatter::try_new(
 //!     &locale!("es-US").into(),
 //!     NeoSkeletonLength::Medium.into(),
 //! )
@@ -67,7 +67,7 @@
 //!
 //! let provider = LocaleFallbackProvider::new(provider, fallbacker);
 //!
-//! let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new_with_buffer_provider(
+//! let dtf = NeoFormatter::try_new_with_buffer_provider(
 //!     &provider,
 //!     &locale!("es-US").into(),
 //!     NeoSkeletonLength::Medium.into(),

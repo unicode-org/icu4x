@@ -25,7 +25,7 @@ fn main() {
     let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
         .expect("deserialization should succeed");
 
-    let formatter = TypedNeoFormatter::<Gregorian, NeoAutoDateTimeMarker>::try_new_with_buffer_provider(
+    let formatter = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
         NeoSkeletonLength::Medium.into(),
