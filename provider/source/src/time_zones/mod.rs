@@ -35,6 +35,10 @@ impl SourceDataProvider {
         let mut bcp47_tzids = BTreeMap::new();
         for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
             if let Some(alias) = &bcp47_tzid_data.alias {
+                if bcp47_tzid.as_str() == "unk" {
+                    // ignore the unknown time zone
+                    continue;
+                }
                 for data_value in alias.split(' ') {
                     bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
                 }
@@ -60,7 +64,9 @@ impl SourceDataProvider {
 
         let mut canonical_tzids = BTreeMap::new();
         for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
-            if Some(true) == bcp47_tzid_data.deprecated {
+            if bcp47_tzid.as_str() == "unk" {
+                // ignore the unknown time zone
+            } else if Some(true) == bcp47_tzid_data.deprecated {
                 // skip
             } else if let Some(iana) = &bcp47_tzid_data.iana {
                 canonical_tzids.insert(*bcp47_tzid, iana.clone());
@@ -166,7 +172,7 @@ macro_rules! impl_iterable_data_provider {
 
 impl_iterable_data_provider!(
     TimeZoneEssentialsV1Marker,
-    ExemplarCitiesV1Marker,
+    LocationsV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,
@@ -206,7 +212,7 @@ mod tests {
             .unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero_format);
 
-        let exemplar_cities: DataResponse<ExemplarCitiesV1Marker> = provider
+        let exemplar_cities: DataResponse<LocationsV1Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -217,7 +223,7 @@ mod tests {
             exemplar_cities
                 .payload
                 .get()
-                .0
+                .zones
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
                 .unwrap()
         );
@@ -226,9 +232,16 @@ mod tests {
             exemplar_cities
                 .payload
                 .get()
-                .0
+                .zones
                 .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
+        );
+        assert_eq!(
+            "Unknown City Time",
+            exemplar_cities
+                .payload
+                .get()
+                .unknown
         );
 
         let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider

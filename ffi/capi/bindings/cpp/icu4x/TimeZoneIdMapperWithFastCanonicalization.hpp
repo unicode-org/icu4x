@@ -12,7 +12,6 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "TimeZoneInvalidIdError.hpp"
 
 
 namespace icu4x {
@@ -22,8 +21,7 @@ namespace capi {
     typedef struct icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1_result {union {icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1_result;
     icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1_result icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    typedef struct icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1_result;
-    icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1_result icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(const icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(const icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
     typedef struct icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1_result;
     icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1_result icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(const icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
@@ -40,25 +38,25 @@ inline diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonical
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>>(std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>(icu4x::TimeZoneIdMapperWithFastCanonicalization::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>, diplomat::Utf8Error> icu4x::TimeZoneIdMapperWithFastCanonicalization::canonicalize_iana(std::string_view value) const {
+inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TimeZoneIdMapperWithFastCanonicalization::canonicalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this->AsFFI(),
+  icu4x::capi::icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return diplomat::Ok<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>>(result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {})));
+  return diplomat::Ok<std::string>(std::move(output));
 }
 
-inline diplomat::result<std::string, icu4x::TimeZoneInvalidIdError> icu4x::TimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47(std::string_view value) const {
+inline std::optional<std::string> icu4x::TimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47(std::string_view value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
+  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneIdMapperWithFastCanonicalization* icu4x::TimeZoneIdMapperWithFastCanonicalization::AsFFI() const {

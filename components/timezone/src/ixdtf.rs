@@ -127,13 +127,10 @@ impl CustomTimeZone {
         match record {
             TimeZoneRecord::Name(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
-                let bcp47_id = mapper
-                    .as_borrowed()
-                    .iana_bytes_to_bcp47(iana_identifier)
-                    .ok_or(ParseError::InvalidIanaIdentifier)?;
+                let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
 
                 let mut tz = Self {
-                    time_zone_id: Some(bcp47_id),
+                    time_zone_id,
                     offset,
                     metazone_id: None,
                     zone_variant: None,
@@ -192,8 +189,8 @@ impl CustomZonedDateTime<Iso> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone, CustomTimeZone {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+    ///     metazone_id: Some(Some(MetazoneId(tinystr!(4, "amce")))),
     ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     ///
@@ -278,8 +275,8 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone, CustomTimeZone {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+    ///     metazone_id: Some(Some(MetazoneId(tinystr!(4, "amce")))),
     ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     /// ```
@@ -299,12 +296,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// let tz_from_offset = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00").unwrap();
     ///
-    /// assert_eq!(tz_from_offset.zone, CustomTimeZone {
-    ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
+    /// assert_eq!(tz_from_offset.zone, CustomTimeZone::new_with_offset(UtcOffset::try_from_offset_seconds(-18000).unwrap()));
     /// ```
     ///
     /// ## Time Zone Annotations
@@ -319,17 +311,12 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
     /// let tz_from_iana_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
     ///
-    /// assert_eq!(tz_from_offset_annotation.zone, CustomTimeZone {
-    ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
+    /// assert_eq!(tz_from_offset_annotation.zone, CustomTimeZone::new_with_offset(UtcOffset::try_from_offset_seconds(-18000).unwrap()));
     ///
     /// assert_eq!(tz_from_iana_annotation.zone, CustomTimeZone {
     ///     offset: None,
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+    ///     metazone_id: Some(Some(MetazoneId(tinystr!(4, "amce")))),
     ///     zone_variant: None,
     /// });
     /// ```
@@ -353,8 +340,8 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// assert_eq!(consistent_tz_from_both.zone, CustomTimeZone {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+    ///     metazone_id: Some(Some(MetazoneId(tinystr!(4, "amce")))),
     ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     ///
@@ -362,8 +349,8 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// assert_eq!(inconsistent_tz_from_both.zone, CustomTimeZone {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uslax")),
+    ///     metazone_id: Some(Some(MetazoneId(tinystr!(4, "ampa")))),
     ///     zone_variant: None,
     /// });
     /// ```
@@ -378,12 +365,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
     ///
-    /// assert_eq!(consistent_tz_from_both.zone, CustomTimeZone {
-    ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
+    /// assert_eq!(consistent_tz_from_both.zone, CustomTimeZone::new_with_offset(UtcOffset::try_from_offset_seconds(-18000).unwrap()));
     ///
     ///
     /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[+05:00]");
@@ -434,7 +416,7 @@ impl FromStr for CustomZonedDateTime<AnyCalendar> {
 mod test {
     use ixdtf::parsers::IxdtfParser;
 
-    use crate::{ParseError, UtcOffset};
+    use crate::{CustomTimeZone, ParseError, UtcOffset};
 
     #[test]
     fn max_possible_ixdtf_utc_offset() {
@@ -444,5 +426,14 @@ mod test {
                 .unwrap();
         let result = UtcOffset::try_from_utc_offset_record(&ixdtf_record.offset.unwrap());
         assert_eq!(result, Err(ParseError::InvalidOffsetError));
+    }
+
+    #[test]
+    fn future_zone() {
+        let ixdtf_record = IxdtfParser::from_utf8("2024-08-08T12:08:19[Future/Zone]".as_bytes())
+            .parse()
+            .unwrap();
+        let result = CustomTimeZone::try_from_ixdtf_record(&ixdtf_record).unwrap();
+        assert_eq!(result, CustomTimeZone::unknown());
     }
 }

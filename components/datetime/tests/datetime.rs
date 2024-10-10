@@ -24,6 +24,7 @@ use icu_calendar::{
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
+use icu_datetime::CldrCalendar;
 use icu_datetime::{
     neo::{NeoFormatter, NeoOptions, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
@@ -31,7 +32,6 @@ use icu_datetime::{
     options::preferences::{self, HourCycle},
     TypedDateTimeNames,
 };
-use icu_datetime::{CldrCalendar, DateTimeWriteError};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
@@ -387,10 +387,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 )
                 .unwrap()
             };
-            assert_try_writeable_eq!(
-                dtf.format(&zoned_datetime),
+            assert_writeable_eq!(
+                writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
                 output_value.expectation(),
-                Ok(()),
                 "{}",
                 description
             );
@@ -469,10 +468,9 @@ fn test_time_zone_format_configs() {
                         length.into(),
                     )
                     .unwrap();
-                    assert_try_writeable_eq!(
-                        tzf.format(&zoned_datetime.zone),
+                    assert_writeable_eq!(
+                        writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
                         *expect,
-                        Ok(()),
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
@@ -495,7 +493,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
         NeverCalendar,
     };
 
-    let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
+    let time_zone = CustomTimeZone::from_str("America/Los_Angeles");
     let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetMarker>::try_new(
         &locale!("en").into(),
         NeoSkeletonLength::Medium.into(),
@@ -503,8 +501,8 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     .unwrap();
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
-        "{GMT+?}",
-        Err(DateTimeWriteError::MissingZoneSymbols)
+        "{O}",
+        Err(DateTimeWriteError::MissingInputField("zone_offset"))
     );
 }
 
@@ -531,7 +529,6 @@ fn test_time_zone_patterns() {
                 }
                 let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
                 for expect in expected.iter() {
-                    println!(".");
                     let mut pattern_formatter =
                         TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
                             &(&locale).into(),
@@ -541,15 +538,9 @@ fn test_time_zone_patterns() {
                         .include_for_pattern(&parsed_pattern)
                         .unwrap()
                         .format(&zoned_datetime);
-                    let expected_result = if expect.starts_with('{') {
-                        Err(DateTimeWriteError::MissingZoneSymbols)
-                    } else {
-                        Ok(())
-                    };
-                    assert_try_writeable_eq!(
-                        formatted_datetime,
+                    assert_writeable_eq!(
+                        writeable::adapters::LossyWrap(formatted_datetime),
                         *expect,
-                        expected_result,
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
