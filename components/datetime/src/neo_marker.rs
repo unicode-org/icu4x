@@ -29,14 +29,12 @@
 //! )
 //! .unwrap();
 //!
-//! let column_formatter =
-//!     TypedNeoFormatter::<Gregorian, _>::try_new(&locale!("en-US").into(), {
-//!         let mut options =
-//!             NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
-//!         options.alignment = Some(Alignment::Column);
-//!         options
-//!     })
-//!     .unwrap();
+//! let column_formatter = TypedNeoFormatter::<Gregorian, _>::try_new(
+//!     &locale!("en-US").into(),
+//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!         .with_alignment(Alignment::Column),
+//! )
+//! .unwrap();
 //!
 //! // By default, en-US does not pad the month and day with zeros.
 //! assert_try_writeable_eq!(
@@ -68,14 +66,12 @@
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! let formatter =
-//!     TypedNeoFormatter::<Gregorian, _>::try_new(&locale!("en-US").into(), {
-//!         let mut options =
-//!             NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
-//!         options.year_style = Some(YearStyle::Auto);
-//!         options
-//!     })
-//!     .unwrap();
+//! let formatter = TypedNeoFormatter::<Gregorian, _>::try_new(
+//!     &locale!("en-US").into(),
+//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!         .with_year_style(YearStyle::Auto),
+//! )
+//! .unwrap();
 //!
 //! // Era displayed when needed for disambiguation,
 //! // such as years before year 0 and small year numbers:
@@ -98,14 +94,12 @@
 //!     "1/1/25"
 //! );
 //!
-//! let formatter =
-//!     TypedNeoFormatter::<Gregorian, _>::try_new(&locale!("en-US").into(), {
-//!         let mut options =
-//!             NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
-//!         options.year_style = Some(YearStyle::Full);
-//!         options
-//!     })
-//!     .unwrap();
+//! let formatter = TypedNeoFormatter::<Gregorian, _>::try_new(
+//!     &locale!("en-US").into(),
+//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!         .with_year_style(YearStyle::Full),
+//! )
+//! .unwrap();
 //!
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
@@ -127,14 +121,12 @@
 //!     "1/1/2025"
 //! );
 //!
-//! let formatter =
-//!     TypedNeoFormatter::<Gregorian, _>::try_new(&locale!("en-US").into(), {
-//!         let mut options =
-//!             NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short);
-//!         options.year_style = Some(YearStyle::Always);
-//!         options
-//!     })
-//!     .unwrap();
+//! let formatter = TypedNeoFormatter::<Gregorian, _>::try_new(
+//!     &locale!("en-US").into(),
+//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!         .with_year_style(YearStyle::Always),
+//! )
+//! .unwrap();
 //!
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
@@ -263,13 +255,8 @@
 //!
 //! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     {
-//!         let mut options = NeoHourMinuteSecondMarker::with_length(
-//!             NeoSkeletonLength::Short,
-//!         );
-//!         options.fractional_second_digits = Some(FractionalSecondDigits::F2);
-//!         options
-//!     },
+//!     NeoHourMinuteSecondMarker::with_length(NeoSkeletonLength::Short)
+//!         .with_fractional_second_digits(FractionalSecondDigits::F2),
 //! )
 //! .unwrap();
 //!
@@ -1730,12 +1717,33 @@ macro_rules! impl_marker_with_options {
         impl_get_field!($type, length, yes);
         $(
             impl_get_field!($type, alignment, $alignment_yes);
+            impl $type {
+                /// Sets the alignment option.
+                pub const fn with_alignment(mut self, alignment: Alignment) -> Self {
+                    self.alignment = Some(alignment);
+                    self
+                }
+            }
         )?
         $(
             impl_get_field!($type, year_style, $yearstyle_yes);
+            impl $type {
+                /// Sets the year style option.
+                pub const fn with_year_style(mut self, year_style: YearStyle) -> Self {
+                    self.year_style = Some(year_style);
+                    self
+                }
+            }
         )?
         $(
             impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
+            impl $type {
+                /// Sets the fractional second digits option.
+                pub const fn with_fractional_second_digits(mut self, digits: FractionalSecondDigits) -> Self {
+                    self.fractional_second_digits = Some(digits);
+                    self
+                }
+            }
         )?
     };
 }
