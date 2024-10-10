@@ -731,20 +731,18 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         ResolvedNeoTimeZoneSkeleton::GenericShort => [
             Some(TimeZoneFormatterUnit::GenericNonLocationShort),
             Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
+            None,
         ],
         // 'vvvv'
         ResolvedNeoTimeZoneSkeleton::GenericLong => [
             Some(TimeZoneFormatterUnit::GenericNonLocationLong),
             Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-        ],
-        // 'VVVV'
-        ResolvedNeoTimeZoneSkeleton::Location => [
-            Some(TimeZoneFormatterUnit::GenericLocation),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
             None,
         ],
+        // 'VVVV'
+        ResolvedNeoTimeZoneSkeleton::Location => {
+            [Some(TimeZoneFormatterUnit::GenericLocation), None, None]
+        }
         // `O`, `ZZZZ`
         ResolvedNeoTimeZoneSkeleton::OffsetShort => [
             Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
@@ -756,11 +754,7 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
         }
         // 'V'
-        ResolvedNeoTimeZoneSkeleton::Bcp47Id => [
-            Some(TimeZoneFormatterUnit::Bcp47Id),
-            Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-            None,
-        ],
+        ResolvedNeoTimeZoneSkeleton::Bcp47Id => [Some(TimeZoneFormatterUnit::Bcp47Id), None, None],
         // 'X'
         ResolvedNeoTimeZoneSkeleton::IsoX => [
             Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {

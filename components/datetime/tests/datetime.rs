@@ -31,7 +31,7 @@ use icu_datetime::{
     options::preferences::{self, HourCycle},
     TypedDateTimeNames,
 };
-use icu_datetime::{neo_skeleton::NeoDateTimeSkeleton, CldrCalendar};
+use icu_datetime::{neo_skeleton::NeoDateTimeSkeleton, CldrCalendar, DateTimeWriteError};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
@@ -524,10 +524,15 @@ fn test_time_zone_patterns() {
                         .include_for_pattern(&parsed_pattern)
                         .unwrap()
                         .format(&zoned_datetime);
+                    let expected_result = if expect.starts_with('{') {
+                        Err(DateTimeWriteError::MissingZoneSymbols)
+                    } else {
+                        Ok(())
+                    };
                     assert_try_writeable_eq!(
                         formatted_datetime,
                         *expect,
-                        Ok(()),
+                        expected_result,
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\

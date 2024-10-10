@@ -1045,7 +1045,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format(&zone_london_winter),
-    ///     "Your time zone is: London Time",
+    ///     "Your time zone is: United Kingdom Time",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
