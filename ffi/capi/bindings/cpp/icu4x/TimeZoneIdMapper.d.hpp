@@ -30,13 +30,13 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline std::optional<std::string> iana_to_bcp47(std::string_view value) const;
+  inline std::string iana_to_bcp47(std::string_view value) const;
 
-  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
+  inline diplomat::result<std::string, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
 
-  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
+  inline diplomat::result<std::string, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
-  inline std::optional<std::string> find_canonical_iana_from_bcp47(std::string_view value) const;
+  inline std::string find_canonical_iana_from_bcp47(std::string_view value) const;
 
   inline const icu4x::capi::TimeZoneIdMapper* AsFFI() const;
   inline icu4x::capi::TimeZoneIdMapper* AsFFI();

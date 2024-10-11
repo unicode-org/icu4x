@@ -47,38 +47,27 @@ pub mod ffi {
             &self,
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        ) {
             let handle = self.0.as_borrowed();
-            let bcp47 = handle.iana_bytes_to_bcp47(value)?;
+            let bcp47 = handle.iana_bytes_to_bcp47(value);
             let _infallible = bcp47.0.write_to(write);
-            Some(())
         }
 
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana, FnInStruct)]
-        pub fn normalize_iana(
-            &self,
-            value: &str,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        pub fn normalize_iana(&self, value: &str, write: &mut diplomat_runtime::DiplomatWrite) {
             let handle = self.0.as_borrowed();
-            let iana = handle.normalize_iana(value)?;
+            let iana = handle.normalize_iana(value);
             let _infallible = iana.0.write_to(write);
-            Some(())
         }
 
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperBorrowed::canonicalize_iana,
             FnInStruct
         )]
-        pub fn canonicalize_iana(
-            &self,
-            value: &str,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        pub fn canonicalize_iana(&self, value: &str, write: &mut diplomat_runtime::DiplomatWrite) {
             let handle = self.0.as_borrowed();
-            let iana = handle.canonicalize_iana(value)?;
+            let iana = handle.canonicalize_iana(value);
             let _infallible = iana.0.write_to(write);
-            Some(())
         }
 
         #[diplomat::rust_link(
@@ -89,13 +78,13 @@ pub mod ffi {
             &self,
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        ) {
             let handle = self.0.as_borrowed();
-            let iana = TinyAsciiStr::try_from_utf8(value).ok().and_then(|s| {
-                handle.find_canonical_iana_from_bcp47(icu_timezone::TimeZoneBcp47Id(s))
-            })?;
-            let _infallible = iana.write_to(write);
-            Some(())
+            let bcp47 = TinyAsciiStr::try_from_utf8(value)
+                .ok()
+                .map(icu_timezone::TimeZoneBcp47Id)
+                .unwrap_or(icu_timezone::TimeZoneBcp47Id::unknown());
+            let _infallible = handle.find_canonical_iana_from_bcp47(bcp47).write_to(write);
         }
     }
 
@@ -152,15 +141,10 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonicalize_iana,
             FnInStruct
         )]
-        pub fn canonicalize_iana(
-            &self,
-            value: &str,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        pub fn canonicalize_iana(&self, value: &str, write: &mut diplomat_runtime::DiplomatWrite) {
             let handle = self.0.as_borrowed();
-            let iana = handle.canonicalize_iana(value)?;
+            let iana = handle.canonicalize_iana(value);
             let _infallible = iana.0.write_to(write);
-            Some(())
         }
 
         #[diplomat::rust_link(

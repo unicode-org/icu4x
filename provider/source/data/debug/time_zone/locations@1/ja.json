@@ -371,7 +371,6 @@
     "ugkla": "ウガンダ",
     "umawk": "ウェーク島",
     "ummdy": "ミッドウェー島",
-    "unk": "地域不明",
     "usadk": "アダック",
     "usaeg": "インディアナ州マレンゴ",
     "usanc": "アンカレッジ",
@@ -419,6 +418,7 @@
     "zmlun": "ザンビア",
     "zwhre": "ジンバブエ"
   },
+  "unknown": "地域不明時間",
   "pattern_generic": [
     {
       "Placeholder": "Singleton"

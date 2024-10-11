@@ -371,7 +371,6 @@
     "ugkla": "Uganda",
     "umawk": "Wake",
     "ummdy": "Midway",
-    "unk": "Ciudad desconocida",
     "usadk": "Adak",
     "usaeg": "Marengo, Indiana",
     "usanc": "Anchorage",
@@ -419,6 +418,7 @@
     "zmlun": "Zambia",
     "zwhre": "Zimbabue"
   },
+  "unknown": "hora de Ciudad desconocida",
   "pattern_generic": [
     {
       "Literal": "hora de "

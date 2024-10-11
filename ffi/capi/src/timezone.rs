@@ -167,11 +167,7 @@ pub mod ffi {
             mapper: &crate::timezone_mapper::ffi::TimeZoneIdMapper,
             id: &DiplomatStr,
         ) {
-            self.0.time_zone_id = mapper
-                .0
-                .as_borrowed()
-                .iana_bytes_to_bcp47(id)
-                .unwrap_or(TimeZoneBcp47Id::unknown());
+            self.0.time_zone_id = mapper.0.as_borrowed().iana_bytes_to_bcp47(id);
         }
 
         /// Writes the value of the `time_zone_id` field as a string.

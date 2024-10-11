@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    CustomTimeZone, CustomZonedDateTime, InvalidOffsetError, MetazoneCalculator, TimeZoneBcp47Id,
-    TimeZoneIdMapper, UtcOffset, ZoneOffsetCalculator,
+    CustomTimeZone, CustomZonedDateTime, InvalidOffsetError, MetazoneCalculator, TimeZoneIdMapper,
+    UtcOffset, ZoneOffsetCalculator,
 };
 use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
@@ -127,10 +127,7 @@ impl CustomTimeZone {
         match record {
             TimeZoneRecord::Name(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
-                let time_zone_id = mapper
-                    .as_borrowed()
-                    .iana_bytes_to_bcp47(iana_identifier)
-                    .unwrap_or(TimeZoneBcp47Id::unknown());
+                let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
 
                 let mut tz = Self {
                     time_zone_id,

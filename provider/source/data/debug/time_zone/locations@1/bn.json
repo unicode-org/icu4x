@@ -371,7 +371,6 @@
     "ugkla": "উগান্ডা",
     "umawk": "ওয়েক",
     "ummdy": "মিডওয়ে",
-    "unk": "অজানা শহর",
     "usadk": "আডক",
     "usaeg": "মারেঙ্গো, ইন্ডিয়ানা",
     "usanc": "এনকোরেজ",
@@ -419,6 +418,7 @@
     "zmlun": "জাম্বিয়া",
     "zwhre": "জিম্বাবোয়ে"
   },
+  "unknown": "অজানা শহর সময়",
   "pattern_generic": [
     {
       "Placeholder": "Singleton"
