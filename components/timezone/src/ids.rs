@@ -333,6 +333,19 @@ impl TimeZoneIdMapperBorrowed<'_> {
         Some(string)
     }
 
+    /// Iterates through all canonical time zones
+    pub fn iter_canonical(&self) -> impl Iterator<Item = TimeZoneBcp47Id> + '_ {
+        self.data.bcp47_ids.iter()
+    }
+
+    /// Iterates through all metazones
+    pub fn iter_metazones(&self) -> impl Iterator<Item = TimeZoneBcp47Id> + '_ {
+        self.data
+            .metazones
+            .iter()
+            .filter_map(|i| self.data.bcp47_ids.get(i as usize))
+    }
+
     /// Queries the data for `iana_id` without recording the normalized string.
     /// This is a fast, no-alloc lookup.
     fn iana_lookup_quick(&self, iana_id: impl AsRef<[u8]>) -> Option<IanaTrieValue> {

@@ -72,6 +72,18 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
         // the canonical order of the IANA names.
         let bcp2iana = self.compute_canonical_tzids_btreemap()?;
 
+        let metazone_representatives = self.compute_meta_zones_representatives()?;
+
+        let metazones = bcp47_ids
+            .iter()
+            .enumerate()
+            .flat_map(|(i, bcp47)| {
+                metazone_representatives
+                    .contains(bcp2iana.get(&bcp47)?)
+                    .then_some(i as u16)
+            })
+            .collect();
+
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
         let map: BTreeMap<Vec<u8>, usize> = iana2bcp
@@ -105,6 +117,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
                 })?
                 .convert_store(),
             bcp47_ids,
+            metazones,
             bcp47_ids_checksum,
         };
         Ok(DataResponse {

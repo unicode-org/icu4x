@@ -7,9 +7,11 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::time_zones::*;
 use icu::timezone::provider::*;
+use icu_locale_core::subtags::region;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use tinystr::tinystr;
 
@@ -102,6 +104,25 @@ impl SourceDataProvider {
         // TODO(#1781): Remove this special case once the short id is updated in CLDR
         meta_zone_ids.insert("Yukon".to_owned(), MetazoneId(tinystr!(4, "yuko")));
         Ok(meta_zone_ids)
+    }
+
+    fn compute_meta_zones_representatives(&self) -> Result<BTreeSet<String>, DataError> {
+        let metazones = &self
+            .cldr()?
+            .core()
+            .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
+                "supplemental/metaZones.json",
+            )?
+            .supplemental
+            .meta_zones;
+
+        Ok(metazones
+            .meta_zones_territory
+            .0
+            .iter()
+            .filter(|t| t.map_zone.territory == region!("001"))
+            .map(|t| t.map_zone.zone_type.clone())
+            .collect())
     }
 
     fn compute_primary_zones(&self) -> Result<BTreeMap<TimeZoneBcp47Id, Region>, DataError> {
