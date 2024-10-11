@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        neo::NeoOptions, neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         neo_skeleton::NeoSkeletonLength,
     };
 
@@ -43,7 +43,9 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+                NeoSkeletonLength::from(length),
+            );
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -96,7 +98,9 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+                NeoSkeletonLength::from(length),
+            );
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::neo::NeoFormatter::try_new,

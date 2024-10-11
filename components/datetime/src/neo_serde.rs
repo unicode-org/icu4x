@@ -6,8 +6,8 @@
 
 use crate::neo_skeleton::{
     Alignment, FractionalSecondDigits, NeoCalendarPeriodComponents, NeoComponents,
-    NeoDateComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
-    NeoTimeZoneStyle, YearStyle,
+    NeoDateComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneStyle,
+    YearStyle,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -327,42 +327,26 @@ impl TryFrom<FieldSetSerde> for NeoTimeComponents {
     }
 }
 
-impl From<NeoTimeZoneSkeleton> for FieldSetSerde {
-    fn from(value: NeoTimeZoneSkeleton) -> Self {
+impl From<NeoTimeZoneStyle> for FieldSetSerde {
+    fn from(value: NeoTimeZoneStyle) -> Self {
         match value {
-            NeoTimeZoneSkeleton {
-                style: NeoTimeZoneStyle::Location,
-            } => Self::ZONE_LOCATION,
-            NeoTimeZoneSkeleton {
-                style: NeoTimeZoneStyle::NonLocation,
-            } => Self::ZONE_GENERIC,
-            NeoTimeZoneSkeleton {
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            } => Self::ZONE_SPECIFIC,
-            NeoTimeZoneSkeleton {
-                style: NeoTimeZoneStyle::Offset,
-            } => Self::ZONE_OFFSET,
+            NeoTimeZoneStyle::Location => Self::ZONE_LOCATION,
+            NeoTimeZoneStyle::Generic => Self::ZONE_GENERIC,
+            NeoTimeZoneStyle::Specific => Self::ZONE_SPECIFIC,
+            NeoTimeZoneStyle::Offset => Self::ZONE_OFFSET,
             _ => todo!(),
         }
     }
 }
 
-impl TryFrom<FieldSetSerde> for NeoTimeZoneSkeleton {
+impl TryFrom<FieldSetSerde> for NeoTimeZoneStyle {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
-            FieldSetSerde::ZONE_LOCATION => Ok(Self {
-                style: NeoTimeZoneStyle::Location,
-            }),
-            FieldSetSerde::ZONE_GENERIC => Ok(Self {
-                style: NeoTimeZoneStyle::NonLocation,
-            }),
-            FieldSetSerde::ZONE_SPECIFIC => Ok(Self {
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            }),
-            FieldSetSerde::ZONE_OFFSET => Ok(Self {
-                style: NeoTimeZoneStyle::Offset,
-            }),
+            FieldSetSerde::ZONE_LOCATION => Ok(NeoTimeZoneStyle::Location),
+            FieldSetSerde::ZONE_GENERIC => Ok(NeoTimeZoneStyle::Generic),
+            FieldSetSerde::ZONE_SPECIFIC => Ok(NeoTimeZoneStyle::Specific),
+            FieldSetSerde::ZONE_OFFSET => Ok(NeoTimeZoneStyle::Offset),
             _ => Err(Error::InvalidFields),
         }
     }
@@ -422,7 +406,7 @@ fn test_basic() {
         components: NeoComponents::DateTimeZone(
             NeoDateComponents::YearMonthDayWeekday,
             NeoTimeComponents::HourMinute,
-            NeoTimeZoneSkeleton::generic(),
+            NeoTimeZoneStyle::Generic,
         ),
         length: NeoSkeletonLength::Medium,
         alignment: Some(Alignment::Column),

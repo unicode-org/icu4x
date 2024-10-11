@@ -8,7 +8,6 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        neo::NeoOptions,
         neo_marker::{NeoHourMinuteMarker, NeoYearMonthDayHourMinuteMarker, NeoYearMonthDayMarker},
         neo_skeleton::NeoSkeletonLength,
         NeverCalendar,
@@ -50,7 +49,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(TimeFormatter(call_constructor!(
                 icu_datetime::neo::TypedNeoFormatter::try_new,
@@ -104,7 +103,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
                 icu_datetime::neo::TypedNeoFormatter::try_new,
@@ -157,7 +156,8 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options =
+                NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::neo::TypedNeoFormatter::try_new,
@@ -196,7 +196,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(DateFormatter(call_constructor!(
                 icu_datetime::neo::NeoFormatter::try_new,
@@ -273,7 +273,8 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options =
+                NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::neo::NeoFormatter::try_new,

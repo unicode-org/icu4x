@@ -30,9 +30,9 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 ];
 
 fn main() {
-    let dtf = TypedNeoFormatter::<Gregorian, NeoYearMonthDayHourMinuteMarker>::try_new(
+    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new(
         &locale!("en").into(),
-        NeoSkeletonLength::Medium.into(),
+        NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
     )
     .expect("Failed to create TypedDateTimeFormatter instance.");
 
