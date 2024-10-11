@@ -694,9 +694,6 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
         };
 
-        let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -715,8 +712,8 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
-        essentials
-            .fallback_format
+        locations
+            .pattern_partial_location
             .interpolate((location, non_location))
             .write_to(sink)?;
 
@@ -745,9 +742,6 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
         };
 
-        let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -766,8 +760,8 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
-        essentials
-            .fallback_format
+        locations
+            .pattern_partial_location
             .interpolate((location, non_location))
             .write_to(sink)?;
 

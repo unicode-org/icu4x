@@ -60,15 +60,6 @@ pub struct TimeZoneEssentialsV1<'data> {
     /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub offset_zero: Cow<'data, str>,
-    /// Metazone Name with Location Pattern.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::DoublePlaceholder, _>"
-        )
-    )]
-    pub fallback_format: Cow<'data, DoublePlaceholderPattern>,
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
@@ -116,6 +107,15 @@ pub struct LocationsV1<'data> {
         )
     )]
     pub pattern_daylight: Cow<'data, SinglePlaceholderPattern>,
+    /// Metazone Name with Location Pattern.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::DoublePlaceholder, _>"
+        )
+    )]
+    pub pattern_partial_location: Cow<'data, DoublePlaceholderPattern>,
 }
 
 /// An ICU4X mapping to generic metazone names.

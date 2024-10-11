@@ -10,19 +10,5 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero": "UTC",
-  "fallback_format": [
-    {
-      "Placeholder": "Place1"
-    },
-    {
-      "Literal": " ("
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": ")"
-    }
-  ]
+  "offset_zero": "UTC"
 }
