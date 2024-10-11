@@ -59,8 +59,8 @@ impl ResolvedNeoTimeZoneSkeleton {
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
     pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
-    /// The exemplar cities for time zones.
-    pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
+    /// The location names, e.g. Germany Time
+    pub(crate) locations: Option<&'a provider::time_zones::LocationsV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
     /// The generic short metazone names, e.g. PT
@@ -595,11 +595,11 @@ impl FormatTimeZone for GenericLocationFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+        let Some(location) = locations.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -635,11 +635,11 @@ impl FormatTimeZone for SpecificLocationFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+        let Some(location) = locations.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -694,14 +694,14 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(non_locations) = data_payloads.mz_generic_long.as_ref() else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+        let Some(location) = locations.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
         let Some(non_location) = non_locations
@@ -745,14 +745,14 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(exemplar_cities) = data_payloads.exemplar_cities else {
+        let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(non_locations) = data_payloads.mz_generic_short.as_ref() else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = exemplar_cities.0.get(&time_zone_id) else {
+        let Some(location) = locations.0.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
         let Some(non_location) = non_locations

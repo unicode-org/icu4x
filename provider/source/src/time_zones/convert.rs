@@ -80,9 +80,9 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+impl DataProvider<LocationsV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -142,7 +142,7 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1(
+            payload: DataPayload::from_owned(LocationsV1(
                 bcp47_tzids
                     .iter()
                     .filter_map(|(bcp47, bcp47_tzid_data)| {
