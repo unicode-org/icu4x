@@ -116,13 +116,12 @@ const COMMON_SEC_AND_TER_CE: u64 = COMMON_SECONDARY_CE | COMMON_TERTIARY_CE;
 
 const UNASSIGNED_IMPLICIT_BYTE: u8 = 0xFE;
 
-/// Set if there is no match for the single (no-suffix) character itself.
-/// This is only possible if there is a prefix.
-/// In this case, discontiguous contraction matching cannot add combining marks
-/// starting from an empty suffix.
-/// The default CE32 is used anyway if there is no suffix match.
+// /// Set if there is no match for the single (no-suffix) character itself.
+// /// This is only possible if there is a prefix.
+// /// In this case, discontiguous contraction matching cannot add combining marks
+// /// starting from an empty suffix.
+// /// The default CE32 is used anyway if there is no suffix match.
 // const CONTRACT_SINGLE_CP_NO_MATCH: u32 = 0x100;
-
 /// Set if the first character of every contraction suffix has lccc!=0.
 const CONTRACT_NEXT_CCC: u32 = 0x200;
 /// Set if any contraction suffix ends with lccc!=0.

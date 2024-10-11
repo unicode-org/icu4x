@@ -100,7 +100,6 @@ impl FieldSymbol {
     /// # Constraints
     ///
     /// This model limits the available number of possible types and symbols to 16 each.
-
     #[inline]
     pub(crate) fn idx(&self) -> u8 {
         let (high, low) = match self {
