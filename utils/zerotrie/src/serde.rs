@@ -44,8 +44,7 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
     }
 }
 
-impl<'data, 'de: 'data> Deserialize<'de> for &'data ByteStr
-{
+impl<'data, 'de: 'data> Deserialize<'de> for &'data ByteStr {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -55,8 +54,7 @@ impl<'data, 'de: 'data> Deserialize<'de> for &'data ByteStr
     }
 }
 
-impl<'de> Deserialize<'de> for Box<ByteStr>
-{
+impl<'de> Deserialize<'de> for Box<ByteStr> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
