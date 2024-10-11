@@ -183,6 +183,7 @@ impl FromStr for UtcOffset {
 }
 
 /// A time zone variant, representing the currently observed relative offset.
+///
 /// The semantics vary from time zone to time zone and could represent concepts
 /// such as Standard time, Daylight time, Summer time, or Ramadan time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]

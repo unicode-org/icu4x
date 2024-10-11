@@ -80,7 +80,7 @@ impl CanonicalCompositionBorrowed<'static> {
     }
 }
 
-impl<'a> CanonicalCompositionBorrowed<'a> {
+impl CanonicalCompositionBorrowed<'_> {
     /// Performs canonical composition (including Hangul) on a pair of
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
@@ -241,7 +241,7 @@ impl CanonicalDecompositionBorrowed<'static> {
     }
 }
 
-impl<'a> CanonicalDecompositionBorrowed<'a> {
+impl CanonicalDecompositionBorrowed<'_> {
     /// Performs non-recursive canonical decomposition (including for Hangul).
     ///
     /// ```
@@ -582,7 +582,7 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
     }
 }
 
-impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
+impl CanonicalCombiningClassMapBorrowed<'_> {
     /// Look up the canonical combining class for a scalar value.
     ///
     /// The return value is a u8 representing the canonical combining class,

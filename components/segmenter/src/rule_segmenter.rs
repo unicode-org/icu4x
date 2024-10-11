@@ -258,7 +258,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -277,7 +277,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
 #[derive(Debug)]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -296,7 +296,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
 #[derive(Debug)]
 pub struct RuleBreakTypeLatin1;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -315,7 +315,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf16;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf16 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

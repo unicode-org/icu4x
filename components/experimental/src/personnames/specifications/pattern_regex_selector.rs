@@ -22,7 +22,7 @@ pub struct PersonNamePattern<'lt> {
     pub name_fields: Vec<(NameField, Cow<'lt, str>)>,
 }
 
-impl<'lt> PersonNamePattern<'lt> {}
+impl PersonNamePattern<'_> {}
 
 impl PersonNamePattern<'_> {
     #[cfg(test)]
@@ -79,7 +79,7 @@ impl PersonNamePattern<'_> {
             requested_name_field,
         );
 
-        return effective_name_field
+        effective_name_field
             .iter()
             .flat_map(|field| {
                 specifications::derive_missing_surname(
@@ -96,7 +96,7 @@ impl PersonNamePattern<'_> {
                     initial_sequence_pattern,
                 )
             })
-            .collect();
+            .collect()
     }
 
     pub fn format_person_name(

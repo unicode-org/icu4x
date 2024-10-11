@@ -20,7 +20,7 @@ pub struct FormattedFixedDecimal<'l> {
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
 
-impl<'l> FormattedFixedDecimal<'l> {
+impl FormattedFixedDecimal<'_> {
     fn get_affixes(&self) -> Option<&AffixesV1> {
         match self.value.sign() {
             Sign::None => None,
@@ -30,7 +30,7 @@ impl<'l> FormattedFixedDecimal<'l> {
     }
 }
 
-impl<'l> Writeable for FormattedFixedDecimal<'l> {
+impl Writeable for FormattedFixedDecimal<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

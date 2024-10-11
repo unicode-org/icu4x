@@ -193,7 +193,7 @@ impl IterableDataProviderCached<CollationTailoringV1Marker> for SourceDataProvid
     }
 }
 
-impl<'a> TryInto<CollationDataV1<'static>> for &'a collator_serde::CollationData {
+impl TryInto<CollationDataV1<'static>> for &collator_serde::CollationData {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationDataV1<'static>, Self::Error> {
@@ -207,7 +207,7 @@ impl<'a> TryInto<CollationDataV1<'static>> for &'a collator_serde::CollationData
     }
 }
 
-impl<'a> TryInto<CollationDiacriticsV1<'static>> for &'a collator_serde::CollationDiacritics {
+impl TryInto<CollationDiacriticsV1<'static>> for &collator_serde::CollationDiacritics {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationDiacriticsV1<'static>, Self::Error> {
@@ -217,7 +217,7 @@ impl<'a> TryInto<CollationDiacriticsV1<'static>> for &'a collator_serde::Collati
     }
 }
 
-impl<'a> TryInto<CollationJamoV1<'static>> for &'a collator_serde::CollationJamo {
+impl TryInto<CollationJamoV1<'static>> for &collator_serde::CollationJamo {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationJamoV1<'static>, Self::Error> {
@@ -227,7 +227,7 @@ impl<'a> TryInto<CollationJamoV1<'static>> for &'a collator_serde::CollationJamo
     }
 }
 
-impl<'a> TryInto<CollationMetadataV1> for &'a collator_serde::CollationMetadata {
+impl TryInto<CollationMetadataV1> for &collator_serde::CollationMetadata {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationMetadataV1, Self::Error> {
@@ -235,7 +235,7 @@ impl<'a> TryInto<CollationMetadataV1> for &'a collator_serde::CollationMetadata 
     }
 }
 
-impl<'a> TryInto<CollationReorderingV1<'static>> for &'a collator_serde::CollationReordering {
+impl TryInto<CollationReorderingV1<'static>> for &collator_serde::CollationReordering {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationReorderingV1<'static>, Self::Error> {
@@ -247,9 +247,7 @@ impl<'a> TryInto<CollationReorderingV1<'static>> for &'a collator_serde::Collati
     }
 }
 
-impl<'a> TryInto<CollationSpecialPrimariesV1<'static>>
-    for &'a collator_serde::CollationSpecialPrimaries
-{
+impl TryInto<CollationSpecialPrimariesV1<'static>> for &collator_serde::CollationSpecialPrimaries {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationSpecialPrimariesV1<'static>, Self::Error> {

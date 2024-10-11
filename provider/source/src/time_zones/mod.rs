@@ -166,7 +166,7 @@ macro_rules! impl_iterable_data_provider {
 
 impl_iterable_data_provider!(
     TimeZoneEssentialsV1Marker,
-    ExemplarCitiesV1Marker,
+    LocationsV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,
@@ -204,9 +204,9 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        assert_eq!("GMT", time_zone_formats.payload.get().offset_zero_format);
+        assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
 
-        let exemplar_cities: DataResponse<ExemplarCitiesV1Marker> = provider
+        let locations: DataResponse<LocationsV1Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -214,19 +214,19 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Pohnpei",
-            exemplar_cities
+            locations
                 .payload
                 .get()
-                .0
+                .locations
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
                 .unwrap()
         );
         assert_eq!(
             "Ireland",
-            exemplar_cities
+            locations
                 .payload
                 .get()
-                .0
+                .locations
                 .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
         );

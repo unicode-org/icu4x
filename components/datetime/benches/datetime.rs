@@ -20,7 +20,7 @@ fn datetime_benches(c: &mut Criterion) {
 
     let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
         let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
-        group.bench_function(&format!("semantic/{name}"), |b| {
+        group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
                     let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx

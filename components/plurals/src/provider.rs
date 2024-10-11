@@ -256,7 +256,7 @@ mod ranges {
 
             struct HumanReadableVisitor;
 
-            impl<'de> Visitor<'de> for HumanReadableVisitor {
+            impl Visitor<'_> for HumanReadableVisitor {
                 type Value = UnvalidatedPluralRange;
 
                 fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
@@ -1001,7 +1001,7 @@ where
 }
 
 // Need a manual impl because the derive(Clone) impl bounds are wrong
-impl<'data, V> Clone for PluralElementsPackedCow<'data, V>
+impl<V> Clone for PluralElementsPackedCow<'_, V>
 where
     V: VarULE + ?Sized,
 {

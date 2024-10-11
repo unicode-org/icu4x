@@ -216,7 +216,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -257,7 +257,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -417,7 +417,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -458,7 +458,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -502,7 +502,7 @@ where
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -534,7 +534,7 @@ where
             &<R::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
@@ -753,7 +753,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -842,7 +842,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -1055,7 +1055,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -1144,7 +1144,7 @@ where
             + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -1243,7 +1243,7 @@ where
             + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
             + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::EssentialsV1Marker>
-            + DataProvider<<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<R::Z as ZoneMarkers>::LocationsV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::GenericLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -1277,7 +1277,7 @@ where
             &<R::D as DateDataMarkers>::WeekdayNamesV1Marker::bind(provider),
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-            &<R::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
+            &<R::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
@@ -1451,7 +1451,7 @@ pub struct FormattedNeoDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
+impl TryWriteable for FormattedNeoDateTime<'_> {
     type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
@@ -1474,7 +1474,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'a> FormattedNeoDateTime<'a> {
+impl FormattedNeoDateTime<'_> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()

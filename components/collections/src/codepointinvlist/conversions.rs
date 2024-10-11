@@ -31,7 +31,7 @@ fn try_from_range<'data>(
     }
 }
 
-impl<'data> TryFrom<Range<char>> for CodePointInversionList<'data> {
+impl TryFrom<Range<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: Range<char>) -> Result<Self, Self::Error> {
@@ -39,7 +39,7 @@ impl<'data> TryFrom<Range<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeFrom<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeFrom<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeFrom<char>) -> Result<Self, Self::Error> {
@@ -47,7 +47,7 @@ impl<'data> TryFrom<RangeFrom<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeFull> for CodePointInversionList<'data> {
+impl TryFrom<RangeFull> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(_: RangeFull) -> Result<Self, Self::Error> {
@@ -55,7 +55,7 @@ impl<'data> TryFrom<RangeFull> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeInclusive<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeInclusive<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeInclusive<char>) -> Result<Self, Self::Error> {
@@ -63,7 +63,7 @@ impl<'data> TryFrom<RangeInclusive<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeTo<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeTo<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeTo<char>) -> Result<Self, Self::Error> {
@@ -71,7 +71,7 @@ impl<'data> TryFrom<RangeTo<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeToInclusive<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeToInclusive<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeToInclusive<char>) -> Result<Self, Self::Error> {

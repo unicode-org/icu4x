@@ -307,7 +307,7 @@ impl DataLocale {
     }
 }
 
-impl<'a> Default for &'a DataLocale {
+impl Default for &DataLocale {
     fn default() -> Self {
         static DEFAULT: DataLocale = DataLocale::default();
         &DEFAULT
@@ -605,7 +605,7 @@ pub struct DataMarkerAttributes {
     value: str,
 }
 
-impl<'a> Default for &'a DataMarkerAttributes {
+impl Default for &DataMarkerAttributes {
     fn default() -> Self {
         DataMarkerAttributes::empty()
     }

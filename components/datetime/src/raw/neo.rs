@@ -91,7 +91,7 @@ pub(crate) struct ItemsAndOptions<'a> {
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
-impl<'a> ItemsAndOptions<'a> {
+impl ItemsAndOptions<'_> {
     fn new_empty() -> Self {
         Self {
             items: ZeroSlice::new_empty(),

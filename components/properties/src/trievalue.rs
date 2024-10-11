@@ -206,7 +206,7 @@ fn packed_u16_to_gcg(value: u16) -> GeneralCategoryGroup {
 
 fn gcg_to_packed_u16(gcg: GeneralCategoryGroup) -> u16 {
     // if it's a single property, translate to that property
-    if gcg.0.count_ones() == 1 {
+    if gcg.0.is_power_of_two() {
         // inverse operation of a bitshift
         gcg.0.trailing_zeros() as u16
     } else {

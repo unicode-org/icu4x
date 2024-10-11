@@ -11,6 +11,7 @@
 use crate::elements::{CASE_MASK, TERTIARY_MASK};
 
 /// The collation strength that indicates how many levels to compare.
+///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.

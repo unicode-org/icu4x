@@ -32,7 +32,7 @@ pub struct FormattedRelativeTime<'a> {
     pub(crate) is_negative: bool,
 }
 
-impl<'a> Writeable for FormattedRelativeTime<'a> {
+impl Writeable for FormattedRelativeTime<'_> {
     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> core::fmt::Result {
         if self.options.numeric == Numeric::Auto {
             let relatives = &self.formatter.rt.get().relatives;
