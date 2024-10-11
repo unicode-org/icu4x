@@ -75,7 +75,6 @@ impl<'a> ParseState<'a> {
 ///
 /// These trait implementations provide access to the internal input string for
 /// functions originating in [`nom`].
-
 impl Compare<&str> for ParseState<'_> {
     fn compare(&self, t: &str) -> nom::CompareResult {
         self.input.compare(t)
