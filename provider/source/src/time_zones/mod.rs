@@ -217,7 +217,7 @@ mod tests {
             locations
                 .payload
                 .get()
-                .0
+                .locations
                 .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
                 .unwrap()
         );
@@ -226,7 +226,7 @@ mod tests {
             locations
                 .payload
                 .get()
-                .0
+                .locations
                 .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
         );

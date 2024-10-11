@@ -142,8 +142,8 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1(
-                bcp47_tzids
+            payload: DataPayload::from_owned(LocationsV1 {
+                locations: bcp47_tzids
                     .iter()
                     .filter_map(|(bcp47, bcp47_tzid_data)| {
                         bcp47_tzid_data
@@ -201,7 +201,7 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                         }
                     })
                     .collect(),
-            )),
+            }),
         })
     }
 }

@@ -113,9 +113,11 @@ pub struct TimeZoneEssentialsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LocationsV1<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroMap<'data, TimeZoneBcp47Id, str>,
-);
+pub struct LocationsV1<'data> {
+    /// Per-zone location display name
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
+}
 
 /// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.

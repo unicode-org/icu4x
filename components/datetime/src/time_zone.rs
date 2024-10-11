@@ -599,7 +599,7 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.0.get(&time_zone_id) else {
+        let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -639,7 +639,7 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.0.get(&time_zone_id) else {
+        let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
@@ -701,7 +701,7 @@ impl FormatTimeZone for GenericPartialLocationLongFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.0.get(&time_zone_id) else {
+        let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
         let Some(non_location) = non_locations
@@ -752,7 +752,7 @@ impl FormatTimeZone for GenericPartialLocationShortFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.0.get(&time_zone_id) else {
+        let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
         let Some(non_location) = non_locations
