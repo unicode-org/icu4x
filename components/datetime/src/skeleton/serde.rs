@@ -17,7 +17,7 @@ pub mod reference {
     #[allow(clippy::upper_case_acronyms)]
     pub(super) struct DeserializeSkeletonUTS35String;
 
-    impl<'de> de::Visitor<'de> for DeserializeSkeletonUTS35String {
+    impl de::Visitor<'_> for DeserializeSkeletonUTS35String {
         type Value = Skeleton;
 
         fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {

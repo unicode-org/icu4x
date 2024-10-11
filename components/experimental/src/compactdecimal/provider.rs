@@ -27,6 +27,7 @@ use zerovec::ZeroMap2d;
 pub use crate::provider::Baked;
 
 /// Compact Decimal Pattern V1 data struct.
+///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an
 /// explicit 1) to a pattern.

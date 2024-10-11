@@ -219,7 +219,7 @@ enum LiteralOrStandin<'a> {
 }
 
 // gives us `to_string` and makes clippy happy
-impl<'a> Display for LiteralOrStandin<'a> {
+impl Display for LiteralOrStandin<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
             LiteralOrStandin::Literal(s) => write!(f, "{}", s),

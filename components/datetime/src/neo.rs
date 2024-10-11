@@ -1451,7 +1451,7 @@ pub struct FormattedNeoDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
+impl TryWriteable for FormattedNeoDateTime<'_> {
     type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
@@ -1474,7 +1474,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'a> FormattedNeoDateTime<'a> {
+impl FormattedNeoDateTime<'_> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()

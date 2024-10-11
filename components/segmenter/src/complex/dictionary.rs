@@ -106,7 +106,7 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized, X: Iterator<Item = usize> + ?Si
     }
 }
 
-impl<'l, 's> DictionaryType<'l, 's> for u32 {
+impl<'s> DictionaryType<'_, 's> for u32 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 
@@ -123,7 +123,7 @@ impl<'l, 's> DictionaryType<'l, 's> for u32 {
     }
 }
 
-impl<'l, 's> DictionaryType<'l, 's> for char {
+impl<'s> DictionaryType<'_, 's> for char {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 

@@ -11,6 +11,7 @@ use twox_hash::XxHash64;
 const SEED: u64 = 0xaabbccdd;
 
 /// Split the 64bit `hash` into (g, f0, f1).
+///
 /// g denotes the highest 16bits of the hash modulo `m`, and is referred to as first level hash.
 /// (f0, f1) denotes the middle, and lower 24bits of the hash respectively.
 /// (f0, f1) are used to distribute the keys with same g, into distinct slots.

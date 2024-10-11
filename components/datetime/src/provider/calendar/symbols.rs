@@ -277,7 +277,7 @@ symbols!(
     }
 );
 
-impl<'data> months::SymbolsV1<'data> {
+impl months::SymbolsV1<'_> {
     /// Get the symbol for the given month code
     pub fn get(&self, code: MonthCode) -> Option<&str> {
         match *self {

@@ -11,7 +11,7 @@ pub(crate) struct WriteComparator<'a> {
 }
 
 /// This is an infallible impl. Functions always return Ok, not Err.
-impl<'a> fmt::Write for WriteComparator<'a> {
+impl fmt::Write for WriteComparator<'_> {
     #[inline]
     fn write_str(&mut self, other: &str) -> fmt::Result {
         if self.result != Ordering::Equal {

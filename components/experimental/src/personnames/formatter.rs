@@ -144,11 +144,11 @@ impl PersonNamesFormatter {
             .as_ref()
             .map(|f| f.as_ref())
             .unwrap_or("{0} {1}");
-        return Ok(best_applicable_pattern
+        Ok(best_applicable_pattern
             .format_person_name(person_name, initial_pattern, initial_sequence_pattern)
             .split_whitespace()
             .collect::<Vec<_>>()
-            .join(space_replacement));
+            .join(space_replacement))
     }
 
     fn final_person_names_formatter_options<N>(

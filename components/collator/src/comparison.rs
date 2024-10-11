@@ -446,7 +446,7 @@ impl CollatorBorrowed<'static> {
     }
 }
 
-impl<'a> CollatorBorrowed<'a> {
+impl CollatorBorrowed<'_> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
     pub fn resolved_options(&self) -> ResolvedCollatorOptions {

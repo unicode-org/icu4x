@@ -69,6 +69,7 @@ pub unsafe trait IntegerULE: ULE {
 }
 
 /// This is a [`VarZeroVecFormat`] that stores u8s in the index array, and a u8 for a length.
+///
 /// Will have a smaller data size, but it's *extremely* likely for larger arrays
 /// to be unrepresentable (and error on construction). Should probably be used
 /// for known-small arrays, where all but the last field are known-small.
@@ -77,6 +78,7 @@ pub unsafe trait IntegerULE: ULE {
 pub struct Index8;
 
 /// This is a [`VarZeroVecFormat`] that stores u16s in the index array, and a u16 for a length.
+///
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
 ///

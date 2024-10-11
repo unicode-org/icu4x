@@ -10,7 +10,7 @@ use alloc::borrow::Cow;
 use icu_provider::DataError;
 use writeable::{LengthHint, Writeable};
 
-impl<'data> ListFormatterPatternsV2<'data> {
+impl ListFormatterPatternsV2<'_> {
     /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
     pub fn try_new(start: &str, middle: &str, end: &str, pair: &str) -> Result<Self, DataError> {
