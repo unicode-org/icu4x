@@ -171,8 +171,12 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = NeoFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
-        .expect("blob should contain required markers and `ja` data");
+    let dtf = NeoFormatter::try_new_with_buffer_provider(
+        &buffer_provider,
+        &LOCALE.into(),
+        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium)
+    )
+    .expect("blob should contain required markers and `ja` data");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
@@ -220,8 +224,12 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
-        .expect("blob should contain required data");
+    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(
+        &buffer_provider,
+        &LOCALE.into(),
+        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
+    )
+    .expect("blob should contain required data");
 
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");

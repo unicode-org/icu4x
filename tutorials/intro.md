@@ -113,8 +113,11 @@ const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
 
-    let dtf = NeoFormatter::try_new(&LOCALE.into(), NeoSkeletonLength::Medium.into())
-        .expect("ja data should be available");
+    let dtf = NeoFormatter::try_new(
+        &LOCALE.into(),
+        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
+    )
+    .expect("ja data should be available");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
