@@ -67,8 +67,7 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .find("bytes")
         .expect("Unable to find the word \"bytes\" in the dhat output.");
 
-    text
-        .get(start..end)
+    text.get(start..end)
         .expect("Unable to get a substring.")
         .trim()
         .replace(',', "")

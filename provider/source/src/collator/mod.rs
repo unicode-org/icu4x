@@ -247,9 +247,7 @@ impl TryInto<CollationReorderingV1<'static>> for &collator_serde::CollationReord
     }
 }
 
-impl TryInto<CollationSpecialPrimariesV1<'static>>
-    for &collator_serde::CollationSpecialPrimaries
-{
+impl TryInto<CollationSpecialPrimariesV1<'static>> for &collator_serde::CollationSpecialPrimaries {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationSpecialPrimariesV1<'static>, Self::Error> {
