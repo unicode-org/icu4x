@@ -402,12 +402,27 @@ impl FormatOffset for LocalizedOffsetFormat {
                         )
                         .write_to(sink)?;
 
-                    if self.length == FieldLength::Wide || self.offset.has_minutes() {
+                    if self.length == FieldLength::Wide
+                        || self.offset.has_minutes()
+                        || self.offset.has_seconds()
+                    {
                         sink.write_char(self.separator)?;
                         self.fdf
                             .format(
                                 &FixedDecimal::from(
                                     (self.offset.offset_seconds() / 60 % 60).unsigned_abs(),
+                                )
+                                .padded_start(2),
+                            )
+                            .write_to(sink)?;
+                    }
+
+                    if self.offset.has_seconds() {
+                        sink.write_char(self.separator)?;
+                        self.fdf
+                            .format(
+                                &FixedDecimal::from(
+                                    (self.offset.offset_seconds() % 3600).unsigned_abs(),
                                 )
                                 .padded_start(2),
                             )
