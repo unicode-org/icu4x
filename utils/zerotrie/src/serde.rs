@@ -44,9 +44,7 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
     }
 }
 
-impl<'de, 'data> Deserialize<'de> for &'data ByteStr
-where
-    'de: 'data,
+impl<'data, 'de: 'data> Deserialize<'de> for &'data ByteStr
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -57,9 +55,7 @@ where
     }
 }
 
-impl<'de, 'data> Deserialize<'de> for Box<ByteStr>
-where
-    'de: 'data,
+impl<'de> Deserialize<'de> for Box<ByteStr>
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -75,7 +71,7 @@ where
     }
 }
 
-impl<'data> Serialize for &'data ByteStr {
+impl Serialize for &ByteStr {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -92,9 +88,8 @@ impl<'data> Serialize for &'data ByteStr {
     }
 }
 
-impl<'de, 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
+impl<'data, 'de: 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
 where
-    'de: 'data,
     // DISCUSS: There are several possibilities for the bounds here that would
     // get the job done. I could look for Deserialize, but this would require
     // creating a custom Deserializer for the map case. I also considered
