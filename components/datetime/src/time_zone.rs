@@ -441,51 +441,58 @@ impl FormatOffset for LongLocalizedOffsetFormat {
             return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
         };
         Ok(if offset.is_zero() {
-            sink.write_str(&essentials.offset_zero_format)?;
+            sink.write_str(&essentials.offset_zero)?;
             Ok(())
         } else {
-            struct FormattedHour<'a> {
-                format_str: &'a str,
-                fdf: &'a FixedDecimalFormatter,
+            struct FormattedOffset<'a> {
                 offset: UtcOffset,
+                sign: char,
+                separator: char,
+                fdf: &'a FixedDecimalFormatter,
             }
 
-            impl Writeable for FormattedHour<'_> {
+            impl Writeable for FormattedOffset<'_> {
                 fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
                     &self,
                     sink: &mut S,
                 ) -> fmt::Result {
-                    let hours = (self.offset.offset_seconds() / 3600).unsigned_abs();
-                    let minutes = (self.offset.offset_seconds() / 60 % 60).unsigned_abs();
+                    sink.write_char(self.sign)?;
 
-                    for c in self.format_str.chars() {
-                        match c {
-                            'H' => self
-                                .fdf
-                                .format(&FixedDecimal::from(hours).padded_start(2))
-                                .write_to(sink)?,
-                            'h' => self.fdf.format(&FixedDecimal::from(hours)).write_to(sink)?,
-                            'm' => self
-                                .fdf
-                                .format(&FixedDecimal::from(minutes).padded_start(2))
-                                .write_to(sink)?,
-                            c => sink.write_char(c)?,
-                        }
-                    }
+                    self.fdf
+                        .format(
+                            &FixedDecimal::from(
+                                (self.offset.offset_seconds() / 3600).unsigned_abs(),
+                            )
+                            .padded_start(2),
+                        )
+                        .write_to(sink)?;
+
+                    sink.write_char(self.separator)?;
+
+                    self.fdf
+                        .format(
+                            &FixedDecimal::from(
+                                (self.offset.offset_seconds() / 60 % 60).unsigned_abs(),
+                            )
+                            .padded_start(2),
+                        )
+                        .write_to(sink)?;
+
                     Ok(())
                 }
             }
 
             essentials
-                .offset_format
-                .interpolate([FormattedHour {
-                    format_str: if offset.is_positive() {
-                        &essentials.hour_format.0
-                    } else {
-                        &essentials.hour_format.1
-                    },
-                    fdf,
+                .offset_pattern
+                .interpolate([FormattedOffset {
                     offset,
+                    sign: if offset.is_positive() {
+                        essentials.offset_positive_sign
+                    } else {
+                        essentials.offset_negative_sign
+                    },
+                    separator: essentials.offset_separator,
+                    fdf,
                 }])
                 .write_to(sink)?;
 
@@ -518,54 +525,56 @@ impl FormatOffset for ShortLocalizedOffsetFormat {
             return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
         };
         Ok(if offset.is_zero() {
-            sink.write_str(&essentials.offset_zero_format)?;
+            sink.write_str(&essentials.offset_zero)?;
             Ok(())
         } else {
-            struct FormattedHour<'a> {
-                format_str: &'a str,
-                fdf: &'a FixedDecimalFormatter,
+            struct FormattedOffset<'a> {
                 offset: UtcOffset,
+                sign: char,
+                separator: char,
+                fdf: &'a FixedDecimalFormatter,
             }
 
-            impl Writeable for FormattedHour<'_> {
+            impl Writeable for FormattedOffset<'_> {
                 fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
                     &self,
                     sink: &mut S,
                 ) -> fmt::Result {
-                    let hours = (self.offset.offset_seconds() / 3600).unsigned_abs();
-                    let minutes = (self.offset.offset_seconds() / 60 % 60).unsigned_abs();
+                    sink.write_char(self.sign)?;
 
-                    let mut between_hours_and_minutes = false;
-                    for c in self.format_str.chars() {
-                        match c {
-                            'h' | 'H' => {
-                                self.fdf.format(&hours.into()).write_to(sink)?;
-                                between_hours_and_minutes = true;
-                            }
-                            'm' => {
-                                if minutes != 0 {
-                                    self.fdf.format(&minutes.into()).write_to(sink)?;
-                                }
-                                between_hours_and_minutes = false;
-                            }
-                            _c if between_hours_and_minutes && minutes == 0 => {}
-                            c => sink.write_char(c)?,
-                        }
+                    self.fdf
+                        .format(&FixedDecimal::from(
+                            (self.offset.offset_seconds() / 3600).unsigned_abs(),
+                        ))
+                        .write_to(sink)?;
+
+                    if self.offset.has_minutes() {
+                        sink.write_char(self.separator)?;
+                        self.fdf
+                            .format(
+                                &FixedDecimal::from(
+                                    (self.offset.offset_seconds() / 60 % 60).unsigned_abs(),
+                                )
+                                .padded_start(2),
+                            )
+                            .write_to(sink)?;
                     }
+
                     Ok(())
                 }
             }
 
             essentials
-                .offset_format
-                .interpolate([FormattedHour {
-                    format_str: if offset.is_positive() {
-                        &essentials.hour_format.0
-                    } else {
-                        &essentials.hour_format.1
-                    },
-                    fdf,
+                .offset_pattern
+                .interpolate([FormattedOffset {
                     offset,
+                    sign: if offset.is_positive() {
+                        essentials.offset_positive_sign
+                    } else {
+                        essentials.offset_negative_sign
+                    },
+                    separator: essentials.offset_separator,
+                    fdf,
                 }])
                 .write_to(sink)?;
 

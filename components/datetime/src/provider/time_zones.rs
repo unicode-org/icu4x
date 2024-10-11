@@ -42,13 +42,12 @@ pub(crate) mod tz {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeZoneEssentialsV1<'data> {
-    /// The hour format for displaying offsets.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[cfg_attr(
-        feature = "serde",
-        serde(deserialize_with = "icu_provider::serde_borrow_de_utils::tuple_of_cow")
-    )]
-    pub hour_format: (Cow<'data, str>, Cow<'data, str>),
+    /// The sign for positive offsets
+    pub offset_positive_sign: char,
+    /// The sign for negative offsets
+    pub offset_negative_sign: char,
+    /// The separator sign
+    pub offset_separator: char,
     /// The localized offset format.
     #[cfg_attr(
         feature = "serde",
@@ -57,10 +56,10 @@ pub struct TimeZoneEssentialsV1<'data> {
             deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
         )
     )]
-    pub offset_format: Cow<'data, SinglePlaceholderPattern>,
+    pub offset_pattern: Cow<'data, SinglePlaceholderPattern>,
     /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub offset_zero_format: Cow<'data, str>,
+    pub offset_zero: Cow<'data, str>,
     /// Metazone Name with Location Pattern.
     #[cfg_attr(
         feature = "serde",

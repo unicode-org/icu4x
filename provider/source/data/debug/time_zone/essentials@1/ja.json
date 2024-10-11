@@ -1,9 +1,8 @@
 {
-  "hour_format": [
-    "+H:m",
-    "-H:m"
-  ],
-  "offset_format": [
+  "offset_positive_sign": "+",
+  "offset_negative_sign": "-",
+  "offset_separator": ":",
+  "offset_pattern": [
     {
       "Literal": "GMT"
     },
@@ -11,7 +10,7 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero_format": "GMT",
+  "offset_zero": "GMT",
   "fallback_format": [
     {
       "Placeholder": "Place1"
