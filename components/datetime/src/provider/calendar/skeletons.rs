@@ -20,7 +20,9 @@ use litemap::LiteMap;
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct DateSkeletonPatternsV1<'data>(pub LiteMap<SkeletonV1, PatternPlurals<'data>>);
 
-/// This struct is a public wrapper around the internal `Skeleton` struct. This allows
+/// This struct is a public wrapper around the internal `Skeleton` struct.
+///
+/// This allows
 /// access to the serialization and deserialization capabilities, without exposing the
 /// internals of the skeleton machinery.
 ///

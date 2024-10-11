@@ -2384,7 +2384,6 @@ where
     ///     "Your time zone is: BST",
     /// );
     /// ```
-
     pub fn format_timezone<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
     where
         I: ?Sized

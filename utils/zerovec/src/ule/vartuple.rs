@@ -198,7 +198,7 @@ fn test_nested() {
         sized: 2000u16,
         variable: VarTuple {
             sized: '🦙',
-            variable: ZeroVec::alloc_from_slice(&[b'I', b'C', b'U']),
+            variable: ZeroVec::alloc_from_slice(b"ICU"),
         },
     };
     let var_tuple_ule = super::encode_varule_to_box(&var_tuple);
@@ -206,6 +206,6 @@ fn test_nested() {
     assert_eq!(var_tuple_ule.variable.sized.to_char(), '🦙');
     assert_eq!(
         &var_tuple_ule.variable.variable,
-        ZeroSlice::from_ule_slice(&[b'I', b'C', b'U'])
+        ZeroSlice::from_ule_slice(b"ICU")
     );
 }

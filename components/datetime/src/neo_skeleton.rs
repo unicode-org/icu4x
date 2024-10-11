@@ -203,6 +203,7 @@ impl TryFrom<u8> for FractionalSecondDigits {
 
 /// A specification for a set of parts of a date that specifies a single day (as
 /// opposed to a whole month or a week).
+///
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
