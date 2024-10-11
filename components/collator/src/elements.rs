@@ -122,6 +122,7 @@ const UNASSIGNED_IMPLICIT_BYTE: u8 = 0xFE;
 // /// starting from an empty suffix.
 // /// The default CE32 is used anyway if there is no suffix match.
 // const CONTRACT_SINGLE_CP_NO_MATCH: u32 = 0x100;
+
 /// Set if the first character of every contraction suffix has lccc!=0.
 const CONTRACT_NEXT_CCC: u32 = 0x200;
 /// Set if any contraction suffix ends with lccc!=0.
