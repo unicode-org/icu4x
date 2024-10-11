@@ -418,5 +418,26 @@
     "zajnb": "Южно-Африканская Республика",
     "zmlun": "Замбия",
     "zwhre": "Зимбабве"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", стандартное время"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", летнее время"
+    }
+  ]
 }

@@ -12,30 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Literal": "hora de "
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Literal": "horario estándar de "
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Literal": "horario de verano de "
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

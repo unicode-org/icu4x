@@ -12,30 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Time"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Standard Time"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Daylight Time"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

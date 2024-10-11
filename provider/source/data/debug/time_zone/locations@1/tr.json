@@ -418,5 +418,29 @@
     "zajnb": "Güney Afrika",
     "zmlun": "Zambiya",
     "zwhre": "Zimbabve"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Saati"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Standart Saati"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Yaz Saati"
+    }
+  ]
 }

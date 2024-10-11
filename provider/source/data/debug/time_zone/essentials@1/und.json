@@ -12,27 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " (+0)"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " (+1)"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

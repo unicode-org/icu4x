@@ -12,30 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Saati"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Standart Saati"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " Yaz Saati"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

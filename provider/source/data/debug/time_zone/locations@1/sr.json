@@ -418,5 +418,26 @@
     "zajnb": "Јужноафричка Република",
     "zmlun": "Замбија",
     "zwhre": "Зимбабве"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", стандардно време"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", летње време"
+    }
+  ]
 }

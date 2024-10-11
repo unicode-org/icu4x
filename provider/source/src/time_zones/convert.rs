@@ -71,9 +71,6 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 hour_format: parse_hour_format(&time_zone_names.hour_format),
                 offset_format: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero_format: time_zone_names.gmt_zero_format.clone().into(),
-                region_format: Cow::Owned(time_zone_names.region_format.0.clone()),
-                region_format_st: Cow::Owned(time_zone_names.region_format_st.0.clone()),
-                region_format_dt: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
                 fallback_format: Cow::Owned(time_zone_names.fallback_format.0.clone()),
             }),
         })
@@ -201,6 +198,9 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                         }
                     })
                     .collect(),
+                    pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
+                    pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
+                    pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
             }),
         })
     }

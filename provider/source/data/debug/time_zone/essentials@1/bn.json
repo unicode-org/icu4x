@@ -12,30 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " সময়"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " মানক সময়"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " দিবালোক সময়"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

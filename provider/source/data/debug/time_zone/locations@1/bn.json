@@ -418,5 +418,29 @@
     "zajnb": "দক্ষিণ আফ্রিকা",
     "zmlun": "জাম্বিয়া",
     "zwhre": "জিম্বাবোয়ে"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " সময়"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " মানক সময়"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " দিবালোক সময়"
+    }
+  ]
 }

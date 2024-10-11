@@ -12,30 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Literal": "เวลา"
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Literal": "เวลามาตรฐาน"
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Literal": "เวลาออมแสง"
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

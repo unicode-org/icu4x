@@ -12,27 +12,6 @@
     }
   ],
   "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": ", standardno vreme"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": ", letnje vreme"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

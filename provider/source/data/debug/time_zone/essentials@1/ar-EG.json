@@ -12,36 +12,6 @@
     }
   ],
   "offset_zero_format": "غرينتش",
-  "region_format": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " الرسمي"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " الصيفي"
-    }
-  ],
   "fallback_format": [
     {
       "Placeholder": "Place1"

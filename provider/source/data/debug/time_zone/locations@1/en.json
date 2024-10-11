@@ -418,5 +418,29 @@
     "zajnb": "South Africa",
     "zmlun": "Zambia",
     "zwhre": "Zimbabwe"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Time"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Standard Time"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Daylight Time"
+    }
+  ]
 }

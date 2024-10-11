@@ -61,33 +61,6 @@ pub struct TimeZoneEssentialsV1<'data> {
     /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub offset_zero_format: Cow<'data, str>,
-    /// The format string for a region.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
-        )
-    )]
-    pub region_format: Cow<'data, SinglePlaceholderPattern>,
-    /// The format string for a region's standard time.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
-        )
-    )]
-    pub region_format_st: Cow<'data, SinglePlaceholderPattern>,
-    /// The format string for a region's daylight time.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
-        )
-    )]
-    pub region_format_dt: Cow<'data, SinglePlaceholderPattern>,
     /// Metazone Name with Location Pattern.
     #[cfg_attr(
         feature = "serde",
@@ -117,6 +90,33 @@ pub struct LocationsV1<'data> {
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    /// The format string for a region's generic time.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+        )
+    )]
+    pub pattern_generic: Cow<'data, SinglePlaceholderPattern>,
+    /// The format string for a region's standard time.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+        )
+    )]
+    pub pattern_standard: Cow<'data, SinglePlaceholderPattern>,
+    /// The format string for a region's daylight time.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+        )
+    )]
+    pub pattern_daylight: Cow<'data, SinglePlaceholderPattern>,
 }
 
 /// An ICU4X mapping to generic metazone names.

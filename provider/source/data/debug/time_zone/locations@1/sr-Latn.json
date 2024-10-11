@@ -418,5 +418,26 @@
     "zajnb": "Južnoafrička Republika",
     "zmlun": "Zambija",
     "zwhre": "Zimbabve"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", standardno vreme"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": ", letnje vreme"
+    }
+  ]
 }

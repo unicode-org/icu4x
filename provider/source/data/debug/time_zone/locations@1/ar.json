@@ -418,5 +418,35 @@
     "zajnb": "جنوب أفريقيا",
     "zmlun": "زامبيا",
     "zwhre": "زيمبابوي"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Literal": "توقيت "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "توقيت "
+    },
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " الرسمي"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "توقيت "
+    },
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " الصيفي"
+    }
+  ]
 }

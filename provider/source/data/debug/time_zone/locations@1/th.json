@@ -418,5 +418,29 @@
     "zajnb": "แอฟริกาใต้",
     "zmlun": "แซมเบีย",
     "zwhre": "ซิมบับเว"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Literal": "เวลา"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "เวลามาตรฐาน"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "เวลาออมแสง"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ]
 }

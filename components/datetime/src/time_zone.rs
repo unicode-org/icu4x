@@ -592,9 +592,6 @@ impl FormatTimeZone for GenericLocationFormat {
             .time_zone_id
             .unwrap_or(TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
 
-        let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -603,8 +600,8 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::NameNotFound));
         };
 
-        essentials
-            .region_format
+        locations
+            .pattern_generic
             .interpolate([location])
             .write_to(sink)?;
 
@@ -632,9 +629,6 @@ impl FormatTimeZone for SpecificLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
-        };
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -644,23 +638,23 @@ impl FormatTimeZone for SpecificLocationFormat {
         };
 
         Ok(if zone_variant == ZoneVariant::daylight() {
-            essentials
-                .region_format_dt
+            locations
+                .pattern_daylight
                 .interpolate([location])
                 .write_to(sink)?;
 
             Ok(())
         } else if zone_variant == ZoneVariant::standard() {
-            essentials
-                .region_format_st
+            locations
+                .pattern_standard
                 .interpolate([location])
                 .write_to(sink)?;
 
             Ok(())
         } else {
             sink.with_part(writeable::Part::ERROR, |sink| {
-                essentials
-                    .region_format
+                locations
+                    .pattern_generic
                     .interpolate([location])
                     .write_to(sink)
             })?;

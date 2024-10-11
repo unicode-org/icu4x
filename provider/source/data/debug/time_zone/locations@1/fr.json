@@ -418,5 +418,29 @@
     "zajnb": "Afrique du Sud",
     "zmlun": "Zambie",
     "zwhre": "Zimbabwe"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Literal": "heure : "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (heure standard)"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (heure d’été)"
+    }
+  ]
 }

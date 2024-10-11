@@ -418,5 +418,29 @@
     "zajnb": "南アフリカ",
     "zmlun": "ザンビア",
     "zwhre": "ジンバブエ"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "時間"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "標準時"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "夏時間"
+    }
+  ]
 }

@@ -418,5 +418,29 @@
     "zajnb": "Sudáfrica",
     "zmlun": "Zambia",
     "zwhre": "Zimbabue"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Literal": "hora de "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "horario estándar de "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "horario de verano de "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ]
 }

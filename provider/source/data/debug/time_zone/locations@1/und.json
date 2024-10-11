@@ -418,5 +418,26 @@
     "zajnb": "ZA",
     "zmlun": "ZM",
     "zwhre": "ZW"
-  }
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (+0)"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " (+1)"
+    }
+  ]
 }
