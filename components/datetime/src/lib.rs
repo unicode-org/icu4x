@@ -28,7 +28,7 @@
 //!
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
-//! use icu::datetime::neo::{NeoFormatter, NeoOptions, TypedNeoFormatter};
+//! use icu::datetime::neo::{NeoFormatter, TypedNeoFormatter};
 //! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::{locale, Locale};
