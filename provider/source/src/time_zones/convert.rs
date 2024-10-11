@@ -51,38 +51,50 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
-            // e.g. "+HH:mm;-hh:mm" -> ("+H:m", "-h:m")
-            let index = hour_format.rfind(';').unwrap();
-            let positive = hour_format[0..index]
-                .replace("H", "h")
-                .replace("hh", "H")
-                .replace("mm", "m");
-            let negative = hour_format[index + 1..]
-                .replace("H", "h")
-                .replace("hh", "H")
-                .replace("mm", "m");
-            (Cow::Owned(positive), Cow::Owned(negative))
-        }
+        // e.g. "+HH:mm;-hh:mm"
+        let (offset_pattern_positive, offset_pattern_negative) =
+            time_zone_names.hour_format.split_once(';').unwrap();
+
+        // The single character before H/h
+        let offset_positive_sign = offset_pattern_positive
+            .split_once(['h', 'H'])
+            .unwrap()
+            .0
+            .chars()
+            .next()
+            .unwrap_or('+');
+        let offset_negative_sign = offset_pattern_negative
+            .split_once(['h', 'H'])
+            .unwrap()
+            .0
+            .chars()
+            .next()
+            .unwrap_or('-');
+        // The single character before `mm`
+        let offset_separator = offset_pattern_positive
+            .split_once('m')
+            .unwrap()
+            .0
+            .chars()
+            .next_back()
+            .unwrap_or(':');
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
-                hour_format: parse_hour_format(&time_zone_names.hour_format),
-                offset_format: Cow::Owned(time_zone_names.gmt_format.0.clone()),
-                offset_zero_format: time_zone_names.gmt_zero_format.clone().into(),
-                region_format: Cow::Owned(time_zone_names.region_format.0.clone()),
-                region_format_st: Cow::Owned(time_zone_names.region_format_st.0.clone()),
-                region_format_dt: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
-                fallback_format: Cow::Owned(time_zone_names.fallback_format.0.clone()),
+                offset_negative_sign,
+                offset_positive_sign,
+                offset_separator,
+                offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
+                offset_zero: time_zone_names.gmt_zero_format.clone().into(),
             }),
         })
     }
 }
 
-impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+impl DataProvider<LocationsV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -142,8 +154,8 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1(
-                bcp47_tzids
+            payload: DataPayload::from_owned(LocationsV1 {
+                locations: bcp47_tzids
                     .iter()
                     .filter_map(|(bcp47, bcp47_tzid_data)| {
                         bcp47_tzid_data
@@ -201,7 +213,11 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
                         }
                     })
                     .collect(),
-            )),
+                pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
+                pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
+                pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
+                pattern_partial_location: Cow::Owned(time_zone_names.fallback_format.0.clone()),
+            }),
         })
     }
 }

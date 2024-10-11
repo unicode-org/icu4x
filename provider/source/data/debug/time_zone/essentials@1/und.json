@@ -1,9 +1,8 @@
 {
-  "hour_format": [
-    "+H:m",
-    "-H:m"
-  ],
-  "offset_format": [
+  "offset_positive_sign": "+",
+  "offset_negative_sign": "-",
+  "offset_separator": ":",
+  "offset_pattern": [
     {
       "Literal": "GMT"
     },
@@ -11,40 +10,5 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero_format": "GMT",
-  "region_format": [
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " (+0)"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " (+1)"
-    }
-  ],
-  "fallback_format": [
-    {
-      "Placeholder": "Place1"
-    },
-    {
-      "Literal": " ("
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": ")"
-    }
-  ]
+  "offset_zero": "GMT"
 }
