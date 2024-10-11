@@ -119,9 +119,6 @@ description = "Run all tests for the CI 'test-c' job"
 category = "CI"
 dependencies = [
     "test-c",
-    # Can be removed after LLVM nightly is updated past May 2024, but it's fine to keep in
-    # to prevent such problems in the future
-    "internal-reset-tutorial-lockfiles",
     "test-c-tiny",
     "test-cpp",
 ]
@@ -131,9 +128,6 @@ description = "Run all tests for the CI 'test-js' job"
 category = "CI"
 dependencies = [
     "test-npm",
-    # Can be removed after LLVM nightly is updated past May 2024, but it's fine to keep in
-    # to prevent such problems in the future
-    "internal-reset-tutorial-lockfiles",
     "test-tinywasm",
 ]
 
@@ -349,10 +343,3 @@ else
     echo "forced-toolchain environment not required"
 end
 '''
-
-[tasks.internal-reset-tutorial-lockfiles]
-description = "Reset changes to tutorial lockfiles (useful to clean up between CI jobs)"
-category = "ICU4X CI internal"
-command = "git"
-args = ["checkout", "@", "--", "tutorials/**/Cargo.lock"]
-
