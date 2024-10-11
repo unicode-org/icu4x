@@ -259,7 +259,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 }
 
-impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
+impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// TODO
     pub fn get_set_for_value_group(&self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
         let matching_gc_ranges = self

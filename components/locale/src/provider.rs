@@ -218,6 +218,7 @@ pub struct AliasesV2<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
@@ -263,6 +264,7 @@ pub struct LikelySubtagsForLanguageV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.

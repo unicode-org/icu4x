@@ -334,7 +334,7 @@ pub struct CollationReorderingV1<'data> {
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
-impl<'data> CollationReorderingV1<'data> {
+impl CollationReorderingV1<'_> {
     pub(crate) fn reorder(&self, primary: u32) -> u32 {
         if let Some(b) = self.reorder_table.get((primary >> 24) as usize) {
             if b != 0 || primary <= NO_CE_PRIMARY {
@@ -491,7 +491,7 @@ pub struct CollationSpecialPrimariesV1<'data> {
     pub numeric_primary: u8,
 }
 
-impl<'data> CollationSpecialPrimariesV1<'data> {
+impl CollationSpecialPrimariesV1<'_> {
     #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.

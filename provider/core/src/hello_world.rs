@@ -326,7 +326,7 @@ impl HelloWorldFormatter {
     }
 }
 
-impl<'l> Writeable for FormattedHelloWorld<'l> {
+impl Writeable for FormattedHelloWorld<'_> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.data.message.write_to(sink)
     }

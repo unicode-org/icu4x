@@ -173,7 +173,7 @@ pub enum MachineDe<T> {
     Fallback(usize),
 }
 
-impl<'a, T> Serialize for MachineSer<'a, T>
+impl<T> Serialize for MachineSer<'_, T>
 where
     T: Serialize,
 {

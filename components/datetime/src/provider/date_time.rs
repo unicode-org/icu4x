@@ -202,7 +202,7 @@ pub(crate) trait TimeSymbols {
     ) -> Result<&str, GetNameForDayPeriodError>;
 }
 
-impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
+impl TimeSymbols for provider::calendar::TimeSymbolsV1<'_> {
     fn get_name_for_day_period(
         &self,
         day_period: fields::DayPeriod,

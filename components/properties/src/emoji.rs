@@ -108,7 +108,7 @@ pub struct EmojiSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }
 
-impl<'a> EmojiSetDataBorrowed<'a> {
+impl EmojiSetDataBorrowed<'_> {
     /// Check if the set contains the string. Strings consisting of one character
     /// are treated as a character/code point.
     ///

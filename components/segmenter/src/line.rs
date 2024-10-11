@@ -1301,7 +1301,7 @@ where
 #[derive(Debug)]
 pub struct LineBreakTypeLatin1;
 
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
+impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -1331,7 +1331,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
 #[derive(Debug)]
 pub struct LineBreakTypeUtf16;
 
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
+impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

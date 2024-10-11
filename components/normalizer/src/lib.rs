@@ -1002,7 +1002,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Decomposition<'data, I>
+impl<I> Iterator for Decomposition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1082,7 +1082,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Composition<'data, I>
+impl<I> Iterator for Composition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1799,7 +1799,7 @@ impl DecomposingNormalizerBorrowed<'static> {
     }
 }
 
-impl<'a> DecomposingNormalizerBorrowed<'a> {
+impl DecomposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
@@ -2369,7 +2369,7 @@ impl ComposingNormalizerBorrowed<'static> {
     }
 }
 
-impl<'a> ComposingNormalizerBorrowed<'a> {
+impl ComposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<I> {
@@ -2828,7 +2828,7 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     }
 }
 
-impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
+impl Write16 for IsNormalizedSinkUtf16<'_> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2870,7 +2870,7 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
+impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2912,7 +2912,7 @@ impl<'a> IsNormalizedSinkStr<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
+impl core::fmt::Write for IsNormalizedSinkStr<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because

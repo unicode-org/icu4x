@@ -7,7 +7,7 @@ use icu_locale_core::subtags::{Language, Region, Script};
 
 use super::*;
 
-impl<'a> LocaleFallbackerWithConfig<'a> {
+impl LocaleFallbackerWithConfig<'_> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale, default_script: &mut Option<Script>) {
         // 0. If there is an invalid "sd" subtag, drop it
         if let Some(subdivision) = locale.subdivision.take() {
@@ -66,7 +66,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     }
 }
 
-impl<'a> LocaleFallbackIteratorInner<'a> {
+impl LocaleFallbackIteratorInner<'_> {
     pub fn step(&mut self, locale: &mut DataLocale) {
         match self.config.priority {
             LocaleFallbackPriority::Language => self.step_language(locale),

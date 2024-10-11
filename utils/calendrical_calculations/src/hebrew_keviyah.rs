@@ -722,10 +722,9 @@ impl Keviyah {
 
 // Four Gates Table
 // ======================
-///
+//
 // The Four Gates table is a table that takes the time of week of the molad
 // and produces a Keviyah for the year
-
 /// "Metonic cycle" in general refers to any 19-year repeating pattern used by lunisolar
 /// calendars. The Hebrew calendar uses one where years 3, 6, 8, 11, 14, 17, 19
 /// are leap years.

@@ -75,7 +75,7 @@ impl<C: Calendar> AsCalendar for Ref<'_, C> {
     }
 }
 
-impl<'a, C> Deref for Ref<'a, C> {
+impl<C> Deref for Ref<'_, C> {
     type Target = C;
     fn deref(&self) -> &C {
         self.0

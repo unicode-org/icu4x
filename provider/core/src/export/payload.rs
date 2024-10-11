@@ -208,7 +208,7 @@ impl DataPayload<ExportMarker> {
         use postcard::ser_flavors::Flavor;
 
         struct HashFlavor<'a, H>(&'a mut H, usize);
-        impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
+        impl<H: core::hash::Hasher> Flavor for HashFlavor<'_, H> {
             type Output = usize;
 
             fn try_push(&mut self, data: u8) -> postcard::Result<()> {

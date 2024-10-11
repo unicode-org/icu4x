@@ -63,7 +63,7 @@ pub struct MultiNamedPlaceholderKey<'a>(pub &'a str);
 pub struct MultiNamedPlaceholderKeyCow<'a>(pub Cow<'a, str>);
 
 #[cfg(feature = "alloc")]
-impl<'a> FromStr for MultiNamedPlaceholderKeyCow<'a> {
+impl FromStr for MultiNamedPlaceholderKeyCow<'_> {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Can't borrow the str here unfortunately
@@ -77,7 +77,7 @@ pub struct MissingNamedPlaceholderError<'a> {
     pub name: &'a str,
 }
 
-impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
+impl Writeable for MissingNamedPlaceholderError<'_> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_char('{')?;
         sink.write_str(self.name)?;

@@ -25,7 +25,7 @@ pub struct LongFormattedCurrency<'l> {
 
 writeable::impl_display_with_writeable!(LongFormattedCurrency<'_>);
 
-impl<'l> Writeable for LongFormattedCurrency<'l> {
+impl Writeable for LongFormattedCurrency<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

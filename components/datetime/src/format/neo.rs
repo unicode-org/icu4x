@@ -2426,7 +2426,7 @@ pub struct FormattedDateTimePattern<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
+impl TryWriteable for FormattedDateTimePattern<'_> {
     type Error = DateTimeWriteError;
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
@@ -2554,7 +2554,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
     }
 }
 
-impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
+impl TimeSymbols for RawDateTimeNamesBorrowed<'_> {
     fn get_name_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,

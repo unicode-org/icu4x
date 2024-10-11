@@ -160,7 +160,7 @@ pub struct TimeZoneIdMapperBorrowed<'a> {
     data: &'a IanaToBcp47MapV3<'a>,
 }
 
-impl<'a> TimeZoneIdMapperBorrowed<'a> {
+impl TimeZoneIdMapperBorrowed<'_> {
     /// Gets the BCP-47 time zone ID from an IANA time zone ID
     /// with a case-insensitive lookup.
     ///

@@ -95,13 +95,13 @@ pub struct WindowsTimeZoneMapperBorrowed<'a> {
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for WindowsTimeZoneMapperBorrowed<'a> {
+impl Default for WindowsTimeZoneMapperBorrowed<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
+impl WindowsTimeZoneMapperBorrowed<'_> {
     /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::expect_used)]

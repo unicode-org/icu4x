@@ -53,7 +53,7 @@ pub struct RuleBasedTransliterator<'a> {
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
 }
 
-impl<'a> RuleBasedTransliterator<'a> {
+impl RuleBasedTransliterator<'_> {
     /// Returns an iterator of dependencies on other transliterators.
     ///
     /// Note that this may contain duplicate entries.
@@ -160,7 +160,7 @@ pub struct VarTable<'a> {
     pub max_right_placeholder_count: u16,
 }
 
-impl<'a> VarTable<'a> {
+impl VarTable<'_> {
     /// The lowest `char` used for encoding specials.
     pub const BASE: char = '\u{F0000}';
     /// The highest `char` used for encoding dynamic (i.e., growing, non-reserved) specials.

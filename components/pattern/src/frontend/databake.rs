@@ -10,7 +10,7 @@ use crate::SinglePlaceholder;
 use super::*;
 use ::databake::{quote, Bake, BakeSize, CrateEnv, TokenStream};
 
-impl<'a, B> Bake for &'a Pattern<B>
+impl<B> Bake for &Pattern<B>
 where
     B: PatternBackend,
     for<'b> &'b B::Store: Bake,
@@ -31,7 +31,7 @@ where
     }
 }
 
-impl<'a, B> BakeSize for &'a Pattern<B>
+impl<B> BakeSize for &Pattern<B>
 where
     B: PatternBackend,
     for<'b> &'b B::Store: BakeSize,
