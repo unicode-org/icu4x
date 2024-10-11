@@ -337,7 +337,9 @@ impl NeoDateComponents {
     /// use icu_provider::prelude::*;
     ///
     /// assert_eq!(
-    ///     NeoDateComponents::from_id_str(DataMarkerAttributes::from_str_or_panic("ym0de")),
+    ///     NeoDateComponents::from_id_str(
+    ///         DataMarkerAttributes::from_str_or_panic("ym0de")
+    ///     ),
     ///     Some(NeoDateComponents::YearMonthDayWeekday)
     /// );
     /// ```
@@ -746,15 +748,15 @@ pub enum NeoComponents {
     /// Components for a time.
     Time(NeoTimeComponents),
     /// Components for a time zone.
-    Zone(NeoTimeZoneSkeleton),
+    Zone(NeoTimeZoneStyle),
     /// Components for a date and a time together.
     DateTime(NeoDateComponents, NeoTimeComponents),
     /// Components for a date and a time zone together.
-    DateZone(NeoDateComponents, NeoTimeZoneSkeleton),
+    DateZone(NeoDateComponents, NeoTimeZoneStyle),
     /// Components for a time and a time zone together.
-    TimeZone(NeoTimeComponents, NeoTimeZoneSkeleton),
+    TimeZone(NeoTimeComponents, NeoTimeZoneStyle),
     /// Components for a date, a time, and a time zone together.
-    DateTimeZone(NeoDateComponents, NeoTimeComponents, NeoTimeZoneSkeleton),
+    DateTimeZone(NeoDateComponents, NeoTimeComponents, NeoTimeZoneStyle),
 }
 
 impl From<NeoDateComponents> for NeoComponents {
@@ -785,8 +787,8 @@ impl From<NeoDateTimeComponents> for NeoComponents {
     }
 }
 
-impl From<NeoTimeZoneSkeleton> for NeoComponents {
-    fn from(value: NeoTimeZoneSkeleton) -> Self {
+impl From<NeoTimeZoneStyle> for NeoComponents {
+    fn from(value: NeoTimeZoneStyle) -> Self {
         Self::Zone(value)
     }
 }
@@ -950,7 +952,7 @@ impl NeoComponents {
 /// Time zone names contribute a lot of data size. For resource-constrained
 /// environments, the following formats require the least amount of data:
 ///
-/// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
+/// - [`NeoTimeZoneStyle::Specific`] + [`NeoSkeletonLength::Short`]
 /// - [`NeoTimeZoneStyle::Offset`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
@@ -958,9 +960,9 @@ pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
     /// format “Pacific Daylight Time”, whichever is idiomatic for the locale.
     /// > Note: for now, this is always identical to
-    /// > [`NeoTimeZoneStyle::SpecificNonLocation`] (Pacific Daylight Time), but
-    /// > whether it is [`NeoTimeZoneStyle::NonLocation`] or
-    /// > [`NeoTimeZoneStyle::SpecificNonLocation`] will be locale-dependent in the
+    /// > [`NeoTimeZoneStyle::Specific`] (Pacific Daylight Time), but
+    /// > whether it is [`NeoTimeZoneStyle::Generic`] or
+    /// > [`NeoTimeZoneStyle::Specific`] will be locale-dependent in the
     /// > future; see
     /// > [CLDR-15566](https://unicode-org.atlassian.net/browse/CLDR-15566).
     #[default]
@@ -972,34 +974,43 @@ pub enum NeoTimeZoneStyle {
     /// The generic non-location format, e.g., “Pacific Time”.
     ///
     /// When unavailable, falls back to [`NeoTimeZoneStyle::Location`].
-    NonLocation,
+    Generic,
     /// The specific non-location format, e.g., “Pacific Daylight Time”.
     ///
     /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
-    SpecificNonLocation,
+    Specific,
     /// The offset format, e.g., “GMT−8”.
     Offset,
 }
 
 /// A skeleton for formatting a time zone.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
+    /// Desired formatting length.
+    pub length: NeoSkeletonLength,
     /// The style, _i.e._, with `length`=[`NeoSkeletonLength::Short`], whether to format as
     /// “GMT−8” ([`NeoTimeZoneStyle::Offset`]) or “PT”
-    /// ([`NeoTimeZoneStyle::NonLocation`]).
+    /// ([`NeoTimeZoneStyle::Generic`]).
     pub style: NeoTimeZoneStyle,
 }
 
-impl NeoTimeZoneSkeleton {
+impl NeoTimeZoneStyle {
     pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
-        crate::tz_registry::skeleton_to_resolved(self.style, length)
+        crate::tz_registry::skeleton_to_resolved(self, length)
+    }
+}
+
+impl NeoTimeZoneSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(length: NeoSkeletonLength, style: NeoTimeZoneStyle) -> Self {
+        Self { length, style }
     }
 }
 
 /// A skeleton for formatting parts of a date (without time or time zone).
 #[derive(Debug, Copy, Clone)]
-#[allow(clippy::exhaustive_structs)] // well-defined type
+#[non_exhaustive]
 pub struct NeoDateSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -1028,25 +1039,40 @@ impl NeoDateSkeleton {
     /// Converts a [`length::Date`] to a [`NeoDateComponents`] and [`NeoSkeletonLength`].
     #[doc(hidden)] // the types involved in this mapping may change
     #[cfg(feature = "datagen")]
-    pub fn day_from_date_length(
-        date_length: length::Date,
-    ) -> (NeoDateComponents, NeoSkeletonLength) {
-        match date_length {
+    pub fn from_date_length(date_length: length::Date) -> NeoDateSkeleton {
+        let (components, length) = match date_length {
             length::Date::Full => (NeoDateComponents::AutoWeekday, NeoSkeletonLength::Long),
             length::Date::Long => (NeoDateComponents::Auto, NeoSkeletonLength::Long),
             length::Date::Medium => (NeoDateComponents::Auto, NeoSkeletonLength::Medium),
             length::Date::Short => (NeoDateComponents::Auto, NeoSkeletonLength::Short),
-        }
+        };
+        NeoDateSkeleton::for_length_and_components(length, components)
     }
+}
 
-    /// Converts a [`length::Date`] to a [`NeoDateSkeleton`].
-    #[doc(hidden)] // the types involved in this mapping may change
-    #[cfg(feature = "datagen")]
-    pub fn from_date_length(date_length: length::Date) -> Self {
-        let (date_components, length) = Self::day_from_date_length(date_length);
-        NeoDateSkeleton {
+/// A skeleton for formatting a calendar period (i.e. month or year).
+#[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
+pub struct NeoCalendarPeriodSkeleton {
+    /// Desired formatting length.
+    pub length: NeoSkeletonLength,
+    /// Date components of the skeleton.
+    pub components: NeoCalendarPeriodComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
+    /// Era display option.
+    pub year_style: Option<YearStyle>,
+}
+
+impl NeoCalendarPeriodSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(
+        length: NeoSkeletonLength,
+        components: NeoCalendarPeriodComponents,
+    ) -> Self {
+        Self {
             length,
-            components: date_components,
+            components,
             alignment: None,
             year_style: None,
         }
@@ -1055,7 +1081,7 @@ impl NeoDateSkeleton {
 
 /// A skeleton for formatting parts of a time (without date or time zone).
 #[derive(Debug, Copy, Clone)]
-#[allow(clippy::exhaustive_structs)] // well-defined type
+#[non_exhaustive]
 pub struct NeoTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -1084,7 +1110,7 @@ impl NeoTimeSkeleton {
 
 /// A skeleton for formatting parts of a date and time (without time zone).
 #[derive(Debug, Copy, Clone)]
-#[allow(clippy::exhaustive_structs)] // well-defined type
+#[non_exhaustive]
 pub struct NeoDateTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -1102,12 +1128,11 @@ impl NeoDateTimeSkeleton {
     /// Creates a skeleton from its length and components.
     pub fn for_length_and_components(
         length: NeoSkeletonLength,
-        date: NeoDateComponents,
-        time: NeoTimeComponents,
+        components: NeoDateTimeComponents,
     ) -> Self {
         Self {
             length,
-            components: NeoDateTimeComponents::DateTime(date, time),
+            components,
             alignment: None,
             year_style: None,
             fractional_second_digits: None,
@@ -1172,6 +1197,19 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
     }
 }
 
+impl NeoSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(length: NeoSkeletonLength, components: NeoComponents) -> Self {
+        Self {
+            length,
+            components,
+            alignment: None,
+            year_style: None,
+            fractional_second_digits: None,
+        }
+    }
+}
+
 impl NeoDateTimeSkeleton {
     #[doc(hidden)] // mostly internal; maps from old API to new API
     #[cfg(feature = "datagen")]
@@ -1179,11 +1217,11 @@ impl NeoDateTimeSkeleton {
         date_length: crate::options::length::Date,
         time_length: crate::options::length::Time,
     ) -> Self {
-        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
         let time_components = NeoTimeComponents::from_time_length(time_length);
         NeoDateTimeSkeleton {
-            length,
-            components: NeoDateTimeComponents::DateTime(day_components, time_components),
+            length: date_skeleton.length,
+            components: NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
             alignment: None,
             year_style: None,
             fractional_second_digits: None,

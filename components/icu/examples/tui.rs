@@ -43,7 +43,12 @@ fn main() {
         let dtf = TypedNeoFormatter::<
             Gregorian,
             NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
-        >::try_new(&locale, NeoSkeletonLength::Medium.into())
+        >::try_new(
+            &locale,
+            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+                NeoSkeletonLength::Medium,
+            ),
+        )
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
