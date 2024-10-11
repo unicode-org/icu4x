@@ -28,7 +28,7 @@ fn main() {
     let formatter = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
-        NeoSkeletonLength::Medium.into(),
+        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
     )
     .expect("locale 'my' should be present in compiled data");
 
