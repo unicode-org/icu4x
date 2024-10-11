@@ -25,7 +25,9 @@ use crate::ParseError;
 compile_error!("The fixed_decimal crate only works if usizes are at least the size of a u16");
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
-/// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
+/// (power of 10).
+///
+/// Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, as well as an optional sign; used for formatting and plural selection.
 ///
 /// # Data Types

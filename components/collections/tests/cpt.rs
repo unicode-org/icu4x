@@ -261,9 +261,11 @@ pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_range
     }
 }
 
-/// Test .get_range() / .iter_ranges() on CodePointTrie by calling
-/// .iter_ranges() on the trie (which returns an iterator that produces values
-/// by calls to .get_range) and see if it matches the values in check_ranges.
+/// Test `.get_range()` / `.iter_ranges()` on CodePointTrie by calling
+/// `.iter_ranges()` on the trie.
+///
+/// `.iter_ranges()` returns an iterator that produces values
+/// by calls to .get_range, and this checks if it matches the values in check_ranges.
 pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
     trie: &CodePointTrie<T>,
     check_ranges: &[u32],

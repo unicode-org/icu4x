@@ -28,7 +28,9 @@ pub enum SymbolError {
 #[cfg(feature = "std")]
 impl std::error::Error for SymbolError {}
 
-/// A field symbol for a date formatting pattern. Field symbols are a more granular distinction
+/// A field symbol for a date formatting pattern.
+///
+/// Field symbols are a more granular distinction
 /// for a pattern field within the category of a field type. Examples of field types are:
 /// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
 /// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string

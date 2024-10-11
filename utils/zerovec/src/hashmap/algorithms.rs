@@ -48,6 +48,7 @@ pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
 
 /// Compute displacements for the given `key_hashes`, which split the keys into distinct slots by a
 /// two-level hashing schema.
+///
 /// Returns a tuple of where the first item is the displacement array and the second item is the
 /// reverse mapping used to permute keys, values into their slots.
 ///

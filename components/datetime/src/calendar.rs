@@ -17,6 +17,8 @@ use crate::provider::{neo::*, *};
 use core::marker::PhantomData;
 use icu_provider::marker::NeverMarker;
 
+/// Internal-ish trait for sealing `CldrCalendar`.
+///
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
 /// feature is enabled. If implementing `CldrCalendar`, you must also
 /// implement `UnstableCldrCalendar` and acknowledge the stability policy.
