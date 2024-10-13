@@ -508,7 +508,7 @@ where
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::GluePatternV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+        L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
         let mut options = options;
@@ -540,7 +540,6 @@ where
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             loader, // fixed decimal formatter
-            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -1249,7 +1248,7 @@ where
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::GluePatternV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
+        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
         let mut options = options;
@@ -1283,7 +1282,6 @@ where
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             loader, // fixed decimal formatter
-            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -1465,7 +1463,6 @@ impl TryWriteable for FormattedNeoDateTime<'_> {
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
-            self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
         )

@@ -29,7 +29,6 @@ use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
-use icu_calendar::week::WeekCalculator;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -499,7 +498,6 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
             mz_specific_long: (),
             mz_specific_short: (),
             fixed_decimal_formatter: other.fixed_decimal_formatter,
-            week_calculator: other.week_calculator,
             _marker: PhantomData,
         }
     }
@@ -519,7 +517,6 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
             mz_specific_long: (),
             mz_specific_short: (),
             fixed_decimal_formatter: other.fixed_decimal_formatter,
-            week_calculator: other.week_calculator,
             _marker: PhantomData,
         }
     }
@@ -555,7 +552,6 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     >>::Container<()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
-    week_calculator: Option<WeekCalculator>,
     _marker: PhantomData<R>,
 }
 
@@ -574,7 +570,6 @@ impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
             .field("mz_specific_long", &self.mz_specific_long)
             .field("mz_specific_short", &self.mz_specific_short)
             .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
-            .field("week_calculator", &self.week_calculator)
             .finish()
     }
 }
@@ -592,7 +587,6 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
-    pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
 
 impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
@@ -1352,43 +1346,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
-    /// Sets the week calculator to use with patterns requiring week numbering.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::week::WeekCalculator;
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
-    ///         .unwrap();
-    ///
-    /// // Load the week calculator and set it here:
-    /// let mut week_calculator =
-    ///     WeekCalculator::try_new(&locale!("en").into()).unwrap();
-    /// names.set_week_calculator(week_calculator);
-    ///
-    /// // Format a pattern needing week data:
-    /// let pattern_str = "'Week' w 'of' Y";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let date = Date::try_new_gregorian_date(2023, 12, 5).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_date(&date),
-    ///     "Week 49 of 2023"
-    /// );
-    /// ```
-    #[inline]
-    pub fn set_week_calculator(&mut self, week_calculator: WeekCalculator) -> &mut Self {
-        self.inner.set_week_calculator(week_calculator);
-        self
-    }
-
     // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
     #[inline]
     fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
@@ -1461,7 +1418,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzSpecificLongV1Marker::bind(provider),
             &tz::MzSpecificShortV1Marker::bind(provider),
             &ExternalLoaderUnstable(provider),
-            &ExternalLoaderUnstable(provider),
             locale,
             pattern
                 .iter_items()
@@ -1494,7 +1450,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
-    /// let pattern_str = "EEEE 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
+    /// let pattern_str = "MMM d (EEEE) 'of year' y G 'at' h:mm a";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// // Load data for the pattern and format:
@@ -1505,7 +1461,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///         .include_for_pattern(&pattern)
     ///         .unwrap()
     ///         .format(&datetime),
-    ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 PM"
+    ///     "Dec 5 (Tuesday) of year 2023 AD at 5:43 PM"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1533,7 +1489,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificShortV1Marker::bind(&crate::provider::Baked),
-            &ExternalLoaderCompiledData,
             &ExternalLoaderCompiledData,
             locale,
             pattern
@@ -1617,7 +1572,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>>::Container::<_>::new_empty(),
             mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>>::Container::<_>::new_empty(),
             fixed_decimal_formatter: None,
-            week_calculator: None,
             _marker: PhantomData,
         }
     }
@@ -1635,7 +1589,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             mz_specific_long: self.mz_specific_long.get().inner,
             mz_specific_short: self.mz_specific_short.get().inner,
             fixed_decimal_formatter: self.fixed_decimal_formatter.as_ref(),
-            week_calculator: self.week_calculator.as_ref(),
         }
     }
 
@@ -1951,11 +1904,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         Ok(())
     }
 
-    #[inline]
-    pub(crate) fn set_week_calculator(&mut self, week_calculator: WeekCalculator) {
-        self.week_calculator = Some(week_calculator);
-    }
-
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
         loader: &impl FixedDecimalFormatterLoader,
@@ -2002,12 +1950,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
-        week_calculator_loader: &impl WeekCalculatorLoader,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = FieldForDataLoading>,
     ) -> Result<(), LoadError> {
         let mut numeric_field = None;
-        let mut week_field = None;
         for item in pattern_items {
             let item = match item {
                 FieldForDataLoading::Field(Field {
@@ -2152,9 +2098,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 }
 
                 ///// Numeric symbols /////
-                FieldSymbol::Year(fields::Year::WeekOf) => week_field = Some(field),
                 FieldSymbol::Year(_) => numeric_field = Some(field),
-                FieldSymbol::Week(_) => week_field = Some(field),
+                FieldSymbol::Week(_) => numeric_field = Some(field),
                 FieldSymbol::Day(_) => numeric_field = Some(field),
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),
@@ -2163,14 +2108,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             };
         }
 
-        if week_field.is_some() {
-            self.set_week_calculator(
-                WeekCalculatorLoader::load(week_calculator_loader, locale)
-                    .map_err(LoadError::Data)?,
-            );
-        }
-
-        if numeric_field.or(week_field).is_some() {
+        if numeric_field.is_some() {
             self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, locale)
                 .map_err(LoadError::Data)?;
         }
@@ -2260,7 +2198,6 @@ where
             + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
             + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
             + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
             + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
             + NeoGetField<NeverField>,
     {
@@ -2424,7 +2361,6 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
-            self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
         )
