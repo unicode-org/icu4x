@@ -26,7 +26,6 @@ use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_decimal::options::FixedDecimalFormatterOptions;
@@ -1401,7 +1400,6 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<tz::MzSpecificLongV1Marker>
             + DataProvider<tz::MzSpecificShortV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<WeekDataV2Marker>
             + ?Sized,
     {
         let locale = &self.locale;

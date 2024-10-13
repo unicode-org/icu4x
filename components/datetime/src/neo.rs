@@ -29,7 +29,6 @@ use core::marker::PhantomData;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
-    WeekDataV2Marker,
 };
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -265,8 +264,6 @@ where
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -466,8 +463,6 @@ where
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -856,8 +851,6 @@ where
             + DataProvider<JapaneseExtendedErasV1Marker>
     // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -1158,8 +1151,6 @@ where
             + DataProvider<JapaneseExtendedErasV1Marker>
     // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
