@@ -24,8 +24,10 @@ use crate::provider::neo::*;
 use crate::provider::ErasedPackedPatterns;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
+use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
+use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
@@ -1427,6 +1429,41 @@ where
             input: datetime,
             names: self.names.as_borrowed(),
         }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet>
+where
+C: IntoAnyCalendar
+{
+    /// Make this [`TypedNeoFormatter`] adopt a calendar so it can format any date.
+    pub fn into_formatter(self, calendar: C) -> NeoFormatter<FSet> {
+        NeoFormatter {
+            selection: self.selection,
+            names: self.names,
+            calendar: calendar.to_any(),
+        }
+    }
+}
+
+impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
+    /// Attempt to convert this [`NeoFormatter`] into one with a specific calendar.
+    pub fn try_into_typed_formatter<C: CldrCalendar>(self) -> Result<TypedNeoFormatter<C, FSet>, MismatchedCalendarError> {
+        // TODO (Review): how to write this function??
+        // AnyCalendarKind is fraught because of ethiopic (C does not know its AnyCalendarKind)
+        // I could add a new trait function to either IntoAnyCalendar or AnyCalendar?
+        #[allow(unreachable_code)]
+        if false {
+            return Err(MismatchedCalendarError {
+                this_kind: self.calendar.kind(),
+                date_kind: todo!(),
+            });
+        }
+        Ok(TypedNeoFormatter {
+            selection: self.selection,
+            names: self.names,
+            _calendar: PhantomData,
+        })
     }
 }
 
