@@ -600,7 +600,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         let mut names = Self {
             locale: locale.clone(),
-            inner: RawDateTimeNames::new_without_fixed_decimal_formatter(),
+            inner: RawDateTimeNames::new_without_number_formatting(),
             _calendar: PhantomData,
         };
         names.include_fixed_decimal_formatter()?;
@@ -614,11 +614,61 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     {
         let mut names = Self {
             locale: locale.clone(),
-            inner: RawDateTimeNames::new_without_fixed_decimal_formatter(),
+            inner: RawDateTimeNames::new_without_number_formatting(),
             _calendar: PhantomData,
         };
         names.load_fixed_decimal_formatter(provider)?;
         Ok(names)
+    }
+
+    /// Creates a completely empty instance, not even with number formatting.
+    /// 
+    /// # Examples
+    /// 
+    /// Errors occur if a number formatter is not loaded but one is required:
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+    /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
+    /// use icu::locale::locale;
+    /// use writeable::{Part, assert_try_writeable_parts_eq};
+    ///
+    /// // Create an instance that can format all fields (NeoSkeleton):
+    /// let names: TypedDateTimeNames<Gregorian, NeoDateSkeleton> =
+    ///     TypedDateTimeNames::new_without_number_formatting(&locale!("en").into());
+    ///
+    /// // Create a pattern from a pattern string:
+    /// let pattern_str = "'It is:' y-MM-dd";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// // The pattern string contains lots of numeric symbols,
+    /// // but we did not load any data!
+    ///
+    /// let date = Date::try_new_gregorian_date(2024, 7, 1).unwrap();
+    ///
+    /// // Missing data is filled in on a best-effort basis, and an error is signaled.
+    /// // (note that the padding is ignored in this fallback mode)
+    /// assert_try_writeable_parts_eq!(
+    ///     names.with_pattern(&pattern).format(&date),
+    ///     "It is: 2024-7-1",
+    ///     Err(DateTimeWriteError::MissingFixedDecimalFormatter),
+    ///     [
+    ///         (7, 11, Part::ERROR), // 2024
+    ///         (12, 13, Part::ERROR), // 7
+    ///         (14, 15, Part::ERROR), // 1
+    ///     ]
+    /// );
+    /// ```
+    pub fn new_without_number_formatting(locale: &DataLocale) -> Self {
+        Self {
+            locale: locale.clone(),
+            inner: RawDateTimeNames::new_without_number_formatting(),
+            _calendar: PhantomData,
+        }
     }
 
     /// Loads year (era or cycle) names for the specified length.
@@ -1345,9 +1395,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
-    // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
+    /// Loads a [`FixedDecimalFormatter`] from a data provider.
     #[inline]
-    fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
+    pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
@@ -1356,10 +1406,38 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         Ok(self)
     }
 
-    // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
+    /// Loads a [`FixedDecimalFormatter`] with compiled data.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Time;
+    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::NeverCalendar;
+    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    /// 
+    /// let locale = &locale!("bn").into();
+    ///
+    /// let mut names = TypedDateTimeNames::<NeverCalendar, NeoTimeSkeleton>::try_new(&locale);
+    /// names.include_fixed_decimal_formatter();
+    /// 
+    /// // Create a pattern for the time, which is all numbers
+    /// let pattern_str = "'The current 24-hour time is:' HH:mm";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// 
+    /// let time = Time::try_new(6, 40, 33, 0).unwrap();
+    /// 
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&time),
+    ///     "The current 24-hour time is: ০৬:৪০",
+    /// );
+    /// ```
     #[cfg(feature = "compiled_data")]
     #[inline]
-    fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
+    pub fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
         self.inner
             .load_fixed_decimal_formatter(&ExternalLoaderCompiledData, &self.locale)?;
         Ok(self)
@@ -1557,7 +1635,7 @@ impl FieldForDataLoading {
 }
 
 impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
-    pub(crate) fn new_without_fixed_decimal_formatter() -> Self {
+    pub(crate) fn new_without_number_formatting() -> Self {
         Self {
             year_names: <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container::<_>::new_empty(),
             month_names: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),

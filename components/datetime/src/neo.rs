@@ -522,7 +522,7 @@ where
             options,
         )
         .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &<R::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
             &<R::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
@@ -1260,7 +1260,7 @@ where
             options,
         )
         .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Year, _>::new(provider, kind),
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Month, _>::new(provider, kind),
