@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use super::neo::RawDateTimeNamesBorrowed;
 use super::GetNameForDayPeriodError;
 use super::{
     GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
@@ -68,8 +67,8 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<'data, W>(
-    pattern: PatternBorrowed<'data>,
+pub(crate) fn try_write_pattern<W>(
+    pattern: PatternBorrowed,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
