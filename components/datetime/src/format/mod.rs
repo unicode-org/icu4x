@@ -4,3 +4,32 @@
 
 pub mod datetime;
 pub mod neo;
+
+use crate::fields::Field;
+use crate::provider::neo::SimpleSubstitutionPattern;
+
+pub(crate) enum GetNameForMonthError {
+    Missing,
+    MissingNames(Field),
+}
+pub(crate) enum GetNameForWeekdayError {
+    Missing,
+    MissingNames(Field),
+}
+
+pub(crate) enum GetSymbolForEraError {
+    Missing,
+    MissingNames(Field),
+}
+
+pub(crate) enum GetNameForDayPeriodError {
+    MissingNames(Field),
+}
+
+/// Internal enum to represent the kinds of month symbols for interpolation
+pub(crate) enum MonthPlaceholderValue<'a> {
+    PlainString(&'a str),
+    Numeric,
+    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
+}
+

@@ -16,7 +16,7 @@ use crate::neo_marker::{
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::pattern::PatternItem;
-use crate::provider::date_time::{
+use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
     GetSymbolForEraError, MonthPlaceholderValue,
 };
