@@ -956,7 +956,7 @@
           "LocalizedOffsetShort"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+3\u200e"]
+        "expected": ["GMT\u200e+3\u200e"]
       },
       {
         "patterns": [
@@ -965,7 +965,7 @@
         "configs": [
           "LocalizedOffsetLong"
         ],
-        "expected": ["GMT+03:00\u200e"]
+        "expected": ["GMT\u200e+03:00\u200e"]
       },
       {
         "patterns": [

@@ -42,12 +42,9 @@ pub(crate) mod tz {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeZoneEssentialsV1<'data> {
-    /// The sign for positive offsets
-    pub offset_positive_sign: char,
-    /// The sign for negative offsets
-    pub offset_negative_sign: char,
     /// The separator sign
-    pub offset_separator: char,
+    #[cfg_attr(feature = "serde", serde(borrow,))]
+    pub offset_separator: Cow<'data, str>,
     /// The localized offset format.
     #[cfg_attr(
         feature = "serde",

@@ -374,8 +374,7 @@ impl FormatOffset for LocalizedOffsetFormat {
         } else {
             struct FormattedOffset<'a> {
                 offset: UtcOffset,
-                sign: char,
-                separator: char,
+                separator: &'a str,
                 fdf: &'a FixedDecimalFormatter,
                 length: FieldLength,
             }
@@ -385,11 +384,10 @@ impl FormatOffset for LocalizedOffsetFormat {
                     &self,
                     sink: &mut S,
                 ) -> fmt::Result {
-                    sink.write_char(self.sign)?;
-
                     self.fdf
                         .format(
-                            &FixedDecimal::from(self.offset.hours_part().unsigned_abs())
+                            &FixedDecimal::from(self.offset.hours_part())
+                                .with_sign_display(fixed_decimal::SignDisplay::Always)
                                 .padded_start(if self.length == FieldLength::Wide {
                                     2
                                 } else {
@@ -402,14 +400,14 @@ impl FormatOffset for LocalizedOffsetFormat {
                         || self.offset.minutes_part() != 0
                         || self.offset.seconds_part() != 0
                     {
-                        sink.write_char(self.separator)?;
+                        sink.write_str(self.separator)?;
                         self.fdf
                             .format(&FixedDecimal::from(self.offset.minutes_part()).padded_start(2))
                             .write_to(sink)?;
                     }
 
                     if self.offset.seconds_part() != 0 {
-                        sink.write_char(self.separator)?;
+                        sink.write_str(self.separator)?;
                         self.fdf
                             .format(&FixedDecimal::from(self.offset.seconds_part()).padded_start(2))
                             .write_to(sink)?;
@@ -423,12 +421,7 @@ impl FormatOffset for LocalizedOffsetFormat {
                 .offset_pattern
                 .interpolate([FormattedOffset {
                     offset,
-                    sign: if offset.is_positive() {
-                        essentials.offset_positive_sign
-                    } else {
-                        essentials.offset_negative_sign
-                    },
-                    separator: essentials.offset_separator,
+                    separator: &*essentials.offset_separator,
                     fdf,
                     length: self.0,
                 }])
