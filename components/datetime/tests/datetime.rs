@@ -28,7 +28,7 @@ use icu_calendar::{
 };
 use icu_datetime::{
     fields::{Field, FieldLength, FieldSymbol, TimeZone},
-    neo::{NeoFormatter, TypedNeoFormatter},
+    neo::{Formatter, TypedFormatter},
     neo_pattern::DateTimePattern,
     neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton},
     options::preferences::{self, HourCycle},
@@ -303,9 +303,9 @@ fn assert_fixture_element<A>(
     };
 
     let dtf =
-        TypedNeoFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+        TypedFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
-    let any_dtf = NeoFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+    let any_dtf = Formatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(
@@ -370,7 +370,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(preferences, &mut locale);
             }
             let dtf = {
-                TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton)
+                TypedFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton)
                     .unwrap()
             };
             assert_try_writeable_eq!(
@@ -449,7 +449,7 @@ fn test_time_zone_format_configs() {
                 }
                 let skeleton = config_input.to_semantic_skeleton();
                 for expect in expected {
-                    let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+                    let tzf = TypedFormatter::<Gregorian, _>::try_new_with_skeleton(
                         &data_locale,
                         skeleton,
                     )
@@ -480,7 +480,7 @@ fn test_time_zone_format_offset_seconds() {
     };
 
     let time_zone = CustomTimeZone::new_with_offset(UtcOffset::try_from_seconds(12).unwrap());
-    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+    let tzf = TypedFormatter::<NeverCalendar, _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )
@@ -496,7 +496,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     };
 
     let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
-    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+    let tzf = TypedFormatter::<NeverCalendar, _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )
