@@ -2421,8 +2421,7 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
             &self.input,
-            Some(&self.names),
-            Some(&self.names),
+            &self.names,
             Some(&self.names),
             self.names.week_calculator,
             self.names.fixed_decimal_formatter,

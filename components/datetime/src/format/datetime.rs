@@ -16,6 +16,7 @@ use crate::time_zone::{
     TimeZoneFormatterUnit,
 };
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
+use super::neo::RawDateTimeNamesBorrowed;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -68,11 +69,10 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
+pub(crate) fn try_write_pattern<'data, W, ZS>(
     pattern: PatternBorrowed<'data>,
     input: &ExtractedInput,
-    date_symbols: Option<&DS>,
-    time_symbols: Option<&TS>,
+    datetime_names: &RawDateTimeNamesBorrowed,
     zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
@@ -80,16 +80,13 @@ pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
-    DS: DateSymbols<'data>,
-    TS: TimeSymbols,
     ZS: ZoneSymbols<'data>,
 {
     try_write_pattern_items(
         pattern.metadata,
         pattern.items.iter(),
         input,
-        date_symbols,
-        time_symbols,
+        datetime_names,
         zone_symbols,
         week_data,
         fixed_decimal_format,
@@ -98,12 +95,11 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
+pub(crate) fn try_write_pattern_items<'data, W, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
     input: &ExtractedInput,
-    date_symbols: Option<&DS>,
-    time_symbols: Option<&TS>,
+    datetime_names: &RawDateTimeNamesBorrowed,
     zone_symbols: Option<&ZS>,
     week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
@@ -111,8 +107,6 @@ pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
-    DS: DateSymbols<'data>,
-    TS: TimeSymbols,
     ZS: ZoneSymbols<'data>,
 {
     let mut r = Ok(());
@@ -137,8 +131,7 @@ where
                     field,
                     pattern_metadata,
                     input,
-                    date_symbols,
-                    time_symbols,
+                    datetime_names,
                     week_data,
                     fixed_decimal_format,
                     w,
@@ -158,15 +151,9 @@ pub enum DateTimeWriteError {
     #[displaydoc("FixedDecimalFormatter not loaded")]
     MissingFixedDecimalFormatter,
     // TODO: Remove Missing*Symbols and use exclusively MissingNames
-    /// Missing DateSymbols
-    #[displaydoc("DateSymbols not loaded")]
-    MissingDateSymbols,
     /// Missing ZoneSymbols
     #[displaydoc("ZoneSymbols not loaded")]
     MissingZoneSymbols,
-    /// Missing TimeSymbols
-    #[displaydoc("TimeSymbols not loaded")]
-    MissingTimeSymbols,
     /// Missing OrdinalRules
     #[displaydoc("OrdinalRules not loaded")]
     MissingOrdinalRules,
@@ -212,20 +199,17 @@ pub enum DateTimeWriteError {
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_field<'data, W, DS, TS>(
+pub(crate) fn try_write_field<'data, W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
-    date_symbols: Option<&DS>,
-    time_symbols: Option<&TS>,
+    datetime_names: &RawDateTimeNamesBorrowed,
     week_data: Option<&WeekCalculator>,
     fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
-    DS: DateSymbols<'data>,
-    TS: TimeSymbols,
 {
     // Writes an error string for the given symbol
     fn write_value_missing(
@@ -245,36 +229,31 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("year"))
             }
-            Some(year) => {
-                let era_symbol = date_symbols
-                    .ok_or(DateTimeWriteError::MissingDateSymbols)
-                    .and_then(|ds| {
-                        let Some(era) = year.formatting_era() else {
-                            return Err(DateTimeWriteError::MissingInputField("era"));
-                        };
-                        ds.get_name_for_era(l, era).map_err(|e| match e {
+            Some(year) => match year.formatting_era() {
+                None => {
+                    write_value_missing(w, field)?;
+                    Err(DateTimeWriteError::MissingInputField("era"))
+                }
+                Some(era) => {
+                    let era_symbol = datetime_names
+                        .get_name_for_era(l, era)
+                        .map_err(|e| match e {
                             GetSymbolForEraError::Missing => {
                                 DateTimeWriteError::MissingEraSymbol(era)
                             }
                             GetSymbolForEraError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
-                        })
-                    });
-                match era_symbol {
-                    Err(e) => {
-                        w.with_part(Part::ERROR, |w| {
-                            if let Some(era) = year.formatting_era() {
-                                w.write_str(&era.0)
-                            } else {
-                                w.write_str("missing era")
-                            }
-                        })?;
-                        Err(e)
+                        });
+                    match era_symbol {
+                        Err(e) => {
+                            w.with_part(Part::ERROR, |w| w.write_str(&era.0))?;
+                            Err(e)
+                        }
+                        Ok(era) => Ok(w.write_str(era)?),
                     }
-                    Ok(era) => Ok(w.write_str(era)?),
                 }
-            }
+            },
         },
         (FieldSymbol::Year(Year::Calendar), l) => match input.year {
             None => {
@@ -376,18 +355,13 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("month"))
             }
-            Some(month_info) => match date_symbols
-                .ok_or(DateTimeWriteError::MissingDateSymbols)
-                .and_then(|ds| {
-                    ds.get_name_for_month(month, l, month_info.formatting_code)
-                        .map_err(|e| match e {
-                            GetNameForMonthError::Missing => {
-                                DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
-                            }
-                            GetNameForMonthError::MissingNames(f) => {
-                                DateTimeWriteError::MissingNames(f)
-                            }
-                        })
+            Some(month_info) => match datetime_names
+                .get_name_for_month(month, l, month_info.formatting_code)
+                .map_err(|e| match e {
+                    GetNameForMonthError::Missing => {
+                        DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
+                    }
+                    GetNameForMonthError::MissingNames(f) => DateTimeWriteError::MissingNames(f),
                 }) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| w.write_str(&month_info.formatting_code.0))?;
@@ -435,18 +409,11 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("iso_weekday"))
             }
-            Some(wd) => match date_symbols
-                .ok_or(DateTimeWriteError::MissingDateSymbols)
-                .and_then(|ds| {
-                    ds.get_name_for_weekday(weekday, l, wd)
-                        .map_err(|e| match e {
-                            GetNameForWeekdayError::Missing => {
-                                DateTimeWriteError::MissingWeekdaySymbol(wd)
-                            }
-                            GetNameForWeekdayError::MissingNames(f) => {
-                                DateTimeWriteError::MissingNames(f)
-                            }
-                        })
+            Some(wd) => match datetime_names
+                .get_name_for_weekday(weekday, l, wd)
+                .map_err(|e| match e {
+                    GetNameForWeekdayError::Missing => DateTimeWriteError::MissingWeekdaySymbol(wd),
+                    GetNameForWeekdayError::MissingNames(f) => DateTimeWriteError::MissingNames(f),
                 }) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| {
@@ -552,24 +519,21 @@ where
                 Err(DateTimeWriteError::MissingInputField("hour"))
             }
             Some(hour) => {
-                match time_symbols
-                    .ok_or(DateTimeWriteError::MissingTimeSymbols)
-                    .and_then(|ts| {
-                        ts.get_name_for_day_period(
-                            period,
-                            l,
-                            hour,
-                            pattern_metadata.time_granularity().is_top_of_hour(
-                                input.minute.map(u8::from).unwrap_or(0),
-                                input.second.map(u8::from).unwrap_or(0),
-                                input.nanosecond.map(u32::from).unwrap_or(0),
-                            ),
-                        )
-                        .map_err(|e| match e {
-                            GetNameForDayPeriodError::MissingNames(f) => {
-                                DateTimeWriteError::MissingNames(f)
-                            }
-                        })
+                match datetime_names
+                    .get_name_for_day_period(
+                        period,
+                        l,
+                        hour,
+                        pattern_metadata.time_granularity().is_top_of_hour(
+                            input.minute.map(u8::from).unwrap_or(0),
+                            input.second.map(u8::from).unwrap_or(0),
+                            input.nanosecond.map(u32::from).unwrap_or(0),
+                        ),
+                    )
+                    .map_err(|e| match e {
+                        GetNameForDayPeriodError::MissingNames(f) => {
+                            DateTimeWriteError::MissingNames(f)
+                        }
                     }) {
                     Err(e) => {
                         w.with_part(Part::ERROR, |w| {
