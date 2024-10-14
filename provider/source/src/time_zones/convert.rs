@@ -66,10 +66,50 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 offset_negative_sign: '-',
                 offset_separator: ':',
             },
+            "+HH:mm; -HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "+H:mm;-H:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
             "+HH:mm;−HH:mm" => HourFormatParts {
                 offset_positive_sign: '+',
                 offset_negative_sign: '−',
                 offset_separator: ':',
+            },
+            "+HH:mm;–HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '–',
+                offset_separator: ':',
+            },
+            "+HH.mm;-HH.mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: '.',
+            },
+            "+H.mm;-H.mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: '.',
+            },
+            "\u{200e}+HH:mm;-HH:mm\u{200e}" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "\u{200e}+HH:mm;\u{200e}−HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '−',
+                offset_separator: ':',
+            },
+            "+HHmm;-HHmm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':', // !!!
             },
             _ => panic!("New hour format parts pattern: {:?}", time_zone_names.hour_format)
         };
