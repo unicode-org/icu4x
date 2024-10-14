@@ -80,9 +80,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct ZonedDateTimeFormatter(
-        pub  icu_datetime::neo::Formatter<
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
-        >,
+        pub icu_datetime::neo::Formatter<NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker>,
     );
 
     impl ZonedDateTimeFormatter {

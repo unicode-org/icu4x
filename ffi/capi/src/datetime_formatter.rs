@@ -259,9 +259,7 @@ pub mod ffi {
     /// An ICU4X DateFormatter object capable of formatting a [`DateTime`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct DateTimeFormatter(
-        pub icu_datetime::neo::Formatter<NeoYearMonthDayHourMinuteMarker>,
-    );
+    pub struct DateTimeFormatter(pub icu_datetime::neo::Formatter<NeoYearMonthDayHourMinuteMarker>);
 
     impl DateTimeFormatter {
         /// Creates a new [`DateTimeFormatter`] from locale data.

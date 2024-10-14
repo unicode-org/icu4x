@@ -2310,7 +2310,7 @@ macro_rules! impl_datetime_marker {
         /// );
         /// ```
         pub type $type = DateTimeCombo<$date, $time, NeoNeverMarker>;
-    }
+    };
 }
 
 macro_rules! impl_zoneddatetime_marker {
@@ -2380,7 +2380,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// );
         /// ```
         pub type $type = DateTimeCombo<$date, $time, $zone>;
-    }
+    };
 }
 
 impl_date_marker!(

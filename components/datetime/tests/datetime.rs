@@ -302,8 +302,7 @@ fn assert_fixture_element<A>(
         zone: CustomTimeZone::utc(),
     };
 
-    let dtf =
-        TypedFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+    let dtf = TypedFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
     let any_dtf = Formatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 

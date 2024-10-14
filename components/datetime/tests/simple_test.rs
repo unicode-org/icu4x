@@ -126,8 +126,7 @@ fn neo_date_lengths() {
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter =
-                TypedFormatter::try_new_with_skeleton(&locale, date_skeleton).unwrap();
+            let formatter = TypedFormatter::try_new_with_skeleton(&locale, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
@@ -194,8 +193,7 @@ fn overlap_patterns() {
     } in cases
     {
         let skeleton = NeoSkeleton::for_length_and_components(length, components);
-        let formatter =
-            TypedFormatter::try_new_with_skeleton(&(&locale).into(), skeleton).unwrap();
+        let formatter = TypedFormatter::try_new_with_skeleton(&(&locale).into(), skeleton).unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(
             formatted,
