@@ -25,11 +25,7 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::{
-    neo::{NeoFormatter, TypedNeoFormatter},
-    neo_pattern::DateTimePattern,
-    neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton},
-    options::preferences::{self, HourCycle},
-    TypedDateTimeNames,
+    fields::{Field, FieldLength, FieldSymbol, TimeZone}, neo::{NeoFormatter, TypedNeoFormatter}, neo_pattern::DateTimePattern, neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton}, options::preferences::{self, HourCycle}, TypedDateTimeNames
 };
 use icu_datetime::{neo_skeleton::NeoDateTimeSkeleton, CldrCalendar, DateTimeWriteError};
 use icu_locale_core::{
@@ -487,7 +483,10 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
         "{GMT+?}",
-        Err(DateTimeWriteError::MissingZoneSymbols)
+        Err(DateTimeWriteError::MissingNames(Field {
+            symbol: FieldSymbol::TimeZone(TimeZone::LowerX),
+            length: FieldLength::TwoDigit,
+        }))
     );
 }
 
@@ -525,7 +524,10 @@ fn test_time_zone_patterns() {
                         .unwrap()
                         .format(&zoned_datetime);
                     let expected_result = if expect.starts_with('{') {
-                        Err(DateTimeWriteError::MissingZoneSymbols)
+                        Err(DateTimeWriteError::MissingNames(Field {
+                            symbol: FieldSymbol::TimeZone(TimeZone::LowerX),
+                            length: FieldLength::TwoDigit,
+                        }))
                     } else {
                         Ok(())
                     };

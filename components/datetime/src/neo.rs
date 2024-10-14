@@ -1463,7 +1463,6 @@ impl TryWriteable for FormattedNeoDateTime<'_> {
             self.pattern.iter_items(),
             &self.input,
             &self.names,
-            Some(&self.names),
             self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
