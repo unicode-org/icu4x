@@ -558,7 +558,15 @@ where
             debug_assert!(false, "unreachable: time zone formatted in its own fn");
             Err(DateTimeWriteError::UnsupportedField(field))
         }
-        (FieldSymbol::Year(Year::WeekOf) | FieldSymbol::Week(Week::WeekOfYear) | FieldSymbol::Week(Week::WeekOfMonth) | FieldSymbol::Day(Day::DayOfYear) | FieldSymbol::Day(Day::ModifiedJulianDay) | FieldSymbol::Second(Second::Millisecond), _) => {
+        (
+            FieldSymbol::Year(Year::WeekOf)
+            | FieldSymbol::Week(Week::WeekOfYear)
+            | FieldSymbol::Week(Week::WeekOfMonth)
+            | FieldSymbol::Day(Day::DayOfYear)
+            | FieldSymbol::Day(Day::ModifiedJulianDay)
+            | FieldSymbol::Second(Second::Millisecond),
+            _,
+        ) => {
             w.with_part(Part::ERROR, |w| {
                 w.write_str("{unsupported:")?;
                 w.write_char(char::from(field.symbol))?;

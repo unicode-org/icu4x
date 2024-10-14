@@ -263,7 +263,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
-            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -462,7 +462,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
-            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_internal(
             provider,

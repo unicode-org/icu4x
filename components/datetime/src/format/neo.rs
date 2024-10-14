@@ -622,9 +622,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     }
 
     /// Creates a completely empty instance, not even with number formatting.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// Errors occur if a number formatter is not loaded but one is required:
     ///
     /// ```
@@ -1407,7 +1407,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     }
 
     /// Loads a [`FixedDecimalFormatter`] with compiled data.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -1418,18 +1418,18 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
-    /// 
+    ///
     /// let locale = &locale!("bn").into();
     ///
     /// let mut names = TypedDateTimeNames::<NeverCalendar, NeoTimeSkeleton>::try_new(&locale).unwrap();
     /// names.include_fixed_decimal_formatter();
-    /// 
+    ///
     /// // Create a pattern for the time, which is all numbers
     /// let pattern_str = "'The current 24-hour time is:' HH:mm";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// 
+    ///
     /// let time = Time::try_new(6, 40, 33, 0).unwrap();
-    /// 
+    ///
     /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format(&time),
     ///     "The current 24-hour time is: ০৬:৪০",
