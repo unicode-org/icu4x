@@ -927,6 +927,58 @@
     ]
   },
   {
+    "locale": "he",
+    "datetime": "2021-01-11T12:00:00.000+03:00[Asia/Jerusalem]",
+    "expectations": [
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
+        "expected": ["+0300"]
+      },
+      {
+        "patterns": [
+          "O",
+          "ZZZZ"
+        ],
+        "configs": [
+          "LocalizedOffsetShort"
+        ],
+        "fallback_formats": ["LocalizedOffset"],
+        "expected": ["GMT+3\u200e"]
+      },
+      {
+        "patterns": [
+          "OOOO"
+        ],
+        "configs": [
+          "LocalizedOffsetLong"
+        ],
+        "expected": ["GMT+03:00\u200e"]
+      },
+      {
+        "patterns": [
+          "VVVV"
+        ],
+        "configs": [
+          "GenericLocation"
+        ],
+        "expected": ["שעון ישראל"]
+      }
+    ]
+  },
+  {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
     "expectations": [
