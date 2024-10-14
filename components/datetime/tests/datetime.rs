@@ -479,8 +479,7 @@ fn test_time_zone_format_offset_seconds() {
         neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, NeverCalendar,
     };
 
-    let time_zone =
-        CustomTimeZone::new_with_offset(UtcOffset::try_from_offset_seconds(12).unwrap());
+    let time_zone = CustomTimeZone::new_with_offset(UtcOffset::try_from_seconds(12).unwrap());
     let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),

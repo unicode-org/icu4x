@@ -320,8 +320,8 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                             data.push((
                                 end_time,
                                 (
-                                    UtcOffset::try_from_offset_seconds(utc_offset as i32).unwrap(),
-                                    UtcOffset::try_from_offset_seconds(dst_offset_relative as i32)
+                                    UtcOffset::try_from_seconds(utc_offset as i32).unwrap(),
+                                    UtcOffset::try_from_seconds(dst_offset_relative as i32)
                                         .unwrap(),
                                 ),
                             ));
@@ -436,8 +436,8 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                                     bcp47,
                                     end_time,
                                     (
-                                        utc_offset.into_eighths_of_hour(),
-                                        dst_offset_relative.into_eighths_of_hour(),
+                                        utc_offset.to_eighths_of_hour(),
+                                        dst_offset_relative.to_eighths_of_hour(),
                                     ),
                                 )
                             },

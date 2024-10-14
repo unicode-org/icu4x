@@ -21,7 +21,7 @@ impl Default for UtcOffset {
 impl UtcOffset {
     /// Attempt to create a [`UtcOffset`] from a seconds input. It returns
     /// [`InvalidOffsetError`] when the seconds are out of bounds.
-    pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
+    pub fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
             Err(InvalidOffsetError)
         } else {
@@ -41,10 +41,10 @@ impl UtcOffset {
     ///
     /// assert_eq!(
     ///     UtcOffset::try_from_str("-0600").unwrap(),
-    ///     UtcOffset::from_offset_eighths_of_hour(-6 * 8),
+    ///     UtcOffset::from_eighths_of_hour(-6 * 8),
     /// );
     /// ```
-    pub const fn from_offset_eighths_of_hour(eighths_of_hour: i8) -> Self {
+    pub const fn from_eighths_of_hour(eighths_of_hour: i8) -> Self {
         Self(eighths_of_hour as i32 * 450)
     }
 
@@ -78,10 +78,10 @@ impl UtcOffset {
     /// let offset_err1 =
     ///     UtcOffset::try_from_str("+05000").expect_err("Invalid input");
     ///
-    /// assert_eq!(offset0.offset_seconds(), 0);
-    /// assert_eq!(offset1.offset_seconds(), 18000);
-    /// assert_eq!(offset2.offset_seconds(), 18000);
-    /// assert_eq!(offset3.offset_seconds(), -18000);
+    /// assert_eq!(offset0.to_seconds(), 0);
+    /// assert_eq!(offset1.to_seconds(), 18000);
+    /// assert_eq!(offset2.to_seconds(), 18000);
+    /// assert_eq!(offset3.to_seconds(), -18000);
     /// ```
     #[inline]
     pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
@@ -129,26 +129,26 @@ impl UtcOffset {
         }
         .ok_or(InvalidOffsetError)?;
 
-        Self::try_from_offset_seconds(offset_sign * (hours * 60 + minutes) * 60)
+        Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
     }
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
     ///
     /// # Safety
     ///
-    /// The seconds must be a valid value as returned by [`Self::offset_seconds`].
+    /// The seconds must be a valid value as returned by [`Self::into_seconds`].
     #[inline]
-    pub unsafe fn from_offset_seconds_unchecked(seconds: i32) -> Self {
+    pub unsafe fn from_seconds_unchecked(seconds: i32) -> Self {
         Self(seconds)
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn into_seconds(self) -> i32 {
+    pub fn to_seconds(self) -> i32 {
         self.0
     }
 
     /// Returns the raw offset value in eights of an hour (7.5 minute units).
-    pub fn into_eighths_of_hour(self) -> i8 {
+    pub fn to_eighths_of_hour(self) -> i8 {
         (self.0 / 450) as i8
     }
 
