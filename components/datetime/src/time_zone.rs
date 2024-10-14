@@ -422,7 +422,7 @@ impl FormatOffset for LocalizedOffsetFormat {
                         self.fdf
                             .format(
                                 &FixedDecimal::from(
-                                    (self.offset.offset_seconds() % 3600).unsigned_abs(),
+                                    (self.offset.offset_seconds() % 60).unsigned_abs(),
                                 )
                                 .padded_start(2),
                             )
