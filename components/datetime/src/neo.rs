@@ -312,7 +312,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -337,7 +337,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -362,7 +362,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -389,7 +389,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -406,7 +406,7 @@ where
     /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting markers
@@ -436,14 +436,14 @@ where
     gen_any_buffer_constructors_with_external_loader!(
         @runtime_fset,
         FSet,
-        try_new_with_components,
-        try_new_with_components_with_any_provider,
-        try_new_with_components_with_buffer_provider,
+        try_new_with_skeleton,
+        try_new_with_skeleton_with_any_provider,
+        try_new_with_skeleton_with_buffer_provider,
         try_new_internal
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_components_unstable<P>(
+    pub fn try_new_with_skeleton_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,
@@ -903,7 +903,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -927,7 +927,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -951,7 +951,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -977,7 +977,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -996,7 +996,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting markers
@@ -1074,14 +1074,14 @@ where
     gen_any_buffer_constructors_with_external_loader!(
         @runtime_fset,
         FSet,
-        try_new_with_components,
-        try_new_with_components_with_any_provider,
-        try_new_with_components_with_buffer_provider,
+        try_new_with_skeleton,
+        try_new_with_skeleton_with_any_provider,
+        try_new_with_skeleton_with_buffer_provider,
         try_new_internal
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_components_unstable<P>(
+    pub fn try_new_with_skeleton_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,

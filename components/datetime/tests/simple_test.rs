@@ -88,7 +88,7 @@ fn neo_datetime_lengths() {
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = TypedNeoFormatter::try_new_with_components(
+                let formatter = TypedNeoFormatter::try_new_with_skeleton(
                     &locale,
                     NeoDateTimeSkeleton::for_length_and_components(
                         date_skeleton.length,
@@ -127,7 +127,7 @@ fn neo_date_lengths() {
             locale!("hi").into(),
         ] {
             let formatter =
-                TypedNeoFormatter::try_new_with_components(&locale, date_skeleton).unwrap();
+                TypedNeoFormatter::try_new_with_skeleton(&locale, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
@@ -195,7 +195,7 @@ fn overlap_patterns() {
     {
         let skeleton = NeoSkeleton::for_length_and_components(length, components);
         let formatter =
-            TypedNeoFormatter::try_new_with_components(&(&locale).into(), skeleton).unwrap();
+            TypedNeoFormatter::try_new_with_skeleton(&(&locale).into(), skeleton).unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(
             formatted,
@@ -224,7 +224,7 @@ fn hebrew_months() {
 #[test]
 fn test_5387() {
     let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
-    let formatter_auto = TypedNeoFormatter::try_new_with_components(
+    let formatter_auto = TypedNeoFormatter::try_new_with_skeleton(
         &locale!("en").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
@@ -235,7 +235,7 @@ fn test_5387() {
         ),
     )
     .unwrap();
-    let formatter_h12 = TypedNeoFormatter::try_new_with_components(
+    let formatter_h12 = TypedNeoFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h12").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
@@ -246,7 +246,7 @@ fn test_5387() {
         ),
     )
     .unwrap();
-    let formatter_h24 = TypedNeoFormatter::try_new_with_components(
+    let formatter_h24 = TypedNeoFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h23").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,

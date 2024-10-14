@@ -45,7 +45,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+                            TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
                                 skeleton,
                             )

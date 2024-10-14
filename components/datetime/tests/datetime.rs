@@ -303,10 +303,9 @@ fn assert_fixture_element<A>(
     };
 
     let dtf =
-        TypedNeoFormatter::try_new_with_components(&locale.into(), skeleton).expect(description);
+        TypedNeoFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
-    let any_dtf =
-        NeoFormatter::try_new_with_components(&locale.into(), skeleton).expect(description);
+    let any_dtf = NeoFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(
@@ -371,7 +370,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(preferences, &mut locale);
             }
             let dtf = {
-                TypedNeoFormatter::<Gregorian, _>::try_new_with_components(&locale.into(), skeleton)
+                TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton)
                     .unwrap()
             };
             assert_try_writeable_eq!(
@@ -450,7 +449,7 @@ fn test_time_zone_format_configs() {
                 }
                 let skeleton = config_input.to_semantic_skeleton();
                 for expect in expected {
-                    let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+                    let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
                         &data_locale,
                         skeleton,
                     )
