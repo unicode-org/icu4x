@@ -19,8 +19,8 @@ fn assert_resolved_components(
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(&locale.into(), skeleton)
-        .unwrap();
+    let dtf =
+        TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton).unwrap();
     let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);
