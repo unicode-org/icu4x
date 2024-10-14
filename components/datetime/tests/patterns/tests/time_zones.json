@@ -732,7 +732,7 @@
         "configs": [
           "SpecificNonLocationShort"
         ],
-        "expected": ["GMT+5:45"]
+        "expected": ["GMT+5.45"]
       },
       {
         "patterns": [
@@ -769,7 +769,7 @@
           "LocalizedOffsetShort"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+5:45"]
+        "expected": ["GMT+5.45"]
       },
       {
         "patterns": [
@@ -778,7 +778,7 @@
         "configs": [
           "LocalizedOffsetLong"
         ],
-        "expected": ["GMT+05:45"]
+        "expected": ["GMT+05.45"]
       },
       {
         "patterns": [

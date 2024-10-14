@@ -51,22 +51,7 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let offset_separator = Cow::Borrowed(match time_zone_names.hour_format.as_str() {
-            "+HH:mm;-HH:mm" => ":",
-            "+HH:mm; -HH:mm" => ":",
-            "+H:mm;-H:mm" => ":",
-            "+HH:mm;−HH:mm" => ":",
-            "+HH:mm;–HH:mm" => ":",
-            "+HH.mm;-HH.mm" => ".",
-            "+H.mm;-H.mm" => ".",
-            "\u{200e}+HH:mm;-HH:mm\u{200e}" => ":",
-            "\u{200e}+HH:mm;\u{200e}−HH:mm" => ":",
-            "+HHmm;-HHmm" => ":", // !!!
-            _ => panic!(
-                "New hour format parts pattern: {:?}",
-                time_zone_names.hour_format
-            ),
-        });
+        let offset_separator = self.load_duration_parts_internal(req)?.2.to_owned().into();
 
         Ok(DataResponse {
             metadata: Default::default(),

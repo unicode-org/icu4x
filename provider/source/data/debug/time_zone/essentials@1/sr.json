@@ -1,5 +1,5 @@
 {
-  "offset_separator": ":",
+  "offset_separator": ".",
   "offset_pattern": [
     {
       "Literal": "GMT"
