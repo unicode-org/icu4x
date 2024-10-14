@@ -51,77 +51,11 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        struct HourFormatParts {
-            offset_positive_sign: char,
-            offset_negative_sign: char,
-            offset_separator: char,
-        }
-        let HourFormatParts {
-            offset_positive_sign,
-            offset_negative_sign,
-            offset_separator,
-        } = match time_zone_names.hour_format.as_str() {
-            "+HH:mm;-HH:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: ':',
-            },
-            "+HH:mm; -HH:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: ':',
-            },
-            "+H:mm;-H:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: ':',
-            },
-            "+HH:mm;−HH:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '−',
-                offset_separator: ':',
-            },
-            "+HH:mm;–HH:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '–',
-                offset_separator: ':',
-            },
-            "+HH.mm;-HH.mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: '.',
-            },
-            "+H.mm;-H.mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: '.',
-            },
-            "\u{200e}+HH:mm;-HH:mm\u{200e}" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: ':',
-            },
-            "\u{200e}+HH:mm;\u{200e}−HH:mm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '−',
-                offset_separator: ':',
-            },
-            "+HHmm;-HHmm" => HourFormatParts {
-                offset_positive_sign: '+',
-                offset_negative_sign: '-',
-                offset_separator: ':', // !!!
-            },
-            _ => panic!(
-                "New hour format parts pattern: {:?}",
-                time_zone_names.hour_format
-            ),
-        };
+        let offset_separator = self.load_duration_parts_internal(req)?.2.to_owned().into();
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
-                offset_negative_sign,
-                offset_positive_sign,
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),

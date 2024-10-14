@@ -36,7 +36,6 @@ mod datetime;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
-#[cfg(feature = "experimental")]
 mod duration;
 mod list;
 mod locale;
