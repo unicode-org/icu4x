@@ -136,7 +136,7 @@ impl UtcOffset {
     ///
     /// # Safety
     ///
-    /// The seconds must be a valid value as returned by [`Self::into_seconds`].
+    /// The seconds must be a valid value as returned by [`Self::to_seconds`].
     #[inline]
     pub unsafe fn from_seconds_unchecked(seconds: i32) -> Self {
         Self(seconds)
