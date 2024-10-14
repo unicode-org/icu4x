@@ -91,12 +91,12 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern_items<'data, W>(
+pub(crate) fn try_write_pattern_items<W>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    week_data: Option<&'data WeekCalculator>,
+    week_data: Option<&WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -189,7 +189,7 @@ pub enum DateTimeWriteError {
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_field<'data, W>(
+pub(crate) fn try_write_field<W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
@@ -593,7 +593,7 @@ impl ExtractedInput {
 }
 
 // #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_zone<'data, W>(
+pub(crate) fn try_write_zone<W>(
     field_symbol: fields::TimeZone,
     field_length: FieldLength,
     input: &ExtractedInput,
