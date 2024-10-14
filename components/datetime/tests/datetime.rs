@@ -534,7 +534,7 @@ fn test_time_zone_patterns() {
                             icu_datetime::pattern::reference::Pattern::from_str(pattern_input)
                                 .unwrap();
                         let icu_datetime::pattern::PatternItem::Field(field) =
-                            internal_pattern.items.get(0).unwrap()
+                            internal_pattern.items.first().unwrap()
                         else {
                             unreachable!()
                         };
