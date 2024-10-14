@@ -27,7 +27,12 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::{
-    fields::{Field, FieldLength, FieldSymbol, TimeZone}, neo::{NeoFormatter, TypedNeoFormatter}, neo_pattern::DateTimePattern, neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton}, options::preferences::{self, HourCycle}, TypedDateTimeNames
+    fields::{Field, FieldLength, FieldSymbol, TimeZone},
+    neo::{NeoFormatter, TypedNeoFormatter},
+    neo_pattern::DateTimePattern,
+    neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton},
+    options::preferences::{self, HourCycle},
+    TypedDateTimeNames,
 };
 use icu_datetime::{neo_skeleton::NeoDateTimeSkeleton, CldrCalendar, DateTimeWriteError};
 use icu_locale_core::{
@@ -525,8 +530,14 @@ fn test_time_zone_patterns() {
                         .unwrap()
                         .format(&zoned_datetime);
                     let expected_result = if expect.starts_with('{') {
-                        let internal_pattern = icu_datetime::pattern::reference::Pattern::from_str(pattern_input).unwrap();
-                        let icu_datetime::pattern::PatternItem::Field(field) = internal_pattern.items.get(0).unwrap() else { unreachable!() };
+                        let internal_pattern =
+                            icu_datetime::pattern::reference::Pattern::from_str(pattern_input)
+                                .unwrap();
+                        let icu_datetime::pattern::PatternItem::Field(field) =
+                            internal_pattern.items.get(0).unwrap()
+                        else {
+                            unreachable!()
+                        };
                         Err(DateTimeWriteError::MissingNames(*field))
                     } else {
                         Ok(())

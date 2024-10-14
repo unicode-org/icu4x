@@ -32,4 +32,3 @@ pub(crate) enum MonthPlaceholderValue<'a> {
     Numeric,
     NumericPattern(&'a SimpleSubstitutionPattern<'a>),
 }
-

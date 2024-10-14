@@ -2,21 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::neo::RawDateTimeNamesBorrowed;
+use super::GetNameForDayPeriodError;
+use super::{
+    GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
+};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
-use super::GetNameForDayPeriodError;
-use super::{
-    GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
-    MonthPlaceholderValue
-};
 use crate::time_zone::{
     FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
     TimeZoneFormatterUnit,
 };
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
-use super::neo::RawDateTimeNamesBorrowed;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -629,24 +628,26 @@ where
     };
 
     // TODO: Implement proper formatting logic here
-    Ok(match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
-        None => {
-            write_time_zone_missing(input.offset, w)?;
-            Err(DateTimeWriteError::UnsupportedField(field))
-        }
-        Some(time_zone) => {
-            let payloads = datetime_names.get_payloads();
-            let units = select_zone_units(time_zone);
-            match do_write_zone(units, input, payloads, fdf, w)? {
-                Ok(()) => Ok(()),
-                Err(()) => {
-                    write_time_zone_missing(input.offset, w)?;
-                    // Return an error since offset data was missing
-                    Err(DateTimeWriteError::MissingNames(field))
+    Ok(
+        match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
+            None => {
+                write_time_zone_missing(input.offset, w)?;
+                Err(DateTimeWriteError::UnsupportedField(field))
+            }
+            Some(time_zone) => {
+                let payloads = datetime_names.get_payloads();
+                let units = select_zone_units(time_zone);
+                match do_write_zone(units, input, payloads, fdf, w)? {
+                    Ok(()) => Ok(()),
+                    Err(()) => {
+                        write_time_zone_missing(input.offset, w)?;
+                        // Return an error since offset data was missing
+                        Err(DateTimeWriteError::MissingNames(field))
+                    }
                 }
             }
-        }
-    })
+        },
+    )
 }
 
 /// Given a [`ResolvedNeoTimeZoneSkeleton`], select the formatter units
