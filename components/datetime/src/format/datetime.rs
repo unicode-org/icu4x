@@ -7,7 +7,7 @@ use super::GetNameForDayPeriodError;
 use super::{
     GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
@@ -22,7 +22,6 @@ use fixed_decimal::FixedDecimal;
 use icu_calendar::types::{
     Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
 };
-use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::UtcOffset;
@@ -68,11 +67,10 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<'data, W>(
-    pattern: PatternBorrowed<'data>,
+pub(crate) fn try_write_pattern<W>(
+    pattern: PatternBorrowed,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    week_data: Option<&'data WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -84,7 +82,6 @@ where
         pattern.items.iter(),
         input,
         datetime_names,
-        week_data,
         fixed_decimal_format,
         w,
     )
@@ -96,7 +93,6 @@ pub(crate) fn try_write_pattern_items<W>(
     pattern_items: impl Iterator<Item = PatternItem>,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    week_data: Option<&WeekCalculator>,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -126,7 +122,6 @@ where
                     pattern_metadata,
                     input,
                     datetime_names,
-                    week_data,
                     fixed_decimal_format,
                     w,
                 )?)
@@ -194,7 +189,6 @@ pub(crate) fn try_write_field<W>(
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    week_data: Option<&WeekCalculator>,
     fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -251,16 +245,6 @@ where
                 Err(DateTimeWriteError::MissingInputField("year"))
             }
             Some(year) => try_write_number(w, fdf, year.era_year_or_extended().into(), l)?,
-        },
-        (FieldSymbol::Year(Year::WeekOf), l) => match week_data
-            .ok_or(DateTimeWriteError::MissingWeekCalculator)
-            .and_then(|w| input.week_of_year(w))
-        {
-            Err(e) => {
-                write_value_missing(w, field)?;
-                Err(e)
-            }
-            Ok((year, _)) => try_write_number(w, fdf, year.era_year_or_extended().into(), l)?,
         },
         (FieldSymbol::Year(Year::Cyclic), l) => match input.year {
             None => {
@@ -370,28 +354,6 @@ where
                     w.write_str(substitution_pattern.get_suffix())?;
                     r
                 }
-            },
-        },
-        (FieldSymbol::Week(week), l) => match week {
-            Week::WeekOfYear => match week_data
-                .ok_or(DateTimeWriteError::MissingWeekCalculator)
-                .and_then(|w| input.week_of_year(w))
-            {
-                Err(e) => {
-                    write_value_missing(w, field)?;
-                    Err(e)
-                }
-                Ok((_, week_of_year)) => try_write_number(w, fdf, week_of_year.0.into(), l)?,
-            },
-            Week::WeekOfMonth => match week_data
-                .ok_or(DateTimeWriteError::MissingWeekCalculator)
-                .and_then(|w| input.week_of_month(w))
-            {
-                Err(e) => {
-                    write_value_missing(w, field)?;
-                    Err(e)
-                }
-                Ok(week_of_month) => try_write_number(w, fdf, week_of_month.0.into(), l)?,
             },
         },
         (FieldSymbol::Weekday(weekday), l) => match input.iso_weekday {
@@ -539,7 +501,15 @@ where
             debug_assert!(false, "unreachable: time zone formatted in its own fn");
             Err(DateTimeWriteError::UnsupportedField(field))
         }
-        (FieldSymbol::Day(_) | FieldSymbol::Second(Second::Millisecond), _) => {
+        (
+            FieldSymbol::Year(Year::WeekOf)
+            | FieldSymbol::Week(Week::WeekOfYear)
+            | FieldSymbol::Week(Week::WeekOfMonth)
+            | FieldSymbol::Day(Day::DayOfYear)
+            | FieldSymbol::Day(Day::ModifiedJulianDay)
+            | FieldSymbol::Second(Second::Millisecond),
+            _,
+        ) => {
             w.with_part(Part::ERROR, |w| {
                 w.write_str("{unsupported:")?;
                 w.write_char(char::from(field.symbol))?;
@@ -548,48 +518,6 @@ where
             Err(DateTimeWriteError::UnsupportedField(field))
         }
     })
-}
-
-impl ExtractedInput {
-    fn week_of_month(
-        &self,
-        calculator: &WeekCalculator,
-    ) -> Result<icu_calendar::types::WeekOfMonth, DateTimeWriteError> {
-        let day_of_month = self
-            .day_of_month
-            .ok_or(DateTimeWriteError::MissingInputField("day_of_month"))?;
-        let iso_weekday = self
-            .iso_weekday
-            .ok_or(DateTimeWriteError::MissingInputField("iso_weekday"))?;
-        Ok(calculator.week_of_month(day_of_month, iso_weekday))
-    }
-
-    fn week_of_year(
-        &self,
-        calculator: &WeekCalculator,
-    ) -> Result<
-        (
-            icu_calendar::types::YearInfo,
-            icu_calendar::types::WeekOfYear,
-        ),
-        DateTimeWriteError,
-    > {
-        let day_of_year_info = self
-            .day_of_year_info
-            .ok_or(DateTimeWriteError::MissingInputField("day_of_year_info"))?;
-        let iso_weekday = self
-            .iso_weekday
-            .ok_or(DateTimeWriteError::MissingInputField("iso_weekday"))?;
-        let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
-        let year = match week_of.unit {
-            icu_calendar::week::RelativeUnit::Previous => day_of_year_info.prev_year,
-            icu_calendar::week::RelativeUnit::Current => self
-                .year
-                .ok_or(DateTimeWriteError::MissingInputField("year"))?,
-            icu_calendar::week::RelativeUnit::Next => day_of_year_info.next_year,
-        };
-        Ok((year, icu_calendar::types::WeekOfYear(week_of.week as u32)))
-    }
 }
 
 // #[allow(clippy::too_many_arguments)]
