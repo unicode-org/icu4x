@@ -146,22 +146,22 @@ impl RawNeoOptions {
     }
 }
 
-size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 496);
+size_test!(TypedFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 496);
 
-/// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
+/// [`TypedFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
 ///
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
-pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
+pub struct TypedFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> TypedNeoFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> TypedFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -171,7 +171,7 @@ where
     FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`TypedNeoFormatter`] from compiled data with
+    /// Creates a new [`TypedFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
     /// Use this constructor for optimal data size and memory use
@@ -186,13 +186,13 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedNeoFormatter::try_new(
+    /// let formatter = TypedFormatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -275,7 +275,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents> TypedNeoFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents> TypedFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -285,11 +285,11 @@ where
     FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`TypedNeoFormatter`] from compiled data with
+    /// Creates a new [`TypedFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
     /// If you know the datetime components at build time, use
-    /// [`TypedNeoFormatter::try_new`] for smaller data size and memory use.
+    /// [`TypedFormatter::try_new`] for smaller data size and memory use.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -302,14 +302,14 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = TypedFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -327,14 +327,14 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = TypedFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -352,14 +352,14 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = TypedFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -377,7 +377,7 @@ where
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
@@ -386,7 +386,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = TypedFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -474,7 +474,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, R: DateTimeMarkers> TypedNeoFormatter<C, R>
+impl<C: CldrCalendar, R: DateTimeMarkers> TypedFormatter<C, R>
 where
     R::D: TypedDateDataMarkers<C>,
     R::T: TimeMarkers,
@@ -546,7 +546,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, R: DateTimeMarkers> TypedNeoFormatter<C, R>
+impl<C: CldrCalendar, R: DateTimeMarkers> TypedFormatter<C, R>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -561,13 +561,13 @@ where
     /// ```compile_fail
     /// use icu::calendar::Date;
     /// use icu::calendar::buddhist::Buddhist;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedNeoFormatter::<Buddhist, _>::try_new(
+    ///     TypedFormatter::<Buddhist, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
@@ -582,13 +582,13 @@ where
     /// ```compile_fail
     /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::TypedFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedNeoFormatter::<Gregorian, _>::try_new(
+    ///     TypedFormatter::<Gregorian, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
@@ -612,25 +612,25 @@ where
 }
 
 size_test!(
-    NeoFormatter<crate::neo_marker::NeoYearMonthDayMarker>,
+    Formatter<crate::neo_marker::NeoYearMonthDayMarker>,
     neo_year_month_day_formatter_size,
     552
 );
 
-/// [`NeoFormatter`] is a formatter capable of formatting dates and/or times from
+/// [`Formatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
 ///
 #[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
-pub struct NeoFormatter<FSet: DateTimeNamesMarker> {
+pub struct Formatter<FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<FSet>,
     calendar: AnyCalendar,
 }
 
-impl<FSet: DateTimeMarkers + HasConstComponents> NeoFormatter<FSet>
+impl<FSet: DateTimeMarkers + HasConstComponents> Formatter<FSet>
 where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
@@ -640,7 +640,7 @@ where
     FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`NeoFormatter`] from compiled data with
+    /// Creates a new [`Formatter`] from compiled data with
     /// datetime components specified at build time.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
@@ -661,7 +661,7 @@ where
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -671,7 +671,7 @@ where
     /// let length = NeoSkeletonLength::Medium;
     /// let locale = locale!("en-u-ca-hebrew");
     ///
-    /// let formatter = NeoFormatter::try_new(
+    /// let formatter = Formatter::try_new(
     ///     &locale.into(),
     ///     NeoYearMonthDayMarker::with_length(length),
     /// )
@@ -862,7 +862,7 @@ where
     }
 }
 
-impl<FSet: DateTimeMarkers + IsRuntimeComponents> NeoFormatter<FSet>
+impl<FSet: DateTimeMarkers + IsRuntimeComponents> Formatter<FSet>
 where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
@@ -872,11 +872,11 @@ where
     FSet: NeoGetField<FSet::YearStyleOption>,
     FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`NeoFormatter`] from compiled data with
+    /// Creates a new [`Formatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
     /// If you know the datetime components at build time, use
-    /// [`NeoFormatter::try_new`] for smaller data size and memory use.
+    /// [`Formatter::try_new`] for smaller data size and memory use.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -888,14 +888,14 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_skeleton(
+    /// let fmt = Formatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -912,14 +912,14 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_skeleton(
+    /// let fmt = Formatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -936,14 +936,14 @@ where
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_skeleton(
+    /// let fmt = Formatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -960,7 +960,7 @@ where
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
@@ -969,7 +969,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_skeleton(
+    /// let fmt = Formatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -1162,7 +1162,7 @@ where
     }
 }
 
-impl<R: DateTimeMarkers> NeoFormatter<R>
+impl<R: DateTimeMarkers> Formatter<R>
 where
     R::D: DateDataMarkers,
     R::T: TimeMarkers,
@@ -1284,7 +1284,7 @@ where
     }
 }
 
-impl<R: DateTimeMarkers> NeoFormatter<R>
+impl<R: DateTimeMarkers> Formatter<R>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -1301,13 +1301,13 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::try_new(
+    /// let formatter = Formatter::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -1325,12 +1325,12 @@ where
     ///
     /// ```compile_fail
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::try_new(
+    /// let formatter = Formatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )
@@ -1374,14 +1374,14 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = NeoFormatter::try_new(
+    /// let formatter = Formatter::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -1399,12 +1399,12 @@ where
     ///
     /// ```compile_fail
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::Formatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
-    /// let formatter = NeoFormatter::try_new(
+    /// let formatter = Formatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )

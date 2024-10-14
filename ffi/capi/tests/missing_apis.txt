@@ -14,18 +14,18 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::datetime::NeoFormatter#Struct
-icu::datetime::NeoFormatter::convert_and_format#FnInStruct
-icu::datetime::NeoFormatter::strict_format#FnInStruct
-icu::datetime::NeoFormatter::try_new#FnInStruct
-icu::datetime::NeoFormatter::try_new_with_skeleton#FnInStruct
+icu::datetime::Formatter#Struct
+icu::datetime::Formatter::convert_and_format#FnInStruct
+icu::datetime::Formatter::strict_format#FnInStruct
+icu::datetime::Formatter::try_new#FnInStruct
+icu::datetime::Formatter::try_new_with_skeleton#FnInStruct
 icu::datetime::NeoSkeletonLength#Enum
 icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
 icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
-icu::datetime::TypedNeoFormatter#Struct
-icu::datetime::TypedNeoFormatter::format#FnInStruct
-icu::datetime::TypedNeoFormatter::try_new#FnInStruct
-icu::datetime::TypedNeoFormatter::try_new_with_skeleton#FnInStruct
+icu::datetime::TypedFormatter#Struct
+icu::datetime::TypedFormatter::format#FnInStruct
+icu::datetime::TypedFormatter::try_new#FnInStruct
+icu::datetime::TypedFormatter::try_new_with_skeleton#FnInStruct
 icu::datetime::options::length::Date#Enum
 icu::datetime::options::length::Time#Enum
 icu::locale::preferences::PreferenceKey::is_custom#FnInTrait

@@ -100,7 +100,7 @@ impl ItemsAndOptions<'_> {
     }
 }
 
-// TODO: Use markers instead of an enum for NeoFormatter pattern storage.
+// TODO: Use markers instead of an enum for Formatter pattern storage.
 
 #[derive(Debug)]
 pub(crate) enum DateTimeZonePatternSelectionData {
