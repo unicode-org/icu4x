@@ -8,8 +8,8 @@ use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::GetNameForDayPeriodError;
 use crate::provider::date_time::{
-    DateSymbols, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
-    MonthPlaceholderValue, TimeSymbols, ZoneSymbols
+    GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
+    MonthPlaceholderValue
 };
 use crate::time_zone::{
     FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
