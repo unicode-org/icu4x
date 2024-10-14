@@ -54,38 +54,32 @@ pub mod ffi {
         /// Sets the `offset` field from offset seconds.
         ///
         /// Errors if the offset seconds are out of range.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
-        #[diplomat::rust_link(
-            icu::timezone::UtcOffset::from_offset_seconds_unchecked,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::from_seconds_unchecked, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_with_offset, FnInStruct, hidden)]
         pub fn try_set_offset_seconds(
             &mut self,
             offset_seconds: i32,
         ) -> Result<(), TimeZoneInvalidOffsetError> {
-            self.0.offset = Some(icu_timezone::UtcOffset::try_from_offset_seconds(
-                offset_seconds,
-            )?);
+            self.0.offset = Some(icu_timezone::UtcOffset::try_from_seconds(offset_seconds)?);
             Ok(())
         }
 
         /// Sets the `offset` field from offset as eighths of an hour.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::from_offset_eighths_of_hour, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::from_eighths_of_hour, FnInStruct)]
         pub fn set_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
-            self.0.offset = Some(icu_timezone::UtcOffset::from_offset_eighths_of_hour(
+            self.0.offset = Some(icu_timezone::UtcOffset::from_eighths_of_hour(
                 offset_eighths_of_hour,
             ));
         }
 
         /// Gets the `offset` field from offset as eighths of an hour.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_eighths_of_hour, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::to_eighths_of_hour, FnInStruct)]
         pub fn offset_eighths_of_hour(&self) -> Option<i8> {
             self.0
                 .offset
-                .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
+                .map(icu_timezone::UtcOffset::to_eighths_of_hour)
         }
 
         /// Clears the `offset` field.
@@ -98,11 +92,11 @@ pub mod ffi {
         /// Returns the value of the `offset` field as offset seconds.
         ///
         /// Returns null if the `offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::to_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_seconds(&self) -> Option<i32> {
-            self.0.offset.map(icu_timezone::UtcOffset::offset_seconds)
+            self.0.offset.map(icu_timezone::UtcOffset::to_seconds)
         }
 
         /// Returns whether the `offset` field is positive.
@@ -123,22 +117,31 @@ pub mod ffi {
             self.0.offset.map(icu_timezone::UtcOffset::is_zero)
         }
 
-        /// Returns whether the `offset` field has nonzero minutes.
+        /// Returns the hours part of the the `offset` field.
         ///
         /// Returns null if the `offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::has_minutes, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::hours_part, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn offset_has_minutes(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_minutes)
+        pub fn offset_hours_part(&self) -> Option<i32> {
+            self.0.offset.map(|o| o.hours_part())
         }
 
-        /// Returns whether the `offset` field has nonzero seconds.
+        /// Returns the minutes part of the the `offset` field.
         ///
         /// Returns null if the `offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::has_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::minutes_part, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn offset_has_seconds(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_seconds)
+        pub fn offset_minutes_part(&self) -> Option<u32> {
+            self.0.offset.map(|o| o.minutes_part())
+        }
+
+        /// Returns the seconds part of the the `offset` field.
+        ///
+        /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::seconds_part, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn offset_seconds_part(&self) -> Option<u32> {
+            self.0.offset.map(|o| o.seconds_part())
         }
 
         /// Sets the `time_zone_id` field from a BCP-47 string.

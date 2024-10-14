@@ -87,9 +87,7 @@ impl CustomTimeZone {
         zone_variant: TinyAsciiStr<2>,
     ) -> Self {
         Self {
-            offset: Some(UtcOffset::from_offset_eighths_of_hour(
-                offset_eighths_of_hour,
-            )),
+            offset: Some(UtcOffset::from_eighths_of_hour(offset_eighths_of_hour)),
             time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
             metazone_id: Some(MetazoneId(metazone_id)),
             zone_variant: Some(ZoneVariant(zone_variant)),
@@ -131,10 +129,10 @@ impl CustomTimeZone {
     /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
     ///     .expect("Failed to parse a time zone");
     ///
-    /// assert_eq!(tz0.offset.map(UtcOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.offset.map(UtcOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.offset.map(UtcOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.offset.map(UtcOffset::offset_seconds), Some(9000));
+    /// assert_eq!(tz0.offset.map(UtcOffset::to_seconds), Some(0));
+    /// assert_eq!(tz1.offset.map(UtcOffset::to_seconds), Some(7200));
+    /// assert_eq!(tz2.offset.map(UtcOffset::to_seconds), Some(-9000));
+    /// assert_eq!(tz3.offset.map(UtcOffset::to_seconds), Some(9000));
     /// ```
     ///
     /// [`CustomZonedDateTime::try_iso_from_str`]: crate::CustomZonedDateTime::try_iso_from_str

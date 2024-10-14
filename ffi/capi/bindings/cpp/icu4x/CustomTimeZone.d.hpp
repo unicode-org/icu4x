@@ -56,9 +56,11 @@ public:
 
   inline std::optional<bool> is_offset_zero() const;
 
-  inline std::optional<bool> offset_has_minutes() const;
+  inline std::optional<int32_t> offset_hours_part() const;
 
-  inline std::optional<bool> offset_has_seconds() const;
+  inline std::optional<uint32_t> offset_minutes_part() const;
+
+  inline std::optional<uint32_t> offset_seconds_part() const;
 
   inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> try_set_time_zone_id(std::string_view id);
 
