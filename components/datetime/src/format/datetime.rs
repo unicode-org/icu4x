@@ -397,17 +397,6 @@ where
                     w.write_str(symbol)?;
                     Ok(())
                 }
-                Ok(MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)) => {
-                    // FIXME (#3766) this should be using actual data for leap months
-                    let leap_str = match input.any_calendar_kind {
-                        Some(AnyCalendarKind::Chinese) => "閏",
-                        Some(AnyCalendarKind::Dangi) => "윤",
-                        _ => "(leap)",
-                    };
-                    w.write_str(leap_str)?;
-                    w.write_str(symbol)?;
-                    Ok(())
-                }
                 Ok(MonthPlaceholderValue::Numeric) => {
                     try_write_number(w, fdf, month_info.ordinal.into(), l)?
                 }
