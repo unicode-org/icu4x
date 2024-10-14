@@ -1421,7 +1421,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// 
     /// let locale = &locale!("bn").into();
     ///
-    /// let mut names = TypedDateTimeNames::<NeverCalendar, NeoTimeSkeleton>::try_new(&locale);
+    /// let mut names = TypedDateTimeNames::<NeverCalendar, NeoTimeSkeleton>::try_new(&locale).unwrap();
     /// names.include_fixed_decimal_formatter();
     /// 
     /// // Create a pattern for the time, which is all numbers
