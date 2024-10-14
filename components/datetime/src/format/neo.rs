@@ -3,6 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::{try_write_pattern, DateTimeWriteError};
+use super::{
+    GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
+    MonthPlaceholderValue,
+};
 use crate::calendar::CldrCalendar;
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
@@ -16,10 +20,6 @@ use crate::neo_marker::{
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::pattern::PatternItem;
-use crate::provider::date_time::{
-    DateSymbols, GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
-    GetSymbolForEraError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
-};
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
@@ -2421,9 +2421,7 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
             &self.input,
-            Some(&self.names),
-            Some(&self.names),
-            Some(&self.names),
+            &self.names,
             self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
@@ -2433,8 +2431,8 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
-    fn get_name_for_month(
+impl<'data> RawDateTimeNamesBorrowed<'data> {
+    pub(crate) fn get_name_for_month(
         &self,
         field_symbol: fields::Month,
         field_length: FieldLength,
@@ -2487,7 +2485,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
             .ok_or(GetNameForMonthError::Missing)
     }
 
-    fn get_name_for_weekday(
+    pub(crate) fn get_name_for_weekday(
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
@@ -2516,7 +2514,11 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
             .ok_or(GetNameForWeekdayError::Missing)
     }
 
-    fn get_name_for_era(
+    /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.
+    ///
+    /// `None` should fall back to the era code directly, if, for example,
+    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
+    pub(crate) fn get_name_for_era(
         &self,
         field_length: FieldLength,
         era_code: Era,
@@ -2540,8 +2542,8 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
     }
 }
 
-impl TimeSymbols for RawDateTimeNamesBorrowed<'_> {
-    fn get_name_for_day_period(
+impl RawDateTimeNamesBorrowed<'_> {
+    pub(crate) fn get_name_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
@@ -2569,8 +2571,8 @@ impl TimeSymbols for RawDateTimeNamesBorrowed<'_> {
     }
 }
 
-impl<'data> ZoneSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
-    fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
+impl<'data> RawDateTimeNamesBorrowed<'data> {
+    pub(crate) fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
         TimeZoneDataPayloadsBorrowed {
             essentials: self.zone_essentials.get_option(),
             locations: self.locations.get_option(),

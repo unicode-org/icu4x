@@ -5,6 +5,8 @@
 mod fixtures;
 mod patterns;
 
+use core::str::FromStr;
+
 use fixtures::TestOutputItem;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
@@ -25,6 +27,7 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::{
+    fields::{Field, FieldLength, FieldSymbol, TimeZone},
     neo::{NeoFormatter, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
     neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton},
@@ -487,7 +490,10 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
         "{GMT+?}",
-        Err(DateTimeWriteError::MissingZoneSymbols)
+        Err(DateTimeWriteError::MissingNames(Field {
+            symbol: FieldSymbol::TimeZone(TimeZone::UpperO),
+            length: FieldLength::One,
+        }))
     );
 }
 
@@ -514,7 +520,6 @@ fn test_time_zone_patterns() {
                 }
                 let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
                 for expect in expected.iter() {
-                    println!(".");
                     let mut pattern_formatter =
                         TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
                             &(&locale).into(),
@@ -525,7 +530,15 @@ fn test_time_zone_patterns() {
                         .unwrap()
                         .format(&zoned_datetime);
                     let expected_result = if expect.starts_with('{') {
-                        Err(DateTimeWriteError::MissingZoneSymbols)
+                        let internal_pattern =
+                            icu_datetime::pattern::reference::Pattern::from_str(pattern_input)
+                                .unwrap();
+                        let icu_datetime::pattern::PatternItem::Field(field) =
+                            internal_pattern.items.first().unwrap()
+                        else {
+                            unreachable!()
+                        };
+                        Err(DateTimeWriteError::MissingNames(*field))
                     } else {
                         Ok(())
                     };
