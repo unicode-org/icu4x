@@ -54,12 +54,12 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
         struct HourFormatParts {
             offset_positive_sign: char,
             offset_negative_sign: char,
-            offset_separator: char
+            offset_separator: char,
         }
         let HourFormatParts {
             offset_positive_sign,
             offset_negative_sign,
-            offset_separator
+            offset_separator,
         } = match time_zone_names.hour_format.as_str() {
             "+HH:mm;-HH:mm" => HourFormatParts {
                 offset_positive_sign: '+',
@@ -111,7 +111,10 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 offset_negative_sign: '-',
                 offset_separator: ':', // !!!
             },
-            _ => panic!("New hour format parts pattern: {:?}", time_zone_names.hour_format)
+            _ => panic!(
+                "New hour format parts pattern: {:?}",
+                time_zone_names.hour_format
+            ),
         };
 
         Ok(DataResponse {
