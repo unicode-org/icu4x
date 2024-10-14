@@ -436,8 +436,8 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                                     bcp47,
                                     end_time,
                                     (
-                                        utc_offset.offset_eighths_of_hour(),
-                                        dst_offset_relative.offset_eighths_of_hour(),
+                                        utc_offset.into_eighths_of_hour(),
+                                        dst_offset_relative.into_eighths_of_hour(),
                                     ),
                                 )
                             },

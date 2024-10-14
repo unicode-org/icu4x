@@ -18,10 +18,6 @@ impl Default for UtcOffset {
     }
 }
 
-fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
-    Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
-}
-
 impl UtcOffset {
     /// Attempt to create a [`UtcOffset`] from a seconds input. It returns
     /// [`InvalidOffsetError`] when the seconds are out of bounds.
@@ -94,6 +90,10 @@ impl UtcOffset {
 
     /// See [`Self::try_from_str`]
     pub fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
+        fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
+            Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
+        }
+
         let offset_sign = match code_units {
             [b'+', rest @ ..] => {
                 code_units = rest;
@@ -143,12 +143,12 @@ impl UtcOffset {
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn offset_seconds(self) -> i32 {
+    pub fn into_seconds(self) -> i32 {
         self.0
     }
 
     /// Returns the raw offset value in eights of an hour (7.5 minute units).
-    pub fn offset_eighths_of_hour(self) -> i8 {
+    pub fn into_eighths_of_hour(self) -> i8 {
         (self.0 / 450) as i8
     }
 
@@ -162,14 +162,19 @@ impl UtcOffset {
         self.0 == 0
     }
 
-    /// Returns `true` if the [`UtcOffset`] has non-zero minutes, otherwise `false`.
-    pub fn has_minutes(self) -> bool {
-        self.0 % 3600 / 60 > 0
+    /// Returns the hours part of if the [`UtcOffset`]
+    pub fn hours_part(self) -> i32 {
+        self.0 / 3600
     }
 
-    /// Returns `true` if the [`UtcOffset`] has non-zero seconds, otherwise `false`.
-    pub fn has_seconds(self) -> bool {
-        self.0 % 3600 % 60 > 0
+    /// Returns the minutes part of if the [`UtcOffset`].
+    pub fn minutes_part(self) -> u32 {
+        (self.0 % 3600 / 60).unsigned_abs()
+    }
+
+    /// Returns the seconds part of if the [`UtcOffset`].
+    pub fn seconds_part(self) -> u32 {
+        (self.0 % 60).unsigned_abs()
     }
 }
 

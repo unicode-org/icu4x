@@ -85,7 +85,7 @@ pub mod ffi {
         pub fn offset_eighths_of_hour(&self) -> Option<i8> {
             self.0
                 .offset
-                .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
+                .map(icu_timezone::UtcOffset::into_eighths_of_hour)
         }
 
         /// Clears the `offset` field.
@@ -102,7 +102,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_seconds(&self) -> Option<i32> {
-            self.0.offset.map(icu_timezone::UtcOffset::offset_seconds)
+            self.0.offset.map(icu_timezone::UtcOffset::into_seconds)
         }
 
         /// Returns whether the `offset` field is positive.
@@ -129,7 +129,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::has_minutes, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_has_minutes(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_minutes)
+            self.0.offset.map(|o| o.minutes_part() != 0)
         }
 
         /// Returns whether the `offset` field has nonzero seconds.
@@ -138,7 +138,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::has_seconds, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_has_seconds(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_seconds)
+            self.0.offset.map(|o| o.seconds_part() != 0)
         }
 
         /// Sets the `time_zone_id` field from a BCP-47 string.

@@ -389,43 +389,29 @@ impl FormatOffset for LocalizedOffsetFormat {
 
                     self.fdf
                         .format(
-                            &FixedDecimal::from(
-                                (self.offset.offset_seconds() / 3600).unsigned_abs(),
-                            )
-                            .padded_start(
-                                if self.length == FieldLength::Wide {
+                            &FixedDecimal::from(self.offset.hours_part().unsigned_abs())
+                                .padded_start(if self.length == FieldLength::Wide {
                                     2
                                 } else {
                                     0
-                                },
-                            ),
+                                }),
                         )
                         .write_to(sink)?;
 
                     if self.length == FieldLength::Wide
-                        || self.offset.has_minutes()
-                        || self.offset.has_seconds()
+                        || self.offset.minutes_part() != 0
+                        || self.offset.seconds_part() != 0
                     {
                         sink.write_char(self.separator)?;
                         self.fdf
-                            .format(
-                                &FixedDecimal::from(
-                                    (self.offset.offset_seconds() / 60 % 60).unsigned_abs(),
-                                )
-                                .padded_start(2),
-                            )
+                            .format(&FixedDecimal::from(self.offset.minutes_part()).padded_start(2))
                             .write_to(sink)?;
                     }
 
-                    if self.offset.has_seconds() {
+                    if self.offset.seconds_part() != 0 {
                         sink.write_char(self.separator)?;
                         self.fdf
-                            .format(
-                                &FixedDecimal::from(
-                                    (self.offset.offset_seconds() % 60).unsigned_abs(),
-                                )
-                                .padded_start(2),
-                            )
+                            .format(&FixedDecimal::from(self.offset.seconds_part()).padded_start(2))
                             .write_to(sink)?;
                     }
 
@@ -647,22 +633,22 @@ impl Iso8601Format {
 
         sink.write_char(if offset.is_positive() { '+' } else { '-' })?;
 
-        format_time_segment(sink, (offset.offset_seconds() / 3600).unsigned_abs())?;
+        format_time_segment(sink, offset.hours_part().unsigned_abs())?;
 
         if self.minutes == IsoMinutes::Required
-            || (self.minutes == IsoMinutes::Optional && offset.has_minutes())
+            || (self.minutes == IsoMinutes::Optional && offset.minutes_part() != 0)
         {
             if extended_format {
                 sink.write_char(':')?;
             }
-            format_time_segment(sink, (offset.offset_seconds() % 3600 / 60).unsigned_abs())?;
+            format_time_segment(sink, offset.minutes_part())?;
         }
 
-        if self.seconds == IsoSeconds::Optional && offset.has_seconds() {
+        if self.seconds == IsoSeconds::Optional && offset.seconds_part() != 0 {
             if extended_format {
                 sink.write_char(':')?;
             }
-            format_time_segment(sink, (offset.offset_seconds() % 3600 % 60).unsigned_abs())?;
+            format_time_segment(sink, offset.seconds_part())?;
         }
 
         Ok(())
