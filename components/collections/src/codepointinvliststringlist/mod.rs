@@ -19,9 +19,10 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{VarZeroSlice, VarZeroVec};
 
-/// A data structure providing a concrete implementation of a `UnicodeSet`
-/// (which represents a set of code points and strings) using an inversion list for the code points and a simple
-/// list-like structure to store and iterate over the strings.
+/// A data structure providing a concrete implementation of a set of code points and strings,
+/// using an inversion list for the code points.
+///
+/// This is what ICU4C calls a `UnicodeSet`.
 #[zerovec::make_varule(CodePointInversionListAndStringListULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]

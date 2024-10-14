@@ -1006,8 +1006,6 @@ pub trait DateInputMarkers: private::Sealed {
     type DayOfMonthInput: Into<Option<DayOfMonth>>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: Into<Option<IsoWeekday>>;
-    /// Marker for resolving the day-of-year input field.
-    type DayOfYearInput: Into<Option<DayOfYearInfo>>;
     /// Marker for resolving the any-calendar-kind input field.
     type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
 }
@@ -1113,7 +1111,6 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
     + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-    + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
     + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
     + NeoGetField<<R::T as TimeMarkers>::HourInput>
     + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
@@ -1140,7 +1137,6 @@ where
         + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
         + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-        + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
         + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
         + NeoGetField<<R::T as TimeMarkers>::HourInput>
         + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
@@ -1165,7 +1161,6 @@ impl DateInputMarkers for NeoNeverMarker {
     type MonthInput = NeverField;
     type DayOfMonthInput = NeverField;
     type DayOfWeekInput = NeverField;
-    type DayOfYearInput = NeverField;
     type AnyCalendarKindInput = NeverField;
 }
 
@@ -1860,7 +1855,6 @@ macro_rules! impl_date_or_calendar_period_marker {
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
-            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
@@ -2782,7 +2776,6 @@ impl DateInputMarkers for NeoDateSkeleton {
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
-    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
@@ -2844,7 +2837,6 @@ impl DateInputMarkers for NeoCalendarPeriodSkeleton {
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
-    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 

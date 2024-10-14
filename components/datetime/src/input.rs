@@ -12,8 +12,7 @@ use icu_timezone::{UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond,
-    YearInfo,
+    DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
 };
 
 #[derive(Default, Debug, Copy, Clone)]
@@ -22,7 +21,6 @@ pub(crate) struct ExtractedInput {
     pub(crate) month: Option<MonthInfo>,
     pub(crate) day_of_month: Option<DayOfMonth>,
     pub(crate) iso_weekday: Option<IsoWeekday>,
-    pub(crate) day_of_year_info: Option<DayOfYearInfo>,
     pub(crate) any_calendar_kind: Option<AnyCalendarKind>,
     pub(crate) hour: Option<IsoHour>,
     pub(crate) minute: Option<IsoMinute>,
@@ -46,7 +44,6 @@ impl ExtractedInput {
             + NeoGetField<D::MonthInput>
             + NeoGetField<D::DayOfMonthInput>
             + NeoGetField<D::DayOfWeekInput>
-            + NeoGetField<D::DayOfYearInput>
             + NeoGetField<D::AnyCalendarKindInput>
             + NeoGetField<T::HourInput>
             + NeoGetField<T::MinuteInput>
@@ -62,7 +59,6 @@ impl ExtractedInput {
             month: NeoGetField::<D::MonthInput>::get_field(input).into(),
             day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
             iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
-            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
             any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
             hour: NeoGetField::<T::HourInput>::get_field(input).into(),
             minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),

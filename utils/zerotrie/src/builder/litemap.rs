@@ -30,7 +30,7 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
     }
 }
 
-impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for ZeroTrie<Vec<u8>>
+impl<K, S> TryFrom<&LiteMap<K, usize, S>> for ZeroTrie<Vec<u8>>
 where
     // Borrow, not AsRef, because we rely on Ord being the same. Unfortunately
     // this means `LiteMap<&str, usize>` does not work.

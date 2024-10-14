@@ -234,7 +234,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     /// Return the status value of break boundary.
     /// If segmenter isn't word, always return WordType::None
     pub fn word_type(&self) -> WordType {
-        if self.result_cache.first().is_some() {
+        if !self.result_cache.is_empty() {
             // Dictionary type (CJ and East Asian) is letter.
             return WordType::Letter;
         }

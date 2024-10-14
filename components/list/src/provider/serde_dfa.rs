@@ -6,7 +6,9 @@ use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use regex_automata::dfa::sparse::DFA;
 
-/// A serde-compatible version of [regex_automata::dfa::sparse::DFA]. This does not implement
+/// A serde-compatible version of [regex_automata::dfa::sparse::DFA].
+///
+/// This does not implement
 /// [`serde::Deserialize`] directly, as binary deserialization is not supported in big-endian
 /// platforms. `Self::maybe_deserialize` can be used to deserialize to `Option<SerdeDFA>`.
 ///

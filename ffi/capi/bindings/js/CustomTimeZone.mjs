@@ -173,16 +173,16 @@ export class CustomTimeZone {
         }
     }
 
-    get offsetHasMinutes() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
+    get offsetHoursPart() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CustomTimeZone_offset_has_minutes_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_offset_hours_part_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return (new Uint8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0] === 1;
+            return (new Int32Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0];
         }
         
         finally {
@@ -190,16 +190,33 @@ export class CustomTimeZone {
         }
     }
 
-    get offsetHasSeconds() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
+    get offsetMinutesPart() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CustomTimeZone_offset_has_seconds_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_offset_minutes_part_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return (new Uint8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0] === 1;
+            return (new Uint32Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0];
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    get offsetSecondsPart() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_CustomTimeZone_offset_seconds_part_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return (new Uint32Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0];
         }
         
         finally {

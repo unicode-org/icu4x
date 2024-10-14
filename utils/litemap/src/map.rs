@@ -744,7 +744,7 @@ where
     }
 }
 
-impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
+impl<K, V, S> LiteMap<K, V, S>
 where
     K: Ord,
     S: StoreIntoIterator<K, V> + StoreFromIterator<K, V>,

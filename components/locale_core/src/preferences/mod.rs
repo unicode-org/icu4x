@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This API provides necessary functionality for building user preferences structs with ability
+//! This API provides necessary functionality for building user preferences structs.
+//!
+//! This includes the ability
 //! to `merge` information between the struct and a [`Locale`] and facilitate resolution of the
 //! attributes against default values.
 //!

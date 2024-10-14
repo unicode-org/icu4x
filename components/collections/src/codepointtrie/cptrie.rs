@@ -58,7 +58,6 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// In most cases, the error value is read from the last element of the `data` array,
     /// this value is used for empty codepointtrie arrays
-
     /// Error type when converting from a u32 to this `TrieValue`.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
@@ -1037,7 +1036,9 @@ where
 }
 
 /// Represents a range of consecutive code points sharing the same value in a
-/// code point map. The start and end of the interval is represented as a
+/// code point map.
+///
+/// The start and end of the interval is represented as a
 /// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct CodePointMapRange<T> {

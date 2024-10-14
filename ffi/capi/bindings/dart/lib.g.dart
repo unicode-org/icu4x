@@ -362,6 +362,32 @@ final class _ResultUint16Void extends ffi.Struct {
   }
 }
 
+final class _ResultUint32VoidUnion extends ffi.Union {
+  @ffi.Uint32()
+  external int ok;
+
+}
+
+final class _ResultUint32Void extends ffi.Struct {
+  external _ResultUint32VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultUint32Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultUint32Void.err() {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultUint8VoidUnion extends ffi.Union {
   @ffi.Uint8()
   external int ok;

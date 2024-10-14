@@ -51,7 +51,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Errors if the offset seconds are out of range.
   ///
-  /// See the [Rust documentation for `try_from_offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.try_from_offset_seconds) for more information.
+  /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.try_from_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
   ///
@@ -66,14 +66,14 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   /// Sets the `offset` field from offset as eighths of an hour.
   ///
-  /// See the [Rust documentation for `from_offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.from_offset_eighths_of_hour) for more information.
+  /// See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
   void setOffsetEighthsOfHour(int offsetEighthsOfHour) {
     _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(_ffi, offsetEighthsOfHour);
   }
 
   /// Gets the `offset` field from offset as eighths of an hour.
   ///
-  /// See the [Rust documentation for `offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.offset_eighths_of_hour) for more information.
+  /// See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
   int? offsetEighthsOfHour() {
     final result = _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(_ffi);
     if (!result.isOk) {
@@ -95,7 +95,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Returns null if the `offset` field is empty.
   ///
-  /// See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.offset_seconds) for more information.
+  /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.to_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
   int? get offsetSeconds {
@@ -132,26 +132,39 @@ final class CustomTimeZone implements ffi.Finalizable {
     return result.union.ok;
   }
 
-  /// Returns whether the `offset` field has nonzero minutes.
+  /// Returns the hours part of the the `offset` field.
   ///
   /// Returns null if the `offset` field is empty.
   ///
-  /// See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.has_minutes) for more information.
-  bool? get offsetHasMinutes {
-    final result = _icu4x_CustomTimeZone_offset_has_minutes_mv1(_ffi);
+  /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.hours_part) for more information.
+  int? get offsetHoursPart {
+    final result = _icu4x_CustomTimeZone_offset_hours_part_mv1(_ffi);
     if (!result.isOk) {
       return null;
     }
     return result.union.ok;
   }
 
-  /// Returns whether the `offset` field has nonzero seconds.
+  /// Returns the minutes part of the the `offset` field.
   ///
   /// Returns null if the `offset` field is empty.
   ///
-  /// See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.has_seconds) for more information.
-  bool? get offsetHasSeconds {
-    final result = _icu4x_CustomTimeZone_offset_has_seconds_mv1(_ffi);
+  /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.minutes_part) for more information.
+  int? get offsetMinutesPart {
+    final result = _icu4x_CustomTimeZone_offset_minutes_part_mv1(_ffi);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok;
+  }
+
+  /// Returns the seconds part of the the `offset` field.
+  ///
+  /// Returns null if the `offset` field is empty.
+  ///
+  /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.seconds_part) for more information.
+  int? get offsetSecondsPart {
+    final result = _icu4x_CustomTimeZone_offset_seconds_part_mv1(_ffi);
     if (!result.isOk) {
       return null;
     }
@@ -381,14 +394,19 @@ external _ResultBoolVoid _icu4x_CustomTimeZone_is_offset_positive_mv1(ffi.Pointe
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_offset_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_has_minutes_mv1')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_hours_part_mv1')
 // ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_CustomTimeZone_offset_has_minutes_mv1(ffi.Pointer<ffi.Opaque> self);
+external _ResultInt32Void _icu4x_CustomTimeZone_offset_hours_part_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_has_seconds_mv1')
+@ffi.Native<_ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_minutes_part_mv1')
 // ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_CustomTimeZone_offset_has_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
+external _ResultUint32Void _icu4x_CustomTimeZone_offset_minutes_part_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.RecordUse()
+@ffi.Native<_ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_seconds_part_mv1')
+// ignore: non_constant_identifier_names
+external _ResultUint32Void _icu4x_CustomTimeZone_offset_seconds_part_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_time_zone_id_mv1')

@@ -113,7 +113,6 @@ impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for Source
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use icu::locale::langid;

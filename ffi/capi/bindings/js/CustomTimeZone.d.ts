@@ -34,9 +34,11 @@ export class CustomTimeZone {
 
     get isOffsetZero(): boolean | null;
 
-    get offsetHasMinutes(): boolean | null;
+    get offsetHoursPart(): number | null;
 
-    get offsetHasSeconds(): boolean | null;
+    get offsetMinutesPart(): number | null;
+
+    get offsetSecondsPart(): number | null;
 
     setTimeZoneId(id: string): void;
 

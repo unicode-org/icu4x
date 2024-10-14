@@ -13,6 +13,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
     /// for converting between two [`MeasureUnit`]s.
+    ///
     /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
     pub struct UnitsConverterFactory(

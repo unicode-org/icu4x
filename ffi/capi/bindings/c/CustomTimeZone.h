@@ -44,11 +44,14 @@ icu4x_CustomTimeZone_is_offset_positive_mv1_result icu4x_CustomTimeZone_is_offse
 typedef struct icu4x_CustomTimeZone_is_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_offset_zero_mv1_result;
 icu4x_CustomTimeZone_is_offset_zero_mv1_result icu4x_CustomTimeZone_is_offset_zero_mv1(const CustomTimeZone* self);
 
-typedef struct icu4x_CustomTimeZone_offset_has_minutes_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_minutes_mv1_result;
-icu4x_CustomTimeZone_offset_has_minutes_mv1_result icu4x_CustomTimeZone_offset_has_minutes_mv1(const CustomTimeZone* self);
+typedef struct icu4x_CustomTimeZone_offset_hours_part_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_hours_part_mv1_result;
+icu4x_CustomTimeZone_offset_hours_part_mv1_result icu4x_CustomTimeZone_offset_hours_part_mv1(const CustomTimeZone* self);
 
-typedef struct icu4x_CustomTimeZone_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_seconds_mv1_result;
-icu4x_CustomTimeZone_offset_has_seconds_mv1_result icu4x_CustomTimeZone_offset_has_seconds_mv1(const CustomTimeZone* self);
+typedef struct icu4x_CustomTimeZone_offset_minutes_part_mv1_result {union {uint32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_minutes_part_mv1_result;
+icu4x_CustomTimeZone_offset_minutes_part_mv1_result icu4x_CustomTimeZone_offset_minutes_part_mv1(const CustomTimeZone* self);
+
+typedef struct icu4x_CustomTimeZone_offset_seconds_part_mv1_result {union {uint32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_seconds_part_mv1_result;
+icu4x_CustomTimeZone_offset_seconds_part_mv1_result icu4x_CustomTimeZone_offset_seconds_part_mv1(const CustomTimeZone* self);
 
 void icu4x_CustomTimeZone_set_time_zone_id_mv1(CustomTimeZone* self, DiplomatStringView id);
 

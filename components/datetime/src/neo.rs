@@ -29,7 +29,6 @@ use core::marker::PhantomData;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
-    WeekDataV2Marker,
 };
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -147,7 +146,7 @@ impl RawNeoOptions {
     }
 }
 
-size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 504);
+size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 496);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -264,9 +263,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
-            + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
+            + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -312,7 +309,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -337,7 +334,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -362,7 +359,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -389,7 +386,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -406,7 +403,7 @@ where
     /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting markers
@@ -436,14 +433,14 @@ where
     gen_any_buffer_constructors_with_external_loader!(
         @runtime_fset,
         FSet,
-        try_new_with_components,
-        try_new_with_components_with_any_provider,
-        try_new_with_components_with_buffer_provider,
+        try_new_with_skeleton,
+        try_new_with_skeleton_with_any_provider,
+        try_new_with_skeleton_with_buffer_provider,
         try_new_internal
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_components_unstable<P>(
+    pub fn try_new_with_skeleton_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,
@@ -465,9 +462,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
-            + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
+            + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -508,7 +503,7 @@ where
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::GluePatternV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+        L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
         let mut options = options;
@@ -527,7 +522,7 @@ where
             options,
         )
         .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &<R::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
             &<R::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
@@ -540,7 +535,6 @@ where
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             loader, // fixed decimal formatter
-            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -620,7 +614,7 @@ where
 size_test!(
     NeoFormatter<crate::neo_marker::NeoYearMonthDayMarker>,
     neo_year_month_day_formatter_size,
-    560
+    552
 );
 
 /// [`NeoFormatter`] is a formatter capable of formatting dates and/or times from
@@ -857,8 +851,6 @@ where
             + DataProvider<JapaneseExtendedErasV1Marker>
     // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -903,7 +895,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -927,7 +919,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -951,7 +943,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -977,7 +969,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = NeoFormatter::try_new_with_components(
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -996,7 +988,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_components(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
     crate::provider::Baked: Sized
     // Date formatting markers
@@ -1074,14 +1066,14 @@ where
     gen_any_buffer_constructors_with_external_loader!(
         @runtime_fset,
         FSet,
-        try_new_with_components,
-        try_new_with_components_with_any_provider,
-        try_new_with_components_with_buffer_provider,
+        try_new_with_skeleton,
+        try_new_with_skeleton_with_any_provider,
+        try_new_with_skeleton_with_buffer_provider,
         try_new_internal
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_components_unstable<P>(
+    pub fn try_new_with_skeleton_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,
@@ -1159,8 +1151,6 @@ where
             + DataProvider<JapaneseExtendedErasV1Marker>
     // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>
-    // WeekCalculator markers
-            + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(
             provider,
@@ -1249,7 +1239,7 @@ where
             + DataProvider<<R::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<R::Z as ZoneMarkers>::SpecificShortV1Marker>
             + DataProvider<R::GluePatternV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
+        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
         let mut options = options;
@@ -1270,7 +1260,7 @@ where
             options,
         )
         .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Year, _>::new(provider, kind),
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Month, _>::new(provider, kind),
@@ -1283,7 +1273,6 @@ where
             &<R::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<R::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
             loader, // fixed decimal formatter
-            loader, // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -1462,10 +1451,7 @@ impl TryWriteable for FormattedNeoDateTime<'_> {
             self.pattern.metadata(),
             self.pattern.iter_items(),
             &self.input,
-            Some(&self.names),
-            Some(&self.names),
-            Some(&self.names),
-            self.names.week_calculator,
+            &self.names,
             self.names.fixed_decimal_formatter,
             sink,
         )

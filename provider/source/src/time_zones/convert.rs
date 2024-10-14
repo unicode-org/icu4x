@@ -51,33 +51,71 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        // e.g. "+HH:mm;-hh:mm"
-        let (offset_pattern_positive, offset_pattern_negative) =
-            time_zone_names.hour_format.split_once(';').unwrap();
-
-        // The single character before H/h
-        let offset_positive_sign = offset_pattern_positive
-            .split_once(['h', 'H'])
-            .unwrap()
-            .0
-            .chars()
-            .next()
-            .unwrap_or('+');
-        let offset_negative_sign = offset_pattern_negative
-            .split_once(['h', 'H'])
-            .unwrap()
-            .0
-            .chars()
-            .next()
-            .unwrap_or('-');
-        // The single character before `mm`
-        let offset_separator = offset_pattern_positive
-            .split_once('m')
-            .unwrap()
-            .0
-            .chars()
-            .next_back()
-            .unwrap_or(':');
+        struct HourFormatParts {
+            offset_positive_sign: char,
+            offset_negative_sign: char,
+            offset_separator: char,
+        }
+        let HourFormatParts {
+            offset_positive_sign,
+            offset_negative_sign,
+            offset_separator,
+        } = match time_zone_names.hour_format.as_str() {
+            "+HH:mm;-HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "+HH:mm; -HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "+H:mm;-H:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "+HH:mm;−HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '−',
+                offset_separator: ':',
+            },
+            "+HH:mm;–HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '–',
+                offset_separator: ':',
+            },
+            "+HH.mm;-HH.mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: '.',
+            },
+            "+H.mm;-H.mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: '.',
+            },
+            "\u{200e}+HH:mm;-HH:mm\u{200e}" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':',
+            },
+            "\u{200e}+HH:mm;\u{200e}−HH:mm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '−',
+                offset_separator: ':',
+            },
+            "+HHmm;-HHmm" => HourFormatParts {
+                offset_positive_sign: '+',
+                offset_negative_sign: '-',
+                offset_separator: ':', // !!!
+            },
+            _ => panic!(
+                "New hour format parts pattern: {:?}",
+                time_zone_names.hour_format
+            ),
+        };
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -320,8 +358,8 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                             data.push((
                                 end_time,
                                 (
-                                    UtcOffset::try_from_offset_seconds(utc_offset as i32).unwrap(),
-                                    UtcOffset::try_from_offset_seconds(dst_offset_relative as i32)
+                                    UtcOffset::try_from_seconds(utc_offset as i32).unwrap(),
+                                    UtcOffset::try_from_seconds(dst_offset_relative as i32)
                                         .unwrap(),
                                 ),
                             ));
@@ -436,8 +474,8 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                                     bcp47,
                                     end_time,
                                     (
-                                        utc_offset.offset_eighths_of_hour(),
-                                        dst_offset_relative.offset_eighths_of_hour(),
+                                        utc_offset.to_eighths_of_hour(),
+                                        dst_offset_relative.to_eighths_of_hour(),
                                     ),
                                 )
                             },

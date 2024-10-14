@@ -20,8 +20,9 @@ pub enum LengthError {
 #[cfg(feature = "std")]
 impl std::error::Error for LengthError {}
 
-/// An enum representing the length of a field within a date or time formatting pattern string,
-/// in which the pattern field is represented as a letter occurring 1 or more times in a row, ex:
+/// An enum representing the length of a field within a date or time formatting pattern string.
+///
+/// Such strings represent fields as a letter occurring 1 or more times in a row, ex:
 /// `MMM`, `dd`, `y`.  See the
 /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
 /// for more details.
