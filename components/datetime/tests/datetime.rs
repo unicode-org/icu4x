@@ -40,7 +40,7 @@ use icu_locale_core::{
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime, UtcOffset};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
@@ -471,6 +471,22 @@ fn test_time_zone_format_configs() {
             }
         }
     }
+}
+
+#[test]
+fn test_time_zone_format_offset_seconds() {
+    use icu_datetime::{
+        neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, NeverCalendar,
+    };
+
+    let time_zone =
+        CustomTimeZone::new_with_offset(UtcOffset::try_from_offset_seconds(12).unwrap());
+    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+        &locale!("en").into(),
+        NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
+    )
+    .unwrap();
+    assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+0:00:12",);
 }
 
 #[test]
