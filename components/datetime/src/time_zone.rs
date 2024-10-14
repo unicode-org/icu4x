@@ -421,7 +421,7 @@ impl FormatOffset for LocalizedOffsetFormat {
                 .offset_pattern
                 .interpolate([FormattedOffset {
                     offset,
-                    separator: &*essentials.offset_separator,
+                    separator: &essentials.offset_separator,
                     fdf,
                     length: self.0,
                 }])
