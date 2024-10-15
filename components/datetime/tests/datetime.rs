@@ -471,12 +471,10 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::{
-        neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, NeverCalendar,
-    };
+    use icu_datetime::{neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength};
 
     let time_zone = CustomTimeZone::new_with_offset(UtcOffset::try_from_seconds(12).unwrap());
-    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+    let tzf = TypedNeoFormatter::<(), _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )
@@ -488,11 +486,10 @@ fn test_time_zone_format_offset_seconds() {
 fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     use icu_datetime::{
         neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, DateTimeWriteError,
-        NeverCalendar,
     };
 
     let time_zone = CustomTimeZone::from_str("America/Los_Angeles");
-    let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+    let tzf = TypedNeoFormatter::<(), _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )

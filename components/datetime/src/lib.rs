@@ -116,7 +116,7 @@ mod time_zone;
 mod tz_registry;
 
 pub use calendar::CldrCalendar;
-pub use calendar::{InternalCldrCalendar, NeverCalendar};
+pub use calendar::InternalCldrCalendar;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
