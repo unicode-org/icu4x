@@ -4,6 +4,7 @@
 
 //! A formatter specifically for the time zone.
 
+use crate::provider::time_zones::MetazoneId;
 use crate::{
     fields::{FieldLength, TimeZone},
     input::ExtractedInput,
@@ -12,7 +13,7 @@ use crate::{
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
-use icu_timezone::{provider::MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
 /// All time zone styles that this crate can format
@@ -217,7 +218,7 @@ impl ExtractedInput {
     fn zone_variant_or_guess(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        offset_period: &icu_timezone::provider::ZoneOffsetPeriodV1,
+        offset_period: &crate::provider::time_zones::ZoneOffsetPeriodV1,
     ) -> ZoneVariant {
         if let Some(zv) = self.zone_variant {
             return zv;
@@ -268,7 +269,7 @@ impl ExtractedInput {
     fn metazone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        metazone_period: &icu_timezone::provider::MetazonePeriodV1,
+        metazone_period: &crate::provider::time_zones::MetazonePeriodV1,
     ) -> Option<MetazoneId> {
         match metazone_period.0.get0(&time_zone_id) {
             Some(cursor) => {
@@ -433,7 +434,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
+            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
         let Some(name) = metazone_id.and_then(|mz| {
@@ -469,7 +470,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         };
         let zone_variant = input.zone_variant_or_guess(
             time_zone_id,
-            icu_timezone::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
+            crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
         );
 
         let Some(names) = (match self.0 {
@@ -481,7 +482,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
+            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
         let Some(name) = metazone_id.and_then(|mz| {
@@ -647,7 +648,7 @@ impl FormatTimeZone for SpecificLocationFormat {
 
         let zone_variant = input.zone_variant_or_guess(
             time_zone_id,
-            icu_timezone::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
+            crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
         );
 
         if let Some(location) = locations.locations.get(&time_zone_id) {
@@ -697,7 +698,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
+            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
         let Some(location) = locations.locations.get(&time_zone_id) else {
