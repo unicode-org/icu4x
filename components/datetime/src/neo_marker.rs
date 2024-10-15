@@ -341,6 +341,7 @@ use crate::{
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
+    scaffolding::UnstableSealed,
     CldrCalendar,
 };
 use icu_calendar::{
@@ -363,10 +364,6 @@ pub use crate::calendar::CalMarkers;
 pub use crate::calendar::FullDataCalMarkers;
 #[doc(inline)]
 pub use crate::calendar::NoDataCalMarkers;
-
-pub(crate) mod private {
-    pub trait Sealed {}
-}
 
 /// A type that can be converted into a specific calendar system.
 pub trait ConvertCalendar {
@@ -993,7 +990,7 @@ pub trait HasConstZoneComponent {
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).
-pub trait DateInputMarkers: private::Sealed {
+pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: Into<Option<YearInfo>>;
     /// Marker for resolving the month input field.
@@ -1008,7 +1005,7 @@ pub trait DateInputMarkers: private::Sealed {
 
 /// A trait associating types for date formatting in a specific calendar
 /// (data markers only).
-pub trait TypedDateDataMarkers<C>: private::Sealed {
+pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
     /// Marker for loading year names.
@@ -1021,7 +1018,7 @@ pub trait TypedDateDataMarkers<C>: private::Sealed {
 
 /// A trait associating types for date formatting in any calendar
 /// (data markers only).
-pub trait DateDataMarkers: private::Sealed {
+pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
     /// Cross-calendar data markers for year names.
@@ -1034,7 +1031,7 @@ pub trait DateDataMarkers: private::Sealed {
 
 /// A trait associating types for time formatting
 /// (input types and data markers).
-pub trait TimeMarkers: private::Sealed {
+pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: Into<Option<IsoHour>>;
     /// Marker for resolving the day-of-week input field.
@@ -1051,7 +1048,7 @@ pub trait TimeMarkers: private::Sealed {
 
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
-pub trait ZoneMarkers: private::Sealed {
+pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone offset input field.
     type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone id input field.
@@ -1076,7 +1073,7 @@ pub trait ZoneMarkers: private::Sealed {
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting.
-pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
+pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
     /// Should implement [`DateDataMarkers`], [`TypedDateDataMarkers`], and [`DateInputMarkers`].
@@ -1150,7 +1147,7 @@ where
 #[allow(clippy::exhaustive_enums)] // empty marker enum
 pub enum NeoNeverMarker {}
 
-impl private::Sealed for NeoNeverMarker {}
+impl UnstableSealed for NeoNeverMarker {}
 
 impl DateInputMarkers for NeoNeverMarker {
     type YearInput = NeverField;
@@ -1215,7 +1212,7 @@ pub struct DateTimeCombo<D, T, Z> {
     pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
-impl<D, T, Z> private::Sealed for DateTimeCombo<D, T, Z> {}
+impl<D, T, Z> UnstableSealed for DateTimeCombo<D, T, Z> {}
 
 impl<D, T, Z> DateTimeCombo<D, T, Z> {
     /// Creates a date/time/zone skeleton with the given formatting length.
@@ -1833,7 +1830,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             $(alignment: $option_alignment_yes,)?
             $(year_style: $year_yes,)?
         );
-        impl private::Sealed for $type {}
+        impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
             type MonthNames = datetime_marker_helper!(@names/month, $($months_yes)?);
@@ -2057,7 +2054,7 @@ macro_rules! impl_time_marker {
             alignment: yes,
             $(fractional_second_digits: $nanosecond_yes,)?
         );
-        impl private::Sealed for $type {}
+        impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
             type MonthNames = datetime_marker_helper!(@names/month,);
@@ -2202,7 +2199,7 @@ macro_rules! impl_zone_marker {
             $type,
             sample_length: $sample_length,
         );
-        impl private::Sealed for $type {}
+        impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
             type MonthNames = datetime_marker_helper!(@names/month,);
@@ -2742,7 +2739,7 @@ impl_zoneddatetime_marker!(
 );
 
 /// Trait for components that can be formatted at runtime.
-pub trait IsRuntimeComponents: private::Sealed + GetField<NeoComponents> {}
+pub trait IsRuntimeComponents: UnstableSealed + GetField<NeoComponents> {}
 
 impl GetField<NeoComponents> for NeoDateSkeleton {
     fn get_field(&self) -> NeoComponents {
@@ -2750,7 +2747,7 @@ impl GetField<NeoComponents> for NeoDateSkeleton {
     }
 }
 
-impl private::Sealed for NeoDateSkeleton {}
+impl UnstableSealed for NeoDateSkeleton {}
 
 impl IsRuntimeComponents for NeoDateSkeleton {}
 
@@ -2805,7 +2802,7 @@ impl_get_field!(NeoDateSkeleton, length, yes);
 impl_get_field!(NeoDateSkeleton, alignment, yes);
 impl_get_field!(NeoDateSkeleton, year_style, yes);
 
-impl private::Sealed for NeoCalendarPeriodSkeleton {}
+impl UnstableSealed for NeoCalendarPeriodSkeleton {}
 
 impl GetField<NeoComponents> for NeoCalendarPeriodSkeleton {
     fn get_field(&self) -> NeoComponents {
@@ -2866,7 +2863,7 @@ impl_get_field!(NeoCalendarPeriodSkeleton, length, yes);
 impl_get_field!(NeoCalendarPeriodSkeleton, alignment, yes);
 impl_get_field!(NeoCalendarPeriodSkeleton, year_style, yes);
 
-impl private::Sealed for NeoTimeSkeleton {}
+impl UnstableSealed for NeoTimeSkeleton {}
 
 impl GetField<NeoComponents> for NeoTimeSkeleton {
     fn get_field(&self) -> NeoComponents {
@@ -2914,7 +2911,7 @@ impl_get_field!(NeoTimeSkeleton, length, yes);
 impl_get_field!(NeoTimeSkeleton, alignment, yes);
 impl_get_field!(NeoTimeSkeleton, fractional_second_digits, yes);
 
-impl private::Sealed for NeoTimeZoneSkeleton {}
+impl UnstableSealed for NeoTimeZoneSkeleton {}
 
 impl GetField<NeoComponents> for NeoTimeZoneSkeleton {
     fn get_field(&self) -> NeoComponents {
@@ -2964,7 +2961,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
 impl_get_field!(NeoTimeZoneSkeleton, never);
 impl_get_field!(NeoTimeZoneSkeleton, length, yes);
 
-impl private::Sealed for NeoDateTimeSkeleton {}
+impl UnstableSealed for NeoDateTimeSkeleton {}
 
 impl GetField<NeoComponents> for NeoDateTimeSkeleton {
     fn get_field(&self) -> NeoComponents {
@@ -3004,7 +3001,7 @@ impl_get_field!(NeoDateTimeSkeleton, alignment, yes);
 impl_get_field!(NeoDateTimeSkeleton, year_style, yes);
 impl_get_field!(NeoDateTimeSkeleton, fractional_second_digits, yes);
 
-impl private::Sealed for NeoSkeleton {}
+impl UnstableSealed for NeoSkeleton {}
 
 impl GetField<NeoComponents> for NeoSkeleton {
     fn get_field(&self) -> NeoComponents {

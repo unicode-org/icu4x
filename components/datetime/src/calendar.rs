@@ -14,21 +14,9 @@ use icu_calendar::{
 use icu_provider::prelude::*;
 
 use crate::provider::{neo::*, *};
+use crate::scaffolding::UnstableSealed;
 use core::marker::PhantomData;
 use icu_provider::marker::NeverMarker;
-
-/// Internal-ish trait for sealing `CldrCalendar`.
-///
-/// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
-/// feature is enabled. If implementing `CldrCalendar`, you must also
-/// implement `UnstableCldrCalendar` and acknowledge the stability policy.
-///
-/// <div class="stab unstable">
-/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
-/// </div>
-// TODO(#4338): Decide what to do with this when we retire this crate's "experimental" feature.
-pub trait InternalCldrCalendar {}
 
 /// A calendar that can be found in CLDR
 ///
@@ -39,7 +27,7 @@ pub trait InternalCldrCalendar {}
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. Do not implement this trait in userland.
 /// </div>
-pub trait CldrCalendar: InternalCldrCalendar {
+pub trait CldrCalendar: UnstableSealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
@@ -155,27 +143,23 @@ impl CldrCalendar for Roc {
     type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
-impl InternalCldrCalendar for () {}
-impl InternalCldrCalendar for Buddhist {}
-impl InternalCldrCalendar for Chinese {}
-impl InternalCldrCalendar for Coptic {}
-impl InternalCldrCalendar for Dangi {}
-impl InternalCldrCalendar for Ethiopian {}
-impl InternalCldrCalendar for Gregorian {}
-impl InternalCldrCalendar for Hebrew {}
-impl InternalCldrCalendar for Indian {}
-impl InternalCldrCalendar for IslamicCivil {}
-impl InternalCldrCalendar for IslamicObservational {}
-impl InternalCldrCalendar for IslamicTabular {}
-impl InternalCldrCalendar for IslamicUmmAlQura {}
-impl InternalCldrCalendar for Japanese {}
-impl InternalCldrCalendar for JapaneseExtended {}
-impl InternalCldrCalendar for Persian {}
-impl InternalCldrCalendar for Roc {}
-
-mod private {
-    pub trait Sealed {}
-}
+impl UnstableSealed for () {}
+impl UnstableSealed for Buddhist {}
+impl UnstableSealed for Chinese {}
+impl UnstableSealed for Coptic {}
+impl UnstableSealed for Dangi {}
+impl UnstableSealed for Ethiopian {}
+impl UnstableSealed for Gregorian {}
+impl UnstableSealed for Hebrew {}
+impl UnstableSealed for Indian {}
+impl UnstableSealed for IslamicCivil {}
+impl UnstableSealed for IslamicObservational {}
+impl UnstableSealed for IslamicTabular {}
+impl UnstableSealed for IslamicUmmAlQura {}
+impl UnstableSealed for Japanese {}
+impl UnstableSealed for JapaneseExtended {}
+impl UnstableSealed for Persian {}
+impl UnstableSealed for Roc {}
 
 /// A collection of marker types associated with all calendars.
 ///
@@ -183,7 +167,7 @@ mod private {
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
-pub trait CalMarkers<M>: private::Sealed
+pub trait CalMarkers<M>: UnstableSealed
 where
     M: DynamicDataMarker,
 {
@@ -228,14 +212,14 @@ where
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum FullDataCalMarkers {}
 
-impl private::Sealed for FullDataCalMarkers {}
+impl UnstableSealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NoDataCalMarkers {}
 
-impl private::Sealed for NoDataCalMarkers {}
+impl UnstableSealed for NoDataCalMarkers {}
 
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where

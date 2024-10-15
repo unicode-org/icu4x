@@ -108,6 +108,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
+pub mod scaffolding;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(feature = "datagen")]
@@ -116,7 +117,6 @@ mod time_zone;
 mod tz_registry;
 
 pub use calendar::CldrCalendar;
-pub use calendar::InternalCldrCalendar;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
