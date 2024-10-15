@@ -1432,10 +1432,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet>
-where
-    C: IntoAnyCalendar,
-{
+impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet> {
     /// Make this [`TypedNeoFormatter`] adopt a calendar so it can format any date.
     ///
     /// This is useful if you need a [`NeoFormatter`] but know the calendar system ahead of time,
@@ -1466,7 +1463,10 @@ where
     ///     "12 Tishri 5785"
     /// );
     /// ```
-    pub fn into_formatter(self, calendar: C) -> NeoFormatter<FSet> {
+    pub fn into_formatter(self, calendar: C) -> NeoFormatter<FSet>
+    where
+        C: IntoAnyCalendar,
+    {
         NeoFormatter {
             selection: self.selection,
             names: self.names,
