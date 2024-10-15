@@ -36,8 +36,7 @@
       },
       {
         "patterns": [
-          "O",
-          "ZZZZ"
+          "O"
         ],
         "configs": [
           "LocalizedOffsetShort"
@@ -47,7 +46,8 @@
       },
       {
         "patterns": [
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [
           "LocalizedOffsetLong"
@@ -400,8 +400,7 @@
       },
       {
         "patterns": [
-          "O",
-          "ZZZZ"
+          "O"
         ],
         "configs": [
           "LocalizedOffsetShort"
@@ -411,7 +410,8 @@
       },
       {
         "patterns": [
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [
           "LocalizedOffsetLong"
@@ -762,8 +762,7 @@
       },
       {
         "patterns": [
-          "O",
-          "ZZZZ"
+          "O"
         ],
         "configs": [
           "LocalizedOffsetShort"
@@ -773,7 +772,8 @@
       },
       {
         "patterns": [
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [
           "LocalizedOffsetLong"
@@ -906,8 +906,7 @@
       },
       {
         "patterns": [
-          "O",
-          "ZZZZ"
+          "O"
         ],
         "configs": [
           "LocalizedOffsetShort"
@@ -917,7 +916,8 @@
       },
       {
         "patterns": [
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [
           "LocalizedOffsetLong"
@@ -949,8 +949,7 @@
       },
       {
         "patterns": [
-          "O",
-          "ZZZZ"
+          "O"
         ],
         "configs": [
           "LocalizedOffsetShort"
@@ -960,7 +959,8 @@
       },
       {
         "patterns": [
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [
           "LocalizedOffsetLong"
@@ -987,7 +987,6 @@
           "z",
           "zz",
           "zzz",
-          "ZZZZ",
           "O"
         ],
         "configs": [],
@@ -996,7 +995,8 @@
       {
         "patterns": [
           "zzzz",
-          "OOOO"
+          "OOOO",
+          "ZZZZ"
         ],
         "configs": [],
         "expected": ["GMT-07:00"]
@@ -1037,7 +1037,6 @@
           "z",
           "zz",
           "zzz",
-          "ZZZZ",
           "O"
         ],
         "configs": [],
@@ -1046,6 +1045,7 @@
       {
         "patterns": [
           "zzzz",
+          "ZZZZ",
           "OOOO"
         ],
         "configs": [],

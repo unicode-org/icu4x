@@ -609,13 +609,13 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         ResolvedNeoTimeZoneSkeleton::Location => {
             [Some(TimeZoneFormatterUnit::GenericLocation), None, None]
         }
-        // `O`, `ZZZZ`
+        // `O`
         ResolvedNeoTimeZoneSkeleton::OffsetShort => [
             Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
             None,
             None,
         ],
-        // `OOOO`
+        // `OOOO`, `ZZZZ`
         ResolvedNeoTimeZoneSkeleton::OffsetLong => {
             [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
         }
