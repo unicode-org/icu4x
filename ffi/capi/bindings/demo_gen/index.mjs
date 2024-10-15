@@ -1128,25 +1128,6 @@ let termini = Object.assign({
         funcName: "CustomTimeZone.timeZoneId",
         parameters: [
             
-            {
-                name: "S",
-                type: "string"
-            }
-            
-        ]
-    },
-
-    "CustomTimeZone.metazoneId": {
-        func: CustomTimeZoneDemo.metazoneId,
-        // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.metazoneId",
-        parameters: [
-            
-            {
-                name: "S",
-                type: "string"
-            }
-            
         ]
     },
 
@@ -1155,11 +1136,6 @@ let termini = Object.assign({
         // For avoiding webpacking minifying issues:
         funcName: "CustomTimeZone.zoneVariant",
         parameters: [
-            
-            {
-                name: "S",
-                type: "string"
-            }
             
         ]
     },
@@ -1297,11 +1273,6 @@ let termini = Object.assign({
             {
                 name: "Nanosecond",
                 type: "number"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]
@@ -1361,11 +1332,6 @@ let termini = Object.assign({
             {
                 name: "Name",
                 type: "string"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]
@@ -1420,11 +1386,6 @@ let termini = Object.assign({
             {
                 name: "Nanosecond",
                 type: "number"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]

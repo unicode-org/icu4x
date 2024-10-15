@@ -22,19 +22,10 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CustomTimeZone_destroy_mv1));
 
-  /// Creates a time zone from an offset string.
-  ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
-  factory CustomTimeZone.fromString(String s) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_CustomTimeZone_from_string_mv1(s._utf8AllocIn(temp.arena));
-    return CustomTimeZone._fromFfi(result, []);
-  }
-
   /// Creates a time zone with no information.
   ///
   /// See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.unknown) for more information.
-  factory CustomTimeZone.unknown() {
+  factory CustomTimeZone() {
     final result = _icu4x_CustomTimeZone_unknown_mv1();
     return CustomTimeZone._fromFfi(result, []);
   }
@@ -203,34 +194,6 @@ final class CustomTimeZone implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Sets the `metazone_id` field from a string.
-  ///
-  /// Returns null if the string is not a valid BCP-47 metazone ID.
-  ///
-  /// See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
-  void setMetazoneId(String id) {
-    final temp = _FinalizedArena();
-    _icu4x_CustomTimeZone_set_metazone_id_mv1(_ffi, id._utf8AllocIn(temp.arena));
-  }
-
-  /// Writes the value of the `metazone_id` field as a string.
-  ///
-  /// Returns null if the `metazone_id` field is empty or unresolved.
-  ///
-  /// See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
-  String? get metazoneId {
-    final write = _Write();
-    final result = _icu4x_CustomTimeZone_metazone_id_mv1(_ffi, write._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return write.finalize();
-  }
-
   /// Sets the `zone_variant` field from a string.
   ///
   /// Returns null if the string is not a valid zone variant.
@@ -318,35 +281,12 @@ final class CustomTimeZone implements ffi.Finalizable {
     }
     return result.union.ok;
   }
-
-  /// Sets the metazone based on the time zone and the local timestamp.
-  ///
-  /// See the [Rust documentation for `maybe_calculate_metazone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
-  void maybeCalculateMetazone(MetazoneCalculator metazoneCalculator, IsoDateTime localDatetime) {
-    _icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(_ffi, metazoneCalculator._ffi, localDatetime._ffi);
-  }
-
-  /// Sets the zone variant based on the time zone and the local timestamp.
-  ///
-  /// See the [Rust documentation for `maybe_calculate_zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_zone_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneOffsetCalculator.html#method.compute_offsets_from_time_zone)
-  void maybeCalculateZoneVariant(ZoneOffsetCalculator zoneOffsetCalculator, IsoDateTime localDatetime) {
-    _icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(_ffi, zoneOffsetCalculator._ffi, localDatetime._ffi);
-  }
 }
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_from_string_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_from_string_mv1(_SliceUtf8 s);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_unknown_mv1')
@@ -424,16 +364,6 @@ external void _icu4x_CustomTimeZone_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Op
 external void _icu4x_CustomTimeZone_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_metazone_id_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_set_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
-
-@meta.RecordUse()
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_metazone_id_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_CustomTimeZone_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_try_set_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
@@ -467,13 +397,3 @@ external _ResultBoolVoid _icu4x_CustomTimeZone_is_standard_time_mv1(ffi.Pointer<
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> metazoneCalculator, ffi.Pointer<ffi.Opaque> localDatetime);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> zoneOffsetCalculator, ffi.Pointer<ffi.Opaque> localDatetime);

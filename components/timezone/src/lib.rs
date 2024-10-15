@@ -6,7 +6,7 @@
 //!
 //! # Fields
 //!
-//! In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
+//! In ICU4X, a [formattable time zone](TimeZoneInfo) consists of four different fields:
 //!
 //! 1. The offset from UTC
 //! 2. The time zone ID
@@ -66,7 +66,7 @@
 //! consistently represent winter versus summer time.
 //!
 //! Note: It is optional (not required) to set the zone variant when constructing a
-//! [`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
+//! [`TimeZoneInfo`]. Therefore, the list of possible variants does not include a generic variant
 //! to represent the lack of a preference.
 //!
 //! # Calculations
@@ -86,28 +86,23 @@
 //!
 //! ```
 //! use icu::calendar::DateTime;
-//! use icu::timezone::CustomTimeZone;
+//! use icu::timezone::TimeZoneInfo;
 //! use icu::timezone::UtcOffset;
 //! use icu::timezone::MetazoneCalculator;
 //! use icu::timezone::TimeZoneBcp47Id;
 //! use icu::timezone::TimeZoneIdMapper;
 //! use tinystr::{tinystr, TinyAsciiStr};
 //!
-//! // Create a time zone for America/Chicago at UTC-6:
-//! let mut time_zone = CustomTimeZone::new_with_offset("-0600".parse().unwrap());
 //! let mapper = TimeZoneIdMapper::new();
-//! time_zone.time_zone_id =
-//!     mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+//! // Create a time zone for America/Chicago at UTC-6:
+//! let mut time_zone = TimeZoneInfo {
+//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
+//!     offset: Some("-0600".parse().unwrap()),
+//!     ..TimeZoneInfo::unknown()
+//! };
 //!
 //! // Alternatively, set it directly from the BCP-47 ID
 //! assert_eq!(time_zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
-//!
-//! // Compute the metazone at January 1, 2022:
-//! let mzc = MetazoneCalculator::new();
-//! let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
-//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
-//!
-//! assert_eq!("amce", time_zone.metazone_id.unwrap().unwrap().0.as_str());
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
@@ -148,7 +143,7 @@ pub use ids::{
 };
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
-pub use time_zone::CustomTimeZone;
+pub use time_zone::TimeZoneInfo;
 pub use types::{UtcOffset, ZoneVariant};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::ZoneOffsetCalculator;

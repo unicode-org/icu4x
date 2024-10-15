@@ -62,14 +62,13 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00");
+    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::unknown();
+    time_zone->try_set_offset_seconds(-18000).ok().value();
     int32_t offset = time_zone->offset_seconds().value();
     if (offset != -18000) {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
     }
-    std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
-    std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
     time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
     std::string time_zone_id_return = time_zone->time_zone_id();
@@ -96,25 +95,6 @@ int main() {
     std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").value();
     if (fast_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;
-        return 1;
-    }
-    std::unique_ptr<IsoDateTime> local_datetime = IsoDateTime::create(2022, 8, 25, 0, 0, 0, 0).ok().value();
-    time_zone->maybe_calculate_metazone(*mzcalc.get(), *local_datetime.get());
-    std::string metazone_id_return = time_zone->metazone_id().value();
-    if (metazone_id_return != "amce") {
-        std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
-        return 1;
-    }
-    time_zone->maybe_calculate_zone_variant(*zocalc.get(), *local_datetime.get());
-    if (!time_zone->is_daylight_time()) {
-        std::cout << "ZoneVariant not calculated correctly" << std::endl;
-        return 1;
-    }
-    // Note: The daylight time switch should normally come from TZDB calculations.
-    time_zone->set_daylight_time();
-    std::string zone_variant_return = time_zone->zone_variant().value();
-    if (zone_variant_return != "dt") {
-        std::cout << "Zone variant not calculated correctly; got " << zone_variant_return << std::endl;
         return 1;
     }
 

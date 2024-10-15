@@ -353,7 +353,7 @@ use icu_calendar::{
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::{
-    CustomTimeZone, CustomZonedDateTime, MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+    CustomZonedDateTime, MetazoneId, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant,
 };
 
 // TODO: Figure out where to export these traits
@@ -413,8 +413,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Custom
     }
 }
 
-impl ConvertCalendar for CustomTimeZone {
-    type Converted<'a> = CustomTimeZone;
+impl ConvertCalendar for TimeZoneInfo {
+    type Converted<'a> = TimeZoneInfo;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -466,7 +466,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for CustomZonedDateTime<A> {}
 
-impl<C> IsInCalendar<C> for CustomTimeZone {}
+impl<C> IsInCalendar<C> for TimeZoneInfo {}
 
 /// A type that can return a certain field `T`.
 pub trait GetField<T> {
@@ -758,7 +758,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<Option<MetazoneId
 {
     #[inline]
     fn get_field(&self) -> Option<Option<MetazoneId>> {
-        self.zone.metazone_id
+        None
     }
 }
 
@@ -771,28 +771,28 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<ZoneVariant>>
     }
 }
 
-impl GetField<Option<UtcOffset>> for CustomTimeZone {
+impl GetField<Option<UtcOffset>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset
     }
 }
 
-impl GetField<Option<TimeZoneBcp47Id>> for CustomTimeZone {
+impl GetField<Option<TimeZoneBcp47Id>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<TimeZoneBcp47Id> {
         Some(self.time_zone_id)
     }
 }
 
-impl GetField<Option<Option<MetazoneId>>> for CustomTimeZone {
+impl GetField<Option<Option<MetazoneId>>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<Option<MetazoneId>> {
-        self.metazone_id
+        None
     }
 }
 
-impl GetField<Option<ZoneVariant>> for CustomTimeZone {
+impl GetField<Option<ZoneVariant>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<ZoneVariant> {
         self.zone_variant
@@ -832,7 +832,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NeverField> for CustomZo
     }
 }
 
-impl GetField<NeverField> for CustomTimeZone {
+impl GetField<NeverField> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> NeverField {
         NeverField

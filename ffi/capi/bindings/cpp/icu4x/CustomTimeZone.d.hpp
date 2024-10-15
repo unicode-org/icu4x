@@ -12,14 +12,8 @@
 namespace icu4x {
 namespace capi { struct CustomTimeZone; }
 class CustomTimeZone;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
-namespace capi { struct MetazoneCalculator; }
-class MetazoneCalculator;
 namespace capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
-namespace capi { struct ZoneOffsetCalculator; }
-class ZoneOffsetCalculator;
 struct TimeZoneInvalidOffsetError;
 }
 
@@ -33,8 +27,6 @@ namespace capi {
 namespace icu4x {
 class CustomTimeZone {
 public:
-
-  inline static std::unique_ptr<icu4x::CustomTimeZone> from_string(std::string_view s);
 
   inline static std::unique_ptr<icu4x::CustomTimeZone> unknown();
 
@@ -66,10 +58,6 @@ public:
 
   inline std::string time_zone_id() const;
 
-  inline void set_metazone_id(std::string_view id);
-
-  inline std::optional<std::string> metazone_id() const;
-
   inline std::optional<std::monostate> try_set_zone_variant(std::string_view id);
 
   inline void clear_zone_variant();
@@ -83,10 +71,6 @@ public:
   inline std::optional<bool> is_standard_time() const;
 
   inline std::optional<bool> is_daylight_time() const;
-
-  inline void maybe_calculate_metazone(const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::IsoDateTime& local_datetime);
-
-  inline void maybe_calculate_zone_variant(const icu4x::ZoneOffsetCalculator& zone_offset_calculator, const icu4x::IsoDateTime& local_datetime);
 
   inline const icu4x::capi::CustomTimeZone* AsFFI() const;
   inline icu4x::capi::CustomTimeZone* AsFFI();
