@@ -9,7 +9,7 @@ use super::{
 };
 use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
-use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
+use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
 use crate::time_zone::{
     FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
@@ -67,27 +67,6 @@ where
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_pattern<W>(
-    pattern: PatternBorrowed,
-    input: &ExtractedInput,
-    datetime_names: &RawDateTimeNamesBorrowed,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
-where
-    W: writeable::PartsWrite + ?Sized,
-{
-    try_write_pattern_items(
-        pattern.metadata,
-        pattern.items.iter(),
-        input,
-        datetime_names,
-        fixed_decimal_format,
-        w,
-    )
-}
-
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern_items<W>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
@@ -103,19 +82,6 @@ where
     for item in pattern_items {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
-            PatternItem::Field(Field {
-                symbol: fields::FieldSymbol::TimeZone(time_zone_field),
-                length,
-            }) => {
-                r = r.and(try_write_zone(
-                    time_zone_field,
-                    length,
-                    input,
-                    datetime_names,
-                    fixed_decimal_format,
-                    w,
-                )?)
-            }
             PatternItem::Field(field) => {
                 r = r.and(try_write_field(
                     field,
@@ -124,7 +90,7 @@ where
                     datetime_names,
                     fixed_decimal_format,
                     w,
-                )?)
+                )?);
             }
         }
     }
@@ -183,8 +149,7 @@ pub enum DateTimeWriteError {
 //
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_field<W>(
+fn try_write_field<W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
@@ -205,6 +170,23 @@ where
             char::from(field.symbol).write_to(w)?;
             "}".write_to(w)
         })
+    }
+
+    fn write_time_zone_missing(
+        offset: Option<UtcOffset>,
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+    ) -> fmt::Result {
+        match offset {
+            Some(offset) => w.with_part(Part::ERROR, |w| {
+                Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }
+                .format_infallible(w, offset)
+            }),
+            None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
+        }
     }
 
     Ok(match (field.symbol, field.length) {
@@ -497,9 +479,26 @@ where
                 }
             }
         },
-        (FieldSymbol::TimeZone(_), _) => {
-            debug_assert!(false, "unreachable: time zone formatted in its own fn");
-            Err(DateTimeWriteError::UnsupportedField(field))
+        (FieldSymbol::TimeZone(time_zone), length) => {
+            // TODO: Implement proper formatting logic here
+            match ResolvedNeoTimeZoneSkeleton::from_field(time_zone, length) {
+                None => {
+                    write_time_zone_missing(input.offset, w)?;
+                    Err(DateTimeWriteError::UnsupportedField(field))
+                }
+                Some(time_zone) => {
+                    let payloads = datetime_names.get_payloads();
+                    let units = select_zone_units(time_zone);
+                    match do_write_zone(units, input, payloads, fdf, w)? {
+                        Ok(()) => Ok(()),
+                        Err(()) => {
+                            write_time_zone_missing(input.offset, w)?;
+                            // Return an error since offset data was missing
+                            Err(DateTimeWriteError::MissingNames(field))
+                        }
+                    }
+                }
+            }
         }
         (
             FieldSymbol::Year(Year::WeekOf)
@@ -518,64 +517,6 @@ where
             Err(DateTimeWriteError::UnsupportedField(field))
         }
     })
-}
-
-// #[allow(clippy::too_many_arguments)]
-pub(crate) fn try_write_zone<W>(
-    field_symbol: fields::TimeZone,
-    field_length: FieldLength,
-    input: &ExtractedInput,
-    datetime_names: &RawDateTimeNamesBorrowed,
-    fdf: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
-where
-    W: writeable::PartsWrite + ?Sized,
-{
-    fn write_time_zone_missing(
-        offset: Option<UtcOffset>,
-        w: &mut (impl writeable::PartsWrite + ?Sized),
-    ) -> fmt::Result {
-        match offset {
-            Some(offset) => w.with_part(Part::ERROR, |w| {
-                Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                }
-                .format_infallible(w, offset)
-            }),
-            None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
-        }
-    }
-
-    // for errors only:
-    let field = Field {
-        symbol: FieldSymbol::TimeZone(field_symbol),
-        length: field_length,
-    };
-
-    // TODO: Implement proper formatting logic here
-    Ok(
-        match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
-            None => {
-                write_time_zone_missing(input.offset, w)?;
-                Err(DateTimeWriteError::UnsupportedField(field))
-            }
-            Some(time_zone) => {
-                let payloads = datetime_names.get_payloads();
-                let units = select_zone_units(time_zone);
-                match do_write_zone(units, input, payloads, fdf, w)? {
-                    Ok(()) => Ok(()),
-                    Err(()) => {
-                        write_time_zone_missing(input.offset, w)?;
-                        // Return an error since offset data was missing
-                        Err(DateTimeWriteError::MissingNames(field))
-                    }
-                }
-            }
-        },
-    )
 }
 
 /// Given a [`ResolvedNeoTimeZoneSkeleton`], select the formatter units

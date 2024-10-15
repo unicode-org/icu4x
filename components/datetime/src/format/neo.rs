@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::{try_write_pattern, DateTimeWriteError};
+use super::datetime::{try_write_pattern_items, DateTimeWriteError};
 use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue,
@@ -2431,8 +2431,9 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        try_write_pattern(
-            self.pattern.0.as_borrowed(),
+        try_write_pattern_items(
+            self.pattern.0.as_borrowed().metadata,
+            self.pattern.0.as_borrowed().items.iter(),
             &self.input,
             &self.names,
             self.names.fixed_decimal_formatter,
