@@ -1111,6 +1111,17 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// You should not need to call this method directly
     fn to_any_cloned(&self) -> AnyCalendar;
 
+    /// Move an [`AnyCalendar`] into a `Self`, or returning it as an error
+    /// if the types do not match.
+    ///
+    /// You should not need to call this method directly
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar>;
+
+    /// Convert an [`AnyCalendar`] reference into a `Self` reference.
+    ///
+    /// You should not need to call this method directly
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self>;
+
     /// Convert a date for this calendar into an [`AnyDateInner`]
     ///
     /// You should not need to call this method directly
@@ -1131,6 +1142,14 @@ impl IntoAnyCalendar for AnyCalendar {
         self.clone()
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        Ok(any)
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        Some(any)
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         d.clone()
     }
@@ -1148,6 +1167,22 @@ impl IntoAnyCalendar for Buddhist {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Buddhist(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Buddhist(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1175,6 +1210,22 @@ impl IntoAnyCalendar for Chinese {
         AnyCalendar::Chinese(self.clone())
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Chinese(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Chinese(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Chinese(*d)
     }
@@ -1200,6 +1251,22 @@ impl IntoAnyCalendar for Coptic {
         AnyCalendar::Coptic(Coptic)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Coptic(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Coptic(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Coptic(*d)
     }
@@ -1223,6 +1290,22 @@ impl IntoAnyCalendar for Dangi {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Dangi(self.clone())
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Dangi(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Dangi(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1255,6 +1338,22 @@ impl IntoAnyCalendar for Ethiopian {
         AnyCalendar::Ethiopian(*self)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Ethiopian(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Ethiopian(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Ethiopian(*d)
     }
@@ -1278,6 +1377,22 @@ impl IntoAnyCalendar for Gregorian {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Gregorian(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Gregorian(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1305,6 +1420,22 @@ impl IntoAnyCalendar for Hebrew {
         AnyCalendar::Hebrew(Hebrew)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Hebrew(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Hebrew(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Hebrew(*d)
     }
@@ -1328,6 +1459,22 @@ impl IntoAnyCalendar for Indian {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Indian(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Indian(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1355,6 +1502,22 @@ impl IntoAnyCalendar for IslamicCivil {
         AnyCalendar::IslamicCivil(*self)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::IslamicCivil(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::IslamicCivil(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicCivil(*d)
     }
@@ -1378,6 +1541,22 @@ impl IntoAnyCalendar for IslamicObservational {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicObservational(self.clone())
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::IslamicObservational(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::IslamicObservational(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1405,6 +1584,22 @@ impl IntoAnyCalendar for IslamicTabular {
         AnyCalendar::IslamicTabular(*self)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::IslamicTabular(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::IslamicTabular(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicTabular(*d)
     }
@@ -1428,6 +1623,22 @@ impl IntoAnyCalendar for IslamicUmmAlQura {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicUmmAlQura(self.clone())
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::IslamicUmmAlQura(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::IslamicUmmAlQura(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1455,6 +1666,22 @@ impl IntoAnyCalendar for Iso {
         AnyCalendar::Iso(Iso)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Iso(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Iso(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Iso(*d)
     }
@@ -1478,6 +1705,22 @@ impl IntoAnyCalendar for Japanese {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Japanese(self.clone())
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Japanese(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Japanese(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
@@ -1505,6 +1748,22 @@ impl IntoAnyCalendar for JapaneseExtended {
         AnyCalendar::JapaneseExtended(self.clone())
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::JapaneseExtended(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::JapaneseExtended(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::JapaneseExtended(*d)
     }
@@ -1530,6 +1789,22 @@ impl IntoAnyCalendar for Persian {
         AnyCalendar::Persian(Persian)
     }
     #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Persian(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Persian(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Persian(*d)
     }
@@ -1553,6 +1828,22 @@ impl IntoAnyCalendar for Roc {
     #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Roc(Roc)
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Roc(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Roc(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {

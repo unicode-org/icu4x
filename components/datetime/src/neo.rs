@@ -24,8 +24,10 @@ use crate::provider::neo::*;
 use crate::provider::ErasedPackedPatterns;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
+use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
+use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
@@ -1427,6 +1429,124 @@ where
             input: datetime,
             names: self.names.as_borrowed(),
         }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet> {
+    /// Make this [`TypedNeoFormatter`] adopt a calendar so it can format any date.
+    ///
+    /// This is useful if you need a [`NeoFormatter`] but know the calendar system ahead of time,
+    /// so that you do not need to link extra data you aren't using.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
+    /// )
+    /// .unwrap()
+    /// .into_formatter(Hebrew::new());
+    ///
+    /// let date = Date::try_new_iso_date(2024, 10, 14).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.convert_and_format(&date),
+    ///     "12 Tishri 5785"
+    /// );
+    /// ```
+    pub fn into_formatter(self, calendar: C) -> NeoFormatter<FSet>
+    where
+        C: IntoAnyCalendar,
+    {
+        NeoFormatter {
+            selection: self.selection,
+            names: self.names,
+            calendar: calendar.to_any(),
+        }
+    }
+}
+
+impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
+    /// Attempt to convert this [`NeoFormatter`] into one with a specific calendar.
+    ///
+    /// Returns an error if the type parameter does not match the inner calendar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = NeoFormatter::try_new(
+    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
+    /// )
+    /// .unwrap()
+    /// .try_into_typed_formatter::<Hebrew>()
+    /// .unwrap();
+    ///
+    /// let date = Date::try_new_hebrew_date(5785, 1, 12).unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&date),
+    ///     "12 Tishri 5785"
+    /// );
+    /// ```
+    ///
+    /// An error occurs if the calendars don't match:
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::MismatchedCalendarError;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    ///
+    /// let result = NeoFormatter::try_new(
+    ///     &locale!("en-u-ca-buddhist").into(),
+    ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
+    /// )
+    /// .unwrap()
+    /// .try_into_typed_formatter::<Hebrew>();
+    ///
+    /// assert!(matches!(
+    ///     result,
+    ///     Err(MismatchedCalendarError { .. })
+    /// ));
+    /// ```
+    pub fn try_into_typed_formatter<C>(
+        self,
+    ) -> Result<TypedNeoFormatter<C, FSet>, MismatchedCalendarError>
+    where
+        C: CldrCalendar + IntoAnyCalendar,
+    {
+        if let Err(cal) = C::from_any(self.calendar) {
+            return Err(MismatchedCalendarError {
+                this_kind: cal.kind(),
+                date_kind: None,
+            });
+        }
+        Ok(TypedNeoFormatter {
+            selection: self.selection,
+            names: self.names,
+            _calendar: PhantomData,
+        })
     }
 }
 
