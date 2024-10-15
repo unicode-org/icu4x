@@ -151,10 +151,15 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonicalize_iana,
             FnInStruct
         )]
-        pub fn canonicalize_iana(&self, value: &str, write: &mut diplomat_runtime::DiplomatWrite) {
+        pub fn canonicalize_iana(
+            &self,
+            value: &str,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Option<()> {
             let handle = self.0.as_borrowed();
-            let iana = handle.canonicalize_iana(value);
+            let iana = handle.canonicalize_iana(value)?;
             let _infallible = iana.0.write_to(write);
+            Some(())
         }
 
         #[diplomat::rust_link(

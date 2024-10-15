@@ -18,7 +18,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
 
     static create(provider: DataProvider): TimeZoneIdMapperWithFastCanonicalization;
 
-    canonicalizeIana(value: string): string;
+    canonicalizeIana(value: string): string | null;
 
     canonicalIanaFromBcp47(value: string): string | null;
 }

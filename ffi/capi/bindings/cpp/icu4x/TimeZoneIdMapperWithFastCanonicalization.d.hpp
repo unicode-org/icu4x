@@ -30,7 +30,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline diplomat::result<std::string, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
+  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
   inline std::optional<std::string> canonical_iana_from_bcp47(std::string_view value) const;
 
