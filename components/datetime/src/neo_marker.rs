@@ -155,14 +155,13 @@
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
-//! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
 //! // but we can set overrides.
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h12").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -172,7 +171,7 @@
 //!     "4:12 PM"
 //! );
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h23").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -182,7 +181,7 @@
 //!     "16:12"
 //! );
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h12").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -192,7 +191,7 @@
 //!     "4:12 PM"
 //! );
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h23").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -210,11 +209,10 @@
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
-//! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h11").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -224,7 +222,7 @@
 //!     "0:00 AM"
 //! );
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h24").into(),
 //!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
 //! )
@@ -246,11 +244,10 @@
 //! use icu::datetime::neo_marker::NeoHourMinuteSecondMarker;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
-//! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! let formatter = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let formatter = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("en-US").into(),
 //!     NeoHourMinuteSecondMarker::with_length(NeoSkeletonLength::Short)
 //!         .with_fractional_second_digits(FractionalSecondDigits::F2),
@@ -274,7 +271,6 @@
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
-//! use icu::datetime::NeverCalendar;
 //! use icu::datetime::DateTimeWriteError;
 //! use icu::locale::locale;
 //! use tinystr::tinystr;
@@ -294,7 +290,7 @@
 //!     .unwrap();
 //!
 //! // Set up the formatter
-//! let mut tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
+//! let mut tzf = TypedNeoFormatter::<(), _>::try_new(
 //!     &locale!("en").into(),
 //!     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
 //! )

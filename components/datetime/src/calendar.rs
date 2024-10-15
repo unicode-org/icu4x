@@ -50,15 +50,7 @@ pub trait CldrCalendar: InternalCldrCalendar {
     type SkeletaV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
 }
 
-/// A calendar that can never exist.
-///
-/// Used as a substitute for calendar parameters when a calendar is not needed,
-/// such as in a time formatter.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty enum
-pub enum NeverCalendar {}
-
-impl CldrCalendar for NeverCalendar {
+impl CldrCalendar for () {
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type SkeletaV1Marker = NeverMarker<PackedPatternsV1<'static>>;
@@ -163,7 +155,7 @@ impl CldrCalendar for Roc {
     type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
-impl InternalCldrCalendar for NeverCalendar {}
+impl InternalCldrCalendar for () {}
 impl InternalCldrCalendar for Buddhist {}
 impl InternalCldrCalendar for Chinese {}
 impl InternalCldrCalendar for Coptic {}
