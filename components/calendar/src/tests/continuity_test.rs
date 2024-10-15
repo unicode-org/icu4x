@@ -161,9 +161,9 @@ fn test_islamic_observational_continuity() {
     let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::islamic::IslamicObservational::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_observational_islamic_date(-10, 1, 1, cal);
+    let date = Date::try_new_observational_islamic_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_observational_islamic_date(-300, 1, 1, cal);
+    let date = Date::try_new_observational_islamic_date_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
@@ -183,9 +183,9 @@ fn test_islamic_umm_al_qura_continuity() {
     let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::islamic::IslamicUmmAlQura::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_ummalqura_date(-10, 1, 1, cal);
+    let date = Date::try_new_ummalqura_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_ummalqura_date(-300, 1, 1, cal);
+    let date = Date::try_new_ummalqura_date_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
@@ -203,9 +203,9 @@ fn test_japanese_continuity() {
     use tinystr::tinystr;
     let cal = crate::japanese::Japanese::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_japanese_date(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
+    let date = Date::try_new_japanese_date_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_japanese_date(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    let date = Date::try_new_japanese_date_with_calendar(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
@@ -215,9 +215,9 @@ fn test_japanese_extended_continuity() {
     use tinystr::tinystr;
     let cal = crate::japanese::JapaneseExtended::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_japanese_extended_date(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
+    let date = Date::try_new_japanese_extended_date_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_japanese_extended_date(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    let date = Date::try_new_japanese_extended_date_with_calendar(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 

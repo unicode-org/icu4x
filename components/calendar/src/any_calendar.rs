@@ -66,7 +66,7 @@ use core::fmt;
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_datetime = DateTime::try_new_japanese_datetime(Era(tinystr!(16, "heisei")), 15, 3, 28,
+/// let japanese_datetime = DateTime::try_new_japanese_datetime_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();

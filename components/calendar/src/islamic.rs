@@ -13,11 +13,11 @@
 //!
 //! // `Date` type
 //! let islamic_date =
-//!     Date::try_new_observational_islamic_date(1348, 10, 11, islamic)
+//!     Date::try_new_observational_islamic_date_with_calendar(1348, 10, 11, islamic)
 //!         .expect("Failed to initialize islamic Date instance.");
 //!
 //! // `DateTime` type
-//! let islamic_datetime = DateTime::try_new_observational_islamic_datetime(
+//! let islamic_datetime = DateTime::try_new_observational_islamic_datetime_with_calendar(
 //!     1348, 10, 11, 13, 1, 0, islamic,
 //! )
 //! .expect("Failed to initialize islamic DateTime instance.");
@@ -569,14 +569,14 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
     /// let islamic = IslamicObservational::new_always_calculating();
     ///
     /// let date_islamic =
-    ///     Date::try_new_observational_islamic_date(1392, 4, 25, islamic)
+    ///     Date::try_new_observational_islamic_date_with_calendar(1392, 4, 25, islamic)
     ///         .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().era_year_or_extended(), 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
     /// assert_eq!(date_islamic.day_of_month().0, 25);
     /// ```
-    pub fn try_new_observational_islamic_date(
+    pub fn try_new_observational_islamic_date_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -601,7 +601,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_observational_islamic_datetime(
+    /// let datetime_islamic = DateTime::try_new_observational_islamic_datetime_with_calendar(
     ///     474, 10, 11, 13, 1, 0, islamic,
     /// )
     /// .expect("Failed to initialize Islamic DateTime instance.");
@@ -613,7 +613,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     /// assert_eq!(datetime_islamic.time.minute.number(), 1);
     /// assert_eq!(datetime_islamic.time.second.number(), 0);
     /// ```
-    pub fn try_new_observational_islamic_datetime(
+    pub fn try_new_observational_islamic_datetime_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -623,7 +623,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
         calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_observational_islamic_date(year, month, day, calendar)?,
+            date: Date::try_new_observational_islamic_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -793,14 +793,14 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
-    /// let date_islamic = Date::try_new_ummalqura_date(1392, 4, 25, islamic)
+    /// let date_islamic = Date::try_new_ummalqura_date_with_calendar(1392, 4, 25, islamic)
     ///     .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().era_year_or_extended(), 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
     /// assert_eq!(date_islamic.day_of_month().0, 25);
     /// ```
-    pub fn try_new_ummalqura_date(
+    pub fn try_new_ummalqura_date_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -829,7 +829,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
     /// let datetime_islamic =
-    ///     DateTime::try_new_ummalqura_datetime(474, 10, 11, 13, 1, 0, islamic)
+    ///     DateTime::try_new_ummalqura_datetime_with_calendar(474, 10, 11, 13, 1, 0, islamic)
     ///         .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().era_year_or_extended(), 474);
@@ -839,7 +839,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     /// assert_eq!(datetime_islamic.time.minute.number(), 1);
     /// assert_eq!(datetime_islamic.time.second.number(), 0);
     /// ```
-    pub fn try_new_ummalqura_datetime(
+    pub fn try_new_ummalqura_datetime_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -849,7 +849,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
         calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_ummalqura_date(year, month, day, calendar)?,
+            date: Date::try_new_ummalqura_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -2021,7 +2021,7 @@ mod test {
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date =
-                Date::try_new_observational_islamic_date(case.year, case.month, case.day, calendar)
+                Date::try_new_observational_islamic_date_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
             let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
 
@@ -2035,7 +2035,7 @@ mod test {
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date =
-                Date::try_new_observational_islamic_date(case.year, case.month, case.day, calendar)
+                Date::try_new_observational_islamic_date_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
             assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
@@ -2106,7 +2106,7 @@ mod test {
             .zip(TEST_FIXED_DATE_UMMALQURA.iter())
         {
             let date =
-                Date::try_new_ummalqura_date(case.year, case.month, case.day, calendar).unwrap();
+                Date::try_new_ummalqura_date_with_calendar(case.year, case.month, case.day, calendar).unwrap();
             let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
@@ -2122,7 +2122,7 @@ mod test {
             .zip(TEST_FIXED_DATE_UMMALQURA.iter())
         {
             let date =
-                Date::try_new_ummalqura_date(case.year, case.month, case.day, calendar).unwrap();
+                Date::try_new_ummalqura_date_with_calendar(case.year, case.month, case.day, calendar).unwrap();
             assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
     }
@@ -2143,10 +2143,10 @@ mod test {
             })
             .sum();
         let expected_number_of_days =
-            Date::try_new_observational_islamic_date(END_YEAR, 1, 1, calendar)
+            Date::try_new_observational_islamic_date_with_calendar(END_YEAR, 1, 1, calendar)
                 .unwrap()
                 .to_fixed()
-                - Date::try_new_observational_islamic_date(START_YEAR, 1, 1, calendar)
+                - Date::try_new_observational_islamic_date_with_calendar(START_YEAR, 1, 1, calendar)
                     .unwrap()
                     .to_fixed(); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
@@ -2172,10 +2172,10 @@ mod test {
                 ) as i64
             })
             .sum();
-        let expected_number_of_days = Date::try_new_ummalqura_date(END_YEAR, 1, 1, calendar)
+        let expected_number_of_days = Date::try_new_ummalqura_date_with_calendar(END_YEAR, 1, 1, calendar)
             .unwrap()
             .to_fixed()
-            - Date::try_new_ummalqura_date(START_YEAR, 1, 1, calendar)
+            - Date::try_new_ummalqura_date_with_calendar(START_YEAR, 1, 1, calendar)
                 .unwrap()
                 .to_fixed(); // The number of days between Umm al-Qura Islamic years -1245 and 1518
 

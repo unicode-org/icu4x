@@ -228,7 +228,7 @@ fn datetime_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
         |y, m, d, h, min, s| {
-            DateTime::try_new_ummalqura_datetime(
+            DateTime::try_new_ummalqura_datetime_with_calendar(
                 y,
                 m,
                 d,
@@ -248,7 +248,7 @@ fn datetime_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::islamic::IslamicObservational::new_always_calculating(),
         |y, m, d, h, min, s| {
-            DateTime::try_new_observational_islamic_datetime(
+            DateTime::try_new_observational_islamic_datetime_with_calendar(
                 y,
                 m,
                 d,
