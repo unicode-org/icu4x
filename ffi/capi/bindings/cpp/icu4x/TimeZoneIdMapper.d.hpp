@@ -32,9 +32,9 @@ public:
 
   inline std::string iana_to_bcp47(std::string_view value) const;
 
-  inline diplomat::result<std::string, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
+  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> normalize_iana(std::string_view value) const;
 
-  inline diplomat::result<std::string, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
+  inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
   inline std::string find_canonical_iana_from_bcp47(std::string_view value) const;
 

@@ -23,9 +23,11 @@ namespace capi {
     
     void icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
-    void icu4x_TimeZoneIdMapper_normalize_iana_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_TimeZoneIdMapper_normalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_normalize_iana_mv1_result;
+    icu4x_TimeZoneIdMapper_normalize_iana_mv1_result icu4x_TimeZoneIdMapper_normalize_iana_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
-    void icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result;
+    icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
     void icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
@@ -50,28 +52,28 @@ inline std::string icu4x::TimeZoneIdMapper::iana_to_bcp47(std::string_view value
   return output;
 }
 
-inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::normalize_iana(std::string_view value) const {
+inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::normalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeZoneIdMapper_normalize_iana_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_TimeZoneIdMapper_normalize_iana_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
 }
 
-inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
+inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
 }
 
 inline std::string icu4x::TimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {

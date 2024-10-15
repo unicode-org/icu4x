@@ -86,10 +86,11 @@ export class TimeZoneIdMapper {
         const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
-            return write.readString8();
+            return result === 0 ? null : write.readString8();
         }
         
         finally {
@@ -105,10 +106,11 @@ export class TimeZoneIdMapper {
         const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
-            return write.readString8();
+            return result === 0 ? null : write.readString8();
         }
         
         finally {

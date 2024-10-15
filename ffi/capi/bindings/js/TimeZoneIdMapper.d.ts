@@ -20,9 +20,9 @@ export class TimeZoneIdMapper {
 
     ianaToBcp47(value: string): string;
 
-    normalizeIana(value: string): string;
+    normalizeIana(value: string): string | null;
 
-    canonicalizeIana(value: string): string;
+    canonicalizeIana(value: string): string | null;
 
     findCanonicalIanaFromBcp47(value: string): string;
 }
