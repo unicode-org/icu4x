@@ -7,6 +7,14 @@
 //! Items in this module are mostly for trait bounds. Most users should not need to reference
 //! these items in userland code.
 
+mod calendar;
+
+pub(crate) use calendar::AnyCalendarProvider;
+pub use calendar::CalMarkers;
+pub use calendar::CldrCalendar;
+pub use calendar::FullDataCalMarkers;
+pub use calendar::NoDataCalMarkers;
+
 /// Trait marking other traits that are considered unstable and should not generally be
 /// implemented outside of the datetime crate.
 ///

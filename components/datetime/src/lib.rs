@@ -89,7 +89,6 @@
 
 extern crate alloc;
 
-mod calendar;
 mod error;
 mod external_loaders;
 pub mod fields;
@@ -116,7 +115,6 @@ pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
-pub use calendar::CldrCalendar;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
