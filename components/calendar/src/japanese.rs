@@ -610,7 +610,13 @@ impl DateTime<JapaneseExtended> {
         japanext_calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_japanese_extended_with_calendar(era, year, month, day, japanext_calendar)?,
+            date: Date::try_new_japanese_extended_with_calendar(
+                era,
+                year,
+                month,
+                day,
+                japanext_calendar,
+            )?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -781,9 +787,7 @@ impl Japanese {
                     max: i32::MAX,
                 });
             }
-            return Ok(Date::try_new_iso(year, month, day)?
-                .to_calendar(cal)
-                .inner);
+            return Ok(Date::try_new_iso(year, month, day)?.to_calendar(cal).inner);
         }
 
         let (era_start, next_era_start) = self.japanese_era_range_for(era.0)?;
@@ -869,8 +873,8 @@ mod tests {
     fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date =
-            Date::try_new_japanese_with_calendar(era, year, month, day, calendar).unwrap_or_else(|e| {
+        let date = Date::try_new_japanese_with_calendar(era, year, month, day, calendar)
+            .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
         let iso = date.to_iso();

@@ -259,10 +259,7 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
                                     .from
                                     .as_deref()
                                     .map(parse_mzone_from)
-                                    .unwrap_or(
-                                        DateTime::try_new_iso(1970, 1, 1, 0, 0, 0)
-                                            .unwrap(),
-                                    )
+                                    .unwrap_or(DateTime::try_new_iso(1970, 1, 1, 0, 0, 0).unwrap())
                                     .minutes_since_local_unix_epoch(),
                                 meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
                             ))

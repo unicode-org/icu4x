@@ -176,11 +176,7 @@ impl Date<Buddhist> {
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
-    pub fn try_new_buddhist(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Buddhist>, RangeError> {
+    pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
         Date::try_new_iso(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }

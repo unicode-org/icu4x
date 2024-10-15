@@ -38,9 +38,8 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
         ) -> Result<Box<IsoDateTime>, CalendarError> {
-            let mut dt = icu_calendar::DateTime::try_new_iso(
-                year, month, day, hour, minute, second,
-            )?;
+            let mut dt =
+                icu_calendar::DateTime::try_new_iso(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(IsoDateTime(dt)))
         }
@@ -258,9 +257,8 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarError> {
             let cal = calendar.0.clone();
-            let mut dt = icu_calendar::DateTime::try_new_iso(
-                year, month, day, hour, minute, second,
-            )?;
+            let mut dt =
+                icu_calendar::DateTime::try_new_iso(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(DateTime(dt.to_calendar(cal))))
         }

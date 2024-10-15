@@ -191,11 +191,7 @@ impl Date<Gregorian> {
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
-    pub fn try_new_gregorian(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Gregorian>, RangeError> {
+    pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
         Date::try_new_iso(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }

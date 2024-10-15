@@ -160,13 +160,8 @@ fn date_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::chinese::Chinese::new(),
         |y, m, d| {
-            Date::try_new_chinese_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::chinese::Chinese::new(),
-            )
-            .unwrap()
+            Date::try_new_chinese_with_calendar(y, m, d, icu::calendar::chinese::Chinese::new())
+                .unwrap()
         },
     );
 
@@ -194,8 +189,7 @@ fn date_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::dangi::Dangi::new(),
         |y, m, d| {
-            Date::try_new_dangi_with_calendar(y, m, d, icu::calendar::dangi::Dangi::new())
-                .unwrap()
+            Date::try_new_dangi_with_calendar(y, m, d, icu::calendar::dangi::Dangi::new()).unwrap()
         },
     );
 

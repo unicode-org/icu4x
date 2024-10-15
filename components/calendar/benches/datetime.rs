@@ -50,10 +50,9 @@ fn bench_calendar<C: Clone + Calendar>(
                 );
 
                 // Conversion from ISO
-                let datetime_iso = DateTime::try_new_iso(
-                    fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second,
-                )
-                .unwrap();
+                let datetime_iso =
+                    DateTime::try_new_iso(fx.year, fx.month, fx.day, fx.hour, fx.minute, fx.second)
+                        .unwrap();
                 let mut converted_datetime_calendar =
                     DateTime::new_from_iso(datetime_iso, calendar.clone());
 
