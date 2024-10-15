@@ -10,13 +10,13 @@
 #include <memory>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "CustomTimeZone.hpp"
 #include "DataProvider.hpp"
 #include "DateTime.hpp"
 #include "DateTimeLength.hpp"
 #include "Error.hpp"
 #include "IsoDateTime.hpp"
 #include "Locale.hpp"
+#include "TimeZoneInfo.hpp"
 
 
 namespace icu4x {
@@ -27,10 +27,10 @@ namespace capi {
     icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result icu4x_ZonedDateTimeFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
     typedef struct icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result;
-    icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::DateTime* datetime, const icu4x::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
+    icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::DateTime* datetime, const icu4x::capi::TimeZoneInfo* time_zone, diplomat::capi::DiplomatWrite* write);
     
     typedef struct icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
-    icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::IsoDateTime* datetime, const icu4x::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
+    icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::IsoDateTime* datetime, const icu4x::capi::TimeZoneInfo* time_zone, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
@@ -46,7 +46,7 @@ inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::E
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error>(diplomat::Ok<std::unique_ptr<icu4x::ZonedDateTimeFormatter>>(std::unique_ptr<icu4x::ZonedDateTimeFormatter>(icu4x::ZonedDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::Error> icu4x::ZonedDateTimeFormatter::format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::CustomTimeZone& time_zone) const {
+inline diplomat::result<std::string, icu4x::Error> icu4x::ZonedDateTimeFormatter::format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(this->AsFFI(),
@@ -56,7 +56,7 @@ inline diplomat::result<std::string, icu4x::Error> icu4x::ZonedDateTimeFormatter
   return result.is_ok ? diplomat::result<std::string, icu4x::Error>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::Error> icu4x::ZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::CustomTimeZone& time_zone) const {
+inline diplomat::result<std::string, icu4x::Error> icu4x::ZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this->AsFFI(),

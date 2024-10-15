@@ -29,8 +29,8 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
-import * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
-export * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
+import * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
+export * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
 import * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 export * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 import * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
@@ -1122,19 +1122,19 @@ let termini = Object.assign({
         ]
     },
 
-    "CustomTimeZone.timeZoneId": {
-        func: CustomTimeZoneDemo.timeZoneId,
+    "TimeZoneInfo.timeZoneId": {
+        func: TimeZoneInfoDemo.timeZoneId,
         // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.timeZoneId",
+        funcName: "TimeZoneInfo.timeZoneId",
         parameters: [
             
         ]
     },
 
-    "CustomTimeZone.zoneVariant": {
-        func: CustomTimeZoneDemo.zoneVariant,
+    "TimeZoneInfo.zoneVariant": {
+        func: TimeZoneInfoDemo.zoneVariant,
         // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.zoneVariant",
+        funcName: "TimeZoneInfo.zoneVariant",
         parameters: [
             
         ]

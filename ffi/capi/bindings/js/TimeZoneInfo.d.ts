@@ -4,20 +4,22 @@ import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `CustomTimeZone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html) for more information.
+/** See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html) for more information.
 */
-export class CustomTimeZone {
+export class TimeZoneInfo {
     
 
     get ffiValue(): pointer;
 
-    static unknown(): CustomTimeZone;
+    static unknown(): TimeZoneInfo;
 
-    static utc(): CustomTimeZone;
+    static utc(): TimeZoneInfo;
 
     trySetOffsetSeconds(offsetSeconds: number): void;
 
     setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
+
+    trySetOffsetStr(offset: string): void;
 
     offsetEighthsOfHour(): number | null;
 

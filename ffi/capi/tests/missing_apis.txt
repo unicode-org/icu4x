@@ -209,7 +209,6 @@ icu::properties::props::GeneralCategoryGroup::union#FnInStruct
 icu::properties::props::GeneralCategoryOutOfBoundsError#Struct
 icu::segmenter::SentenceBreakOptions#Struct
 icu::segmenter::WordBreakOptions#Struct
-icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
 icu::timezone::CustomZonedDateTime::from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct

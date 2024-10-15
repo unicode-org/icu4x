@@ -7,7 +7,7 @@
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/TimeFormatter.hpp>
 #include <icu4x/Logger.hpp>
-#include <icu4x/CustomTimeZone.hpp>
+#include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/TimeZoneIdMapper.hpp>
 #include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
@@ -62,8 +62,8 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::unknown();
-    time_zone->try_set_offset_seconds(-18000).ok().value();
+    std::unique_ptr<TimeZoneInfo> time_zone = TimeZoneInfo::unknown();
+    time_zone->try_set_offset_str("-05:00").ok().value();
     int32_t offset = time_zone->offset_seconds().value();
     if (offset != -18000) {
         std::cout << "GMT offset doesn't parse" << std::endl;
