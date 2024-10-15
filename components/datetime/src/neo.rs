@@ -13,9 +13,9 @@ use crate::input::ExtractedInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
-    AllInputMarkers, CalMarkers, ConvertCalendar, DateDataMarkers, DateTimeMarkers,
-    IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, NeoGetField, TimeMarkers,
-    TypedDateDataMarkers, ZoneMarkers,
+    AllInputMarkers, CalMarkers, ConvertCalendar, DateDataMarkers, DateTimeMarkers, GetField,
+    IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers, TypedDateDataMarkers,
+    ZoneMarkers,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
@@ -119,10 +119,10 @@ impl RawNeoOptions {
     pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
     where
         FSet: DateTimeMarkers,
-        FSet: NeoGetField<FSet::LengthOption>,
-        FSet: NeoGetField<FSet::AlignmentOption>,
-        FSet: NeoGetField<FSet::YearStyleOption>,
-        FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+        FSet: GetField<FSet::LengthOption>,
+        FSet: GetField<FSet::AlignmentOption>,
+        FSet: GetField<FSet::YearStyleOption>,
+        FSet: GetField<FSet::FractionalSecondDigitsOption>,
     {
         // TODO: Return an error if there are more options than field set
         let hour_cycle = locale
@@ -130,16 +130,16 @@ impl RawNeoOptions {
             .as_ref()
             .and_then(HourCycle::from_locale_value);
         Self {
-            length: match NeoGetField::<FSet::LengthOption>::get_field(field_set).into() {
+            length: match GetField::<FSet::LengthOption>::get_field(field_set).into() {
                 Some(length) => length,
                 None => {
                     debug_assert!(false, "unreachable");
                     NeoSkeletonLength::Medium
                 }
             },
-            alignment: NeoGetField::<FSet::AlignmentOption>::get_field(field_set).into(),
-            year_style: NeoGetField::<FSet::YearStyleOption>::get_field(field_set).into(),
-            fractional_second_digits: NeoGetField::<FSet::FractionalSecondDigitsOption>::get_field(
+            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into(),
+            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into(),
+            fractional_second_digits: GetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 field_set,
             )
             .into(),
@@ -168,10 +168,10 @@ where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: NeoGetField<FSet::LengthOption>,
-    FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::YearStyleOption>,
-    FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::LengthOption>,
+    FSet: GetField<FSet::AlignmentOption>,
+    FSet: GetField<FSet::YearStyleOption>,
+    FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -282,10 +282,10 @@ where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: NeoGetField<FSet::LengthOption>,
-    FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::YearStyleOption>,
-    FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::LengthOption>,
+    FSet: GetField<FSet::AlignmentOption>,
+    FSet: GetField<FSet::YearStyleOption>,
+    FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`TypedNeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
@@ -596,7 +596,7 @@ where
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // the trait `GetField<AnyCalendarKind>`
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
@@ -637,10 +637,10 @@ where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: NeoGetField<FSet::LengthOption>,
-    FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::YearStyleOption>,
-    FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::LengthOption>,
+    FSet: GetField<FSet::AlignmentOption>,
+    FSet: GetField<FSet::YearStyleOption>,
+    FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -869,10 +869,10 @@ where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: NeoGetField<FSet::LengthOption>,
-    FSet: NeoGetField<FSet::AlignmentOption>,
-    FSet: NeoGetField<FSet::YearStyleOption>,
-    FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::LengthOption>,
+    FSet: GetField<FSet::AlignmentOption>,
+    FSet: GetField<FSet::YearStyleOption>,
+    FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
     /// Creates a new [`NeoFormatter`] from compiled data with
     /// datetime components specified at runtime.
@@ -1338,7 +1338,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // the trait `GetField<AnyCalendarKind>`
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.strict_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
@@ -1353,7 +1353,7 @@ where
             return Err(crate::MismatchedCalendarError {
                 this_kind: self.calendar.kind(),
                 date_kind:
-                    NeoGetField::<<FSet::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
+                    GetField::<<FSet::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
                         datetime,
                     )
                     .into(),
@@ -1413,7 +1413,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // the trait `GetField<AnyCalendarKind>`
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.convert_and_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```

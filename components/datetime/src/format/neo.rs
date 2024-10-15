@@ -14,7 +14,7 @@ use crate::helpers::size_test;
 use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_marker::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, NeoGetField, NeoNeverMarker,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     NeverField, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
@@ -2270,12 +2270,12 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
-            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + NeoGetField<NeverField>,
+            + GetField<<R::D as DateInputMarkers>::YearInput>
+            + GetField<<R::D as DateInputMarkers>::MonthInput>
+            + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+            + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+            + GetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
@@ -2336,11 +2336,11 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<NeverField>,
+            + GetField<<R::T as TimeMarkers>::HourInput>
+            + GetField<<R::T as TimeMarkers>::MinuteInput>
+            + GetField<<R::T as TimeMarkers>::SecondInput>
+            + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + GetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
@@ -2401,11 +2401,11 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-            + NeoGetField<NeverField>,
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+            + GetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
