@@ -1530,11 +1530,11 @@ impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
     ///     Err(MismatchedCalendarError { .. })
     /// ));
     /// ```
-    pub fn try_into_typed_formatter<C: CldrCalendar>(
+    pub fn try_into_typed_formatter<C>(
         self,
     ) -> Result<TypedNeoFormatter<C, FSet>, MismatchedCalendarError>
     where
-        C: IntoAnyCalendar,
+        C: CldrCalendar + IntoAnyCalendar,
     {
         if let Err(cal) = C::from_any(self.calendar) {
             return Err(MismatchedCalendarError {
