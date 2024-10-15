@@ -11,7 +11,9 @@ use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Ye
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
-use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, ResolvedNeoTimeZoneSkeleton};
+use crate::time_zone::{
+    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoMinutes, ResolvedNeoTimeZoneSkeleton,
+};
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -490,9 +492,31 @@ where
                             write_value_missing(w, field)?;
                             Err(DateTimeWriteError::MissingInputField(f))
                         }
-                        Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
-                            // A backup write should have already happened
-                            Err(DateTimeWriteError::MissingFixedDecimalFormatter)
+                        Err(
+                            e @ (FormatTimeZoneError::MissingFixedDecimalFormatter
+                            | FormatTimeZoneError::MissingZoneSymbols),
+                        ) => {
+                            if let Some(offset) = input.offset {
+                                w.with_part(Part::ERROR, |w| {
+                                    Iso8601Format {
+                                        format: crate::time_zone::IsoFormat::Basic,
+                                        minutes: IsoMinutes::Required,
+                                        seconds: crate::time_zone::IsoSeconds::Optional,
+                                    }
+                                    .format_infallible(w, offset)
+                                })?;
+                            } else {
+                                write_value_missing(w, field)?;
+                            }
+                            Err(match e {
+                                FormatTimeZoneError::MissingFixedDecimalFormatter => {
+                                    DateTimeWriteError::MissingFixedDecimalFormatter
+                                }
+                                FormatTimeZoneError::MissingZoneSymbols => {
+                                    DateTimeWriteError::MissingNames(field)
+                                }
+                                _ => unreachable!(),
+                            })
                         }
                         Err(FormatTimeZoneError::Fallback) => {
                             // fell through
@@ -502,10 +526,6 @@ where
                                 w.write_str("}")
                             })?;
                             Err(DateTimeWriteError::UnsupportedField(field))
-                        }
-                        Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                            // todo write something
-                            Err(DateTimeWriteError::MissingNames(field))
                         }
                     }
                 }

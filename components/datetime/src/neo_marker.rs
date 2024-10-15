@@ -1417,8 +1417,8 @@ where
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
-    type MetazoneLookup = NeverMarker<()>;
-    type Offsets = NeverMarker<()>;
+    type MetazoneLookup = Z::MetazoneLookup;
+    type Offsets = Z::Offsets;
 }
 
 impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
