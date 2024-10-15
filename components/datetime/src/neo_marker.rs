@@ -323,14 +323,16 @@
 //! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
-//!     "Honolulu Time"
+//!     "{v}",
+//!     Err(DateTimeWriteError::MissingInputField("metazone"))
 //! );
 //!
 //! // If we don't set a zone at all, there's no fallback to the offset
 //! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
-//!     "Unknown City Time",
+//!     "{v}",
+//!     Err(DateTimeWriteError::MissingInputField("metazone"))
 //! );
 //! ```
 

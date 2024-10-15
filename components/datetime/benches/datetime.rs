@@ -56,9 +56,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            fdt.try_write_to(&mut result)
-                                .unwrap()
-                                .expect("Failed to write to date time format.");
+                            let _ = fdt.try_write_to(&mut result).unwrap();
                             result.clear();
                         }
                     }

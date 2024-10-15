@@ -5,8 +5,6 @@
 mod fixtures;
 mod patterns;
 
-use core::str::FromStr;
-
 use fixtures::TestOutputItem;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
@@ -26,15 +24,15 @@ use icu_calendar::{
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
+use icu_datetime::neo_skeleton::NeoDateTimeSkeleton;
+use icu_datetime::CldrCalendar;
 use icu_datetime::{
-    fields::{Field, FieldLength, FieldSymbol, TimeZone},
     neo::{NeoFormatter, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
     neo_skeleton::{NeoSkeleton, NeoTimeZoneSkeleton},
     options::preferences::{self, HourCycle},
     TypedDateTimeNames,
 };
-use icu_datetime::{neo_skeleton::NeoDateTimeSkeleton, CldrCalendar, DateTimeWriteError};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
@@ -373,10 +371,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton)
                     .unwrap()
             };
-            assert_try_writeable_eq!(
-                dtf.format(&zoned_datetime),
+            assert_writeable_eq!(
+                writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
                 output_value.expectation(),
-                Ok(()),
                 "{}",
                 description
             );
@@ -454,10 +451,9 @@ fn test_time_zone_format_configs() {
                         skeleton,
                     )
                     .unwrap();
-                    assert_try_writeable_eq!(
-                        tzf.format(&zoned_datetime.zone),
+                    assert_writeable_eq!(
+                        writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
                         *expect,
-                        Ok(()),
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
@@ -503,11 +499,8 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     .unwrap();
     assert_try_writeable_eq!(
         tzf.format(&time_zone),
-        "{GMT+?}",
-        Err(DateTimeWriteError::MissingNames(Field {
-            symbol: FieldSymbol::TimeZone(TimeZone::UpperO),
-            length: FieldLength::One,
-        }))
+        "{O}",
+        Err(DateTimeWriteError::MissingInputField("zone_offset"))
     );
 }
 
@@ -543,23 +536,9 @@ fn test_time_zone_patterns() {
                         .include_for_pattern(&parsed_pattern)
                         .unwrap()
                         .format(&zoned_datetime);
-                    let expected_result = if expect.starts_with('{') {
-                        let internal_pattern =
-                            icu_datetime::pattern::reference::Pattern::from_str(pattern_input)
-                                .unwrap();
-                        let icu_datetime::pattern::PatternItem::Field(field) =
-                            internal_pattern.items.first().unwrap()
-                        else {
-                            unreachable!()
-                        };
-                        Err(DateTimeWriteError::MissingNames(*field))
-                    } else {
-                        Ok(())
-                    };
-                    assert_try_writeable_eq!(
-                        formatted_datetime,
+                    assert_writeable_eq!(
+                        writeable::adapters::LossyWrap(formatted_datetime),
                         *expect,
-                        expected_result,
                         "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\

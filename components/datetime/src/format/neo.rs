@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::{try_write_pattern, DateTimeWriteError};
+use super::datetime::{try_write_pattern_items, DateTimeWriteError};
 use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue,
@@ -383,7 +383,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::unknown()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {z}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -395,7 +395,7 @@ size_test!(
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
 ///         (42, 45, Part::ERROR), // {a}
-///         (46, 53, Part::ERROR), // {GMT+?}
+///         (46, 49, Part::ERROR), // {z}
 ///     ]
 /// );
 /// ```
@@ -2431,8 +2431,9 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        try_write_pattern(
-            self.pattern.0.as_borrowed(),
+        try_write_pattern_items(
+            self.pattern.0.as_borrowed().metadata,
+            self.pattern.0.as_borrowed().items.iter(),
             &self.input,
             &self.names,
             self.names.fixed_decimal_formatter,
