@@ -5,8 +5,8 @@
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::provider::MetazonePeriodV1Marker;
-use icu_calendar::DateTime;
 use icu_calendar::Iso;
+use icu_calendar::{Date, DateTime, Time};
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 
@@ -106,21 +106,25 @@ impl MetazoneCalculator {
     pub fn compute_metazone_from_time_zone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        local_datetime: &DateTime<Iso>,
+        local_time: Option<(Date<Iso>, Time)>,
     ) -> Option<MetazoneId> {
         match self.metazone_period.get().0.get0(&time_zone_id) {
             Some(cursor) => {
-                let mut metazone_id = None;
-                let minutes_since_local_unix_epoch =
-                    local_datetime.minutes_since_local_unix_epoch();
-                for (minutes, id) in cursor.iter1() {
-                    if minutes_since_local_unix_epoch >= i32::from_unaligned(*minutes) {
-                        metazone_id = id.get()
-                    } else {
-                        break;
+                if let Some((date, time)) = local_time {
+                    let mut metazone_id = None;
+                    let minutes_since_local_unix_epoch =
+                        DateTime { date, time }.minutes_since_local_unix_epoch();
+                    for (minutes, id) in cursor.iter1() {
+                        if minutes_since_local_unix_epoch >= i32::from_unaligned(*minutes) {
+                            metazone_id = id.get()
+                        } else {
+                            break;
+                        }
                     }
+                    metazone_id
+                } else {
+                    cursor.iter1().next_back().and_then(|(_, m)| m.get())
                 }
-                metazone_id
             }
             None => None,
         }

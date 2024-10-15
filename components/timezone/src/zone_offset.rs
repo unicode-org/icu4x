@@ -4,8 +4,8 @@
 
 use crate::provider::ZoneOffsetPeriodV1Marker;
 use crate::{TimeZoneBcp47Id, UtcOffset};
-use icu_calendar::DateTime;
 use icu_calendar::Iso;
+use icu_calendar::{Date, DateTime, Time};
 use icu_provider::prelude::*;
 
 /// [`ZoneOffsetCalculator`] uses data from the [data provider] to calculate time zone offsets.
@@ -93,22 +93,30 @@ impl ZoneOffsetCalculator {
     pub fn compute_offsets_from_time_zone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        local_datetime: &DateTime<Iso>,
+        local_time: Option<(Date<Iso>, Time)>,
     ) -> Option<(UtcOffset, Option<UtcOffset>)> {
         use zerovec::ule::AsULE;
         match self.offset_period.get().0.get0(&time_zone_id) {
             Some(cursor) => {
-                let mut offsets = None;
-                let minutes_since_local_unix_epoch =
-                    local_datetime.minutes_since_local_unix_epoch();
-                for (minutes, id) in cursor.iter1_copied().rev() {
-                    if minutes_since_local_unix_epoch <= i32::from_unaligned(*minutes) {
-                        offsets = Some(id);
-                    } else {
-                        break;
+                let offsets = if let Some((date, time)) = local_time {
+                    let mut offsets = None;
+                    let minutes_since_local_unix_epoch =
+                        DateTime { date, time }.minutes_since_local_unix_epoch();
+                    for (minutes, id) in cursor.iter1_copied().rev() {
+                        if minutes_since_local_unix_epoch <= i32::from_unaligned(*minutes) {
+                            offsets = Some(id);
+                        } else {
+                            break;
+                        }
                     }
-                }
-                let offsets = offsets?;
+                    offsets?
+                } else {
+                    cursor
+                        .iter1()
+                        .map(|(_, v)| <_>::from_unaligned(*v))
+                        .next_back()
+                        .unwrap_or_default() // shouldn't happen
+                };
                 Some((
                     UtcOffset::from_eighths_of_hour(offsets.0),
                     (offsets.1 != 0)

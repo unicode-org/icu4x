@@ -349,12 +349,10 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
+    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::{
-    CustomZonedDateTime, MetazoneId, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant,
-};
+use icu_timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
 
 // TODO: Figure out where to export these traits
 #[doc(inline)]
@@ -735,30 +733,21 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for CustomZo
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<TimeZoneBcp47Id>
+    for CustomZonedDateTime<A>
+{
+    #[inline]
+    fn get_field(&self) -> TimeZoneBcp47Id {
+        self.zone.time_zone_id
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
     for CustomZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.zone.offset
-    }
-}
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<TimeZoneBcp47Id>>
-    for CustomZonedDateTime<A>
-{
-    #[inline]
-    fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        Some(self.zone.time_zone_id)
-    }
-}
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<Option<MetazoneId>>>
-    for CustomZonedDateTime<A>
-{
-    #[inline]
-    fn get_field(&self) -> Option<Option<MetazoneId>> {
-        None
     }
 }
 
@@ -771,6 +760,22 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<ZoneVariant>>
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<(Date<Iso>, Time)>>
+    for CustomZonedDateTime<A>
+{
+    #[inline]
+    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+        self.zone.local_time
+    }
+}
+
+impl GetField<TimeZoneBcp47Id> for TimeZoneInfo {
+    #[inline]
+    fn get_field(&self) -> TimeZoneBcp47Id {
+        self.time_zone_id
+    }
+}
+
 impl GetField<Option<UtcOffset>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
@@ -778,24 +783,17 @@ impl GetField<Option<UtcOffset>> for TimeZoneInfo {
     }
 }
 
-impl GetField<Option<TimeZoneBcp47Id>> for TimeZoneInfo {
-    #[inline]
-    fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        Some(self.time_zone_id)
-    }
-}
-
-impl GetField<Option<Option<MetazoneId>>> for TimeZoneInfo {
-    #[inline]
-    fn get_field(&self) -> Option<Option<MetazoneId>> {
-        None
-    }
-}
-
 impl GetField<Option<ZoneVariant>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<ZoneVariant> {
         self.zone_variant
+    }
+}
+
+impl GetField<Option<(Date<Iso>, Time)>> for TimeZoneInfo {
+    #[inline]
+    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+        self.local_time
     }
 }
 
@@ -909,13 +907,6 @@ impl From<NeverField> for Option<NanoSecond> {
     }
 }
 
-impl From<NeverField> for Option<UtcOffset> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
 impl From<NeverField> for Option<TimeZoneBcp47Id> {
     #[inline]
     fn from(_: NeverField) -> Self {
@@ -923,14 +914,21 @@ impl From<NeverField> for Option<TimeZoneBcp47Id> {
     }
 }
 
-impl From<NeverField> for Option<Option<MetazoneId>> {
+impl From<NeverField> for Option<Option<UtcOffset>> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverField> for Option<ZoneVariant> {
+impl From<NeverField> for Option<Option<ZoneVariant>> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
+impl From<NeverField> for Option<Option<(Date<Iso>, Time)>> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -1052,14 +1050,14 @@ pub trait TimeMarkers: private::Sealed {
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
 pub trait ZoneMarkers: private::Sealed {
-    /// Marker for resolving the time zone offset input field.
-    type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
-    /// Marker for resolving the time zone metazone input field.
-    type TimeZoneMetazoneInput: Into<Option<Option<MetazoneId>>>;
+    /// Marker for resolving the time zone offset input field.
+    type TimeZoneOffsetInput: Into<Option<Option<UtcOffset>>>;
     /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
+    type TimeZoneVariantInput: Into<Option<Option<ZoneVariant>>>;
+    /// Marker for resolving the time zone metazone input field.
+    type TimeZoneLocalTimeInput: Into<Option<Option<(Date<Iso>, Time)>>>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
@@ -1112,10 +1110,10 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
     + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -1138,10 +1136,10 @@ where
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
         + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>,
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
 {
 }
 
@@ -1184,10 +1182,10 @@ impl TimeMarkers for NeoNeverMarker {
 }
 
 impl ZoneMarkers for NeoNeverMarker {
-    type TimeZoneOffsetInput = NeverField;
     type TimeZoneIdInput = NeverField;
-    type TimeZoneMetazoneInput = NeverField;
+    type TimeZoneOffsetInput = NeverField;
     type TimeZoneVariantInput = NeverField;
+    type TimeZoneLocalTimeInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
@@ -1538,17 +1536,17 @@ macro_rules! datetime_marker_helper {
     (@input/nanosecond, yes) => {
         NanoSecond
     };
+    (@input/timezone/id, yes) => {
+        TimeZoneBcp47Id
+    };
     (@input/timezone/offset, yes) => {
         Option<UtcOffset>
     };
-    (@input/timezone/id, yes) => {
-        Option<TimeZoneBcp47Id>
-    };
-    (@input/timezone/metazone, yes) => {
-        Option<Option<MetazoneId>>
-    };
     (@input/timezone/variant, yes) => {
         Option<ZoneVariant>
+    };
+    (@input/timezone/local_time, yes) => {
+        Option<(Date<Iso>, Time)>
     };
     (@input/$any:ident,) => {
         NeverField
@@ -2219,10 +2217,10 @@ macro_rules! impl_zone_marker {
             const COMPONENT: NeoTimeZoneStyle = $components;
         }
         impl ZoneMarkers for $type {
-            type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-            type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
+            type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
+            type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
@@ -2938,10 +2936,10 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {
-    type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-    type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
+    type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
+    type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, yes);
     type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, yes);

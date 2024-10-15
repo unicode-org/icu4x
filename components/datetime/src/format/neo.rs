@@ -2400,10 +2400,10 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
             + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
             + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+            + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
             + GetField<NeverField>,
     {
         FormattedDateTimePattern {
