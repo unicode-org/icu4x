@@ -55,27 +55,23 @@ impl ResolvedNeoTimeZoneSkeleton {
 
     pub(crate) fn units(self) -> impl Iterator<Item = TimeZoneFormatterUnit> {
         match self {
-            // `z..zzz`
-            ResolvedNeoTimeZoneSkeleton::SpecificShort => [
-                Some(TimeZoneFormatterUnit::SpecificNonLocationShort),
-                Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
+            // `z..zzzz`
+            ResolvedNeoTimeZoneSkeleton::SpecificShort
+            | ResolvedNeoTimeZoneSkeleton::SpecificLong => [
+                Some(TimeZoneFormatterUnit::SpecificNonLocation(
+                    self.to_field().length,
+                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
                 None,
             ],
-            // `zzzz`
-            ResolvedNeoTimeZoneSkeleton::SpecificLong => [
-                Some(TimeZoneFormatterUnit::SpecificNonLocationLong),
-                Some(TimeZoneFormatterUnit::LocalizedOffsetLong),
-                None,
-            ],
-            // 'v'
-            ResolvedNeoTimeZoneSkeleton::GenericShort => [
-                Some(TimeZoneFormatterUnit::GenericNonLocationShort),
-                Some(TimeZoneFormatterUnit::GenericLocation),
-                None,
-            ],
-            // 'vvvv'
-            ResolvedNeoTimeZoneSkeleton::GenericLong => [
-                Some(TimeZoneFormatterUnit::GenericNonLocationLong),
+            // 'v', 'vvvv'
+            ResolvedNeoTimeZoneSkeleton::GenericShort
+            | ResolvedNeoTimeZoneSkeleton::GenericLong => [
+                Some(TimeZoneFormatterUnit::GenericNonLocation(
+                    self.to_field().length,
+                )),
                 Some(TimeZoneFormatterUnit::GenericLocation),
                 None,
             ],
@@ -83,16 +79,14 @@ impl ResolvedNeoTimeZoneSkeleton {
             ResolvedNeoTimeZoneSkeleton::Location => {
                 [Some(TimeZoneFormatterUnit::GenericLocation), None, None]
             }
-            // `O`
-            ResolvedNeoTimeZoneSkeleton::OffsetShort => [
-                Some(TimeZoneFormatterUnit::LocalizedOffsetShort),
+            // `O`, `OOOO`, `ZZZZ`
+            ResolvedNeoTimeZoneSkeleton::OffsetShort | ResolvedNeoTimeZoneSkeleton::OffsetLong => [
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
                 None,
                 None,
             ],
-            // `OOOO`, `ZZZZ`
-            ResolvedNeoTimeZoneSkeleton::OffsetLong => {
-                [Some(TimeZoneFormatterUnit::LocalizedOffsetLong), None, None]
-            }
             // 'V'
             ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
                 [Some(TimeZoneFormatterUnit::Bcp47Id), None, None]
@@ -267,51 +261,17 @@ pub enum IsoSeconds {
     Never,
 }
 
-/// An enum for time zone fallback formats.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[non_exhaustive]
-#[derive(Default)]
-pub enum FallbackFormat {
-    /// The localized offset format for time zone format fallback.
-    ///
-    /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
-    #[default]
-    LocalizedOffset,
-}
-
-/// A bag of options to define how time zone will be formatted.
-#[derive(Default, Debug, Clone, Copy, PartialEq)]
-#[non_exhaustive]
-pub struct TimeZoneFormatterOptions {
-    /// The time zone format fallback option.
-    ///
-    /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
-    pub fallback_format: FallbackFormat,
-}
-
-impl From<FallbackFormat> for TimeZoneFormatterOptions {
-    fn from(fallback_format: FallbackFormat) -> Self {
-        Self { fallback_format }
-    }
-}
-
 // An enum for time zone format unit.
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum TimeZoneFormatterUnit {
-    GenericNonLocationLong,
-    GenericNonLocationShort,
-    SpecificNonLocationLong,
-    SpecificNonLocationShort,
+    GenericNonLocation(FieldLength),
+    SpecificNonLocation(FieldLength),
     GenericLocation,
     #[allow(dead_code)]
     SpecificLocation,
     #[allow(dead_code)]
-    GenericPartialLocationLong,
-    #[allow(dead_code)]
-    GenericPartialLocationShort,
-    #[default]
-    LocalizedOffsetLong,
-    LocalizedOffsetShort,
+    GenericPartialLocation(FieldLength),
+    LocalizedOffset(FieldLength),
     Iso8601(Iso8601Format),
     Bcp47Id,
 }
@@ -336,34 +296,6 @@ pub(super) trait FormatTimeZone {
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error>;
 }
 
-pub(super) trait FormatOffset {
-    fn format_offset<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        offset: UtcOffset,
-        _data_payloads: TimeZoneDataPayloadsBorrowed,
-        fdf: Option<&FixedDecimalFormatter>,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error>;
-}
-
-impl<T> FormatTimeZone for T
-where
-    T: FormatOffset,
-{
-    fn format<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        input: &ExtractedInput,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-        fdf: Option<&FixedDecimalFormatter>,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(offset) = input.offset else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
-        };
-        self.format_offset(sink, offset, data_payloads, fdf)
-    }
-}
-
 impl FormatTimeZone for TimeZoneFormatterUnit {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
@@ -372,36 +304,23 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        match self {
-            Self::GenericNonLocationLong => {
-                GenericNonLocationFormat(FieldLength::Wide).format(sink, input, data_payloads, fdf)
+        match *self {
+            Self::GenericNonLocation(length) => {
+                GenericNonLocationFormat(length).format(sink, input, data_payloads, fdf)
             }
-            Self::GenericNonLocationShort => GenericNonLocationFormat(FieldLength::Abbreviated)
-                .format(sink, input, data_payloads, fdf),
-            Self::SpecificNonLocationLong => {
-                SpecificNonLocationFormat(FieldLength::Wide).format(sink, input, data_payloads, fdf)
+            Self::SpecificNonLocation(length) => {
+                SpecificNonLocationFormat(length).format(sink, input, data_payloads, fdf)
             }
-            Self::SpecificNonLocationShort => SpecificNonLocationFormat(FieldLength::Abbreviated)
-                .format(sink, input, data_payloads, fdf),
             Self::GenericLocation => GenericLocationFormat.format(sink, input, data_payloads, fdf),
             Self::SpecificLocation => {
                 SpecificLocationFormat.format(sink, input, data_payloads, fdf)
             }
-            Self::GenericPartialLocationLong => GenericPartialLocationFormat(FieldLength::Wide)
-                .format(sink, input, data_payloads, fdf),
-            Self::GenericPartialLocationShort => GenericPartialLocationFormat(
-                FieldLength::Abbreviated,
-            )
-            .format(sink, input, data_payloads, fdf),
-            Self::LocalizedOffsetLong => {
-                LocalizedOffsetFormat(FieldLength::Wide).format(sink, input, data_payloads, fdf)
+            Self::GenericPartialLocation(length) => {
+                GenericPartialLocationFormat(length).format(sink, input, data_payloads, fdf)
             }
-            Self::LocalizedOffsetShort => LocalizedOffsetFormat(FieldLength::Abbreviated).format(
-                sink,
-                input,
-                data_payloads,
-                fdf,
-            ),
+            Self::LocalizedOffset(length) => {
+                LocalizedOffsetFormat(length).format(sink, input, data_payloads, fdf)
+            }
             Self::Iso8601(iso) => iso.format(sink, input, data_payloads, fdf),
             Self::Bcp47Id => Bcp47IdFormat.format(sink, input, data_payloads, fdf),
         }
@@ -496,20 +415,23 @@ impl FormatTimeZone for SpecificNonLocationFormat {
 // UTC+7:00
 struct LocalizedOffsetFormat(FieldLength);
 
-impl FormatOffset for LocalizedOffsetFormat {
+impl FormatTimeZone for LocalizedOffsetFormat {
     /// Writes the time zone in localized offset format according to the CLDR localized hour format.
     /// This goes explicitly against the UTS-35 spec, which specifies long or short localized
     /// offset formats regardless of locale.
     ///
     /// You can see more information about our decision to resolve this conflict here:
     /// <https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing>
-    fn format_offset<W: writeable::PartsWrite + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        offset: UtcOffset,
+        input: &ExtractedInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(offset) = input.offset else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+        };
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
@@ -734,7 +656,7 @@ pub(crate) struct Iso8601Format {
     pub(crate) seconds: IsoSeconds,
 }
 
-impl FormatOffset for Iso8601Format {
+impl FormatTimeZone for Iso8601Format {
     /// Writes a [`UtcOffset`](crate::input::UtcOffset) in ISO-8601 format according to the
     /// given formatting options.
     ///
@@ -746,13 +668,16 @@ impl FormatOffset for Iso8601Format {
     ///
     /// [`IsoMinutes`] can be required or optional.
     /// [`IsoSeconds`] can be optional or never.
-    fn format_offset<W: writeable::PartsWrite + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        offset: UtcOffset,
+        input: &ExtractedInput,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(offset) = input.offset else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+        };
         self.format_infallible(sink, offset).map(|()| Ok(()))
     }
 }
