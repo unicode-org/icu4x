@@ -39,7 +39,7 @@ fn main() {
     println!("\n====== Work Log (en) example ============");
 
     for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
-        let date = DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)
+        let date = DateTime::try_new_gregorian(year, month, day, hour, minute, second)
             .expect("datetime should parse");
         let fdt = dtf.format(&date);
         println!("{idx}) {}", writeable::adapters::LossyWrap(fdt));

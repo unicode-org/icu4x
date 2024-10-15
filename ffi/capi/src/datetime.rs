@@ -27,7 +27,7 @@ pub mod ffi {
 
     impl IsoDateTime {
         /// Creates a new [`IsoDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso_datetime, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             year: i32,
@@ -38,7 +38,7 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
         ) -> Result<Box<IsoDateTime>, CalendarError> {
-            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
+            let mut dt = icu_calendar::DateTime::try_new_iso(
                 year, month, day, hour, minute, second,
             )?;
             dt.time.nanosecond = nanosecond.try_into()?;
@@ -258,7 +258,7 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarError> {
             let cal = calendar.0.clone();
-            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
+            let mut dt = icu_calendar::DateTime::try_new_iso(
                 year, month, day, hour, minute, second,
             )?;
             dt.time.nanosecond = nanosecond.try_into()?;

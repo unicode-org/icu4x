@@ -112,7 +112,7 @@ fn main() {
     let dtf = NeoFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("ja data should be available");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
@@ -178,7 +178,7 @@ fn main() {
     )
     .expect("blob should contain required markers and `ja` data");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
@@ -231,7 +231,7 @@ fn main() {
     )
     .expect("blob should contain required data");
 
-    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_gregorian(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
     let formatted_date = dtf.format(&date).to_string_lossy();

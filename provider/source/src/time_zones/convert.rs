@@ -260,7 +260,7 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
                                     .as_deref()
                                     .map(parse_mzone_from)
                                     .unwrap_or(
-                                        DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0)
+                                        DateTime::try_new_iso(1970, 1, 1, 0, 0, 0)
                                             .unwrap(),
                                     )
                                     .minutes_since_local_unix_epoch(),
@@ -647,5 +647,5 @@ fn parse_mzone_from(from: &str) -> DateTime<Iso> {
     let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
     let hour = time_parts[0].parse::<u8>().unwrap();
     let minute = time_parts[1].parse::<u8>().unwrap();
-    DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap()
+    DateTime::try_new_iso(year, month, day, hour, minute, 0).unwrap()
 }

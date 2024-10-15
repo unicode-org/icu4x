@@ -152,7 +152,7 @@ let locale = icu::locale::Locale::default(); // to make this example compile
 /// Helper function to create an ICU4X DateTime for the current local time:
 fn get_current_date() -> Date<Iso> {
     let current_offset_date_time = time::OffsetDateTime::now_local().unwrap();
-    Date::try_new_iso_date(
+    Date::try_new_iso(
         current_offset_date_time.year(),
         current_offset_date_time.month() as u8,
         current_offset_date_time.day(),

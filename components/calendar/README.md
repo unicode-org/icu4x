@@ -31,7 +31,7 @@ as well as the calendar type.
 use icu::calendar::{types::IsoWeekday, Date};
 
 // Creating ISO date: 1992-09-02.
-let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
+let mut date_iso = Date::try_new_iso(1992, 9, 2)
     .expect("Failed to initialize ISO Date instance.");
 
 assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
@@ -50,7 +50,7 @@ Example of converting an ISO date across Indian and Buddhist calendars.
 use icu::calendar::{buddhist::Buddhist, indian::Indian, Date};
 
 // Creating ISO date: 1992-09-02.
-let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
+let mut date_iso = Date::try_new_iso(1992, 9, 2)
     .expect("Failed to initialize ISO Date instance.");
 
 assert_eq!(date_iso.year().era_year_or_extended(), 1992);
@@ -79,7 +79,7 @@ year, and calendar type. Additionally, `DateTime` objects contain an accessible
 use icu::calendar::{types::IsoWeekday, DateTime, Time};
 
 // Creating ISO date: 1992-09-02 8:59
-let mut datetime_iso = DateTime::try_new_iso_datetime(1992, 9, 2, 8, 59, 0)
+let mut datetime_iso = DateTime::try_new_iso(1992, 9, 2, 8, 59, 0)
     .expect("Failed to initialize ISO DateTime instance.");
 
 assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);

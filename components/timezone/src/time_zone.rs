@@ -173,7 +173,7 @@ impl CustomTimeZone {
     /// let mut tz = CustomTimeZone::new_with_bcp47_id(TimeZoneBcp47Id(tinystr!(8, "gugum")));
     /// tz.maybe_calculate_metazone(
     ///     &mzc,
-    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    ///     &DateTime::try_new_iso(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     /// assert_eq!(tz.metazone_id.unwrap(), Some(MetazoneId(tinystr!(4, "guam"))));
     /// ```
@@ -209,7 +209,7 @@ impl CustomTimeZone {
     /// };
     /// tz.maybe_calculate_zone_variant(
     ///     &zoc,
-    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    ///     &DateTime::try_new_iso(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     /// assert_eq!(tz.zone_variant, Some(ZoneVariant::standard()));
     /// ```

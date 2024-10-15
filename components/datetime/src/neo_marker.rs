@@ -38,14 +38,14 @@
 //! // By default, en-US does not pad the month and day with zeros.
 //! assert_try_writeable_eq!(
 //!     plain_formatter
-//!         .format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!         .format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "1/1/25"
 //! );
 //!
 //! // The column alignment option hints that they should be padded.
 //! assert_try_writeable_eq!(
 //!     column_formatter
-//!         .format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!         .format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "01/01/25"
 //! );
 //! ```
@@ -74,21 +74,21 @@
 //! // Era displayed when needed for disambiguation,
 //! // such as years before year 0 and small year numbers:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 //!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 //!     "1/1/77 AD"
 //! );
 //! // Era elided for modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 //!     "1/1/1900"
 //! );
 //! // Era and century both elided for nearby years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "1/1/25"
 //! );
 //!
@@ -101,21 +101,21 @@
 //!
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 //!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 //!     "1/1/77 AD"
 //! );
 //! // Era elided for modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 //!     "1/1/1900"
 //! );
 //! // But now we always get a full-precision year:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "1/1/2025"
 //! );
 //!
@@ -128,20 +128,20 @@
 //!
 //! // Era still displayed in cases with ambiguity:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 //!     "1/1/1001 BC"
 //! );
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 //!     "1/1/77 AD"
 //! );
 //! // But now it is shown even on modern years:
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(1900, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 //!     "1/1/1900 AD"
 //! );
 //! assert_try_writeable_eq!(
-//!     formatter.format(&Date::try_new_gregorian_date(2025, 1, 1).unwrap()),
+//!     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "1/1/2025 AD"
 //! );
 //! ```
@@ -286,7 +286,7 @@
 //! // and the DateTime to use in calculation
 //! let mzc = MetazoneCalculator::new();
 //! let mapper = TimeZoneIdMapper::new();
-//! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
+//! let datetime = DateTime::try_new_iso(2022, 8, 29, 0, 0, 0)
 //!     .unwrap();
 //!
 //! // Set up the formatter
@@ -1797,7 +1797,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
+            /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&dt),
@@ -1821,7 +1821,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
+            /// let dt = Date::try_new_gregorian(2024, 5, 17).unwrap();
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&dt),
@@ -2021,7 +2021,7 @@ macro_rules! impl_time_marker {
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+            /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&dt),
@@ -2274,7 +2274,7 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+        /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dt),
@@ -2298,7 +2298,7 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dt = DateTime::try_new_gregorian_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+        /// let dt = DateTime::try_new_gregorian(2024, 5, 17, 15, 47, 50).unwrap();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dt),

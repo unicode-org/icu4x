@@ -50,7 +50,7 @@ let typed_dtf = TypedNeoFormatter::<Gregorian, _>::try_new(
 .expect("should successfully create TypedNeoFormatter instance");
 
 let typed_date =
-    DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    DateTime::try_new_gregorian(2020, 9, 12, 12, 34, 28).unwrap();
 // prefer using ISO dates with DateTimeFormatter
 let date = typed_date.to_iso();
 

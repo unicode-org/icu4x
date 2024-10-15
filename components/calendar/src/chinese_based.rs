@@ -8,7 +8,7 @@
 //! ```rust
 //! use icu::calendar::{chinese::Chinese, Date, Iso};
 //!
-//! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
+//! let iso_date = Date::try_new_iso(2023, 6, 23).unwrap();
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);

@@ -104,7 +104,7 @@
 //!
 //! // Compute the metazone at January 1, 2022:
 //! let mzc = MetazoneCalculator::new();
-//! let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
+//! let datetime = DateTime::try_new_iso(2022, 1, 1, 0, 0, 0).unwrap();
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //!
 //! assert_eq!("amce", time_zone.metazone_id.unwrap().unwrap().0.as_str());
