@@ -122,9 +122,7 @@ part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
-part 'TimeZoneInvalidIdError.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
-part 'TimeZoneUnknownError.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
@@ -338,31 +336,6 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
   }
 }
 
-final class _ResultOpaqueTimeZoneUnknownErrorFfiUnion extends ffi.Union {
-  external ffi.Pointer<ffi.Opaque> ok;
-
-}
-
-final class _ResultOpaqueTimeZoneUnknownErrorFfi extends ffi.Struct {
-  external _ResultOpaqueTimeZoneUnknownErrorFfiUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  
-  factory _ResultOpaqueTimeZoneUnknownErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
-    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneUnknownErrorFfi>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  factory _ResultOpaqueTimeZoneUnknownErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneUnknownErrorFfi>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
 final class _ResultUint16VoidUnion extends ffi.Union {
   @ffi.Uint16()
   external int ok;
@@ -463,25 +436,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultVoidInt32>();
     struct.isOk = false;
     struct.union.err = val;
-    return struct;
-  }
-}
-
-final class _ResultVoidTimeZoneInvalidIdErrorFfi extends ffi.Struct {
-  
-
-  @ffi.Bool()
-  external bool isOk;
-
-  
-  factory _ResultVoidTimeZoneInvalidIdErrorFfi.ok() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidIdErrorFfi>();
-    struct.isOk = true;
-    return struct;
-  }
-  factory _ResultVoidTimeZoneInvalidIdErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidIdErrorFfi>();
-    struct.isOk = false;
     return struct;
   }
 }

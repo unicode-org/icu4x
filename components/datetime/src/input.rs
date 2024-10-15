@@ -28,7 +28,7 @@ pub(crate) struct ExtractedInput {
     pub(crate) nanosecond: Option<NanoSecond>,
     pub(crate) offset: Option<UtcOffset>,
     pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
-    pub(crate) metazone_id: Option<MetazoneId>,
+    pub(crate) metazone_id: Option<Option<MetazoneId>>,
     pub(crate) zone_variant: Option<ZoneVariant>,
 }
 

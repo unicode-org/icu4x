@@ -1109,37 +1109,5 @@
         "expected": ["Unknown City Time"]
       }
     ]
-  },
-  {
-    "locale": "en",
-    "datetime": "2021-07-11T12:00:00.000",
-    "expectations": [
-      {
-        "patterns": [
-          "z",
-          "zz",
-          "zzz",
-          "zzzz",
-          "Z",
-          "ZZ",
-          "ZZZ",
-          "ZZZZ",
-          "ZZZZZ",
-          "O",
-          "OOOO"
-        ],
-        "configs": [],
-        "expected": ["{GMT+?}"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv",
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
-      }
-    ]
   }
 ]

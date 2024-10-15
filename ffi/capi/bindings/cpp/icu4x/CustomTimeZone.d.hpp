@@ -20,9 +20,7 @@ namespace capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
 namespace capi { struct ZoneOffsetCalculator; }
 class ZoneOffsetCalculator;
-struct TimeZoneInvalidIdError;
 struct TimeZoneInvalidOffsetError;
-struct TimeZoneUnknownError;
 }
 
 
@@ -36,9 +34,9 @@ namespace icu4x {
 class CustomTimeZone {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError> from_string(std::string_view s);
+  inline static std::unique_ptr<icu4x::CustomTimeZone> from_string(std::string_view s);
 
-  inline static std::unique_ptr<icu4x::CustomTimeZone> empty();
+  inline static std::unique_ptr<icu4x::CustomTimeZone> unknown();
 
   inline static std::unique_ptr<icu4x::CustomTimeZone> utc();
 
@@ -62,17 +60,13 @@ public:
 
   inline std::optional<uint32_t> offset_seconds_part() const;
 
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> try_set_time_zone_id(std::string_view id);
+  inline void set_time_zone_id(std::string_view id);
 
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> try_set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id);
+  inline void set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id);
 
-  inline void clear_time_zone_id();
+  inline std::string time_zone_id() const;
 
-  inline std::optional<std::string> time_zone_id() const;
-
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> try_set_metazone_id(std::string_view id);
-
-  inline void clear_metazone_id();
+  inline void set_metazone_id(std::string_view id);
 
   inline std::optional<std::string> metazone_id() const;
 

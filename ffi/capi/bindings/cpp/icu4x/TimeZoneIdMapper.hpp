@@ -12,7 +12,6 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "TimeZoneInvalidIdError.hpp"
 
 
 namespace icu4x {
@@ -46,16 +45,16 @@ inline diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataErr
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::TimeZoneIdMapper>>(std::unique_ptr<icu4x::TimeZoneIdMapper>(icu4x::TimeZoneIdMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::TimeZoneInvalidIdError> icu4x::TimeZoneIdMapper::iana_to_bcp47(std::string_view value) const {
+inline std::optional<std::string> icu4x::TimeZoneIdMapper::iana_to_bcp47(std::string_view value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
+  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
-inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::normalize_iana(std::string_view value) const {
+inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::normalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
@@ -64,10 +63,10 @@ inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdEr
   auto result = icu4x::capi::icu4x_TimeZoneIdMapper_normalize_iana_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return diplomat::Ok<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>>(result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {})));
+  return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
 }
 
-inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
+inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
@@ -76,16 +75,16 @@ inline diplomat::result<diplomat::result<std::string, icu4x::TimeZoneInvalidIdEr
   auto result = icu4x::capi::icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return diplomat::Ok<diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>>(result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {})));
+  return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
 }
 
-inline diplomat::result<std::string, icu4x::TimeZoneInvalidIdError> icu4x::TimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
+inline std::optional<std::string> icu4x::TimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return result.is_ok ? diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::TimeZoneInvalidIdError>(diplomat::Err<icu4x::TimeZoneInvalidIdError>(icu4x::TimeZoneInvalidIdError {}));
+  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneIdMapper* icu4x::TimeZoneIdMapper::AsFFI() const {

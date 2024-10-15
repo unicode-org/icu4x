@@ -74,6 +74,16 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
+impl TimeZoneBcp47Id {
+    /// The synthetic `Etc/Unknown` time zone.
+    ///
+    /// This is the result of parsing unknown zones. It's important that such parsing does not
+    /// fail, as new zones are added all the time, and ICU4X might not be up to date.
+    pub const fn unknown() -> Self {
+        Self(tinystr::tinystr!(8, "unk"))
+    }
+}
+
 impl Deref for TimeZoneBcp47Id {
     type Target = TinyAsciiStr<8>;
 

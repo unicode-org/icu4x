@@ -495,7 +495,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
         NeverCalendar,
     };
 
-    let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
+    let time_zone = CustomTimeZone::from_str("America/Los_Angeles");
     let tzf = TypedNeoFormatter::<NeverCalendar, _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
