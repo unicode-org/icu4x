@@ -267,7 +267,7 @@
 //!
 //! ```
 //! use icu::calendar::DateTime;
-//! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
+//! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -279,12 +279,11 @@
 //! // Set up the time zone. Note: the inputs here are
 //! //   1. The offset
 //! //   2. The IANA time zone ID
-//! //   3. A datetime (for metazone resolution)
+//! //   3. A datetime (for non-location name resolution)
 //! //   4. Note: we do not need the zone variant because of `load_generic_*()`
 //!
-//! // Set up the Metazone calculator, time zone ID mapper,
+//! // Set up the time zone ID mapper,
 //! // and the DateTime to use in calculation
-//! let mzc = MetazoneCalculator::new();
 //! let mapper = TimeZoneIdMapper::new();
 //! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 //!     .unwrap();
@@ -296,39 +295,40 @@
 //! )
 //! .unwrap();
 //!
-//! // "uschi" - has metazone symbol data for generic_non_location_short
-//! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
-//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! // "uschi" - has symbol data for generic_non_location_short
+//! let time_zone = TimeZoneInfo {
+//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
+//!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
+//!     local_time: Some((datetime.date, datetime.time)),
+//!     ..TimeZoneInfo::unknown()
+//! };
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "CT"
+//! );
+//!
+//! // This is the latest non-location name for `uschi`, so we don't *have*
+//! // to set the `local_time`.
+//! let time_zone = TimeZoneInfo {
+//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
+//!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
+//!     ..TimeZoneInfo::unknown()
+//! };
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
 //! );
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
-//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
-//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! let time_zone = TimeZoneInfo {
+//!     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "ushnl")),
+//!     offset: Some(UtcOffset::from_eighths_of_hour(-10 * 8)),
+//!     local_time: Some((datetime.date, datetime.time)),
+//!     ..TimeZoneInfo::unknown()
+//! };
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
-//! );
-//!
-//! // If we don't calculate the metazone, it falls back to generic location
-//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "{v}",
-//!     Err(DateTimeWriteError::MissingInputField("metazone"))
-//! );
-//!
-//! // If we don't set a zone at all, there's no fallback to the offset
-//! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "{v}",
-//!     Err(DateTimeWriteError::MissingInputField("metazone"))
 //! );
 //! ```
 
@@ -2136,7 +2136,7 @@ macro_rules! impl_zone_marker {
             /// In [`NeoFormatter`](crate::neo::NeoFormatter):
             ///
             /// ```
-            /// use icu::timezone::CustomTimeZone;
+            /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::neo::NeoFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -2150,13 +2150,13 @@ macro_rules! impl_zone_marker {
             /// )
             /// .unwrap();
             ///
-            /// // Time zone for America/Chicago in the summer
-            /// let zone = CustomTimeZone::from_parts(
-            ///     -40, // offset eighths of hour
-            ///     tinystr!(8, "uschi"), // time zone ID
-            ///     tinystr!(4, "amce"), // metazone ID
-            ///     tinystr!(2, "dt"), // zone variant: daylight time
-            /// );
+            /// // Time zone info for America/Chicago in the summer
+            /// let zone = TimeZoneInfo {
+            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
+            ///     zone_variant: Some(ZoneVariant::daylight()),
+            ///     ..TimeZoneInfo::unknown()
+            /// };
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -2168,7 +2168,7 @@ macro_rules! impl_zone_marker {
             ///
             /// ```
             /// use icu::calendar::{Date, Time};
-            /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+            /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::neo::TypedNeoFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2183,13 +2183,13 @@ macro_rules! impl_zone_marker {
             /// )
             /// .unwrap();
             ///
-            /// // Time zone for America/Chicago in the summer
-            /// let zone = CustomTimeZone::from_parts(
-            ///     -40, // offset eighths of hour
-            ///     tinystr!(8, "uschi"), // time zone ID
-            ///     tinystr!(4, "amce"), // metazone ID
-            ///     tinystr!(2, "dt"), // zone variant: daylight time
-            /// );
+            /// // Time zone info for America/Chicago in the summer
+            /// let zone = TimeZoneInfo {
+            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
+            ///     zone_variant: Some(ZoneVariant::daylight()),
+            ///     ..TimeZoneInfo::unknown()
+            /// };
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -2325,7 +2325,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -2350,7 +2350,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2500,7 +2500,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
@@ -2515,13 +2515,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = CustomTimeZone::from_parts(
-    ///     -24, // offset eighths of hour
-    ///     tinystr!(8, "brsao"), // time zone ID
-    ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
-    /// );
+    /// // Time zone info for America/Sao_Paulo in the summer
+    /// let zone = TimeZoneInfo {
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
+    ///     zone_variant: Some(ZoneVariant::standard()),
+    ///     ..TimeZoneInfo::unknown()
+    /// };
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -2543,7 +2543,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;
@@ -2615,7 +2615,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
@@ -2630,13 +2630,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = CustomTimeZone::from_parts(
-    ///     -24, // offset eighths of hour
-    ///     tinystr!(8, "brsao"), // time zone ID
-    ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
-    /// );
+    /// // Time zone info for America/Sao_Paulo in the summer
+    /// let zone = TimeZoneInfo {
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
+    ///     zone_variant: Some(ZoneVariant::standard()),
+    ///     ..TimeZoneInfo::unknown()
+    /// };
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -2659,7 +2659,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;

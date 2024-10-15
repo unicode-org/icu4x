@@ -37,7 +37,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
     datetime_iso.to_calendar(Gregorian)
 }
 
-/// Parse a [`DateTime`] and [`CustomTimeZone`] from a string.
+/// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
 /// string must take a specific form of the ISO 8601 format:
