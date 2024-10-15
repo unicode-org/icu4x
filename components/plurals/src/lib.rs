@@ -79,6 +79,8 @@ extern crate alloc;
 mod operands;
 pub mod provider;
 pub mod rules;
+#[cfg(feature = "compiled_data")]
+mod supported_locales_of;
 
 use core::cmp::{Ord, PartialOrd};
 use icu_provider::marker::ErasedMarker;
@@ -88,6 +90,8 @@ use provider::CardinalV1Marker;
 use provider::OrdinalV1Marker;
 use provider::PluralRulesV1;
 use rules::runtime::test_rule;
+#[cfg(feature = "compiled_data")]
+pub use supported_locales_of::supported_locales_of;
 
 #[cfg(feature = "experimental")]
 use provider::PluralRangesV1Marker;
