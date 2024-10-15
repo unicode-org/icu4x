@@ -168,7 +168,6 @@ impl CustomZonedDateTime<Iso> {
     ///
     /// ```
     /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_iso_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
@@ -251,7 +250,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// ```
     /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]").unwrap();
@@ -297,7 +295,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// ```
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
     /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
@@ -323,7 +320,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// ```
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();

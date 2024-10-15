@@ -36,7 +36,7 @@
 //!
 //! ## Zone Variant
 //!
-//! Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
+//! Many zones use different names and offsets in the summer than in the winter. In ICU4X,
 //! this is called the _zone variant_.
 //!
 //! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
@@ -46,17 +46,13 @@
 //! Note: It is optional (not required) to set the zone variant when constructing a
 //! [`TimeZoneInfo`]. Therefore, the list of possible variants does not include a generic variant
 //! to represent the lack of a preference.
-//! 
-//! # Examples
 //!
-//! Create a time zone for which the offset and time zone ID are already known, and calculate
-//! the metazone based on a certain local datetime:
+//! # Examples
 //!
 //! ```
 //! use icu::calendar::DateTime;
 //! use icu::timezone::TimeZoneInfo;
 //! use icu::timezone::UtcOffset;
-//! use icu::timezone::MetazoneCalculator;
 //! use icu::timezone::TimeZoneBcp47Id;
 //! use icu::timezone::TimeZoneIdMapper;
 //! use tinystr::{tinystr, TinyAsciiStr};
