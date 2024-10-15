@@ -338,7 +338,7 @@ impl TimeZoneIdMapperBorrowed<'_> {
         self.data.bcp47_ids.iter()
     }
 
-    /// Iterates through all metazones
+    /// Iterates through all time zones that are primary for some metazone.
     pub fn iter_metazones(&self) -> impl Iterator<Item = TimeZoneBcp47Id> + '_ {
         self.data
             .metazones

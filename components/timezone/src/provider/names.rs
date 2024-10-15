@@ -95,7 +95,7 @@ pub struct IanaToBcp47MapV3<'data> {
     // Note: this is 9739B as `ZeroVec<TimeZoneBcp47Id>` (`ZeroVec<TinyStr8>`)
     // and 9335B as `VarZeroVec<str>`
     pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
-    /// Metazones
+    /// The indices, in bcp47_ids, that are primary zones for a metazone.
     pub metazones: ZeroVec<'data, u16>,
     /// An XxHash64 checksum of [`Self::bcp47_ids`].
     pub bcp47_ids_checksum: u64,
