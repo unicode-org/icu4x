@@ -212,6 +212,10 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
+    /// The metazone lookup
+    pub(crate) mz_periods: Option<&'a provider::time_zones::MetazonePeriodV1<'a>>,
+    /// The zone offset lookup
+    pub(crate) offsets: Option<&'a provider::time_zones::ZoneOffsetPeriodV1<'a>>,
 }
 
 impl ExtractedInput {
@@ -431,11 +435,11 @@ impl FormatTimeZone for GenericNonLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let metazone_id = input.metazone(
-            time_zone_id,
-            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
-        );
+        let metazone_id = input.metazone(time_zone_id, metazone_period);
 
         let Some(name) = metazone_id.and_then(|mz| {
             names
@@ -468,10 +472,11 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let zone_variant = input.zone_variant_or_guess(
-            time_zone_id,
-            crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
-        );
+        let Some(offset_period) = data_payloads.offsets else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
+
+        let zone_variant = input.zone_variant_or_guess(time_zone_id, offset_period);
 
         let Some(names) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_specific_long.as_ref(),
@@ -479,11 +484,11 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let metazone_id = input.metazone(
-            time_zone_id,
-            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
-        );
+        let metazone_id = input.metazone(time_zone_id, metazone_period);
 
         let Some(name) = metazone_id.and_then(|mz| {
             names
@@ -645,11 +650,11 @@ impl FormatTimeZone for SpecificLocationFormat {
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(offset_period) = data_payloads.offsets else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let zone_variant = input.zone_variant_or_guess(
-            time_zone_id,
-            crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
-        );
+        let zone_variant = input.zone_variant_or_guess(time_zone_id, offset_period);
 
         if let Some(location) = locations.locations.get(&time_zone_id) {
             if zone_variant == ZoneVariant::daylight() {
@@ -695,11 +700,11 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let metazone_id = input.metazone(
-            time_zone_id,
-            crate::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
-        );
+        let metazone_id = input.metazone(time_zone_id, metazone_period);
 
         let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::Fallback));

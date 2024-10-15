@@ -222,6 +222,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -263,6 +265,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
@@ -421,6 +425,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -462,6 +468,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
@@ -504,6 +512,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader,
     {
@@ -536,6 +546,8 @@ where
             &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker::bind(provider),
             loader, // fixed decimal formatter
             locale,
             selection.pattern_items_for_data_loading(),
@@ -754,6 +766,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -843,6 +857,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1054,6 +1070,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     {
         Self::try_new_internal(
@@ -1143,6 +1161,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1240,6 +1260,8 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
@@ -1274,6 +1296,8 @@ where
             &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ZoneOffsetPeriodV1Marker::bind(provider),
             loader, // fixed decimal formatter
             locale,
             selection.pattern_items_for_data_loading(),

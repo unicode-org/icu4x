@@ -23,11 +23,15 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
     pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
     pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
+    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
+    pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
     pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
     pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
     pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
+    pub(crate) use super::ZoneOffsetPeriodV1 as OffsetsV1;
+    pub(crate) use super::ZoneOffsetPeriodV1Marker as OffsetsV1Marker;
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
