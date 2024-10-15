@@ -28,9 +28,9 @@ pub(crate) struct ExtractedInput {
     pub(crate) second: Option<IsoSecond>,
     pub(crate) nanosecond: Option<NanoSecond>,
     pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
-    pub(crate) offset: Option<Option<UtcOffset>>,
-    pub(crate) zone_variant: Option<Option<ZoneVariant>>,
-    pub(crate) local_time: Option<Option<(Date<Iso>, Time)>>,
+    pub(crate) offset: Option<UtcOffset>,
+    pub(crate) zone_variant: Option<ZoneVariant>,
+    pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
 impl ExtractedInput {

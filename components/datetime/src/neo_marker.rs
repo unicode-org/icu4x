@@ -914,21 +914,21 @@ impl From<NeverField> for Option<TimeZoneBcp47Id> {
     }
 }
 
-impl From<NeverField> for Option<Option<UtcOffset>> {
+impl From<NeverField> for Option<UtcOffset> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverField> for Option<Option<ZoneVariant>> {
+impl From<NeverField> for Option<ZoneVariant> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverField> for Option<Option<(Date<Iso>, Time)>> {
+impl From<NeverField> for Option<(Date<Iso>, Time)> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -1053,11 +1053,11 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
     /// Marker for resolving the time zone offset input field.
-    type TimeZoneOffsetInput: Into<Option<Option<UtcOffset>>>;
+    type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: Into<Option<Option<ZoneVariant>>>;
+    type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
     /// Marker for resolving the time zone metazone input field.
-    type TimeZoneLocalTimeInput: Into<Option<Option<(Date<Iso>, Time)>>>;
+    type TimeZoneLocalTimeInput: Into<Option<(Date<Iso>, Time)>>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting

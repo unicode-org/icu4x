@@ -11,7 +11,6 @@ use crate::{
 };
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_calendar::{Date, DateTime, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::{provider::MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
@@ -218,24 +217,23 @@ impl ExtractedInput {
     fn zone_variant_or_guess(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        local_time: Option<(Date<Iso>, Time)>,
         offset_period: &icu_timezone::provider::ZoneOffsetPeriodV1,
     ) -> ZoneVariant {
-        if let Some(zv) = self.zone_variant.flatten() {
+        if let Some(zv) = self.zone_variant {
             return zv;
         }
 
-        let Some(offset) = self.offset.flatten() else {
+        let Some(offset) = self.offset else {
             return ZoneVariant::standard();
         };
 
         let dst_offset = {
             match offset_period.0.get0(&time_zone_id) {
                 Some(cursor) => {
-                    let offsets = if let Some((date, time)) = local_time {
+                    let offsets = if let Some((date, time)) = self.local_time {
                         let mut offsets = None;
                         let minutes_since_local_unix_epoch =
-                            DateTime { date, time }.minutes_since_local_unix_epoch();
+                            icu_calendar::DateTime { date, time }.minutes_since_local_unix_epoch();
                         for (minutes, id) in cursor.iter1_copied().rev() {
                             if minutes_since_local_unix_epoch
                                 <= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
@@ -270,15 +268,14 @@ impl ExtractedInput {
     fn metazone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        local_time: Option<(Date<Iso>, Time)>,
         metazone_period: &icu_timezone::provider::MetazonePeriodV1,
     ) -> Option<MetazoneId> {
         match metazone_period.0.get0(&time_zone_id) {
             Some(cursor) => {
-                if let Some((date, time)) = local_time {
+                if let Some((date, time)) = self.local_time {
                     let mut metazone_id = None;
                     let minutes_since_local_unix_epoch =
-                        DateTime { date, time }.minutes_since_local_unix_epoch();
+                        icu_calendar::DateTime { date, time }.minutes_since_local_unix_epoch();
                     for (minutes, id) in cursor.iter1() {
                         if minutes_since_local_unix_epoch
                             >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
@@ -427,9 +424,6 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(local_time) = input.local_time else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
-        };
         let Some(names) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
@@ -439,7 +433,6 @@ impl FormatTimeZone for GenericNonLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            local_time,
             icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
@@ -474,12 +467,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(local_time) = input.local_time else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
-        };
         let zone_variant = input.zone_variant_or_guess(
             time_zone_id,
-            local_time,
             icu_timezone::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
         );
 
@@ -492,7 +481,6 @@ impl FormatTimeZone for SpecificNonLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            local_time,
             icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
@@ -528,7 +516,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(Some(offset)) = input.offset else {
+        let Some(offset) = input.offset else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
         };
         let Some(essentials) = data_payloads.essentials else {
@@ -650,9 +638,6 @@ impl FormatTimeZone for SpecificLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(local_time) = input.local_time else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
-        };
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
@@ -662,7 +647,6 @@ impl FormatTimeZone for SpecificLocationFormat {
 
         let zone_variant = input.zone_variant_or_guess(
             time_zone_id,
-            local_time,
             icu_timezone::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
         );
 
@@ -700,9 +684,6 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(local_time) = input.local_time else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
-        };
 
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
@@ -716,7 +697,6 @@ impl FormatTimeZone for GenericPartialLocationFormat {
 
         let metazone_id = input.metazone(
             time_zone_id,
-            local_time,
             icu_timezone::provider::Baked::SINGLETON_METAZONE_PERIOD_V1_MARKER,
         );
 
@@ -767,7 +747,7 @@ impl FormatTimeZone for Iso8601Format {
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(Some(offset)) = input.offset else {
+        let Some(offset) = input.offset else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
         };
         self.format_infallible(sink, offset).map(|()| Ok(()))

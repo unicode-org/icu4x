@@ -93,11 +93,13 @@ use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
 use tinystr::{tinystr, TinyAsciiStr};
 
-// Create a time zone for America/Chicago at UTC-6:
-let mut time_zone = TimeZoneInfo::new_with_offset("-0600".parse().unwrap());
 let mapper = TimeZoneIdMapper::new();
-time_zone.time_zone_id =
-    mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+// Create a time zone for America/Chicago at UTC-6:
+let mut time_zone = TimeZoneInfo {
+    time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
+    offset: Some("-0600".parse().unwrap()),
+    ..TimeZoneInfo::unknown()
+};
 
 // Alternatively, set it directly from the BCP-47 ID
 assert_eq!(time_zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
