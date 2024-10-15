@@ -524,20 +524,14 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let location = locations
-            .locations
-            .get(&time_zone_id)
-            .or_else(|| {
-                locations
-                    .locations
-                    .get(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
-            })
-            .unwrap_or("Unknown");
-
-        locations
-            .pattern_generic
-            .interpolate([location])
-            .write_to(sink)?;
+        if let Some(location) = locations.locations.get(&time_zone_id) {
+            locations
+                .pattern_generic
+                .interpolate([location])
+                .write_to(sink)?;
+        } else {
+            sink.write_str(&locations.unknown)?;
+        }
 
         Ok(Ok(()))
     }
@@ -567,34 +561,21 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-
-        Ok(if zone_variant == ZoneVariant::daylight() {
-            locations
-                .pattern_daylight
-                .interpolate([location])
-                .write_to(sink)?;
-
-            Ok(())
-        } else if zone_variant == ZoneVariant::standard() {
-            locations
-                .pattern_standard
-                .interpolate([location])
-                .write_to(sink)?;
-
-            Ok(())
+        if let Some(location) = locations.locations.get(&time_zone_id) {
+            if zone_variant == ZoneVariant::daylight() {
+                &locations.pattern_daylight
+            } else if zone_variant == ZoneVariant::standard() {
+                &locations.pattern_standard
+            } else {
+                &locations.pattern_generic
+            }
+            .interpolate([location])
+            .write_to(sink)?;
         } else {
-            sink.with_part(writeable::Part::ERROR, |sink| {
-                locations
-                    .pattern_generic
-                    .interpolate([location])
-                    .write_to(sink)
-            })?;
+            sink.write_str(&locations.unknown)?;
+        }
 
-            Err(FormatTimeZoneError::MissingInputField("zone_offset"))
-        })
+        Ok(Ok(()))
     }
 }
 

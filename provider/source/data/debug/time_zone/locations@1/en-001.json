@@ -371,7 +371,6 @@
     "ugkla": "Uganda",
     "umawk": "Wake",
     "ummdy": "Midway",
-    "unk": "Unknown City",
     "usadk": "Adak",
     "usaeg": "Marengo, Indiana",
     "usanc": "Anchorage",
@@ -419,6 +418,7 @@
     "zmlun": "Zambia",
     "zwhre": "Zimbabwe"
   },
+  "unknown": "Unknown City Time",
   "pattern_generic": [
     {
       "Placeholder": "Singleton"

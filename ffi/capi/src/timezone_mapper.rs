@@ -47,11 +47,10 @@ pub mod ffi {
             &self,
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
+        ) {
             let handle = self.0.as_borrowed();
-            let bcp47 = handle.iana_bytes_to_bcp47(value)?;
+            let bcp47 = handle.iana_bytes_to_bcp47(value);
             let _infallible = bcp47.0.write_to(write);
-            Some(())
         }
 
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana, FnInStruct)]

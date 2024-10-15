@@ -19,6 +19,7 @@ use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use writeable::Writeable;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -124,67 +125,79 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .time_zones
             .values;
 
+        let mut locations = bcp47_tzids
+            .iter()
+            .filter_map(|(bcp47, bcp47_tzid_data)| {
+                bcp47_tzid_data
+                    .alias
+                    .as_ref()
+                    .map(|aliases| (bcp47, aliases))
+            })
+            // Montreal is meant to be deprecated, but pre-43 the deprecation
+            // fallback was not set, which is why it might show up here.
+            .filter(|(bcp47, _)| bcp47.0 != "camtr")
+            .filter_map(|(bcp47, aliases)| {
+                if let Some(region) = primary_zones.get(bcp47) {
+                    Some((
+                        *bcp47,
+                        region_display_names
+                            .get(region)
+                            .copied()
+                            .unwrap_or(region.as_str())
+                            .to_string(),
+                    ))
+                } else {
+                    aliases
+                        .split(' ')
+                        .filter_map(|alias| {
+                            let mut alias_parts = alias.split('/');
+                            let continent = alias_parts.next().expect("split non-empty");
+                            let location_or_subregion = alias_parts.next()?;
+                            let location_in_subregion = alias_parts.next();
+                            time_zone_names
+                                .zone
+                                .0
+                                .get(continent)
+                                .and_then(|x| x.0.get(location_or_subregion))
+                                .and_then(|x| match x {
+                                    LocationOrSubRegion::Location(place) => Some(place),
+                                    LocationOrSubRegion::SubRegion(region) => {
+                                        region.get(location_in_subregion?)
+                                    }
+                                })
+                                .and_then(|p| p.exemplar_city.clone())
+                        })
+                        .next()
+                        .or_else(|| {
+                            let canonical_alias =
+                                aliases.split(' ').next().expect("split non-empty");
+                            let mut alias_parts = canonical_alias.split('/');
+                            (alias_parts.next() != Some("Etc")).then(|| {
+                                alias_parts
+                                    .next_back()
+                                    .expect("split non-empty")
+                                    .replace('_', " ")
+                            })
+                        })
+                        .map(|name| (*bcp47, name))
+                }
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let unknown = time_zone_names
+            .region_format
+            .interpolate([locations
+                .remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
+                .unwrap_or("Unknown".into())])
+            .write_to_string()
+            .into_owned()
+            .into();
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(LocationsV1 {
-                locations: bcp47_tzids
-                    .iter()
-                    .filter_map(|(bcp47, bcp47_tzid_data)| {
-                        bcp47_tzid_data
-                            .alias
-                            .as_ref()
-                            .map(|aliases| (bcp47, aliases))
-                    })
-                    // Montreal is meant to be deprecated, but pre-43 the deprecation
-                    // fallback was not set, which is why it might show up here.
-                    .filter(|(bcp47, _)| bcp47.0 != "camtr")
-                    .filter_map(|(bcp47, aliases)| {
-                        if let Some(region) = primary_zones.get(bcp47) {
-                            Some((
-                                *bcp47,
-                                region_display_names
-                                    .get(region)
-                                    .copied()
-                                    .unwrap_or(region.as_str())
-                                    .to_string(),
-                            ))
-                        } else {
-                            aliases
-                                .split(' ')
-                                .filter_map(|alias| {
-                                    let mut alias_parts = alias.split('/');
-                                    let continent = alias_parts.next().expect("split non-empty");
-                                    let location_or_subregion = alias_parts.next()?;
-                                    let location_in_subregion = alias_parts.next();
-                                    time_zone_names
-                                        .zone
-                                        .0
-                                        .get(continent)
-                                        .and_then(|x| x.0.get(location_or_subregion))
-                                        .and_then(|x| match x {
-                                            LocationOrSubRegion::Location(place) => Some(place),
-                                            LocationOrSubRegion::SubRegion(region) => {
-                                                region.get(location_in_subregion?)
-                                            }
-                                        })
-                                        .and_then(|p| p.exemplar_city.clone())
-                                })
-                                .next()
-                                .or_else(|| {
-                                    let canonical_alias =
-                                        aliases.split(' ').next().expect("split non-empty");
-                                    let mut alias_parts = canonical_alias.split('/');
-                                    (alias_parts.next() != Some("Etc")).then(|| {
-                                        alias_parts
-                                            .next_back()
-                                            .expect("split non-empty")
-                                            .replace('_', " ")
-                                    })
-                                })
-                                .map(|name| (*bcp47, name))
-                        }
-                    })
-                    .collect(),
+                locations: locations.into_iter().collect(),
+                unknown,
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
                 pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),

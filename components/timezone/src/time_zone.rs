@@ -149,16 +149,12 @@ impl CustomTimeZone {
             };
         }
         let mapper = TimeZoneIdMapper::new();
-        if let Some(time_zone_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
-            return Self {
-                offset: None,
-                time_zone_id,
-                metazone_id: None,
-                zone_variant: None,
-            };
+        Self {
+            offset: None,
+            time_zone_id: mapper.as_borrowed().iana_bytes_to_bcp47(code_units),
+            metazone_id: None,
+            zone_variant: None,
         }
-
-        Self::unknown()
     }
 
     /// Infer the metazone ID.

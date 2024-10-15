@@ -302,7 +302,7 @@
 //!
 //! // "uschi" - has metazone symbol data for generic_non_location_short
 //! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap();
+//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
