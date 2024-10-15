@@ -82,11 +82,11 @@ use crate::{
 ///     TimeZoneBcp47Id(tinystr!(8, "aumel"))
 /// );
 ///
-/// // The IANA zone "Australia/Prominent_Knob" does not exist
+/// // The IANA zone "Australia/Boing_Boing" does not exist
 /// // (maybe not *yet*), so it produces the special unknown
 /// // timezone in order for this operation to be infallible:
 /// assert_eq!(
-///     mapper.iana_to_bcp47("Australia/Prominent_Knob"),
+///     mapper.iana_to_bcp47("Australia/Boing_Boing"),
 ///     TimeZoneBcp47Id::unknown()
 /// );
 ///
