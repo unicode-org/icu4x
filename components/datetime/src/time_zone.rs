@@ -53,7 +53,7 @@ impl ResolvedNeoTimeZoneSkeleton {
         crate::tz_registry::resolved_to_field(self)
     }
 
-    pub(crate) fn units(self) -> [Option<TimeZoneFormatterUnit>; 3] {
+    pub(crate) fn units(self) -> impl Iterator<Item = TimeZoneFormatterUnit> {
         match self {
             // `z..zzz`
             ResolvedNeoTimeZoneSkeleton::SpecificShort => [
@@ -198,6 +198,8 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
             ],
         }
+        .into_iter()
+        .flatten()
     }
 }
 
@@ -318,8 +320,7 @@ pub(super) enum TimeZoneFormatterUnit {
 pub(super) enum FormatTimeZoneError {
     MissingZoneSymbols,
     MissingFixedDecimalFormatter,
-    NameNotFound,
-    #[allow(dead_code)] // the field is not being read but it may be useful
+    Fallback,
     MissingInputField(&'static str),
 }
 
@@ -357,7 +358,7 @@ where
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         let Some(offset) = input.offset else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("offset")));
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
         };
         self.format_offset(sink, offset, data_payloads, fdf)
     }
@@ -439,7 +440,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
                 .get(&time_zone_id)
                 .or_else(|| names.defaults.get(&mz))
         }) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
         sink.write_str(name)?;
@@ -483,7 +484,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
                 .get_2d(&time_zone_id, &zone_variant)
                 .or_else(|| names.defaults.get_2d(&mz, &zone_variant))
         }) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
         sink.write_str(name)?;
@@ -645,7 +646,7 @@ impl FormatTimeZone for SpecificLocationFormat {
         };
 
         let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
         Ok(if zone_variant == ZoneVariant::daylight() {
@@ -706,7 +707,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         };
 
         let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
         let Some(non_location) = metazone_id.and_then(|mz| {
             non_locations
@@ -714,7 +715,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
                 .get(&time_zone_id)
                 .or_else(|| non_locations.defaults.get(&mz))
         }) else {
-            return Ok(Err(FormatTimeZoneError::NameNotFound));
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
         locations

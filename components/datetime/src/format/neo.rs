@@ -383,7 +383,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::unknown()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {z}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -395,7 +395,7 @@ size_test!(
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
 ///         (42, 45, Part::ERROR), // {a}
-///         (46, 53, Part::ERROR), // {GMT+?}
+///         (46, 49, Part::ERROR), // {z}
 ///     ]
 /// );
 /// ```

@@ -11,10 +11,7 @@ use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Ye
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
-use crate::time_zone::{
-    FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneDataPayloadsBorrowed,
-    TimeZoneFormatterUnit,
-};
+use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format};
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 
 use core::fmt::{self, Write};
@@ -24,7 +21,6 @@ use icu_calendar::types::{
 };
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
-use icu_timezone::UtcOffset;
 use writeable::{Part, Writeable};
 
 /// Apply length to input number and write to result using fixed_decimal_format.
@@ -475,34 +471,27 @@ where
                 }
                 Some(time_zone) => {
                     let payloads = datetime_names.get_payloads();
-                    let mut r = Err(());
-                    for formatter in time_zone.units().into_iter().flatten() {
+                    let mut r = Err(DateTimeWriteError::MissingNames(field));
+                    for formatter in time_zone.units() {
                         match formatter.format(w, input, payloads, fdf)? {
-                            Err(FormatTimeZoneError::MissingInputField(_)) => {
-                                // The time zone input doesn't have the fields for this formatter.
-                                // TODO: What behavior makes the most sense here?
-                                // We can keep trying other formatters.
-                                continue;
-                            }
-                            Err(FormatTimeZoneError::NameNotFound) => {
-                                // Expected common case: data is loaded, but this time zone's
-                                // name was not found in the data.
-                                continue;
-                            }
-                            Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                                // We don't have the necessary data for this formatter.
-                                // TODO: What behavior makes the most sense here?
-                                // We can keep trying other formatters.
-                                continue;
-                            }
-                            Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
-                                // We don't have the necessary data for this formatter.
-                                // TODO: What behavior makes the most sense here?
-                                // We can keep trying other formatters.
-                                continue;
-                            }
                             Ok(()) => {
                                 r = Ok(());
+                                break;
+                            }
+                            Err(FormatTimeZoneError::Fallback) => {
+                                // Expected common case: the unit needs fall back to the next one
+                                continue;
+                            }
+                            Err(FormatTimeZoneError::MissingInputField(f)) => {
+                                r = Err(DateTimeWriteError::MissingInputField(f));
+                                break;
+                            }
+                            Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                                r = Err(DateTimeWriteError::MissingNames(field));
+                                break;
+                            }
+                            Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
+                                r = Err(DateTimeWriteError::MissingFixedDecimalFormatter);
                                 break;
                             }
                         }
@@ -510,7 +499,11 @@ where
 
                     match r {
                         Ok(()) => Ok(()),
-                        Err(()) => {
+                        Err(DateTimeWriteError::MissingInputField(_)) => {
+                            write_value_missing(w, field)?;
+                            r
+                        }
+                        _ => {
                             w.with_part(Part::ERROR, |w| match input.offset {
                                 Some(offset) => Iso8601Format {
                                     format: IsoFormat::Basic,
@@ -520,8 +513,7 @@ where
                                 .format_infallible(w, offset),
                                 None => "{GMT+?}".write_to(w),
                             })?;
-                            // Return an error since offset data was missing
-                            Err(DateTimeWriteError::MissingNames(field))
+                            r
                         }
                     }
                 }
