@@ -77,17 +77,17 @@ int main() {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
         return 1;
     }
-    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value();
+    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
     if (normalized_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
         return 1;
     }
-    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value();
+    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().value();
     if (canonicalied_iana_id != "Asia/Kolkata") {
         std::cout << "Time zone ID does not canonicalize: " << canonicalied_iana_id << std::endl;
         return 1;
     }
-    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi");
+    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").value();
     if (slow_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
         return 1;

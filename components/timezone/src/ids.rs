@@ -327,22 +327,20 @@ impl TimeZoneIdMapperBorrowed<'_> {
     /// let mapper = mapper.as_borrowed();
     ///
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "inccu"));
-    /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id);
+    /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id).unwrap();
     ///
     /// assert_eq!(result, "Asia/Kolkata");
     ///
     /// // Unknown BCP-47 time zone ID:
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
-    /// assert_eq!(mapper.find_canonical_iana_from_bcp47(bcp47_id), "Etc/Unknown");
+    /// assert_eq!(mapper.find_canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> String {
-        let Some(index) = self.data.bcp47_ids.binary_search(&bcp47_id).ok() else {
-            return "Etc/Unknown".into();
-        };
+    pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<String> {
+        let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let stack = alloc::vec![(self.data.map.cursor(), 0, 0)];
         let needle = IanaTrieValue::canonical_for_index(index);
-        self.iana_search(needle, String::new(), stack)
-            .unwrap_or_else(|| "Etc/Unknown".into())
+        let string = self.iana_search(needle, String::new(), stack)?;
+        Some(string)
     }
 
     /// Queries the data for `iana_id` without recording the normalized string.

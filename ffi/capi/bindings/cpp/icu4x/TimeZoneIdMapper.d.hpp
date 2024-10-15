@@ -36,7 +36,7 @@ public:
 
   inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 
-  inline std::string find_canonical_iana_from_bcp47(std::string_view value) const;
+  inline std::optional<std::string> find_canonical_iana_from_bcp47(std::string_view value) const;
 
   inline const icu4x::capi::TimeZoneIdMapper* AsFFI() const;
   inline icu4x::capi::TimeZoneIdMapper* AsFFI();

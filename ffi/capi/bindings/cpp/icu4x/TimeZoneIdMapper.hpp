@@ -29,7 +29,8 @@ namespace capi {
     typedef struct icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result;
     icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
-    void icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result;
+    icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(const icu4x::capi::TimeZoneIdMapper* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_TimeZoneIdMapper_destroy_mv1(TimeZoneIdMapper* self);
@@ -76,13 +77,13 @@ inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::
   return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
 }
 
-inline std::string icu4x::TimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
+inline std::optional<std::string> icu4x::TimeZoneIdMapper::find_canonical_iana_from_bcp47(std::string_view value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this->AsFFI(),
     {value.data(), value.size()},
     &write);
-  return output;
+  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneIdMapper* icu4x::TimeZoneIdMapper::AsFFI() const {

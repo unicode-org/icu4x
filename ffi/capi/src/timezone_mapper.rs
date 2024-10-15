@@ -88,13 +88,13 @@ pub mod ffi {
             &self,
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        ) -> Option<()> {
             let handle = self.0.as_borrowed();
-            let bcp47 = TinyAsciiStr::try_from_utf8(value)
-                .ok()
-                .map(icu_timezone::TimeZoneBcp47Id)
-                .unwrap_or(icu_timezone::TimeZoneBcp47Id::unknown());
-            let _infallible = handle.find_canonical_iana_from_bcp47(bcp47).write_to(write);
+            let iana = TinyAsciiStr::try_from_utf8(value).ok().and_then(|s| {
+                handle.find_canonical_iana_from_bcp47(icu_timezone::TimeZoneBcp47Id(s))
+            })?;
+            let _infallible = iana.write_to(write);
+            Some(())
         }
     }
 

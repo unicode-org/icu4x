@@ -24,5 +24,5 @@ export class TimeZoneIdMapper {
 
     canonicalizeIana(value: string): string | null;
 
-    findCanonicalIanaFromBcp47(value: string): string;
+    findCanonicalIanaFromBcp47(value: string): string | null;
 }
