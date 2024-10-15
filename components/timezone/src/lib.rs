@@ -8,18 +8,10 @@
 //!
 //! In ICU4X, a [formattable time zone](TimeZoneInfo) consists of four different fields:
 //!
-//! 1. The offset from UTC
-//! 2. The time zone ID
-//! 3. The metazone ID
-//! 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
-//!
-//! ## UTC Offset
-//!
-//! The UTC offset precisely states the time difference between the time zone in question and
-//! Coordinated Universal Time (UTC).
-//!
-//! In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
-//! use the term "GMT" instead of "UTC").
+//! 1. The time zone ID
+//! 2. The offset from UTC
+//! 3. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
+//! 4. A timestamp, as time zone names can change over time
 //!
 //! ## Time Zone
 //!
@@ -34,27 +26,13 @@
 //! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
 //! IANA time zone, use [`TimeZoneIdMapper`].
 //!
-//! ## Metazone
+//! ## UTC Offset
 //!
-//! A metazone is a collection of multiple time zones that share the same localized formatting
-//! at a particular date and time.
+//! The UTC offset precisely states the time difference between the time zone in question and
+//! Coordinated Universal Time (UTC).
 //!
-//! For example, "America/Chicago" and "America/Indiana/Knox" both map to US Central Time, or
-//! `"America_Central"`.
-//!
-//! The mapping from time zone to metazone depends on the date. For example, from 1991 to 2006,
-//! "America/Indiana/Knox" mapped to US Eastern Time instead of US Central Time.
-//!
-//! As with time zone IDs, there are two interchangeable forms:
-//!
-//! 1. Long form, like `"America_Central"`
-//! 2. Short form compatible with BCP-47, like `"amce"`
-//!
-//! ICU4X uses the short form.
-//!
-//! Note: in ICU4X, "metazone" is one word and "time zone" is two words, except for this crate
-//! and module name, where "timezone" is used with no separators. See
-//! <https://github.com/unicode-org/icu4x/issues/2507>.
+//! In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
+//! use the term "GMT" instead of "UTC").
 //!
 //! ## Zone Variant
 //!
@@ -68,17 +46,7 @@
 //! Note: It is optional (not required) to set the zone variant when constructing a
 //! [`TimeZoneInfo`]. Therefore, the list of possible variants does not include a generic variant
 //! to represent the lack of a preference.
-//!
-//! # Calculations
-//!
-//! In date/time processing, normally only a subset of information is available, and the other
-//! fields must be computed from it.
-//!
-//! The following calculations are currently supported or will be supported:
-//!
-//! 1. Time Zone + Local DateTime → Metazone ([`MetazoneCalculator`])
-//! 2. Time Zone + Local DateTime + Offset → Zone Variant ([`ZoneOffsetCalculator`])
-//!
+//! 
 //! # Examples
 //!
 //! Create a time zone for which the offset and time zone ID are already known, and calculate
