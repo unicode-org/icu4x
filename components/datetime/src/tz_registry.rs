@@ -44,7 +44,7 @@ macro_rules! time_zone_style_registry {
                 (SpecificShort, LowerZ, Abbreviated), // 'zzz'
                 (Isoxxxx, UpperZ, TwoDigit), // 'ZZ'
                 (Isoxxxx, UpperZ, Abbreviated), // 'ZZZ'
-                (OffsetShort, UpperZ, Wide), // 'ZZZZ'
+                (OffsetLong, UpperZ, Wide), // 'ZZZZ'
                 (Isoxxxx, LowerX, Wide), // 'xxxx'
                 (IsoXXXXX, UpperX, Narrow), // 'XXXXX'
             ],
