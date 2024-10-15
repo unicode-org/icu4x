@@ -31,6 +31,7 @@ use icu_calendar::provider::{
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
 };
 use icu_calendar::AnyCalendar;
+use icu_calendar::AsCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
@@ -1427,6 +1428,37 @@ where
             input: datetime,
             names: self.names.as_borrowed(),
         }
+    }
+
+    /// Formats a date in a field set with only date fields.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_skeleton::NeoDateComponents;
+    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let fmt = NeoFormatter::try_new_with_skeleton(
+    ///     &locale!("es-MX").into(),
+    ///     NeoDateSkeleton::for_length_and_components(
+    ///         NeoSkeletonLength::Medium,
+    ///         NeoDateComponents::DayWeekday,
+    ///     ),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_try_writeable_eq!(fmt.format_date("2024-10-01".parse().unwrap()), "mié 10");
+    /// ```
+    pub fn format_date<C, A>(&self, date: icu_calendar::Date<A>) -> FormattedNeoDateTime where C: icu_calendar::any_calendar::IntoAnyCalendar, A: AsCalendar<Calendar = C>,
+    for<'a> icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>: AllInputMarkers<R>
+     {
+        self.convert_and_format(&date)
     }
 }
 
