@@ -13,6 +13,11 @@ use icu_provider::prelude::*;
 pub const MIN_UNIT_DAYS: u16 = 14;
 
 /// Calculator for week-of-month and week-of-year based on locale-specific configurations.
+///
+/// Note that things get subtly tricky for weeks that straddle the boundary between two years: different locales
+/// may consider them as belonging to the preceding or succeeding year based on where exactly the week gets split.
+/// While this struct can be populated by values supplied by the programmer, we do recommend using one of the
+/// constructors to get locale data.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct WeekCalculator {
