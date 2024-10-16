@@ -116,8 +116,8 @@ impl TimeZoneInfo {
         Ok(Self {
             time_zone_id: crate::TimeZoneBcp47Id::unknown(),
             offset: Some(UtcOffset::try_from_utc_offset_record(record)?),
-            zone_variant: None,
-            local_time: None,
+            zone_variant: Some(ZoneVariant::standard()),
+            local_time: Some((Date::unix_epoch(), Time::midnight())),
         })
     }
 
@@ -144,17 +144,22 @@ impl TimeZoneInfo {
                         time.second,
                     )?;
                     if let Some(offset) = offset {
-                        if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
-                            .compute_offsets_from_time_zone(time_zone_id, &iso)
-                        {
-                            zone_variant = if offset == std_offset {
-                                Some(ZoneVariant::standard())
-                            } else if Some(offset) == dst_offset {
-                                Some(ZoneVariant::daylight())
+                        zone_variant = Some(
+                            if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
+                                .compute_offsets_from_time_zone(time_zone_id, &iso)
+                            {
+                                if offset == std_offset {
+                                    ZoneVariant::standard()
+                                } else if Some(offset) == dst_offset {
+                                    ZoneVariant::daylight()
+                                } else {
+                                    return Err(ParseError::InvalidOffsetError);
+                                }
                             } else {
-                                return Err(ParseError::InvalidOffsetError);
-                            };
-                        }
+                                debug_assert_eq!(time_zone_id.0.as_str(), "unk");
+                                ZoneVariant::standard()
+                            },
+                        );
                     }
                     local_time = Some((iso.date, iso.time));
                 };

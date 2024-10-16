@@ -23,7 +23,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 {v}"
+                "en": "Tuesday, January 21, 2020, 08:25:07 Unknown City Time"
             }
         }
     },
@@ -51,7 +51,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 {v}"
+                "en": "Tuesday, January 21, 2020, 08:25:07 Unknown City Time"
             }
         }
     },
@@ -79,7 +79,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 {z}"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -107,7 +107,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 {z}"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
