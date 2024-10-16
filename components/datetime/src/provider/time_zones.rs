@@ -85,9 +85,6 @@ pub struct LocationsV1<'data> {
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
-    /// The display name for an unknown time zone. This is not combined with a pattern.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unknown: Cow<'data, str>,
     /// The format string for a region's generic time.
     #[cfg_attr(
         feature = "serde",

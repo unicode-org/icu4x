@@ -74,12 +74,18 @@ impl ResolvedNeoTimeZoneSkeleton {
                     self.to_field().length,
                 )),
                 Some(TimeZoneFormatterUnit::GenericLocation),
-                None,
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
             ],
             // 'VVVV'
-            ResolvedNeoTimeZoneSkeleton::Location => {
-                [Some(TimeZoneFormatterUnit::GenericLocation), None, None]
-            }
+            ResolvedNeoTimeZoneSkeleton::Location => [
+                Some(TimeZoneFormatterUnit::GenericLocation),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
+                None,
+            ],
             // `O`, `OOOO`, `ZZZZ`
             ResolvedNeoTimeZoneSkeleton::OffsetShort | ResolvedNeoTimeZoneSkeleton::OffsetLong => [
                 Some(TimeZoneFormatterUnit::LocalizedOffset(
@@ -555,14 +561,14 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        if let Some(location) = locations.locations.get(&time_zone_id) {
-            locations
-                .pattern_generic
-                .interpolate([location])
-                .write_to(sink)?;
-        } else {
-            sink.write_str(&locations.unknown)?;
-        }
+        let Some(location) = locations.locations.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        locations
+            .pattern_generic
+            .interpolate([location])
+            .write_to(sink)?;
 
         Ok(Ok(()))
     }
@@ -592,19 +598,19 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        if let Some(location) = locations.locations.get(&time_zone_id) {
-            if zone_variant == ZoneVariant::daylight() {
-                &locations.pattern_daylight
-            } else if zone_variant == ZoneVariant::standard() {
-                &locations.pattern_standard
-            } else {
-                &locations.pattern_generic
-            }
-            .interpolate([location])
-            .write_to(sink)?;
+        let Some(location) = locations.locations.get(&time_zone_id) else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        if zone_variant == ZoneVariant::daylight() {
+            &locations.pattern_daylight
+        } else if zone_variant == ZoneVariant::standard() {
+            &locations.pattern_standard
         } else {
-            sink.write_str(&locations.unknown)?;
+            &locations.pattern_generic
         }
+        .interpolate([location])
+        .write_to(sink)?;
 
         Ok(Ok(()))
     }
