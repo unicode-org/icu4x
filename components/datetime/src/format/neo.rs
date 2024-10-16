@@ -14,7 +14,7 @@ use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_marker::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
-    NeverField, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
+    TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeSkeleton;
@@ -2306,7 +2306,7 @@ where
             + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
             + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
             + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
-            + GetField<NeverField>,
+            + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
@@ -2371,7 +2371,7 @@ where
             + GetField<<R::T as TimeMarkers>::MinuteInput>
             + GetField<<R::T as TimeMarkers>::SecondInput>
             + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + GetField<NeverField>,
+            + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
@@ -2436,7 +2436,7 @@ where
             + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
             + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
             + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
-            + GetField<NeverField>,
+            + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,

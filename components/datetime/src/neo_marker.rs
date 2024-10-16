@@ -448,10 +448,8 @@ pub trait GetField<T> {
 /// Generates an impl of [`GetField`]
 macro_rules! impl_get_field {
     ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, never) => {
-        impl $(<$($generics0),+>)? GetField<NeverField> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> NeverField {
-                NeverField
-            }
+        impl $(<$($generics0),+>)? GetField<()> for $type $(<$($generics1),+>)? {
+            fn get_field(&self) {}
         }
     };
     ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, length, yes) => {
@@ -770,170 +768,29 @@ impl GetField<Option<(Date<Iso>, Time)>> for TimeZoneInfo {
     }
 }
 
-/// Struct representing the absence of a datetime formatting field.
-#[derive(Debug, Copy, Clone, Default)]
-#[allow(clippy::exhaustive_structs)] // empty marker struct
-pub struct NeverField;
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NeverField> for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for Date<A> {
     #[inline]
-    fn get_field(&self) -> NeverField {
-        NeverField
-    }
+    fn get_field(&self) {}
 }
 
-impl GetField<NeverField> for Time {
+impl GetField<()> for Time {
     #[inline]
-    fn get_field(&self) -> NeverField {
-        NeverField
-    }
+    fn get_field(&self) {}
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NeverField> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> NeverField {
-        NeverField
-    }
+    fn get_field(&self) {}
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NeverField> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for CustomZonedDateTime<A> {
     #[inline]
-    fn get_field(&self) -> NeverField {
-        NeverField
-    }
+    fn get_field(&self) {}
 }
 
-impl GetField<NeverField> for TimeZoneInfo {
+impl GetField<()> for TimeZoneInfo {
     #[inline]
-    fn get_field(&self) -> NeverField {
-        NeverField
-    }
-}
-
-impl From<NeverField> for Option<YearInfo> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<MonthInfo> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<DayOfMonth> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<IsoWeekday> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<DayOfYearInfo> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<AnyCalendarKind> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<IsoHour> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<IsoMinute> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<IsoSecond> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<NanoSecond> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<TimeZoneBcp47Id> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<UtcOffset> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<ZoneVariant> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<(Date<Iso>, Time)> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<NeoSkeletonLength> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<Alignment> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<YearStyle> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
-impl From<NeverField> for Option<FractionalSecondDigits> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
+    fn get_field(&self) {}
 }
 
 /// A trait associating [`NeoComponents`].
@@ -966,15 +823,15 @@ pub trait HasConstZoneComponent {
 /// (input types only).
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
-    type YearInput: Into<Option<YearInfo>>;
+    type YearInput: IntoOption<YearInfo>;
     /// Marker for resolving the month input field.
-    type MonthInput: Into<Option<MonthInfo>>;
+    type MonthInput: IntoOption<MonthInfo>;
     /// Marker for resolving the day-of-month input field.
-    type DayOfMonthInput: Into<Option<DayOfMonth>>;
+    type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-week input field.
-    type DayOfWeekInput: Into<Option<IsoWeekday>>;
+    type DayOfWeekInput: IntoOption<IsoWeekday>;
     /// Marker for resolving the any-calendar-kind input field.
-    type AnyCalendarKindInput: Into<Option<AnyCalendarKind>>;
+    type AnyCalendarKindInput: IntoOption<AnyCalendarKind>;
 }
 
 /// A trait associating types for date formatting in a specific calendar
@@ -1007,13 +864,13 @@ pub trait DateDataMarkers: UnstableSealed {
 /// (input types and data markers).
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
-    type HourInput: Into<Option<IsoHour>>;
+    type HourInput: IntoOption<IsoHour>;
     /// Marker for resolving the day-of-week input field.
-    type MinuteInput: Into<Option<IsoMinute>>;
+    type MinuteInput: IntoOption<IsoMinute>;
     /// Marker for resolving the day-of-year input field.
-    type SecondInput: Into<Option<IsoSecond>>;
+    type SecondInput: IntoOption<IsoSecond>;
     /// Marker for resolving the any-calendar-kind input field.
-    type NanoSecondInput: Into<Option<NanoSecond>>;
+    type NanoSecondInput: IntoOption<NanoSecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
     /// Marker for loading day period names.
@@ -1024,13 +881,13 @@ pub trait TimeMarkers: UnstableSealed {
 /// (input types and data markers).
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
-    type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
+    type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
     /// Marker for resolving the time zone offset input field.
-    type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
+    type TimeZoneOffsetInput: IntoOption<UtcOffset>;
     /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
+    type TimeZoneVariantInput: IntoOption<ZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
-    type TimeZoneLocalTimeInput: Into<Option<(Date<Iso>, Time)>>;
+    type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
@@ -1063,13 +920,13 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Should implement [`ZoneMarkers`].
     type Z;
     /// Type of the length option in the constructor.
-    type LengthOption: Into<Option<NeoSkeletonLength>>;
+    type LengthOption: IntoOption<NeoSkeletonLength>;
     /// Type of the alignment option in the constructor.
-    type AlignmentOption: Into<Option<Alignment>>;
+    type AlignmentOption: IntoOption<Alignment>;
     /// Type of the year style option in the constructor.
-    type YearStyleOption: Into<Option<YearStyle>>;
+    type YearStyleOption: IntoOption<YearStyle>;
     /// Type of the fractional seconds display option in the constructor.
-    type FractionalSecondDigitsOption: Into<Option<FractionalSecondDigits>>;
+    type FractionalSecondDigitsOption: IntoOption<FractionalSecondDigits>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
@@ -1126,11 +983,11 @@ pub enum NeoNeverMarker {}
 impl UnstableSealed for NeoNeverMarker {}
 
 impl DateInputMarkers for NeoNeverMarker {
-    type YearInput = NeverField;
-    type MonthInput = NeverField;
-    type DayOfMonthInput = NeverField;
-    type DayOfWeekInput = NeverField;
-    type AnyCalendarKindInput = NeverField;
+    type YearInput = ();
+    type MonthInput = ();
+    type DayOfMonthInput = ();
+    type DayOfWeekInput = ();
+    type AnyCalendarKindInput = ();
 }
 
 impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
@@ -1148,19 +1005,19 @@ impl DateDataMarkers for NeoNeverMarker {
 }
 
 impl TimeMarkers for NeoNeverMarker {
-    type HourInput = NeverField;
-    type MinuteInput = NeverField;
-    type SecondInput = NeverField;
-    type NanoSecondInput = NeverField;
+    type HourInput = ();
+    type MinuteInput = ();
+    type SecondInput = ();
+    type NanoSecondInput = ();
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
 impl ZoneMarkers for NeoNeverMarker {
-    type TimeZoneIdInput = NeverField;
-    type TimeZoneOffsetInput = NeverField;
-    type TimeZoneVariantInput = NeverField;
-    type TimeZoneLocalTimeInput = NeverField;
+    type TimeZoneIdInput = ();
+    type TimeZoneOffsetInput = ();
+    type TimeZoneVariantInput = ();
+    type TimeZoneLocalTimeInput = ();
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
@@ -1246,7 +1103,7 @@ where
     type LengthOption = NeoSkeletonLength; // always needed for date
     type AlignmentOption = D::AlignmentOption;
     type YearStyleOption = D::YearStyleOption;
-    type FractionalSecondDigitsOption = NeverField;
+    type FractionalSecondDigitsOption = ();
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -1283,7 +1140,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
     type AlignmentOption = Option<Alignment>; // always needed for time
-    type YearStyleOption = NeverField; // no year in a time-only format
+    type YearStyleOption = (); // no year in a time-only format
     type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
@@ -1321,8 +1178,8 @@ where
     type Z = Z;
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
     type AlignmentOption = Z::AlignmentOption; // no date or time: inherit from zone
-    type YearStyleOption = NeverField; // no year in a zone-only format
-    type FractionalSecondDigitsOption = NeverField;
+    type YearStyleOption = (); // no year in a zone-only format
+    type FractionalSecondDigitsOption = ();
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1485,7 +1342,7 @@ macro_rules! datetime_marker_helper {
         Option<FractionalSecondDigits>
     };
     (@option/$any:ident,) => {
-        NeverField
+        ()
     };
     (@input/year, yes) => {
         YearInfo
@@ -1530,7 +1387,7 @@ macro_rules! datetime_marker_helper {
         Option<(Date<Iso>, Time)>
     };
     (@input/$any:ident,) => {
-        NeverField
+        ()
     };
     (@data/zone/essentials, yes) => {
         tz::EssentialsV1Marker

@@ -129,19 +129,19 @@ impl RawNeoOptions {
             .as_ref()
             .and_then(HourCycle::from_locale_value);
         Self {
-            length: match GetField::<FSet::LengthOption>::get_field(field_set).into() {
+            length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
                 Some(length) => length,
                 None => {
                     debug_assert!(false, "unreachable");
                     NeoSkeletonLength::Medium
                 }
             },
-            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into(),
-            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into(),
+            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
+            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
             fractional_second_digits: GetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 field_set,
             )
-            .into(),
+            .into_option(),
             hour_cycle,
         }
     }
@@ -1367,7 +1367,7 @@ where
                     GetField::<<FSet::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
                         datetime,
                     )
-                    .into(),
+                    .into_option(),
             });
         }
         let datetime =
