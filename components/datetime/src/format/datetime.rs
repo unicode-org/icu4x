@@ -12,7 +12,8 @@ use crate::input::ExtractedInput;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
 use crate::time_zone::{
-    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoMinutes, ResolvedNeoTimeZoneSkeleton,
+    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
+    ResolvedNeoTimeZoneSkeleton,
 };
 
 use core::fmt::{self, Write};
@@ -499,9 +500,9 @@ where
                             if let Some(offset) = input.offset {
                                 w.with_part(Part::ERROR, |w| {
                                     Iso8601Format {
-                                        format: crate::time_zone::IsoFormat::Basic,
+                                        format: IsoFormat::Basic,
                                         minutes: IsoMinutes::Required,
-                                        seconds: crate::time_zone::IsoSeconds::Optional,
+                                        seconds: IsoSeconds::Optional,
                                     }
                                     .format_infallible(w, offset)
                                 })?;
@@ -519,7 +520,7 @@ where
                             })
                         }
                         Err(FormatTimeZoneError::Fallback) => {
-                            // fell through
+                            // unreachable because our current fallback chains don't fall through
                             w.with_part(Part::ERROR, |w| {
                                 w.write_str("{unsupported:")?;
                                 w.write_char(char::from(field.symbol))?;

@@ -266,7 +266,7 @@
 //! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericMarker`]).
 //!
 //! ```
-//! use icu::calendar::DateTime;
+//! use icu::calendar::{Date, Time};
 //! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
@@ -279,14 +279,11 @@
 //! // Set up the time zone. Note: the inputs here are
 //! //   1. The offset
 //! //   2. The IANA time zone ID
-//! //   3. A datetime (for non-location name resolution)
+//! //   3. A date and time (for non-location name resolution)
 //! //   4. Note: we do not need the zone variant because of `load_generic_*()`
 //!
-//! // Set up the time zone ID mapper,
-//! // and the DateTime to use in calculation
+//! // Set up the time zone ID mapper
 //! let mapper = TimeZoneIdMapper::new();
-//! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
-//!     .unwrap();
 //!
 //! // Set up the formatter
 //! let mut tzf = TypedNeoFormatter::<(), _>::try_new(
@@ -299,19 +296,7 @@
 //! let time_zone = TimeZoneInfo {
 //!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
 //!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
-//!     local_time: Some((datetime.date, datetime.time)),
-//!     ..TimeZoneInfo::unknown()
-//! };
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "CT"
-//! );
-//!
-//! // This is the latest non-location name for `uschi`, so we don't *have*
-//! // to set the `local_time`.
-//! let time_zone = TimeZoneInfo {
-//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
-//!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
+//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
 //!     ..TimeZoneInfo::unknown()
 //! };
 //! assert_try_writeable_eq!(
@@ -323,7 +308,7 @@
 //! let time_zone = TimeZoneInfo {
 //!     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "ushnl")),
 //!     offset: Some(UtcOffset::from_eighths_of_hour(-10 * 8)),
-//!     local_time: Some((datetime.date, datetime.time)),
+//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
 //!     ..TimeZoneInfo::unknown()
 //! };
 //! assert_try_writeable_eq!(
@@ -2178,6 +2163,7 @@ macro_rules! impl_zone_marker {
             /// In [`NeoFormatter`](crate::neo::NeoFormatter):
             ///
             /// ```
+            /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::neo::NeoFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2197,7 +2183,7 @@ macro_rules! impl_zone_marker {
             ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
             ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
             ///     zone_variant: Some(ZoneVariant::daylight()),
-            ///     ..TimeZoneInfo::unknown()
+            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
             /// };
             ///
             /// assert_try_writeable_eq!(
@@ -2230,7 +2216,7 @@ macro_rules! impl_zone_marker {
             ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
             ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
             ///     zone_variant: Some(ZoneVariant::daylight()),
-            ///     ..TimeZoneInfo::unknown()
+            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
             /// };
             ///
             /// assert_try_writeable_eq!(
@@ -2566,7 +2552,7 @@ impl_zone_marker!(
     ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
     ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
     ///     zone_variant: Some(ZoneVariant::standard()),
-    ///     ..TimeZoneInfo::unknown()
+    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
     /// };
     ///
     /// assert_try_writeable_eq!(
@@ -2685,7 +2671,7 @@ impl_zone_marker!(
     ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
     ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
     ///     zone_variant: Some(ZoneVariant::standard()),
-    ///     ..TimeZoneInfo::unknown()
+    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
     /// };
     ///
     /// assert_try_writeable_eq!(
