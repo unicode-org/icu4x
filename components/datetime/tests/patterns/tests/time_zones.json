@@ -986,13 +986,7 @@
         "patterns": [
           "z",
           "zz",
-          "zzz"
-        ],
-        "configs": [],
-        "expected": ["{z}"]
-      },
-      {
-        "patterns": [
+          "zzz",
           "O"
         ],
         "configs": [],

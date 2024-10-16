@@ -144,17 +144,20 @@ impl TimeZoneInfo {
                         time.second,
                     )?;
                     if let Some(offset) = offset {
-                        if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
+                        zone_variant = Some(if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
                             .compute_offsets_from_time_zone(time_zone_id, &iso)
                         {
-                            zone_variant = if offset == std_offset {
-                                Some(ZoneVariant::standard())
+                            if offset == std_offset {
+                                ZoneVariant::standard()
                             } else if Some(offset) == dst_offset {
-                                Some(ZoneVariant::daylight())
+                                ZoneVariant::daylight()
                             } else {
                                 return Err(ParseError::InvalidOffsetError);
-                            };
-                        }
+                            }
+                        } else {
+                            debug_assert_eq!(time_zone_id.0.as_str(), "unk");
+                            ZoneVariant::standard()
+                        });
                     }
                     local_time = Some((iso.date, iso.time));
                 };
