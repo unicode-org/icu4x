@@ -10,6 +10,7 @@
 #include <memory>
 #include <optional>
 #include "../diplomat_runtime.hpp"
+#include "IsoDateTime.hpp"
 #include "TimeZoneIdMapper.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
 
@@ -76,6 +77,12 @@ namespace capi {
     
     typedef struct icu4x_TimeZoneInfo_is_daylight_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_daylight_time_mv1_result;
     icu4x_TimeZoneInfo_is_daylight_time_mv1_result icu4x_TimeZoneInfo_is_daylight_time_mv1(const icu4x::capi::TimeZoneInfo* self);
+    
+    void icu4x_TimeZoneInfo_set_local_time_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDateTime* datetime);
+    
+    void icu4x_TimeZoneInfo_clear_local_time_mv1(icu4x::capi::TimeZoneInfo* self);
+    
+    icu4x::capi::IsoDateTime* icu4x_TimeZoneInfo_get_local_time_mv1(const icu4x::capi::TimeZoneInfo* self);
     
     
     void icu4x_TimeZoneInfo_destroy_mv1(TimeZoneInfo* self);
@@ -203,6 +210,20 @@ inline std::optional<bool> icu4x::TimeZoneInfo::is_standard_time() const {
 inline std::optional<bool> icu4x::TimeZoneInfo::is_daylight_time() const {
   auto result = icu4x::capi::icu4x_TimeZoneInfo_is_daylight_time_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
+}
+
+inline void icu4x::TimeZoneInfo::set_local_time(const icu4x::IsoDateTime& datetime) {
+  icu4x::capi::icu4x_TimeZoneInfo_set_local_time_mv1(this->AsFFI(),
+    datetime.AsFFI());
+}
+
+inline void icu4x::TimeZoneInfo::clear_local_time() {
+  icu4x::capi::icu4x_TimeZoneInfo_clear_local_time_mv1(this->AsFFI());
+}
+
+inline std::unique_ptr<icu4x::IsoDateTime> icu4x::TimeZoneInfo::get_local_time() const {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_get_local_time_mv1(this->AsFFI());
+  return std::unique_ptr<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result));
 }
 
 inline const icu4x::capi::TimeZoneInfo* icu4x::TimeZoneInfo::AsFFI() const {

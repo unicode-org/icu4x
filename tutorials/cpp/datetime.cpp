@@ -62,20 +62,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<TimeZoneInfo> time_zone = TimeZoneInfo::unknown();
-    time_zone->try_set_offset_str("-05:00").ok().value();
-    int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -18000) {
-        std::cout << "GMT offset doesn't parse" << std::endl;
-        return 1;
-    }
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
-    time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
-    std::string time_zone_id_return = time_zone->time_zone_id();
-    if (time_zone_id_return != "uschi") {
-        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
-        return 1;
-    }
     std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
     if (normalized_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
@@ -98,6 +85,21 @@ int main() {
         return 1;
     }
 
+    std::unique_ptr<TimeZoneInfo> time_zone = TimeZoneInfo::unknown();
+    time_zone->try_set_offset_str("-05:00").ok().value();
+    int32_t offset = time_zone->offset_seconds().value();
+    if (offset != -18000) {
+        std::cout << "GMT offset doesn't parse" << std::endl;
+        return 1;
+    }
+    time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
+    std::string time_zone_id_return = time_zone->time_zone_id();
+    if (time_zone_id_return != "uschi") {
+        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
+        return 1;
+    }
+    time_zone->set_local_time(*date.get());
+
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get());
     std::cout << "Formatted value is " << out << std::endl;
@@ -105,6 +107,8 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    time_zone->set_local_time(*any_date->to_iso().get());
 
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = zdtf->format_datetime_with_custom_time_zone(*any_date.get(), *time_zone.get()).ok().value();

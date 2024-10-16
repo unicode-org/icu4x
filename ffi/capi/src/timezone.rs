@@ -10,7 +10,7 @@ pub mod ffi {
     use core::fmt::Write;
     use icu_timezone::TimeZoneBcp47Id;
 
-    use crate::errors::ffi::TimeZoneInvalidOffsetError;
+    use crate::{datetime::ffi::IsoDateTime, errors::ffi::TimeZoneInvalidOffsetError};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::TimeZoneInfo, Struct)]
@@ -244,6 +244,26 @@ pub mod ffi {
         #[diplomat::attr(auto, getter)]
         pub fn is_daylight_time(&self) -> Option<bool> {
             Some(self.0.zone_variant? == icu_timezone::ZoneVariant::daylight())
+        }
+
+        /// Sets the `local_time` field.
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField)]
+        pub fn set_local_time(&mut self, datetime: &IsoDateTime) {
+            self.0.local_time = Some((datetime.0.date, datetime.0.time.clone()));
+        }
+
+        /// Clears the `local_time` field.
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField)]
+        pub fn clear_local_time(&mut self) {
+            self.0.local_time.take();
+        }
+
+        /// Returns a copy of the `local_time` field.
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField, compact)]
+        pub fn get_local_time(&self) -> Option<Box<IsoDateTime>> {
+            self.0
+                .local_time
+                .map(|(date, time)| Box::new(IsoDateTime(icu_calendar::DateTime { date, time })))
         }
     }
 }

@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "IsoDateTime.d.h"
 #include "TimeZoneIdMapper.d.h"
 
 #include "TimeZoneInfo.d.h"
@@ -74,6 +75,12 @@ icu4x_TimeZoneInfo_is_standard_time_mv1_result icu4x_TimeZoneInfo_is_standard_ti
 
 typedef struct icu4x_TimeZoneInfo_is_daylight_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_daylight_time_mv1_result;
 icu4x_TimeZoneInfo_is_daylight_time_mv1_result icu4x_TimeZoneInfo_is_daylight_time_mv1(const TimeZoneInfo* self);
+
+void icu4x_TimeZoneInfo_set_local_time_mv1(TimeZoneInfo* self, const IsoDateTime* datetime);
+
+void icu4x_TimeZoneInfo_clear_local_time_mv1(TimeZoneInfo* self);
+
+IsoDateTime* icu4x_TimeZoneInfo_get_local_time_mv1(const TimeZoneInfo* self);
 
 
 void icu4x_TimeZoneInfo_destroy_mv1(TimeZoneInfo* self);

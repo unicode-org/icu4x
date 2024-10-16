@@ -295,6 +295,28 @@ final class TimeZoneInfo implements ffi.Finalizable {
     }
     return result.union.ok;
   }
+
+  /// Sets the `local_time` field.
+  ///
+  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time) for more information.
+  void setLocalTime(IsoDateTime datetime) {
+    _icu4x_TimeZoneInfo_set_local_time_mv1(_ffi, datetime._ffi);
+  }
+
+  /// Clears the `local_time` field.
+  ///
+  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time) for more information.
+  void clearLocalTime() {
+    _icu4x_TimeZoneInfo_clear_local_time_mv1(_ffi);
+  }
+
+  /// Returns a copy of the `local_time` field.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time)
+  IsoDateTime? getLocalTime() {
+    final result = _icu4x_TimeZoneInfo_get_local_time_mv1(_ffi);
+    return result.address == 0 ? null : IsoDateTime._fromFfi(result, []);
+  }
 }
 
 @meta.RecordUse()
@@ -416,3 +438,18 @@ external _ResultBoolVoid _icu4x_TimeZoneInfo_is_standard_time_mv1(ffi.Pointer<ff
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_TimeZoneInfo_is_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_local_time_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_TimeZoneInfo_set_local_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_clear_local_time_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_TimeZoneInfo_clear_local_time_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_get_local_time_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_get_local_time_mv1(ffi.Pointer<ffi.Opaque> self);
