@@ -152,8 +152,7 @@ impl TimeZoneInfo {
                             } else if Some(offset) == dst_offset {
                                 Some(ZoneVariant::daylight())
                             } else {
-                                // return an invalid offset error?
-                                None
+                                return Err(ParseError::InvalidOffsetError);
                             };
                         }
                     }
@@ -335,11 +334,10 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// ### DateTime UTC Offset with IANA identifier annotation
     ///
-    /// In cases where the DateTime UTC Offset is provided and the IANA identifier, these will be returned without
-    /// verifying internal consistency.
+    /// In cases where the DateTime UTC Offset is provided and the IANA identifier, some validity checks are performed.
     ///
     /// ```
-    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
+    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant, ParseError};
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
@@ -350,12 +348,16 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// assert_eq!(consistent_tz_from_both.zone.zone_variant, Some(ZoneVariant::daylight()));
     /// assert!(consistent_tz_from_both.zone.local_time.is_some());
     ///
-    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();
-    ///
-    /// assert_eq!(inconsistent_tz_from_both.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uslax")));
-    /// assert_eq!(inconsistent_tz_from_both.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(inconsistent_tz_from_both.zone.zone_variant, None);
-    /// assert!(inconsistent_tz_from_both.zone.local_time.is_some());
+    /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
+    /// assert_eq!(
+    ///     CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap_err(), 
+    ///     ParseError::InvalidOffsetError
+    /// );
+    /// 
+    /// // We don't know that America/Los_Angeles didn't use DST (-08:00) in August
+    /// assert!(
+    ///     CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]").is_ok()
+    /// );
     /// ```
     ///
     /// ### DateTime UTC offset with UTC Offset annotation.
