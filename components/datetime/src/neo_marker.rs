@@ -1041,7 +1041,7 @@ pub trait ZoneMarkers: private::Sealed {
     type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone variant input field.
     type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
-    /// Marker for resolving the time zone metazone input field.
+    /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneLocalTimeInput: Into<Option<(Date<Iso>, Time)>>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
