@@ -116,8 +116,8 @@ impl TimeZoneInfo {
         Ok(Self {
             time_zone_id: crate::TimeZoneBcp47Id::unknown(),
             offset: Some(UtcOffset::try_from_utc_offset_record(record)?),
-            zone_variant: None,
-            local_time: None,
+            zone_variant: Some(ZoneVariant::standard()),
+            local_time: Some((Date::unix_epoch(), Time::midnight())),
         })
     }
 
