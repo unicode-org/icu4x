@@ -16,7 +16,7 @@ use icu_calendar::{
 use icu_provider::prelude::*;
 
 use crate::provider::{neo::*, *};
-use crate::scaffolding::UnstableSealed;
+use crate::scaffold::UnstableSealed;
 use core::marker::PhantomData;
 use icu_provider::marker::NeverMarker;
 

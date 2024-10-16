@@ -21,7 +21,7 @@ use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::pattern::PatternItem;
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
-use crate::scaffolding::*;
+use crate::scaffold::*;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;

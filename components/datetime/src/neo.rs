@@ -22,7 +22,7 @@ use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::provider::ErasedPackedPatterns;
 use crate::raw::neo::*;
-use crate::scaffolding::*;
+use crate::scaffold::*;
 use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;

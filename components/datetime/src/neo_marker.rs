@@ -341,7 +341,7 @@ use crate::{
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
-    scaffolding::*,
+    scaffold::*,
 };
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,

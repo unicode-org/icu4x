@@ -25,7 +25,7 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::neo_skeleton::NeoDateTimeSkeleton;
-use icu_datetime::scaffolding::CldrCalendar;
+use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
     neo::{NeoFormatter, TypedNeoFormatter},
     neo_pattern::DateTimePattern,

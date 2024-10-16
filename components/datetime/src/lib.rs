@@ -107,7 +107,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
-pub mod scaffolding;
+pub mod scaffold;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(feature = "datagen")]
