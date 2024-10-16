@@ -57,10 +57,6 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
     CustomZonedDateTime::try_iso_from_str(input)
-        .or_else(|e| {
-            println!("{input}");
-            Err(e)
-        })
         .unwrap()
         .to_calendar(Gregorian)
 }

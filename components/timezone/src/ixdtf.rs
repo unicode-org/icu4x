@@ -350,10 +350,10 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
     /// assert_eq!(
-    ///     CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap_err(), 
+    ///     CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap_err(),
     ///     ParseError::InvalidOffsetError
     /// );
-    /// 
+    ///
     /// // We don't know that America/Los_Angeles didn't use DST (-08:00) in August
     /// assert!(
     ///     CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]").is_ok()
