@@ -38,8 +38,8 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
     return GregorianZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
-  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, CustomTimeZone timeZone) {
+  /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
+  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     return write.finalize();

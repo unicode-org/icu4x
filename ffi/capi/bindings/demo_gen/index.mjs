@@ -29,8 +29,8 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
-import * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
-export * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
+import * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
+export * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
 import * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 export * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 import * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
@@ -1122,44 +1122,20 @@ let termini = Object.assign({
         ]
     },
 
-    "CustomTimeZone.timeZoneId": {
-        func: CustomTimeZoneDemo.timeZoneId,
+    "TimeZoneInfo.timeZoneId": {
+        func: TimeZoneInfoDemo.timeZoneId,
         // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.timeZoneId",
+        funcName: "TimeZoneInfo.timeZoneId",
         parameters: [
-            
-            {
-                name: "S",
-                type: "string"
-            }
             
         ]
     },
 
-    "CustomTimeZone.metazoneId": {
-        func: CustomTimeZoneDemo.metazoneId,
+    "TimeZoneInfo.zoneVariant": {
+        func: TimeZoneInfoDemo.zoneVariant,
         // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.metazoneId",
+        funcName: "TimeZoneInfo.zoneVariant",
         parameters: [
-            
-            {
-                name: "S",
-                type: "string"
-            }
-            
-        ]
-    },
-
-    "CustomTimeZone.zoneVariant": {
-        func: CustomTimeZoneDemo.zoneVariant,
-        // For avoiding webpacking minifying issues:
-        funcName: "CustomTimeZone.zoneVariant",
-        parameters: [
-            
-            {
-                name: "S",
-                type: "string"
-            }
             
         ]
     },
@@ -1297,11 +1273,6 @@ let termini = Object.assign({
             {
                 name: "Nanosecond",
                 type: "number"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]
@@ -1361,11 +1332,6 @@ let termini = Object.assign({
             {
                 name: "Name",
                 type: "string"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]
@@ -1420,11 +1386,6 @@ let termini = Object.assign({
             {
                 name: "Nanosecond",
                 type: "number"
-            },
-            
-            {
-                name: "S",
-                type: "string"
             }
             
         ]

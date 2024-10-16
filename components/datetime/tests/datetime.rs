@@ -38,7 +38,7 @@ use icu_locale_core::{
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime, UtcOffset};
+use icu_timezone::{CustomZonedDateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
@@ -281,23 +281,23 @@ fn assert_fixture_element<A>(
     let input_value = CustomZonedDateTime {
         date: input_value.date.clone(),
         time: input_value.time,
-        zone: CustomTimeZone::utc(),
+        zone: TimeZoneInfo::utc(),
     };
     let input_iso = CustomZonedDateTime {
         date: input_iso.date,
         time: input_iso.time,
-        zone: CustomTimeZone::utc(),
+        zone: TimeZoneInfo::utc(),
     };
 
     let any_input = CustomZonedDateTime {
         date: input_value.date.to_any(),
         time: input_value.time,
-        zone: CustomTimeZone::utc(),
+        zone: TimeZoneInfo::utc(),
     };
     let iso_any_input = CustomZonedDateTime {
         date: input_iso.date.to_any(),
         time: input_iso.time,
-        zone: CustomTimeZone::utc(),
+        zone: TimeZoneInfo::utc(),
     };
 
     let dtf =
@@ -473,7 +473,10 @@ fn test_time_zone_format_configs() {
 fn test_time_zone_format_offset_seconds() {
     use icu_datetime::{neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength};
 
-    let time_zone = CustomTimeZone::new_with_offset(UtcOffset::try_from_seconds(12).unwrap());
+    let time_zone = TimeZoneInfo {
+        offset: UtcOffset::try_from_seconds(12).ok(),
+        ..TimeZoneInfo::unknown()
+    };
     let tzf = TypedNeoFormatter::<(), _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
@@ -488,7 +491,12 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
         neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, DateTimeWriteError,
     };
 
-    let time_zone = CustomTimeZone::from_str("America/Los_Angeles");
+    let time_zone = TimeZoneInfo {
+        time_zone_id: TimeZoneIdMapper::new()
+            .as_borrowed()
+            .iana_to_bcp47("America/Los_Angeles"),
+        ..TimeZoneInfo::unknown()
+    };
     let tzf = TypedNeoFormatter::<(), _>::try_new(
         &locale!("en").into(),
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),

@@ -7,10 +7,13 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use zerovec::{ZeroMap, ZeroMap2d};
+use tinystr::TinyAsciiStr;
+use zerovec::{
+    ule::{AsULE, ULE},
+    ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec,
+};
 
-pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
-use icu_timezone::ZoneVariant;
+use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
@@ -19,6 +22,8 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
     pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
     pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
+    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
+    pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
     pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
@@ -170,3 +175,63 @@ pub struct MetazoneSpecificNamesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, ZoneVariant, str>,
 }
+
+/// Metazone ID in a compact format
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct MetazoneId(pub TinyAsciiStr<4>);
+
+impl AsULE for MetazoneId {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
+    type Container = ZeroVec<'a, MetazoneId>;
+    type Slice = ZeroSlice<MetazoneId>;
+    type GetType = MetazoneId;
+    type OwnedType = MetazoneId;
+}
+
+/// An ICU4X mapping to the metazones at a given period.
+/// See CLDR-JSON metaZones.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    MetazonePeriodV1Marker,
+    "time_zone/metazone_period@1",
+    singleton
+))]
+#[derive(PartialEq, Debug, Clone, Default)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct MetazonePeriodV1<'data>(
+    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
+    /// the number of minutes since the local unix epoch. It represents when the metazone started to be used.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, Option<MetazoneId>>,
+);

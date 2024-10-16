@@ -266,8 +266,8 @@
 //! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericMarker`]).
 //!
 //! ```
-//! use icu::calendar::DateTime;
-//! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
+//! use icu::calendar::{Date, Time};
+//! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -279,15 +279,11 @@
 //! // Set up the time zone. Note: the inputs here are
 //! //   1. The offset
 //! //   2. The IANA time zone ID
-//! //   3. A datetime (for metazone resolution)
+//! //   3. A date and time (for non-location name resolution)
 //! //   4. Note: we do not need the zone variant because of `load_generic_*()`
 //!
-//! // Set up the Metazone calculator, time zone ID mapper,
-//! // and the DateTime to use in calculation
-//! let mzc = MetazoneCalculator::new();
+//! // Set up the time zone ID mapper
 //! let mapper = TimeZoneIdMapper::new();
-//! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
-//!     .unwrap();
 //!
 //! // Set up the formatter
 //! let mut tzf = TypedNeoFormatter::<(), _>::try_new(
@@ -296,39 +292,28 @@
 //! )
 //! .unwrap();
 //!
-//! // "uschi" - has metazone symbol data for generic_non_location_short
-//! let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
-//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! // "uschi" - has symbol data for generic_non_location_short
+//! let time_zone = TimeZoneInfo {
+//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
+//!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
+//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+//!     ..TimeZoneInfo::unknown()
+//! };
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
 //! );
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
-//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
-//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
+//! let time_zone = TimeZoneInfo {
+//!     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "ushnl")),
+//!     offset: Some(UtcOffset::from_eighths_of_hour(-10 * 8)),
+//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+//!     ..TimeZoneInfo::unknown()
+//! };
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
-//! );
-//!
-//! // If we don't calculate the metazone, it falls back to generic location
-//! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = TimeZoneBcp47Id(tinystr!(8, "ushnl"));
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "{v}",
-//!     Err(DateTimeWriteError::MissingInputField("metazone"))
-//! );
-//!
-//! // If we don't set a zone at all, there's no fallback to the offset
-//! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
-//! assert_try_writeable_eq!(
-//!     tzf.format(&time_zone),
-//!     "{v}",
-//!     Err(DateTimeWriteError::MissingInputField("metazone"))
 //! );
 //! ```
 
@@ -349,12 +334,10 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
+    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::{
-    CustomTimeZone, CustomZonedDateTime, MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
-};
+use icu_timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
 
 /// A type that can be converted into a specific calendar system.
 pub trait ConvertCalendar {
@@ -401,8 +384,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Custom
     }
 }
 
-impl ConvertCalendar for CustomTimeZone {
-    type Converted<'a> = CustomTimeZone;
+impl ConvertCalendar for TimeZoneInfo {
+    type Converted<'a> = TimeZoneInfo;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -454,7 +437,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for CustomZonedDateTime<A> {}
 
-impl<C> IsInCalendar<C> for CustomTimeZone {}
+impl<C> IsInCalendar<C> for TimeZoneInfo {}
 
 /// A type that can return a certain field `T`.
 pub trait GetField<T> {
@@ -723,30 +706,21 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for CustomZo
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<TimeZoneBcp47Id>
+    for CustomZonedDateTime<A>
+{
+    #[inline]
+    fn get_field(&self) -> TimeZoneBcp47Id {
+        self.zone.time_zone_id
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
     for CustomZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.zone.offset
-    }
-}
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<TimeZoneBcp47Id>>
-    for CustomZonedDateTime<A>
-{
-    #[inline]
-    fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        Some(self.zone.time_zone_id)
-    }
-}
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<Option<MetazoneId>>>
-    for CustomZonedDateTime<A>
-{
-    #[inline]
-    fn get_field(&self) -> Option<Option<MetazoneId>> {
-        self.zone.metazone_id
     }
 }
 
@@ -759,31 +733,40 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<ZoneVariant>>
     }
 }
 
-impl GetField<Option<UtcOffset>> for CustomTimeZone {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<(Date<Iso>, Time)>>
+    for CustomZonedDateTime<A>
+{
+    #[inline]
+    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+        self.zone.local_time
+    }
+}
+
+impl GetField<TimeZoneBcp47Id> for TimeZoneInfo {
+    #[inline]
+    fn get_field(&self) -> TimeZoneBcp47Id {
+        self.time_zone_id
+    }
+}
+
+impl GetField<Option<UtcOffset>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset
     }
 }
 
-impl GetField<Option<TimeZoneBcp47Id>> for CustomTimeZone {
-    #[inline]
-    fn get_field(&self) -> Option<TimeZoneBcp47Id> {
-        Some(self.time_zone_id)
-    }
-}
-
-impl GetField<Option<Option<MetazoneId>>> for CustomTimeZone {
-    #[inline]
-    fn get_field(&self) -> Option<Option<MetazoneId>> {
-        self.metazone_id
-    }
-}
-
-impl GetField<Option<ZoneVariant>> for CustomTimeZone {
+impl GetField<Option<ZoneVariant>> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> Option<ZoneVariant> {
         self.zone_variant
+    }
+}
+
+impl GetField<Option<(Date<Iso>, Time)>> for TimeZoneInfo {
+    #[inline]
+    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+        self.local_time
     }
 }
 
@@ -820,7 +803,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NeverField> for CustomZo
     }
 }
 
-impl GetField<NeverField> for CustomTimeZone {
+impl GetField<NeverField> for TimeZoneInfo {
     #[inline]
     fn get_field(&self) -> NeverField {
         NeverField
@@ -897,13 +880,6 @@ impl From<NeverField> for Option<NanoSecond> {
     }
 }
 
-impl From<NeverField> for Option<UtcOffset> {
-    #[inline]
-    fn from(_: NeverField) -> Self {
-        None
-    }
-}
-
 impl From<NeverField> for Option<TimeZoneBcp47Id> {
     #[inline]
     fn from(_: NeverField) -> Self {
@@ -911,7 +887,7 @@ impl From<NeverField> for Option<TimeZoneBcp47Id> {
     }
 }
 
-impl From<NeverField> for Option<Option<MetazoneId>> {
+impl From<NeverField> for Option<UtcOffset> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -919,6 +895,13 @@ impl From<NeverField> for Option<Option<MetazoneId>> {
 }
 
 impl From<NeverField> for Option<ZoneVariant> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
+impl From<NeverField> for Option<(Date<Iso>, Time)> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -1040,26 +1023,28 @@ pub trait TimeMarkers: UnstableSealed {
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
 pub trait ZoneMarkers: UnstableSealed {
-    /// Marker for resolving the time zone offset input field.
-    type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
-    /// Marker for resolving the time zone metazone input field.
-    type TimeZoneMetazoneInput: Into<Option<Option<MetazoneId>>>;
+    /// Marker for resolving the time zone offset input field.
+    type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone variant input field.
     type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
+    /// Marker for resolving the time zone non-location display names, which depend on the datetime.
+    type TimeZoneLocalTimeInput: Into<Option<(Date<Iso>, Time)>>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
     type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
-    /// Marker for loading generic short time zone names.
+    /// Marker for loading generic long time zone names.
     type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
     type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
-    /// Marker for loading generic short time zone names.
+    /// Marker for loading specific long time zone names.
     type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
     /// Marker for loading generic short time zone names.
     type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
+    /// Marker for loading metazone periods.
+    type MetazonePeriodV1Marker: DataMarker<DataStruct = tz::MzPeriodV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -1100,10 +1085,10 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
     + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -1126,10 +1111,10 @@ where
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
         + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>,
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
 {
 }
 
@@ -1172,16 +1157,17 @@ impl TimeMarkers for NeoNeverMarker {
 }
 
 impl ZoneMarkers for NeoNeverMarker {
-    type TimeZoneOffsetInput = NeverField;
     type TimeZoneIdInput = NeverField;
-    type TimeZoneMetazoneInput = NeverField;
+    type TimeZoneOffsetInput = NeverField;
     type TimeZoneVariantInput = NeverField;
+    type TimeZoneLocalTimeInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
     type SpecificShortV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
+    type MetazonePeriodV1Marker = NeverMarker<tz::MzPeriodV1<'static>>;
 }
 
 /// A struct that supports formatting both a date and a time.
@@ -1240,6 +1226,7 @@ where
     type ZoneGenericShort = NeverMarker<()>;
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
+    type MetazoneLookup = NeverMarker<()>;
 }
 
 impl<D> HasConstComponents for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
@@ -1277,6 +1264,7 @@ where
     type ZoneGenericShort = NeverMarker<()>;
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
+    type MetazoneLookup = NeverMarker<()>;
 }
 
 impl<T> HasConstComponents for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -1314,6 +1302,7 @@ where
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
+    type MetazoneLookup = Z::MetazoneLookup;
 }
 
 impl<Z> HasConstComponents for DateTimeCombo<NeoNeverMarker, NeoNeverMarker, Z>
@@ -1352,6 +1341,7 @@ where
     type ZoneGenericShort = NeverMarker<()>;
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
+    type MetazoneLookup = NeverMarker<()>;
 }
 
 impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
@@ -1393,6 +1383,7 @@ where
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
+    type MetazoneLookup = Z::MetazoneLookup;
 }
 
 impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
@@ -1526,17 +1517,17 @@ macro_rules! datetime_marker_helper {
     (@input/nanosecond, yes) => {
         NanoSecond
     };
+    (@input/timezone/id, yes) => {
+        TimeZoneBcp47Id
+    };
     (@input/timezone/offset, yes) => {
         Option<UtcOffset>
     };
-    (@input/timezone/id, yes) => {
-        Option<TimeZoneBcp47Id>
-    };
-    (@input/timezone/metazone, yes) => {
-        Option<Option<MetazoneId>>
-    };
     (@input/timezone/variant, yes) => {
         Option<ZoneVariant>
+    };
+    (@input/timezone/local_time, yes) => {
+        Option<(Date<Iso>, Time)>
     };
     (@input/$any:ident,) => {
         NeverField
@@ -1559,6 +1550,9 @@ macro_rules! datetime_marker_helper {
     (@data/zone/specific_short, yes) => {
         tz::MzSpecificShortV1Marker
     };
+    (@data/zone/metazone_periods, yes) => {
+        tz::MzPeriodV1Marker
+    };
     (@data/zone/essentials,) => {
         NeverMarker<tz::EssentialsV1<'static>>
     };
@@ -1576,6 +1570,9 @@ macro_rules! datetime_marker_helper {
     };
     (@data/zone/specific_short,) => {
         NeverMarker<tz::MzSpecificV1<'static>>
+    };
+    (@data/zone/metazone_periods,) => {
+        NeverMarker<tz::MzPeriodV1<'static>>
     };
     (@names/year, yes) => {
         YearNamesV1Marker
@@ -1606,6 +1603,9 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/specific_short, yes) => {
         tz::MzSpecificShortV1Marker
+    };
+    (@names/zone/metazone_periods, yes) => {
+        tz::MzPeriodV1Marker
     };
     (@names/$any:ident,) => {
         NeverMarker<()>
@@ -1833,6 +1833,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+            type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
         }
         impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
@@ -2057,6 +2058,7 @@ macro_rules! impl_time_marker {
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+            type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
         }
         impl HasConstTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
@@ -2117,6 +2119,8 @@ macro_rules! impl_zone_marker {
         $(zone_specific_long = $zone_specific_long_yes:ident,)?
         // Whether specific short formats can occur.
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
+        // Whether metazone periods are needed
+        $(metazone_periods = $metazone_periods_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -2126,7 +2130,8 @@ macro_rules! impl_zone_marker {
             /// In [`NeoFormatter`](crate::neo::NeoFormatter):
             ///
             /// ```
-            /// use icu::timezone::CustomTimeZone;
+            /// use icu::calendar::{Date, Time};
+            /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::neo::NeoFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -2140,13 +2145,13 @@ macro_rules! impl_zone_marker {
             /// )
             /// .unwrap();
             ///
-            /// // Time zone for America/Chicago in the summer
-            /// let zone = CustomTimeZone::from_parts(
-            ///     -40, // offset eighths of hour
-            ///     tinystr!(8, "uschi"), // time zone ID
-            ///     tinystr!(4, "amce"), // metazone ID
-            ///     tinystr!(2, "dt"), // zone variant: daylight time
-            /// );
+            /// // Time zone info for America/Chicago in the summer
+            /// let zone = TimeZoneInfo {
+            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
+            ///     zone_variant: Some(ZoneVariant::daylight()),
+            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+            /// };
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -2158,7 +2163,7 @@ macro_rules! impl_zone_marker {
             ///
             /// ```
             /// use icu::calendar::{Date, Time};
-            /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+            /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::neo::TypedNeoFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2173,13 +2178,13 @@ macro_rules! impl_zone_marker {
             /// )
             /// .unwrap();
             ///
-            /// // Time zone for America/Chicago in the summer
-            /// let zone = CustomTimeZone::from_parts(
-            ///     -40, // offset eighths of hour
-            ///     tinystr!(8, "uschi"), // time zone ID
-            ///     tinystr!(4, "amce"), // metazone ID
-            ///     tinystr!(2, "dt"), // zone variant: daylight time
-            /// );
+            /// // Time zone info for America/Chicago in the summer
+            /// let zone = TimeZoneInfo {
+            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
+            ///     zone_variant: Some(ZoneVariant::daylight()),
+            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+            /// };
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -2202,21 +2207,23 @@ macro_rules! impl_zone_marker {
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
+            type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, $($metazone_periods_yes)?);
         }
         impl HasConstZoneComponent for $type {
             const COMPONENT: NeoTimeZoneStyle = $components;
         }
         impl ZoneMarkers for $type {
-            type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-            type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
+            type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
+            type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
             type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
+            type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
@@ -2315,7 +2322,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -2340,7 +2347,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2490,7 +2497,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
@@ -2505,13 +2512,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = CustomTimeZone::from_parts(
-    ///     -24, // offset eighths of hour
-    ///     tinystr!(8, "brsao"), // time zone ID
-    ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
-    /// );
+    /// // Time zone info for America/Sao_Paulo in the summer
+    /// let zone = TimeZoneInfo {
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
+    ///     zone_variant: Some(ZoneVariant::standard()),
+    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+    /// };
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -2526,6 +2533,7 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_specific_long = yes,
     zone_specific_short = yes,
+    metazone_periods = yes,
 );
 
 impl_zone_marker!(
@@ -2533,7 +2541,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;
@@ -2589,6 +2597,7 @@ impl_zone_marker!(
     sample = "CDT",
     zone_essentials = yes,
     zone_specific_short = yes,
+    metazone_periods = yes,
 );
 
 impl_zone_marker!(
@@ -2605,7 +2614,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
@@ -2620,13 +2629,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = CustomTimeZone::from_parts(
-    ///     -24, // offset eighths of hour
-    ///     tinystr!(8, "brsao"), // time zone ID
-    ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
-    /// );
+    /// // Time zone info for America/Sao_Paulo in the summer
+    /// let zone = TimeZoneInfo {
+    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
+    ///     zone_variant: Some(ZoneVariant::standard()),
+    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
+    /// };
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -2642,6 +2651,7 @@ impl_zone_marker!(
     zone_locations = yes,
     zone_generic_long = yes,
     zone_generic_short = yes,
+    metazone_periods = yes,
 );
 
 impl_zone_marker!(
@@ -2649,7 +2659,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;
@@ -2706,6 +2716,7 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_short = yes,
+    metazone_periods = yes,
 );
 
 impl_zone_marker!(
@@ -2753,6 +2764,7 @@ impl DateTimeNamesMarker for NeoDateSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
 }
 
 impl DateInputMarkers for NeoDateSkeleton {
@@ -2814,6 +2826,7 @@ impl DateTimeNamesMarker for NeoCalendarPeriodSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
 }
 
 impl DateInputMarkers for NeoCalendarPeriodSkeleton {
@@ -2875,6 +2888,7 @@ impl DateTimeNamesMarker for NeoTimeSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
 }
 
 impl TimeMarkers for NeoTimeSkeleton {
@@ -2923,19 +2937,21 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, yes);
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {
-    type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-    type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
+    type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
+    type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, yes);
     type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, yes);
     type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, yes);
     type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, yes);
     type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, yes);
+    type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, yes);
 }
 
 impl DateTimeMarkers for NeoTimeZoneSkeleton {
@@ -2973,6 +2989,7 @@ impl DateTimeNamesMarker for NeoDateTimeSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
 }
 
 impl DateTimeMarkers for NeoDateTimeSkeleton {
@@ -3013,6 +3030,7 @@ impl DateTimeNamesMarker for NeoSkeleton {
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
+    type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, yes);
 }
 
 impl DateTimeMarkers for NeoSkeleton {

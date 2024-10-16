@@ -94,8 +94,6 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
-export { MetazoneCalculator } from "./MetazoneCalculator"
-
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"
@@ -166,7 +164,7 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
-export { CustomTimeZone } from "./CustomTimeZone"
+export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 
@@ -181,8 +179,6 @@ export { UnitsConverter } from "./UnitsConverter"
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { WeekCalculator } from "./WeekCalculator"
-
-export { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 

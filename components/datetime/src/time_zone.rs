@@ -4,6 +4,7 @@
 
 //! A formatter specifically for the time zone.
 
+use crate::provider::time_zones::MetazoneId;
 use crate::{
     fields::{FieldLength, TimeZone},
     input::ExtractedInput,
@@ -11,9 +12,9 @@ use crate::{
 };
 use core::fmt;
 use fixed_decimal::FixedDecimal;
+use icu_calendar::{Date, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
-use icu_timezone::ZoneVariant;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset};
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
 /// All time zone styles that this crate can format
@@ -212,6 +213,28 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
+    /// The metazone lookup
+    pub(crate) mz_periods: Option<&'a provider::time_zones::MetazonePeriodV1<'a>>,
+}
+
+fn metazone(
+    time_zone_id: TimeZoneBcp47Id,
+    (date, time): (Date<Iso>, Time),
+    metazone_period: &crate::provider::time_zones::MetazonePeriodV1,
+) -> Option<MetazoneId> {
+    let cursor = metazone_period.0.get0(&time_zone_id)?;
+    let mut metazone_id = None;
+    let minutes_since_local_unix_epoch =
+        icu_calendar::DateTime { date, time }.minutes_since_local_unix_epoch();
+    for (minutes, id) in cursor.iter1() {
+        if minutes_since_local_unix_epoch >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
+        {
+            metazone_id = id.get()
+        } else {
+            break;
+        }
+    }
+    metazone_id
 }
 
 /// Determines which ISO-8601 format should be used to format the timezone offset.
@@ -340,11 +363,11 @@ impl FormatTimeZone for GenericNonLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(metazone_id) = input.metazone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
-        };
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(local_time) = input.local_time else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
         };
         let Some(names) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
@@ -352,8 +375,11 @@ impl FormatTimeZone for GenericNonLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let Some(name) = metazone_id.and_then(|mz| {
+        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
             names
                 .overrides
                 .get(&time_zone_id)
@@ -381,23 +407,27 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_variant) = input.zone_variant else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
-        };
-        let Some(metazone_id) = input.metazone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
-        };
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
+        let Some(zone_variant) = input.zone_variant else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_variant")));
+        };
+        let Some(local_time) = input.local_time else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
+        };
+
         let Some(names) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_specific_long.as_ref(),
             _ => data_payloads.mz_specific_short.as_ref(),
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
 
-        let Some(name) = metazone_id.and_then(|mz| {
+        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
             names
                 .overrides
                 .get_2d(&time_zone_id, &zone_variant)
@@ -516,9 +546,9 @@ impl FormatTimeZone for GenericLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let time_zone_id = input
-            .time_zone_id
-            .unwrap_or(TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
 
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
@@ -551,11 +581,11 @@ impl FormatTimeZone for SpecificLocationFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(zone_variant) = input.zone_variant else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
-        };
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(zone_variant) = input.zone_variant else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_variant")));
         };
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
@@ -595,8 +625,8 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(metazone_id) = input.metazone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("metazone")));
+        let Some(local_time) = input.local_time else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
         };
 
         let Some(locations) = data_payloads.locations else {
@@ -608,16 +638,20 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+        };
         let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(non_location) = metazone_id.and_then(|mz| {
-            non_locations
-                .overrides
-                .get(&time_zone_id)
-                .or_else(|| non_locations.defaults.get(&mz))
-        }) else {
+        let Some(non_location) =
+            metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
+                non_locations
+                    .overrides
+                    .get(&time_zone_id)
+                    .or_else(|| non_locations.defaults.get(&mz))
+            })
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 

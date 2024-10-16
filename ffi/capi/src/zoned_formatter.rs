@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::{
         datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
         datetime_formatter::ffi::DateTimeLength, errors::ffi::Error, locale_core::ffi::Locale,
-        provider::ffi::DataProvider, timezone::ffi::CustomTimeZone,
+        provider::ffi::DataProvider, timezone::ffi::TimeZoneInfo,
     };
 
     use writeable::TryWriteable;
@@ -59,11 +59,11 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
@@ -112,11 +112,11 @@ pub mod ffi {
             )?)))
         }
 
-        /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_datetime_with_custom_time_zone(
             &self,
             datetime: &DateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::CustomZonedDateTime {
@@ -128,11 +128,11 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::CustomZonedDateTime {
