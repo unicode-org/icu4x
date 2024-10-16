@@ -1047,18 +1047,16 @@ pub trait ZoneMarkers: private::Sealed {
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
     type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
-    /// Marker for loading generic short time zone names.
+    /// Marker for loading generic long time zone names.
     type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
     type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
-    /// Marker for loading generic short time zone names.
+    /// Marker for loading specific long time zone names.
     type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
     /// Marker for loading generic short time zone names.
     type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
-    /// Marker for loading generic short time zone names.
+    /// Marker for loading metazone periods.
     type MetazonePeriodV1Marker: DataMarker<DataStruct = tz::MzPeriodV1<'static>>;
-    ///  for loading generic short time zone names.
-    type ZoneOffsetPeriodV1Marker: DataMarker<DataStruct = tz::OffsetsV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -1182,7 +1180,6 @@ impl ZoneMarkers for NeoNeverMarker {
     type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
     type SpecificShortV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
     type MetazonePeriodV1Marker = NeverMarker<tz::MzPeriodV1<'static>>;
-    type ZoneOffsetPeriodV1Marker = NeverMarker<tz::OffsetsV1<'static>>;
 }
 
 /// A struct that supports formatting both a date and a time.
@@ -1242,7 +1239,6 @@ where
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
     type MetazoneLookup = NeverMarker<()>;
-    type Offsets = NeverMarker<()>;
 }
 
 impl<D> HasConstComponents for DateTimeCombo<D, NeoNeverMarker, NeoNeverMarker>
@@ -1281,7 +1277,6 @@ where
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
     type MetazoneLookup = NeverMarker<()>;
-    type Offsets = NeverMarker<()>;
 }
 
 impl<T> HasConstComponents for DateTimeCombo<NeoNeverMarker, T, NeoNeverMarker>
@@ -1320,7 +1315,6 @@ where
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
     type MetazoneLookup = Z::MetazoneLookup;
-    type Offsets = Z::Offsets;
 }
 
 impl<Z> HasConstComponents for DateTimeCombo<NeoNeverMarker, NeoNeverMarker, Z>
@@ -1360,7 +1354,6 @@ where
     type ZoneSpecificLong = NeverMarker<()>;
     type ZoneSpecificShort = NeverMarker<()>;
     type MetazoneLookup = NeverMarker<()>;
-    type Offsets = NeverMarker<()>;
 }
 
 impl<D, T> HasConstComponents for DateTimeCombo<D, T, NeoNeverMarker>
@@ -1403,7 +1396,6 @@ where
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
     type MetazoneLookup = Z::MetazoneLookup;
-    type Offsets = Z::Offsets;
 }
 
 impl<D, T, Z> HasConstComponents for DateTimeCombo<D, T, Z>
@@ -1573,9 +1565,6 @@ macro_rules! datetime_marker_helper {
     (@data/zone/metazone_periods, yes) => {
         tz::MzPeriodV1Marker
     };
-    (@data/zone/offsets, yes) => {
-        tz::OffsetsV1Marker
-    };
     (@data/zone/essentials,) => {
         NeverMarker<tz::EssentialsV1<'static>>
     };
@@ -1596,9 +1585,6 @@ macro_rules! datetime_marker_helper {
     };
     (@data/zone/metazone_periods,) => {
         NeverMarker<tz::MzPeriodV1<'static>>
-    };
-    (@data/zone/offsets,) => {
-        NeverMarker<tz::OffsetsV1<'static>>
     };
     (@names/year, yes) => {
         YearNamesV1Marker
@@ -1632,9 +1618,6 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/metazone_periods, yes) => {
         tz::MzPeriodV1Marker
-    };
-    (@names/zone/offsets, yes) => {
-        tz::OffsetsV1Marker
     };
     (@names/$any:ident,) => {
         NeverMarker<()>
@@ -1863,7 +1846,6 @@ macro_rules! impl_date_or_calendar_period_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-            type Offsets = datetime_marker_helper!(@names/zone/offsets,);
         }
         impl DateInputMarkers for $type {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
@@ -2089,7 +2071,6 @@ macro_rules! impl_time_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-            type Offsets = datetime_marker_helper!(@names/zone/offsets,);
         }
         impl HasConstTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
@@ -2152,8 +2133,6 @@ macro_rules! impl_zone_marker {
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
         // Whether metazone periods are needed
         $(metazone_periods = $metazone_periods_yes:ident,)?
-        // Whether metazone offests are needed
-        $(offsets = $offsets_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -2241,7 +2220,6 @@ macro_rules! impl_zone_marker {
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, $($metazone_periods_yes)?);
-            type Offsets = datetime_marker_helper!(@names/zone/offsets, $($offsets_yes)?);
         }
         impl HasConstZoneComponent for $type {
             const COMPONENT: NeoTimeZoneStyle = $components;
@@ -2258,7 +2236,6 @@ macro_rules! impl_zone_marker {
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
             type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
-            type ZoneOffsetPeriodV1Marker = datetime_marker_helper!(@data/zone/offsets, $($offsets_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
@@ -2569,7 +2546,6 @@ impl_zone_marker!(
     zone_specific_long = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
-    offsets = yes,
 );
 
 impl_zone_marker!(
@@ -2634,7 +2610,6 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
-    offsets = yes,
 );
 
 impl_zone_marker!(
@@ -2802,7 +2777,6 @@ impl DateTimeNamesMarker for NeoDateSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets,);
 }
 
 impl DateInputMarkers for NeoDateSkeleton {
@@ -2865,7 +2839,6 @@ impl DateTimeNamesMarker for NeoCalendarPeriodSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets,);
 }
 
 impl DateInputMarkers for NeoCalendarPeriodSkeleton {
@@ -2928,7 +2901,6 @@ impl DateTimeNamesMarker for NeoTimeSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets,);
 }
 
 impl TimeMarkers for NeoTimeSkeleton {
@@ -2978,7 +2950,6 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, yes);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets, yes);
 }
 
 impl ZoneMarkers for NeoTimeZoneSkeleton {
@@ -2993,7 +2964,6 @@ impl ZoneMarkers for NeoTimeZoneSkeleton {
     type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, yes);
     type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, yes);
     type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, yes);
-    type ZoneOffsetPeriodV1Marker = datetime_marker_helper!(@data/zone/offsets, yes);
 }
 
 impl DateTimeMarkers for NeoTimeZoneSkeleton {
@@ -3032,7 +3002,6 @@ impl DateTimeNamesMarker for NeoDateTimeSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets,);
 }
 
 impl DateTimeMarkers for NeoDateTimeSkeleton {
@@ -3074,7 +3043,6 @@ impl DateTimeNamesMarker for NeoSkeleton {
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
     type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, yes);
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, yes);
-    type Offsets = datetime_marker_helper!(@names/zone/offsets, yes);
 }
 
 impl DateTimeMarkers for NeoSkeleton {

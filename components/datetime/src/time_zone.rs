@@ -215,8 +215,6 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The metazone lookup
     pub(crate) mz_periods: Option<&'a provider::time_zones::MetazonePeriodV1<'a>>,
-    /// The zone offset lookup
-    pub(crate) offsets: Option<&'a provider::time_zones::ZoneOffsetPeriodV1<'a>>,
 }
 
 fn metazone(

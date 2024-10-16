@@ -93,6 +93,7 @@ pub mod provider;
 mod time_zone;
 mod types;
 mod windows_tz;
+mod zone_offset;
 mod zoned_datetime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
@@ -107,6 +108,7 @@ pub use provider::TimeZoneBcp47Id;
 pub use time_zone::TimeZoneInfo;
 pub use types::{UtcOffset, ZoneVariant};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
+pub use zone_offset::ZoneOffsetCalculator;
 pub use zoned_datetime::CustomZonedDateTime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]

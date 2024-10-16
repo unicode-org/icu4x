@@ -6,6 +6,7 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::time_zones::*;
+use icu::timezone::provider::*;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;

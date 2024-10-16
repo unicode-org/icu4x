@@ -13,8 +13,7 @@ use zerovec::{
     ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec,
 };
 
-pub use icu_timezone::provider::TimeZoneBcp47Id;
-use icu_timezone::ZoneVariant;
+use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
@@ -30,8 +29,6 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
     pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
     pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
-    pub(crate) use super::ZoneOffsetPeriodV1 as OffsetsV1;
-    pub(crate) use super::ZoneOffsetPeriodV1Marker as OffsetsV1Marker;
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
@@ -237,41 +234,4 @@ pub struct MetazonePeriodV1<'data>(
     /// the number of minutes since the local unix epoch. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, Option<MetazoneId>>,
-);
-
-/// Storage type for storing UTC offsets as eights of an hour.
-pub type EighthsOfHourOffset = i8;
-/// Storage type for storing `DateTime<Iso>` as minutes since the UNIX epoch.
-pub type IsoMinutesSinceEpoch = i32;
-
-/// An ICU4X mapping to the time zone offsets at a given period.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(
-    ZoneOffsetPeriodV1Marker,
-    "time_zone/offset_period@1",
-    singleton
-))]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct ZoneOffsetPeriodV1<'data>(
-    /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local unix epoch. It represents when the offsets ended to be used.
-    ///
-    /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
-    /// if the second value is 0, there is no daylight time.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub  ZeroMap2d<
-        'data,
-        TimeZoneBcp47Id,
-        IsoMinutesSinceEpoch,
-        (EighthsOfHourOffset, EighthsOfHourOffset),
-    >,
 );

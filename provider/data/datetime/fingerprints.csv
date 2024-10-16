@@ -35815,7 +35815,6 @@ time_zone/locations@1, zh-MO, -> zh-HK
 time_zone/locations@1, zh-SG, 9247B, 9088B, dbf3a8f8eb62d828
 time_zone/locations@1, zu, 9086B, 8927B, cebb6ba6c35f2d98
 time_zone/metazone_period@1, <singleton>, 11097B, 11009B, dcfa50fb39ebd549
-time_zone/offset_period@1, <singleton>, 13374B, 13286B, 397b18d3f2345411
 time_zone/specific_long@1, <lookup>, 948B, 190 identifiers
 time_zone/specific_long@1, <total>, 1638778B, 1605415B, 185 unique payloads
 time_zone/specific_long@1, af, 6872B, 6692B, 92b73e3a6b592d73

@@ -10,6 +10,7 @@ use cldr_serde::time_zones::time_zone_names::*;
 use icu::calendar::DateTime;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
+use icu::timezone::provider::*;
 use icu::timezone::UtcOffset;
 use icu::timezone::ZoneVariant;
 use icu_provider::prelude::*;
