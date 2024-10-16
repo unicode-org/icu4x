@@ -249,7 +249,7 @@ pub mod ffi {
         /// Sets the `local_time` field.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField)]
         pub fn set_local_time(&mut self, datetime: &IsoDateTime) {
-            self.0.local_time = Some((datetime.0.date, datetime.0.time.clone()));
+            self.0.local_time = Some((datetime.0.date, datetime.0.time));
         }
 
         /// Clears the `local_time` field.
