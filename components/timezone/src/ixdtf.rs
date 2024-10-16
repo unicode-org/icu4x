@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{CustomZonedDateTime, InvalidOffsetError, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
+use crate::{
+    CustomZonedDateTime, InvalidOffsetError, TimeZoneIdMapper, TimeZoneInfo, UtcOffset,
+    ZoneOffsetCalculator, ZoneVariant,
+};
 use alloc::str::FromStr;
-use icu_calendar::{AnyCalendar, Date, DateError, Iso, RangeError, Time};
+use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
 use ixdtf::{
     parsers::{
         records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord, UTCOffsetRecord},
@@ -129,22 +132,39 @@ impl TimeZoneInfo {
                 let mapper = TimeZoneIdMapper::new();
                 let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
 
+                let mut zone_variant = None;
+                let mut local_time = None;
+                if let (Some(date), Some(time)) = (date, time) {
+                    let iso = DateTime::<Iso>::try_new_iso_datetime(
+                        date.year,
+                        date.month,
+                        date.day,
+                        time.hour,
+                        time.minute,
+                        time.second,
+                    )?;
+                    if let Some(offset) = offset {
+                        if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
+                            .compute_offsets_from_time_zone(time_zone_id, &iso)
+                        {
+                            zone_variant = if offset == std_offset {
+                                Some(ZoneVariant::standard())
+                            } else if Some(offset) == dst_offset {
+                                Some(ZoneVariant::daylight())
+                            } else {
+                                // return an invalid offset error?
+                                None
+                            };
+                        }
+                    }
+                    local_time = Some((iso.date, iso.time));
+                };
+
                 Ok(Self {
                     time_zone_id,
                     offset,
-                    zone_variant: None,
-                    local_time: if let Some(date) = date {
-                        if let Some(time) = time {
-                            Some((
-                                Date::<Iso>::try_new_iso_date(date.year, date.month, date.day)?,
-                                Time::try_new(time.hour, time.minute, time.second, 0)?,
-                            ))
-                        } else {
-                            None
-                        }
-                    } else {
-                        None
-                    },
+                    zone_variant,
+                    local_time,
                 })
             }
             TimeZoneRecord::Offset(offset_record) => {
@@ -167,7 +187,7 @@ impl CustomZonedDateTime<Iso> {
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// ```
-    /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_iso_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
@@ -185,7 +205,7 @@ impl CustomZonedDateTime<Iso> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, None);
+    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
     /// assert!(zoneddatetime.zone.local_time.is_some());
     /// ```
     ///
@@ -249,7 +269,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// Basic usage:
     ///
     /// ```
-    /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]").unwrap();
@@ -267,7 +287,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, None);
+    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
     /// assert!(zoneddatetime.zone.local_time.is_some());
     /// ```
     ///
@@ -294,7 +314,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// Below is an example of a time zone being provided by a time zone annotation.
     ///
     /// ```
-    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
     /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
@@ -319,7 +339,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// verifying internal consistency.
     ///
     /// ```
-    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
@@ -327,7 +347,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, None);
+    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, Some(ZoneVariant::daylight()));
     /// assert!(consistent_tz_from_both.zone.local_time.is_some());
     ///
     /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();

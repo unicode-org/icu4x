@@ -986,7 +986,13 @@
         "patterns": [
           "z",
           "zz",
-          "zzz",
+          "zzz"
+        ],
+        "configs": [],
+        "expected": ["{z}"]
+      },
+      {
+        "patterns": [
           "O"
         ],
         "configs": [],
@@ -995,7 +1001,6 @@
       {
         "patterns": [
           "OOOO",
-          "zzzz",
           "ZZZZ"
         ],
         "configs": [],
@@ -1037,6 +1042,13 @@
           "z",
           "zz",
           "zzz",
+          "zzzz"
+        ],
+        "configs": [],
+        "expected": ["{z}"]
+      },
+      {
+        "patterns": [
           "O"
         ],
         "configs": [],
@@ -1045,7 +1057,6 @@
       {
         "patterns": [
           "ZZZZ",
-          "zzzz",
           "OOOO"
         ],
         "configs": [],
@@ -1070,7 +1081,13 @@
       {
         "patterns": [
           "v",
-          "vvvv",
+          "vvvv"
+        ],
+        "configs": [],
+        "expected": ["{v}"]
+      },
+      {
+        "patterns": [
           "VVVV"
         ],
         "configs": [],
