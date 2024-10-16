@@ -208,6 +208,9 @@ lazy_static::lazy_static! {
         // may in the future be exposed for options
         "icu::datetime::fields",
 
+        // Datetime scaffolding
+        "icu::datetime::scaffold",
+
         // experimental
         "icu::datetime::neo",
         "icu::datetime::neo_marker",
