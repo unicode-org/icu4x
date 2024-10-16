@@ -459,14 +459,15 @@ impl FormatTimeZone for LocalizedOffsetFormat {
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(offset) = input.offset else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
-        };
         let Some(essentials) = data_payloads.essentials else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
         let Some(fdf) = fdf else {
             return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
+        };
+        let Some(offset) = input.offset else {
+            sink.write_str(&essentials.offset_unknown)?;
+            return Ok(Ok(()));
         };
         Ok(if offset.is_zero() {
             sink.write_str(&essentials.offset_zero)?;
@@ -691,7 +692,8 @@ impl FormatTimeZone for Iso8601Format {
         _fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         let Some(offset) = input.offset else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField("zone_offset")));
+            sink.write_str("+?")?;
+            return Ok(Ok(()));
         };
         self.format_infallible(sink, offset).map(|()| Ok(()))
     }

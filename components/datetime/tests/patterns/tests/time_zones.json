@@ -1097,19 +1097,19 @@
           "Z",
           "ZZ",
           "ZZZ",
-          "ZZZZ",
           "ZZZZZ"
         ],
         "configs": [],
-        "expected": ["{Z}"]
+        "expected": ["+?"]
       },
       {
         "patterns": [
           "O",
+          "ZZZZ",
           "OOOO"
         ],
         "configs": [],
-        "expected": ["{O}"]
+        "expected": ["GMT+?"]
       },
       {
         "patterns": [

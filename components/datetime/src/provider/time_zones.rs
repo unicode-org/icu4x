@@ -62,6 +62,9 @@ pub struct TimeZoneEssentialsV1<'data> {
     /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub offset_zero: Cow<'data, str>,
+    /// The localized unknown-offset format.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub offset_unknown: Cow<'data, str>,
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.

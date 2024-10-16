@@ -487,9 +487,7 @@ fn test_time_zone_format_offset_seconds() {
 
 #[test]
 fn test_time_zone_format_offset_not_set_debug_assert_panic() {
-    use icu_datetime::{
-        neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, DateTimeWriteError,
-    };
+    use icu_datetime::{neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength};
 
     let time_zone = TimeZoneInfo {
         time_zone_id: TimeZoneIdMapper::new()
@@ -502,11 +500,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
         NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     )
     .unwrap();
-    assert_try_writeable_eq!(
-        tzf.format(&time_zone),
-        "{O}",
-        Err(DateTimeWriteError::MissingInputField("zone_offset"))
-    );
+    assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+?",);
 }
 
 #[test]

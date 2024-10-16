@@ -60,6 +60,14 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
+                // TODO: get this from CLDR
+                offset_unknown: time_zone_names
+                    .gmt_format
+                    .0
+                    .interpolate(["+?"])
+                    .write_to_string()
+                    .into_owned()
+                    .into(),
             }),
         })
     }
@@ -184,6 +192,7 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             })
             .collect::<BTreeMap<_, _>>();
 
+        // TODO: get this from CLDR
         let unknown = time_zone_names
             .region_format
             .interpolate([locations

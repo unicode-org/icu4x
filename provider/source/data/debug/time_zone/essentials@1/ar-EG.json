@@ -8,5 +8,6 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero": "غرينتش"
+  "offset_zero": "غرينتش",
+  "offset_unknown": "غرينتش+?"
 }
