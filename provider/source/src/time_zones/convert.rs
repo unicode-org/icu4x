@@ -60,6 +60,14 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
+                // TODO: get this from CLDR
+                offset_unknown: time_zone_names
+                    .gmt_format
+                    .0
+                    .interpolate(["+?"])
+                    .write_to_string()
+                    .into_owned()
+                    .into(),
             }),
         })
     }
@@ -184,20 +192,12 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             })
             .collect::<BTreeMap<_, _>>();
 
-        let unknown = time_zone_names
-            .region_format
-            .interpolate([locations
-                .remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")))
-                .unwrap_or("Unknown".into())])
-            .write_to_string()
-            .into_owned()
-            .into();
+        locations.remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(LocationsV1 {
                 locations: locations.into_iter().collect(),
-                unknown,
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
                 pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),

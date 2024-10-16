@@ -211,6 +211,7 @@ mod tests {
             })
             .unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
+        assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
         let locations: DataResponse<LocationsV1Marker> = provider
             .load(DataRequest {
@@ -236,7 +237,6 @@ mod tests {
                 .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
                 .unwrap()
         );
-        assert_eq!("Unknown City Time", locations.payload.get().unknown);
 
         let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {

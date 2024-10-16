@@ -23,7 +23,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 Unknown City Time"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -51,7 +51,7 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 Unknown City Time"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },

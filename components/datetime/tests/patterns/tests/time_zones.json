@@ -987,6 +987,7 @@
           "z",
           "zz",
           "zzz",
+          "v",
           "O"
         ],
         "configs": [],
@@ -994,6 +995,8 @@
       },
       {
         "patterns": [
+          "vvvv",
+          "VVVV",
           "OOOO",
           "zzzz",
           "ZZZZ"
@@ -1016,15 +1019,6 @@
         ],
         "configs": [],
         "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv",
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
       }
     ]
   },
@@ -1037,6 +1031,7 @@
           "z",
           "zz",
           "zzz",
+          "v",
           "O"
         ],
         "configs": [],
@@ -1045,6 +1040,8 @@
       {
         "patterns": [
           "ZZZZ",
+          "vvvv",
+          "VVVV",
           "zzzz",
           "OOOO"
         ],
@@ -1066,15 +1063,6 @@
         ],
         "configs": [],
         "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv",
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
       }
     ]
   },
@@ -1097,28 +1085,22 @@
           "Z",
           "ZZ",
           "ZZZ",
-          "ZZZZ",
           "ZZZZZ"
         ],
         "configs": [],
-        "expected": ["{Z}"]
+        "expected": ["+?"]
       },
       {
         "patterns": [
           "O",
-          "OOOO"
-        ],
-        "configs": [],
-        "expected": ["{O}"]
-      },
-      {
-        "patterns": [
+          "ZZZZ",
+          "OOOO",
           "v",
           "vvvv",
           "VVVV"
         ],
         "configs": [],
-        "expected": ["Unknown City Time"]
+        "expected": ["GMT+?"]
       }
     ]
   }
