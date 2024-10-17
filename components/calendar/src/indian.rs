@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Indian national calendar.
 //!
 //! ```rust
-//! use icu::calendar::{indian::Indian, Date, DateTime};
+//! use icu::calendar::{cal::Indian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)

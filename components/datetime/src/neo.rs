@@ -567,7 +567,7 @@ where
     ///
     /// ```compile_fail
     /// use icu::calendar::Date;
-    /// use icu::calendar::buddhist::Buddhist;
+    /// use icu::calendar::cal::Buddhist;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1456,7 +1456,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::calendar::cal::Hebrew;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1498,7 +1498,7 @@ impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::calendar::cal::Hebrew;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1525,7 +1525,7 @@ impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::calendar::cal::Hebrew;
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::MismatchedCalendarError;

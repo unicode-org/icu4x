@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Julian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{julian::Julian, Date, DateTime};
+//! use icu::calendar::{cal::Julian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)

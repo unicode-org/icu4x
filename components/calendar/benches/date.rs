@@ -61,7 +61,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/overview",
         &fxs,
-        icu::calendar::iso::Iso,
+        icu::calendar::cal::Iso,
         |y, m, d| Date::try_new_iso(y, m, d).unwrap(),
     );
 
@@ -70,7 +70,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/buddhist",
         &fxs,
-        icu::calendar::buddhist::Buddhist,
+        icu::calendar::cal::Buddhist,
         |y, m, d| Date::try_new_buddhist(y, m, d).unwrap(),
     );
 
@@ -79,7 +79,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/coptic",
         &fxs,
-        icu::calendar::coptic::Coptic,
+        icu::calendar::cal::Coptic,
         |y, m, d| Date::try_new_coptic(y, m, d).unwrap(),
     );
 
@@ -88,15 +88,10 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/ethiopic",
         &fxs,
-        icu::calendar::ethiopian::Ethiopian::new(),
+        icu::calendar::cal::Ethiopian::new(),
         |y, m, d| {
-            Date::try_new_ethiopian(
-                icu::calendar::ethiopian::EthiopianEraStyle::AmeteMihret,
-                y,
-                m,
-                d,
-            )
-            .unwrap()
+            Date::try_new_ethiopian(icu::calendar::cal::EthiopianEraStyle::AmeteMihret, y, m, d)
+                .unwrap()
         },
     );
 
@@ -105,7 +100,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/indian",
         &fxs,
-        icu::calendar::indian::Indian,
+        icu::calendar::cal::Indian,
         |y, m, d| Date::try_new_indian(y, m, d).unwrap(),
     );
 
@@ -114,7 +109,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/persian",
         &fxs,
-        icu::calendar::persian::Persian,
+        icu::calendar::cal::Persian,
         |y, m, d| Date::try_new_persian(y, m, d).unwrap(),
     );
 
@@ -123,7 +118,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/roc",
         &fxs,
-        icu::calendar::roc::Roc,
+        icu::calendar::cal::Roc,
         |y, m, d| Date::try_new_roc(y, m, d).unwrap(),
     );
 
@@ -132,7 +127,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/julian",
         &fxs,
-        icu::calendar::julian::Julian,
+        icu::calendar::cal::Julian,
         |y, m, d| Date::try_new_julian(y, m, d).unwrap(),
     );
 
@@ -141,13 +136,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/chinese_calculating",
         &fxs,
-        icu::calendar::chinese::Chinese::new_always_calculating(),
+        icu::calendar::cal::Chinese::new_always_calculating(),
         |y, m, d| {
             Date::try_new_chinese_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::chinese::Chinese::new_always_calculating(),
+                icu::calendar::cal::Chinese::new_always_calculating(),
             )
             .unwrap()
         },
@@ -158,9 +153,9 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/chinese_cached",
         &fxs,
-        icu::calendar::chinese::Chinese::new(),
+        icu::calendar::cal::Chinese::new(),
         |y, m, d| {
-            Date::try_new_chinese_with_calendar(y, m, d, icu::calendar::chinese::Chinese::new())
+            Date::try_new_chinese_with_calendar(y, m, d, icu::calendar::cal::Chinese::new())
                 .unwrap()
         },
     );
@@ -170,13 +165,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/dangi_calculating",
         &fxs,
-        icu::calendar::dangi::Dangi::new_always_calculating(),
+        icu::calendar::cal::Dangi::new_always_calculating(),
         |y, m, d| {
             Date::try_new_dangi_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::dangi::Dangi::new_always_calculating(),
+                icu::calendar::cal::Dangi::new_always_calculating(),
             )
             .unwrap()
         },
@@ -187,9 +182,9 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/dangi_cached",
         &fxs,
-        icu::calendar::dangi::Dangi::new(),
+        icu::calendar::cal::Dangi::new(),
         |y, m, d| {
-            Date::try_new_dangi_with_calendar(y, m, d, icu::calendar::dangi::Dangi::new()).unwrap()
+            Date::try_new_dangi_with_calendar(y, m, d, icu::calendar::cal::Dangi::new()).unwrap()
         },
     );
 
@@ -198,7 +193,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/hebrew",
         &fxs,
-        icu::calendar::hebrew::Hebrew,
+        icu::calendar::cal::Hebrew,
         |y, m, d| Date::try_new_hebrew(y, m, d).unwrap(),
     );
 
@@ -207,7 +202,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/gregorian",
         &fxs,
-        icu::calendar::gregorian::Gregorian,
+        icu::calendar::cal::Gregorian,
         |y, m, d| Date::try_new_gregorian(y, m, d).unwrap(),
     );
 
@@ -216,13 +211,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::islamic::IslamicCivil::new(),
+        icu::calendar::cal::IslamicCivil::new(),
         |y, m, d| {
             Date::try_new_islamic_civil_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::islamic::IslamicCivil::new(),
+                icu::calendar::cal::IslamicCivil::new(),
             )
             .unwrap()
         },
@@ -233,13 +228,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::islamic::IslamicTabular::new(),
+        icu::calendar::cal::IslamicTabular::new(),
         |y, m, d| {
             Date::try_new_islamic_tabular_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::islamic::IslamicTabular::new(),
+                icu::calendar::cal::IslamicTabular::new(),
             )
             .unwrap()
         },
@@ -250,13 +245,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+        icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
         |y, m, d| {
             Date::try_new_ummalqura_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+                icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
             )
             .unwrap()
         },
@@ -267,13 +262,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+        icu::calendar::cal::IslamicObservational::new_always_calculating(),
         |y, m, d| {
             Date::try_new_observational_islamic_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+                icu::calendar::cal::IslamicObservational::new_always_calculating(),
             )
             .unwrap()
         },
