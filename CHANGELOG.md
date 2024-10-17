@@ -13,6 +13,7 @@
   - `icu_experimental`
   - `icu_locale`
     - New crate
+    - Allow `LocaleDirectionality` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5704)
   - `icu_locale_core`
     - New crate, renamed from `icu_locid`
     - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
