@@ -1,6 +1,4 @@
 {
-  "offset_positive_sign": "+",
-  "offset_negative_sign": "−",
   "offset_separator": ":",
   "offset_pattern": [
     {
@@ -10,5 +8,6 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero": "UTC"
+  "offset_zero": "UTC",
+  "offset_unknown": "UTC+?"
 }

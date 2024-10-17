@@ -587,7 +587,6 @@ impl MatchDirection for Reverse {}
 ///
 /// The used indices in method parameters are all compatible with each other.
 // Thought: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
-
 pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
     fn cursor(&self) -> usize;
 

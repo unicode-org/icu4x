@@ -9,7 +9,7 @@ use icu_datetime::neo::TypedNeoFormatter;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo};
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -35,7 +35,7 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: CustomTimeZone::utc(),
+                                    zone: TimeZoneInfo::utc(),
                                 }
                             }
                         })
@@ -45,7 +45,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+                            TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
                                 skeleton,
                             )
@@ -56,9 +56,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            fdt.try_write_to(&mut result)
-                                .unwrap()
-                                .expect("Failed to write to date time format.");
+                            let _ = fdt.try_write_to(&mut result).unwrap();
                             result.clear();
                         }
                     }

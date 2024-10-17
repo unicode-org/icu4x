@@ -6,6 +6,7 @@
   - General
     - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
   - `icu_calendar`
+    - Consistently name calendar-specific `Date`/`DateTime` functions that have a calendar argument (https://github.com/unicode-org/icu4x/pull/5692)
   - `icu_collections`
   - `icu_normalizer`
   - `icu_datetime`

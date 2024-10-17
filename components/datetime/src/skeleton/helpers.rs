@@ -80,6 +80,8 @@ const SKELETON_EXTRA_SYMBOL: u32 = 1000;
 // the stored skeletons. There cannot be any cases higher than this one.
 const REQUESTED_SYMBOL_MISSING: u32 = 10000;
 
+/// The best skeleton found, alongside information on how well it matches.
+///
 /// According to the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
 /// there will be a guaranteed match for a skeleton. However, with this initial implementation,
 /// there is no attempt to add on missing fields. This enum encodes the variants for the current

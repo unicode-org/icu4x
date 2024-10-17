@@ -4,7 +4,6 @@
 
 //! A data provider wrapper that performs locale fallback.
 
-use crate::helpers::result_is_err_missing_locale;
 #[doc(no_inline)]
 pub use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
@@ -157,23 +156,25 @@ impl<P> LocaleFallbackProvider<P> {
                 ),
                 ..base_req
             });
-            if !result_is_err_missing_locale(&result) {
-                return result
-                    .map(|mut res| {
-                        f2(&mut res).locale = Some(fallback_iterator.take());
-                        res
-                    })
+
+            match result.allow_identifier_not_found() {
+                Ok(Some(mut result)) => {
+                    f2(&mut result).locale = Some(fallback_iterator.take());
+                    return Ok(result);
+                }
+                Ok(None) => {
+                    // If we just checked und, break out of the loop.
+                    if fallback_iterator.get().is_default() {
+                        break;
+                    }
+                    fallback_iterator.step();
+                }
+                Err(e) => {
                     // Log the original request rather than the fallback request
-                    .map_err(|e| {
-                        base_req.metadata.silent = base_silent;
-                        e.with_req(marker, base_req)
-                    });
-            }
-            // If we just checked und, break out of the loop.
-            if fallback_iterator.get().is_default() {
-                break;
-            }
-            fallback_iterator.step();
+                    base_req.metadata.silent = base_silent;
+                    return Err(e.with_req(marker, base_req));
+                }
+            };
         }
         base_req.metadata.silent = base_silent;
         Err(DataErrorKind::IdentifierNotFound.with_req(marker, base_req))

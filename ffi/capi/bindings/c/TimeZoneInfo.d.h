@@ -1,5 +1,5 @@
-#ifndef TimeZoneUnknownError_D_H
-#define TimeZoneUnknownError_D_H
+#ifndef TimeZoneInfo_D_H
+#define TimeZoneInfo_D_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -11,10 +11,9 @@
 
 
 
+typedef struct TimeZoneInfo TimeZoneInfo;
 
 
 
 
-
-
-#endif // TimeZoneUnknownError_D_H
+#endif // TimeZoneInfo_D_H

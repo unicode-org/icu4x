@@ -4,7 +4,6 @@
 
 //! Internal traits and structs for loading data from other crates.
 
-use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::FixedDecimalFormatter;
@@ -19,13 +18,6 @@ pub(crate) trait FixedDecimalFormatterLoader {
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError>;
-}
-
-/// Trait for loading a WeekCalculator.
-///
-/// Implemented on the provider-specific loader types in this module.
-pub(crate) trait WeekCalculatorLoader {
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError>;
 }
 
 /// Trait for loading an AnyCalendar.
@@ -52,14 +44,6 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
 }
 
 #[cfg(feature = "compiled_data")]
-impl WeekCalculatorLoader for ExternalLoaderCompiledData {
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new(locale)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
@@ -81,16 +65,6 @@ where
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
         FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
-    }
-}
-
-impl<P> WeekCalculatorLoader for ExternalLoaderAny<'_, P>
-where
-    P: ?Sized + AnyProvider,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_any_provider(self.0, locale)
     }
 }
 
@@ -124,17 +98,6 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<P> WeekCalculatorLoader for ExternalLoaderBuffer<'_, P>
-where
-    P: ?Sized + BufferProvider,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_buffer_provider(self.0, locale)
-    }
-}
-
-#[cfg(feature = "serde")]
 impl<P> AnyCalendarLoader for ExternalLoaderBuffer<'_, P>
 where
     P: ?Sized + BufferProvider,
@@ -159,16 +122,6 @@ where
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
         FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
-    }
-}
-
-impl<P> WeekCalculatorLoader for ExternalLoaderUnstable<'_, P>
-where
-    P: ?Sized + DataProvider<icu_calendar::provider::WeekDataV2Marker>,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_unstable(self.0, locale)
     }
 }
 

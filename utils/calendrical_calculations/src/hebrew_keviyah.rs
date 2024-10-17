@@ -314,7 +314,9 @@ impl YearInfo {
     }
 }
 
-/// The Keviyah (קביעה) of a year. A year may be one of fourteen types, categorized by the day of
+/// The Keviyah (קביעה) of a year.
+///
+/// A year may be one of fourteen types, categorized by the day of
 /// week of the new year (the first number, 1 = Sunday), the type of year (Deficient, Regular,
 /// Complete), and the day of week of the first day of Passover. The last segment disambiguates
 /// between cases that have the same first two but differ on whether they are leap years (since

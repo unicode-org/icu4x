@@ -7,7 +7,9 @@ use alloc::borrow::{Cow, ToOwned};
 use core::{marker::PhantomData, mem};
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
-/// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use
+/// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`).
+///
+/// One can use
 /// `Yokeable::Output` on this trait to obtain the "lifetime'd" value of the `Cow<'static, T>`,
 /// e.g. `<Cow<'static, T> as Yokeable<'a>'>::Output` is `Cow<'a, T>`.
 ///

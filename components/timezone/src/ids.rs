@@ -67,19 +67,27 @@ use crate::{
 /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel":
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("Australia/Melbourne"),
-///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
+///     TimeZoneBcp47Id(tinystr!(8, "aumel"))
 /// );
 ///
 /// // Lookup is ASCII-case-insensitive:
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("australia/melbourne"),
-///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
+///     TimeZoneBcp47Id(tinystr!(8, "aumel"))
 /// );
 ///
 /// // The IANA zone "Australia/Victoria" is an alias:
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("Australia/Victoria"),
-///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
+///     TimeZoneBcp47Id(tinystr!(8, "aumel"))
+/// );
+///
+/// // The IANA zone "Australia/Boing_Boing" does not exist
+/// // (maybe not *yet*), so it produces the special unknown
+/// // timezone in order for this operation to be infallible:
+/// assert_eq!(
+///     mapper.iana_to_bcp47("Australia/Boing_Boing"),
+///     TimeZoneBcp47Id::unknown()
 /// );
 ///
 /// // We can recover the canonical identifier from the mapper:
@@ -175,22 +183,24 @@ impl TimeZoneIdMapperBorrowed<'_> {
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
     ///
-    /// let result = mapper.iana_to_bcp47("Asia/CALCUTTA").unwrap();
+    /// let result = mapper.iana_to_bcp47("Asia/CALCUTTA");
     ///
     /// assert_eq!(*result, "inccu");
     ///
     /// // Unknown IANA time zone ID:
-    /// assert_eq!(mapper.iana_to_bcp47("America/San_Francisco"), None);
+    /// assert_eq!(mapper.iana_to_bcp47("America/San_Francisco"), TimeZoneBcp47Id::unknown());
     /// ```
-    pub fn iana_to_bcp47(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
+    pub fn iana_to_bcp47(&self, iana_id: &str) -> TimeZoneBcp47Id {
         self.iana_lookup_quick(iana_id)
             .and_then(|trie_value| self.data.bcp47_ids.get(trie_value.index()))
+            .unwrap_or(TimeZoneBcp47Id::unknown())
     }
 
     /// Same as [`Self::iana_to_bcp47()`] but works with potentially ill-formed UTF-8.
-    pub fn iana_bytes_to_bcp47(&self, iana_id: &[u8]) -> Option<TimeZoneBcp47Id> {
+    pub fn iana_bytes_to_bcp47(&self, iana_id: &[u8]) -> TimeZoneBcp47Id {
         self.iana_lookup_quick(iana_id)
             .and_then(|trie_value| self.data.bcp47_ids.get(trie_value.index()))
+            .unwrap_or(TimeZoneBcp47Id::unknown())
     }
 
     /// Normalizes the syntax of an IANA time zone ID.

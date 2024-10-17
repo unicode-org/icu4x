@@ -382,7 +382,9 @@ pub(crate) fn new_year_on_or_before_fixed_date<C: ChineseBased>(
     }
 }
 
-/// Get a RataDie in the middle of a year; this is not necessarily meant for direct use in
+/// Get a RataDie in the middle of a year.
+///
+/// This is not necessarily meant for direct use in
 /// calculations; rather, it is useful for getting a RataDie guaranteed to be in a given year
 /// as input for other calculations like calculating the leap month in a year.
 ///
@@ -511,7 +513,9 @@ pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
     result
 }
 
-/// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
+/// Returns the number of days in the given (year, month).
+///
+/// In the Chinese calendar, months start at each
 /// new moon, so this function finds the number of days between the new moon at the beginning of the given
 /// month and the new moon at the beginning of the next month.
 pub fn month_days<C: ChineseBased>(year: i32, month: u8) -> u8 {

@@ -1,7 +1,5 @@
 {
-  "offset_positive_sign": "+",
-  "offset_negative_sign": "-",
-  "offset_separator": ":",
+  "offset_separator": ".",
   "offset_pattern": [
     {
       "Literal": "GMT"
@@ -10,5 +8,6 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero": "GMT"
+  "offset_zero": "GMT",
+  "offset_unknown": "GMT+?"
 }

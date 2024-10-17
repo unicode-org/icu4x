@@ -14,7 +14,7 @@ fn bench_calendar<C: Clone + Calendar>(
     name: &str,
     calendar: C,
 ) {
-    let iso = Date::try_new_iso_date(2023, 8, 16).unwrap();
+    let iso = Date::try_new_iso(2023, 8, 16).unwrap();
     group.bench_function(name, |b| {
         b.iter(|| {
             let converted = black_box(iso).to_calendar(Ref(&calendar));

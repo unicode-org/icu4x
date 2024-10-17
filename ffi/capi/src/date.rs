@@ -36,10 +36,10 @@ pub mod ffi {
 
     impl IsoDate {
         /// Creates a new [`IsoDate`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(year: i32, month: u8, day: u8) -> Result<Box<IsoDate>, CalendarError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso_date(
+            Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso(
                 year, month, day,
             )?)))
         }
@@ -184,7 +184,7 @@ pub mod ffi {
         ) -> Result<Box<Date>, CalendarError> {
             let cal = calendar.0.clone();
             Ok(Box::new(Date(
-                icu_calendar::Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
+                icu_calendar::Date::try_new_iso(year, month, day)?.to_calendar(cal),
             )))
         }
 

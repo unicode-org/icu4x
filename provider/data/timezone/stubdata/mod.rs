@@ -1,7 +1,6 @@
 // @generated
 include!("bcp47_to_iana_map_v1_marker.rs.data");
 include!("iana_to_bcp47_map_v3_marker.rs.data");
-include!("metazone_period_v1_marker.rs.data");
 include!("zone_offset_period_v1_marker.rs.data");
 include!("windows_zones_to_bcp47_map_v1_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
@@ -35,7 +34,6 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_bcp47_to_iana_map_v1_marker!($provider);
         impl_iana_to_bcp47_map_v3_marker!($provider);
-        impl_metazone_period_v1_marker!($provider);
         impl_zone_offset_period_v1_marker!($provider);
         impl_windows_zones_to_bcp47_map_v1_marker!($provider);
     };
@@ -49,7 +47,6 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::timezone::provider::names::IanaToBcp47MapV3Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::IanaToBcp47MapV3Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::timezone::provider::MetazonePeriodV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::MetazonePeriodV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::timezone::provider::ZoneOffsetPeriodV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::ZoneOffsetPeriodV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),

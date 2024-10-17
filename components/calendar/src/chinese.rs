@@ -12,11 +12,11 @@
 //!
 //! // `Date` type
 //! let chinese_date =
-//!     Date::try_new_chinese_date_with_calendar(4660, 6, 6, chinese)
+//!     Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
 //!         .expect("Failed to initialize Chinese Date instance.");
 //!
 //! // `DateTime` type
-//! let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+//! let chinese_datetime = DateTime::try_new_chinese_with_calendar(
 //!     4660, 6, 6, 13, 1, 0, chinese,
 //! )
 //! .expect("Failed to initialize Chinese DateTime instance");
@@ -325,7 +325,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// let chinese = Chinese::new_always_calculating();
     ///
     /// let date_chinese =
-    ///     Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
+    ///     Date::try_new_chinese_with_calendar(4660, 6, 11, chinese)
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().era_year_or_extended(), 4660);
@@ -334,7 +334,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
-    pub fn try_new_chinese_date_with_calendar(
+    pub fn try_new_chinese_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -364,7 +364,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
-    /// let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+    /// let chinese_datetime = DateTime::try_new_chinese_with_calendar(
     ///     4660, 6, 11, 13, 1, 0, chinese,
     /// )
     /// .expect("Failed to initialize Chinese DateTime instance.");
@@ -377,7 +377,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     /// assert_eq!(chinese_datetime.time.minute.number(), 1);
     /// assert_eq!(chinese_datetime.time.second.number(), 0);
     /// ```
-    pub fn try_new_chinese_datetime_with_calendar(
+    pub fn try_new_chinese_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -387,7 +387,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
         calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_chinese_date_with_calendar(year, month, day, calendar)?,
+            date: Date::try_new_chinese_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -596,7 +596,7 @@ mod test {
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let date = Date::try_new_chinese_date_with_calendar(
+                    let date = Date::try_new_chinese_with_calendar(
                         case.year, case.month, case.day, chinese,
                     )
                     .unwrap();
@@ -639,7 +639,7 @@ mod test {
 
     #[test]
     fn test_chinese_epoch() {
-        let iso = Date::try_new_iso_date(-2636, 2, 15).unwrap();
+        let iso = Date::try_new_iso(-2636, 2, 15).unwrap();
 
         do_twice(
             &Chinese::new_always_calculating(),
@@ -692,7 +692,7 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -734,7 +734,7 @@ mod test {
         for case in expected {
             let year = case.0;
             let expected_month = case.1;
-            let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
+            let iso = Date::try_new_iso(year, 6, 1).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -894,7 +894,7 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
+            let iso = Date::try_new_iso(case.year, case.month, case.day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -983,7 +983,7 @@ mod test {
             let year = i;
             let month = i as u8 % 12 + 1;
             let day = i as u8 % 28 + 1;
-            let iso = Date::try_new_iso_date(year, month, day).unwrap();
+            let iso = Date::try_new_iso(year, month, day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -1091,7 +1091,7 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
 
             do_twice(
                 &chinese_calculating,
