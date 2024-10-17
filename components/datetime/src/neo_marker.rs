@@ -2446,6 +2446,8 @@ impl_zone_marker!(
     zone_specific_long = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
+    input_variant = yes,
+    input_localtime = yes,
 );
 
 impl_zone_marker!(
