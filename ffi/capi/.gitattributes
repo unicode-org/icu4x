@@ -1,1 +1,2 @@
 bindings/** linguist-generated=true
+bindings/demo_gen_custom/** linguist-generated=false
