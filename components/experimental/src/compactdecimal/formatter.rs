@@ -13,7 +13,7 @@ use crate::compactdecimal::{
 };
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, UnsignedFixedDecimal};
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataError;
@@ -280,7 +280,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_i64(-1_172_700), "-1.2M");
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
-        let unrounded = FixedDecimal::from(value);
+        let unrounded = UnsignedFixedDecimal::from(value);
         self.format_fixed_decimal(unrounded)
     }
 
@@ -345,7 +345,7 @@ impl CompactDecimalFormatter {
         use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = FixedDecimal::try_from_f64(value, RoundTrip)?;
+        let partly_rounded = UnsignedFixedDecimal::try_from_f64(value, RoundTrip)?;
         Ok(self.format_fixed_decimal(partly_rounded))
     }
 
@@ -447,7 +447,7 @@ impl CompactDecimalFormatter {
     ///     "-1.2M"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: FixedDecimal) -> FormattedCompactDecimal<'_> {
+    pub fn format_fixed_decimal(&self, value: UnsignedFixedDecimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = value.multiplied_pow10(-i16::from(exponent));

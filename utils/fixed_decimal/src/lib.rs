@@ -55,25 +55,32 @@ mod compact;
 mod decimal;
 mod integer;
 mod ops;
+mod rounding;
 mod scientific;
+mod signed_decimal;
 mod uint_iterator;
+mod variations;
 
 #[cfg(feature = "ryu")]
-pub use decimal::FloatPrecision;
+pub use variations::FloatPrecision;
 
+use variations::Signed;
+use variations::WithInfinity;
+use variations::WithNaN;
 #[cfg(feature = "ryu")]
 #[doc(no_inline)]
 pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
-pub use decimal::FixedDecimal;
-pub use decimal::RoundingIncrement;
-pub use decimal::RoundingMode;
-pub use decimal::Sign;
-pub use decimal::SignDisplay;
+pub use decimal::UnsignedFixedDecimal;
 use displaydoc::Display;
 pub use integer::FixedInteger;
+pub use rounding::RoundingIncrement;
+pub use rounding::RoundingMode;
 pub use scientific::ScientificDecimal;
+pub use signed_decimal::SignedFixedDecimal;
+pub use variations::Sign;
+pub use variations::SignDisplay;
 
 /// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`].
 ///
@@ -119,3 +126,9 @@ pub enum ParseError {
 
 #[cfg(feature = "std")]
 impl std::error::Error for ParseError {}
+
+pub type FixedDecimalOrInfinity = WithInfinity<UnsignedFixedDecimal>;
+
+pub type SignedFixedDecimalOrInfinity = Signed<FixedDecimalOrInfinity>;
+
+pub type SignedFixedDecimalOrInfinityOrNan = WithNaN<SignedFixedDecimalOrInfinity>;

@@ -4,7 +4,7 @@
 
 use alloc::fmt::Write;
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use writeable::Writeable;
 
 use crate::relativetime::{
@@ -28,7 +28,7 @@ pub mod parts {
 pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,
-    pub(crate) value: FixedDecimal,
+    pub(crate) value: UnsignedFixedDecimal,
     pub(crate) is_negative: bool,
 }
 

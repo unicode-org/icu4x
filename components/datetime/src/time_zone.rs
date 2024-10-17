@@ -11,7 +11,7 @@ use crate::{
     provider,
 };
 use core::fmt;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::UnsignedFixedDecimal;
 use icu_calendar::{Date, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -493,7 +493,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                 ) -> fmt::Result {
                     self.fdf
                         .format(
-                            &FixedDecimal::from(self.offset.hours_part())
+                            &UnsignedFixedDecimal::from(self.offset.hours_part())
                                 .with_sign_display(fixed_decimal::SignDisplay::Always)
                                 .padded_start(if self.length == FieldLength::Wide {
                                     2
@@ -509,14 +509,20 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     {
                         sink.write_str(self.separator)?;
                         self.fdf
-                            .format(&FixedDecimal::from(self.offset.minutes_part()).padded_start(2))
+                            .format(
+                                &UnsignedFixedDecimal::from(self.offset.minutes_part())
+                                    .padded_start(2),
+                            )
                             .write_to(sink)?;
                     }
 
                     if self.offset.seconds_part() != 0 {
                         sink.write_str(self.separator)?;
                         self.fdf
-                            .format(&FixedDecimal::from(self.offset.seconds_part()).padded_start(2))
+                            .format(
+                                &UnsignedFixedDecimal::from(self.offset.seconds_part())
+                                    .padded_start(2),
+                            )
                             .write_to(sink)?;
                     }
 
