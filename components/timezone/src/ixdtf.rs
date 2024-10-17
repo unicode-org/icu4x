@@ -32,8 +32,6 @@ pub enum ParseError {
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
-    /// There was an invalid IANA identifier provided.
-    InvalidIanaIdentifier,
     /// The set of time zone fields was not expected for the given type.
     /// For example, if a named time zone was present with offset-only parsing,
     /// or an offset was present with named-time-zone-only parsing.
