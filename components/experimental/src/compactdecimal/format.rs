@@ -49,7 +49,7 @@ impl FormattedCompactDecimal<'_> {
     }
 }
 
-impl<'l> Writeable for FormattedCompactDecimal<'l> {
+impl Writeable for FormattedCompactDecimal<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

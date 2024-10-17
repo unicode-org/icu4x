@@ -634,7 +634,7 @@ impl From<TimeZoneName> for Field {
 
 /// Get the resolved components for a TypedDateTimeFormatter, via the PatternPlurals. In the case of
 /// plurals resolve off of the required `other` pattern.
-impl<'data> From<&PatternPlurals<'data>> for Bag {
+impl From<&PatternPlurals<'_>> for Bag {
     fn from(other: &PatternPlurals) -> Self {
         let pattern = match other {
             PatternPlurals::SinglePattern(pattern) => pattern,
@@ -650,7 +650,7 @@ impl From<&DateTimePattern> for Bag {
     }
 }
 
-impl<'data> From<&Pattern<'data>> for Bag {
+impl From<&Pattern<'_>> for Bag {
     fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 

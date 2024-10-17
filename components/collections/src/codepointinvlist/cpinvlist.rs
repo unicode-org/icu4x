@@ -145,7 +145,7 @@ impl core::fmt::Display for UnicodeCodePoint {
 }
 
 #[cfg(feature = "serde")]
-impl<'data> serde::Serialize for CodePointInversionList<'data> {
+impl serde::Serialize for CodePointInversionList<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,

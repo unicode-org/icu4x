@@ -103,7 +103,7 @@ impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
     }
 }
 
-impl<'data> CaseMapV1<'data> {
+impl CaseMapV1<'_> {
     /// Creates a new CaseMapV1 using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.

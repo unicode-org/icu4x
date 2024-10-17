@@ -330,8 +330,8 @@ pub(crate) struct IslamicPrecomputedData<'a, IB: IslamicBasedMarker> {
     _ib: PhantomData<IB>,
 }
 
-impl<'b, IB: IslamicBasedMarker> PrecomputedDataSource<IslamicYearInfo>
-    for IslamicPrecomputedData<'b, IB>
+impl<IB: IslamicBasedMarker> PrecomputedDataSource<IslamicYearInfo>
+    for IslamicPrecomputedData<'_, IB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> IslamicYearInfo {
         self.data

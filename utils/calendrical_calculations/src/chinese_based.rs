@@ -382,7 +382,9 @@ pub(crate) fn new_year_on_or_before_fixed_date<C: ChineseBased>(
     }
 }
 
-/// Get a RataDie in the middle of a year; this is not necessarily meant for direct use in
+/// Get a RataDie in the middle of a year.
+///
+/// This is not necessarily meant for direct use in
 /// calculations; rather, it is useful for getting a RataDie guaranteed to be in a given year
 /// as input for other calculations like calculating the leap month in a year.
 ///
@@ -483,6 +485,7 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
 }
 
 /// Given that `new_year` is the first day of a leap year, find which month in the year is a leap month.
+///
 /// Since the first month in which there are no major solar terms is a leap month, this function
 /// cycles through months until it finds the leap month, then returns the number of that month. This
 /// function assumes the date passed in is in a leap year and tests to ensure this is the case in debug
@@ -510,7 +513,9 @@ pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
     result
 }
 
-/// Returns the number of days in the given (year, month). In the Chinese calendar, months start at each
+/// Returns the number of days in the given (year, month).
+///
+/// In the Chinese calendar, months start at each
 /// new moon, so this function finds the number of days between the new moon at the beginning of the given
 /// month and the new moon at the beginning of the next month.
 pub fn month_days<C: ChineseBased>(year: i32, month: u8) -> u8 {
@@ -548,6 +553,7 @@ pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
 }
 
 /// Returns the length of each month in the year, as well as a leap month index (1-indexed) if any.
+///
 /// Month lengths are stored as true for 30-day, false for 29-day.
 /// In the case of no leap months, month 13 will have value false.
 pub fn month_structure_for_year<C: ChineseBased>(

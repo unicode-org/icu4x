@@ -78,7 +78,7 @@ impl ZoneOffsetCalculator {
     ///         TimeZoneBcp47Id(tinystr!(8, "usden")),
     ///         &DateTime::try_new_iso_datetime(2024, 1, 1, 0, 0, 0).unwrap()
     ///     ),
-    ///     Some((UtcOffset::try_from_offset_seconds(-7 * 3600).unwrap(), Some(UtcOffset::try_from_offset_seconds(-6 * 3600).unwrap())))
+    ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())))
     /// );
     ///
     /// // America/Phoenix does not
@@ -87,7 +87,7 @@ impl ZoneOffsetCalculator {
     ///         TimeZoneBcp47Id(tinystr!(8, "usphx")),
     ///         &DateTime::try_new_iso_datetime(2024, 1, 1, 0, 0, 0).unwrap()
     ///     ),
-    ///     Some((UtcOffset::try_from_offset_seconds(-7 * 3600).unwrap(), None))
+    ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), None))
     /// );
     /// ```
     pub fn compute_offsets_from_time_zone(
@@ -110,10 +110,9 @@ impl ZoneOffsetCalculator {
                 }
                 let offsets = offsets?;
                 Some((
-                    UtcOffset::from_offset_eighths_of_hour(offsets.0),
-                    (offsets.1 != 0).then_some(UtcOffset::from_offset_eighths_of_hour(
-                        offsets.0 + offsets.1,
-                    )),
+                    UtcOffset::from_eighths_of_hour(offsets.0),
+                    (offsets.1 != 0)
+                        .then_some(UtcOffset::from_eighths_of_hour(offsets.0 + offsets.1)),
                 ))
             }
             None => None,

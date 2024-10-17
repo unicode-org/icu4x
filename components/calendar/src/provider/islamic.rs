@@ -47,7 +47,7 @@ pub struct IslamicCacheV1<'data> {
     pub data: ZeroVec<'data, PackedIslamicYearInfo>,
 }
 
-impl<'data> IslamicCacheV1<'data> {
+impl IslamicCacheV1<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<IB: IslamicBasedMarker>(extended_years: core::ops::Range<i32>) -> Self {

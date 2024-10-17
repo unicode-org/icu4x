@@ -62,7 +62,7 @@ impl Uts46MapperBorrowed<'static> {
     }
 }
 
-impl<'a> Uts46MapperBorrowed<'a> {
+impl Uts46MapperBorrowed<'_> {
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
     /// into an iterator yielding a `char` sequence that gets the following
     /// operations from the "Map" and "Normalize" steps of the "Processing"

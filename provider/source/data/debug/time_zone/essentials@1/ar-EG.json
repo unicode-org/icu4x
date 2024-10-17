@@ -1,9 +1,6 @@
 {
-  "hour_format": [
-    "+H:m",
-    "-H:m"
-  ],
-  "offset_format": [
+  "offset_separator": ":",
+  "offset_pattern": [
     {
       "Literal": "غرينتش"
     },
@@ -11,49 +8,6 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero_format": "غرينتش",
-  "region_format": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    }
-  ],
-  "region_format_st": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " الرسمي"
-    }
-  ],
-  "region_format_dt": [
-    {
-      "Literal": "توقيت "
-    },
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " الصيفي"
-    }
-  ],
-  "fallback_format": [
-    {
-      "Placeholder": "Place1"
-    },
-    {
-      "Literal": " ("
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": ")"
-    }
-  ]
+  "offset_zero": "غرينتش",
+  "offset_unknown": "غرينتش+?"
 }

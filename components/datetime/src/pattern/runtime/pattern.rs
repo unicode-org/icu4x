@@ -94,7 +94,7 @@ impl Default for PatternMetadata {
     }
 }
 
-impl<'data> Pattern<'data> {
+impl Pattern<'_> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),

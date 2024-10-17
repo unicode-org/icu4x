@@ -286,7 +286,7 @@ enum ReverseRuleGroup<'p> {
     Transform(VecDeque<Cow<'p, parse::SingleId>>),
 }
 
-impl<'p> Default for ReverseRuleGroup<'p> {
+impl Default for ReverseRuleGroup<'_> {
     fn default() -> Self {
         Self::Conversion(Vec::new())
     }

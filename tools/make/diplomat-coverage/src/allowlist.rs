@@ -89,7 +89,7 @@ lazy_static::lazy_static! {
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
-        "NeoGetField",
+        "GetField",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -207,6 +207,9 @@ lazy_static::lazy_static! {
         // Experimental API mostly used for provider, components bags, and patterns,
         // may in the future be exposed for options
         "icu::datetime::fields",
+
+        // Datetime scaffolding
+        "icu::datetime::scaffold",
 
         // experimental
         "icu::datetime::neo",
@@ -420,7 +423,6 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
-        "icu::datetime::NeverCalendar",
 
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too

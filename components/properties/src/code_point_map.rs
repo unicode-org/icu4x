@@ -11,7 +11,9 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use zerovec::ule::UleError;
 
-/// A wrapper around code point map data. It is returned by APIs that return Unicode
+/// A wrapper around code point map data.
+///
+/// It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
@@ -259,7 +261,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 }
 
-impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
+impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// TODO
     pub fn get_set_for_value_group(&self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
         let matching_gc_ranges = self

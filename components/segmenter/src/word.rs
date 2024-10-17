@@ -730,7 +730,7 @@ where
 #[derive(Debug)]
 pub struct WordBreakTypeUtf16;
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
+impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

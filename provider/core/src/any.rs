@@ -337,7 +337,7 @@ pub trait AnyProvider {
     fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
-impl<'a, T: AnyProvider + ?Sized> AnyProvider for &'a T {
+impl<T: AnyProvider + ?Sized> AnyProvider for &T {
     #[inline]
     fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(marker, req)

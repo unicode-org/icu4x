@@ -143,7 +143,9 @@ pub struct LanguageStrStrPair<'a>(
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-/// This alias data is used for locale canonicalization. Each field defines a
+/// This alias data is used for locale canonicalization.
+///
+/// Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
 /// is stored in sorted order, allowing for binary search to identify rules to
@@ -218,6 +220,7 @@ pub struct AliasesV2<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
@@ -263,6 +266,7 @@ pub struct LikelySubtagsForLanguageV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.

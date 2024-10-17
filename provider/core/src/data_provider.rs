@@ -20,7 +20,7 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
-impl<'a, M, P> DataProvider<M> for &'a P
+impl<M, P> DataProvider<M> for &P
 where
     M: DataMarker,
     P: DataProvider<M> + ?Sized,
@@ -125,7 +125,7 @@ pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     ) -> Result<DataResponseMetadata, DataError>;
 }
 
-impl<'a, M, P> DynamicDataProvider<M> for &'a P
+impl<M, P> DynamicDataProvider<M> for &P
 where
     M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
@@ -234,7 +234,7 @@ where
     fn bound_marker(&self) -> DataMarkerInfo;
 }
 
-impl<'a, M, P> BoundDataProvider<M> for &'a P
+impl<M, P> BoundDataProvider<M> for &P
 where
     M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,

@@ -179,7 +179,6 @@ impl ExceptionBitsULE {
     /// Whether or not the slots are double-width.
     ///
     /// Unused in ICU4X
-
     pub fn double_width_slots(self) -> bool {
         self.0 & Self::DOUBLE_SLOTS_FLAG != 0
     }

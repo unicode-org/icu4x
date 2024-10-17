@@ -23,7 +23,7 @@ pub struct FormattedCurrency<'l> {
 
 writeable::impl_display_with_writeable!(FormattedCurrency<'_>);
 
-impl<'l> Writeable for FormattedCurrency<'l> {
+impl Writeable for FormattedCurrency<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

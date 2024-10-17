@@ -6,9 +6,9 @@ use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::format::neo::FieldForDataLoading;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{Alignment, FractionalSecondDigits};
 use crate::neo_skeleton::{
-    NeoComponents, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton, YearStyle,
+    Alignment, FractionalSecondDigits, NeoComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoTimeZoneStyle, YearStyle,
 };
 use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::PatternMetadata;
@@ -91,7 +91,7 @@ pub(crate) struct ItemsAndOptions<'a> {
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
-impl<'a> ItemsAndOptions<'a> {
+impl ItemsAndOptions<'_> {
     fn new_empty() -> Self {
         Self {
             items: ZeroSlice::new_empty(),
@@ -436,7 +436,7 @@ impl<'a> TimePatternDataBorrowed<'a> {
 
 impl ZonePatternSelectionData {
     pub(crate) fn new_with_skeleton(
-        components: NeoTimeZoneSkeleton,
+        components: NeoTimeZoneStyle,
         options: RawNeoOptions,
         is_only_field: bool,
     ) -> Self {

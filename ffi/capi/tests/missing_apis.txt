@@ -17,16 +17,18 @@
 icu::datetime::NeoFormatter#Struct
 icu::datetime::NeoFormatter::convert_and_format#FnInStruct
 icu::datetime::NeoFormatter::strict_format#FnInStruct
+icu::datetime::NeoFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::NeoFormatter::try_new#FnInStruct
-icu::datetime::NeoFormatter::try_new_with_components#FnInStruct
+icu::datetime::NeoFormatter::try_new_with_skeleton#FnInStruct
 icu::datetime::NeoSkeletonLength#Enum
+icu::datetime::NeoSkeletonLength::into_option#FnInEnum
 icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
 icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
 icu::datetime::TypedNeoFormatter#Struct
 icu::datetime::TypedNeoFormatter::format#FnInStruct
+icu::datetime::TypedNeoFormatter::into_formatter#FnInStruct
 icu::datetime::TypedNeoFormatter::try_new#FnInStruct
-icu::datetime::TypedNeoFormatter::try_new2#FnInStruct
-icu::datetime::TypedNeoFormatter::try_new_with_components#FnInStruct
+icu::datetime::TypedNeoFormatter::try_new_with_skeleton#FnInStruct
 icu::datetime::options::length::Date#Enum
 icu::datetime::options::length::Time#Enum
 icu::locale::preferences::PreferenceKey::is_custom#FnInTrait
@@ -208,7 +210,6 @@ icu::properties::props::GeneralCategoryGroup::union#FnInStruct
 icu::properties::props::GeneralCategoryOutOfBoundsError#Struct
 icu::segmenter::SentenceBreakOptions#Struct
 icu::segmenter::WordBreakOptions#Struct
-icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
 icu::timezone::CustomZonedDateTime::from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
@@ -218,7 +219,6 @@ icu::timezone::CustomZonedDateTime::try_from_utf8#FnInStruct
 icu::timezone::CustomZonedDateTime::try_iso_from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::try_iso_from_utf8#FnInStruct
 icu::timezone::ParseError#Enum
-icu::timezone::UnknownTimeZoneError#Struct
 icu::timezone::WindowsTimeZoneMapper#Struct
 icu::timezone::WindowsTimeZoneMapper::as_borrowed#FnInStruct
 icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
@@ -226,3 +226,6 @@ icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
 icu::timezone::WindowsTimeZoneMapperBorrowed::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id_with_region#FnInStruct
+icu::timezone::ZoneOffsetCalculator#Struct
+icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
+icu::timezone::ZoneOffsetCalculator::new#FnInStruct

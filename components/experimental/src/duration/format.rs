@@ -130,7 +130,7 @@ impl Writeable for FormattedDigitalDuration<'_> {
     }
 }
 
-impl<'a> FormattedDuration<'a> {
+impl FormattedDuration<'_> {
     /// Section 1.1.9
     /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours(

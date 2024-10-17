@@ -41,7 +41,7 @@ pub struct ChineseBasedCacheV1<'data> {
     pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
 }
 
-impl<'data> ChineseBasedCacheV1<'data> {
+impl ChineseBasedCacheV1<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<CB: ChineseBased>(extended_years: core::ops::Range<i32>) -> Self {

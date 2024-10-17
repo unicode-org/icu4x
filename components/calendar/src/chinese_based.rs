@@ -128,8 +128,8 @@ pub(crate) fn compute_many_packed<CB: ChineseBased>(
         .collect()
 }
 
-impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
-    for ChineseBasedPrecomputedData<'b, CB>
+impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
+    for ChineseBasedPrecomputedData<'_, CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
         self.data

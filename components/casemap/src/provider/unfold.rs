@@ -30,7 +30,7 @@ pub struct CaseMapUnfoldV1<'data> {
     pub map: ZeroMap<'data, PotentialUtf8, str>,
 }
 
-impl<'data> CaseMapUnfoldV1<'data> {
+impl CaseMapUnfoldV1<'_> {
     /// Creates a new CaseMapUnfoldV1 using data exported by the `icuexportdata` tool in ICU4C.
     ///
     /// Unfold data is exported by ICU as an array of 16-bit values, representing a short

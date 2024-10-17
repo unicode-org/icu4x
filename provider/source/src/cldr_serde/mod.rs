@@ -32,7 +32,6 @@ pub(crate) mod plurals;
 pub(crate) mod time_zones;
 #[cfg(feature = "experimental")]
 pub(crate) mod transforms;
-#[cfg(feature = "experimental")]
 pub(crate) mod units;
 pub(crate) mod week_data;
 

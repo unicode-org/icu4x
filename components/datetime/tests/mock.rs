@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::CustomZonedDateTime;
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -37,7 +37,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
     datetime_iso.to_calendar(Gregorian)
 }
 
-/// Parse a [`DateTime`] and [`CustomTimeZone`] from a string.
+/// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
 /// string must take a specific form of the ISO 8601 format:
@@ -56,15 +56,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
-    let datetime_iso = CustomZonedDateTime::try_iso_from_str(input)
-        .or_else(|_| CustomZonedDateTime::try_iso_from_str(input.split('[').next().unwrap()))
-        .or_else(|_| {
-            DateTime::try_iso_from_str(input).map(|dt| CustomZonedDateTime {
-                date: dt.date,
-                time: dt.time,
-                zone: CustomTimeZone::new_empty(),
-            })
-        })
-        .unwrap();
-    datetime_iso.to_calendar(Gregorian)
+    CustomZonedDateTime::try_iso_from_str(input)
+        .unwrap()
+        .to_calendar(Gregorian)
 }

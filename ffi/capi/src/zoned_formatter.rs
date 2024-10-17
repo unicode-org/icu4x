@@ -8,14 +8,14 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        neo::NeoOptions, neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         neo_skeleton::NeoSkeletonLength,
     };
 
     use crate::{
         datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
         datetime_formatter::ffi::DateTimeLength, errors::ffi::Error, locale_core::ffi::Locale,
-        provider::ffi::DataProvider, timezone::ffi::CustomTimeZone,
+        provider::ffi::DataProvider, timezone::ffi::TimeZoneInfo,
     };
 
     use writeable::TryWriteable;
@@ -43,7 +43,9 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+                NeoSkeletonLength::from(length),
+            );
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -57,11 +59,11 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
@@ -96,7 +98,9 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoOptions::from(NeoSkeletonLength::from(length));
+            let options = NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+                NeoSkeletonLength::from(length),
+            );
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::neo::NeoFormatter::try_new,
@@ -108,11 +112,11 @@ pub mod ffi {
             )?)))
         }
 
-        /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_datetime_with_custom_time_zone(
             &self,
             datetime: &DateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::CustomZonedDateTime {
@@ -124,11 +128,11 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::CustomZonedDateTime {

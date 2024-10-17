@@ -12,7 +12,7 @@
 //! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
-//! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+//! and [`timezone::TimeZoneInfo`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
 //! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
@@ -28,24 +28,24 @@
 //!
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
-//! use icu::datetime::neo::{TypedNeoFormatter, NeoFormatter, NeoOptions};
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::neo::{NeoFormatter, TypedNeoFormatter};
 //! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::{locale, Locale};
 //! use writeable::assert_try_writeable_eq;
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-//! let dtf = NeoFormatter::<NeoYearMonthDayHourMinuteMarker>::try_new(
+//! let dtf = NeoFormatter::try_new(
 //!     &locale.into(),
-//!     NeoSkeletonLength::Medium.into()
+//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
 //! )
 //! .expect("should successfully create NeoFormatter instance");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedNeoFormatter::<Gregorian, NeoYearMonthDayHourMinuteMarker>::try_new(
+//! let typed_dtf = TypedNeoFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en").into(),
-//!     NeoSkeletonLength::Medium.into(),
+//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
 //! )
 //! .expect("should successfully create TypedNeoFormatter instance");
 //!
@@ -69,7 +69,7 @@
 //! [`Time`]: calendar::types::{Time}
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
-//! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+//! [`timezone::TimeZoneInfo`]: icu::timezone::{TimeZoneInfo}
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -89,7 +89,6 @@
 
 extern crate alloc;
 
-mod calendar;
 mod error;
 mod external_loaders;
 pub mod fields;
@@ -108,6 +107,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
+pub mod scaffold;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(feature = "datagen")]
@@ -115,8 +115,6 @@ pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
-pub use calendar::CldrCalendar;
-pub use calendar::{InternalCldrCalendar, NeverCalendar};
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};

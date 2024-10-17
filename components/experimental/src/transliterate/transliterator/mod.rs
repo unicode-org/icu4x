@@ -487,7 +487,7 @@ impl Transliterator {
     }
 }
 
-impl<'a> RuleBasedTransliterator<'a> {
+impl RuleBasedTransliterator<'_> {
     /// Transliteration using rules works as follows:
     ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter
     ///  2. Transliterate each run in sequence
@@ -514,7 +514,7 @@ impl<'a> RuleBasedTransliterator<'a> {
     }
 }
 
-impl<'a> SimpleId<'a> {
+impl SimpleId<'_> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
         // definitely loaded in the constructor
@@ -569,7 +569,7 @@ impl<'a> RuleGroup<'a> {
     }
 }
 
-impl<'a> Rule<'a> {
+impl Rule<'_> {
     /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
     /// current run.
     fn apply(&self, mut dest: Insertable, data: MatchData, vt: &VarTable, env: &Env) {
@@ -905,7 +905,7 @@ enum SpecialMatcher<'a> {
     AnchorEnd,
 }
 
-impl<'a> SpecialMatcher<'a> {
+impl SpecialMatcher<'_> {
     // Thought: a lot of duplicated code in matches and rev_matches. deduplicate.
     //  maybe by being generic over Direction? doesn't work for some special cases, though, like segments and sets
 
@@ -1114,7 +1114,7 @@ enum SpecialReplacer<'a> {
     PureCursor,
 }
 
-impl<'a> SpecialReplacer<'a> {
+impl SpecialReplacer<'_> {
     /// Estimates the size of the replacement string produced by this Replacer.
     fn estimate_size(&self, data: &MatchData, vt: &VarTable) -> usize {
         match self {

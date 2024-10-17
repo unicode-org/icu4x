@@ -641,7 +641,7 @@ impl<'a> ZeroTrieIterator<'a> {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a> Iterator for ZeroTrieIterator<'a> {
+impl Iterator for ZeroTrieIterator<'_> {
     type Item = (Vec<u8>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         let (mut trie, mut string, mut branch_idx);

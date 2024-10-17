@@ -38,10 +38,10 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
+  /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
   ///
   /// Throws [Error] on failure.
-  String formatDatetimeWithCustomTimeZone(DateTime datetime, CustomTimeZone timeZone) {
+  String formatDatetimeWithCustomTimeZone(DateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     final result = _icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     if (!result.isOk) {
@@ -50,10 +50,10 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+  /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
   ///
   /// Throws [Error] on failure.
-  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, CustomTimeZone timeZone) {
+  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     final result = _icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     if (!result.isOk) {

@@ -477,7 +477,7 @@ pub struct LinearNamesV1<'data> {
     pub names: VarZeroVec<'data, str>,
 }
 
-impl<'data> LinearNamesV1<'data> {
+impl LinearNamesV1<'_> {
     /// Gets the 'am' name assuming this struct contains day period data.
     pub(crate) fn am(&self) -> Option<&str> {
         self.names.get(0)

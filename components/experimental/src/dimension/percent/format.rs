@@ -32,7 +32,7 @@ pub struct FormattedPercent<'l> {
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
 
-impl<'l> Writeable for FormattedPercent<'l> {
+impl Writeable for FormattedPercent<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
