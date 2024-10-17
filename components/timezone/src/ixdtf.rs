@@ -35,6 +35,8 @@ pub enum ParseError {
     /// There was an invalid IANA identifier provided.
     InvalidIanaIdentifier,
     /// The set of time zone fields was not expected for the given type.
+    /// For example, if a named time zone was present with offset-only parsing,
+    /// or an offset was present with named-time-zone-only parsing.
     MismatchedTimeZoneFields,
     /// An unknown calendar was provided.
     UnknownCalendar,
@@ -120,7 +122,11 @@ impl TimeZoneInfo<models::Full> {
                 }
                 (offset, date, time)
             }
-            _ => return Err(ParseError::MismatchedTimeZoneFields),
+            _ => {
+                // Date, time, or offset was missing
+                // Or, there was a named zone: [America/Los_Angeles]
+                return Err(ParseError::MismatchedTimeZoneFields);
+            }
         };
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         let iso = DateTime::<Iso>::try_new_iso_datetime(
@@ -144,6 +150,7 @@ impl TimeZoneInfo<models::AtTime> {
     fn try_location_only_from_ixdtf_record(
         ixdtf_record: &IxdtfParseRecord,
     ) -> Result<Self, ParseError> {
+        // [America/Los_Angeles]
         let IxdtfParseRecord {
             offset: None,
             tz:
@@ -156,6 +163,9 @@ impl TimeZoneInfo<models::AtTime> {
             ..
         } = ixdtf_record
         else {
+            // Date, time, or named zone was missing
+            // Or, the named zone was an offset: [-0800]
+            // Or, the string contains an offset
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let mapper = TimeZoneIdMapper::new();
@@ -179,6 +189,7 @@ impl TimeZoneInfo<models::AtTime> {
 
 impl TimeZoneInfo<models::Full> {
     fn try_full_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        // -0800[America/Los_Angeles]
         let IxdtfParseRecord {
             offset: Some(offset),
             tz:
@@ -191,6 +202,8 @@ impl TimeZoneInfo<models::Full> {
             ..
         } = ixdtf_record
         else {
+            // Date, time, offset, or named zone was missing
+            // Or, the named zone was an offset: -0800[-0800]
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
