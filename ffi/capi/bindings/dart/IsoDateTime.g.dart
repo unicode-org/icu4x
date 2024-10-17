@@ -26,7 +26,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Creates a new [`IsoDateTime`] from the specified date and time.
   ///
-  /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
+  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory IsoDateTime(int year, int month, int day, int hour, int minute, int second, int nanosecond) {

@@ -83,7 +83,7 @@ impl Date<Iso> {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Self::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
+        let date = Self::try_new_iso(date_record.year, date_record.month, date_record.day)?;
         Ok(date)
     }
 }

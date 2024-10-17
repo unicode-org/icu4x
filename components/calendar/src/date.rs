@@ -95,7 +95,7 @@ impl<C> Deref for Ref<'_, C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::try_new_iso_date(1970, 1, 2)
+/// let date_iso = Date::try_new_iso(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
@@ -244,7 +244,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::Date;
     ///
-    /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
@@ -270,7 +270,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::week::WeekOf;
     /// use icu::calendar::Date;
     ///
-    /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
+    /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
     ///
     /// // The following info is usually locale-specific
     /// let week_calculator = WeekCalculator::default();
@@ -435,21 +435,21 @@ mod tests {
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            Date::try_new_iso_date(-10, 1, 1).unwrap(),
-            Date::try_new_iso_date(-10, 1, 2).unwrap(),
-            Date::try_new_iso_date(-10, 2, 1).unwrap(),
-            Date::try_new_iso_date(-1, 1, 1).unwrap(),
-            Date::try_new_iso_date(-1, 1, 2).unwrap(),
-            Date::try_new_iso_date(-1, 2, 1).unwrap(),
-            Date::try_new_iso_date(0, 1, 1).unwrap(),
-            Date::try_new_iso_date(0, 1, 2).unwrap(),
-            Date::try_new_iso_date(0, 2, 1).unwrap(),
-            Date::try_new_iso_date(1, 1, 1).unwrap(),
-            Date::try_new_iso_date(1, 1, 2).unwrap(),
-            Date::try_new_iso_date(1, 2, 1).unwrap(),
-            Date::try_new_iso_date(10, 1, 1).unwrap(),
-            Date::try_new_iso_date(10, 1, 2).unwrap(),
-            Date::try_new_iso_date(10, 2, 1).unwrap(),
+            Date::try_new_iso(-10, 1, 1).unwrap(),
+            Date::try_new_iso(-10, 1, 2).unwrap(),
+            Date::try_new_iso(-10, 2, 1).unwrap(),
+            Date::try_new_iso(-1, 1, 1).unwrap(),
+            Date::try_new_iso(-1, 1, 2).unwrap(),
+            Date::try_new_iso(-1, 2, 1).unwrap(),
+            Date::try_new_iso(0, 1, 1).unwrap(),
+            Date::try_new_iso(0, 1, 2).unwrap(),
+            Date::try_new_iso(0, 2, 1).unwrap(),
+            Date::try_new_iso(1, 1, 1).unwrap(),
+            Date::try_new_iso(1, 1, 2).unwrap(),
+            Date::try_new_iso(1, 2, 1).unwrap(),
+            Date::try_new_iso(10, 1, 1).unwrap(),
+            Date::try_new_iso(10, 1, 2).unwrap(),
+            Date::try_new_iso(10, 2, 1).unwrap(),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

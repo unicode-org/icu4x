@@ -135,7 +135,7 @@ impl TimeZoneInfo {
                 let mut zone_variant = None;
                 let mut local_time = None;
                 if let (Some(date), Some(time)) = (date, time) {
-                    let iso = DateTime::<Iso>::try_new_iso_datetime(
+                    let iso = DateTime::<Iso>::try_new_iso(
                         date.year,
                         date.month,
                         date.day,
@@ -231,7 +231,7 @@ impl CustomZonedDateTime<Iso> {
 
     fn try_iso_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Date::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
+        let date = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
         let time = Time::try_new(
             time_record.hour,

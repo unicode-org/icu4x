@@ -76,7 +76,7 @@ impl ZoneOffsetCalculator {
     /// assert_eq!(
     ///     zoc.compute_offsets_from_time_zone(
     ///         TimeZoneBcp47Id(tinystr!(8, "usden")),
-    ///         &DateTime::try_new_iso_datetime(2024, 1, 1, 0, 0, 0).unwrap()
+    ///         &DateTime::try_new_iso(2024, 1, 1, 0, 0, 0).unwrap()
     ///     ),
     ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())))
     /// );
@@ -85,7 +85,7 @@ impl ZoneOffsetCalculator {
     /// assert_eq!(
     ///     zoc.compute_offsets_from_time_zone(
     ///         TimeZoneBcp47Id(tinystr!(8, "usphx")),
-    ///         &DateTime::try_new_iso_datetime(2024, 1, 1, 0, 0, 0).unwrap()
+    ///         &DateTime::try_new_iso(2024, 1, 1, 0, 0, 0).unwrap()
     ///     ),
     ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), None))
     /// );

@@ -119,7 +119,7 @@ fn main() {
     )
     .expect("ja data should be available");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
     // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.

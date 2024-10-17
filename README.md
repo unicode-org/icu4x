@@ -46,7 +46,7 @@ let dtf = NeoFormatter::try_new(
 )
 .expect("locale should be present in compiled data");
 
-let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
+let date = DateTime::try_new_iso(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
 let date = date.to_any();
 
 let formatted_date = dtf.convert_and_format(&date).to_string_lossy();

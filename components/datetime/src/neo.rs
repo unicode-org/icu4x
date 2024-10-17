@@ -200,7 +200,7 @@ where
     /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+    ///     formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap()),
     ///     "20 de diciembre de 2023"
     /// );
     /// ```
@@ -320,7 +320,7 @@ where
     ///     ),
     /// )
     /// .unwrap();
-    /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
+    /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "mié 10");
     /// ```
@@ -345,7 +345,7 @@ where
     ///     ),
     /// )
     /// .unwrap();
-    /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
+    /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
     /// ```
@@ -401,7 +401,7 @@ where
     /// )
     /// .unwrap();
     /// let dt =
-    ///     DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
+    ///     DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
@@ -581,7 +581,7 @@ where
     ///     .unwrap();
     ///
     /// // type mismatch resolving `<Gregorian as AsCalendar>::Calendar == Buddhist`
-    /// formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap());
+    /// formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap());
     /// ```
     ///
     /// A time cannot be passed into the formatter when a date is expected:
@@ -684,7 +684,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).unwrap();
+    /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.convert_and_format(&datetime),
@@ -912,7 +912,7 @@ where
     ///     ),
     /// )
     /// .unwrap();
-    /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
+    /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "mié 10");
     /// ```
@@ -936,7 +936,7 @@ where
     ///     ),
     /// )
     /// .unwrap();
-    /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
+    /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
     /// ```
@@ -989,7 +989,7 @@ where
     ///     ),
     /// )
     /// .unwrap();
-    /// let dt = DateTime::try_new_iso_datetime(2024, 1, 10, 16, 20, 0).unwrap();
+    /// let dt = DateTime::try_new_iso(2024, 1, 10, 16, 20, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
@@ -1326,7 +1326,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let date = Date::try_new_gregorian_date(2023, 12, 20).unwrap();
+    /// let date = Date::try_new_gregorian(2023, 12, 20).unwrap();
     ///
     /// assert!(matches!(
     ///     formatter.strict_format(&date),
@@ -1401,7 +1401,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let date = Date::try_new_roc_date(113, 5, 8).unwrap();
+    /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.convert_and_format(&date),
@@ -1470,7 +1470,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedNeoFormatter<C, FSet> {
     /// .unwrap()
     /// .into_formatter(Hebrew::new());
     ///
-    /// let date = Date::try_new_iso_date(2024, 10, 14).unwrap();
+    /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.convert_and_format(&date),
@@ -1513,7 +1513,7 @@ impl<FSet: DateTimeMarkers> NeoFormatter<FSet> {
     /// .try_into_typed_formatter::<Hebrew>()
     /// .unwrap();
     ///
-    /// let date = Date::try_new_hebrew_date(5785, 1, 12).unwrap();
+    /// let date = Date::try_new_hebrew(5785, 1, 12).unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&date),

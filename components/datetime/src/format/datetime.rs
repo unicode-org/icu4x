@@ -574,7 +574,7 @@ mod tests {
         )
         .expect("DateTimeFormat construction succeeds");
 
-        let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
+        let date = Date::try_new_gregorian(1800, 9, 1).expect("Failed to construct Date.");
         let date = date
             .to_calendar(JapaneseExtended::new())
             .into_japanese_date()
