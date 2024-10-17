@@ -331,22 +331,22 @@ pub struct DayOfYearInfo {
 /// A day number in a month. Usually 1-based.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct DayOfMonth(pub u32);
+pub struct DayOfMonth(pub u8);
 
 /// A week number in a month. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfMonth(pub u32);
+pub struct WeekOfMonth(pub u8);
 
 /// A week number in a year. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfYear(pub u32);
+pub struct WeekOfYear(pub u8);
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct DayOfWeekInMonth(pub u32);
+pub struct DayOfWeekInMonth(pub u8);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
     fn from(day_of_month: DayOfMonth) -> Self {

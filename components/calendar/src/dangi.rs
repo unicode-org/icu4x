@@ -265,7 +265,7 @@ impl Calendar for Dangi {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> crate::types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day as u32)
+        types::DayOfMonth(date.0 .0.day)
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> crate::types::DayOfYearInfo {

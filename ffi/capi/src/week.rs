@@ -24,7 +24,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::week::WeekOf, Struct)]
     #[diplomat::out]
     pub struct WeekOf {
-        pub week: u16,
+        pub week: u8,
         pub unit: WeekRelativeUnit,
     }
     /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
