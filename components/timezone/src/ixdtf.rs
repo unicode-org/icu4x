@@ -116,7 +116,7 @@ impl TimeZoneInfo<models::Full> {
                 ..
             } => {
                 if offset != offset1 {
-                    return Err(ParseError::InvalidOffsetError);
+                    return Err(ParseError::InconsistentTimeZoneOffsets);
                 }
                 (offset, date, time)
             }
@@ -307,8 +307,8 @@ impl CustomZonedDateTime<Iso, models::Full> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(zoneddatetime.zone.local_time.is_some());
+    /// assert_eq!(zoneddatetime.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = zoneddatetime.zone.local_time;
     /// ```
     ///
     /// For more information on date, time, and time zone parsing,
@@ -362,6 +362,56 @@ impl FromStr for CustomZonedDateTime<Iso, models::Full> {
 impl CustomZonedDateTime<AnyCalendar, models::Full> {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
     ///
+    /// The string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_offset_only_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_offset_only_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// The string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    ///
+    /// See [`Self::try_iso_from_str`].
+    pub fn try_offset_only_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let time_zone = TimeZoneInfo::try_offset_only_from_ixdtf_record(&ixdtf_record)?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<AnyCalendar, models::AtTime> {
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// The string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_location_only_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_location_only_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// The string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    ///
+    /// See [`Self::try_iso_from_str`].
+    pub fn try_location_only_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let time_zone = TimeZoneInfo::try_location_only_from_ixdtf_record(&ixdtf_record)?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<AnyCalendar, models::Full> {
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// The string should have both an offset and a named time zone.
+    ///
     /// For more information on IXDTF, see the [`ixdtf`] crate.
     ///
     /// This is a convenience constructor that uses compiled data. For custom data providers,
@@ -392,8 +442,8 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(zoneddatetime.zone.local_time.is_some());
+    /// assert_eq!(zoneddatetime.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = zoneddatetime.zone.local_time;
     /// ```
     ///
     /// An IXDTF string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
@@ -409,7 +459,7 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     /// ```
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset};
     ///
-    /// let tz_from_offset = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00").unwrap();
+    /// let tz_from_offset = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00").unwrap();
     ///
     /// assert_eq!(tz_from_offset.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
     /// ```
@@ -422,15 +472,15 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
-    /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
-    /// let tz_from_iana_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
+    /// let tz_from_offset_annotation = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
+    /// let tz_from_iana_annotation = CustomZonedDateTime::try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
     ///
     /// assert_eq!(tz_from_offset_annotation.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
     ///
     /// assert_eq!(tz_from_iana_annotation.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(tz_from_iana_annotation.zone.offset, None);
-    /// assert_eq!(tz_from_iana_annotation.zone.zone_variant, None);
-    /// assert!(tz_from_iana_annotation.zone.local_time.is_some());
+    /// let () = tz_from_iana_annotation.zone.zone_variant;
+    /// let (_, _) = tz_from_iana_annotation.zone.local_time;
     /// ```
     ///
     /// ## DateTime UTC Offset and Time Zone Annotations.
@@ -451,8 +501,8 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(consistent_tz_from_both.zone.local_time.is_some());
+    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = consistent_tz_from_both.zone.local_time;
     ///
     /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
     /// assert_eq!(
@@ -474,12 +524,12 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     /// use icu_timezone::{ParseError, TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
+    /// let consistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
     ///
     /// assert_eq!(consistent_tz_from_both.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
     ///
     ///
-    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[+05:00]");
+    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]");
     ///
     /// assert!(matches!(inconsistent_tz_from_both, Err(ParseError::InconsistentTimeZoneOffsets)));
     /// ```
@@ -488,6 +538,8 @@ impl CustomZonedDateTime<AnyCalendar, models::Full> {
     }
 
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// The string should have both an offset and a named time zone.
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
