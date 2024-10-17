@@ -110,7 +110,7 @@ mod tests {
     fn test_effective_locale_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("fr");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de_Latn_ch"), &locale),
             Ok(&locale!("de_Latn_ch"))
@@ -125,7 +125,7 @@ mod tests {
     fn test_effective_locale_non_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de_Latn_ch"), &locale),
             Ok(&locale!("ja-Jpan-JP"))
@@ -140,7 +140,7 @@ mod tests {
     fn test_effective_locale_compatible_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("ja_Hani_JP"), &locale),
             Ok(&locale!("ja_Hani_JP"))

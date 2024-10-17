@@ -75,7 +75,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, locale: &Locale) -> LocaleDirection {
-            match self.0.get(&locale.0) {
+            match self.0.get(&locale.0.id) {
                 Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,
                 Some(icu_locale::Direction::RightToLeft) => LocaleDirection::RightToLeft,
                 _ => LocaleDirection::Unknown,
@@ -84,12 +84,12 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_left_to_right, FnInStruct)]
         pub fn is_left_to_right(&self, locale: &Locale) -> bool {
-            self.0.is_left_to_right(&locale.0)
+            self.0.is_left_to_right(&locale.0.id)
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_right_to_left, FnInStruct)]
         pub fn is_right_to_left(&self, locale: &Locale) -> bool {
-            self.0.is_right_to_left(&locale.0)
+            self.0.is_right_to_left(&locale.0.id)
         }
     }
 }
