@@ -34,6 +34,7 @@ typedef enum Error {
   Error_DateTimeDuplicateFieldError = 2057,
   Error_DateTimeTooNarrowError = 2058,
   Error_DateTimeMissingNamesError = 2059,
+  Error_DateTimeZoneInfoMissingFieldsError = 2176,
 } Error;
 
 typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;
