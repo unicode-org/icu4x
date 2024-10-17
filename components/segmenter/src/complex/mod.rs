@@ -332,22 +332,18 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
     model: &'static DataMarkerAttributes,
 ) -> Result<Option<DataPayload<M>>, DataError> {
-    match provider.load(DataRequest {
-        id: DataIdentifierBorrowed::for_marker_attributes(model),
-        metadata: {
-            let mut m = DataRequestMetadata::default();
-            m.silent = true;
-            m.attributes_prefix_match = true;
-            m
-        },
-    }) {
-        Ok(response) => Ok(Some(response.payload)),
-        Err(DataError {
-            kind: DataErrorKind::IdentifierNotFound,
-            ..
-        }) => Ok(None),
-        Err(e) => Err(e),
-    }
+    provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(model),
+            metadata: {
+                let mut m = DataRequestMetadata::default();
+                m.silent = true;
+                m.attributes_prefix_match = true;
+                m
+            },
+        })
+        .allow_identifier_not_found()
+        .map(|r| r.map(|r| r.payload))
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.

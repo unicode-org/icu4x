@@ -128,12 +128,6 @@ impl ForkByErrorPredicate for IdentifierNotFoundPredicate {
 
     #[inline]
     fn test(&self, _: DataMarkerInfo, _: Option<DataRequest>, err: DataError) -> bool {
-        matches!(
-            err,
-            DataError {
-                kind: DataErrorKind::IdentifierNotFound,
-                ..
-            }
-        )
+        Err::<(), _>(err).allow_identifier_not_found().is_ok()
     }
 }
