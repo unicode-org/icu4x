@@ -137,7 +137,7 @@ fn neo_date_lengths() {
 #[test]
 fn overlap_patterns() {
     let datetime = DateTime {
-        date: Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
+        date: Date::try_new_gregorian(2024, 8, 9).unwrap(),
         time: Time::try_new(20, 40, 7, 250).unwrap(),
     };
     struct TestCase {
