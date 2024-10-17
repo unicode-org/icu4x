@@ -986,13 +986,8 @@
         "patterns": [
           "z",
           "zz",
-          "zzz"
-        ],
-        "configs": [],
-        "expected": ["{z}"]
-      },
-      {
-        "patterns": [
+          "zzz",
+          "v",
           "O"
         ],
         "configs": [],
@@ -1000,7 +995,10 @@
       },
       {
         "patterns": [
+          "vvvv",
+          "VVVV",
           "OOOO",
+          "zzzz",
           "ZZZZ"
         ],
         "configs": [],
@@ -1021,15 +1019,6 @@
         ],
         "configs": [],
         "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv",
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
       }
     ]
   },
@@ -1042,13 +1031,7 @@
           "z",
           "zz",
           "zzz",
-          "zzzz"
-        ],
-        "configs": [],
-        "expected": ["{z}"]
-      },
-      {
-        "patterns": [
+          "v",
           "O"
         ],
         "configs": [],
@@ -1057,6 +1040,9 @@
       {
         "patterns": [
           "ZZZZ",
+          "vvvv",
+          "VVVV",
+          "zzzz",
           "OOOO"
         ],
         "configs": [],
@@ -1077,21 +1063,6 @@
         ],
         "configs": [],
         "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v",
-          "vvvv"
-        ],
-        "configs": [],
-        "expected": ["{v}"]
-      },
-      {
-        "patterns": [
-          "VVVV"
-        ],
-        "configs": [],
-        "expected": ["Unknown City Time"]
       }
     ]
   },
@@ -1114,28 +1085,22 @@
           "Z",
           "ZZ",
           "ZZZ",
-          "ZZZZ",
           "ZZZZZ"
         ],
         "configs": [],
-        "expected": ["{Z}"]
+        "expected": ["+?"]
       },
       {
         "patterns": [
           "O",
-          "OOOO"
-        ],
-        "configs": [],
-        "expected": ["{O}"]
-      },
-      {
-        "patterns": [
+          "ZZZZ",
+          "OOOO",
           "v",
           "vvvv",
           "VVVV"
         ],
         "configs": [],
-        "expected": ["Unknown City Time"]
+        "expected": ["GMT+?"]
       }
     ]
   }

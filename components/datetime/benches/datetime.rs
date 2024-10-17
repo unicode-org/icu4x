@@ -9,7 +9,7 @@ use icu_datetime::neo::TypedNeoFormatter;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo};
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -35,7 +35,7 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: CustomTimeZone::utc(),
+                                    zone: TimeZoneInfo::utc(),
                                 }
                             }
                         })

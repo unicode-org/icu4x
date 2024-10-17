@@ -398,19 +398,6 @@ impl From<Locale> for LanguageIdentifier {
     }
 }
 
-impl AsRef<LanguageIdentifier> for Locale {
-    #[inline(always)]
-    fn as_ref(&self) -> &LanguageIdentifier {
-        &self.id
-    }
-}
-
-impl AsMut<LanguageIdentifier> for Locale {
-    fn as_mut(&mut self) -> &mut LanguageIdentifier {
-        &mut self.id
-    }
-}
-
 impl core::fmt::Debug for Locale {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)

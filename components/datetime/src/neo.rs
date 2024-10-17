@@ -4,7 +4,6 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::datetime::DateTimeWriteError;
@@ -13,7 +12,7 @@ use crate::input::ExtractedInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
-    AllInputMarkers, CalMarkers, ConvertCalendar, DateDataMarkers, DateTimeMarkers, GetField,
+    AllInputMarkers, ConvertCalendar, DateDataMarkers, DateTimeMarkers, GetField,
     IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers, TypedDateDataMarkers,
     ZoneMarkers,
 };
@@ -23,7 +22,7 @@ use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::provider::ErasedPackedPatterns;
 use crate::raw::neo::*;
-use crate::CldrCalendar;
+use crate::scaffold::*;
 use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
@@ -130,19 +129,19 @@ impl RawNeoOptions {
             .as_ref()
             .and_then(HourCycle::from_locale_value);
         Self {
-            length: match GetField::<FSet::LengthOption>::get_field(field_set).into() {
+            length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
                 Some(length) => length,
                 None => {
                     debug_assert!(false, "unreachable");
                     NeoSkeletonLength::Medium
                 }
             },
-            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into(),
-            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into(),
+            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
+            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
             fractional_second_digits: GetField::<FSet::FractionalSecondDigitsOption>::get_field(
                 field_set,
             )
-            .into(),
+            .into_option(),
             hour_cycle,
         }
     }
@@ -222,6 +221,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -263,6 +263,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
@@ -421,6 +422,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -462,6 +464,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
             // FixedDecimalFormatter markers
             + DataProvider<DecimalSymbolsV1Marker>,
@@ -504,6 +507,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader,
     {
@@ -536,6 +540,7 @@ where
             &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
             loader, // fixed decimal formatter
             locale,
             selection.pattern_items_for_data_loading(),
@@ -754,6 +759,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -843,6 +849,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1054,6 +1061,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     {
         Self::try_new_internal(
@@ -1143,6 +1151,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>
     // AnyCalendar constructor markers
             + DataProvider<ChineseCacheV1Marker>
@@ -1240,6 +1249,7 @@ where
             + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
             + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker>
             + DataProvider<FSet::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
@@ -1274,6 +1284,7 @@ where
             &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
             &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
             loader, // fixed decimal formatter
             locale,
             selection.pattern_items_for_data_loading(),
@@ -1356,7 +1367,7 @@ where
                     GetField::<<FSet::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
                         datetime,
                     )
-                    .into(),
+                    .into_option(),
             });
         }
         let datetime =

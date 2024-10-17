@@ -8,7 +8,7 @@
 use icu::calendar::{Date, Gregorian, Time};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::CustomTimeZone;
+use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
@@ -52,7 +52,7 @@ fn main() {
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
-        let zone = CustomTimeZone::utc();
+        let zone = TimeZoneInfo::utc();
 
         let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
 

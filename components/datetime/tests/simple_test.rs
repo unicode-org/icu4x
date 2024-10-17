@@ -12,7 +12,7 @@ use icu_datetime::neo_skeleton::{
 };
 use icu_datetime::options::length;
 use icu_locale_core::{locale, Locale};
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo};
 use writeable::assert_try_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -140,7 +140,7 @@ fn overlap_patterns() {
     let datetime = CustomZonedDateTime {
         date: Date::try_new_gregorian(2024, 8, 9).unwrap(),
         time: Time::try_new(20, 40, 7, 250).unwrap(),
-        zone: CustomTimeZone::utc(),
+        zone: TimeZoneInfo::utc(),
     };
     struct TestCase {
         locale: Locale,

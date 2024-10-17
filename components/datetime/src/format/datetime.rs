@@ -11,8 +11,10 @@ use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Ye
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
-use crate::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format};
-use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
+use crate::time_zone::{
+    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
+    ResolvedNeoTimeZoneSkeleton,
+};
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -471,27 +473,15 @@ where
                 }
                 Some(time_zone) => {
                     let payloads = datetime_names.get_payloads();
-                    let mut r = Err(DateTimeWriteError::MissingNames(field));
+                    let mut r = Err(FormatTimeZoneError::Fallback);
                     for formatter in time_zone.units() {
                         match formatter.format(w, input, payloads, fdf)? {
-                            Ok(()) => {
-                                r = Ok(());
-                                break;
-                            }
                             Err(FormatTimeZoneError::Fallback) => {
                                 // Expected common case: the unit needs fall back to the next one
                                 continue;
                             }
-                            Err(FormatTimeZoneError::MissingInputField(f)) => {
-                                r = Err(DateTimeWriteError::MissingInputField(f));
-                                break;
-                            }
-                            Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                                r = Err(DateTimeWriteError::MissingNames(field));
-                                break;
-                            }
-                            Err(FormatTimeZoneError::MissingFixedDecimalFormatter) => {
-                                r = Err(DateTimeWriteError::MissingFixedDecimalFormatter);
+                            r2 => {
+                                r = r2;
                                 break;
                             }
                         }
@@ -499,21 +489,44 @@ where
 
                     match r {
                         Ok(()) => Ok(()),
-                        Err(DateTimeWriteError::MissingInputField(_)) => {
+                        Err(FormatTimeZoneError::MissingInputField(f)) => {
                             write_value_missing(w, field)?;
-                            r
+                            Err(DateTimeWriteError::MissingInputField(f))
                         }
-                        _ => {
-                            w.with_part(Part::ERROR, |w| match input.offset {
-                                Some(offset) => Iso8601Format {
-                                    format: IsoFormat::Basic,
-                                    minutes: IsoMinutes::Required,
-                                    seconds: IsoSeconds::Optional,
+                        Err(
+                            e @ (FormatTimeZoneError::MissingFixedDecimalFormatter
+                            | FormatTimeZoneError::MissingZoneSymbols),
+                        ) => {
+                            if let Some(offset) = input.offset {
+                                w.with_part(Part::ERROR, |w| {
+                                    Iso8601Format {
+                                        format: IsoFormat::Basic,
+                                        minutes: IsoMinutes::Required,
+                                        seconds: IsoSeconds::Optional,
+                                    }
+                                    .format_infallible(w, offset)
+                                })?;
+                            } else {
+                                write_value_missing(w, field)?;
+                            }
+                            Err(match e {
+                                FormatTimeZoneError::MissingFixedDecimalFormatter => {
+                                    DateTimeWriteError::MissingFixedDecimalFormatter
                                 }
-                                .format_infallible(w, offset),
-                                None => "{GMT+?}".write_to(w),
+                                FormatTimeZoneError::MissingZoneSymbols => {
+                                    DateTimeWriteError::MissingNames(field)
+                                }
+                                _ => unreachable!(),
+                            })
+                        }
+                        Err(FormatTimeZoneError::Fallback) => {
+                            // unreachable because our current fallback chains don't fall through
+                            w.with_part(Part::ERROR, |w| {
+                                w.write_str("{unsupported:")?;
+                                w.write_char(char::from(field.symbol))?;
+                                w.write_str("}")
                             })?;
-                            r
+                            Err(DateTimeWriteError::UnsupportedField(field))
                         }
                     }
                 }

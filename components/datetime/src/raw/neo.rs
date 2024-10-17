@@ -353,20 +353,16 @@ impl TimePatternSelectionData {
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
         let mut maybe_payload = None;
         if let Some(hour_cycle) = options.hour_cycle {
-            maybe_payload = match provider.load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    components.with_hour_cycle(hour_cycle.into()).id_str(),
-                    locale,
-                ),
-                ..Default::default()
-            }) {
-                Ok(response) => Some(response.payload),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => None,
-                Err(e) => return Err(e),
-            };
+            maybe_payload = provider
+                .load_bound(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        components.with_hour_cycle(hour_cycle.into()).id_str(),
+                        locale,
+                    ),
+                    ..Default::default()
+                })
+                .allow_identifier_not_found()?
+                .map(|r| r.payload);
         }
         let payload = match maybe_payload {
             Some(payload) => payload,
@@ -523,21 +519,16 @@ impl DateTimeZonePatternSelectionData {
                 // TODO(#5387): load the patterns for custom hour cycles here
                 if let (Some(attributes), None) = (components.id_str(), options.hour_cycle) {
                     // Try loading an overlap pattern.
-                    match OverlapPatternSelectionData::try_new_with_skeleton(
+                    if let Some(overlap) = OverlapPatternSelectionData::try_new_with_skeleton(
                         // Note: overlap patterns are stored in the date provider
                         date_provider,
                         locale,
                         attributes,
                         options,
-                    ) {
-                        Ok(overlap) => return Ok(Self::Overlap(overlap)),
-                        Err(DataError {
-                            kind: DataErrorKind::IdentifierNotFound,
-                            ..
-                        }) => {
-                            // fall through
-                        }
-                        Err(e) => return Err(e),
+                    )
+                    .allow_identifier_not_found()?
+                    {
+                        return Ok(Self::Overlap(overlap));
                     }
                 }
                 let date = DatePatternSelectionData::try_new_with_skeleton(

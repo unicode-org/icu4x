@@ -12,7 +12,7 @@
 //! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
-//! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+//! and [`timezone::TimeZoneInfo`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
 //! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
@@ -69,7 +69,7 @@
 //! [`Time`]: calendar::types::{Time}
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
-//! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+//! [`timezone::TimeZoneInfo`]: icu::timezone::{TimeZoneInfo}
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -89,7 +89,6 @@
 
 extern crate alloc;
 
-mod calendar;
 mod error;
 mod external_loaders;
 pub mod fields;
@@ -108,6 +107,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
+pub mod scaffold;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(feature = "datagen")]
@@ -115,8 +115,6 @@ pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
-pub use calendar::CldrCalendar;
-pub use calendar::InternalCldrCalendar;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};

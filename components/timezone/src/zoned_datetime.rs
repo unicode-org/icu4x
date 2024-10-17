@@ -4,7 +4,7 @@
 
 use icu_calendar::{AsCalendar, Date, Iso, Time};
 
-use crate::CustomTimeZone;
+use crate::TimeZoneInfo;
 
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
@@ -15,7 +15,7 @@ pub struct CustomZonedDateTime<A: AsCalendar> {
     /// The time, local to the time zone
     pub time: Time,
     /// The time zone
-    pub zone: CustomTimeZone,
+    pub zone: TimeZoneInfo,
 }
 
 impl<A: AsCalendar> CustomZonedDateTime<A> {

@@ -49,6 +49,7 @@ const _: () = {
     impl_locations_v1_marker!(Baked);
     impl_metazone_generic_names_long_v1_marker!(Baked);
     impl_metazone_generic_names_short_v1_marker!(Baked);
+    impl_metazone_period_v1_marker!(Baked);
     impl_metazone_specific_names_long_v1_marker!(Baked);
     impl_metazone_specific_names_short_v1_marker!(Baked);
     impl_time_zone_essentials_v1_marker!(Baked);
@@ -110,6 +111,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::LocationsV1Marker::INFO,
     time_zones::MetazoneGenericNamesLongV1Marker::INFO,
     time_zones::MetazoneGenericNamesShortV1Marker::INFO,
+    time_zones::MetazonePeriodV1Marker::INFO,
     time_zones::MetazoneSpecificNamesLongV1Marker::INFO,
     time_zones::MetazoneSpecificNamesShortV1Marker::INFO,
     time_zones::TimeZoneEssentialsV1Marker::INFO,
