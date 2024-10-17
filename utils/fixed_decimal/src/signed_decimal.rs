@@ -39,7 +39,7 @@ impl SignedFixedDecimal {
             return Err(ParseError::Syntax);
         }
 
-        let unsigned_decimal = UnsignedFixedDecimal::try_from_utf8(no_sign_str)?;
+        let unsigned_decimal = UnsignedFixedDecimal::try_from_no_sign_utf8(no_sign_str)?;
         Ok(Self {
             sign,
             value: unsigned_decimal,

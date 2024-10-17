@@ -52,7 +52,7 @@ macro_rules! impl_fixed_integer_from_integer_type {
     ($type:ident) => {
         impl From<$type> for FixedInteger {
             fn from(value: $type) -> Self {
-                FixedInteger(FixedDecimal::from(value))
+                FixedInteger(UnsignedFixedDecimal::from(value))
             }
         }
     };

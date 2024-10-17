@@ -2250,6 +2250,21 @@ impl UnsignedFixedDecimal {
         if no_sign_str.is_empty() {
             return Err(ParseError::Syntax);
         }
+
+        Self::try_from_no_sign_utf8(no_sign_str)
+    }
+
+    /// This function is used to parse a [`UnsignedFixedDecimal`] from a string without a sign.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::UnsignedFixedDecimal;
+    ///
+    /// let decimal = UnsignedFixedDecimal::try_from_no_sign_utf8(b"1234567890");
+    /// assert_eq!(decimal, Ok(UnsignedFixedDecimal::from(1234567890)));
+    /// ```
+    pub(crate) fn try_from_no_sign_utf8(no_sign_str: &[u8]) -> Result<Self, ParseError> {
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
