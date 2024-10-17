@@ -61,16 +61,18 @@ pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregor
         Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
             match CustomZonedDateTime::try_iso_from_str(input) {
                 Ok(zdt) => zdt,
-                Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => match CustomZonedDateTime::try_location_only_iso_from_str(input) {
-                    Ok(zdt) => {
-                        CustomZonedDateTime {
-                            date: zdt.date,
-                            time: zdt.time,
-                            // For fixture tests, set the zone variant to standard here
-                            zone: zdt.zone.with_zone_variant(ZoneVariant::standard())
+                Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
+                    match CustomZonedDateTime::try_location_only_iso_from_str(input) {
+                        Ok(zdt) => {
+                            CustomZonedDateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                                // For fixture tests, set the zone variant to standard here
+                                zone: zdt.zone.with_zone_variant(ZoneVariant::standard()),
+                            }
                         }
-                    },
-                    Err(e) => panic!("could not parse input: {input}: {e:?}"),
+                        Err(e) => panic!("could not parse input: {input}: {e:?}"),
+                    }
                 }
                 Err(e) => panic!("could not parse input: {input}: {e:?}"),
             }
