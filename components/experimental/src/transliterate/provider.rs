@@ -31,7 +31,6 @@ use zerovec::*;
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
 #[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
@@ -40,17 +39,55 @@ pub struct RuleBasedTransliterator<'a> {
     /// see, e.g., [Devanagari-Latin](https://github.com/unicode-org/cldr/blob/main/common/transforms/Devanagari-Latin.xml)
     pub visibility: bool,
     /// The [`VarTable`] containing any special matchers (variables, UnicodeSets, ...) used by this transliterator.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub variable_table: VarTable<'a>,
     /// The filter for this transliterator. If there is none, the set of all code points is used.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub filter: CodePointInversionList<'a>,
     /// The list of transform rule groups this transliterator uses.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIdULE>>,
     /// The list of conversion rule groups this transliterator uses.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for RuleBasedTransliterator<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        #[derive(serde::Deserialize)]
+        pub struct Raw<'a> {
+            pub visibility: bool,
+            #[serde(borrow)]
+            pub variable_table: VarTable<'a>,
+            #[serde(borrow)]
+            pub filter: CodePointInversionList<'a>,
+            #[serde(borrow)]
+            pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIdULE>>,
+            #[serde(borrow)]
+            pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
+        }
+
+        let Raw {
+            visibility,
+            variable_table,
+            filter,
+            id_group_list,
+            rule_group_list,
+        } = Raw::deserialize(deserializer)?;
+        if id_group_list.len() != rule_group_list.len() {
+            return Err(D::Error::custom(
+                "invalid data: id_group_list and rule_group_list have different lengths",
+            ));
+        }
+        Ok(Self {
+            visibility,
+            variable_table,
+            filter,
+            id_group_list,
+            rule_group_list,
+        })
+    }
 }
 
 impl RuleBasedTransliterator<'_> {
