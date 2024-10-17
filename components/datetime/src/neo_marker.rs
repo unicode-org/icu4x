@@ -337,7 +337,10 @@ use icu_calendar::{
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+use icu_timezone::scaffold::IntoOption;
+use icu_timezone::{
+    CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
+};
 
 /// A type that can be converted into a specific calendar system.
 pub trait ConvertCalendar {
@@ -371,8 +374,10 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for CustomZonedDateTime<A> {
-    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>>;
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> ConvertCalendar
+    for CustomZonedDateTime<A, O>
+{
+    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, O>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
         let date = self.date.to_any().to_calendar(Ref(calendar));
@@ -384,8 +389,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Custom
     }
 }
 
-impl ConvertCalendar for TimeZoneInfo {
-    type Converted<'a> = TimeZoneInfo;
+impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
+    type Converted<'a> = TimeZoneInfo<O>;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -420,7 +425,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> IsAnyCalendarKind
+    for CustomZonedDateTime<A, O>
+{
     fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
         true
     }
@@ -435,9 +442,12 @@ impl<C> IsInCalendar<C> for Time {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for CustomZonedDateTime<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> IsInCalendar<C>
+    for CustomZonedDateTime<A, O>
+{
+}
 
-impl<C> IsInCalendar<C> for TimeZoneInfo {}
+impl<C, O: TimeZoneModel> IsInCalendar<C> for TimeZoneInfo<O> {}
 
 /// A type that can return a certain field `T`.
 pub trait GetField<T> {
@@ -632,43 +642,53 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<YearInfo>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> YearInfo {
         self.date.year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<MonthInfo> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<MonthInfo>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> MonthInfo {
         self.date.month()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfMonth> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfMonth>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> DayOfMonth {
         self.date.day_of_month()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoWeekday> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoWeekday>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> IsoWeekday {
         self.date.day_of_week()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfYearInfo>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind>
-    for CustomZonedDateTime<A>
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<AnyCalendarKind>
+    for CustomZonedDateTime<A, O>
 {
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
@@ -676,36 +696,46 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoHour> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoHour>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> IsoHour {
         self.time.hour
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoMinute> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoMinute>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> IsoMinute {
         self.time.minute
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoSecond> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoSecond>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> IsoSecond {
         self.time.second
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<NanoSecond>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) -> NanoSecond {
         self.time.nanosecond
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<TimeZoneBcp47Id>
-    for CustomZonedDateTime<A>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<TimeZoneBcp47Id>
+    for CustomZonedDateTime<A, O>
+where
+    O: TimeZoneModel,
 {
     #[inline]
     fn get_field(&self) -> TimeZoneBcp47Id {
@@ -713,8 +743,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<TimeZoneBcp47Id>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
-    for CustomZonedDateTime<A>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<Option<UtcOffset>>
+    for CustomZonedDateTime<A, O>
+where
+    O: TimeZoneModel,
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
@@ -722,48 +754,64 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<ZoneVariant>>
-    for CustomZonedDateTime<A>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<ZoneVariant>
+    for CustomZonedDateTime<A, O>
+where
+    O: TimeZoneModel<ZoneVariant = ZoneVariant>,
 {
     #[inline]
-    fn get_field(&self) -> Option<ZoneVariant> {
+    fn get_field(&self) -> ZoneVariant {
         self.zone.zone_variant
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<(Date<Iso>, Time)>>
-    for CustomZonedDateTime<A>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<(Date<Iso>, Time)>
+    for CustomZonedDateTime<A, O>
+where
+    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
 {
     #[inline]
-    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+    fn get_field(&self) -> (Date<Iso>, Time) {
         self.zone.local_time
     }
 }
 
-impl GetField<TimeZoneBcp47Id> for TimeZoneInfo {
+impl<O> GetField<TimeZoneBcp47Id> for TimeZoneInfo<O>
+where
+    O: TimeZoneModel,
+{
     #[inline]
     fn get_field(&self) -> TimeZoneBcp47Id {
         self.time_zone_id
     }
 }
 
-impl GetField<Option<UtcOffset>> for TimeZoneInfo {
+impl<O> GetField<Option<UtcOffset>> for TimeZoneInfo<O>
+where
+    O: TimeZoneModel,
+{
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset
     }
 }
 
-impl GetField<Option<ZoneVariant>> for TimeZoneInfo {
+impl<O> GetField<ZoneVariant> for TimeZoneInfo<O>
+where
+    O: TimeZoneModel<ZoneVariant = ZoneVariant>,
+{
     #[inline]
-    fn get_field(&self) -> Option<ZoneVariant> {
+    fn get_field(&self) -> ZoneVariant {
         self.zone_variant
     }
 }
 
-impl GetField<Option<(Date<Iso>, Time)>> for TimeZoneInfo {
+impl<O> GetField<(Date<Iso>, Time)> for TimeZoneInfo<O>
+where
+    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+{
     #[inline]
-    fn get_field(&self) -> Option<(Date<Iso>, Time)> {
+    fn get_field(&self) -> (Date<Iso>, Time) {
         self.local_time
     }
 }
@@ -783,12 +831,14 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for DateTime<A> {
     fn get_field(&self) {}
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for CustomZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<()>
+    for CustomZonedDateTime<A, O>
+{
     #[inline]
     fn get_field(&self) {}
 }
 
-impl GetField<()> for TimeZoneInfo {
+impl<O: TimeZoneModel> GetField<()> for TimeZoneInfo<O> {
     #[inline]
     fn get_field(&self) {}
 }
@@ -1381,10 +1431,13 @@ macro_rules! datetime_marker_helper {
         Option<UtcOffset>
     };
     (@input/timezone/variant, yes) => {
-        Option<ZoneVariant>
+        ZoneVariant
     };
     (@input/timezone/local_time, yes) => {
-        Option<(Date<Iso>, Time)>
+        (Date<Iso>, Time)
+    };
+    (@input/timezone/$any:ident,) => {
+        ()
     };
     (@input/$any:ident,) => {
         ()
@@ -1978,6 +2031,10 @@ macro_rules! impl_zone_marker {
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
         // Whether metazone periods are needed
         $(metazone_periods = $metazone_periods_yes:ident,)?
+        // Whether to require the ZoneVariant
+        $(input_variant = $variant_input_yes:ident,)?
+        // Whether to require the Local Time
+        $(input_localtime = $localtime_input_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -2072,8 +2129,8 @@ macro_rules! impl_zone_marker {
         impl ZoneMarkers for $type {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
-            type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
-            type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
+            type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
+            type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
@@ -2455,6 +2512,8 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
+    input_variant = yes,
+    input_localtime = yes,
 );
 
 impl_zone_marker!(
@@ -2509,6 +2568,7 @@ impl_zone_marker!(
     zone_generic_long = yes,
     zone_generic_short = yes,
     metazone_periods = yes,
+    input_localtime = yes,
 );
 
 impl_zone_marker!(
@@ -2574,6 +2634,7 @@ impl_zone_marker!(
     zone_locations = yes,
     zone_generic_short = yes,
     metazone_periods = yes,
+    input_localtime = yes,
 );
 
 impl_zone_marker!(
@@ -2595,6 +2656,17 @@ impl_zoneddatetime_marker!(
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneGenericMarker,
+);
+
+// TODO: Type aliases like this are excessive; make a curated set
+impl_zoneddatetime_marker!(
+    NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
+    description = "locale-dependent date and time fields with a time zone",
+    sample_length = Medium,
+    sample = "May 17, 2024, 3:47:50 PM GMT",
+    date = NeoAutoDateMarker,
+    time = NeoAutoTimeMarker,
+    zone = NeoTimeZoneOffsetMarker,
 );
 
 /// Trait for components that can be formatted at runtime.

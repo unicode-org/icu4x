@@ -116,6 +116,7 @@ pub mod ffi {
         DateTimeDuplicateFieldError = 0x8_09,
         DateTimeTooNarrowError = 0x8_0A,
         DateTimeMissingNamesError = 0x8_0B,
+        DateTimeZoneInfoMissingFieldsError = 0x8_80, // FFI-only error
     }
 }
 

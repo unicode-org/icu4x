@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::CustomZonedDateTime;
+use icu_timezone::{models, CustomZonedDateTime};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -55,8 +55,8 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
-pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
-    CustomZonedDateTime::try_iso_from_str(input)
+pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian, models::Full> {
+    CustomZonedDateTime::try_offset_only_iso_from_str(input)
         .unwrap()
         .to_calendar(Gregorian)
 }

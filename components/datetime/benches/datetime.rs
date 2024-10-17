@@ -23,7 +23,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -35,7 +35,7 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: TimeZoneInfo::utc(),
+                                    zone: TimeZoneInfo::utc_full(),
                                 }
                             }
                         })

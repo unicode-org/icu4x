@@ -6,9 +6,9 @@
 //! formatting operations.
 
 use crate::neo_marker::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
-use crate::scaffold::IntoOption;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{Date, Iso, Time};
+use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
