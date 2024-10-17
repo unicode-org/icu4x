@@ -293,24 +293,22 @@
 //! .unwrap();
 //!
 //! // "uschi" - has symbol data for generic_non_location_short
-//! let time_zone = TimeZoneInfo {
-//!     time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
-//!     offset: Some(UtcOffset::from_eighths_of_hour(-6 * 8)),
-//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-//!     ..TimeZoneInfo::unknown()
-//! };
+//! let time_zone = TimeZoneInfo::from_id_and_offset(
+//!     TimeZoneBcp47Id(tinystr!(8, "uschi")),
+//!     UtcOffset::from_eighths_of_hour(-5 * 8),
+//! )
+//! .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
 //! );
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
-//! let time_zone = TimeZoneInfo {
-//!     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "ushnl")),
-//!     offset: Some(UtcOffset::from_eighths_of_hour(-10 * 8)),
-//!     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-//!     ..TimeZoneInfo::unknown()
-//! };
+//! let time_zone = TimeZoneInfo::from_id_and_offset(
+//!     TimeZoneBcp47Id(tinystr!(8, "ushnl")),
+//!     UtcOffset::from_eighths_of_hour(-10 * 8),
+//! )
+//! .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
@@ -2060,12 +2058,12 @@ macro_rules! impl_zone_marker {
             /// .unwrap();
             ///
             /// // Time zone info for America/Chicago in the summer
-            /// let zone = TimeZoneInfo {
-            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
-            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
-            ///     zone_variant: Some(ZoneVariant::daylight()),
-            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-            /// };
+            /// let zone = TimeZoneInfo::from_id_and_offset(
+            ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     UtcOffset::from_eighths_of_hour(-5 * 8),
+            /// )
+            /// .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()))
+            /// .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -2093,12 +2091,12 @@ macro_rules! impl_zone_marker {
             /// .unwrap();
             ///
             /// // Time zone info for America/Chicago in the summer
-            /// let zone = TimeZoneInfo {
-            ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "uschi")),
-            ///     offset: Some(UtcOffset::from_eighths_of_hour(-5 * 8)),
-            ///     zone_variant: Some(ZoneVariant::daylight()),
-            ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-            /// };
+            /// let zone = TimeZoneInfo::from_id_and_offset(
+            ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
+            ///     UtcOffset::from_eighths_of_hour(-5 * 8),
+            /// )
+            /// .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()))
+            /// .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -2426,13 +2424,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone info for America/Sao_Paulo in the summer
-    /// let zone = TimeZoneInfo {
-    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
-    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
-    ///     zone_variant: Some(ZoneVariant::standard()),
-    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-    /// };
+    /// // Time zone info for America/Sao_Paulo in the winter
+    /// let zone = TimeZoneInfo::from_id_and_offset(
+    ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     UtcOffset::from_eighths_of_hour(-3 * 8),
+    /// )
+    /// .with_local_time((Date::try_new_iso_date(2022, 1, 29).unwrap(), Time::midnight()))
+    /// .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -2545,13 +2543,13 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// // Time zone info for America/Sao_Paulo in the summer
-    /// let zone = TimeZoneInfo {
-    ///     time_zone_id: TimeZoneBcp47Id(tinystr!(8, "brsao")),
-    ///     offset: Some(UtcOffset::from_eighths_of_hour(-3 * 8)),
-    ///     zone_variant: Some(ZoneVariant::standard()),
-    ///     local_time: Some((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight())),
-    /// };
+    /// // Time zone info for America/Sao_Paulo in the winter
+    /// let zone = TimeZoneInfo::from_id_and_offset(
+    ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
+    ///     UtcOffset::from_eighths_of_hour(-3 * 8),
+    /// )
+    /// .with_local_time((Date::try_new_iso_date(2022, 1, 29).unwrap(), Time::midnight()))
+    /// .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),

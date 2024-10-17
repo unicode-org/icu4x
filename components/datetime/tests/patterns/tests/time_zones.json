@@ -1072,16 +1072,6 @@
     "expectations": [
       {
         "patterns": [
-          "z",
-          "zz",
-          "zzz",
-          "zzzz"
-        ],
-        "configs": [],
-        "expected": ["{z}"]
-      },
-      {
-        "patterns": [
           "Z",
           "ZZ",
           "ZZZ",
@@ -1097,7 +1087,11 @@
           "OOOO",
           "v",
           "vvvv",
-          "VVVV"
+          "VVVV",
+          "z",
+          "zz",
+          "zzz",
+          "zzzz"
         ],
         "configs": [],
         "expected": ["GMT+?"]
