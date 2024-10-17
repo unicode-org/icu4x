@@ -2242,7 +2242,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en-GB").into(),
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
@@ -2268,7 +2268,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en-GB").into(),
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
@@ -2652,7 +2652,7 @@ impl_zoneddatetime_marker!(
     NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
-    sample = "May 17, 2024, 3:47:50 PM GMT",
+    sample = "17 May 2024, 15:47:50 GMT",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneGenericMarker,
@@ -2660,10 +2660,21 @@ impl_zoneddatetime_marker!(
 
 // TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
+    NeoYearMonthDayHourMinuteSecondTimeZoneSpecificShortMarker,
+    description = "locale-dependent date and time fields with a time zone",
+    sample_length = Medium,
+    sample = "17 May 2024, 15:47:50 BST",
+    date = NeoAutoDateMarker,
+    time = NeoAutoTimeMarker,
+    zone = NeoTimeZoneSpecificMarker,
+);
+
+// TODO: Type aliases like this are excessive; make a curated set
+impl_zoneddatetime_marker!(
     NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
-    sample = "May 17, 2024, 3:47:50 PM GMT+1",
+    sample = "17 May 2024, 15:47:50 GMT+1",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneOffsetMarker,
