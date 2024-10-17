@@ -68,7 +68,7 @@ pub(crate) struct MapZone {
     #[serde(rename = "_type")]
     pub(crate) zone_type: String,
     #[serde(rename = "_territory")]
-    pub(crate) territory: String,
+    pub(crate) territory: icu::locale::subtags::Region,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -85,7 +85,7 @@ pub(crate) struct Metazones {
     #[serde(rename = "metazoneInfo")]
     pub(crate) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub(crate) _meta_zones_territory: MetazonesTerritory,
+    pub(crate) meta_zones_territory: MetazonesTerritory,
     #[serde(rename = "metazoneIds")]
     pub(crate) meta_zone_ids: MetazoneIds,
 }
