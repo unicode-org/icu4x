@@ -2663,7 +2663,7 @@ impl_zoneddatetime_marker!(
     NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
-    sample = "May 17, 2024, 3:47:50 PM GMT",
+    sample = "May 17, 2024, 3:47:50 PM GMT+1",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
     zone = NeoTimeZoneOffsetMarker,
