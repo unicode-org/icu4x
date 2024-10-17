@@ -21,6 +21,7 @@ icu::datetime::NeoFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::NeoFormatter::try_new#FnInStruct
 icu::datetime::NeoFormatter::try_new_with_skeleton#FnInStruct
 icu::datetime::NeoSkeletonLength#Enum
+icu::datetime::NeoSkeletonLength::into_option#FnInEnum
 icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
 icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
 icu::datetime::TypedNeoFormatter#Struct
