@@ -11,8 +11,8 @@ use crate::{
     provider,
 };
 use core::fmt;
-use icu_calendar::{Date, Iso, Time};
 use fixed_decimal::UnsignedFixedDecimal;
+use icu_calendar::{Date, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
@@ -509,14 +509,20 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     {
                         sink.write_str(self.separator)?;
                         self.fdf
-                            .format(&UnsignedFixedDecimal::from(self.offset.minutes_part()).padded_start(2))
+                            .format(
+                                &UnsignedFixedDecimal::from(self.offset.minutes_part())
+                                    .padded_start(2),
+                            )
                             .write_to(sink)?;
                     }
 
                     if self.offset.seconds_part() != 0 {
                         sink.write_str(self.separator)?;
                         self.fdf
-                            .format(&UnsignedFixedDecimal::from(self.offset.seconds_part()).padded_start(2))
+                            .format(
+                                &UnsignedFixedDecimal::from(self.offset.seconds_part())
+                                    .padded_start(2),
+                            )
                             .write_to(sink)?;
                     }
 
