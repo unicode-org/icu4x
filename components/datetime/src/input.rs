@@ -6,6 +6,7 @@
 //! formatting operations.
 
 use crate::neo_marker::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
+use crate::scaffold::IntoOption;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{Date, Iso, Time};
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -55,19 +56,19 @@ impl ExtractedInput {
             + GetField<Z::TimeZoneLocalTimeInput>,
     {
         Self {
-            year: GetField::<D::YearInput>::get_field(input).into(),
-            month: GetField::<D::MonthInput>::get_field(input).into(),
-            day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into(),
-            iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into(),
-            any_calendar_kind: GetField::<D::AnyCalendarKindInput>::get_field(input).into(),
-            hour: GetField::<T::HourInput>::get_field(input).into(),
-            minute: GetField::<T::MinuteInput>::get_field(input).into(),
-            second: GetField::<T::SecondInput>::get_field(input).into(),
-            nanosecond: GetField::<T::NanoSecondInput>::get_field(input).into(),
-            time_zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into(),
-            offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into(),
-            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into(),
-            local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into(),
+            year: GetField::<D::YearInput>::get_field(input).into_option(),
+            month: GetField::<D::MonthInput>::get_field(input).into_option(),
+            day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
+            iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
+            any_calendar_kind: GetField::<D::AnyCalendarKindInput>::get_field(input).into_option(),
+            hour: GetField::<T::HourInput>::get_field(input).into_option(),
+            minute: GetField::<T::MinuteInput>::get_field(input).into_option(),
+            second: GetField::<T::SecondInput>::get_field(input).into_option(),
+            nanosecond: GetField::<T::NanoSecondInput>::get_field(input).into_option(),
+            time_zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
+            offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
+            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
+            local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into_option(),
         }
     }
 }
