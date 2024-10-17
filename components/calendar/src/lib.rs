@@ -134,6 +134,8 @@ pub mod cal {
     pub use crate::persian::Persian;
     pub use crate::roc::Roc;
 
+    pub use crate::any_calendar::AnyCalendar;
+
     /// Scaffolding types: You shouldn't need to use these, they need to be public for the `Calendar` trait impl to work.
     pub mod scaffold {
         pub use crate::chinese::ChineseDateInner;
@@ -152,6 +154,8 @@ pub mod cal {
         pub use crate::julian::JulianDateInner;
         pub use crate::persian::PersianDateInner;
         pub use crate::roc::RocDateInner;
+
+        pub use crate::any_calendar::AnyDateInner;
     }
 }
 
