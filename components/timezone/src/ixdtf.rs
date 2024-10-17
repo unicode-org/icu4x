@@ -129,7 +129,7 @@ impl TimeZoneInfo<models::Full> {
             }
         };
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        let iso = DateTime::<Iso>::try_new_iso_datetime(
+        let iso = DateTime::<Iso>::try_new_iso(
             date.year,
             date.month,
             date.day,
@@ -170,7 +170,7 @@ impl TimeZoneInfo<models::AtTime> {
         };
         let mapper = TimeZoneIdMapper::new();
         let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
-        let iso = DateTime::<Iso>::try_new_iso_datetime(
+        let iso = DateTime::<Iso>::try_new_iso(
             date.year,
             date.month,
             date.day,
@@ -209,7 +209,7 @@ impl TimeZoneInfo<models::Full> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         let mapper = TimeZoneIdMapper::new();
         let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
-        let iso = DateTime::<Iso>::try_new_iso_datetime(
+        let iso = DateTime::<Iso>::try_new_iso(
             date.year,
             date.month,
             date.day,
