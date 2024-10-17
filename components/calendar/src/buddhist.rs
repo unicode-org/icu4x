@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Buddhist calendar.
 //!
 //! ```rust
-//! use icu::calendar::{buddhist::Buddhist, Date, DateTime};
+//! use icu::calendar::{cal::Buddhist, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)

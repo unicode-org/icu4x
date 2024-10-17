@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Chinese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{chinese::Chinese, Date, DateTime, Ref};
+//! use icu::calendar::{cal::Chinese, Date, DateTime, Ref};
 //!
 //! let chinese = Chinese::new();
 //! let chinese = Ref(&chinese); // to avoid cloning
@@ -320,7 +320,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::{chinese::Chinese, Date};
+    /// use icu::calendar::{cal::Chinese, Date};
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
@@ -360,7 +360,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::{chinese::Chinese, DateTime};
+    /// use icu::calendar::{cal::Chinese, DateTime};
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///

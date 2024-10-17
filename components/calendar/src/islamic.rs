@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Islamic calendars.
 //!
 //! ```rust
-//! use icu::calendar::islamic::IslamicObservational;
+//! use icu::calendar::cal::IslamicObservational;
 //! use icu::calendar::{Date, DateTime, Ref};
 //!
 //! let islamic = IslamicObservational::new_always_calculating();
@@ -563,7 +563,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicObservational;
+    /// use icu::calendar::cal::IslamicObservational;
     /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
@@ -596,7 +596,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     /// Construct a new Islamic Observational datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicObservational;
+    /// use icu::calendar::cal::IslamicObservational;
     /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
@@ -788,7 +788,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicUmmAlQura;
+    /// use icu::calendar::cal::IslamicUmmAlQura;
     /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
@@ -823,7 +823,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     /// Construct a new Islamic Umm al-Qura datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicUmmAlQura;
+    /// use icu::calendar::cal::IslamicUmmAlQura;
     /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
@@ -1025,7 +1025,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicCivil;
+    /// use icu::calendar::cal::IslamicCivil;
     /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicCivil::new();
@@ -1054,7 +1054,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     /// Construct a new Civil Islamic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicCivil;
+    /// use icu::calendar::cal::IslamicCivil;
     /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicCivil::new();
@@ -1257,7 +1257,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicTabular;
+    /// use icu::calendar::cal::IslamicTabular;
     /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicTabular::new();
@@ -1286,7 +1286,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     /// Construct a new Tabular Islamic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::islamic::IslamicTabular;
+    /// use icu::calendar::cal::IslamicTabular;
     /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicTabular::new();

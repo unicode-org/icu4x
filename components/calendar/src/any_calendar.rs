@@ -39,7 +39,7 @@ use core::fmt;
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, DateTime, cal::Japanese, Time, types::{Era, MonthCode}};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
