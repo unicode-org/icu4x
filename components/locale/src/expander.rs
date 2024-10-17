@@ -582,6 +582,12 @@ impl LocaleExpander {
     }
 }
 
+impl AsRef<LocaleExpander> for LocaleExpander {
+    fn as_ref(&self) -> &LocaleExpander {
+        self
+    }
+}
+
 #[cfg(feature = "serde")]
 #[cfg(test)]
 mod tests {
