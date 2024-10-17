@@ -16,33 +16,22 @@ export default {
 				case "Dictionary":
 					segmenter = lib.WordSegmenter.createDictionary(provider);
 			}
-
+			
+			let last = 0;
 			const iter = segmenter.segment(text);
+
 			const segments = [];
 			
-			let utf8Index = 0;
-			let utf16Index = 0;
 			while (true) {
 				const next = iter.next();
 
 				if (next === -1) {
-					segments.push(text.slice(utf16Index));
+					segments.push(text.slice(last));
 					break;
-				} else {
-					const oldUtf16Index = utf16Index;
-					while (utf8Index < next) {
-						const codePoint = text.codePointAt(utf16Index);
-						const utf8Len = (codePoint <= 0x7F) ? 1
-							: (codePoint <= 0x7FF) ? 2
-							: (codePoint <= 0xFFFF) ? 3
-							: 4;
-						const utf16Len = (codePoint <= 0xFFFF) ? 1
-							: 2;
-						utf8Index += utf8Len;
-						utf16Index += utf16Len;
-					}
-					segments.push(text.slice(oldUtf16Index, utf16Index));
 				}
+
+				segments.push(text.slice(last, next));
+				last = next;
 			}
 			
 			return segments.join(" . ");
