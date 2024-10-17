@@ -23,7 +23,7 @@ use alloc::sync::Arc;
 /// use icu::calendar::DateTime;
 ///
 /// // Example: Construction of ISO datetime from integers.
-/// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+/// let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 ///     .expect("Failed to initialize ISO DateTime instance.");
 ///
 /// assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
@@ -187,13 +187,13 @@ mod tests {
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            DateTime::try_new_iso_datetime(0, 1, 1, 0, 0, 0).unwrap(),
-            DateTime::try_new_iso_datetime(0, 1, 1, 0, 0, 1).unwrap(),
-            DateTime::try_new_iso_datetime(0, 1, 1, 0, 1, 0).unwrap(),
-            DateTime::try_new_iso_datetime(0, 1, 1, 1, 0, 0).unwrap(),
-            DateTime::try_new_iso_datetime(0, 1, 2, 0, 0, 0).unwrap(),
-            DateTime::try_new_iso_datetime(0, 2, 1, 0, 0, 0).unwrap(),
-            DateTime::try_new_iso_datetime(1, 1, 1, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso(0, 1, 1, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso(0, 1, 1, 0, 0, 1).unwrap(),
+            DateTime::try_new_iso(0, 1, 1, 0, 1, 0).unwrap(),
+            DateTime::try_new_iso(0, 1, 1, 1, 0, 0).unwrap(),
+            DateTime::try_new_iso(0, 1, 2, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso(0, 2, 1, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso(1, 1, 1, 0, 0, 0).unwrap(),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

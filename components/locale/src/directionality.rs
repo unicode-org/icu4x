@@ -25,11 +25,11 @@ pub enum Direction {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{locale, Direction, LocaleDirectionality};
+/// use icu::locale::{langid, Direction, LocaleDirectionality};
 ///
 /// let ld = LocaleDirectionality::new();
 ///
-/// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
+/// assert_eq!(ld.get(&langid!("en")), Some(Direction::LeftToRight));
 /// ```
 #[derive(Debug)]
 pub struct LocaleDirectionality {
@@ -92,18 +92,18 @@ impl LocaleDirectionality {
     ///
     /// ```
     /// use icu::locale::{
-    ///     locale, Direction, LocaleDirectionality, LocaleExpander,
+    ///     langid, Direction, LocaleDirectionality, LocaleExpander,
     /// };
     ///
     /// let ld_default = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld_default.get(&locale!("jbn")), None);
+    /// assert_eq!(ld_default.get(&langid!("jbn")), None);
     ///
     /// let expander = LocaleExpander::new_extended();
     /// let ld_extended = LocaleDirectionality::new_with_expander(expander);
     ///
     /// assert_eq!(
-    ///     ld_extended.get(&locale!("jbn")),
+    ///     ld_extended.get(&langid!("jbn")),
     ///     Some(Direction::RightToLeft)
     /// );
     /// ```
@@ -150,34 +150,34 @@ impl LocaleDirectionality {
     /// Using an existing locale:
     ///
     /// ```
-    /// use icu::locale::{locale, Direction, LocaleDirectionality};
+    /// use icu::locale::{langid, Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld.get(&locale!("en-US")), Some(Direction::LeftToRight));
+    /// assert_eq!(ld.get(&langid!("en-US")), Some(Direction::LeftToRight));
     ///
-    /// assert_eq!(ld.get(&locale!("ar")), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&langid!("ar")), Some(Direction::RightToLeft));
     ///
-    /// assert_eq!(ld.get(&locale!("en-Arab")), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&langid!("en-Arab")), Some(Direction::RightToLeft));
     ///
-    /// assert_eq!(ld.get(&locale!("foo")), None);
+    /// assert_eq!(ld.get(&langid!("foo")), None);
     /// ```
     ///
     /// Using a script directly:
     ///
     /// ```
     /// use icu::locale::subtags::script;
-    /// use icu::locale::{Locale, Direction, LocaleDirectionality};
+    /// use icu::locale::{LanguageIdentifier, Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///
     /// assert_eq!(
-    ///     ld.get(&Locale::from(Some(script!("Latn")))),
+    ///     ld.get(&LanguageIdentifier::from(Some(script!("Latn")))),
     ///     Some(Direction::LeftToRight)
     /// );
     /// ```
-    pub fn get(&self, locale: impl AsRef<LanguageIdentifier>) -> Option<Direction> {
-        let script = self.expander.get_likely_script(locale.as_ref())?;
+    pub fn get(&self, langid: &LanguageIdentifier) -> Option<Direction> {
+        let script = self.expander.get_likely_script(langid)?;
 
         if self.script_in_ltr(script) {
             Some(Direction::LeftToRight)
@@ -195,9 +195,9 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_right_to_left(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_right_to_left(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .get_likely_script(langid)
             .map(|s| self.script_in_rtl(s))
             .unwrap_or(false)
     }
@@ -209,9 +209,9 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_left_to_right(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_left_to_right(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .get_likely_script(langid)
             .map(|s| self.script_in_ltr(s))
             .unwrap_or(false)
     }

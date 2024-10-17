@@ -70,7 +70,7 @@ const EXPECTED_DATE: &[&str] = &[
 
 #[test]
 fn neo_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATETIME.iter();
     for date_length in [
         length::Date::Full,
@@ -110,7 +110,7 @@ fn neo_datetime_lengths() {
 
 #[test]
 fn neo_date_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATE.iter();
     for date_length in [
         length::Date::Full,
@@ -206,7 +206,7 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime::try_new_iso_datetime(2011, 4, 3, 14, 15, 7).unwrap();
+    let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
     let formatter = TypedNeoFormatter::try_new(
         &locale!("en").into(),
@@ -221,7 +221,7 @@ fn hebrew_months() {
 
 #[test]
 fn test_5387() {
-    let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
+    let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
     let formatter_auto = TypedNeoFormatter::try_new_with_skeleton(
         &locale!("en").into(),
         NeoDateTimeSkeleton::for_length_and_components(

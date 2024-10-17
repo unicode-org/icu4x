@@ -312,7 +312,7 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 12, 35, 3).unwrap();
+/// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
 /// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
@@ -658,7 +658,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // The pattern string contains lots of numeric symbols,
     /// // but we did not load any data!
     ///
-    /// let date = Date::try_new_gregorian_date(2024, 7, 1).unwrap();
+    /// let date = Date::try_new_gregorian(2024, 7, 1).unwrap();
     ///
     /// // Missing data is filled in on a best-effort basis, and an error is signaled.
     /// // (note that the padding is ignored in this fallback mode)
@@ -1546,7 +1546,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// // Load data for the pattern and format:
     /// let datetime =
-    ///     DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
+    ///     DateTime::try_new_gregorian(2023, 12, 5, 17, 43, 12).unwrap();
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -2286,8 +2286,8 @@ where
     ///
     /// // Test it with some different dates:
     /// // Note: extended year -50 is year 51 BCE
-    /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
-    /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
+    /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
+    /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
     /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_date(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
@@ -2662,7 +2662,7 @@ mod tests {
         let pattern: DateTimePattern = "'It is' E, MMMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
-        let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
+        let datetime = DateTime::try_new_gregorian(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
         assert_try_writeable_eq!(
@@ -2720,7 +2720,7 @@ mod tests {
                 .load_year_names(&crate::provider::Baked, field_length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -2791,7 +2791,7 @@ mod tests {
                 .load_month_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -2909,7 +2909,7 @@ mod tests {
                 .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -2991,7 +2991,7 @@ mod tests {
                 .load_day_period_names(&crate::provider::Baked, field_length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");

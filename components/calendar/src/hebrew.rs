@@ -8,12 +8,12 @@
 //! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
-//! let hebrew_date = Date::try_new_hebrew_date(3425, 10, 11)
+//! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
 //! // `DateTime` type
 //! let hebrew_datetime =
-//!     DateTime::try_new_hebrew_datetime(3425, 10, 11, 13, 1, 0)
+//!     DateTime::try_new_hebrew(3425, 10, 11, 13, 1, 0)
 //!         .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
@@ -355,14 +355,14 @@ impl Date<Hebrew> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
+    /// let date_hebrew = Date::try_new_hebrew(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
     /// assert_eq!(date_hebrew.year().era_year_or_extended(), 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
-    pub fn try_new_hebrew_date(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
+    pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year_info = HebrewYearInfo::compute(year);
 
         ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
@@ -378,7 +378,7 @@ impl DateTime<Hebrew> {
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_hebrew =
-    ///     DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
+    ///     DateTime::try_new_hebrew(4201, 10, 11, 13, 1, 0)
     ///         .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().era_year_or_extended(), 4201);
@@ -388,7 +388,7 @@ impl DateTime<Hebrew> {
     /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
     /// assert_eq!(datetime_hebrew.time.second.number(), 0);
     /// ```
-    pub fn try_new_hebrew_datetime(
+    pub fn try_new_hebrew(
         year: i32,
         month: u8,
         day: u8,
@@ -397,7 +397,7 @@ impl DateTime<Hebrew> {
         second: u8,
     ) -> Result<DateTime<Hebrew>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_hebrew_date(year, month, day)?,
+            date: Date::try_new_hebrew(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -476,7 +476,7 @@ mod tests {
     #[test]
     fn test_conversions() {
         for ((iso_y, iso_m, iso_d), (y, m, d)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
-            let iso_date = Date::try_new_iso_date(iso_y, iso_m, iso_d).unwrap();
+            let iso_date = Date::try_new_iso(iso_y, iso_m, iso_d).unwrap();
             let month_code = if m == ADARI {
                 MonthCode(tinystr!(4, "M05L"))
             } else {
@@ -512,7 +512,7 @@ mod tests {
                 m
             };
 
-            let ordinal_hebrew_date = Date::try_new_hebrew_date(y, ordinal_month, d)
+            let ordinal_hebrew_date = Date::try_new_hebrew(y, ordinal_month, d)
                 .expect("Construction of date must succeed");
 
             assert_eq!(ordinal_hebrew_date, hebrew_date, "Hebrew date construction from codes and ordinals should work the same for {hebrew_date:?}");
@@ -527,7 +527,7 @@ mod tests {
 
     #[test]
     fn test_negative_era_years() {
-        let greg_date = Date::try_new_gregorian_date(-5000, 1, 1).unwrap();
+        let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         // Extended year is accessible via the inner value.
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
