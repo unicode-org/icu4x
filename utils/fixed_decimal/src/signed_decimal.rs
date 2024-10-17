@@ -8,6 +8,66 @@ use crate::uint_iterator::IntIterator;
 use crate::{variations::Signed, UnsignedFixedDecimal};
 use crate::{ParseError, Sign, SignDisplay};
 
+/// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`].
+///
+/// Supports a mantissa of non-zero digits and a number of leading and trailing
+/// zeros, as well as an optional sign; used for formatting and plural selection.
+///
+/// # Data Types
+///
+/// The following types can be converted to a `SignedFixedDecimal`:
+///
+/// - Integers, signed and unsigned
+/// - Strings representing an arbitrary-precision decimal
+/// - Floating point values (using the `ryu` feature)
+///
+/// To create a [`SignedFixedDecimal`] with fraction digits, either create it from an integer and then
+/// call [`SignedFixedDecimal::multiplied_pow10`], create it from a string, or (when the `ryu` feature is
+/// enabled) create it from a floating point value using [`SignedFixedDecimal::try_from_f64`].
+///
+/// # Magnitude and Position
+///
+/// Each digit in a `SignedFixedDecimal` is indexed by a *magnitude*, or the digit's power of 10.
+/// Illustration for the number "12.34":
+///
+/// | Magnitude | Digit | Description      |
+/// |-----------|-------|------------------|
+/// | 1         | 1     | Tens place       |
+/// | 0         | 2     | Ones place       |
+/// | -1        | 3     | Tenths place     |
+/// | -2        | 4     | Hundredths place |
+///
+/// Some functions deal with a *position* for the purpose of padding, truncating, or rounding a
+/// number. In these cases, the position sits between the corresponding magnitude of that position
+/// and the next lower significant digit.
+/// Illustration:
+///
+/// ```text
+/// Position:   2   0  -2
+/// Number:     |1|2.3|4|
+/// Position:     1  -1
+/// ```
+///
+/// Expected output of various operations, all with input "12.34":
+///
+/// | Operation                | Position  | Expected Result |
+/// |--------------------------|-----------|-----------------|
+/// | Truncate to tens         |         1 |   10            |
+/// | Truncate to tenths       |        -1 |   12.3          |
+/// | Pad to ten thousands     |         4 | 0012.34         |
+/// | Pad to ten thousandths   |        -4 |   12.3400       |
+///
+/// # Examples
+///
+/// ```
+/// use fixed_decimal::UnsignedFixedDecimal;
+///
+/// let mut dec = UnsignedFixedDecimal::from(250);
+/// assert_eq!("250", dec.to_string());
+///
+/// dec.multiply_pow10(-2);
+/// assert_eq!("2.50", dec.to_string());
+/// ```
 pub type SignedFixedDecimal = Signed<UnsignedFixedDecimal>;
 
 impl SignedFixedDecimal {

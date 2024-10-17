@@ -61,7 +61,7 @@ mod uint_iterator;
 mod variations;
 
 #[cfg(feature = "ryu")]
-pub use decimal::FloatPrecision;
+pub use variations::FloatPrecision;
 
 use variations::Signed;
 use variations::WithInfinity;
@@ -71,15 +71,15 @@ use variations::WithNaN;
 pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
-pub use decimal::RoundingIncrement;
-pub use decimal::RoundingMode;
-pub use decimal::Sign;
-pub use decimal::SignDisplay;
 pub use decimal::UnsignedFixedDecimal;
 use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use scientific::ScientificDecimal;
 pub use signed_decimal::SignedFixedDecimal;
+pub use variations::RoundingIncrement;
+pub use variations::RoundingMode;
+pub use variations::Sign;
+pub use variations::SignDisplay;
 
 /// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`].
 ///
