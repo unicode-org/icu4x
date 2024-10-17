@@ -297,7 +297,7 @@
 //!     mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
 //!     UtcOffset::from_eighths_of_hour(-5 * 8),
 //! )
-//! .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()));
+//! .with_local_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
@@ -308,7 +308,7 @@
 //!     mapper.as_borrowed().iana_to_bcp47("America/Honolulu"),
 //!     UtcOffset::from_eighths_of_hour(-10 * 8),
 //! )
-//! .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()));
+//! .with_local_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
@@ -2062,7 +2062,7 @@ macro_rules! impl_zone_marker {
             ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
             ///     UtcOffset::from_eighths_of_hour(-5 * 8),
             /// )
-            /// .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()))
+            /// .with_local_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
             /// .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
@@ -2095,7 +2095,7 @@ macro_rules! impl_zone_marker {
             ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
             ///     UtcOffset::from_eighths_of_hour(-5 * 8),
             /// )
-            /// .with_local_time((Date::try_new_iso_date(2022, 8, 29).unwrap(), Time::midnight()))
+            /// .with_local_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
             /// .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
@@ -2429,7 +2429,7 @@ impl_zone_marker!(
     ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
     ///     UtcOffset::from_eighths_of_hour(-3 * 8),
     /// )
-    /// .with_local_time((Date::try_new_iso_date(2022, 1, 29).unwrap(), Time::midnight()))
+    /// .with_local_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
     /// .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
@@ -2550,7 +2550,7 @@ impl_zone_marker!(
     ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
     ///     UtcOffset::from_eighths_of_hour(-3 * 8),
     /// )
-    /// .with_local_time((Date::try_new_iso_date(2022, 1, 29).unwrap(), Time::midnight()))
+    /// .with_local_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
     /// .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
