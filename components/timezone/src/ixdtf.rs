@@ -546,7 +546,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
     ///
     /// let tz_from_offset = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00").unwrap();
     ///
-    /// assert_eq!(tz_from_offset.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(tz_from_offset.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     /// ```
     ///
     /// ## Time Zone Annotations
@@ -560,7 +560,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
     /// let tz_from_offset_annotation = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
     /// let tz_from_iana_annotation = CustomZonedDateTime::try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
     ///
-    /// assert_eq!(tz_from_offset_annotation.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(tz_from_offset_annotation.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     ///
     /// assert_eq!(tz_from_iana_annotation.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(tz_from_iana_annotation.zone.offset, None);
@@ -611,7 +611,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
     ///
     /// let consistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
     ///
-    /// assert_eq!(consistent_tz_from_both.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(consistent_tz_from_both.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     ///
     ///
     /// let inconsistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]");
