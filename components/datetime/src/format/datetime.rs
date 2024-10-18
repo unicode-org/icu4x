@@ -556,7 +556,7 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{fieldset::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
@@ -570,7 +570,7 @@ mod tests {
         let locale = icu::locale::locale!("en-u-ca-japanese");
         let dtf = DateTimeFormatter::try_new(
             &locale.into(),
-            NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
+            YMD::with_length(NeoSkeletonLength::Medium),
         )
         .expect("DateTimeFormat construction succeeds");
 

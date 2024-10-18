@@ -138,6 +138,7 @@ macro_rules! impl_marker_with_options {
 /// Internal helper macro used by [`impl_date_marker`] and [`impl_calendar_period_marker`]
 macro_rules! impl_date_or_calendar_period_marker {
     (
+        $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
         // A plain language description of the field set for documentation.
@@ -218,6 +219,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
+            $(#[$attr])*
             $type,
             sample_length: $sample_length,
             $(alignment: $option_alignment_yes,)?
@@ -278,6 +280,7 @@ macro_rules! impl_date_or_calendar_period_marker {
 /// See [`impl_date_marker`].
 macro_rules! impl_date_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -296,6 +299,7 @@ macro_rules! impl_date_marker {
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_or_calendar_period_marker!(
+            $(#[$attr])*
             $type,
             description = $description,
             sample_length = $sample_length,
@@ -330,6 +334,7 @@ macro_rules! impl_date_marker {
 /// See [`impl_date_marker`].
 macro_rules! impl_calendar_period_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -344,6 +349,7 @@ macro_rules! impl_calendar_period_marker {
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_or_calendar_period_marker!(
+            $(#[$attr])*
             $type,
             description = $description,
             sample_length = $sample_length,
@@ -371,6 +377,7 @@ macro_rules! impl_calendar_period_marker {
 /// Documentation for each option is shown inline below.
 macro_rules! impl_time_marker {
     (
+        $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
         // An expression for the field set.
@@ -443,6 +450,7 @@ macro_rules! impl_time_marker {
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
+            $(#[$attr])*
             $type,
             sample_length: $sample_length,
             alignment: yes,
@@ -783,11 +791,13 @@ macro_rules! impl_zoneddatetime_marker {
 }
 
 impl_date_marker!(
+    /// This format may use ordinal formatting, such as "the 17th",
+    /// in the future. See CLDR-18040.
     D,
     NeoDateComponents::Day,
     description = "day of month (standalone)",
     sample_length = Short,
-    sample = "the 17th",
+    sample = "17",
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
@@ -804,11 +814,13 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
+    /// This format may use ordinal formatting, such as "Friday the 17th",
+    /// in the future. See CLDR-18040.
     DE,
     NeoDateComponents::DayWeekday,
     description = "day of month and weekday",
     sample_length = Long,
-    sample = "Friday the 17th",
+    sample = "17 Friday",
     weekdays = yes,
     input_day_of_month = yes,
     input_day_of_week = yes,
@@ -829,11 +841,12 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
+    /// See CLDR-18040 for progress on improving this format.
     MDE,
     NeoDateComponents::MonthDayWeekday,
     description = "month, day, and weekday",
     sample_length = Medium,
-    sample = "Friday, May 17",
+    sample = "Fri, May 17",
     months = yes,
     weekdays = yes,
     input_month = yes,
@@ -1041,8 +1054,8 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoMonthDayMarker;
-    /// use icu::datetime::fieldset::NeoHourMinuteMarker;
+    /// use icu::datetime::fieldset::MD;
+    /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::NeoTimeZoneSpecificShortMarker;
     /// use icu::datetime::DateTimeCombo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1051,8 +1064,8 @@ impl_zone_marker!(
     /// use writeable::assert_try_writeable_eq;
     ///
     /// type MyDateTimeZoneSet = DateTimeCombo<
-    ///     NeoMonthDayMarker,
-    ///     NeoHourMinuteMarker,
+    ///     MD,
+    ///     HM,
     ///     NeoTimeZoneSpecificShortMarker,
     /// >;
     ///
@@ -1269,8 +1282,8 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoMonthDayMarker;
-    /// use icu::datetime::fieldset::NeoHourMinuteMarker;
+    /// use icu::datetime::fieldset::MD;
+    /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::NeoTimeZoneGenericShortMarker;
     /// use icu::datetime::DateTimeCombo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1279,8 +1292,8 @@ impl_zone_marker!(
     /// use writeable::assert_try_writeable_eq;
     ///
     /// type MyDateTimeZoneSet = DateTimeCombo<
-    ///     NeoMonthDayMarker,
-    ///     NeoHourMinuteMarker,
+    ///     MD,
+    ///     HM,
     ///     NeoTimeZoneGenericShortMarker,
     /// >;
     ///

@@ -37,12 +37,12 @@ icu = "1.5.0"
 
 ```rust
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDHMS};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     &locale!("es").into(),
-    NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Long)
+    YMDHMS::with_length(NeoSkeletonLength::Long)
 )
 .expect("locale should be present in compiled data");
 

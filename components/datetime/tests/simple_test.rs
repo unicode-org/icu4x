@@ -4,7 +4,7 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::fieldset::NeoYearMonthDayMarker;
+use icu_datetime::fieldset::YMD;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
     NeoSkeletonLength, NeoTimeComponents,
@@ -212,7 +212,7 @@ fn hebrew_months() {
     let datetime = datetime.to_calendar(Hebrew);
     let formatter = FixedCalendarDateTimeFormatter::try_new(
         &locale!("en").into(),
-        NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
+        YMD::with_length(NeoSkeletonLength::Medium),
     )
     .unwrap();
 

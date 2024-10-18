@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::fieldset::NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker;
+use icu_datetime::fieldset::YMDHMSTimeZoneOffsetMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_timezone::CustomZonedDateTime;
@@ -42,10 +42,10 @@ fn main() {
     {
         let dtf = FixedCalendarDateTimeFormatter::<
             Gregorian,
-            NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
+            YMDHMSTimeZoneOffsetMarker,
         >::try_new(
             &locale,
-            NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker::with_length(
+            YMDHMSTimeZoneOffsetMarker::with_length(
                 NeoSkeletonLength::Medium,
             ),
         )
