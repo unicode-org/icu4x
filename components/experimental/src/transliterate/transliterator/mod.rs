@@ -25,6 +25,7 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
 use zerofrom::ZeroFrom;
+use zerovec::vecs::Index32;
 use zerovec::VarZeroSlice;
 
 type Filter<'a> = CodePointInversionList<'a>;
@@ -499,11 +500,11 @@ impl SimpleId<'_> {
 }
 
 struct RuleGroup<'a> {
-    rules: &'a VarZeroSlice<RuleULE>,
+    rules: &'a VarZeroSlice<RuleULE, Index32>,
 }
 
 impl<'a> RuleGroup<'a> {
-    fn from(rules: &'a VarZeroSlice<RuleULE>) -> Self {
+    fn from(rules: &'a VarZeroSlice<RuleULE, Index32>) -> Self {
         Self { rules }
     }
 

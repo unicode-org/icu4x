@@ -604,7 +604,7 @@ mod tests {
     use crate::transliterate::provider as ds;
     use icu_locale_core::locale;
     use std::collections::HashSet;
-    use zerovec::VarZeroVec;
+    use zerovec::{vecs::Index32, VarZeroVec};
 
     fn parse_set(source: &str) -> super::parse::UnicodeSet {
         crate::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
@@ -726,7 +726,7 @@ mod tests {
                 replacer: Cow::Borrowed("splitsuprulegroups"),
             }];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> = vec![
                 VarZeroVec::from(&expected_rule_group1),
                 VarZeroVec::from(&expected_rule_group2),
                 VarZeroVec::new(), // empty rule group after the last transform rule
@@ -816,7 +816,7 @@ mod tests {
                 },
             ];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> =
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> =
                 vec![VarZeroVec::from(&expected_rule_group1), VarZeroVec::new()];
 
             let expected_compounds = vec![
