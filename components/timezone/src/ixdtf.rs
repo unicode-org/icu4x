@@ -312,7 +312,7 @@ impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
-    /// [`CustomZonedDateTime::try_full_iso_from_str`].
+    /// [`CustomZonedDateTime::try_iso_from_str`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     pub fn try_loose_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
@@ -325,7 +325,7 @@ impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
-    /// [`CustomZonedDateTime::try_full_iso_from_utf8`].
+    /// [`CustomZonedDateTime::try_iso_from_utf8`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     pub fn try_loose_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
@@ -468,7 +468,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
-    /// [`CustomZonedDateTime::try_full_from_str`].
+    /// [`CustomZonedDateTime::try_from_str`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     pub fn try_loose_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
@@ -481,7 +481,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
-    /// [`CustomZonedDateTime::try_full_from_utf8`].
+    /// [`CustomZonedDateTime::try_from_utf8`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     pub fn try_loose_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
