@@ -39,15 +39,57 @@ impl CldrCache {
                         continue;
                     };
 
+                    if transform == "und-Ethi-t-und-latn-m0-beta_metsehaf-geminate" {
+                        // References an unknown transliterator
+                        continue;
+                    }
+
+                    if transform == "byn-Ethi-t-byn-latn-m0-xaleget" {
+                        // Doesn't parse (backreference error)
+                        continue;
+                    }
+
+                    if transform == "Han-Latin-Names" {
+                        // Alias clash with Han-Latin
+                        continue;
+                    }
+
+                    if transform == "Thai-Latin" {
+                        // References an unknown transliterator (Any-BreakInternal)
+                        continue;
+                    }
+
+                    if transform == "de-ASCII" {
+                        // References an unknown transliterator (Any-ASCII)
+                        continue;
+                    }
+
                     let metadata = self
                         .serde_cache
                         .read_and_parse_json::<transforms::Resource>(&format!(
                             "cldr-transforms/transforms/{transform}.json"
                         ))?;
-                    let source = self.serde_cache.root.read_to_string(&format!(
-                        "cldr-transforms/transforms/{}",
-                        metadata.rules_file
-                    ))?;
+                    let source = self
+                        .serde_cache
+                        .root
+                        .read_to_string(&format!(
+                            "cldr-transforms/transforms/{}",
+                            metadata.rules_file
+                        ))?
+                        // Declares a sequence of Unicode sets instead of a Unicode set
+                        .replace(
+                            "$initialPunct = [:Ps:][:Pi:];",
+                            "$initialPunct = [[:Ps:][:Pi:]];",
+                        )
+                        // I'm not sure why this errors
+                        .replace("ə̃ {ə̃}+ → ə̃;", "")
+                        // This does not escape the $, so the = is interpreted as a variable name
+                        .replace(r#"$="#, r#"\$="#)
+                        // Incorrect casing, we're strict
+                        .replace("script=", "Script=")
+                        .replace("ideographic:", "Ideographic:")
+                        .replace("cased:", "Cased:")
+                        .replace("case-ignorable:", "Case_Ignorable:");
 
                     if matches!(
                         metadata.direction,
@@ -67,22 +109,18 @@ impl CldrCache {
                         provider.register_source(
                             &bcp47_alias,
                             source.clone(),
-                            metadata
-                                .alias
-                                .as_deref()
-                                .into_iter()
-                                .chain([
-                                    transform,
-                                    &format!("{}-{}", metadata.source, metadata.target),
-                                ])
-                                .chain(
-                                    metadata
-                                        .alias_bcp47
-                                        .as_deref()
-                                        .unwrap_or_default()
-                                        .split(' ')
-                                        .skip(1),
-                                ),
+                            [metadata.alias.as_deref().unwrap_or(
+                                format!("{}-{}", metadata.source, metadata.target).as_str(),
+                            )]
+                            .into_iter()
+                            .chain(
+                                metadata
+                                    .alias_bcp47
+                                    .as_deref()
+                                    .unwrap_or_default()
+                                    .split(' ')
+                                    .skip(1),
+                            ),
                             false,
                             metadata.visibility == transforms::Visibility::External,
                         );
@@ -105,21 +143,18 @@ impl CldrCache {
                         provider.register_source(
                             &bcp47_alias,
                             source,
-                            metadata
-                                .backward_alias
-                                .as_deref()
-                                .into_iter()
-                                .chain(
-                                    [format!("{}-{}", metadata.target, metadata.source).as_str()],
-                                )
-                                .chain(
-                                    metadata
-                                        .backward_alias_bcp47
-                                        .as_deref()
-                                        .unwrap_or_default()
-                                        .split(' ')
-                                        .skip(1),
-                                ),
+                            [metadata.backward_alias.as_deref().unwrap_or(
+                                format!("{}-{}", metadata.target, metadata.source).as_str(),
+                            )]
+                            .into_iter()
+                            .chain(
+                                metadata
+                                    .backward_alias_bcp47
+                                    .as_deref()
+                                    .unwrap_or_default()
+                                    .split(' ')
+                                    .skip(1),
+                            ),
                             true,
                             metadata.visibility == transforms::Visibility::External,
                         );

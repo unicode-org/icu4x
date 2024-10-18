@@ -390,13 +390,31 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
-        let mut unparsed = id.basic_id.to_string();
-        let string = if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
+        let unparsed = id.basic_id.to_string();
+
+        let string = if matches!(
+            unparsed.as_str(),
+            "any-nfc"
+                | "any-nfkc"
+                | "any-nfd"
+                | "any-nfkd"
+                | "any-null"
+                | "any-remove"
+                | "any-lower"
+                | "any-upper"
+                | "any-title"
+                | "any-hex/unicode"
+                | "any-hex/rust"
+                | "any-hex/xml"
+                | "any-hex/perl"
+                | "any-hex/plain"
+        ) {
+            unparsed
+        } else if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
             bcp47_id.to_string()
         } else {
-            // Non-BCP47 ids get prefixed with `x-`.
-            unparsed.replace_range(0..0, "x-");
-            unparsed
+            icu_provider::log::warn!("Reference to unknown transliterator: {unparsed}");
+            format!("x-{unparsed}")
         };
         ds::SimpleId {
             id: string.into(),

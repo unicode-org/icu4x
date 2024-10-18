@@ -2166,6 +2166,11 @@ mod tests {
                 "[$set-$a]",
                 r"[$set-$a← error: unexpected variable",
             ),
+            (
+                &map_char_set,
+                "[$=]",
+                "[$=← error: unexpected character '='",
+            ),
         ];
         for (variable_map, source, expected_err) in cases {
             assert_is_error_and_message_eq(source, expected_err, variable_map);
