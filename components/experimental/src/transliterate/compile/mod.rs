@@ -126,11 +126,22 @@ impl RuleCollection {
         id: &icu_locale_core::Locale,
         aliases: impl IntoIterator<Item = &'a str>,
     ) {
-        self.id_mapping.extend(
-            aliases
-                .into_iter()
-                .map(|alias| (alias.to_ascii_lowercase(), id.clone())),
-        )
+        for alias in aliases {
+            self.id_mapping
+                .entry(alias.to_ascii_lowercase())
+                .and_modify(|prev| {
+                    if prev != id {
+                        icu_provider::log::warn!(
+                            "Duplicate entry for alias for {alias}: {prev}, {id}"
+                        );
+                        // stability
+                        if prev.to_string() > id.to_string() {
+                            *prev = id.clone();
+                        }
+                    }
+                })
+                .or_insert(id.clone());
+        }
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).

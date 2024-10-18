@@ -374,7 +374,7 @@ impl Transliterator {
                 // Load the transliterator, by checking
                 let internal_t =
                     // a) hardcoded specials
-                    dep.strip_prefix("x-").and_then(|special| Transliterator::load_special(special, normalizer_provider))
+                    Transliterator::load_special(&dep, normalizer_provider)
                     // b) the user-provided override
                     .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
@@ -427,6 +427,9 @@ impl Transliterator {
             ),
             "any-null" => Some(Ok(InternalTransliterator::Null)),
             "any-remove" => Some(Ok(InternalTransliterator::Remove)),
+            "any-lower" => Some(Err(DataError::custom("any-lower not implemented"))),
+            "any-upper" => Some(Err(DataError::custom("any-upper not implemented"))),
+            "any-title" => Some(Err(DataError::custom("any-title not implemented"))),
             "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
             ))),
