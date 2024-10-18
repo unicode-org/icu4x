@@ -80,6 +80,30 @@ impl<Model: TimeZoneModel> Clone for TimeZoneInfo<Model> {
 
 impl<Model: TimeZoneModel> Copy for TimeZoneInfo<Model> {}
 
+impl UtcOffset {
+    /// Associates this [`UtcOffset`] with a time zone ID, returning a [`TimeZoneInfo`].
+    pub const fn with_id(self, time_zone_id: TimeZoneBcp47Id) -> TimeZoneInfo<models::Base> {
+        TimeZoneInfo {
+            offset: Some(self),
+            time_zone_id,
+            zone_variant: (),
+            local_time: (),
+        }
+    }
+}
+
+impl TimeZoneBcp47Id {
+    /// Associates this [`TimeZoneBcp47Id`] with a UTC offset, returning a [`TimeZoneInfo`].
+    pub const fn with_offset(self, offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
+        TimeZoneInfo {
+            offset,
+            time_zone_id: self,
+            zone_variant: (),
+            local_time: (),
+        }
+    }
+}
+
 impl TimeZoneInfo<models::Base> {
     /// Creates a time zone info with no information.
     pub const fn unknown() -> Self {
