@@ -8,7 +8,7 @@ use core::convert::TryFrom;
 use zerovec::ule::{AsULE, UleError, ULE};
 
 /// `PatternItemULE` is a type optimized for efficient storing and
-/// deserialization of `TypedDateTimeFormatter` `PatternItem` elements using
+/// deserialization of `FixedCalendarDateTimeFormatter` `PatternItem` elements using
 /// `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
@@ -144,7 +144,7 @@ impl AsULE for PatternItem {
 }
 
 /// `GenericPatternItemULE` is a type optimized for efficient storing and
-/// deserialization of `TypedDateTimeFormatter` `GenericPatternItem` elements using
+/// deserialization of `FixedCalendarDateTimeFormatter` `GenericPatternItem` elements using
 /// the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.

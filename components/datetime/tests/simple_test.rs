@@ -4,13 +4,13 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::NeoYearMonthDayMarker;
+use icu_datetime::fieldset::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
     NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_locale_core::{locale, Locale};
 use writeable::assert_try_writeable_eq;
 
@@ -87,7 +87,7 @@ fn neo_datetime_lengths() {
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = TypedNeoFormatter::try_new_with_skeleton(
+                let formatter = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
                     &locale,
                     NeoDateTimeSkeleton::for_length_and_components(
                         date_skeleton.length,
@@ -126,7 +126,8 @@ fn neo_date_lengths() {
             locale!("hi").into(),
         ] {
             let formatter =
-                TypedNeoFormatter::try_new_with_skeleton(&locale, date_skeleton).unwrap();
+                FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale, date_skeleton)
+                    .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
@@ -193,7 +194,8 @@ fn overlap_patterns() {
     {
         let skeleton = NeoDateTimeSkeleton::for_length_and_components(length, components);
         let formatter =
-            TypedNeoFormatter::try_new_with_skeleton(&(&locale).into(), skeleton).unwrap();
+            FixedCalendarDateTimeFormatter::try_new_with_skeleton(&(&locale).into(), skeleton)
+                .unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(
             formatted,
@@ -208,7 +210,7 @@ fn overlap_patterns() {
 fn hebrew_months() {
     let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
-    let formatter = TypedNeoFormatter::try_new(
+    let formatter = FixedCalendarDateTimeFormatter::try_new(
         &locale!("en").into(),
         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
     )
@@ -222,7 +224,7 @@ fn hebrew_months() {
 #[test]
 fn test_5387() {
     let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
-    let formatter_auto = TypedNeoFormatter::try_new_with_skeleton(
+    let formatter_auto = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
@@ -233,7 +235,7 @@ fn test_5387() {
         ),
     )
     .unwrap();
-    let formatter_h12 = TypedNeoFormatter::try_new_with_skeleton(
+    let formatter_h12 = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h12").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
@@ -244,7 +246,7 @@ fn test_5387() {
         ),
     )
     .unwrap();
-    let formatter_h24 = TypedNeoFormatter::try_new_with_skeleton(
+    let formatter_h24 = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h23").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,

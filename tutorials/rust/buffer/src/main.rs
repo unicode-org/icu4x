@@ -14,7 +14,7 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{TypedNeoFormatter, neo_marker::NeoAutoDateTimeMarker, neo_skeleton::NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::NeoAutoDateTimeMarker, neo_skeleton::NeoSkeletonLength};
 use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
@@ -25,7 +25,7 @@ fn main() {
     let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
         .expect("deserialization should succeed");
 
-    let formatter = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(
+    let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
         NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),

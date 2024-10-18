@@ -8,12 +8,35 @@
 //! these items in userland code.
 
 mod calendar;
+mod fieldset_traits;
+mod get_field;
 
 pub(crate) use calendar::AnyCalendarProvider;
 pub use calendar::CalMarkers;
 pub use calendar::CldrCalendar;
+pub use calendar::ConvertCalendar;
 pub use calendar::FullDataCalMarkers;
+pub use calendar::IsAnyCalendarKind;
+pub use calendar::IsInCalendar;
 pub use calendar::NoDataCalMarkers;
+
+pub(crate) use fieldset_traits::datetime_marker_helper;
+pub use fieldset_traits::AllInputMarkers;
+pub use fieldset_traits::DateDataMarkers;
+pub use fieldset_traits::DateInputMarkers;
+pub use fieldset_traits::DateTimeMarkers;
+pub use fieldset_traits::HasConstComponents;
+pub use fieldset_traits::HasConstDateComponents;
+pub use fieldset_traits::HasConstTimeComponents;
+pub use fieldset_traits::HasConstZoneComponent;
+pub use fieldset_traits::IsRuntimeComponents;
+pub use fieldset_traits::NeoNeverMarker;
+pub use fieldset_traits::TimeMarkers;
+pub use fieldset_traits::TypedDateDataMarkers;
+pub use fieldset_traits::ZoneMarkers;
+
+pub(crate) use get_field::impl_get_field;
+pub use get_field::GetField;
 
 /// Trait marking other traits that are considered unstable and should not generally be
 /// implemented outside of the datetime crate.

@@ -632,7 +632,7 @@ impl From<TimeZoneName> for Field {
     }
 }
 
-/// Get the resolved components for a TypedDateTimeFormatter, via the PatternPlurals. In the case of
+/// Get the resolved components for a FixedCalendarDateTimeFormatter, via the PatternPlurals. In the case of
 /// plurals resolve off of the required `other` pattern.
 impl From<&PatternPlurals<'_>> for Bag {
     fn from(other: &PatternPlurals) -> Self {

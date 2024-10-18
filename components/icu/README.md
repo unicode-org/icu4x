@@ -28,10 +28,10 @@ provide data explicitly using [`DataProvider`]s.
 Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 
 ```rust
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateMarker};
 use icu::locale::locale;
 
-let dtf = NeoFormatter::try_new(
+let dtf = DateTimeFormatter::try_new(
     &locale!("es-US").into(),
     NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
 )
@@ -51,7 +51,7 @@ Powerful data management is possible with [`DataProvider`]s, which are passed to
 special constructors:
 
 ```rust
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateMarker};
 use icu::locale::locale;
 use icu::locale::fallback::LocaleFallbacker;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -67,7 +67,7 @@ let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
 
 let provider = LocaleFallbackProvider::new(provider, fallbacker);
 
-let dtf = NeoFormatter::try_new_with_buffer_provider(
+let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,
     &locale!("es-US").into(),
     NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
