@@ -7,10 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{
-        fieldset::YMDHMSV,
-        neo_skeleton::NeoSkeletonLength,
-    };
+    use icu_datetime::{fieldset::YMDHMSV, neo_skeleton::NeoSkeletonLength};
 
     use crate::{
         datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
@@ -24,10 +21,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            icu_calendar::Gregorian,
-            YMDHMSV,
-        >,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDHMSV>,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -43,9 +37,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(
-                NeoSkeletonLength::from(length),
-            );
+            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -80,11 +72,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct ZonedDateTimeFormatter(
-        pub  icu_datetime::DateTimeFormatter<
-            YMDHMSV,
-        >,
-    );
+    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDHMSV>);
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
@@ -99,9 +87,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(
-                NeoSkeletonLength::from(length),
-            );
+            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
