@@ -155,19 +155,6 @@ impl TimeZoneInfo<models::AtTime> {
     }
 }
 
-impl TimeZoneInfo<models::Full> {
-    /// Creates a new [`TimeZoneInfo`] for the UTC time zone
-    /// with a reference point at the UNIX Epoch.
-    pub fn utc_full() -> Self {
-        Self {
-            offset: Some(UtcOffset::zero()),
-            time_zone_id: TimeZoneBcp47Id(tinystr::tinystr!(8, "utc")),
-            zone_variant: ZoneVariant::standard(),
-            local_time: (Date::unix_epoch(), Time::midnight()),
-        }
-    }
-}
-
 impl From<UtcOffset> for TimeZoneInfo<models::Base> {
     fn from(offset: UtcOffset) -> Self {
         Self {
