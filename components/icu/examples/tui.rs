@@ -40,14 +40,9 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = FixedCalendarDateTimeFormatter::<
-            Gregorian,
-            YMDHMSO,
-        >::try_new(
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, YMDHMSO>::try_new(
             &locale,
-            YMDHMSO::with_length(
-                NeoSkeletonLength::Medium,
-            ),
+            YMDHMSO::with_length(NeoSkeletonLength::Medium),
         )
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
