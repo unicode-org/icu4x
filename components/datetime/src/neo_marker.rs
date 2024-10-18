@@ -1478,9 +1478,6 @@ macro_rules! datetime_marker_helper {
     (@input/timezone/$any:ident,) => {
         ()
     };
-    (@input/timezone/$any:ident,) => {
-        ()
-    };
     (@input/$any:ident,) => {
         ()
     };
