@@ -16,18 +16,12 @@ use icu_calendar::cal::{
 };
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
-    types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    },
-    AnyCalendar, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
+    AnyCalendar, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_provider::prelude::*;
-use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{
-    CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
+    CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset,
 };
 
 /// A calendar that can be found in CLDR

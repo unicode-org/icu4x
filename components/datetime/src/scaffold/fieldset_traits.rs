@@ -9,17 +9,15 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    any_calendar::IntoAnyCalendar,
     types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
-    },
-    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
+    }, AnyCalendarKind, Date, Iso, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{
-    CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
+    TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
 /// Trait for components that can be formatted at runtime.
