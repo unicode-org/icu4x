@@ -14,8 +14,8 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::datetime::Combo#Struct
-icu::datetime::Combo::with_length#FnInStruct
+icu::datetime::fieldset::Combo#Struct
+icu::datetime::fieldset::Combo::with_length#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::convert_and_format#FnInStruct
 icu::datetime::DateTimeFormatter::strict_format#FnInStruct
