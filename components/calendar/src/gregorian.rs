@@ -374,7 +374,7 @@ mod test {
         expected_year: i32,
         expected_era: Era,
         expected_month: u8,
-        expected_day: u32,
+        expected_day: u8,
     }
 
     fn check_test_case(case: TestCase) {

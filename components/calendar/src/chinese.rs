@@ -666,7 +666,7 @@ mod test {
             iso_day: u8,
             expected_year: i32,
             expected_month: u8,
-            expected_day: u32,
+            expected_day: u8,
         }
 
         let cases = [
@@ -1006,7 +1006,7 @@ mod test {
             expected_rel_iso: i32,
             expected_cyclic: u8,
             expected_month: u8,
-            expected_day: u32,
+            expected_day: u8,
         }
 
         let cases = [
