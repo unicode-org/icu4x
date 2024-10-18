@@ -372,10 +372,10 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> ConvertCalendar
-    for CustomZonedDateTime<A, O>
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
+    for CustomZonedDateTime<A, Z>
 {
-    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, O>;
+    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, Z>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
         let date = self.date.to_any().to_calendar(Ref(calendar));
@@ -406,26 +406,44 @@ pub trait IsAnyCalendarKind {
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
+    #[inline]
     fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
         self.calendar().any_calendar_kind() == Some(any_calendar_kind)
     }
 }
 
 impl IsAnyCalendarKind for Time {
+    #[inline]
     fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
         true
     }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A> {
+    #[inline]
     fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
         self.date.calendar().any_calendar_kind() == Some(any_calendar_kind)
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> IsAnyCalendarKind
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsAnyCalendarKind
+    for CustomZonedDateTime<A, Z>
 {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl IsAnyCalendarKind for UtcOffset {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl<O: TimeZoneModel> IsAnyCalendarKind for TimeZoneInfo<O> {
+    #[inline]
     fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
         true
     }
@@ -440,10 +458,12 @@ impl<C> IsInCalendar<C> for Time {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> IsInCalendar<C>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInCalendar<C>
+    for CustomZonedDateTime<A, Z>
 {
 }
+
+impl<C> IsInCalendar<C> for UtcOffset {}
 
 impl<C, O: TimeZoneModel> IsInCalendar<C> for TimeZoneInfo<O> {}
 
@@ -640,8 +660,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<YearInfo>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<YearInfo>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> YearInfo {
@@ -649,8 +669,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<YearIn
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<MonthInfo>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<MonthInfo>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> MonthInfo {
@@ -658,8 +678,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<MonthI
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfMonth>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfMonth>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> DayOfMonth {
@@ -667,8 +687,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfM
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoWeekday>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoWeekday>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> IsoWeekday {
@@ -676,8 +696,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoWee
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfYearInfo>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYearInfo>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
@@ -685,8 +705,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<DayOfY
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<AnyCalendarKind>
-    for CustomZonedDateTime<A, O>
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z> GetField<AnyCalendarKind>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
@@ -694,8 +714,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoHour>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoHour>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> IsoHour {
@@ -703,8 +723,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoHou
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoMinute>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoMinute>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> IsoMinute {
@@ -712,8 +732,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoMin
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoSecond>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoSecond>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> IsoSecond {
@@ -721,8 +741,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<IsoSec
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<NanoSecond>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<NanoSecond>
+    for CustomZonedDateTime<A, Z>
 {
     #[inline]
     fn get_field(&self) -> NanoSecond {
@@ -730,8 +750,17 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<NanoSe
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
+    for CustomZonedDateTime<A, UtcOffset>
+{
+    #[inline]
+    fn get_field(&self) -> Option<UtcOffset> {
+        Some(self.zone)
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<TimeZoneBcp47Id>
-    for CustomZonedDateTime<A, O>
+    for CustomZonedDateTime<A, TimeZoneInfo<O>>
 where
     O: TimeZoneModel,
 {
@@ -742,7 +771,7 @@ where
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<Option<UtcOffset>>
-    for CustomZonedDateTime<A, O>
+    for CustomZonedDateTime<A, TimeZoneInfo<O>>
 where
     O: TimeZoneModel,
 {
@@ -753,7 +782,7 @@ where
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<ZoneVariant>
-    for CustomZonedDateTime<A, O>
+    for CustomZonedDateTime<A, TimeZoneInfo<O>>
 where
     O: TimeZoneModel<ZoneVariant = ZoneVariant>,
 {
@@ -764,13 +793,21 @@ where
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<(Date<Iso>, Time)>
-    for CustomZonedDateTime<A, O>
+    for CustomZonedDateTime<A, TimeZoneInfo<O>>
 where
     O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
 {
     #[inline]
     fn get_field(&self) -> (Date<Iso>, Time) {
         self.zone.local_time
+    }
+}
+
+impl GetField<Option<UtcOffset>> for UtcOffset
+{
+    #[inline]
+    fn get_field(&self) -> Option<UtcOffset> {
+        Some(*self)
     }
 }
 
@@ -829,9 +866,14 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<()> for DateTime<A> {
     fn get_field(&self) {}
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O: TimeZoneModel> GetField<()>
-    for CustomZonedDateTime<A, O>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<()>
+    for CustomZonedDateTime<A, Z>
 {
+    #[inline]
+    fn get_field(&self) {}
+}
+
+impl GetField<()> for UtcOffset {
     #[inline]
     fn get_field(&self) {}
 }
