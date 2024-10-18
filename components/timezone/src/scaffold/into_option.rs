@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::neo_skeleton::*;
+use crate::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use icu_calendar::{types::*, AnyCalendarKind, Date, Iso};
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 /// Converts Self to an `Option<T>`, either `Some(T)` if able or `None`
 pub trait IntoOption<T> {
@@ -118,34 +117,6 @@ impl IntoOption<ZoneVariant> for ZoneVariant {
 }
 
 impl IntoOption<(Date<Iso>, Time)> for (Date<Iso>, Time) {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
-}
-
-impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
-}
-
-impl IntoOption<Alignment> for Alignment {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
-}
-
-impl IntoOption<YearStyle> for YearStyle {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
-}
-
-impl IntoOption<FractionalSecondDigits> for FractionalSecondDigits {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

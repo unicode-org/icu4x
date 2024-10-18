@@ -208,9 +208,6 @@ lazy_static::lazy_static! {
         // may in the future be exposed for options
         "icu::datetime::fields",
 
-        // Datetime scaffolding
-        "icu::datetime::scaffold",
-
         // experimental
         "icu::datetime::neo",
         "icu::datetime::neo_marker",
@@ -350,6 +347,10 @@ lazy_static::lazy_static! {
 
         // Datagen
         "icu::markers_for_bin",
+
+        // Scaffolding modules
+        "icu::datetime::scaffold",
+        "icu::timezone::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them

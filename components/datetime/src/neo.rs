@@ -34,6 +34,7 @@ use icu_calendar::provider::{
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
+use icu_timezone::scaffold::IntoOption;
 use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.

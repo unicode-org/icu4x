@@ -35,4 +35,5 @@ export class Error {
     static DateTimeDuplicateFieldError : Error;
     static DateTimeTooNarrowError : Error;
     static DateTimeMissingNamesError : Error;
+    static DateTimeZoneInfoMissingFieldsError : Error;
 }

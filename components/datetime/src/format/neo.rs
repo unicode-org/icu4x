@@ -365,13 +365,13 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+/// use icu::datetime::neo_marker::NeoTimeZoneOffsetMarker;
 /// use icu::locale::locale;
 /// use icu::timezone::TimeZoneInfo;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian, NeoTimeZoneSkeleton> =
+/// let mut names: TypedDateTimeNames<Gregorian, NeoTimeZoneOffsetMarker> =
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:

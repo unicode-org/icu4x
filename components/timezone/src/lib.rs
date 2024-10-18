@@ -90,6 +90,7 @@ extern crate alloc;
 mod error;
 mod ids;
 pub mod provider;
+pub mod scaffold;
 mod time_zone;
 mod types;
 mod windows_tz;
@@ -105,7 +106,9 @@ pub use ids::{
     TimeZoneIdMapperWithFastCanonicalizationBorrowed,
 };
 pub use provider::TimeZoneBcp47Id;
+pub use time_zone::models;
 pub use time_zone::TimeZoneInfo;
+pub use time_zone::TimeZoneModel;
 pub use types::{UtcOffset, ZoneVariant};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::ZoneOffsetCalculator;

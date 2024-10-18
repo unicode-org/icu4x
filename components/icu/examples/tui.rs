@@ -11,7 +11,7 @@ use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
+use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
 use icu_timezone::CustomZonedDateTime;
 use std::env;
@@ -42,10 +42,10 @@ fn main() {
     {
         let dtf = TypedNeoFormatter::<
             Gregorian,
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+            NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
         >::try_new(
             &locale,
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
+            NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker::with_length(
                 NeoSkeletonLength::Medium,
             ),
         )

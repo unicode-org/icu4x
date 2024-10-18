@@ -50,7 +50,9 @@ enum Error {
 
   dateTimeTooNarrowError,
 
-  dateTimeMissingNamesError;
+  dateTimeMissingNamesError,
+
+  dateTimeZoneInfoMissingFieldsError;
 
   int get _ffi {
     switch (this) {
@@ -98,6 +100,8 @@ enum Error {
         return 2058;
       case dateTimeMissingNamesError:
         return 2059;
+      case dateTimeZoneInfoMissingFieldsError:
+        return 2176;
     }
   }
 }

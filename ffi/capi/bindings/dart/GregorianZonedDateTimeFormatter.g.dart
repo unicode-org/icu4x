@@ -39,9 +39,14 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
-    _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    final result = _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+    }
     return write.finalize();
   }
 }
@@ -57,6 +62,6 @@ external void _icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi
 external _ResultOpaqueInt32 _icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
