@@ -784,7 +784,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Use GIGO with debug assertion in Char16Trie (#2537)
   - `datetime`
     - Formatting for `AnyCalendar`s (#1987, #2146)
-    - Renaming `DateTimeFormatter` (etc) to `TypedDateTimeFormatter` and `AnyDateTimeFormatter` to `DateTimeFormatter` (#2298)
+    - Renaming `DateTimeFormatter` (etc) to `FixedCalendarDateTimeFormatter` and `AnyDateTimeFormatter` to `DateTimeFormatter` (#2298)
     - DateFormatter cleanups (#2304)
     - Remove Calendar type parameter from `TimeFormat` (#2282)
     - Class Hierarchy for `DateTimeFormat` (split into `DateFormat`, `TimeFormat`, etc) (#2133)

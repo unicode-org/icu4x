@@ -4,7 +4,7 @@
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    TypedDateTimeFormatter,
+    FixedCalendarDateTimeFormatter,
     neo_skeleton::{
         Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
         NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, YearStyle,
@@ -20,7 +20,7 @@ fn assert_resolved_components(
     locale: Locale,
 ) {
     let dtf =
-        TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton).unwrap();
+        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton).unwrap();
     let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);

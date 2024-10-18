@@ -39,7 +39,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::TypedDateTimeFormatter;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -54,7 +54,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
 /// // Load data that resolves to the same pattern:
-/// let data_pattern = TypedDateTimeFormatter::<Gregorian, _>::try_new(
+/// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 ///     &locale!("es-MX").into(),
 ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
 /// )

@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::neo::TypedDateTimeFormatter;
+use icu_datetime::neo::FixedCalendarDateTimeFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
 use icu_timezone::CustomZonedDateTime;
@@ -40,7 +40,7 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = TypedDateTimeFormatter::<
+        let dtf = FixedCalendarDateTimeFormatter::<
             Gregorian,
             NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
         >::try_new(

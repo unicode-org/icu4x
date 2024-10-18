@@ -26,7 +26,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct TimeFormatter(pub icu_datetime::neo::TypedDateTimeFormatter<(), NeoHourMinuteMarker>);
+    pub struct TimeFormatter(pub icu_datetime::neo::FixedCalendarDateTimeFormatter<(), NeoHourMinuteMarker>);
 
     #[diplomat::enum_convert(icu_datetime::neo_skeleton::NeoSkeletonLength, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::neo_skeleton::NeoSkeletonLength, Enum)]
@@ -49,9 +49,9 @@ pub mod ffi {
             let options = NeoHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(TimeFormatter(call_constructor!(
-                icu_datetime::neo::TypedDateTimeFormatter::try_new,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options
@@ -87,7 +87,7 @@ pub mod ffi {
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateFormatter(
-        pub icu_datetime::neo::TypedDateTimeFormatter<icu_calendar::Gregorian, NeoYearMonthDayMarker>,
+        pub icu_datetime::neo::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, NeoYearMonthDayMarker>,
     );
 
     impl GregorianDateFormatter {
@@ -103,9 +103,9 @@ pub mod ffi {
             let options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
-                icu_datetime::neo::TypedDateTimeFormatter::try_new,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options
@@ -133,11 +133,11 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X TypedDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateTimeFormatter(
-        pub  icu_datetime::neo::TypedDateTimeFormatter<
+        pub  icu_datetime::neo::FixedCalendarDateTimeFormatter<
             icu_calendar::Gregorian,
             NeoYearMonthDayHourMinuteMarker,
         >,
@@ -157,9 +157,9 @@ pub mod ffi {
                 NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
-                icu_datetime::neo::TypedDateTimeFormatter::try_new,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::neo::TypedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options

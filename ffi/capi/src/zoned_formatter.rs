@@ -24,7 +24,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub  icu_datetime::neo::TypedDateTimeFormatter<
+        pub  icu_datetime::neo::FixedCalendarDateTimeFormatter<
             icu_calendar::Gregorian,
             NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         >,
@@ -49,9 +49,9 @@ pub mod ffi {
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
-                    icu_datetime::neo::TypedDateTimeFormatter::try_new,
-                    icu_datetime::neo::TypedDateTimeFormatter::try_new_with_any_provider,
-                    icu_datetime::neo::TypedDateTimeFormatter::try_new_with_buffer_provider,
+                    icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new,
+                    icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+                    icu_datetime::neo::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
                     &locale,
                     options

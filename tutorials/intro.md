@@ -123,7 +123,7 @@ fn main() {
         .expect("datetime should be valid");
 
     // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
-    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
+    // For smaller codesize you can use FixedCalendarDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
     let date = date.to_any();
 
     let formatted_date = dtf.convert_and_format(&date).to_string_lossy();

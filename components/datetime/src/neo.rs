@@ -148,22 +148,22 @@ impl RawNeoOptions {
     }
 }
 
-size_test!(TypedDateTimeFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 496);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 496);
 
-/// [`TypedDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
+/// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
 ///
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
-pub struct TypedDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
+pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<FSet>,
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> TypedDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -173,7 +173,7 @@ where
     FSet: GetField<FSet::YearStyleOption>,
     FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`TypedDateTimeFormatter`] from compiled data with
+    /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
     /// Use this constructor for optimal data size and memory use
@@ -188,13 +188,13 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedDateTimeFormatter::try_new(
+    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -279,7 +279,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents> TypedDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -289,11 +289,11 @@ where
     FSet: GetField<FSet::YearStyleOption>,
     FSet: GetField<FSet::FractionalSecondDigitsOption>,
 {
-    /// Creates a new [`TypedDateTimeFormatter`] from compiled data with
+    /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at runtime.
     ///
     /// If you know the datetime components at build time, use
-    /// [`TypedDateTimeFormatter::try_new`] for smaller data size and memory use.
+    /// [`FixedCalendarDateTimeFormatter::try_new`] for smaller data size and memory use.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -306,14 +306,14 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -331,14 +331,14 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoCalendarPeriodSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -356,14 +356,14 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Medium,
@@ -381,7 +381,7 @@ where
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
@@ -390,7 +390,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeSkeleton::for_length_and_components(
     ///         NeoSkeletonLength::Long,
@@ -480,7 +480,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -554,7 +554,7 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: DateInputMarkers,
     FSet::T: TimeMarkers,
@@ -569,13 +569,13 @@ where
     /// ```compile_fail
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Buddhist;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedDateTimeFormatter::<Buddhist, _>::try_new(
+    ///     FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
@@ -590,13 +590,13 @@ where
     /// ```compile_fail
     /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     ///
     /// let formatter =
-    ///     TypedDateTimeFormatter::<Gregorian, _>::try_new(
+    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///         &locale!("es-MX").into(),
     ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     ///     )
@@ -1447,8 +1447,8 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeFormatter<C, FSet> {
-    /// Make this [`TypedDateTimeFormatter`] adopt a calendar so it can format any date.
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet> {
+    /// Make this [`FixedCalendarDateTimeFormatter`] adopt a calendar so it can format any date.
     ///
     /// This is useful if you need a [`DateTimeFormatter`] but know the calendar system ahead of time,
     /// so that you do not need to link extra data you aren't using.
@@ -1458,13 +1458,13 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeFormatter<C, FSet> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::TypedDateTimeFormatter;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedDateTimeFormatter::try_new(
+    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en").into(),
     ///     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
     /// )
@@ -1547,7 +1547,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     pub fn try_into_typed_formatter<C>(
         self,
-    ) -> Result<TypedDateTimeFormatter<C, FSet>, MismatchedCalendarError>
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, MismatchedCalendarError>
     where
         C: CldrCalendar + IntoAnyCalendar,
     {
@@ -1557,7 +1557,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
                 date_kind: None,
             });
         }
-        Ok(TypedDateTimeFormatter {
+        Ok(FixedCalendarDateTimeFormatter {
             selection: self.selection,
             names: self.names,
             _calendar: PhantomData,

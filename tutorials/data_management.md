@@ -202,12 +202,12 @@ The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
-We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
+We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{TypedDateTimeFormatter, neo_marker::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, neo_marker::NeoAutoDateTimeMarker, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -224,7 +224,7 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = TypedDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
+    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
         NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
@@ -240,7 +240,7 @@ fn main() {
 }
 ```
 
-This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `FixedCalendarDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 

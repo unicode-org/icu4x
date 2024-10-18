@@ -7,7 +7,7 @@
 //! This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
+//! [`FixedCalendarDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
 //! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
@@ -16,7 +16,7 @@
 //!
 //! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
-//! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
+//! will only be formatting Gregorian dates, you can use [`FixedCalendarDateTimeFormatter<Gregorian>`](FixedCalendarDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 //! the calendar at runtime, you can use [`neo::DateTimeFormatter`] with the calendar specified in the locale, and use it with
 //! [`DateTime<AnyCalendar>`](icu_calendar::DateTime) (see [`AnyCalendar`]). These formatters still require dates associated
@@ -28,7 +28,7 @@
 //!
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
-//! use icu::datetime::{DateTimeFormatter, TypedDateTimeFormatter};
+//! use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
 //! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::{locale, Locale};
@@ -43,11 +43,11 @@
 //! .expect("should successfully create DateTimeFormatter instance");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedDateTimeFormatter::<Gregorian, _>::try_new(
+//! let typed_dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en").into(),
 //!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
 //! )
-//! .expect("should successfully create TypedDateTimeFormatter instance");
+//! .expect("should successfully create FixedCalendarDateTimeFormatter instance");
 //!
 //! let typed_date =
 //!     DateTime::try_new_gregorian(2020, 9, 12, 12, 34, 28).unwrap();
@@ -120,5 +120,5 @@ pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 
 pub use neo::DateTimeFormatter;
-pub use neo::TypedDateTimeFormatter;
+pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo_skeleton::NeoSkeletonLength;
