@@ -783,23 +783,40 @@ macro_rules! impl_zoneddatetime_marker {
 }
 
 impl_date_marker!(
-    NeoYearMonthDayMarker,
-    NeoDateComponents::YearMonthDay,
-    description = "year, month, and day (year might be abbreviated)",
+    D,
+    NeoDateComponents::Day,
+    description = "day of month (standalone)",
     sample_length = Short,
-    sample = "5/17/24",
-    years = yes,
-    months = yes,
-    weekdays = yes,
-    input_year = yes,
-    input_month = yes,
+    sample = "the 17th",
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
 
 impl_date_marker!(
-    NeoMonthDayMarker,
+    E,
+    NeoDateComponents::Weekday,
+    description = "weekday (standalone)",
+    sample_length = Long,
+    sample = "Friday",
+    weekdays = yes,
+    input_day_of_week = yes,
+);
+
+impl_date_marker!(
+    DE,
+    NeoDateComponents::DayWeekday,
+    description = "day of month and weekday",
+    sample_length = Long,
+    sample = "Friday the 17th",
+    weekdays = yes,
+    input_day_of_month = yes,
+    input_day_of_week = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    MD,
     NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = Medium,
@@ -812,11 +829,41 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
-    NeoAutoDateMarker,
-    NeoDateComponents::Auto,
-    description = "locale-dependent date fields",
+    MDE,
+    NeoDateComponents::MonthDayWeekday,
+    description = "month, day, and weekday",
     sample_length = Medium,
-    sample = "May 17, 2024",
+    sample = "Friday, May 17",
+    months = yes,
+    weekdays = yes,
+    input_month = yes,
+    input_day_of_month = yes,
+    input_day_of_week = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    YMD,
+    NeoDateComponents::YearMonthDay,
+    description = "year, month, and day",
+    sample_length = Short,
+    sample = "5/17/24",
+    years = yes,
+    months = yes,
+    input_year = yes,
+    input_month = yes,
+    input_day_of_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    YMDE,
+    NeoDateComponents::YearMonthDayWeekday,
+    description = "year, month, day, and weekday",
+    sample_length = Short,
+    sample = "Fri, 5/17/24",
     years = yes,
     months = yes,
     weekdays = yes,
@@ -829,7 +876,7 @@ impl_date_marker!(
 );
 
 impl_time_marker!(
-    NeoHourMinuteMarker,
+    HM,
     NeoTimeComponents::HourMinute,
     description = "hour and minute (locale-dependent hour cycle)",
     sample_length = Medium,
@@ -840,7 +887,7 @@ impl_time_marker!(
 );
 
 impl_time_marker!(
-    NeoHourMinuteSecondMarker,
+    HMS,
     NeoTimeComponents::HourMinuteSecond,
     description = "hour, minute, and second (locale-dependent hour cycle)",
     sample_length = Medium,
@@ -852,44 +899,34 @@ impl_time_marker!(
     input_nanosecond = yes,
 );
 
-impl_time_marker!(
-    NeoAutoTimeMarker,
-    NeoTimeComponents::Auto,
-    description = "locale-dependent time fields",
+impl_calendar_period_marker!(
+    Y,
+    NeoCalendarPeriodComponents::Year,
+    description = "year (standalone)",
     sample_length = Medium,
-    sample = "3:47:50 PM",
-    dayperiods = yes,
-    input_hour = yes,
-    input_minute = yes,
-    input_second = yes,
-    input_nanosecond = yes,
-);
-
-// TODO: Make NeoAutoZoneMarker, derived from time length patterns
-
-impl_datetime_marker!(
-    NeoAutoDateTimeMarker,
-    description = "locale-dependent date and time fields",
-    sample_length = Medium,
-    sample = "May 17, 2024, 3:47:50 PM",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
-);
-
-// TODO: Type aliases like this are excessive; make a curated set
-impl_datetime_marker!(
-    NeoYearMonthDayHourMinuteMarker,
-    description = "locale-dependent date and time fields",
-    sample_length = Medium,
-    sample = "May 17, 2024, 3:47 PM",
-    date = NeoYearMonthDayMarker,
-    time = NeoHourMinuteMarker,
+    sample = "2024",
+    years = yes,
+    input_year = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_calendar_period_marker!(
-    NeoYearMonthMarker,
+    M,
+    NeoCalendarPeriodComponents::Month,
+    description = "month (standalone)",
+    sample_length = Long,
+    sample = "May",
+    months = yes,
+    input_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_calendar_period_marker!(
+    YM,
     NeoCalendarPeriodComponents::YearMonth,
-    description = "year and month (era elided when possible)",
+    description = "year and month",
     sample_length = Medium,
     sample = "May 2024",
     years = yes,
@@ -898,6 +935,25 @@ impl_calendar_period_marker!(
     input_month = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
+);
+
+// TODO: Type aliases like this are excessive; make a curated set
+impl_datetime_marker!(
+    YMDHM,
+    description = "year, month, day, hour, and minute",
+    sample_length = Medium,
+    sample = "May 17, 2024, 3:47 PM",
+    date = YMD,
+    time = HM,
+);
+
+impl_datetime_marker!(
+    YMDHMS,
+    description = "year, month, day, hour, minute, and second",
+    sample_length = Medium,
+    sample = "May 17, 2024, 3:47:50 PM",
+    date = YMD,
+    time = HMS,
 );
 
 impl_zone_marker!(
@@ -1337,33 +1393,33 @@ impl_zone_marker!(
 
 // TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+    YMDHMSTimeZoneGenericShortMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 GMT",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
+    date = YMD,
+    time = HMS,
     zone = NeoTimeZoneGenericMarker,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneSpecificShortMarker,
+    YMDHMSTimeZoneSpecificShortMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 BST",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
+    date = YMD,
+    time = HMS,
     zone = NeoTimeZoneSpecificMarker,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
+    YMDHMSTimeZoneOffsetMarker,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 GMT+1",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
+    date = YMD,
+    time = HMS,
     zone = NeoTimeZoneOffsetMarker,
 );
