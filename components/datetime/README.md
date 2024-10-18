@@ -28,7 +28,7 @@ programmer to pick the calendar at compile time.
 
 ```rust
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::neo::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
+use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
 use icu::datetime::fieldset::NeoYearMonthDayHourMinuteMarker;
 use icu::datetime::neo_skeleton::NeoSkeletonLength;
 use icu::locale::{locale, Locale};
