@@ -99,7 +99,7 @@ mod format;
 pub(crate) mod helpers;
 pub mod input;
 mod neo;
-pub mod neo_marker;
+mod neo_marker;
 pub mod neo_pattern;
 #[cfg(feature = "serde")]
 mod neo_serde;
