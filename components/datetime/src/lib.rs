@@ -28,7 +28,7 @@
 //!
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
-//! use icu::datetime::neo::{DateTimeFormatter, TypedDateTimeFormatter};
+//! use icu::datetime::{DateTimeFormatter, TypedDateTimeFormatter};
 //! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::{locale, Locale};
@@ -96,7 +96,7 @@ mod format;
 #[macro_use]
 pub(crate) mod helpers;
 pub mod input;
-pub mod neo;
+mod neo;
 pub mod neo_marker;
 pub mod neo_pattern;
 #[cfg(feature = "serde")]

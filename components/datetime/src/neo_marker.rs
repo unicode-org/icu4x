@@ -15,7 +15,7 @@
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 //! use icu::datetime::neo_skeleton::Alignment;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -57,7 +57,7 @@
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::neo_skeleton::YearStyle;
@@ -152,7 +152,7 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
@@ -206,7 +206,7 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
@@ -240,7 +240,7 @@
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteSecondMarker;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -268,7 +268,7 @@
 //! ```
 //! use icu::calendar::{Date, Time};
 //! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
-//! use icu::datetime::neo::TypedDateTimeFormatter;
+//! use icu::datetime::TypedDateTimeFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::DateTimeWriteError;
@@ -1724,7 +1724,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             ///
             /// ```
             /// use icu::calendar::Date;
-            /// use icu::datetime::neo::DateTimeFormatter;
+            /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -1747,7 +1747,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// ```
             /// use icu::calendar::Date;
             /// use icu::calendar::Gregorian;
-            /// use icu::datetime::neo::TypedDateTimeFormatter;
+            /// use icu::datetime::TypedDateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -1948,7 +1948,7 @@ macro_rules! impl_time_marker {
             ///
             /// ```
             /// use icu::calendar::DateTime;
-            /// use icu::datetime::neo::DateTimeFormatter;
+            /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -1972,7 +1972,7 @@ macro_rules! impl_time_marker {
             /// ```
             /// use icu::calendar::Time;
             /// use icu::calendar::Gregorian;
-            /// use icu::datetime::neo::TypedDateTimeFormatter;
+            /// use icu::datetime::TypedDateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -2087,7 +2087,7 @@ macro_rules! impl_zone_marker {
             /// ```
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
-            /// use icu::datetime::neo::DateTimeFormatter;
+            /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -2120,7 +2120,7 @@ macro_rules! impl_zone_marker {
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::calendar::Gregorian;
-            /// use icu::datetime::neo::TypedDateTimeFormatter;
+            /// use icu::datetime::TypedDateTimeFormatter;
             #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
             /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
             /// use icu::locale::locale;
@@ -2213,7 +2213,7 @@ macro_rules! impl_datetime_marker {
         ///
         /// ```
         /// use icu::calendar::DateTime;
-        /// use icu::datetime::neo::DateTimeFormatter;
+        /// use icu::datetime::DateTimeFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
@@ -2237,7 +2237,7 @@ macro_rules! impl_datetime_marker {
         /// ```
         /// use icu::calendar::DateTime;
         /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedDateTimeFormatter;
+        /// use icu::datetime::TypedDateTimeFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
@@ -2278,7 +2278,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// ```
         /// use icu::calendar::{Date, Time};
         /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
-        /// use icu::datetime::neo::DateTimeFormatter;
+        /// use icu::datetime::DateTimeFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
@@ -2304,7 +2304,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use icu::calendar::{Date, Time};
         /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
         /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedDateTimeFormatter;
+        /// use icu::datetime::TypedDateTimeFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locale::locale;
@@ -2454,7 +2454,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -2486,7 +2486,7 @@ impl_zone_marker!(
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -2530,7 +2530,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;
     /// use icu::datetime::neo_marker::NeoHourMinuteMarker;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
@@ -2564,7 +2564,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::LoadError;
@@ -2583,7 +2583,7 @@ impl_zone_marker!(
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -2624,7 +2624,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneOffsetMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant, CustomZonedDateTime};
@@ -2727,7 +2727,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -2758,7 +2758,7 @@ impl_zone_marker!(
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
@@ -2800,7 +2800,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoMonthDayMarker;
     /// use icu::datetime::neo_marker::NeoHourMinuteMarker;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
@@ -2834,7 +2834,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::LoadError;
@@ -2852,7 +2852,7 @@ impl_zone_marker!(
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
@@ -2892,7 +2892,7 @@ impl_zone_marker!(
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneLocationMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::UtcOffset;

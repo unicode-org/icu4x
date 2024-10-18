@@ -11,7 +11,7 @@ use icu_benchmark_macros::println;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    neo::TypedDateTimeFormatter, neo_marker::NeoYearMonthDayHourMinuteMarker,
+    TypedDateTimeFormatter, neo_marker::NeoYearMonthDayHourMinuteMarker,
     neo_skeleton::NeoSkeletonLength,
 };
 use icu_locale_core::locale;

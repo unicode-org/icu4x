@@ -4,7 +4,7 @@
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    neo::TypedDateTimeFormatter,
+    TypedDateTimeFormatter,
     neo_skeleton::{
         Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
         NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, YearStyle,

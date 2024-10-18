@@ -18,7 +18,7 @@ use icu_calendar::{
 use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
-    neo::{DateTimeFormatter, TypedDateTimeFormatter},
+    DateTimeFormatter, TypedDateTimeFormatter,
     neo_pattern::DateTimePattern,
     neo_skeleton::NeoTimeZoneSkeleton,
     options::preferences::{self, HourCycle},

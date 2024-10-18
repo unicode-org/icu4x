@@ -188,7 +188,7 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -306,7 +306,7 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -331,7 +331,7 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -356,7 +356,7 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
@@ -381,7 +381,7 @@ where
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
@@ -569,7 +569,7 @@ where
     /// ```compile_fail
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Buddhist;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -590,7 +590,7 @@ where
     /// ```compile_fail
     /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -669,7 +669,7 @@ where
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -898,7 +898,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -922,7 +922,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -946,7 +946,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
@@ -970,7 +970,7 @@ where
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
@@ -1315,7 +1315,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
@@ -1339,7 +1339,7 @@ where
     ///
     /// ```compile_fail
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -1389,7 +1389,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
@@ -1414,7 +1414,7 @@ where
     ///
     /// ```compile_fail
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -1458,7 +1458,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeFormatter<C, FSet> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::neo::TypedDateTimeFormatter;
+    /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -1500,7 +1500,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
@@ -1527,7 +1527,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::neo::DateTimeFormatter;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
