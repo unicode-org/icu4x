@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Ethiopian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{ethiopian::Ethiopian, Date, DateTime};
+//! use icu::calendar::{cal::Ethiopian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
@@ -336,7 +336,7 @@ impl Date<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::cal::EthiopianEraStyle;
     /// use icu::calendar::Date;
     ///
     /// let date_ethiopian = Date::try_new_ethiopian(
@@ -374,7 +374,7 @@ impl DateTime<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::cal::EthiopianEraStyle;
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_ethiopian = DateTime::try_new_ethiopian(

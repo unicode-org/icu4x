@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Gregorian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
+//! use icu::calendar::{cal::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)

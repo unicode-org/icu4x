@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Korean Dangi calendar.
 //!
 //! ```rust
-//! use icu::calendar::dangi::Dangi;
+//! use icu::calendar::cal::Dangi;
 //! use icu::calendar::{Date, DateTime, Ref};
 //!
 //! let dangi = Dangi::new();
@@ -69,7 +69,8 @@ use tinystr::tinystr;
 /// going to be perfect.
 ///
 /// ```rust
-/// use icu::calendar::{chinese::Chinese, dangi::Dangi, Date};
+/// use icu::calendar::cal::{Chinese, Dangi};
+/// use icu::calendar::Date;
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
@@ -299,7 +300,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::cal::Dangi;
     /// use icu::calendar::Date;
     ///
     /// let dangi = Dangi::new();
@@ -337,7 +338,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::cal::Dangi;
     /// use icu::calendar::DateTime;
     ///
     /// let dangi = Dangi::new();

@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use super::TimeZoneInfoBuilder;
     use alloc::boxed::Box;
     use core::fmt::Write;
     use icu_timezone::TimeZoneBcp47Id;
@@ -14,7 +15,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::TimeZoneInfo, Struct)]
-    pub struct TimeZoneInfo(pub icu_timezone::TimeZoneInfo);
+    pub struct TimeZoneInfo(pub(crate) TimeZoneInfoBuilder);
 
     impl TimeZoneInfo {
         /// Creates a time zone with no information.
@@ -22,7 +23,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::unknown, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn unknown() -> Box<TimeZoneInfo> {
-            Box::new(icu_timezone::TimeZoneInfo::unknown().into())
+            Box::new(Self(icu_timezone::TimeZoneInfo::unknown().into()))
         }
 
         /// Creates a time zone for UTC (Coordinated Universal Time).
@@ -30,7 +31,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn utc() -> Box<TimeZoneInfo> {
-            Box::new(icu_timezone::TimeZoneInfo::utc().into())
+            Box::new(Self(icu_timezone::TimeZoneInfo::utc().into()))
         }
 
         /// Sets the `offset` field from offset seconds.
@@ -268,14 +269,42 @@ pub mod ffi {
     }
 }
 
-impl From<icu_timezone::TimeZoneInfo> for ffi::TimeZoneInfo {
-    fn from(other: icu_timezone::TimeZoneInfo) -> Self {
-        Self(other)
+#[derive(Copy, Clone)]
+pub(crate) struct TimeZoneInfoBuilder {
+    pub time_zone_id: icu_timezone::TimeZoneBcp47Id,
+    pub offset: Option<icu_timezone::UtcOffset>,
+    pub zone_variant: Option<icu_timezone::ZoneVariant>,
+    pub local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_calendar::Time)>,
+}
+
+impl From<icu_timezone::TimeZoneInfo<icu_timezone::models::Base>> for TimeZoneInfoBuilder {
+    fn from(other: icu_timezone::TimeZoneInfo<icu_timezone::models::Base>) -> Self {
+        Self {
+            time_zone_id: other.time_zone_id,
+            offset: other.offset,
+            zone_variant: None,
+            local_time: None,
+        }
     }
 }
 
-impl From<ffi::TimeZoneInfo> for icu_timezone::TimeZoneInfo {
-    fn from(other: ffi::TimeZoneInfo) -> Self {
-        other.0
+impl TryFrom<TimeZoneInfoBuilder> for icu_timezone::TimeZoneInfo<icu_timezone::models::Full> {
+    type Error = crate::errors::ffi::Error;
+    fn try_from(other: TimeZoneInfoBuilder) -> Result<Self, crate::errors::ffi::Error> {
+        use crate::errors::ffi::Error;
+        let mut time_zone_info = icu_timezone::TimeZoneInfo::unknown();
+        time_zone_info.offset = other.offset;
+        time_zone_info.time_zone_id = other.time_zone_id;
+        Ok(time_zone_info
+            .at_time(
+                other
+                    .local_time
+                    .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+            )
+            .with_zone_variant(
+                other
+                    .zone_variant
+                    .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+            ))
     }
 }

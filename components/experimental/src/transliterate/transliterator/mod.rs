@@ -322,39 +322,32 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        let payload = Transliterator::load_rbt(
+        let mut env = LiteMap::new();
+
+        let transliterator = Transliterator::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
             DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
-            transliterator_provider,
-        )?;
-        let rbt = payload.get();
-        if !rbt.visibility {
-            // transliterator is internal
-            return Err(DataError::custom("internal only transliterator"));
-        }
-        let mut env = LiteMap::new();
-        // Avoid recursive load
-        env.insert(locale.to_string(), InternalTransliterator::Null);
-        Transliterator::load_dependencies_recursive(
-            rbt,
-            &mut env,
             lookup,
             transliterator_provider,
             normalizer_provider,
+            false,
+            &mut env,
         )?;
+
         Ok(Transliterator {
-            transliterator: payload,
+            transliterator,
             env,
         })
     }
 
-    fn load_dependencies_recursive<PT, PN, F>(
-        rbt: &RuleBasedTransliterator<'_>,
-        env: &mut LiteMap<String, InternalTransliterator>,
+    fn load_rbt<PT, PN, F>(
+        marker_attributes: &DataMarkerAttributes,
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<(), DataError>
+        allow_internal: bool,
+        env: &mut LiteMap<String, InternalTransliterator>,
+    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -365,11 +358,19 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        for dep in rbt.deps() {
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
+            ..Default::default()
+        };
+        let transliterator = transliterator_provider.load(req)?.payload;
+        if !allow_internal && !transliterator.get().visibility {
+            return Err(DataError::custom("internal only transliterator"));
+        }
+        // Avoid recursive load
+        env.insert(marker_attributes.to_string(), InternalTransliterator::Null);
+        for dep in transliterator.get().deps() {
             if !env.contains_key(&*dep) {
-                // 1. Insert a placeholder to avoid infinite recursion.
-                env.insert(dep.to_string(), InternalTransliterator::Null);
-                // 2. Load the transliterator, by checking
+                // Load the transliterator, by checking
                 let internal_t =
                     // a) hardcoded specials
                     dep.strip_prefix("x-").and_then(|special| Transliterator::load_special(special, normalizer_provider))
@@ -377,28 +378,20 @@ impl Transliterator {
                     .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
                     .unwrap_or_else(|| {
-                        let rbt = Transliterator::load_rbt(
+                        Transliterator::load_rbt(
                             #[allow(clippy::unwrap_used)] // infallible
                             DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
+                            lookup,
                             transliterator_provider,
-                        )?;
-                        Ok(InternalTransliterator::RuleBased(rbt))
+                            normalizer_provider,
+                            true,
+                            env,
+                        ).map(InternalTransliterator::RuleBased)
                     })?;
-                if let InternalTransliterator::RuleBased(rbt) = &internal_t {
-                    // 3. Recursively load the dependencies of the dependency.
-                    Self::load_dependencies_recursive(
-                        rbt.get(),
-                        env,
-                        lookup,
-                        transliterator_provider,
-                        normalizer_provider,
-                    )?;
-                }
-                // 4. Replace the placeholder with the loaded transliterator.
                 env.insert(dep.to_string(), internal_t);
             }
         }
-        Ok(())
+        Ok(transliterator)
     }
 
     fn load_special<P>(
@@ -450,27 +443,6 @@ impl Transliterator {
             ))),
             _ => None,
         }
-    }
-
-    fn load_rbt<P>(
-        marker_attributes: &DataMarkerAttributes,
-        provider: &P,
-    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
-    where
-        P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-    {
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
-            ..Default::default()
-        };
-        let payload = provider.load(req)?.payload;
-        let rbt = payload.get();
-        if rbt.id_group_list.len() != rbt.rule_group_list.len() {
-            return Err(DataError::custom(
-                "invalid data: id_group_list and rule_group_list have different lengths",
-            ));
-        }
-        Ok(payload)
     }
 
     // Before stabilization, consider the input type we want to accept here. We might want to

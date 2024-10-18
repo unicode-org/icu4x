@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Coptic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{coptic::Coptic, Date, DateTime};
+//! use icu::calendar::{cal::Coptic, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)

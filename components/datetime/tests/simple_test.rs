@@ -2,17 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::hebrew::Hebrew;
+use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
-    NeoSkeleton, NeoSkeletonLength, NeoTimeComponents,
+    NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
+    NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
 use icu_locale_core::{locale, Locale};
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo};
 use writeable::assert_try_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -137,14 +136,13 @@ fn neo_date_lengths() {
 
 #[test]
 fn overlap_patterns() {
-    let datetime = CustomZonedDateTime {
+    let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 8, 9).unwrap(),
         time: Time::try_new(20, 40, 7, 250).unwrap(),
-        zone: TimeZoneInfo::utc(),
     };
     struct TestCase {
         locale: Locale,
-        components: NeoComponents,
+        components: NeoDateTimeComponents,
         length: NeoSkeletonLength,
         expected: &'static str,
     }
@@ -152,7 +150,7 @@ fn overlap_patterns() {
         // Note: in en-US, there is no comma in the overlap pattern
         TestCase {
             locale: locale!("en-US"),
-            components: NeoComponents::DateTime(
+            components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
@@ -161,7 +159,7 @@ fn overlap_patterns() {
         },
         TestCase {
             locale: locale!("en-US"),
-            components: NeoComponents::DateTime(
+            components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::MonthDayWeekday,
                 NeoTimeComponents::HourMinute,
             ),
@@ -172,7 +170,7 @@ fn overlap_patterns() {
         // (but the strings are the same in data)
         TestCase {
             locale: locale!("ru"),
-            components: NeoComponents::DateTime(
+            components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
@@ -181,7 +179,7 @@ fn overlap_patterns() {
         },
         TestCase {
             locale: locale!("ru"),
-            components: NeoComponents::Date(NeoDateComponents::Weekday),
+            components: NeoDateTimeComponents::Date(NeoDateComponents::Weekday),
             length: NeoSkeletonLength::Medium,
             expected: "пт",
         },
@@ -193,7 +191,7 @@ fn overlap_patterns() {
         expected,
     } in cases
     {
-        let skeleton = NeoSkeleton::for_length_and_components(length, components);
+        let skeleton = NeoDateTimeSkeleton::for_length_and_components(length, components);
         let formatter =
             TypedNeoFormatter::try_new_with_skeleton(&(&locale).into(), skeleton).unwrap();
         let formatted = formatter.format(&datetime);

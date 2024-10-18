@@ -11,9 +11,8 @@ The [`types`] module has a lot of common types for dealing with dates and times.
 [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 can represent dates for arbitrary calendars.
 
-The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
-Gregorian calendars respectively. Further calendars can be found in modules like
-[`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopian`].
+The [`Iso`] and [`Gregorian`] types are implementations for the ISO and
+Gregorian calendars respectively. Further calendars can be found in the [`cal`] module.
 
 Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 
@@ -47,7 +46,8 @@ assert_eq!(date_iso.days_in_month(), 30);
 Example of converting an ISO date across Indian and Buddhist calendars.
 
 ```rust
-use icu::calendar::{buddhist::Buddhist, indian::Indian, Date};
+use icu::calendar::cal::{Buddhist, Indian};
+use icu::calendar::Date;
 
 // Creating ISO date: 1992-09-02.
 let mut date_iso = Date::try_new_iso(1992, 9, 2)
