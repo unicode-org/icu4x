@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    time_zone::models, CustomZonedDateTime, InvalidOffsetError, TimeZoneIdMapper, TimeZoneInfo,
-    UtcOffset, ZoneOffsetCalculator, ZoneVariant,
+    time_zone::models, CustomZonedDateTime, InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneVariant
 };
 use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
@@ -167,7 +166,7 @@ impl<'a> Intermediate<'a> {
         UtcOffset::try_from_utc_offset_record(offset)
     }
 
-    fn location_only_strict(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+    fn location_only(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
         let None = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
@@ -189,16 +188,18 @@ impl<'a> Intermediate<'a> {
             .with_local_time((iso.date, iso.time)))
     }
 
-    fn location_optional_offset(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+    fn loose(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
         let offset = match self.offset {
             Some(offset) => Some(UtcOffset::try_from_utc_offset_record(offset)?),
             None => None,
         };
-        let Some(iana_identifier) = self.iana_identifier else {
-            return Err(ParseError::MismatchedTimeZoneFields);
+        let time_zone_id = match self.iana_identifier {
+            Some(iana_identifier) => {
+                let mapper = TimeZoneIdMapper::new();
+                mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier)
+            }
+            None => TimeZoneBcp47Id::unknown()
         };
-        let mapper = TimeZoneIdMapper::new();
-        let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
         let iso = DateTime::<Iso>::try_new_iso(
             self.date.year,
             self.date.month,
@@ -300,7 +301,7 @@ impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
     pub fn try_location_only_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
-        let time_zone = intermediate.location_only_strict()?;
+        let time_zone = intermediate.location_only()?;
         Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
     }
 }
@@ -331,7 +332,7 @@ impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
     pub fn try_loose_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
-        let time_zone = intermediate.location_optional_offset()?;
+        let time_zone = intermediate.loose()?;
         Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
     }
 }
@@ -456,7 +457,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
     pub fn try_location_only_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
-        let time_zone = intermediate.location_only_strict()?;
+        let time_zone = intermediate.location_only()?;
         Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
     }
 }
@@ -487,7 +488,7 @@ impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
     pub fn try_loose_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
-        let time_zone = intermediate.location_optional_offset()?;
+        let time_zone = intermediate.loose()?;
         Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
     }
 }
@@ -685,7 +686,7 @@ mod test {
             .parse()
             .unwrap();
         let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record).unwrap();
-        let result = intermediate.location_optional_offset().unwrap();
+        let result = intermediate.loose().unwrap();
         assert_eq!(result.time_zone_id, TimeZoneBcp47Id::unknown());
         assert_eq!(result.offset, None);
     }
