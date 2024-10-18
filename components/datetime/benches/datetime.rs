@@ -5,7 +5,7 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo::TypedDateTimeFormatter;
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
@@ -47,11 +47,11 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+                            TypedDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
                                 skeleton,
                             )
-                            .expect("Failed to create TypedNeoFormatter.")
+                            .expect("Failed to create TypedDateTimeFormatter.")
                         };
 
                         let mut result = String::new();

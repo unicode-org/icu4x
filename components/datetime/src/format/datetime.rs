@@ -562,13 +562,13 @@ mod tests {
 
     #[test]
     fn test_mixed_calendar_eras() {
-        use crate::neo::NeoFormatter;
+        use crate::neo::DateTimeFormatter;
         use crate::options::length;
         use icu_calendar::cal::JapaneseExtended;
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf = NeoFormatter::try_new(
+        let dtf = DateTimeFormatter::try_new(
             &locale.into(),
             NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
         )

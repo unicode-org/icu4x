@@ -107,13 +107,13 @@ which is exposed through constructors such as `try_new`.
 ```rust
 use icu::locale::{Locale, locale};
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
 
 const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
 
-    let dtf = NeoFormatter::try_new(
+    let dtf = DateTimeFormatter::try_new(
         &LOCALE.into(),
         NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
     )
@@ -123,7 +123,7 @@ fn main() {
         .expect("datetime should be valid");
 
     // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
-    // For smaller codesize you can use TypedNeoFormatter<Gregorian> with a DateTime<Gregorian>
+    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
     let date = date.to_any();
 
     let formatted_date = dtf.convert_and_format(&date).to_string_lossy();
