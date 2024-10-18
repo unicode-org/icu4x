@@ -4,7 +4,7 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::neo_marker::NeoYearMonthDayMarker;
+use icu_datetime::fieldset::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
     NeoSkeletonLength, NeoTimeComponents,

@@ -40,7 +40,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::calendar::DateTime;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
-/// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+/// use icu::datetime::fieldset::NeoYearMonthDayMarker;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::datetime::options::components;

@@ -12,16 +12,16 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
 use crate::input;
 use crate::input::ExtractedInput;
-use crate::neo_marker::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
-    TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
-};
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::pattern::PatternItem;
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use crate::scaffold::*;
+use crate::scaffold::{
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
+    TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
+};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
@@ -365,7 +365,7 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_marker::NeoTimeZoneOffsetMarker;
+/// use icu::datetime::fieldset::NeoTimeZoneOffsetMarker;
 /// use icu::locale::locale;
 /// use icu::timezone::TimeZoneInfo;
 /// use writeable::{Part, assert_try_writeable_parts_eq};

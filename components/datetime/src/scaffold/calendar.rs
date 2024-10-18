@@ -4,6 +4,9 @@
 
 //! Scaffolding traits and impls for calendars.
 
+use crate::provider::{neo::*, *};
+use crate::scaffold::UnstableSealed;
+use core::marker::PhantomData;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::cal::Chinese;
 use icu_calendar::cal::Roc;
@@ -11,12 +14,21 @@ use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Indian, IslamicCivil,
     IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
 };
-use icu_provider::prelude::*;
-
-use crate::provider::{neo::*, *};
-use crate::scaffold::UnstableSealed;
-use core::marker::PhantomData;
+use icu_calendar::{
+    any_calendar::IntoAnyCalendar,
+    types::{
+        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        NanoSecond, YearInfo,
+    },
+    AnyCalendar, AsCalendar, Calendar, Date, DateTime, Iso, Ref, Time,
+};
 use icu_provider::marker::NeverMarker;
+use icu_provider::prelude::*;
+use icu_provider::prelude::*;
+use icu_timezone::scaffold::IntoOption;
+use icu_timezone::{
+    CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
+};
 
 /// A calendar that can be found in CLDR
 ///
@@ -378,3 +390,125 @@ impl_load_any_calendar!([
 ], [
     EthiopianAmeteAlem => Ethiopian
 ]);
+
+/// A type that can be converted into a specific calendar system.
+pub trait ConvertCalendar {
+    /// The converted type. This can be the same as the receiver type.
+    type Converted<'a>: Sized;
+    /// Converts `self` to the specified [`AnyCalendar`].
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A> {
+    type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        self.to_any().to_calendar(Ref(calendar))
+    }
+}
+
+impl ConvertCalendar for Time {
+    type Converted<'a> = Time;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTime<A> {
+    type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        self.to_any().to_calendar(Ref(calendar))
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
+    for CustomZonedDateTime<A, Z>
+{
+    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, Z>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        let date = self.date.to_any().to_calendar(Ref(calendar));
+        CustomZonedDateTime {
+            date,
+            time: self.time,
+            zone: self.zone,
+        }
+    }
+}
+
+impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
+    type Converted<'a> = TimeZoneInfo<O>;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
+/// A type that might be compatible with a specific calendar system.
+///
+/// All formattable types should implement this trait.
+pub trait IsAnyCalendarKind {
+    /// Whether this type is compatible with the given calendar.
+    ///
+    /// Types that are agnostic to calendar systems should return `true`.
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool;
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
+    #[inline]
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
+        self.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    }
+}
+
+impl IsAnyCalendarKind for Time {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A> {
+    #[inline]
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
+        self.date.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsAnyCalendarKind for CustomZonedDateTime<A, Z> {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl IsAnyCalendarKind for UtcOffset {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+impl<O: TimeZoneModel> IsAnyCalendarKind for TimeZoneInfo<O> {
+    #[inline]
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
+}
+
+/// An input associated with a specific calendar.
+pub trait IsInCalendar<C> {}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {}
+
+impl<C> IsInCalendar<C> for Time {}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInCalendar<C> for CustomZonedDateTime<A, Z> {}
+
+impl<C> IsInCalendar<C> for UtcOffset {}
+
+impl<C, O: TimeZoneModel> IsInCalendar<C> for TimeZoneInfo<O> {}

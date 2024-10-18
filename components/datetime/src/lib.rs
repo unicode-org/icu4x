@@ -29,7 +29,7 @@
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
-//! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
+//! use icu::datetime::fieldset::NeoYearMonthDayHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::{locale, Locale};
 //! use writeable::assert_try_writeable_eq;
@@ -89,9 +89,11 @@
 
 extern crate alloc;
 
+mod combo;
 mod error;
 mod external_loaders;
 pub mod fields;
+pub mod fieldset;
 mod format;
 #[macro_use]
 pub(crate) mod helpers;
@@ -115,6 +117,7 @@ pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
+pub use combo::DateTimeCombo;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};

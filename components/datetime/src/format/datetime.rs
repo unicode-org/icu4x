@@ -556,7 +556,7 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::{fieldset::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
