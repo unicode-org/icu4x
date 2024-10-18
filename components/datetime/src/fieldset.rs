@@ -1044,7 +1044,7 @@ impl_zone_marker!(
     /// ```
     Z,
     NeoTimeZoneStyle::Specific,
-    description = "specific time zone, or raw offset if unavailable",
+    description = "time zone in specific non-location format",
     sample_length = Long,
     sample = "Central Daylight Time",
     zone_essentials = yes,
@@ -1067,7 +1067,7 @@ impl_zone_marker!(
     /// use icu::datetime::fieldset::MD;
     /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::Combo;
+    /// use icu::datetime::fieldset::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -1142,7 +1142,7 @@ impl_zone_marker!(
     /// ```
     Zs,
     NeoTimeZoneStyle::Specific,
-    description = "specific time zone (only short), or raw offset if unavailable",
+    description = "time zone in specific non-location format (only short)",
     sample_length = Short,
     sample = "CDT",
     zone_essentials = yes,
@@ -1204,7 +1204,7 @@ impl_zone_marker!(
     /// ```
     O,
     NeoTimeZoneStyle::Offset,
-    description = "UTC offset time zone",
+    description = "UTC offset",
     sample_length = Medium,
     sample = "GMT-5",
     zone_essentials = yes,
@@ -1272,7 +1272,7 @@ impl_zone_marker!(
     /// ```
     V,
     NeoTimeZoneStyle::Generic,
-    description = "generic time zone, or location if unavailable",
+    description = "time zone in generic non-location format",
     sample_length = Long,
     sample = "Central Time",
     zone_essentials = yes,
@@ -1295,7 +1295,7 @@ impl_zone_marker!(
     /// use icu::datetime::fieldset::MD;
     /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::Combo;
+    /// use icu::datetime::fieldset::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -1367,7 +1367,7 @@ impl_zone_marker!(
     /// ```
     Vs,
     NeoTimeZoneStyle::Generic,
-    description = "generic time zone (only short), or location if unavailable",
+    description = "time zone in generic non-location format (only short)",
     sample_length = Short,
     sample = "CT",
     zone_essentials = yes,
@@ -1406,7 +1406,7 @@ impl_zone_marker!(
     /// ```
     L,
     NeoTimeZoneStyle::Location,
-    description = "location time zone",
+    description = "time zone in location format",
     sample_length = Long,
     sample = "Chicago Time",
     zone_essentials = yes,
