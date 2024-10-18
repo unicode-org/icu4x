@@ -121,4 +121,5 @@ pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, Type
 
 pub use neo::DateTimeFormatter;
 pub use neo::FixedCalendarDateTimeFormatter;
+pub use neo::FormattedNeoDateTime;
 pub use neo_skeleton::NeoSkeletonLength;

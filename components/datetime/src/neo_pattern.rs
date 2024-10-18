@@ -76,7 +76,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
-/// [`FormattedNeoDateTime::pattern`]: crate::neo::FormattedNeoDateTime::pattern
+/// [`FormattedNeoDateTime::pattern`]: crate::FormattedNeoDateTime::pattern
 /// [`TypedDateTimeNames`]: crate::TypedDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {
