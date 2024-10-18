@@ -136,10 +136,7 @@ impl TimeZoneInfo<models::Base> {
     }
 
     /// Sets a local time on this time zone.
-    pub const fn with_local_time(
-        self,
-        local_time: (Date<Iso>, Time),
-    ) -> TimeZoneInfo<models::AtTime> {
+    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             time_zone_id: self.time_zone_id,

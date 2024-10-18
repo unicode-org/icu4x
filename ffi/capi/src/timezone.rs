@@ -296,7 +296,7 @@ impl TryFrom<TimeZoneInfoBuilder> for icu_timezone::TimeZoneInfo<icu_timezone::m
         time_zone_info.offset = other.offset;
         time_zone_info.time_zone_id = other.time_zone_id;
         Ok(time_zone_info
-            .with_local_time(
+            .at_time(
                 other
                     .local_time
                     .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,

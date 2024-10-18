@@ -184,9 +184,7 @@ impl<'a> Intermediate<'a> {
             self.time.minute,
             self.time.second,
         )?;
-        Ok(time_zone_id
-            .with_offset(None)
-            .with_local_time((iso.date, iso.time)))
+        Ok(time_zone_id.with_offset(None).at_time((iso.date, iso.time)))
     }
 
     fn loose(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
@@ -211,7 +209,7 @@ impl<'a> Intermediate<'a> {
         )?;
         Ok(time_zone_id
             .with_offset(offset)
-            .with_local_time((iso.date, iso.time)))
+            .at_time((iso.date, iso.time)))
     }
 
     fn full(self) -> Result<TimeZoneInfo<models::Full>, ParseError> {
@@ -252,7 +250,7 @@ impl<'a> Intermediate<'a> {
             };
         Ok(offset
             .with_id(time_zone_id)
-            .with_local_time((iso.date, iso.time))
+            .at_time((iso.date, iso.time))
             .with_zone_variant(zone_variant))
     }
 }
