@@ -55,7 +55,9 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
-pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
+pub fn parse_zoned_gregorian_from_str(
+    input: &str,
+) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
     let iso_zdt = match CustomZonedDateTime::try_iso_from_str(input) {
         Ok(zdt) => zdt,
         Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {

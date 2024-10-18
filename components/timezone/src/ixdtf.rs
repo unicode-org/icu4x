@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    time_zone::models, CustomZonedDateTime, InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneVariant
+    time_zone::models, CustomZonedDateTime, InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper,
+    TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
 };
 use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
@@ -198,7 +199,7 @@ impl<'a> Intermediate<'a> {
                 let mapper = TimeZoneIdMapper::new();
                 mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier)
             }
-            None => TimeZoneBcp47Id::unknown()
+            None => TimeZoneBcp47Id::unknown(),
         };
         let iso = DateTime::<Iso>::try_new_iso(
             self.date.year,
@@ -667,8 +668,8 @@ impl FromStr for CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
 
 #[cfg(test)]
 mod test {
-    use crate::TimeZoneBcp47Id;
     use super::*;
+    use crate::TimeZoneBcp47Id;
 
     #[test]
     fn max_possible_ixdtf_utc_offset() {
