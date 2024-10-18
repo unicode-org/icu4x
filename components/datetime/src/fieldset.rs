@@ -20,6 +20,9 @@ use icu_calendar::{
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
+#[cfg(doc)]
+use icu_timezone::TimeZoneInfo;
+
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
     ($any:ident, yes) => {
@@ -931,8 +934,9 @@ impl_zone_marker!(
     /// );
     /// ```
     ///
-    /// Only a full time zone info can be formatted with this style.
-    /// For example, AtTime cannot be formatted.
+    /// This style requires a [`ZoneVariant`], so
+    /// only a full time zone info can be formatted with this style.
+    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
@@ -1028,8 +1032,9 @@ impl_zone_marker!(
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     ///
-    /// Only a full time zone info can be formatted with this style.
-    /// For example, AtTime cannot be formatted.
+    /// This style requires a [`ZoneVariant`], so
+    /// only a full time zone info can be formatted with this style.
+    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
@@ -1204,7 +1209,8 @@ impl_zone_marker!(
     /// );
     /// ```
     ///
-    /// A time zone requires a reference time to be formatted with this style.
+    /// Since non-location names might change over time,
+    /// this time zone style requires a reference time.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
@@ -1298,7 +1304,8 @@ impl_zone_marker!(
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     ///
-    /// A time zone requires a reference time to be formatted with this style.
+    /// Since non-location names might change over time,
+    /// this time zone style requires a reference time.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
@@ -1337,7 +1344,7 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// A time zone requires a time zone ID to be formatted with this style.
+    /// A time zone ID is required to format with this style.
     /// For example, a raw [`UtcOffset`] cannot be used here.
     ///
     /// ```compile_fail
