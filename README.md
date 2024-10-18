@@ -42,7 +42,7 @@ use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     &locale!("es").into(),
-    YMDHMS::with_length(NeoSkeletonLength::Long)
+    YMDHMS::long()
 )
 .expect("locale should be present in compiled data");
 

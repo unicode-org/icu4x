@@ -210,11 +210,8 @@ fn overlap_patterns() {
 fn hebrew_months() {
     let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
-    let formatter = FixedCalendarDateTimeFormatter::try_new(
-        &locale!("en").into(),
-        YMD::with_length(NeoSkeletonLength::Medium),
-    )
-    .unwrap();
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMD::medium()).unwrap();
 
     let formatted_datetime = formatter.format(&datetime);
 

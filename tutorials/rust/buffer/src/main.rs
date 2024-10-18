@@ -28,7 +28,7 @@ fn main() {
     let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
-        YMDHMS::with_length(NeoSkeletonLength::Medium),
+        YMDHMS::medium(),
     )
     .expect("locale 'my' should be present in compiled data");
 

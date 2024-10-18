@@ -42,7 +42,6 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldset::YMD;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::datetime::options::components;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -56,7 +55,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// // Load data that resolves to the same pattern:
 /// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 ///     &locale!("es-MX").into(),
-///     YMD::with_length(NeoSkeletonLength::Medium),
+///     YMD::medium(),
 /// )
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.

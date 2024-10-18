@@ -475,20 +475,17 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::{fieldset::O, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::fieldset::O;
 
     let time_zone = TimeZoneInfo::from(UtcOffset::try_from_seconds(12).unwrap());
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
-        &locale!("en").into(),
-        O::with_length(NeoSkeletonLength::Medium),
-    )
-    .unwrap();
+    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
+        .unwrap();
     assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+0:00:12",);
 }
 
 #[test]
 fn test_time_zone_format_offset_not_set_debug_assert_panic() {
-    use icu_datetime::{fieldset::O, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::fieldset::O;
 
     let time_zone = TimeZoneInfo {
         time_zone_id: TimeZoneIdMapper::new()
@@ -496,11 +493,8 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
             .iana_to_bcp47("America/Los_Angeles"),
         ..TimeZoneInfo::unknown()
     };
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
-        &locale!("en").into(),
-        O::with_length(NeoSkeletonLength::Medium),
-    )
-    .unwrap();
+    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
+        .unwrap();
     assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+?",);
 }
 

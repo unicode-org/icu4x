@@ -307,13 +307,13 @@ macro_rules! datetime_marker_helper {
     (@option/length, yes) => {
         NeoSkeletonLength
     };
-    (@option/length, Long) => {
+    (@option/length, long) => {
         NeoSkeletonLength
     };
-    (@option/length, Medium) => {
+    (@option/length, medium) => {
         NeoSkeletonLength
     };
-    (@option/length, Short) => {
+    (@option/length, short) => {
         NeoSkeletonLength
     };
     (@option/yearstyle, yes) => {

@@ -33,7 +33,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es-US").into(),
-//!     YMD::with_length(NeoSkeletonLength::Medium),
+//!     YMD::medium(),
 //! )
 //! .expect("compiled data should include 'es-US'");
 //! ```
@@ -70,7 +70,7 @@
 //! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
 //!     &provider,
 //!     &locale!("es-US").into(),
-//!     YMD::with_length(NeoSkeletonLength::Medium),
+//!     YMD::medium(),
 //! )
 //! .expect("data should include 'es-US', 'es', or 'und'");
 //! ```

@@ -19,13 +19,12 @@ use icu_provider::marker::NeverMarker;
 /// use icu::timezone::CustomZonedDateTime;
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = DateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::with_length(NeoSkeletonLength::Short)
+///     Combo::<E, HM, L>::short()
 /// )
 /// .unwrap();
 ///
@@ -44,13 +43,12 @@ use icu_provider::marker::NeverMarker;
 /// use icu::timezone::CustomZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::with_length(NeoSkeletonLength::Short)
+///     Combo::<E, HM, L>::short()
 /// )
 /// .unwrap();
 ///
@@ -80,7 +78,7 @@ impl<D, T, Z> UnstableSealed for Combo<D, T, Z> {}
 
 impl<D, T, Z> Combo<D, T, Z> {
     /// Creates a date/time/zone skeleton with the given formatting length.
-    pub fn with_length(length: NeoSkeletonLength) -> Self {
+    pub const fn with_length(length: NeoSkeletonLength) -> Self {
         Self {
             _d: PhantomData,
             _t: PhantomData,
@@ -90,6 +88,18 @@ impl<D, T, Z> Combo<D, T, Z> {
             year_style: None,
             fractional_second_digits: None,
         }
+    }
+    /// Creates a date/time/zone skeleton with a long length.
+    pub const fn long() -> Self {
+        Self::with_length(NeoSkeletonLength::Long)
+    }
+    /// Creates a date/time/zone skeleton with a medium length.
+    pub const fn medium() -> Self {
+        Self::with_length(NeoSkeletonLength::Medium)
+    }
+    /// Creates a date/time/zone skeleton with a short length.
+    pub const fn short() -> Self {
+        Self::with_length(NeoSkeletonLength::Short)
     }
 }
 

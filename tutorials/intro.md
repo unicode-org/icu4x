@@ -115,7 +115,7 @@ fn main() {
 
     let dtf = DateTimeFormatter::try_new(
         &LOCALE.into(),
-        YMDHMS::with_length(NeoSkeletonLength::Medium),
+        YMDHMS::medium(),
     )
     .expect("ja data should be available");
 

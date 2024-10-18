@@ -568,9 +568,8 @@ mod tests {
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf =
-            DateTimeFormatter::try_new(&locale.into(), YMD::with_length(NeoSkeletonLength::Medium))
-                .expect("DateTimeFormat construction succeeds");
+        let dtf = DateTimeFormatter::try_new(&locale.into(), YMD::medium())
+            .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian(1800, 9, 1).expect("Failed to construct Date.");
         let date = date
