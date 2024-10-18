@@ -66,9 +66,6 @@ pub struct TimeZoneInfo<Model: TimeZoneModel> {
     /// The time variant e.g. daylight or standard, if known.
     pub zone_variant: Model::ZoneVariant,
     /// The time at which to interpret the time zone.
-    ///
-    /// This can be set in order to get correct historical time zone names.
-    /// If it's not set, the most recent data for the time zone will be used.
     pub local_time: Model::LocalTime,
 }
 
