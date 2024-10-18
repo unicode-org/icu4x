@@ -11,8 +11,7 @@ use icu_benchmark_macros::println;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    fieldset::YMDHM, neo_skeleton::NeoSkeletonLength,
-    FixedCalendarDateTimeFormatter,
+    fieldset::YMDHM, neo_skeleton::NeoSkeletonLength, FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::locale;
 
