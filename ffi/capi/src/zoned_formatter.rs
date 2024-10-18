@@ -65,14 +65,15 @@ pub mod ffi {
             datetime: &IsoDateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        ) -> Result<(), Error> {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
                 time: greg.time,
-                zone: time_zone.0,
+                zone: time_zone.0.try_into()?,
             };
             let _infallible = self.0.format(&zdt).try_write_to(write);
+            Ok(())
         }
     }
 
@@ -122,7 +123,7 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
-                zone: time_zone.0,
+                zone: time_zone.0.try_into()?,
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
@@ -138,7 +139,7 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
-                zone: time_zone.0,
+                zone: time_zone.0.try_into()?,
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())

@@ -99,9 +99,10 @@ int main() {
         return 1;
     }
     time_zone->set_local_time(*date.get());
+    time_zone->try_set_zone_variant("dt");
 
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get());
+    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;

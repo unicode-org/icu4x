@@ -35,6 +35,7 @@ namespace capi {
       Error_DateTimeDuplicateFieldError = 2057,
       Error_DateTimeTooNarrowError = 2058,
       Error_DateTimeMissingNamesError = 2059,
+      Error_DateTimeZoneInfoMissingFieldsError = 2176,
     };
     
     typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;
@@ -67,6 +68,7 @@ public:
     DateTimeDuplicateFieldError = 2057,
     DateTimeTooNarrowError = 2058,
     DateTimeMissingNamesError = 2059,
+    DateTimeZoneInfoMissingFieldsError = 2176,
   };
 
   Error() = default;

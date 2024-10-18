@@ -11,6 +11,7 @@ use crate::options::{self, length};
 use crate::pattern::CoarseHourCycle;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
+use icu_timezone::scaffold::IntoOption;
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -30,6 +31,13 @@ pub enum NeoSkeletonLength {
     Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
     Short = 1,
+}
+
+impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
 }
 
 impl NeoSkeletonLength {
@@ -82,6 +90,13 @@ pub enum Alignment {
     Column,
 }
 
+impl IntoOption<Alignment> for Alignment {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
 /// A specification of how to render the year and the era.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -122,6 +137,13 @@ pub enum YearStyle {
     // TODO(#4478): add Hide and Never options once there is data to back them
 }
 
+impl IntoOption<YearStyle> for YearStyle {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -153,6 +175,13 @@ pub enum FractionalSecondDigits {
     F8,
     /// Nine fractional digits.
     F9,
+}
+
+impl IntoOption<FractionalSecondDigits> for FractionalSecondDigits {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
@@ -715,6 +744,8 @@ impl NeoTimeComponents {
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
     Date(NeoDateComponents),
+    /// Components for parts of a date with fields larger than a date.
+    CalendarPeriod(NeoCalendarPeriodComponents),
     /// Components for parts of a time.
     Time(NeoTimeComponents),
     /// Components for parts of a date and time together.
@@ -727,9 +758,33 @@ impl From<NeoDateComponents> for NeoDateTimeComponents {
     }
 }
 
+impl From<NeoCalendarPeriodComponents> for NeoDateTimeComponents {
+    fn from(value: NeoCalendarPeriodComponents) -> Self {
+        Self::CalendarPeriod(value)
+    }
+}
+
 impl From<NeoTimeComponents> for NeoDateTimeComponents {
     fn from(value: NeoTimeComponents) -> Self {
         Self::Time(value)
+    }
+}
+
+impl NeoDateTimeComponents {
+    /// Returns a [`NeoDateTimeComponents`] if it is a subset of the [`NeoComponents`] argument.
+    ///
+    /// If the [`NeoComponents`] contains a time zone, this function returns `None`.
+    pub fn try_from_components(components: NeoComponents) -> Option<Self> {
+        match components {
+            NeoComponents::Date(d) => Some(Self::Date(d)),
+            NeoComponents::CalendarPeriod(cp) => Some(Self::CalendarPeriod(cp)),
+            NeoComponents::Time(t) => Some(Self::Time(t)),
+            NeoComponents::Zone(_) => None,
+            NeoComponents::DateTime(d, t) => Some(Self::DateTime(d, t)),
+            NeoComponents::DateZone(_, _) => None,
+            NeoComponents::TimeZone(_, _) => None,
+            NeoComponents::DateTimeZone(_, _, _) => None,
+        }
     }
 }
 
@@ -782,6 +837,7 @@ impl From<NeoDateTimeComponents> for NeoComponents {
     fn from(value: NeoDateTimeComponents) -> Self {
         match value {
             NeoDateTimeComponents::Date(components) => components.into(),
+            NeoDateTimeComponents::CalendarPeriod(components) => components.into(),
             NeoDateTimeComponents::Time(components) => components.into(),
             NeoDateTimeComponents::DateTime(day, time) => NeoComponents::DateTime(day, time),
         }

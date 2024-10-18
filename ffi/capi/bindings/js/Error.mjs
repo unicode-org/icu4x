@@ -32,7 +32,8 @@ export class Error {
         ["DateTimeMismatchedCalendarError", 2056],
         ["DateTimeDuplicateFieldError", 2057],
         ["DateTimeTooNarrowError", 2058],
-        ["DateTimeMissingNamesError", 2059]
+        ["DateTimeMissingNamesError", 2059],
+        ["DateTimeZoneInfoMissingFieldsError", 2176]
     ]);
 
     constructor(value) {
@@ -94,6 +95,7 @@ export class Error {
         [2057]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2057),
         [2058]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2058),
         [2059]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2059),
+        [2176]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2176),
     };
 
     static UnknownError = Error.#objectValues[0];
@@ -118,4 +120,5 @@ export class Error {
     static DateTimeDuplicateFieldError = Error.#objectValues[2057];
     static DateTimeTooNarrowError = Error.#objectValues[2058];
     static DateTimeMissingNamesError = Error.#objectValues[2059];
+    static DateTimeZoneInfoMissingFieldsError = Error.#objectValues[2176];
 }

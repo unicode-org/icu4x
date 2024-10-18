@@ -63,14 +63,23 @@ export class GregorianZonedDateTimeFormatter {
     }
 
     formatIsoDatetimeWithCustomTimeZone(datetime, timeZone) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write.buffer);
+        
+        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write.buffer);
     
         try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
+            }
             return write.readString8();
         }
         
         finally {
+            diplomatReceive.free();
+        
             write.free();
         }
     }
