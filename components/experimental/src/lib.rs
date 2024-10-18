@@ -139,6 +139,7 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::INFO,
+        super::transliterate::provider::TransliteratorRulesV1Marker::INFO,
         super::units::provider::UnitsInfoV1Marker::INFO,
     ];
 }
