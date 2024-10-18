@@ -305,7 +305,7 @@
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
 //! let time_zone = TimeZoneInfo::from_id_and_offset(
-//!     mapper.as_borrowed().iana_to_bcp47("America/Honolulu"),
+//!     mapper.as_borrowed().iana_to_bcp47("Pacific/Honolulu"),
 //!     UtcOffset::from_eighths_of_hour(-10 * 8),
 //! )
 //! .with_local_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
