@@ -91,7 +91,7 @@ impl Direction {
 ///     true,
 /// );
 ///
-/// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
+/// let t = Transliterator::try_new_unstable(&collection.as_provider(), &collection.as_provider(), &"de-t-de-d0-ascii".parse().unwrap()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {

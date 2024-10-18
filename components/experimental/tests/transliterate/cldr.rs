@@ -40,8 +40,12 @@ fn test_all_cldr() {
             include_str!("data/fixtures/und-t-und-latn-d0-ascii.txt"),
         ),
     ] {
-        let t =
-            Transliterator::try_new_unstable(locale.parse().unwrap(), &TestingProvider).unwrap();
+        let t = Transliterator::try_new_unstable(
+            &TestingProvider,
+            &icu_normalizer::provider::Baked,
+            &locale.parse().unwrap(),
+        )
+        .unwrap();
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))
