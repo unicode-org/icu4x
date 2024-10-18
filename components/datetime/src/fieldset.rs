@@ -20,6 +20,9 @@ use icu_calendar::{
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
+#[cfg(doc)]
+use icu_timezone::TimeZoneInfo;
+
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
     ($any:ident, yes) => {
