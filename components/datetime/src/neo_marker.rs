@@ -327,7 +327,7 @@
 //! ```
 
 #[cfg(doc)]
-use crate::neo::DateTimeFormatter;
+use crate::{fieldset::*, DateTimeFormatter};
 
 use crate::{
     format::neo::*,

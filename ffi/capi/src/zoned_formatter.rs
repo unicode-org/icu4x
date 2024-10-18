@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        fieldset::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         neo_skeleton::NeoSkeletonLength,
     };
 
