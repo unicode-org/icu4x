@@ -18,11 +18,10 @@ use icu_calendar::{
 use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
-    DateTimeFormatter, FixedCalendarDateTimeFormatter,
     neo_pattern::DateTimePattern,
     neo_skeleton::NeoTimeZoneSkeleton,
     options::preferences::{self, HourCycle},
-    TypedDateTimeNames,
+    DateTimeFormatter, FixedCalendarDateTimeFormatter, TypedDateTimeNames,
 };
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
@@ -300,10 +299,11 @@ fn assert_fixture_element<A>(
         zone: TimeZoneInfo::utc(),
     };
 
-    let dtf =
-        FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+    let dtf = FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton)
+        .expect(description);
 
-    let any_dtf = DateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+    let any_dtf =
+        DateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(
@@ -368,8 +368,11 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(preferences, &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton)
-                    .unwrap()
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+                    &locale.into(),
+                    skeleton,
+                )
+                .unwrap()
             };
             assert_writeable_eq!(
                 writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
@@ -446,11 +449,12 @@ fn test_time_zone_format_configs() {
                 }
                 let skeleton = config_input.to_semantic_skeleton();
                 for expect in expected {
-                    let tzf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-                        &data_locale,
-                        skeleton,
-                    )
-                    .unwrap();
+                    let tzf =
+                        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+                            &data_locale,
+                            skeleton,
+                        )
+                        .unwrap();
                     assert_writeable_eq!(
                         writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
                         *expect,

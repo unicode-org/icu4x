@@ -163,7 +163,8 @@ pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMa
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> FixedCalendarDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents>
+    FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -279,7 +280,8 @@ where
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents> FixedCalendarDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents>
+    FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,

@@ -4,12 +4,12 @@
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    FixedCalendarDateTimeFormatter,
     neo_skeleton::{
         Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
         NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, YearStyle,
     },
     options::{components, preferences},
+    FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::locale;
 use icu_locale_core::Locale;
@@ -19,8 +19,11 @@ fn assert_resolved_components(
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf =
-        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(&locale.into(), skeleton).unwrap();
+    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+        &locale.into(),
+        skeleton,
+    )
+    .unwrap();
     let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);

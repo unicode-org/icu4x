@@ -26,7 +26,9 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct TimeFormatter(pub icu_datetime::neo::FixedCalendarDateTimeFormatter<(), NeoHourMinuteMarker>);
+    pub struct TimeFormatter(
+        pub icu_datetime::neo::FixedCalendarDateTimeFormatter<(), NeoHourMinuteMarker>,
+    );
 
     #[diplomat::enum_convert(icu_datetime::neo_skeleton::NeoSkeletonLength, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::neo_skeleton::NeoSkeletonLength, Enum)]
@@ -87,7 +89,10 @@ pub mod ffi {
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateFormatter(
-        pub icu_datetime::neo::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, NeoYearMonthDayMarker>,
+        pub  icu_datetime::neo::FixedCalendarDateTimeFormatter<
+            icu_calendar::Gregorian,
+            NeoYearMonthDayMarker,
+        >,
     );
 
     impl GregorianDateFormatter {
