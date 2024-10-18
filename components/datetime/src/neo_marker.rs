@@ -313,6 +313,17 @@
 //!     tzf.format(&time_zone),
 //!     "HST"
 //! );
+//!
+//! // Mis-spelling of "America/Chicago" results in a fallback to GMT format
+//! let time_zone = TimeZoneInfo::from_id_and_offset(
+//!     mapper.as_borrowed().iana_to_bcp47("America/Chigagou"),
+//!     UtcOffset::from_eighths_of_hour(-5 * 8),
+//! )
+//! .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+//! assert_try_writeable_eq!(
+//!     tzf.format(&time_zone),
+//!     "GMT-5"
+//! );
 //! ```
 
 #[cfg(doc)]
@@ -1467,6 +1478,9 @@ macro_rules! datetime_marker_helper {
     (@input/timezone/$any:ident,) => {
         ()
     };
+    (@input/timezone/$any:ident,) => {
+        ()
+    };
     (@input/$any:ident,) => {
         ()
     };
@@ -2059,6 +2073,8 @@ macro_rules! impl_zone_marker {
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
         // Whether metazone periods are needed
         $(metazone_periods = $metazone_periods_yes:ident,)?
+        // Whether to require the TimeZoneBcp47Id
+        $(input_tzid = $tzid_input_yes:ident,)?
         // Whether to require the ZoneVariant
         $(input_variant = $variant_input_yes:ident,)?
         // Whether to require the Local Time
@@ -2155,7 +2171,7 @@ macro_rules! impl_zone_marker {
             const COMPONENT: NeoTimeZoneStyle = $components;
         }
         impl ZoneMarkers for $type {
-            type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
+            type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, $($tzid_input_yes)?);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
             type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
@@ -2467,6 +2483,35 @@ impl_zone_marker!(
     ///     "GMT-3"
     /// );
     /// ```
+    ///
+    /// Only a full time zone info can be formatted with this style.
+    /// For example, AtTime cannot be formatted.
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneSpecificMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
+    /// // note: required by a bound in `TypedNeoFormatter::<C, FSet>::format`
+    /// formatter.format(&time_zone_at_time);
+    /// ```
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneStyle::Specific,
     description = "specific time zone, or raw offset if unavailable",
@@ -2476,6 +2521,7 @@ impl_zone_marker!(
     zone_specific_long = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
+    input_tzid = yes,
     input_variant = yes,
     input_localtime = yes,
 );
@@ -2534,6 +2580,35 @@ impl_zone_marker!(
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
+    ///
+    /// Only a full time zone info can be formatted with this style.
+    /// For example, AtTime cannot be formatted.
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneSpecificShortMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
+    /// // note: required by a bound in `TypedNeoFormatter::<C, FSet>::format`
+    /// formatter.format(&time_zone_at_time);
+    /// ```
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneStyle::Specific,
     description = "specific time zone (only short), or raw offset if unavailable",
@@ -2542,11 +2617,104 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
+    input_tzid = yes,
     input_variant = yes,
     input_localtime = yes,
 );
 
 impl_zone_marker!(
+    /// All shapes of time zones can be formatted with this style.
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneOffsetMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant, CustomZonedDateTime};
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
+    ///
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    ///
+    /// let zdt_utc_offset = CustomZonedDateTime {
+    ///     date: datetime.date,
+    ///     time: datetime.time,
+    ///     zone: utc_offset
+    /// };
+    ///
+    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    ///
+    /// let zdt_time_zone_basic = CustomZonedDateTime {
+    ///     date: datetime.date,
+    ///     time: datetime.time,
+    ///     zone: time_zone_basic
+    /// };
+    ///
+    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
+    ///
+    /// let zdt_time_zone_at_time = CustomZonedDateTime {
+    ///     date: datetime.date,
+    ///     time: datetime.time,
+    ///     zone: time_zone_at_time
+    /// };
+    ///
+    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
+    ///
+    /// let zdt_time_zone_full = CustomZonedDateTime {
+    ///     date: datetime.date,
+    ///     time: datetime.time,
+    ///     zone: time_zone_full
+    /// };
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&utc_offset),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&zdt_utc_offset),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&time_zone_basic),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&zdt_time_zone_basic),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&time_zone_at_time),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&zdt_time_zone_at_time),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&time_zone_full),
+    ///     "GMT-6"
+    /// );
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&zdt_time_zone_full),
+    ///     "GMT-6"
+    /// );
+    /// ```
     NeoTimeZoneOffsetMarker,
     NeoTimeZoneStyle::Offset,
     description = "UTC offset time zone",
@@ -2588,6 +2756,32 @@ impl_zone_marker!(
     ///     "Sao Paulo Time"
     /// );
     /// ```
+    ///
+    /// A time zone requires a reference time to be formatted with this style.
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+    /// // note: required by a bound in `TypedNeoFormatter::<C, FSet>::format`
+    /// formatter.format(&time_zone_basic);
+    /// ```
     NeoTimeZoneGenericMarker,
     NeoTimeZoneStyle::Generic,
     description = "generic time zone, or location if unavailable",
@@ -2598,6 +2792,7 @@ impl_zone_marker!(
     zone_generic_long = yes,
     zone_generic_short = yes,
     metazone_periods = yes,
+    input_tzid = yes,
     input_localtime = yes,
 );
 
@@ -2655,6 +2850,32 @@ impl_zone_marker!(
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
+    ///
+    /// A time zone requires a reference time to be formatted with this style.
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneGenericShortMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+    /// // note: required by a bound in `TypedNeoFormatter::<C, FSet>::format`
+    /// formatter.format(&time_zone_basic);
+    /// ```
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneStyle::Generic,
     description = "generic time zone (only short), or location if unavailable",
@@ -2664,10 +2885,36 @@ impl_zone_marker!(
     zone_locations = yes,
     zone_generic_short = yes,
     metazone_periods = yes,
+    input_tzid = yes,
     input_localtime = yes,
 );
 
 impl_zone_marker!(
+    /// A time zone requires a time zone ID to be formatted with this style.
+    /// For example, a raw [`UtcOffset`] cannot be used here.
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneLocationMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::timezone::UtcOffset;
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    ///
+    /// let formatter = TypedNeoFormatter::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoTimeZoneLocationMarker::with_length(NeoSkeletonLength::Medium),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<NeoTimeZoneLocationMarker>` is not satisfied
+    /// // note: required by a bound in `TypedNeoFormatter::<C, FSet>::format`
+    /// formatter.format(&utc_offset);
+    /// ```
     NeoTimeZoneLocationMarker,
     NeoTimeZoneStyle::Location,
     description = "location time zone",
@@ -2675,6 +2922,7 @@ impl_zone_marker!(
     sample = "Chicago Time",
     zone_essentials = yes,
     zone_locations = yes,
+    input_tzid = yes,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
