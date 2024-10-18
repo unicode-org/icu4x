@@ -4,12 +4,13 @@
 
 //! All available field sets for datetime formatting.
 
+pub use crate::combo::Combo;
+
 use crate::{
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
     scaffold::*,
-    DateTimeCombo,
 };
 use icu_calendar::{
     types::{
@@ -716,7 +717,7 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```
-        pub type $type = DateTimeCombo<$date, $time, NeoNeverMarker>;
+        pub type $type = Combo<$date, $time, NeoNeverMarker>;
     }
 }
 
@@ -786,7 +787,7 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```
-        pub type $type = DateTimeCombo<$date, $time, $zone>;
+        pub type $type = Combo<$date, $time, $zone>;
     }
 }
 
@@ -1066,13 +1067,13 @@ impl_zone_marker!(
     /// use icu::datetime::fieldset::MD;
     /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::DateTimeCombo;
+    /// use icu::datetime::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// type MyDateTimeZoneSet = DateTimeCombo<
+    /// type MyDateTimeZoneSet = Combo<
     ///     MD,
     ///     HM,
     ///     Zs,
@@ -1294,13 +1295,13 @@ impl_zone_marker!(
     /// use icu::datetime::fieldset::MD;
     /// use icu::datetime::fieldset::HM;
     /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::DateTimeCombo;
+    /// use icu::datetime::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// type MyDateTimeZoneSet = DateTimeCombo<
+    /// type MyDateTimeZoneSet = Combo<
     ///     MD,
     ///     HM,
     ///     Vs,
