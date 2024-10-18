@@ -8,6 +8,7 @@
   - `icu_calendar`
     - Consistently name calendar-specific `Date`/`DateTime` functions that have a calendar argument (https://github.com/unicode-org/icu4x/pull/5692)
     - Move all calendar types to `cal` module (https://github.com/unicode-org/icu4x/pull/5701)
+    - Shorten integer types returned by `day_of_month()`, `week_of_month()`, and `week_of_year()` to `u8` (https://github.com/unicode-org/icu4x/pull/5702)
   - `icu_collections`
   - `icu_normalizer`
   - `icu_datetime`

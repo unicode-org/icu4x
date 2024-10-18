@@ -285,7 +285,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day as u32)
+        types::DayOfMonth(date.0 .0.day)
     }
 
     /// Information of the day of the year
@@ -666,7 +666,7 @@ mod test {
             iso_day: u8,
             expected_year: i32,
             expected_month: u8,
-            expected_day: u32,
+            expected_day: u8,
         }
 
         let cases = [
@@ -1006,7 +1006,7 @@ mod test {
             expected_rel_iso: i32,
             expected_cyclic: u8,
             expected_month: u8,
-            expected_day: u32,
+            expected_day: u8,
         }
 
         let cases = [

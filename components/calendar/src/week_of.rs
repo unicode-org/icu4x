@@ -84,7 +84,11 @@ impl WeekCalculator {
     ///
     /// [1]: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
     pub fn week_of_month(&self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
-        WeekOfMonth(simple_week_of(self.first_weekday, day_of_month.0 as u16, iso_weekday) as u32)
+        WeekOfMonth(simple_week_of(
+            self.first_weekday,
+            day_of_month.0 as u16,
+            iso_weekday,
+        ))
     }
 
     /// Returns the week of year according to the weekday and [`DayOfYearInfo`].
@@ -169,7 +173,7 @@ enum RelativeWeek {
     /// A week that is assigned to the last week of the previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
     LastWeekOfPreviousUnit,
     /// A week that's assigned to the current year/month. The offset is 1-based. e.g. 2021-01-11 is week 2 of 2021 per the ISO calendar so would be WeekOfCurrentUnit(2).
-    WeekOfCurrentUnit(u16),
+    WeekOfCurrentUnit(u8),
     /// A week that is assigned to the first week of the next year/month. e.g. 2019-12-31 is week 1 of 2020 per the ISO calendar.
     FirstWeekOfNextUnit,
 }
@@ -213,7 +217,7 @@ impl UnitInfo {
     }
 
     /// Returns the number of weeks in this unit according to `calendar`.
-    fn num_weeks(&self, calendar: &WeekCalculator) -> u16 {
+    fn num_weeks(&self, calendar: &WeekCalculator) -> u8 {
         let first_week_offset = self.first_week_offset(calendar);
         let num_days_including_first_week =
             (self.duration_days as i32) - (first_week_offset as i32);
@@ -221,7 +225,7 @@ impl UnitInfo {
             num_days_including_first_week >= 0,
             "Unit is shorter than a week."
         );
-        ((num_days_including_first_week + 7 - (calendar.min_week_days as i32)) / 7) as u16
+        ((num_days_including_first_week + 7 - (calendar.min_week_days as i32)) / 7) as u8
     }
 
     /// Returns the week number for the given day in this unit.
@@ -232,7 +236,7 @@ impl UnitInfo {
             return RelativeWeek::LastWeekOfPreviousUnit;
         }
 
-        let week_number = (1 + days_since_first_week / 7) as u16;
+        let week_number = (1 + days_since_first_week / 7) as u8;
         if week_number > self.num_weeks(calendar) {
             return RelativeWeek::FirstWeekOfNextUnit;
         }
@@ -257,7 +261,7 @@ pub enum RelativeUnit {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct WeekOf {
     /// Week of month/year. 1 based.
-    pub week: u16,
+    pub week: u8,
     /// The month/year that this week is in, relative to the month/year of the input date.
     pub unit: RelativeUnit,
 }
@@ -316,7 +320,7 @@ pub fn week_of(
 ///  - first_weekday: The first day of a week.
 ///  - day: 1-based day of the month or year.
 ///  - week_day: The weekday of `day`.
-pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u16 {
+pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u8 {
     let calendar = WeekCalculator {
         first_weekday,
         min_week_days: 1,

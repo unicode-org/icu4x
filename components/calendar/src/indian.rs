@@ -329,7 +329,7 @@ mod tests {
             "{y}-{m}-{d}: ISO month did not match"
         );
         assert_eq!(
-            iso.day_of_month().0 as u8,
+            iso.day_of_month().0,
             iso_d,
             "{y}-{m}-{d}: ISO day did not match"
         );
@@ -376,7 +376,7 @@ mod tests {
         iso_day: u8,
         expected_year: i32,
         expected_month: u8,
-        expected_day: u32,
+        expected_day: u8,
     }
 
     fn check_case(case: TestCase) {

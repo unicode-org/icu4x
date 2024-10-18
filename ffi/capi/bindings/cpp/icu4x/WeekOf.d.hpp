@@ -18,7 +18,7 @@ class WeekRelativeUnit;
 namespace icu4x {
 namespace capi {
     struct WeekOf {
-      uint16_t week;
+      uint8_t week;
       icu4x::capi::WeekRelativeUnit unit;
     };
     
@@ -29,7 +29,7 @@ namespace capi {
 
 namespace icu4x {
 struct WeekOf {
-  uint16_t week;
+  uint8_t week;
   icu4x::WeekRelativeUnit unit;
 
   inline icu4x::capi::WeekOf AsFFI() const;

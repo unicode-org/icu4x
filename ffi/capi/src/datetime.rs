@@ -153,7 +153,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.date.day_of_month().0
         }
 
@@ -174,7 +174,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.date.week_of_month(first_weekday.into()).0
         }
 
@@ -386,7 +386,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.date.day_of_month().0
         }
 
@@ -407,7 +407,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.date.week_of_month(first_weekday.into()).0
         }
 

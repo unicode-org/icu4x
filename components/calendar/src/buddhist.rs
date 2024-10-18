@@ -342,7 +342,7 @@ mod test {
         );
         assert_eq!(
             buddhist1.day_of_month().0,
-            buddhist_day as u32,
+            buddhist_day,
             "Iso -> Buddhist day check failed for case: {case:?}"
         );
 
@@ -361,7 +361,7 @@ mod test {
         );
         assert_eq!(
             iso2.day_of_month().0,
-            iso_day as u32,
+            iso_day,
             "Buddhist -> Iso day check failed for case: {case:?}"
         );
     }
