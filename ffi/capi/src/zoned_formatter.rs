@@ -70,7 +70,7 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
                 time: greg.time,
-                zone: time_zone.0.try_into()?,
+                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
             };
             let _infallible = self.0.format(&zdt).try_write_to(write);
             Ok(())
@@ -123,7 +123,7 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
-                zone: time_zone.0.try_into()?,
+                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
@@ -139,7 +139,7 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
-                zone: time_zone.0.try_into()?,
+                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
