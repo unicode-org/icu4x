@@ -4,12 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{
-    format::neo::*,
-    neo_skeleton::*,
-    provider::neo::*,
-    scaffold::*,
-};
+use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 use icu_provider::marker::NeverMarker;
 
 /// A struct that supports formatting both a date and a time.

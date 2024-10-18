@@ -10,15 +10,13 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    }, AnyCalendarKind, Date, Iso, Time,
+        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+    },
+    AnyCalendarKind, Date, Iso, Time,
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{
-    TimeZoneBcp47Id, UtcOffset, ZoneVariant,
-};
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 /// Trait for components that can be formatted at runtime.
 pub trait IsRuntimeComponents: UnstableSealed + GetField<NeoComponents> {}

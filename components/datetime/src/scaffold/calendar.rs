@@ -15,14 +15,11 @@ use icu_calendar::cal::{
     IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
 };
 use icu_calendar::{
-    any_calendar::IntoAnyCalendar,
-    AnyCalendar, AsCalendar, Calendar, Date, DateTime, Ref, Time,
+    any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{
-    CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset,
-};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
 
 /// A calendar that can be found in CLDR
 ///

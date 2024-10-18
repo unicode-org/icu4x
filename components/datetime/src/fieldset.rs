@@ -13,14 +13,12 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    }, AnyCalendarKind, Date, Iso, Time,
+        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+    },
+    AnyCalendarKind, Date, Iso, Time,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{
-    TimeZoneBcp47Id, UtcOffset, ZoneVariant,
-};
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {

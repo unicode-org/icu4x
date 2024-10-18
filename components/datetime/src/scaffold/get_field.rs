@@ -8,7 +8,8 @@ use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
-    }, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Time,
+    },
+    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Time,
 };
 use icu_timezone::{
     CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,

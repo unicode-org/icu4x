@@ -329,7 +329,6 @@
 #[cfg(doc)]
 use crate::neo::DateTimeFormatter;
 
-
 use crate::{
     format::neo::*,
     neo_skeleton::*,
@@ -338,14 +337,12 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    }, AnyCalendarKind, Date, Iso, Time,
+        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+    },
+    AnyCalendarKind, Date, Iso, Time,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{
-    TimeZoneBcp47Id, UtcOffset, ZoneVariant,
-};
+use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 impl GetField<NeoComponents> for NeoDateSkeleton {
     fn get_field(&self) -> NeoComponents {
