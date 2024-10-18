@@ -11,7 +11,6 @@ use icu_provider::prelude::*;
 use icu_provider_blob::export::*;
 use icu_provider_blob::BlobDataProvider;
 use std::collections::BTreeSet;
-use std::hash::Hasher;
 
 const BLOB_V3: &[u8] = include_bytes!("data/v3.postcard");
 
@@ -134,9 +133,7 @@ fn test_format_bigger() {
     // Rather than check in a 10MB file, we just compute hashes
     println!("Computing hash ....");
     // Construct a hasher with a random, stable seed
-    let mut hasher = twox_hash::XxHash64::with_seed(1234);
-    hasher.write(&blob);
-    let hash = hasher.finish();
+    let hash = twox_hash::XxHash64::oneshot(1234, &blob);
 
     assert_eq!(
         hash, 9019763565456414394,
