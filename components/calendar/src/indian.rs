@@ -329,7 +329,7 @@ mod tests {
             "{y}-{m}-{d}: ISO month did not match"
         );
         assert_eq!(
-            iso.day_of_month().0 as u8,
+            iso.day_of_month().0,
             iso_d,
             "{y}-{m}-{d}: ISO day did not match"
         );

@@ -3,7 +3,7 @@
 part of 'lib.g.dart';
 
 final class _WeekOfFfi extends ffi.Struct {
-  @ffi.Uint16()
+  @ffi.Uint8()
   external int week;
   @ffi.Int32()
   external int unit;
