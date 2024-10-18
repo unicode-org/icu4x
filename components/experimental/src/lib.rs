@@ -39,6 +39,7 @@ pub mod provider {
         use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
+            pub use icu_collections as collections;
             pub use icu_experimental_data::icu_locale as locale;
             pub use icu_plurals as plurals;
         }
@@ -85,6 +86,7 @@ pub mod provider {
         impl_short_second_relative_time_format_data_v1_marker!(Baked);
         impl_short_week_relative_time_format_data_v1_marker!(Baked);
         impl_short_year_relative_time_format_data_v1_marker!(Baked);
+        impl_transliterator_rules_v1_marker!(Baked);
         impl_units_info_v1_marker!(Baked);
         impl_units_trie_v1_marker!(Baked);
     };

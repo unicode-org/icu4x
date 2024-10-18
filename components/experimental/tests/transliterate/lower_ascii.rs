@@ -95,7 +95,9 @@ fn test_lower_ascii() {
     );
     let provider = TransliteratorMultiSourceProvider(collection.as_provider());
     let t = Transliterator::try_new_with_override_unstable(
-        "und-t-und-x0-lowascii".parse().unwrap(),
+        &provider,
+        &provider,
+        &"und-t-und-x0-lowascii".parse().unwrap(),
         |locale| {
             if locale.normalizing_eq("und-t-und-x0-lower") {
                 Some(Ok(Box::new(LowercaseTransliterator(CaseMapper::new()))))
@@ -103,7 +105,6 @@ fn test_lower_ascii() {
                 None
             }
         },
-        &provider,
     )
     .unwrap();
     let r = t.transliterate("ÎÑŢÉRÑÅŢÎÖÑÅĻÎŽÅŢÎÖÑ".to_string());
