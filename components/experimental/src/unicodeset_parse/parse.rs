@@ -17,8 +17,8 @@ use icu_collections::{
 use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
     props::{
-        GeneralCategory, GeneralCategoryGroup, GraphemeClusterBreak, Script, SentenceBreak,
-        WordBreak,
+        CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
+        GraphemeClusterBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
@@ -430,6 +430,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -1124,6 +1126,10 @@ where
         let mut try_wb = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
+        // contains a supposed canonical combining class property name that needs to be tried
+        let mut try_ccc: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
+        // contains a supposed block property name that needs to be tried
+        let mut try_block: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
 
         if !value.is_empty() {
             // key is gc, sc, scx, grapheme cluster break, sentence break, word break
@@ -1131,13 +1137,19 @@ where
             // OR
             // key is a binary property and value is a truthy/falsy value
 
-            match key {
-                "General_Category" | "gc" => try_gc = Ok(value),
-                "Grapheme_Cluster_Break" => try_gcb = Ok(value),
-                "Script" | "sc" => try_sc = Ok(value),
-                "Script_Extensions" | "scx" => try_scx = Ok(value),
-                "Sentence_Break" => try_sb = Ok(value),
-                "Word_Break" => try_wb = Ok(value),
+            match key.as_bytes() {
+                GeneralCategory::NAME | GeneralCategory::SHORT_NAME => try_gc = Ok(value),
+                GraphemeClusterBreak::NAME | GraphemeClusterBreak::SHORT_NAME => {
+                    try_gcb = Ok(value)
+                }
+                Script::NAME | Script::SHORT_NAME => try_sc = Ok(value),
+                SentenceBreak::NAME | SentenceBreak::SHORT_NAME => try_sb = Ok(value),
+                WordBreak::NAME | WordBreak::SHORT_NAME => try_wb = Ok(value),
+                CanonicalCombiningClass::NAME | CanonicalCombiningClass::SHORT_NAME => {
+                    try_ccc = Ok(value)
+                }
+                b"Script_Extensions" | b"scx" => try_scx = Ok(value),
+                b"block" => try_block = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -1168,7 +1180,9 @@ where
             .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))
             .or_else(|_| try_gcb.and_then(|value| self.try_load_grapheme_cluster_break_set(value)))
             .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
-            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))?;
+            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))
+            .or_else(|_| try_ccc.and_then(|value| self.try_load_ccc_set(value)))
+            .or_else(|_| try_block.and_then(|value| self.try_load_block_set(value)))?;
         Ok(inverted)
     }
 
@@ -1387,6 +1401,7 @@ where
         let gcb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(GraphemeClusterBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
@@ -1403,6 +1418,7 @@ where
         let sb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(SentenceBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
@@ -1419,12 +1435,44 @@ where
         let wb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(WordBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map = CodePointMapData::<WordBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(wb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_ccc_set(&mut self, name: &str) -> Result<()> {
+        let parser =
+            PropertyParser::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .or_else(|| name.parse().ok().map(CanonicalCombiningClass))
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_block_set(&mut self, name: &str) -> Result<()> {
+        // TODO: source these from properties
+        self.single_set.add_range(match name {
+            "ARABIC" => '\u{0600}'..'\u{06FF}',
+            "thaana" => '\u{0780}'..'\u{07BF}',
+            _ => {
+                icu_provider::log::warn!("Skipping :block={name}:");
+                return Ok(());
+            }
+        });
         Ok(())
     }
 }
@@ -1561,6 +1609,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -1675,6 +1725,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>

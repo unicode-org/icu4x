@@ -266,6 +266,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
