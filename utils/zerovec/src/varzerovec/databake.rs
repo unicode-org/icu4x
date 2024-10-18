@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{ule::VarULE, VarZeroSlice, VarZeroVec};
+use crate::{ule::VarULE, varzerovec::VarZeroVecFormat, VarZeroSlice, VarZeroVec};
 use databake::*;
 
-impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Bake for VarZeroVec<'_, T, F> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         if self.is_empty() {
@@ -18,13 +18,13 @@ impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
     }
 }
 
-impl<T: VarULE + ?Sized> BakeSize for VarZeroVec<'_, T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> BakeSize for VarZeroVec<'_, T, F> {
     fn borrows_size(&self) -> usize {
         self.as_bytes().len()
     }
 }
 
-impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Bake for &VarZeroSlice<T, F> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         if self.is_empty() {
@@ -37,7 +37,7 @@ impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     }
 }
 
-impl<T: VarULE + ?Sized> BakeSize for &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> BakeSize for &VarZeroSlice<T, F> {
     fn borrows_size(&self) -> usize {
         if self.is_empty() {
             0
