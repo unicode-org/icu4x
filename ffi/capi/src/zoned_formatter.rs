@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        fieldset::YMDHMSTimeZoneGenericShortMarker,
+        fieldset::YMDHMSV,
         neo_skeleton::NeoSkeletonLength,
     };
 
@@ -26,7 +26,7 @@ pub mod ffi {
     pub struct GregorianZonedDateTimeFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             icu_calendar::Gregorian,
-            YMDHMSTimeZoneGenericShortMarker,
+            YMDHMSV,
         >,
     );
 
@@ -43,7 +43,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSTimeZoneGenericShortMarker::with_length(
+            let options = YMDHMSV::with_length(
                 NeoSkeletonLength::from(length),
             );
 
@@ -82,7 +82,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct ZonedDateTimeFormatter(
         pub  icu_datetime::DateTimeFormatter<
-            YMDHMSTimeZoneGenericShortMarker,
+            YMDHMSV,
         >,
     );
 
@@ -99,7 +99,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSTimeZoneGenericShortMarker::with_length(
+            let options = YMDHMSV::with_length(
                 NeoSkeletonLength::from(length),
             );
 

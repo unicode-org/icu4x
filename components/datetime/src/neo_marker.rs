@@ -263,13 +263,13 @@
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`DateTimeFormatter`] to format with generic non-location short,
-//! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericMarker`]).
+//! which falls back to the offset when unavailable (see [`V`]).
 //!
 //! ```
 //! use icu::calendar::{Date, Time};
 //! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoTimeZoneGenericMarker;
+//! use icu::datetime::fieldset::V;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::DateTimeWriteError;
 //! use icu::locale::locale;
@@ -288,7 +288,7 @@
 //! // Set up the formatter
 //! let mut tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en").into(),
-//!     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
+//!     V::with_length(NeoSkeletonLength::Short),
 //! )
 //! .unwrap();
 //!
