@@ -564,7 +564,7 @@ mod tests {
     fn test_mixed_calendar_eras() {
         use crate::neo::NeoFormatter;
         use crate::options::length;
-        use icu_calendar::japanese::JapaneseExtended;
+        use icu_calendar::cal::JapaneseExtended;
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");

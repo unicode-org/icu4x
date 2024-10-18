@@ -6,23 +6,14 @@ mod fixtures;
 mod patterns;
 
 use fixtures::TestOutputItem;
+use icu_calendar::cal::{
+    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, Indian, IslamicCivil,
+    IslamicObservational, IslamicTabular, IslamicUmmAlQura, Iso, Persian, Roc,
+    {Ethiopian, EthiopianEraStyle}, {Japanese, JapaneseExtended},
+};
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
-    buddhist::Buddhist,
-    chinese::Chinese,
-    coptic::Coptic,
-    dangi::Dangi,
-    ethiopian::{Ethiopian, EthiopianEraStyle},
-    hebrew::Hebrew,
-    indian::Indian,
-    islamic::IslamicCivil,
-    islamic::IslamicObservational,
-    islamic::IslamicTabular,
-    islamic::IslamicUmmAlQura,
-    japanese::{Japanese, JapaneseExtended},
-    persian::Persian,
-    roc::Roc,
-    AsCalendar, Calendar, DateTime, Gregorian, Iso,
+    AsCalendar, Calendar, DateTime,
 };
 use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
 use icu_datetime::scaffold::CldrCalendar;

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::hebrew::Hebrew;
+use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayMarker;

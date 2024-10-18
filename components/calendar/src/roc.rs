@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Republic of China calendar.
 //!
 //! ```rust
-//! use icu::calendar::{roc::Roc, Date, DateTime};
+//! use icu::calendar::{cal::Roc, Date, DateTime};
 //!
 //! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
@@ -197,7 +197,7 @@ impl Date<Roc> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use icu::calendar::gregorian::Gregorian;
+    /// use icu::calendar::cal::Gregorian;
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC Date

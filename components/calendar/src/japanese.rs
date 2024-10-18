@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::japanese::Japanese;
+//! use icu::calendar::cal::Japanese;
 //! use icu::calendar::{types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
@@ -415,7 +415,7 @@ impl Date<Japanese> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::cal::Japanese;
     /// use icu::calendar::{types, Date, Ref};
     /// use tinystr::tinystr;
     ///
@@ -469,7 +469,7 @@ impl Date<JapaneseExtended> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::JapaneseExtended;
+    /// use icu::calendar::cal::JapaneseExtended;
     /// use icu::calendar::{types, Date, Ref};
     /// use tinystr::tinystr;
     ///
@@ -514,7 +514,7 @@ impl DateTime<Japanese> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::cal::Japanese;
     /// use icu::calendar::{types, DateTime};
     /// use tinystr::tinystr;
     ///
@@ -568,7 +568,7 @@ impl DateTime<JapaneseExtended> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::JapaneseExtended;
+    /// use icu::calendar::cal::JapaneseExtended;
     /// use icu::calendar::{types, DateTime};
     /// use tinystr::tinystr;
     ///

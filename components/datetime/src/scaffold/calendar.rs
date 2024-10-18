@@ -5,13 +5,11 @@
 //! Scaffolding traits and impls for calendars.
 
 use icu_calendar::any_calendar::AnyCalendarKind;
-use icu_calendar::chinese::Chinese;
-use icu_calendar::roc::Roc;
-use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, dangi::Dangi, ethiopian::Ethiopian, hebrew::Hebrew,
-    indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
-    islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
-    Gregorian,
+use icu_calendar::cal::Chinese;
+use icu_calendar::cal::Roc;
+use icu_calendar::cal::{
+    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Indian, IslamicCivil,
+    IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
 };
 use icu_provider::prelude::*;
 

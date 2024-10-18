@@ -124,19 +124,7 @@ lazy_static::lazy_static! {
         // We have chosen to not do individual calendars (except Iso) over FFI
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
-        "icu::calendar::buddhist",
-        "icu::calendar::chinese",
-        "icu::calendar::coptic",
-        "icu::calendar::dangi",
-        "icu::calendar::dangi",
-        "icu::calendar::ethiopian",
-        "icu::calendar::hebrew",
-        "icu::calendar::indian",
-        "icu::calendar::islamic",
-        "icu::calendar::japanese",
-        "icu::calendar::julian",
-        "icu::calendar::persian",
-        "icu::calendar::roc",
+        "icu::calendar::cal",
         "icu::calendar::any_calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
@@ -418,11 +406,11 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::from_raw",
         "icu::calendar::Date::inner",
         "icu::calendar::Iso",
-        "icu::calendar::iso::Iso",
-        "icu::calendar::iso::IsoDateInner",
+        "icu::calendar::cal::Iso",
+        "icu::calendar::cal::IsoDateInner",
         "icu::calendar::Gregorian",
-        "icu::calendar::gregorian::Gregorian",
-        "icu::calendar::gregorian::GregorianDateInner",
+        "icu::calendar::cal::Gregorian",
+        "icu::calendar::cal::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
 
         // Options bags which are expanded in FFI to regular functions
