@@ -4,12 +4,13 @@
 
 //! All available field sets for datetime formatting.
 
+pub use crate::combo::Combo;
+
 use crate::{
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
     scaffold::*,
-    DateTimeCombo,
 };
 use icu_calendar::{
     types::{
@@ -19,6 +20,9 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+
+#[cfg(doc)]
+use icu_timezone::TimeZoneInfo;
 
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
@@ -135,6 +139,7 @@ macro_rules! impl_marker_with_options {
 /// Internal helper macro used by [`impl_date_marker`] and [`impl_calendar_period_marker`]
 macro_rules! impl_date_or_calendar_period_marker {
     (
+        $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
         // A plain language description of the field set for documentation.
@@ -215,6 +220,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
+            $(#[$attr])*
             $type,
             sample_length: $sample_length,
             $(alignment: $option_alignment_yes,)?
@@ -275,6 +281,7 @@ macro_rules! impl_date_or_calendar_period_marker {
 /// See [`impl_date_marker`].
 macro_rules! impl_date_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -293,6 +300,7 @@ macro_rules! impl_date_marker {
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_or_calendar_period_marker!(
+            $(#[$attr])*
             $type,
             description = $description,
             sample_length = $sample_length,
@@ -327,6 +335,7 @@ macro_rules! impl_date_marker {
 /// See [`impl_date_marker`].
 macro_rules! impl_calendar_period_marker {
     (
+        $(#[$attr:meta])*
         $type:ident,
         $components:expr,
         description = $description:literal,
@@ -341,6 +350,7 @@ macro_rules! impl_calendar_period_marker {
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_or_calendar_period_marker!(
+            $(#[$attr])*
             $type,
             description = $description,
             sample_length = $sample_length,
@@ -368,6 +378,7 @@ macro_rules! impl_calendar_period_marker {
 /// Documentation for each option is shown inline below.
 macro_rules! impl_time_marker {
     (
+        $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
         // An expression for the field set.
@@ -440,6 +451,7 @@ macro_rules! impl_time_marker {
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
+            $(#[$attr])*
             $type,
             sample_length: $sample_length,
             alignment: yes,
@@ -705,7 +717,7 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```
-        pub type $type = DateTimeCombo<$date, $time, NeoNeverMarker>;
+        pub type $type = Combo<$date, $time, NeoNeverMarker>;
     }
 }
 
@@ -775,28 +787,49 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```
-        pub type $type = DateTimeCombo<$date, $time, $zone>;
+        pub type $type = Combo<$date, $time, $zone>;
     }
 }
 
 impl_date_marker!(
-    NeoYearMonthDayMarker,
-    NeoDateComponents::YearMonthDay,
-    description = "year, month, and day (year might be abbreviated)",
+    /// This format may use ordinal formatting, such as "the 17th",
+    /// in the future. See CLDR-18040.
+    D,
+    NeoDateComponents::Day,
+    description = "day of month (standalone)",
     sample_length = Short,
-    sample = "5/17/24",
-    years = yes,
-    months = yes,
-    weekdays = yes,
-    input_year = yes,
-    input_month = yes,
+    sample = "17",
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
 
 impl_date_marker!(
-    NeoMonthDayMarker,
+    E,
+    NeoDateComponents::Weekday,
+    description = "weekday (standalone)",
+    sample_length = Long,
+    sample = "Friday",
+    weekdays = yes,
+    input_day_of_week = yes,
+);
+
+impl_date_marker!(
+    /// This format may use ordinal formatting, such as "Friday the 17th",
+    /// in the future. See CLDR-18040.
+    DE,
+    NeoDateComponents::DayWeekday,
+    description = "day of month and weekday",
+    sample_length = Long,
+    sample = "17 Friday",
+    weekdays = yes,
+    input_day_of_month = yes,
+    input_day_of_week = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    MD,
     NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = Medium,
@@ -809,11 +842,42 @@ impl_date_marker!(
 );
 
 impl_date_marker!(
-    NeoAutoDateMarker,
-    NeoDateComponents::Auto,
-    description = "locale-dependent date fields",
+    /// See CLDR-18040 for progress on improving this format.
+    MDE,
+    NeoDateComponents::MonthDayWeekday,
+    description = "month, day, and weekday",
     sample_length = Medium,
-    sample = "May 17, 2024",
+    sample = "Fri, May 17",
+    months = yes,
+    weekdays = yes,
+    input_month = yes,
+    input_day_of_month = yes,
+    input_day_of_week = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    YMD,
+    NeoDateComponents::YearMonthDay,
+    description = "year, month, and day",
+    sample_length = Short,
+    sample = "5/17/24",
+    years = yes,
+    months = yes,
+    input_year = yes,
+    input_month = yes,
+    input_day_of_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_date_marker!(
+    YMDE,
+    NeoDateComponents::YearMonthDayWeekday,
+    description = "year, month, day, and weekday",
+    sample_length = Short,
+    sample = "Fri, 5/17/24",
     years = yes,
     months = yes,
     weekdays = yes,
@@ -825,8 +889,56 @@ impl_date_marker!(
     option_alignment = yes,
 );
 
+impl_calendar_period_marker!(
+    Y,
+    NeoCalendarPeriodComponents::Year,
+    description = "year (standalone)",
+    sample_length = Medium,
+    sample = "2024",
+    years = yes,
+    input_year = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_calendar_period_marker!(
+    M,
+    NeoCalendarPeriodComponents::Month,
+    description = "month (standalone)",
+    sample_length = Long,
+    sample = "May",
+    months = yes,
+    input_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_calendar_period_marker!(
+    YM,
+    NeoCalendarPeriodComponents::YearMonth,
+    description = "year and month",
+    sample_length = Medium,
+    sample = "May 2024",
+    years = yes,
+    months = yes,
+    input_year = yes,
+    input_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
 impl_time_marker!(
-    NeoHourMinuteMarker,
+    H,
+    NeoTimeComponents::Hour,
+    description = "hour (locale-dependent hour cycle)",
+    sample_length = Medium,
+    sample = "3 PM",
+    dayperiods = yes,
+    input_hour = yes,
+);
+
+impl_time_marker!(
+    HM,
     NeoTimeComponents::HourMinute,
     description = "hour and minute (locale-dependent hour cycle)",
     sample_length = Medium,
@@ -837,7 +949,7 @@ impl_time_marker!(
 );
 
 impl_time_marker!(
-    NeoHourMinuteSecondMarker,
+    HMS,
     NeoTimeComponents::HourMinuteSecond,
     description = "hour, minute, and second (locale-dependent hour cycle)",
     sample_length = Medium,
@@ -849,52 +961,22 @@ impl_time_marker!(
     input_nanosecond = yes,
 );
 
-impl_time_marker!(
-    NeoAutoTimeMarker,
-    NeoTimeComponents::Auto,
-    description = "locale-dependent time fields",
-    sample_length = Medium,
-    sample = "3:47:50 PM",
-    dayperiods = yes,
-    input_hour = yes,
-    input_minute = yes,
-    input_second = yes,
-    input_nanosecond = yes,
-);
-
-// TODO: Make NeoAutoZoneMarker, derived from time length patterns
-
 impl_datetime_marker!(
-    NeoAutoDateTimeMarker,
-    description = "locale-dependent date and time fields",
-    sample_length = Medium,
-    sample = "May 17, 2024, 3:47:50 PM",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
-);
-
-// TODO: Type aliases like this are excessive; make a curated set
-impl_datetime_marker!(
-    NeoYearMonthDayHourMinuteMarker,
-    description = "locale-dependent date and time fields",
+    YMDHM,
+    description = "year, month, day, hour, and minute",
     sample_length = Medium,
     sample = "May 17, 2024, 3:47 PM",
-    date = NeoYearMonthDayMarker,
-    time = NeoHourMinuteMarker,
+    date = YMD,
+    time = HM,
 );
 
-impl_calendar_period_marker!(
-    NeoYearMonthMarker,
-    NeoCalendarPeriodComponents::YearMonth,
-    description = "year and month (era elided when possible)",
+impl_datetime_marker!(
+    YMDHMS,
+    description = "year, month, day, hour, minute, and second",
     sample_length = Medium,
-    sample = "May 2024",
-    years = yes,
-    months = yes,
-    input_year = yes,
-    input_month = yes,
-    input_any_calendar_kind = yes,
-    option_alignment = yes,
+    sample = "May 17, 2024, 3:47:50 PM",
+    date = YMD,
+    time = HMS,
 );
 
 impl_zone_marker!(
@@ -905,7 +987,7 @@ impl_zone_marker!(
     /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneSpecificMarker;
+    /// use icu::datetime::fieldset::Z;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -913,7 +995,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoTimeZoneSpecificMarker::with_length(NeoSkeletonLength::Short),
+    ///     Z::with_length(NeoSkeletonLength::Short),
     /// )
     /// .unwrap();
     ///
@@ -931,13 +1013,14 @@ impl_zone_marker!(
     /// );
     /// ```
     ///
-    /// Only a full time zone info can be formatted with this style.
-    /// For example, AtTime cannot be formatted.
+    /// This style requires a [`ZoneVariant`], so
+    /// only a full time zone info can be formatted with this style.
+    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneSpecificMarker;
+    /// use icu::datetime::fieldset::Z;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
@@ -951,7 +1034,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneSpecificMarker::with_length(NeoSkeletonLength::Medium),
+    ///     Z::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
@@ -959,9 +1042,9 @@ impl_zone_marker!(
     /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&time_zone_at_time);
     /// ```
-    NeoTimeZoneSpecificMarker,
+    Z,
     NeoTimeZoneStyle::Specific,
-    description = "specific time zone, or raw offset if unavailable",
+    description = "time zone in specific non-location format",
     sample_length = Long,
     sample = "Central Daylight Time",
     zone_essentials = yes,
@@ -981,19 +1064,19 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoMonthDayMarker;
-    /// use icu::datetime::fieldset::NeoHourMinuteMarker;
-    /// use icu::datetime::fieldset::NeoTimeZoneSpecificShortMarker;
-    /// use icu::datetime::DateTimeCombo;
+    /// use icu::datetime::fieldset::MD;
+    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::Zs;
+    /// use icu::datetime::fieldset::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// type MyDateTimeZoneSet = DateTimeCombo<
-    ///     NeoMonthDayMarker,
-    ///     NeoHourMinuteMarker,
-    ///     NeoTimeZoneSpecificShortMarker,
+    /// type MyDateTimeZoneSet = Combo<
+    ///     MD,
+    ///     HM,
+    ///     Zs,
     /// >;
     ///
     /// let fmt = DateTimeFormatter::try_new(
@@ -1015,26 +1098,27 @@ impl_zone_marker!(
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::fieldset::Zs;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::LoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoTimeZoneSpecificShortMarker::with_length(NeoSkeletonLength::Long),
+    ///     Zs::with_length(NeoSkeletonLength::Long),
     /// );
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     ///
-    /// Only a full time zone info can be formatted with this style.
-    /// For example, AtTime cannot be formatted.
+    /// This style requires a [`ZoneVariant`], so
+    /// only a full time zone info can be formatted with this style.
+    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::fieldset::Zs;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
@@ -1048,7 +1132,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneSpecificShortMarker::with_length(NeoSkeletonLength::Medium),
+    ///     Zs::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
@@ -1056,9 +1140,9 @@ impl_zone_marker!(
     /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&time_zone_at_time);
     /// ```
-    NeoTimeZoneSpecificShortMarker,
+    Zs,
     NeoTimeZoneStyle::Specific,
-    description = "specific time zone (only short), or raw offset if unavailable",
+    description = "time zone in specific non-location format (only short)",
     sample_length = Short,
     sample = "CDT",
     zone_essentials = yes,
@@ -1075,7 +1159,7 @@ impl_zone_marker!(
     /// ```
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneOffsetMarker;
+    /// use icu::datetime::fieldset::O;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant, CustomZonedDateTime};
     /// use tinystr::tinystr;
@@ -1118,7 +1202,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
+    ///     O::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
@@ -1162,9 +1246,9 @@ impl_zone_marker!(
     ///     "GMT-6"
     /// );
     /// ```
-    NeoTimeZoneOffsetMarker,
+    O,
     NeoTimeZoneStyle::Offset,
-    description = "UTC offset time zone",
+    description = "UTC offset",
     sample_length = Medium,
     sample = "GMT-5",
     zone_essentials = yes,
@@ -1178,7 +1262,7 @@ impl_zone_marker!(
     /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneGenericMarker;
+    /// use icu::datetime::fieldset::V;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -1186,7 +1270,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
+    ///     V::with_length(NeoSkeletonLength::Short),
     /// )
     /// .unwrap();
     ///
@@ -1204,12 +1288,13 @@ impl_zone_marker!(
     /// );
     /// ```
     ///
-    /// A time zone requires a reference time to be formatted with this style.
+    /// Since non-location names might change over time,
+    /// this time zone style requires a reference time.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneGenericMarker;
+    /// use icu::datetime::fieldset::V;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
@@ -1221,7 +1306,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Medium),
+    ///     V::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
@@ -1229,9 +1314,9 @@ impl_zone_marker!(
     /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&time_zone_basic);
     /// ```
-    NeoTimeZoneGenericMarker,
+    V,
     NeoTimeZoneStyle::Generic,
-    description = "generic time zone, or location if unavailable",
+    description = "time zone in generic non-location format",
     sample_length = Long,
     sample = "Central Time",
     zone_essentials = yes,
@@ -1251,19 +1336,19 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoMonthDayMarker;
-    /// use icu::datetime::fieldset::NeoHourMinuteMarker;
-    /// use icu::datetime::fieldset::NeoTimeZoneGenericShortMarker;
-    /// use icu::datetime::DateTimeCombo;
+    /// use icu::datetime::fieldset::MD;
+    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::Vs;
+    /// use icu::datetime::fieldset::Combo;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// type MyDateTimeZoneSet = DateTimeCombo<
-    ///     NeoMonthDayMarker,
-    ///     NeoHourMinuteMarker,
-    ///     NeoTimeZoneGenericShortMarker,
+    /// type MyDateTimeZoneSet = Combo<
+    ///     MD,
+    ///     HM,
+    ///     Vs,
     /// >;
     ///
     /// let fmt = DateTimeFormatter::try_new(
@@ -1285,25 +1370,26 @@ impl_zone_marker!(
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::fieldset::Vs;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::LoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     NeoTimeZoneGenericShortMarker::with_length(NeoSkeletonLength::Long),
+    ///     Vs::with_length(NeoSkeletonLength::Long),
     /// );
     ///
     /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
     /// ```
     ///
-    /// A time zone requires a reference time to be formatted with this style.
+    /// Since non-location names might change over time,
+    /// this time zone style requires a reference time.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::fieldset::Vs;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
@@ -1315,7 +1401,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneGenericShortMarker::with_length(NeoSkeletonLength::Medium),
+    ///     Vs::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
@@ -1323,9 +1409,9 @@ impl_zone_marker!(
     /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&time_zone_basic);
     /// ```
-    NeoTimeZoneGenericShortMarker,
+    Vs,
     NeoTimeZoneStyle::Generic,
-    description = "generic time zone (only short), or location if unavailable",
+    description = "time zone in generic non-location format (only short)",
     sample_length = Short,
     sample = "CT",
     zone_essentials = yes,
@@ -1337,13 +1423,13 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// A time zone requires a time zone ID to be formatted with this style.
+    /// A time zone ID is required to format with this style.
     /// For example, a raw [`UtcOffset`] cannot be used here.
     ///
     /// ```compile_fail
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::NeoTimeZoneLocationMarker;
+    /// use icu::datetime::fieldset::L;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::timezone::UtcOffset;
     /// use tinystr::tinystr;
@@ -1354,17 +1440,17 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     NeoTimeZoneLocationMarker::with_length(NeoSkeletonLength::Medium),
+    ///     L::with_length(NeoSkeletonLength::Medium),
     /// )
     /// .unwrap();
     ///
-    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<NeoTimeZoneLocationMarker>` is not satisfied
+    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<L>` is not satisfied
     /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&utc_offset);
     /// ```
-    NeoTimeZoneLocationMarker,
+    L,
     NeoTimeZoneStyle::Location,
-    description = "location time zone",
+    description = "time zone in location format",
     sample_length = Long,
     sample = "Chicago Time",
     zone_essentials = yes,
@@ -1372,35 +1458,32 @@ impl_zone_marker!(
     input_tzid = yes,
 );
 
-// TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+    YMDHMSV,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 GMT",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
-    zone = NeoTimeZoneGenericMarker,
+    date = YMD,
+    time = HMS,
+    zone = V,
 );
 
-// TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneSpecificShortMarker,
+    YMDHMSZ,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 BST",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
-    zone = NeoTimeZoneSpecificMarker,
+    date = YMD,
+    time = HMS,
+    zone = Z,
 );
 
-// TODO: Type aliases like this are excessive; make a curated set
 impl_zoneddatetime_marker!(
-    NeoYearMonthDayHourMinuteSecondTimeZoneOffsetMarker,
+    YMDHMSO,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = Medium,
     sample = "17 May 2024, 15:47:50 GMT+1",
-    date = NeoAutoDateMarker,
-    time = NeoAutoTimeMarker,
-    zone = NeoTimeZoneOffsetMarker,
+    date = YMD,
+    time = HMS,
+    zone = O,
 );
