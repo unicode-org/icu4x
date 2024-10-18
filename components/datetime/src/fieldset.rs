@@ -1078,7 +1078,7 @@ impl_zone_marker!(
     /// All shapes of time zones can be formatted with this style.
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::calendar::{Date, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::NeoTimeZoneOffsetMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1087,41 +1087,17 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
-    ///
     /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    ///
-    /// let zdt_utc_offset = CustomZonedDateTime {
-    ///     date: datetime.date,
-    ///     time: datetime.time,
-    ///     zone: utc_offset
-    /// };
     ///
     /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
     ///
-    /// let zdt_time_zone_basic = CustomZonedDateTime {
-    ///     date: datetime.date,
-    ///     time: datetime.time,
-    ///     zone: time_zone_basic
-    /// };
-    ///
-    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
-    ///
-    /// let zdt_time_zone_at_time = CustomZonedDateTime {
-    ///     date: datetime.date,
-    ///     time: datetime.time,
-    ///     zone: time_zone_at_time
-    /// };
+    /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
+    /// let time = Time::midnight();
+    /// let time_zone_at_time = time_zone_basic.at_time((date, time));
     ///
     /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
     ///
-    /// let zdt_time_zone_full = CustomZonedDateTime {
-    ///     date: datetime.date,
-    ///     time: datetime.time,
-    ///     zone: time_zone_full
-    /// };
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
     ///     &locale!("en-US").into(),
     ///     NeoTimeZoneOffsetMarker::with_length(NeoSkeletonLength::Medium),
     /// )
@@ -1133,17 +1109,7 @@ impl_zone_marker!(
     /// );
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(&zdt_utc_offset),
-    ///     "GMT-6"
-    /// );
-    ///
-    /// assert_try_writeable_eq!(
     ///     formatter.format(&time_zone_basic),
-    ///     "GMT-6"
-    /// );
-    ///
-    /// assert_try_writeable_eq!(
-    ///     formatter.format(&zdt_time_zone_basic),
     ///     "GMT-6"
     /// );
     ///
@@ -1153,17 +1119,7 @@ impl_zone_marker!(
     /// );
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(&zdt_time_zone_at_time),
-    ///     "GMT-6"
-    /// );
-    ///
-    /// assert_try_writeable_eq!(
     ///     formatter.format(&time_zone_full),
-    ///     "GMT-6"
-    /// );
-    ///
-    /// assert_try_writeable_eq!(
-    ///     formatter.format(&zdt_time_zone_full),
     ///     "GMT-6"
     /// );
     /// ```

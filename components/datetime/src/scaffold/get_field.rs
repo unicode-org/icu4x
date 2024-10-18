@@ -295,56 +295,47 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<NanoSecond>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Option<UtcOffset>>
-    for CustomZonedDateTime<A, UtcOffset>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Option<UtcOffset>>
+    for CustomZonedDateTime<A, Z>
+where
+    Z: GetField<Option<UtcOffset>>,
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
-        Some(self.zone)
+        self.zone.get_field()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<TimeZoneBcp47Id>
-    for CustomZonedDateTime<A, TimeZoneInfo<O>>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZoneBcp47Id>
+    for CustomZonedDateTime<A, Z>
 where
-    O: TimeZoneModel,
+    Z: GetField<TimeZoneBcp47Id>,
 {
     #[inline]
     fn get_field(&self) -> TimeZoneBcp47Id {
-        self.zone.time_zone_id
+        self.zone.get_field()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<Option<UtcOffset>>
-    for CustomZonedDateTime<A, TimeZoneInfo<O>>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<ZoneVariant>
+    for CustomZonedDateTime<A, Z>
 where
-    O: TimeZoneModel,
-{
-    #[inline]
-    fn get_field(&self) -> Option<UtcOffset> {
-        self.zone.offset
-    }
-}
-
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<ZoneVariant>
-    for CustomZonedDateTime<A, TimeZoneInfo<O>>
-where
-    O: TimeZoneModel<ZoneVariant = ZoneVariant>,
+    Z: GetField<ZoneVariant>,
 {
     #[inline]
     fn get_field(&self) -> ZoneVariant {
-        self.zone.zone_variant
+        self.zone.get_field()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, O> GetField<(Date<Iso>, Time)>
-    for CustomZonedDateTime<A, TimeZoneInfo<O>>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<(Date<Iso>, Time)>
+    for CustomZonedDateTime<A, Z>
 where
-    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Z: GetField<(Date<Iso>, Time)>,
 {
     #[inline]
     fn get_field(&self) -> (Date<Iso>, Time) {
-        self.zone.local_time
+        self.zone.get_field()
     }
 }
 
