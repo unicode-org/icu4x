@@ -1082,7 +1082,7 @@ impl_zone_marker!(
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::NeoTimeZoneOffsetMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
