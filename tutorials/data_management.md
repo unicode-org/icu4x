@@ -98,7 +98,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, neo_skeleton::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{DateTimeFormatter, neo_skeleton::NeoAutoDateTimeMarker, NeoSkeletonLength};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -109,7 +109,7 @@ impl_data_provider!(MyDataProvider);
 fn main() {
     let baked_provider = MyDataProvider;
 
-    let dtf = NeoFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
+    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("ja data should be available");
 
     let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
@@ -154,7 +154,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateTimeMarker};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -171,7 +171,7 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = NeoFormatter::try_new_with_buffer_provider(
+    let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
         NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium)
@@ -202,12 +202,12 @@ The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
-We can instead use `TypedNeoFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
+We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{TypedNeoFormatter, neo_marker::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::NeoAutoDateTimeMarker, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -224,7 +224,7 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_buffer_provider(
+    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
         NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
@@ -240,7 +240,7 @@ fn main() {
 }
 ```
 
-This has two advantages: it reduces our code size, as `NeoFormatter` includes much more functionality than `TypedNeoFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `FixedCalendarDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 

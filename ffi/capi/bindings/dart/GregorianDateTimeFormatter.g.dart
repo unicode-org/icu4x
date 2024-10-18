@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X TypedDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
 /// using the Gregorian Calendar.
 ///
 /// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.

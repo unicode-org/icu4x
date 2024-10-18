@@ -186,11 +186,11 @@ lazy_static::lazy_static! {
         //   can be destructively passed to these constructors via &mut self. All future
         //   specialized constructors show up on this type instead.
         "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+        "icu::datetime::FixedCalendarDateTimeFormatter::try_from_date_and_time",
 
         // experimental
         "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::TypedDateTimeFormatter::resolve_components",
+        "icu::datetime::FixedCalendarDateTimeFormatter::resolve_components",
 
         // Experimental API mostly used for provider, components bags, and patterns,
         // may in the future be exposed for options
@@ -209,7 +209,7 @@ lazy_static::lazy_static! {
         "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::FixedCalendarDateTimeFormatter::try_new_experimental",
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
         "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 

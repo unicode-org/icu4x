@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        fieldset::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         neo_skeleton::NeoSkeletonLength,
     };
 
@@ -24,7 +24,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub  icu_datetime::neo::TypedNeoFormatter<
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
             icu_calendar::Gregorian,
             NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         >,
@@ -49,9 +49,9 @@ pub mod ffi {
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
-                    icu_datetime::neo::TypedNeoFormatter::try_new,
-                    icu_datetime::neo::TypedNeoFormatter::try_new_with_any_provider,
-                    icu_datetime::neo::TypedNeoFormatter::try_new_with_buffer_provider,
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new,
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
                     &locale,
                     options
@@ -81,7 +81,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct ZonedDateTimeFormatter(
-        pub  icu_datetime::neo::NeoFormatter<
+        pub  icu_datetime::DateTimeFormatter<
             NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
         >,
     );
@@ -104,9 +104,9 @@ pub mod ffi {
             );
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
-                icu_datetime::neo::NeoFormatter::try_new,
-                icu_datetime::neo::NeoFormatter::try_new_with_any_provider,
-                icu_datetime::neo::NeoFormatter::try_new_with_buffer_provider,
+                icu_datetime::DateTimeFormatter::try_new,
+                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options,

@@ -37,10 +37,10 @@ icu = "1.5.0"
 
 ```rust
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateTimeMarker};
 use icu::locale::locale;
 
-let dtf = NeoFormatter::try_new(
+let dtf = DateTimeFormatter::try_new(
     &locale!("es").into(),
     NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Long)
 )

@@ -10,7 +10,7 @@
 //! may alter how the selected pattern is formatted.
 //!
 //! [`Locale`]: icu_locale_core::Locale
-//! [`TypedDateTimeFormatter`]: crate::TypedDateTimeFormatter
+//! [`FixedCalendarDateTimeFormatter`]: crate::FixedCalendarDateTimeFormatter
 //!
 //! # Examples
 //!

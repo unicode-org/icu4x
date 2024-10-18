@@ -7,7 +7,7 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X TypedDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/** An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
 *using the Gregorian Calendar.
 *
 *See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.

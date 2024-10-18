@@ -145,7 +145,7 @@ Now we can write the Rust code:
 // At the top of the file:
 use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateMarker};
 
 let locale = icu::locale::Locale::default(); // to make this example compile
 
@@ -164,7 +164,7 @@ fn get_current_date() -> Date<Iso> {
 let iso_date = get_current_date();
 
 // Create and use an ICU4X date formatter:
-let date_formatter = NeoFormatter::try_new(
+let date_formatter = DateTimeFormatter::try_new(
     &(&locale).into(),
     NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
 )
