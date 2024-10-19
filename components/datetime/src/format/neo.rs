@@ -1427,14 +1427,15 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let locale = &locale!("bn").into();
     ///
-    /// let mut names = TypedDateTimeNames::<(), NeoTimeSkeleton>::try_new(&locale).unwrap();
+    /// let mut names =
+    ///     TypedDateTimeNames::<(), NeoTimeSkeleton>::try_new(&locale).unwrap();
     /// names.include_fixed_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers

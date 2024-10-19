@@ -16,19 +16,22 @@ use icu_provider::marker::NeverMarker;
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::timezone::CustomZonedDateTime;
-/// use icu::datetime::DateTimeFormatter;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
+/// use icu::timezone::CustomZonedDateTime;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = DateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short()
+///     Combo::<E, HM, L>::short(),
 /// )
 /// .unwrap();
 ///
-/// let zdt = CustomZonedDateTime::try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]").unwrap();
+/// let zdt = CustomZonedDateTime::try_location_only_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+/// )
+/// .unwrap();
 ///
 /// assert_try_writeable_eq!(
 ///     formatter.convert_and_format(&zdt),
@@ -40,19 +43,23 @@ use icu_provider::marker::NeverMarker;
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::timezone::CustomZonedDateTime;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
+/// use icu::timezone::CustomZonedDateTime;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short()
+///     Combo::<E, HM, L>::short(),
 /// )
 /// .unwrap();
 ///
-/// let zdt = CustomZonedDateTime::try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]").unwrap().to_calendar(Gregorian);
+/// let zdt = CustomZonedDateTime::try_location_only_iso_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+/// )
+/// .unwrap()
+/// .to_calendar(Gregorian);
 ///
 /// assert_try_writeable_eq!(
 ///     formatter.format(&zdt),

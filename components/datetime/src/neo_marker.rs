@@ -15,36 +15,35 @@
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::datetime::fieldset::YMD;
 //! use icu::datetime::neo_skeleton::Alignment;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! let plain_formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-//!     &locale!("en-US").into(),
-//!     YMD::short(),
-//! )
-//! .unwrap();
+//! let plain_formatter =
+//!     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+//!         &locale!("en-US").into(),
+//!         YMD::short(),
+//!     )
+//!     .unwrap();
 //!
-//! let column_formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-//!     &locale!("en-US").into(),
-//!     YMD::short()
-//!         .with_alignment(Alignment::Column),
-//! )
-//! .unwrap();
+//! let column_formatter =
+//!     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+//!         &locale!("en-US").into(),
+//!         YMD::short().with_alignment(Alignment::Column),
+//!     )
+//!     .unwrap();
 //!
 //! // By default, en-US does not pad the month and day with zeros.
 //! assert_try_writeable_eq!(
-//!     plain_formatter
-//!         .format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
+//!     plain_formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "1/1/25"
 //! );
 //!
 //! // The column alignment option hints that they should be padded.
 //! assert_try_writeable_eq!(
-//!     column_formatter
-//!         .format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
+//!     column_formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 //!     "01/01/25"
 //! );
 //! ```
@@ -56,16 +55,15 @@
 //! ```
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::datetime::fieldset::YMD;
 //! use icu::datetime::neo_skeleton::YearStyle;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     YMD::short()
-//!         .with_year_style(YearStyle::Auto),
+//!     YMD::short().with_year_style(YearStyle::Auto),
 //! )
 //! .unwrap();
 //!
@@ -92,8 +90,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     YMD::short()
-//!         .with_year_style(YearStyle::Full),
+//!     YMD::short().with_year_style(YearStyle::Full),
 //! )
 //! .unwrap();
 //!
@@ -119,8 +116,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     YMD::short()
-//!         .with_year_style(YearStyle::Always),
+//!     YMD::short().with_year_style(YearStyle::Always),
 //! )
 //! .unwrap();
 //!
@@ -150,8 +146,8 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::datetime::fieldset::HM;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
@@ -203,8 +199,8 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::datetime::fieldset::HM;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
@@ -236,16 +232,15 @@
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
-//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::datetime::fieldset::HMS;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US").into(),
-//!     HMS::short()
-//!         .with_fractional_second_digits(FractionalSecondDigits::F2),
+//!     HMS::short().with_fractional_second_digits(FractionalSecondDigits::F2),
 //! )
 //! .unwrap();
 //!
