@@ -695,7 +695,7 @@ mod tests {
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
-                id: Cow::Borrowed("x-any-remove"),
+                id: Cow::Borrowed("any-remove"),
             }];
             let expected_id_group3 = vec![
                 ds::SimpleId {
@@ -704,7 +704,7 @@ mod tests {
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfc"),
+                    id: Cow::Borrowed("any-nfc"),
                 },
             ];
 
@@ -782,8 +782,8 @@ mod tests {
             assert_eq!(
                 forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
-                    Cow::Borrowed("x-any-nfc"),
-                    Cow::Borrowed("x-any-remove"),
+                    Cow::Borrowed("any-nfc"),
+                    Cow::Borrowed("any-remove"),
                     Cow::Borrowed("x-interindic-devanagari"),
                     Cow::Borrowed("x-latin-interindic"),
                 ])
@@ -795,7 +795,7 @@ mod tests {
             let expected_id_group1 = vec![
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfd"),
+                    id: Cow::Borrowed("any-nfd"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -888,7 +888,7 @@ mod tests {
                 reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
-                    Cow::Borrowed("x-any-nfd"),
+                    Cow::Borrowed("any-nfd"),
                     Cow::Borrowed("x-any-revfncall"),
                     Cow::Borrowed("x-devanagari-interindic"),
                     Cow::Borrowed("x-interindic-latin"),

@@ -8,10 +8,6 @@
 
 use icu_experimental::transliterate::Transliterator;
 
-#[allow(clippy::single_component_path_imports)]
-use icu_experimental;
-include!("data/provider.rs");
-
 #[test]
 fn test_all_cldr() {
     for (locale, data) in [
@@ -40,12 +36,7 @@ fn test_all_cldr() {
             include_str!("data/fixtures/und-t-und-latn-d0-ascii.txt"),
         ),
     ] {
-        let t = Transliterator::try_new_unstable(
-            &TestingProvider,
-            &icu_normalizer::provider::Baked,
-            &locale.parse().unwrap(),
-        )
-        .unwrap();
+        let t = Transliterator::try_new(&locale.parse().unwrap()).unwrap();
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))

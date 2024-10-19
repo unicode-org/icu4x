@@ -229,7 +229,7 @@ impl Transliterator {
     /// Construct a [`Transliterator`] from the given [`Locale`].
     ///
     /// # Examples
-    /// ```ignore
+    /// ```
     /// use icu::experimental::transliterate::Transliterator;
     /// // BCP-47-T ID for Bengali to Arabic transliteration
     /// let locale = "und-Arab-t-und-beng".parse().unwrap();
@@ -304,7 +304,7 @@ impl Transliterator {
     ///
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
-    /// ```ignore
+    /// ```
     /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
     /// use icu::locale::Locale;
     /// use core::ops::Range;
@@ -347,7 +347,6 @@ impl Transliterator {
     where
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        use icu_provider::any::AsDowncastingAnyProvider;
         Self::try_new_with_override_unstable(
             &provider.as_downcasting(),
             &provider.as_downcasting(),
@@ -365,7 +364,6 @@ impl Transliterator {
     where
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        use icu_provider::buf::AsDeserializingBufferProvider;
         Self::try_new_with_override_unstable(
             &provider.as_deserializing(),
             &provider.as_deserializing(),
@@ -1377,11 +1375,8 @@ impl<'a> VarTable<'a> {
 
 #[cfg(test)]
 mod tests {
-    #![allow(unused_imports)]
     use super::*;
-
-    use crate as icu_experimental;
-    include!("../../../tests/transliterate/data/provider.rs");
+    use crate::transliterate::RuleCollection;
 
     #[test]
     fn test_empty_matches() {
@@ -1393,10 +1388,19 @@ mod tests {
             ("b1", "bmatch1"),
         ];
 
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/EmptyMatches.txt").into(),
+            [],
+            false,
+            true,
+        );
+
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1407,10 +1411,26 @@ mod tests {
 
     #[test]
     fn test_recursive_suite() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-root".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveRoot.txt").into(),
+            [],
+            false,
+            true,
+        );
+        collection.register_source(
+            &"und-x-rec".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveA.txt").into(),
+            ["Test-Test/RecursiveSuiteA"],
+            false,
+            true,
+        );
+
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
+            &"und-x-root".parse().unwrap(),
         )
         .unwrap();
 
@@ -1421,10 +1441,18 @@ mod tests {
 
     #[test]
     fn test_cursor_placeholders_filters() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/CursorFilters.txt").into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1435,10 +1463,18 @@ mod tests {
 
     #[test]
     fn test_functionality() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/Functionality.txt").into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1449,12 +1485,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii() {
-        let t = Transliterator::try_new_unstable(
-            &TestingProvider,
-            &icu_normalizer::provider::Baked,
-            &"de-t-de-d0-ascii".parse().unwrap(),
-        )
-        .unwrap();
+        let t = Transliterator::try_new(&"de-t-de-d0-ascii".parse().unwrap()).unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
@@ -1474,17 +1505,13 @@ mod tests {
         }
 
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
-        let t = Transliterator::try_new_with_override_unstable(
-            &TestingProvider,
-            &icu_normalizer::provider::Baked,
-            &"de-t-de-d0-ascii".parse().unwrap(),
-            |locale| {
+        let t =
+            Transliterator::try_new_with_override(&"de-t-de-d0-ascii".parse().unwrap(), |locale| {
                 locale
                     .eq(&want_locale)
                     .then_some(Ok(Box::new(MaoamTranslit)))
-            },
-        )
-        .unwrap();
+            })
+            .unwrap();
 
         let input = "Ich liebe ꜵ über alles";
         let output = "Ich liebe maoam ueber alles";
@@ -1493,12 +1520,7 @@ mod tests {
 
     #[test]
     fn test_nfc_nfd() {
-        let t = Transliterator::try_new_unstable(
-            &TestingProvider,
-            &icu_normalizer::provider::Baked,
-            &"und-t-und-latn-d0-ascii".parse().unwrap(),
-        )
-        .unwrap();
+        let t = Transliterator::try_new(&"und-t-und-latn-d0-ascii".parse().unwrap()).unwrap();
         let input = "äa\u{0308}";
         let output = "aa";
         assert_eq!(t.transliterate(input.to_string()), output);
@@ -1506,10 +1528,18 @@ mod tests {
 
     #[test]
     fn test_hex_rust() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            "::Hex/Rust;".into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
@@ -1519,10 +1549,18 @@ mod tests {
 
     #[test]
     fn test_hex_unicode() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            "::Hex/Unicode;".into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            &TestingProvider,
+            &collection.as_provider(),
             &icu_normalizer::provider::Baked,
-            &"und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
