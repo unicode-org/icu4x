@@ -187,8 +187,8 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -305,17 +305,18 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::DayWeekday.medium()
-    /// )
-    /// .unwrap();
+    /// let fmt =
+    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    ///         &locale!("es-MX").into(),
+    ///         NeoDateComponents::DayWeekday.medium(),
+    ///     )
+    ///     .unwrap();
     /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "mié 10");
@@ -326,17 +327,18 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoCalendarPeriodComponents::YearMonth.medium()
-    /// )
-    /// .unwrap();
+    /// let fmt =
+    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    ///         &locale!("es-MX").into(),
+    ///         NeoCalendarPeriodComponents::YearMonth.medium(),
+    ///     )
+    ///     .unwrap();
     /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
@@ -347,16 +349,17 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour.medium(),
-    /// )
-    /// .unwrap();
+    /// let fmt =
+    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    ///         &locale!("es-MX").into(),
+    ///         NeoTimeComponents::Hour.medium(),
+    ///     )
+    ///     .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "04 p.m.");
@@ -367,23 +370,24 @@ where
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::HourMinute,
-    ///     ).long(),
-    /// )
-    /// .unwrap();
-    /// let dt =
-    ///     DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
+    /// let fmt =
+    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+    ///         &locale!("es-MX").into(),
+    ///         NeoDateTimeComponents::DateTime(
+    ///             NeoDateComponents::Weekday,
+    ///             NeoTimeComponents::HourMinute,
+    ///         )
+    ///         .long(),
+    ///     )
+    ///     .unwrap();
+    /// let dt = DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
@@ -648,19 +652,16 @@ where
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let locale = locale!("en-u-ca-hebrew");
     ///
-    /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale.into(),
-    ///     YMD::medium(),
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     DateTimeFormatter::try_new(&locale.into(), YMD::medium()).unwrap();
     ///
     /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
@@ -875,15 +876,15 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = DateTimeFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::DayWeekday.medium()
+    ///     NeoDateComponents::DayWeekday.medium(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
@@ -895,15 +896,15 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
     /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = DateTimeFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
-    ///     NeoCalendarPeriodComponents::YearMonth.medium()
+    ///     NeoCalendarPeriodComponents::YearMonth.medium(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
@@ -915,15 +916,15 @@ where
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = DateTimeFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour.medium()
+    ///     NeoTimeComponents::Hour.medium(),
     /// )
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -935,11 +936,11 @@ where
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::neo_skeleton::NeoDateComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
     /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -948,7 +949,8 @@ where
     ///     NeoDateTimeComponents::DateTime(
     ///         NeoDateComponents::Weekday,
     ///         NeoTimeComponents::HourMinute,
-    ///     ).long(),
+    ///     )
+    ///     .long(),
     /// )
     /// .unwrap();
     /// let dt = DateTime::try_new_iso(2024, 1, 10, 16, 20, 0).unwrap();
@@ -1276,8 +1278,8 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     ///
@@ -1348,8 +1350,8 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -1413,10 +1415,10 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::calendar::Date;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1454,10 +1456,10 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::calendar::Date;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1471,19 +1473,16 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// let date = Date::try_new_hebrew(5785, 1, 12).unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     formatter.format(&date),
-    ///     "12 Tishri 5785"
-    /// );
+    /// assert_try_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
     ///
     /// An error occurs if the calendars don't match:
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::calendar::Date;
     /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
     ///
@@ -1494,10 +1493,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// .unwrap()
     /// .try_into_typed_formatter::<Hebrew>();
     ///
-    /// assert!(matches!(
-    ///     result,
-    ///     Err(MismatchedCalendarError { .. })
-    /// ));
+    /// assert!(matches!(result, Err(MismatchedCalendarError { .. })));
     /// ```
     pub fn try_into_typed_formatter<C>(
         self,
