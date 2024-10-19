@@ -16,21 +16,20 @@
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoYearMonthDayMarker;
+//! use icu::datetime::fieldset::YMD;
 //! use icu::datetime::neo_skeleton::Alignment;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let plain_formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short),
+//!     YMD::short(),
 //! )
 //! .unwrap();
 //!
 //! let column_formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!     YMD::short()
 //!         .with_alignment(Alignment::Column),
 //! )
 //! .unwrap();
@@ -58,15 +57,14 @@
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoYearMonthDayMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::fieldset::YMD;
 //! use icu::datetime::neo_skeleton::YearStyle;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!     YMD::short()
 //!         .with_year_style(YearStyle::Auto),
 //! )
 //! .unwrap();
@@ -94,7 +92,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!     YMD::short()
 //!         .with_year_style(YearStyle::Full),
 //! )
 //! .unwrap();
@@ -121,7 +119,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Short)
+//!     YMD::short()
 //!         .with_year_style(YearStyle::Always),
 //! )
 //! .unwrap();
@@ -153,8 +151,7 @@
 //! ```
 //! use icu::calendar::Time;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoHourMinuteMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::fieldset::HM;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
@@ -163,7 +160,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h12").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -173,7 +170,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h23").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -183,7 +180,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h12").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -193,7 +190,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h23").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -207,14 +204,13 @@
 //! ```
 //! use icu::calendar::Time;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoHourMinuteMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::fieldset::HM;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h11").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -224,7 +220,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h24").into(),
-//!     NeoHourMinuteMarker::with_length(NeoSkeletonLength::Short),
+//!     HM::short(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -241,15 +237,14 @@
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoHourMinuteSecondMarker;
+//! use icu::datetime::fieldset::HMS;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US").into(),
-//!     NeoHourMinuteSecondMarker::with_length(NeoSkeletonLength::Short)
+//!     HMS::short()
 //!         .with_fractional_second_digits(FractionalSecondDigits::F2),
 //! )
 //! .unwrap();
@@ -263,14 +258,13 @@
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`DateTimeFormatter`] to format with generic non-location short,
-//! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericMarker`]).
+//! which falls back to the offset when unavailable (see [`V`]).
 //!
 //! ```
 //! use icu::calendar::{Date, Time};
 //! use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
-//! use icu::datetime::fieldset::NeoTimeZoneGenericMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::fieldset::V;
 //! use icu::datetime::DateTimeWriteError;
 //! use icu::locale::locale;
 //! use tinystr::tinystr;
@@ -288,7 +282,7 @@
 //! // Set up the formatter
 //! let mut tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en").into(),
-//!     NeoTimeZoneGenericMarker::with_length(NeoSkeletonLength::Short),
+//!     V::short(),
 //! )
 //! .unwrap();
 //!

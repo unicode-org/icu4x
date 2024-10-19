@@ -556,7 +556,7 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{fieldset::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
@@ -568,11 +568,8 @@ mod tests {
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf = DateTimeFormatter::try_new(
-            &locale.into(),
-            NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
-        )
-        .expect("DateTimeFormat construction succeeds");
+        let dtf = DateTimeFormatter::try_new(&locale.into(), YMD::medium())
+            .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian(1800, 9, 1).expect("Failed to construct Date.");
         let date = date

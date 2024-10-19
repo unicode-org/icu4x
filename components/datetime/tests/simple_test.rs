@@ -4,7 +4,7 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::fieldset::NeoYearMonthDayMarker;
+use icu_datetime::fieldset::YMD;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
     NeoSkeletonLength, NeoTimeComponents,
@@ -210,11 +210,8 @@ fn overlap_patterns() {
 fn hebrew_months() {
     let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
-    let formatter = FixedCalendarDateTimeFormatter::try_new(
-        &locale!("en").into(),
-        NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Medium),
-    )
-    .unwrap();
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMD::medium()).unwrap();
 
     let formatted_datetime = formatter.format(&datetime);
 

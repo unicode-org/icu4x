@@ -9,11 +9,8 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::{DateTime, Gregorian};
-use icu_datetime::{
-    fieldset::NeoYearMonthDayHourMinuteMarker, neo_skeleton::NeoSkeletonLength,
-    FixedCalendarDateTimeFormatter,
-};
+use icu_calendar::DateTime;
+use icu_datetime::{fieldset::YMDHM, FixedCalendarDateTimeFormatter};
 use icu_locale_core::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
@@ -30,11 +27,8 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 ];
 
 fn main() {
-    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-        &locale!("en").into(),
-        NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
-    )
-    .expect("Failed to create FixedCalendarDateTimeFormatter instance.");
+    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMDHM::medium())
+        .expect("Failed to create FixedCalendarDateTimeFormatter instance.");
 
     println!("\n====== Work Log (en) example ============");
 

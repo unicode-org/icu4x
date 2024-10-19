@@ -29,8 +29,7 @@
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
-//! use icu::datetime::fieldset::NeoYearMonthDayHourMinuteMarker;
-//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::fieldset::YMDHM;
 //! use icu::locale::{locale, Locale};
 //! use writeable::assert_try_writeable_eq;
 //!
@@ -38,14 +37,14 @@
 //! let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
 //! let dtf = DateTimeFormatter::try_new(
 //!     &locale.into(),
-//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
+//!     YMDHM::medium(),
 //! )
 //! .expect("should successfully create DateTimeFormatter instance");
 //!
 //! // Or one that selects a calendar at compile time:
 //! let typed_dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 //!     &locale!("en").into(),
-//!     NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::Medium),
+//!     YMDHM::medium(),
 //! )
 //! .expect("should successfully create FixedCalendarDateTimeFormatter instance");
 //!
@@ -117,7 +116,6 @@ pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
-pub use combo::DateTimeCombo;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};

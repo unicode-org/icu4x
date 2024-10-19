@@ -98,7 +98,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, neo_skeleton::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{DateTimeFormatter, neo_skeleton::YMDHMS, NeoSkeletonLength};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -154,7 +154,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDHMS};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -174,7 +174,7 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
-        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium)
+        YMDHMS::medium()
     )
     .expect("blob should contain required markers and `ja` data");
 
@@ -207,7 +207,7 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::YMDHMS, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -227,7 +227,7 @@ fn main() {
     let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
-        NeoAutoDateTimeMarker::with_length(NeoSkeletonLength::Medium),
+        YMDHMS::medium(),
     )
     .expect("blob should contain required data");
 

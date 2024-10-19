@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        fieldset::{NeoHourMinuteMarker, NeoYearMonthDayHourMinuteMarker, NeoYearMonthDayMarker},
+        fieldset::{HM, YMD, YMDHM},
         neo_skeleton::NeoSkeletonLength,
     };
 
@@ -26,9 +26,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct TimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<(), NeoHourMinuteMarker>,
-    );
+    pub struct TimeFormatter(pub icu_datetime::FixedCalendarDateTimeFormatter<(), HM>);
 
     #[diplomat::enum_convert(icu_datetime::neo_skeleton::NeoSkeletonLength, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::neo_skeleton::NeoSkeletonLength, Enum)]
@@ -48,7 +46,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
+            let options = HM::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(TimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -89,10 +87,7 @@ pub mod ffi {
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateFormatter(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            icu_calendar::Gregorian,
-            NeoYearMonthDayMarker,
-        >,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMD>,
     );
 
     impl GregorianDateFormatter {
@@ -105,7 +100,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::from(length));
+            let options = YMD::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -142,10 +137,7 @@ pub mod ffi {
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateTimeFormatter(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            icu_calendar::Gregorian,
-            NeoYearMonthDayHourMinuteMarker,
-        >,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDHM>,
     );
 
     impl GregorianDateTimeFormatter {
@@ -158,8 +150,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options =
-                NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
+            let options = YMDHM::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -186,7 +177,7 @@ pub mod ffi {
     /// An ICU4X DateFormatter object capable of formatting a [`Date`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct DateFormatter(pub icu_datetime::DateTimeFormatter<NeoYearMonthDayMarker>);
+    pub struct DateFormatter(pub icu_datetime::DateTimeFormatter<YMD>);
 
     impl DateFormatter {
         /// Creates a new [`DateFormatter`] from locale data.
@@ -198,7 +189,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = NeoYearMonthDayMarker::with_length(NeoSkeletonLength::from(length));
+            let options = YMD::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(DateFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
@@ -261,9 +252,7 @@ pub mod ffi {
     /// An ICU4X DateFormatter object capable of formatting a [`DateTime`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct DateTimeFormatter(
-        pub icu_datetime::DateTimeFormatter<NeoYearMonthDayHourMinuteMarker>,
-    );
+    pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDHM>);
 
     impl DateTimeFormatter {
         /// Creates a new [`DateTimeFormatter`] from locale data.
@@ -275,8 +264,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options =
-                NeoYearMonthDayHourMinuteMarker::with_length(NeoSkeletonLength::from(length));
+            let options = YMDHM::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
