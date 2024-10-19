@@ -12,13 +12,6 @@ use icu_experimental::transliterate::{
 use icu_locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 
-#[allow(unused_imports)]
-#[allow(clippy::single_component_path_imports)]
-mod provider {
-    use icu_experimental;
-    include!("data/provider.rs");
-}
-
 struct TransliteratorMultiSourceProvider<'a>(
     RuleCollectionProvider<'a, icu_properties::provider::Baked, icu_normalizer::provider::Baked>,
 );
@@ -34,21 +27,16 @@ where
         if TypeId::of::<M>() == TypeId::of::<TransliteratorRulesV1Marker>() {
             let mut silent_req = req;
             silent_req.metadata.silent = true;
-            match DataProvider::<TransliteratorRulesV1Marker>::load(
-                &provider::TestingProvider,
+            if let Some(response) = DataProvider::<TransliteratorRulesV1Marker>::load(
+                &icu_experimental::provider::Baked,
                 silent_req,
-            ) {
-                Ok(response) => {
-                    return Ok(DataResponse {
-                        metadata: response.metadata,
-                        payload: response.payload.dynamic_cast()?,
-                    })
-                }
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => (),
-                Err(e) => return Err(e),
+            )
+            .allow_identifier_not_found()?
+            {
+                return Ok(DataResponse {
+                    metadata: response.metadata,
+                    payload: response.payload.dynamic_cast()?,
+                });
             }
         }
         self.0.load(req)
@@ -80,22 +68,24 @@ fn test_lower_ascii() {
     collection.register_source(
         &"und-t-und-x0-lower".parse().unwrap(),
         "<error>".to_string(),
-        ["Any-Lower"],
+        ["Any-XLower"],
         false,
         true,
     );
     // Now register our new transliterator
     collection.register_source(
         &"und-t-und-x0-lowascii".parse().unwrap(),
-        // "::NFD; ::[:Nonspacing Mark:] Remove; ::Lower; ::NFC; ::Latin-ASCII;".to_string(),
-        "::NFD; ::[:Nonspacing Mark:] Remove; ::Lower; ::NFC; ::Latin-ASCII;".to_string(),
+        // "::NFD; ::[:Nonspacing Mark:] Remove; ::Any-XLower; ::NFC; ::Latin-ASCII;".to_string(),
+        "::NFD; ::[:Nonspacing Mark:] Remove; ::Any-XLower; ::NFC; ::Latin-ASCII;".to_string(),
         [],
         false,
         true,
     );
     let provider = TransliteratorMultiSourceProvider(collection.as_provider());
     let t = Transliterator::try_new_with_override_unstable(
-        "und-t-und-x0-lowascii".parse().unwrap(),
+        &provider,
+        &provider,
+        &"und-t-und-x0-lowascii".parse().unwrap(),
         |locale| {
             if locale.normalizing_eq("und-t-und-x0-lower") {
                 Some(Ok(Box::new(LowercaseTransliterator(CaseMapper::new()))))
@@ -103,7 +93,6 @@ fn test_lower_ascii() {
                 None
             }
         },
-        &provider,
     )
     .unwrap();
     let r = t.transliterate("ÎÑŢÉRÑÅŢÎÖÑÅĻÎŽÅŢÎÖÑ".to_string());

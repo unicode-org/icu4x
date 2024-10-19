@@ -91,7 +91,7 @@ impl Direction {
 ///     true,
 /// );
 ///
-/// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
+/// let t = Transliterator::try_new_unstable(&collection.as_provider(), &collection.as_provider(), &"de-t-de-d0-ascii".parse().unwrap()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
@@ -126,11 +126,22 @@ impl RuleCollection {
         id: &icu_locale_core::Locale,
         aliases: impl IntoIterator<Item = &'a str>,
     ) {
-        self.id_mapping.extend(
-            aliases
-                .into_iter()
-                .map(|alias| (alias.to_ascii_lowercase(), id.clone())),
-        )
+        for alias in aliases {
+            self.id_mapping
+                .entry(alias.to_ascii_lowercase())
+                .and_modify(|prev| {
+                    if prev != id {
+                        icu_provider::log::warn!(
+                            "Duplicate entry for alias for {alias}: {prev}, {id}"
+                        );
+                        // stability
+                        if prev.to_string() > id.to_string() {
+                            *prev = id.clone();
+                        }
+                    }
+                })
+                .or_insert(id.clone());
+        }
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
@@ -256,6 +267,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -417,6 +430,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -604,7 +619,7 @@ mod tests {
     use crate::transliterate::provider as ds;
     use icu_locale_core::locale;
     use std::collections::HashSet;
-    use zerovec::VarZeroVec;
+    use zerovec::{vecs::Index32, VarZeroVec};
 
     fn parse_set(source: &str) -> super::parse::UnicodeSet {
         crate::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
@@ -680,7 +695,7 @@ mod tests {
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
-                id: Cow::Borrowed("x-any-remove"),
+                id: Cow::Borrowed("any-remove"),
             }];
             let expected_id_group3 = vec![
                 ds::SimpleId {
@@ -689,7 +704,7 @@ mod tests {
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfc"),
+                    id: Cow::Borrowed("any-nfc"),
                 },
             ];
 
@@ -726,7 +741,7 @@ mod tests {
                 replacer: Cow::Borrowed("splitsuprulegroups"),
             }];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> = vec![
                 VarZeroVec::from(&expected_rule_group1),
                 VarZeroVec::from(&expected_rule_group2),
                 VarZeroVec::new(), // empty rule group after the last transform rule
@@ -767,8 +782,8 @@ mod tests {
             assert_eq!(
                 forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
-                    Cow::Borrowed("x-any-nfc"),
-                    Cow::Borrowed("x-any-remove"),
+                    Cow::Borrowed("any-nfc"),
+                    Cow::Borrowed("any-remove"),
                     Cow::Borrowed("x-interindic-devanagari"),
                     Cow::Borrowed("x-latin-interindic"),
                 ])
@@ -780,7 +795,7 @@ mod tests {
             let expected_id_group1 = vec![
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfd"),
+                    id: Cow::Borrowed("any-nfd"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -816,7 +831,7 @@ mod tests {
                 },
             ];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> =
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> =
                 vec![VarZeroVec::from(&expected_rule_group1), VarZeroVec::new()];
 
             let expected_compounds = vec![
@@ -873,7 +888,7 @@ mod tests {
                 reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
-                    Cow::Borrowed("x-any-nfd"),
+                    Cow::Borrowed("any-nfd"),
                     Cow::Borrowed("x-any-revfncall"),
                     Cow::Borrowed("x-devanagari-interindic"),
                     Cow::Borrowed("x-interindic-latin"),
