@@ -59,11 +59,6 @@ impl CldrCache {
                         continue;
                     }
 
-                    if transform == "de-ASCII" {
-                        // References an unknown transliterator (Any-ASCII)
-                        continue;
-                    }
-
                     let metadata = self
                         .serde_cache
                         .read_and_parse_json::<transforms::Resource>(&format!(
@@ -85,6 +80,8 @@ impl CldrCache {
                         .replace("ə̃ {ə̃}+ → ə̃;", "")
                         // This does not escape the $, so the = is interpreted as a variable name
                         .replace(r#"$="#, r#"\$="#)
+                        // Any-ASCII does not exist and should probably the Latin-ASCII
+                        .replace("Any-ASCII", "Latin-ASCII")
                         // Incorrect casing, we're strict
                         .replace("script=", "Script=")
                         .replace("ideographic:", "Ideographic:")
