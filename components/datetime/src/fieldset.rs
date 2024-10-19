@@ -37,12 +37,7 @@ macro_rules! yes_to {
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
     ($type:ty, $length:ident) => {
-        concat!(
-            stringify!($type),
-            "::",
-            stringify!($length),
-            "()"
-        )
+        concat!(stringify!($type), "::", stringify!($length), "()")
     };
 }
 
