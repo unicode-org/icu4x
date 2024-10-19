@@ -146,7 +146,7 @@ impl RawNeoOptions {
     }
 }
 
-size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 496);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 456);
 
 /// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -601,7 +601,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldset::YMD>,
     neo_year_month_day_formatter_size,
-    552
+    512
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
