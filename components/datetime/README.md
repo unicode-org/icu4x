@@ -28,25 +28,24 @@ programmer to pick the calendar at compile time.
 
 ```rust
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
 use icu::datetime::fieldset::YMDHM;
+use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
 use icu::locale::{locale, Locale};
 use writeable::assert_try_writeable_eq;
 
 // You can work with a formatter that can select the calendar at runtime:
 let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-let dtf = DateTimeFormatter::try_new(
-    &locale.into(),
-    YMDHM::medium(),
-)
-.expect("should successfully create DateTimeFormatter instance");
+let dtf = DateTimeFormatter::try_new(&locale.into(), YMDHM::medium())
+    .expect("should successfully create DateTimeFormatter instance");
 
 // Or one that selects a calendar at compile time:
 let typed_dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     &locale!("en").into(),
     YMDHM::medium(),
 )
-.expect("should successfully create FixedCalendarDateTimeFormatter instance");
+.expect(
+    "should successfully create FixedCalendarDateTimeFormatter instance",
+);
 
 let typed_date =
     DateTime::try_new_gregorian(2020, 9, 12, 12, 34, 28).unwrap();
