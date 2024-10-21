@@ -1149,7 +1149,7 @@ where
                     try_ccc = Ok(value)
                 }
                 b"Script_Extensions" | b"scx" => try_scx = Ok(value),
-                b"block" => try_block = Ok(value),
+                b"Block" | b"blk" => try_block = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -1465,14 +1465,15 @@ where
 
     fn try_load_block_set(&mut self, name: &str) -> Result<()> {
         // TODO: source these from properties
-        self.single_set.add_range(match name {
-            "ARABIC" => '\u{0600}'..'\u{06FF}',
-            "thaana" => '\u{0780}'..'\u{07BF}',
-            _ => {
-                icu_provider::log::warn!("Skipping :block={name}:");
-                return Ok(());
-            }
-        });
+        self.single_set
+            .add_range(match name.to_ascii_lowercase().as_str() {
+                "arabic" => '\u{0600}'..'\u{06FF}',
+                "thaana" => '\u{0780}'..'\u{07BF}',
+                _ => {
+                    log::warn!("Skipping :block={name}:");
+                    return Err(PEK::Unimplemented.into());
+                }
+            });
         Ok(())
     }
 }

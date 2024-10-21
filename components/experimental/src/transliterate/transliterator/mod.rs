@@ -170,7 +170,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// let mut collection = RuleCollection::default();
 /// collection.register_source(
 ///     &"und-t-und-x0-custom".parse().unwrap(),
-///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
 ///     [],
 ///     false,
 ///     true,

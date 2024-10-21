@@ -82,11 +82,26 @@ impl CldrCache {
                         .replace(r#"$="#, r#"\$="#)
                         // Any-ASCII does not exist and should probably the Latin-ASCII
                         .replace("Any-ASCII", "Latin-ASCII")
-                        // Incorrect casing, we're strict
+                        // Non-canonical property names
+                        .replace("block=", "Block=")
                         .replace("script=", "Script=")
-                        .replace("ideographic:", "Ideographic:")
+                        .replace("case-ignorable:", "Case_Ignorable:")
                         .replace("cased:", "Cased:")
-                        .replace("case-ignorable:", "Case_Ignorable:");
+                        .replace("ideographic:", "Ideographic:")
+                        // Non-canonical property values
+                        .replace("ccc=above", "ccc=Above")
+                        .replace("ccc=below", "ccc=Below")
+                        .replace("UppercaseLetter:", "Uppercase_Letter:")
+                        .replace("nonspacing mark:", "Nonspacing_Mark:")
+                        .replace("letter:", "Letter:")
+                        .replace("ARABIC:", "Arabic:")
+                        .replace("arabic:", "Arabic:")
+                        .replace("bengali:", "Bengali:")
+                        .replace("greek:", "Greek:")
+                        .replace("han:", "Han:")
+                        .replace("latin:", "Latin:")
+                        .replace("thaana:", "Thaana:")
+                        .replace("thai:", "Thai:");
 
                     if matches!(
                         metadata.direction,
