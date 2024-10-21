@@ -5,9 +5,9 @@
 use core::fmt;
 use core::str::FromStr;
 
-use crate::FixedDecimal;
 use crate::FixedInteger;
 use crate::ParseError;
+use crate::UnsignedFixedDecimal;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in scientific notation, such as 1.729×10³.
@@ -16,12 +16,12 @@ use crate::ParseError;
 /// and an optional sign for both the significand and the exponent.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ScientificDecimal {
-    significand: FixedDecimal,
+    significand: UnsignedFixedDecimal,
     exponent: FixedInteger,
 }
 
 impl ScientificDecimal {
-    pub fn from(significand: FixedDecimal, exponent: FixedInteger) -> Self {
+    pub fn from(significand: UnsignedFixedDecimal, exponent: FixedInteger) -> Self {
         ScientificDecimal {
             significand,
             exponent,
@@ -90,7 +90,7 @@ impl ScientificDecimal {
             return Err(ParseError::Syntax);
         }
         Ok(ScientificDecimal::from(
-            FixedDecimal::try_from_utf8(significand)?,
+            UnsignedFixedDecimal::try_from_utf8(significand)?,
             FixedInteger::try_from_utf8(exponent)?,
         ))
     }

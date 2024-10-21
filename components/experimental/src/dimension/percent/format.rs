@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{FixedDecimal, Sign};
+use fixed_decimal::{Sign, UnsignedFixedDecimal};
 use icu_decimal::FixedDecimalFormatter;
 
 use crate::alloc::borrow::ToOwned;
@@ -26,7 +26,7 @@ impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
 }
 
 pub struct FormattedPercent<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l UnsignedFixedDecimal,
     pub(crate) essential: &'l PercentEssentialsV1<'l>,
     pub(crate) options: &'l PercentFormatterOptions,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
