@@ -11,7 +11,7 @@ export default {
 					segmenter = lib.WordSegmenter.createAuto(provider);
 					break;
 				case "LSTM":
-					segmenter = lib.WordSegmenter.createLSTM(provider);
+					segmenter = lib.WordSegmenter.createLstm(provider);
 					break;
 				case "Dictionary":
 					segmenter = lib.WordSegmenter.createDictionary(provider);
