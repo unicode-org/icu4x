@@ -21,79 +21,79 @@ macro_rules! __impl_hebrew_year_names_v1_marker {
                 values: &[
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xD8\xB5") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD8\xB5") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xD8\xAA\xD9\x82\xD9\x88\xDB\x8C\xD9\x85 \xD8\xB9\xD8\xA8\xD8\xB1\xDB\x8C") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD8\xAA\xD9\x82\xD9\x88\xDB\x8C\xD9\x85 \xD8\xB9\xD8\xA8\xD8\xB1\xDB\x8C") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x8E") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xF0\x9E\xA4\x80\xF0\x9E\xA4\x8E") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0A. M.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0A. M.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0AM") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0AM") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0T\xC3\x89") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0T\xC3\x89") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0A.M.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0A.M.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0a.m.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0a.m.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE0\xB8\xA2.\xE0\xB8\xA8.") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xB8\xA2.\xE0\xB8\xA8.") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE5\x89\xB5\xE4\xB8\x96\xE7\xB4\x80\xE5\x85\x83") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE5\x89\xB5\xE4\xB8\x96\xE7\xB4\x80\xE5\x85\x83") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE5\x88\x9B\xE4\xB8\x96\xE7\xBA\xAA\xE5\x85\x83") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE5\x88\x9B\xE4\xB8\x96\xE7\xBA\xAA\xE5\x85\x83") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE5\xB8\x8C\xE4\xBC\xAF\xE6\x9D\xA5\xE5\x8E\x86") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE5\xB8\x8C\xE4\xBC\xAF\xE6\x9D\xA5\xE5\x8E\x86") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0Anno Mundi") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Anno Mundi") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xD7\x9C\xD7\x91\xD7\xA8\xD7\x99\xD7\x90\xD7\xAA \xD7\x94\xD7\xA2\xD7\x95\xD7\x9C\xD7\x9D") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD7\x9C\xD7\x91\xD7\xA8\xD7\x99\xD7\x90\xD7\xAA \xD7\x94\xD7\xA2\xD7\x95\xD7\x9C\xD7\x9D") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xEC\x9C\xA0\xEB\x8C\x80\xEB\xA0\xA5") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xEC\x9C\xA0\xEB\x8C\x80\xEB\xA0\xA5") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0kop\xC5\xA1 pasaules rad\xC4\xAB\xC5\xA1anas") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0kop\xC5\xA1 pasaules rad\xC4\xAB\xC5\xA1anas") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xE0\xA4\x8D\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\xA8\xE0\xA5\x8B \xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x82\xE0\xA4\xA1\xE0\xA5\x80") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\x8D\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\xA8\xE0\xA5\x8B \xE0\xA4\xAE\xE0\xA5\x81\xE0\xA4\x82\xE0\xA4\xA1\xE0\xA5\x80") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\xD0\xBE\xD1\x82 \xD1\x81\xD0\xBE\xD1\x82\xD0\xB2\xD0\xBE\xD1\x80\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xBC\xD0\xB8\xD1\x80\xD0\xB0") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD0\xBE\xD1\x82 \xD1\x81\xD0\xBE\xD1\x82\xD0\xB2\xD0\xBE\xD1\x80\xD0\xB5\xD0\xBD\xD0\xB8\xD1\x8F \xD0\xBC\xD0\xB8\xD1\x80\xD0\xB0") })
                     }),
                     icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0annu de su mundu") })
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0hebrew") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0annu de su mundu") })
                     }),
                 ],
             };
