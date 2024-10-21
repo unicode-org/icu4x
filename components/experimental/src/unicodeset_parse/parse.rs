@@ -1470,6 +1470,7 @@ where
                 "arabic" => '\u{0600}'..'\u{06FF}',
                 "thaana" => '\u{0780}'..'\u{07BF}',
                 _ => {
+                    #[cfg(feature = "log")]
                     log::warn!("Skipping :block={name}:");
                     return Err(PEK::Unimplemented.into());
                 }
