@@ -124,58 +124,46 @@ lazy_static::lazy_static! {
         // We have chosen to not do individual calendars (except Iso) over FFI
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
-        "icu::calendar::buddhist",
-        "icu::calendar::chinese",
-        "icu::calendar::coptic",
-        "icu::calendar::dangi",
-        "icu::calendar::dangi",
-        "icu::calendar::ethiopian",
-        "icu::calendar::hebrew",
-        "icu::calendar::indian",
-        "icu::calendar::islamic",
-        "icu::calendar::japanese",
-        "icu::calendar::julian",
-        "icu::calendar::persian",
-        "icu::calendar::roc",
+        "icu::calendar::cal",
         "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::try_new_buddhist_date",
-        "icu::calendar::Date::try_new_chinese_date_with_calendar",
-        "icu::calendar::Date::try_new_coptic_date",
-        "icu::calendar::Date::try_new_dangi_date",
-        "icu::calendar::Date::try_new_dangi_date_with_calendar",
-        "icu::calendar::Date::try_new_ethiopian_date",
-        "icu::calendar::Date::try_new_gregorian_date",
-        "icu::calendar::Date::try_new_hebrew_date",
-        "icu::calendar::Date::try_new_hebrew_date_with_calendar",
-        "icu::calendar::Date::try_new_indian_date",
-        "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
-        "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
-        "icu::calendar::Date::try_new_japanese_date",
-        "icu::calendar::Date::try_new_japanese_extended_date",
-        "icu::calendar::Date::try_new_julian_date",
-        "icu::calendar::Date::try_new_observational_islamic_date",
-        "icu::calendar::Date::try_new_persian_date",
-        "icu::calendar::Date::try_new_roc_date",
-        "icu::calendar::Date::try_new_ummalqura_date",
-        "icu::calendar::DateTime::try_new_buddhist_datetime",
-        "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_coptic_datetime",
-        "icu::calendar::DateTime::try_new_dangi_datetime",
-        "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_ethiopian_datetime",
-        "icu::calendar::DateTime::try_new_gregorian_datetime",
-        "icu::calendar::DateTime::try_new_hebrew_datetime",
-        "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_indian_datetime",
-        "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_datetime",
-        "icu::calendar::DateTime::try_new_japanese_extended_datetime",
-        "icu::calendar::DateTime::try_new_julian_datetime",
-        "icu::calendar::DateTime::try_new_observational_islamic_datetime",
-        "icu::calendar::DateTime::try_new_persian_datetime",
-        "icu::calendar::DateTime::try_new_roc_datetime",
-        "icu::calendar::DateTime::try_new_ummalqura_datetime",
+        "icu::calendar::Date::try_new_buddhist",
+        "icu::calendar::Date::try_new_chinese_with_calendar",
+        "icu::calendar::Date::try_new_coptic",
+        "icu::calendar::Date::try_new_dangi",
+        "icu::calendar::Date::try_new_dangi_with_calendar",
+        "icu::calendar::Date::try_new_ethiopian",
+        "icu::calendar::Date::try_new_gregorian",
+        "icu::calendar::Date::try_new_hebrew",
+        "icu::calendar::Date::try_new_hebrew_with_calendar",
+        "icu::calendar::Date::try_new_indian",
+        "icu::calendar::Date::try_new_islamic_civil_with_calendar",
+        "icu::calendar::Date::try_new_islamic_tabular_with_calendar",
+        "icu::calendar::Date::try_new_japanese_with_calendar",
+        "icu::calendar::Date::try_new_japanese_extended_with_calendar",
+        "icu::calendar::Date::try_new_julian",
+        "icu::calendar::Date::try_new_observational_islamic_with_calendar",
+        "icu::calendar::Date::try_new_persian",
+        "icu::calendar::Date::try_new_roc",
+        "icu::calendar::Date::try_new_ummalqura_with_calendar",
+        "icu::calendar::DateTime::try_new_buddhist",
+        "icu::calendar::DateTime::try_new_chinese_with_calendar",
+        "icu::calendar::DateTime::try_new_coptic",
+        "icu::calendar::DateTime::try_new_dangi",
+        "icu::calendar::DateTime::try_new_dangi_with_calendar",
+        "icu::calendar::DateTime::try_new_ethiopian",
+        "icu::calendar::DateTime::try_new_gregorian",
+        "icu::calendar::DateTime::try_new_hebrew",
+        "icu::calendar::DateTime::try_new_hebrew_with_calendar",
+        "icu::calendar::DateTime::try_new_indian",
+        "icu::calendar::DateTime::try_new_islamic_civil_with_calendar",
+        "icu::calendar::DateTime::try_new_islamic_tabular_with_calendar",
+        "icu::calendar::DateTime::try_new_japanese_with_calendar",
+        "icu::calendar::DateTime::try_new_japanese_extended_with_calendar",
+        "icu::calendar::DateTime::try_new_julian",
+        "icu::calendar::DateTime::try_new_observational_islamic_with_calendar",
+        "icu::calendar::DateTime::try_new_persian",
+        "icu::calendar::DateTime::try_new_roc",
+        "icu::calendar::DateTime::try_new_ummalqura_with_calendar",
 
         // Calendar structs mostly for internal use but which might expose
         // useful information to clients.
@@ -198,18 +186,15 @@ lazy_static::lazy_static! {
         //   can be destructively passed to these constructors via &mut self. All future
         //   specialized constructors show up on this type instead.
         "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+        "icu::datetime::FixedCalendarDateTimeFormatter::try_from_date_and_time",
 
         // experimental
         "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::TypedDateTimeFormatter::resolve_components",
+        "icu::datetime::FixedCalendarDateTimeFormatter::resolve_components",
 
         // Experimental API mostly used for provider, components bags, and patterns,
         // may in the future be exposed for options
         "icu::datetime::fields",
-
-        // Datetime scaffolding
-        "icu::datetime::scaffold",
 
         // experimental
         "icu::datetime::neo",
@@ -224,7 +209,7 @@ lazy_static::lazy_static! {
         "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::FixedCalendarDateTimeFormatter::try_new_experimental",
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
         "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
@@ -351,6 +336,10 @@ lazy_static::lazy_static! {
         // Datagen
         "icu::markers_for_bin",
 
+        // Scaffolding modules
+        "icu::datetime::scaffold",
+        "icu::timezone::scaffold",
+
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
@@ -417,11 +406,11 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::from_raw",
         "icu::calendar::Date::inner",
         "icu::calendar::Iso",
-        "icu::calendar::iso::Iso",
-        "icu::calendar::iso::IsoDateInner",
+        "icu::calendar::cal::Iso",
+        "icu::calendar::cal::IsoDateInner",
         "icu::calendar::Gregorian",
-        "icu::calendar::gregorian::Gregorian",
-        "icu::calendar::gregorian::GregorianDateInner",
+        "icu::calendar::cal::Gregorian",
+        "icu::calendar::cal::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
 
         // Options bags which are expanded in FFI to regular functions

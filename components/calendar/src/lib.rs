@@ -11,9 +11,8 @@
 //! [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 //! can represent dates for arbitrary calendars.
 //!
-//! The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
-//! Gregorian calendars respectively. Further calendars can be found in modules like
-//! [`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopian`].
+//! The [`Iso`] and [`Gregorian`] types are implementations for the ISO and
+//! Gregorian calendars respectively. Further calendars can be found in the [`cal`] module.
 //!
 //! Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 //!
@@ -31,7 +30,7 @@
 //! use icu::calendar::{types::IsoWeekday, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
+//! let mut date_iso = Date::try_new_iso(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
@@ -47,10 +46,11 @@
 //! Example of converting an ISO date across Indian and Buddhist calendars.
 //!
 //! ```rust
-//! use icu::calendar::{buddhist::Buddhist, indian::Indian, Date};
+//! use icu::calendar::cal::{Buddhist, Indian};
+//! use icu::calendar::Date;
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
+//! let mut date_iso = Date::try_new_iso(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.year().era_year_or_extended(), 1992);
@@ -79,7 +79,7 @@
 //! use icu::calendar::{types::IsoWeekday, DateTime, Time};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
-//! let mut datetime_iso = DateTime::try_new_iso_datetime(1992, 9, 2, 8, 59, 0)
+//! let mut datetime_iso = DateTime::try_new_iso(1992, 9, 2, 8, 59, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
@@ -115,29 +115,73 @@ extern crate alloc;
 mod date;
 mod datetime;
 
+/// Types for individual calendars
+pub mod cal {
+    pub use crate::buddhist::Buddhist;
+    pub use crate::chinese::Chinese;
+    pub use crate::coptic::Coptic;
+    pub use crate::dangi::Dangi;
+    pub use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
+    pub use crate::gregorian::Gregorian;
+    pub use crate::hebrew::Hebrew;
+    pub use crate::indian::Indian;
+    pub use crate::islamic::{
+        IslamicCivil, IslamicObservational, IslamicTabular, IslamicUmmAlQura,
+    };
+    pub use crate::iso::Iso;
+    pub use crate::japanese::{Japanese, JapaneseExtended};
+    pub use crate::julian::Julian;
+    pub use crate::persian::Persian;
+    pub use crate::roc::Roc;
+
+    pub use crate::any_calendar::AnyCalendar;
+
+    /// Scaffolding types: You shouldn't need to use these, they need to be public for the `Calendar` trait impl to work.
+    pub mod scaffold {
+        pub use crate::chinese::ChineseDateInner;
+        pub use crate::coptic::CopticDateInner;
+        pub use crate::dangi::DangiDateInner;
+        pub use crate::ethiopian::EthiopianDateInner;
+        pub use crate::gregorian::GregorianDateInner;
+        pub use crate::hebrew::HebrewDateInner;
+        pub use crate::indian::Indian;
+        pub use crate::islamic::{
+            IslamicCivilDateInner, IslamicDateInner, IslamicTabularDateInner,
+            IslamicUmmAlQuraDateInner,
+        };
+        pub use crate::iso::Iso;
+        pub use crate::japanese::Japanese;
+        pub use crate::julian::JulianDateInner;
+        pub use crate::persian::PersianDateInner;
+        pub use crate::roc::RocDateInner;
+
+        pub use crate::any_calendar::AnyDateInner;
+    }
+}
+
 pub mod any_calendar;
-pub mod buddhist;
+mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
-pub mod chinese;
+mod chinese;
 mod chinese_based;
-pub mod coptic;
-pub mod dangi;
+mod coptic;
+mod dangi;
 mod duration;
 mod error;
-pub mod ethiopian;
-pub mod gregorian;
-pub mod hebrew;
-pub mod indian;
-pub mod islamic;
-pub mod iso;
+mod ethiopian;
+mod gregorian;
+mod hebrew;
+mod indian;
+mod islamic;
+mod iso;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
-pub mod japanese;
-pub mod julian;
-pub mod persian;
+mod japanese;
+mod julian;
+mod persian;
 pub mod provider;
-pub mod roc;
+mod roc;
 #[cfg(test)]
 mod tests;
 pub mod types;

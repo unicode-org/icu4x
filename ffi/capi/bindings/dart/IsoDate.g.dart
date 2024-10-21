@@ -26,7 +26,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Creates a new [`IsoDate`] from the specified date and time.
   ///
-  /// See the [Rust documentation for `try_new_iso_date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date) for more information.
+  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory IsoDate(int year, int month, int day) {
@@ -205,7 +205,7 @@ external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_to_any_mv1(ffi.Pointer<ffi.Opaqu
 external int _icu4x_IsoDate_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
@@ -215,7 +215,7 @@ external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 external int _icu4x_IsoDate_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 

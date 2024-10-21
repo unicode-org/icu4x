@@ -57,11 +57,11 @@ namespace capi {
     
     uint16_t icu4x_IsoDateTime_day_of_year_mv1(const icu4x::capi::IsoDateTime* self);
     
-    uint32_t icu4x_IsoDateTime_day_of_month_mv1(const icu4x::capi::IsoDateTime* self);
+    uint8_t icu4x_IsoDateTime_day_of_month_mv1(const icu4x::capi::IsoDateTime* self);
     
     icu4x::capi::IsoWeekday icu4x_IsoDateTime_day_of_week_mv1(const icu4x::capi::IsoDateTime* self);
     
-    uint32_t icu4x_IsoDateTime_week_of_month_mv1(const icu4x::capi::IsoDateTime* self, icu4x::capi::IsoWeekday first_weekday);
+    uint8_t icu4x_IsoDateTime_week_of_month_mv1(const icu4x::capi::IsoDateTime* self, icu4x::capi::IsoWeekday first_weekday);
     
     icu4x::capi::WeekOf icu4x_IsoDateTime_week_of_year_mv1(const icu4x::capi::IsoDateTime* self, const icu4x::capi::WeekCalculator* calculator);
     
@@ -167,7 +167,7 @@ inline uint16_t icu4x::IsoDateTime::day_of_year() const {
   return result;
 }
 
-inline uint32_t icu4x::IsoDateTime::day_of_month() const {
+inline uint8_t icu4x::IsoDateTime::day_of_month() const {
   auto result = icu4x::capi::icu4x_IsoDateTime_day_of_month_mv1(this->AsFFI());
   return result;
 }
@@ -177,7 +177,7 @@ inline icu4x::IsoWeekday icu4x::IsoDateTime::day_of_week() const {
   return icu4x::IsoWeekday::FromFFI(result);
 }
 
-inline uint32_t icu4x::IsoDateTime::week_of_month(icu4x::IsoWeekday first_weekday) const {
+inline uint8_t icu4x::IsoDateTime::week_of_month(icu4x::IsoWeekday first_weekday) const {
   auto result = icu4x::capi::icu4x_IsoDateTime_week_of_month_mv1(this->AsFFI(),
     first_weekday.AsFFI());
   return result;

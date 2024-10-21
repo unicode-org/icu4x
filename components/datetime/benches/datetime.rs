@@ -5,11 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
-use icu_calendar::{DateTime, Gregorian};
+use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -23,7 +23,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -35,7 +35,9 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: TimeZoneInfo::utc(),
+                                    zone: TimeZoneInfo::utc()
+                                        .at_time((Date::unix_epoch(), Time::midnight()))
+                                        .with_zone_variant(ZoneVariant::standard()),
                                 }
                             }
                         })
@@ -45,11 +47,11 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_skeleton(
+                            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
                                 skeleton,
                             )
-                            .expect("Failed to create TypedNeoFormatter.")
+                            .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };
 
                         let mut result = String::new();

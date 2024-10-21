@@ -300,7 +300,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
-        types::DayOfMonth(self.day.into())
+        types::DayOfMonth(self.day)
     }
 
     /// The [`types::MonthInfo`] for the current month (with month code) for a solar calendar

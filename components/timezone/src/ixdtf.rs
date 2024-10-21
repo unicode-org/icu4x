@@ -3,14 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    CustomZonedDateTime, InvalidOffsetError, TimeZoneIdMapper, TimeZoneInfo, UtcOffset,
-    ZoneOffsetCalculator, ZoneVariant,
+    time_zone::models, CustomZonedDateTime, InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper,
+    TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
 };
 use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
 use ixdtf::{
     parsers::{
-        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord, UTCOffsetRecord},
+        records::{
+            DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
+            UTCOffsetRecord,
+        },
         IxdtfParser,
     },
     ParseError as IxdtfParseError,
@@ -26,16 +29,16 @@ pub enum ParseError {
     Range(RangeError),
     /// Parsed date and time records were not a valid ISO date.
     Date(DateError),
-    /// There was no time zone offset or IANA identifier found.
-    MissingTimeZone,
     /// There were missing fields required to parse component.
     MissingFields,
     /// There were two offsets provided that were not consistent with each other.
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
-    /// There was an invalid IANA identifier provided.
-    InvalidIanaIdentifier,
+    /// The set of time zone fields was not expected for the given type.
+    /// For example, if a named time zone was present with offset-only parsing,
+    /// or an offset was present with named-time-zone-only parsing.
+    MismatchedTimeZoneFields,
     /// An unknown calendar was provided.
     UnknownCalendar,
 }
@@ -76,117 +79,267 @@ impl UtcOffset {
     }
 }
 
-// ==== TimeZoneInfo methods and traits ====
+struct Intermediate<'a> {
+    offset: Option<&'a UTCOffsetRecord>,
+    iana_identifier: Option<&'a [u8]>,
+    date: &'a DateRecord,
+    time: &'a TimeRecord,
+}
 
-impl TimeZoneInfo {
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
-        match ixdtf_record {
+impl<'a> Intermediate<'a> {
+    fn try_from_ixdtf_record(ixdtf_record: &'a IxdtfParseRecord) -> Result<Self, ParseError> {
+        let (offset, iana_identifier) = match ixdtf_record {
+            // empty
+            // -0800
             IxdtfParseRecord {
-                offset: Some(offset),
-                tz: None,
-                ..
-            } => Self::try_from_utc_offset_record(offset),
+                offset, tz: None, ..
+            } => (offset.as_ref(), None),
+            // [-0800]
             IxdtfParseRecord {
                 offset: None,
-                tz: Some(time_zone_annotation),
-                date,
-                time,
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Offset(offset),
+                        ..
+                    }),
                 ..
-            } => Self::try_from_time_zone_record(&time_zone_annotation.tz, None, date, time),
+            } => (Some(offset), None),
+            // -0800[-0800]
             IxdtfParseRecord {
                 offset: Some(offset),
-                tz: Some(time_zone_annotation),
-                date,
-                time,
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Offset(offset1),
+                        ..
+                    }),
                 ..
             } => {
-                let custom_from_offset = Self::try_from_utc_offset_record(offset)?;
-                Self::try_from_time_zone_record(
-                    &time_zone_annotation.tz,
-                    custom_from_offset.offset,
-                    date,
-                    time,
-                )
+                if offset != offset1 {
+                    return Err(ParseError::InconsistentTimeZoneOffsets);
+                }
+                (Some(offset), None)
             }
-            _ => Err(ParseError::MissingTimeZone),
-        }
-    }
-
-    fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
+            // [America/Los_Angeles]
+            // -0800[America/Los_Angeles]
+            IxdtfParseRecord {
+                offset,
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Name(iana_identifier),
+                        ..
+                    }),
+                ..
+            } => (offset.as_ref(), Some(*iana_identifier)),
+            // non_exhaustive match: maybe something like [u-tz=uslax] in the future
+            IxdtfParseRecord {
+                offset,
+                tz: Some(TimeZoneAnnotation { tz, .. }),
+                ..
+            } => {
+                debug_assert!(false, "unexpected TimeZoneRecord: {tz:?}");
+                (offset.as_ref(), None)
+            }
+        };
+        let IxdtfParseRecord {
+            date: Some(date),
+            time: Some(time),
+            ..
+        } = ixdtf_record
+        else {
+            // Date or time was missing
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
         Ok(Self {
-            time_zone_id: crate::TimeZoneBcp47Id::unknown(),
-            offset: Some(UtcOffset::try_from_utc_offset_record(record)?),
-            zone_variant: Some(ZoneVariant::standard()),
-            local_time: Some((Date::unix_epoch(), Time::midnight())),
+            offset,
+            iana_identifier,
+            date,
+            time,
         })
     }
 
-    fn try_from_time_zone_record(
-        record: &TimeZoneRecord<'_>,
-        offset: Option<UtcOffset>,
-        date: &Option<DateRecord>,
-        time: &Option<TimeRecord>,
-    ) -> Result<Self, ParseError> {
-        match record {
-            TimeZoneRecord::Name(iana_identifier) => {
+    fn offset_only(self) -> Result<UtcOffset, ParseError> {
+        let Some(offset) = self.offset else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        let None = self.iana_identifier else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        UtcOffset::try_from_utc_offset_record(offset)
+    }
+
+    fn location_only(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+        let None = self.offset else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        let Some(iana_identifier) = self.iana_identifier else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        let mapper = TimeZoneIdMapper::new();
+        let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
+        let iso = DateTime::<Iso>::try_new_iso(
+            self.date.year,
+            self.date.month,
+            self.date.day,
+            self.time.hour,
+            self.time.minute,
+            self.time.second,
+        )?;
+        Ok(time_zone_id.with_offset(None).at_time((iso.date, iso.time)))
+    }
+
+    fn loose(self) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
+        let offset = match self.offset {
+            Some(offset) => Some(UtcOffset::try_from_utc_offset_record(offset)?),
+            None => None,
+        };
+        let time_zone_id = match self.iana_identifier {
+            Some(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
-                let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
+                mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier)
+            }
+            None => TimeZoneBcp47Id::unknown(),
+        };
+        let iso = DateTime::<Iso>::try_new_iso(
+            self.date.year,
+            self.date.month,
+            self.date.day,
+            self.time.hour,
+            self.time.minute,
+            self.time.second,
+        )?;
+        Ok(time_zone_id
+            .with_offset(offset)
+            .at_time((iso.date, iso.time)))
+    }
 
-                let mut zone_variant = None;
-                let mut local_time = None;
-                if let (Some(date), Some(time)) = (date, time) {
-                    let iso = DateTime::<Iso>::try_new_iso_datetime(
-                        date.year,
-                        date.month,
-                        date.day,
-                        time.hour,
-                        time.minute,
-                        time.second,
-                    )?;
-                    if let Some(offset) = offset {
-                        zone_variant = Some(
-                            if let Some((std_offset, dst_offset)) = ZoneOffsetCalculator::new()
-                                .compute_offsets_from_time_zone(time_zone_id, &iso)
-                            {
-                                if offset == std_offset {
-                                    ZoneVariant::standard()
-                                } else if Some(offset) == dst_offset {
-                                    ZoneVariant::daylight()
-                                } else {
-                                    return Err(ParseError::InvalidOffsetError);
-                                }
-                            } else {
-                                debug_assert_eq!(time_zone_id.0.as_str(), "unk");
-                                ZoneVariant::standard()
-                            },
-                        );
+    fn full(self) -> Result<TimeZoneInfo<models::Full>, ParseError> {
+        let Some(offset) = self.offset else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        let Some(iana_identifier) = self.iana_identifier else {
+            return Err(ParseError::MismatchedTimeZoneFields);
+        };
+        let mapper = TimeZoneIdMapper::new();
+        let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
+        let iso = DateTime::<Iso>::try_new_iso(
+            self.date.year,
+            self.date.month,
+            self.date.day,
+            self.time.hour,
+            self.time.minute,
+            self.time.second,
+        )?;
+        let offset = UtcOffset::try_from_utc_offset_record(offset)?;
+        let zone_offset_calculator = ZoneOffsetCalculator::new();
+        let zone_variant =
+            match zone_offset_calculator.compute_offsets_from_time_zone(time_zone_id, &iso) {
+                Some((std_offset, dst_offset)) => {
+                    if offset == std_offset {
+                        ZoneVariant::standard()
+                    } else if Some(offset) == dst_offset {
+                        ZoneVariant::daylight()
+                    } else {
+                        return Err(ParseError::InvalidOffsetError);
                     }
-                    local_time = Some((iso.date, iso.time));
-                };
-
-                Ok(Self {
-                    time_zone_id,
-                    offset,
-                    zone_variant,
-                    local_time,
-                })
-            }
-            TimeZoneRecord::Offset(offset_record) => {
-                let tz = Self::try_from_utc_offset_record(offset_record)?;
-                if offset.is_some() && tz.offset != offset {
-                    return Err(ParseError::InconsistentTimeZoneOffsets);
                 }
-                Ok(tz)
-            }
-            _ => Err(ParseError::MissingTimeZone),
-        }
+                None => {
+                    // time_zone_id not found; Etc/Unknown?
+                    debug_assert_eq!(time_zone_id.0.as_str(), "unk");
+                    ZoneVariant::standard()
+                }
+            };
+        Ok(offset
+            .with_id(time_zone_id)
+            .at_time((iso.date, iso.time))
+            .with_zone_variant(zone_variant))
     }
 }
 
+// ==== TimeZoneInfo methods and traits ====
+
 // ==== CustomZonedDateTime methods and traits ====
 
-impl CustomZonedDateTime<Iso> {
+impl CustomZonedDateTime<Iso, UtcOffset> {
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// This function is "strict": the string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_offset_only_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_offset_only_iso_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "strict": the string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_offset_only_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.offset_only()?;
+        Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// This function is "strict": the string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_location_only_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_location_only_iso_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "strict": the string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_location_only_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.location_only()?;
+        Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<Iso, TimeZoneInfo<models::AtTime>> {
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// This function is "loose": the string can have an offset, and named time zone, both, or
+    /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
+    ///
+    /// The zone variant is _not_ calculated with this function. If you need it, use
+    /// [`CustomZonedDateTime::try_iso_from_str`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_loose_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_loose_iso_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "loose": the string can have an offset, and named time zone, both, or
+    /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
+    ///
+    /// The zone variant is _not_ calculated with this function. If you need it, use
+    /// [`CustomZonedDateTime::try_iso_from_utf8`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_loose_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.loose()?;
+        Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<Iso, TimeZoneInfo<models::Full>> {
+    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// The string should have both an offset and a named time zone.
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
@@ -209,8 +362,8 @@ impl CustomZonedDateTime<Iso> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(zoneddatetime.zone.local_time.is_some());
+    /// assert_eq!(zoneddatetime.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = zoneddatetime.zone.local_time;
     /// ```
     ///
     /// For more information on date, time, and time zone parsing,
@@ -221,17 +374,26 @@ impl CustomZonedDateTime<Iso> {
 
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
     ///
+    /// The string should have both an offset and a named time zone.
+    ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_iso_from_str`].
     pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        Self::try_iso_from_ixdtf_record(&ixdtf_record)
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.full()?;
+        Self::try_iso_from_ixdtf_record(&ixdtf_record, time_zone)
     }
+}
 
-    fn try_iso_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+impl<Z> CustomZonedDateTime<Iso, Z> {
+    fn try_iso_from_ixdtf_record(
+        ixdtf_record: &IxdtfParseRecord,
+        zone: Z,
+    ) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Date::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
+        let date = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
         let time = Time::try_new(
             time_record.hour,
@@ -239,17 +401,12 @@ impl CustomZonedDateTime<Iso> {
             time_record.second,
             time_record.nanosecond,
         )?;
-        let time_zone = TimeZoneInfo::try_from_ixdtf_record(ixdtf_record)?;
 
-        Ok(Self {
-            date,
-            time,
-            zone: time_zone,
-        })
+        Ok(Self { date, time, zone })
     }
 }
 
-impl FromStr for CustomZonedDateTime<Iso> {
+impl FromStr for CustomZonedDateTime<Iso, TimeZoneInfo<models::Full>> {
     type Err = ParseError;
 
     #[inline]
@@ -258,8 +415,87 @@ impl FromStr for CustomZonedDateTime<Iso> {
     }
 }
 
-impl CustomZonedDateTime<AnyCalendar> {
+impl CustomZonedDateTime<AnyCalendar, UtcOffset> {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// This function is "strict": the string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_offset_only_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_offset_only_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "strict": the string should have only an offset and no named time zone.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_offset_only_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.offset_only()?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// This function is "strict": the string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_location_only_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_location_only_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "strict": the string should have only a named time zone and no offset.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_location_only_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.location_only()?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::AtTime>> {
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// This function is "loose": the string can have an offset, and named time zone, both, or
+    /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
+    ///
+    /// The zone variant is _not_ calculated with this function. If you need it, use
+    /// [`CustomZonedDateTime::try_from_str`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_loose_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_loose_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
+    ///
+    /// This function is "loose": the string can have an offset, and named time zone, both, or
+    /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
+    ///
+    /// The zone variant is _not_ calculated with this function. If you need it, use
+    /// [`CustomZonedDateTime::try_from_utf8`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    pub fn try_loose_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.loose()?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
+    }
+}
+
+impl CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// The string should have both an offset and a named time zone.
     ///
     /// For more information on IXDTF, see the [`ixdtf`] crate.
     ///
@@ -291,8 +527,8 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(zoneddatetime.zone.local_time.is_some());
+    /// assert_eq!(zoneddatetime.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = zoneddatetime.zone.local_time;
     /// ```
     ///
     /// An IXDTF string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
@@ -308,9 +544,9 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// ```
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset};
     ///
-    /// let tz_from_offset = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00").unwrap();
+    /// let tz_from_offset = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00").unwrap();
     ///
-    /// assert_eq!(tz_from_offset.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(tz_from_offset.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     /// ```
     ///
     /// ## Time Zone Annotations
@@ -321,15 +557,15 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// use icu_timezone::{TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use tinystr::tinystr;
     ///
-    /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
-    /// let tz_from_iana_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
+    /// let tz_from_offset_annotation = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
+    /// let tz_from_iana_annotation = CustomZonedDateTime::try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
     ///
-    /// assert_eq!(tz_from_offset_annotation.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(tz_from_offset_annotation.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     ///
     /// assert_eq!(tz_from_iana_annotation.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(tz_from_iana_annotation.zone.offset, None);
-    /// assert_eq!(tz_from_iana_annotation.zone.zone_variant, None);
-    /// assert!(tz_from_iana_annotation.zone.local_time.is_some());
+    /// let () = tz_from_iana_annotation.zone.zone_variant;
+    /// let (_, _) = tz_from_iana_annotation.zone.local_time;
     /// ```
     ///
     /// ## DateTime UTC Offset and Time Zone Annotations.
@@ -350,8 +586,8 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset, Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, Some(ZoneVariant::daylight()));
-    /// assert!(consistent_tz_from_both.zone.local_time.is_some());
+    /// assert_eq!(consistent_tz_from_both.zone.zone_variant, ZoneVariant::daylight());
+    /// let (_, _) = consistent_tz_from_both.zone.local_time;
     ///
     /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
     /// assert_eq!(
@@ -373,12 +609,12 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// use icu_timezone::{ParseError, TimeZoneInfo, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
+    /// let consistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
     ///
-    /// assert_eq!(consistent_tz_from_both.zone.offset, UtcOffset::try_from_seconds(-18000).ok());
+    /// assert_eq!(consistent_tz_from_both.zone, UtcOffset::try_from_seconds(-18000).unwrap());
     ///
     ///
-    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[+05:00]");
+    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]");
     ///
     /// assert!(matches!(inconsistent_tz_from_both, Err(ParseError::InconsistentTimeZoneOffsets)));
     /// ```
@@ -388,16 +624,22 @@ impl CustomZonedDateTime<AnyCalendar> {
 
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
     ///
+    /// The string should have both an offset and a named time zone.
+    ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_from_str`].
     pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        Self::try_from_ixdtf_record(&ixdtf_record)
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record)?;
+        let time_zone = intermediate.full()?;
+        Self::try_from_ixdtf_record(&ixdtf_record, time_zone)
     }
+}
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
-        let iso_zdt = CustomZonedDateTime::<Iso>::try_iso_from_ixdtf_record(ixdtf_record)?;
+impl<Z> CustomZonedDateTime<AnyCalendar, Z> {
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord, zone: Z) -> Result<Self, ParseError> {
+        let iso_zdt = CustomZonedDateTime::<Iso, Z>::try_iso_from_ixdtf_record(ixdtf_record, zone)?;
 
         // Find the calendar (based off icu_calendar's AnyCalendar try_from)
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
@@ -413,7 +655,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     }
 }
 
-impl FromStr for CustomZonedDateTime<AnyCalendar> {
+impl FromStr for CustomZonedDateTime<AnyCalendar, TimeZoneInfo<models::Full>> {
     type Err = ParseError;
 
     #[inline]
@@ -424,9 +666,8 @@ impl FromStr for CustomZonedDateTime<AnyCalendar> {
 
 #[cfg(test)]
 mod test {
-    use ixdtf::parsers::IxdtfParser;
-
-    use crate::{ParseError, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset};
+    use super::*;
+    use crate::TimeZoneBcp47Id;
 
     #[test]
     fn max_possible_ixdtf_utc_offset() {
@@ -443,9 +684,9 @@ mod test {
         let ixdtf_record = IxdtfParser::from_utf8("2024-08-08T12:08:19[Future/Zone]".as_bytes())
             .parse()
             .unwrap();
-        let result = TimeZoneInfo::try_from_ixdtf_record(&ixdtf_record).unwrap();
+        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record).unwrap();
+        let result = intermediate.loose().unwrap();
         assert_eq!(result.time_zone_id, TimeZoneBcp47Id::unknown());
         assert_eq!(result.offset, None);
-        assert_eq!(result.zone_variant, None);
     }
 }

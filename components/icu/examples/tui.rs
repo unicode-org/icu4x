@@ -10,9 +10,8 @@ use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
-use icu_datetime::neo_skeleton::NeoSkeletonLength;
+use icu_datetime::fieldset::YMDHMSO;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_timezone::CustomZonedDateTime;
 use std::env;
 use writeable::adapters::LossyWrap;
@@ -40,17 +39,12 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = TypedNeoFormatter::<
-            Gregorian,
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
-        >::try_new(
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, YMDHMSO>::try_new(
             &locale,
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker::with_length(
-                NeoSkeletonLength::Medium,
-            ),
+            YMDHMSO::medium(),
         )
         .expect("Failed to create zoned datetime formatter.");
-        let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
+        let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
         let zone = TimeZoneInfo::utc();
 

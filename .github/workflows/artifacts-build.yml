@@ -404,6 +404,12 @@ jobs:
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+    # gsutil needs Python 3.11 but macos-latest has 3.12
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
       name: "Authenticate to Google Cloud with Workload Identity Provider"

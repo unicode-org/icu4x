@@ -39,7 +39,7 @@ use core::fmt;
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, DateTime, cal::Japanese, Time, types::{Era, MonthCode}};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -60,13 +60,13 @@ use core::fmt;
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_datetime = DateTime::try_new_japanese_datetime(Era(tinystr!(16, "heisei")), 15, 3, 28,
+/// let japanese_datetime = DateTime::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();
@@ -1864,7 +1864,6 @@ mod tests {
 
     use super::*;
     use crate::Ref;
-    use core::convert::TryInto;
 
     fn single_test_roundtrip(
         calendar: Ref<AnyCalendar>,
@@ -1889,7 +1888,7 @@ mod tests {
         let roundtrip_era = roundtrip_year.formatting_era().unwrap_or(era);
         let roundtrip_year = roundtrip_year.era_year_or_extended();
         let roundtrip_month = date.month().standard_code;
-        let roundtrip_day = date.day_of_month().0.try_into().expect("Must fit in u8");
+        let roundtrip_day = date.day_of_month().0;
 
         assert_eq!(
             (era, year, month, day),

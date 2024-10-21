@@ -8,12 +8,12 @@
 //! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
-//! let persian_date = Date::try_new_persian_date(1348, 10, 11)
+//! let persian_date = Date::try_new_persian(1348, 10, 11)
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
 //! // `DateTime` type
 //! let persian_datetime =
-//!     DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
+//!     DateTime::try_new_persian(1348, 10, 11, 13, 1, 0)
 //!         .expect("Failed to initialize Persian DateTime instance.");
 //!
 //! // `Date` checks
@@ -241,18 +241,14 @@ impl Date<Persian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_persian = Date::try_new_persian_date(1392, 4, 25)
+    /// let date_persian = Date::try_new_persian(1392, 4, 25)
     ///     .expect("Failed to initialize Persian Date instance.");
     ///
     /// assert_eq!(date_persian.year().era_year_or_extended(), 1392);
     /// assert_eq!(date_persian.month().ordinal, 4);
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
-    pub fn try_new_persian_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Persian>, RangeError> {
+    pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
@@ -266,7 +262,7 @@ impl DateTime<Persian> {
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_persian =
-    ///     DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
+    ///     DateTime::try_new_persian(474, 10, 11, 13, 1, 0)
     ///         .expect("Failed to initialize Persian DateTime instance.");
     ///
     /// assert_eq!(datetime_persian.date.year().era_year_or_extended(), 474);
@@ -276,7 +272,7 @@ impl DateTime<Persian> {
     /// assert_eq!(datetime_persian.time.minute.number(), 1);
     /// assert_eq!(datetime_persian.time.second.number(), 0);
     /// ```
-    pub fn try_new_persian_datetime(
+    pub fn try_new_persian(
         year: i32,
         month: u8,
         day: u8,
@@ -285,7 +281,7 @@ impl DateTime<Persian> {
         second: u8,
     ) -> Result<DateTime<Persian>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_persian_date(year, month, day)?,
+            date: Date::try_new_persian(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -464,7 +460,7 @@ mod tests {
     #[test]
     fn test_fixed_from_persian() {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_persian(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
                 Persian::fixed_from_fast_persian(*date.inner()).to_i64_date(),
@@ -476,7 +472,7 @@ mod tests {
     #[test]
     fn test_persian_from_fixed() {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_persian(case.year, case.month, case.day).unwrap();
             assert_eq!(
                 Persian::fast_persian_from_fixed(RataDie::new(*f_date)),
                 date.inner,
@@ -518,7 +514,7 @@ mod tests {
         ];
 
         for case in test_cases {
-            let date = Date::try_new_persian_date(case.input, 1, 1).unwrap();
+            let date = Date::try_new_persian(case.input, 1, 1).unwrap();
             let info = Persian::day_of_year_info(&Persian, date.inner());
 
             assert_eq!(
@@ -538,7 +534,7 @@ mod tests {
 
     // From https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
     // Plain text version at https://github.com/roozbehp/persiancalendar/blob/main/kabise.txt
-    static CALENDAR_UT_AC_IR_TEST_DATA: [(i32, bool, i32, u8, u32); 293] = [
+    static CALENDAR_UT_AC_IR_TEST_DATA: [(i32, bool, i32, u8, u8); 293] = [
         (1206, false, 1827, 3, 22),
         (1207, false, 1828, 3, 21),
         (1208, false, 1829, 3, 21),
@@ -838,7 +834,7 @@ mod tests {
     fn test_calendar_ut_ac_ir_data() {
         for (p_year, leap, iso_year, iso_month, iso_day) in CALENDAR_UT_AC_IR_TEST_DATA.iter() {
             assert_eq!(Persian::is_leap_year(*p_year, ()), *leap);
-            let persian_date = Date::try_new_persian_date(*p_year, 1, 1).unwrap();
+            let persian_date = Date::try_new_persian(*p_year, 1, 1).unwrap();
             let iso_date = persian_date.to_calendar(Iso);
             assert_eq!(iso_date.year().era_year_or_extended(), *iso_year);
             assert_eq!(iso_date.month().ordinal, *iso_month);

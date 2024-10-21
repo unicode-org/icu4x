@@ -5,15 +5,15 @@
 //! This module contains types and implementations for the Indian national calendar.
 //!
 //! ```rust
-//! use icu::calendar::{indian::Indian, Date, DateTime};
+//! use icu::calendar::{cal::Indian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_indian = Date::new_from_iso(date_iso, Indian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_indian = DateTime::new_from_iso(datetime_iso, Indian);
 //!
@@ -263,14 +263,14 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian = Date::try_new_indian_date(1891, 10, 12)
+    /// let date_indian = Date::try_new_indian(1891, 10, 12)
     ///     .expect("Failed to initialize Indian Date instance.");
     ///
     /// assert_eq!(date_indian.year().era_year_or_extended(), 1891);
     /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
-    pub fn try_new_indian_date(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
+    pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
@@ -284,7 +284,7 @@ impl DateTime<Indian> {
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_indian =
-    ///     DateTime::try_new_indian_datetime(1891, 10, 12, 13, 1, 0)
+    ///     DateTime::try_new_indian(1891, 10, 12, 13, 1, 0)
     ///         .expect("Failed to initialize Indian DateTime instance.");
     ///
     /// assert_eq!(datetime_indian.date.year().era_year_or_extended(), 1891);
@@ -294,7 +294,7 @@ impl DateTime<Indian> {
     /// assert_eq!(datetime_indian.time.minute.number(), 1);
     /// assert_eq!(datetime_indian.time.second.number(), 0);
     /// ```
-    pub fn try_new_indian_datetime(
+    pub fn try_new_indian(
         year: i32,
         month: u8,
         day: u8,
@@ -303,7 +303,7 @@ impl DateTime<Indian> {
         second: u8,
     ) -> Result<DateTime<Indian>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_indian_date(year, month, day)?,
+            date: Date::try_new_indian(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -315,7 +315,7 @@ mod tests {
     use calendrical_calculations::rata_die::RataDie;
     fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
         let indian =
-            Date::try_new_indian_date(y, m, d).expect("Indian date should construct successfully");
+            Date::try_new_indian(y, m, d).expect("Indian date should construct successfully");
         let iso = indian.to_iso();
 
         assert_eq!(
@@ -329,7 +329,7 @@ mod tests {
             "{y}-{m}-{d}: ISO month did not match"
         );
         assert_eq!(
-            iso.day_of_month().0 as u8,
+            iso.day_of_month().0,
             iso_d,
             "{y}-{m}-{d}: ISO day did not match"
         );
@@ -376,11 +376,11 @@ mod tests {
         iso_day: u8,
         expected_year: i32,
         expected_month: u8,
-        expected_day: u32,
+        expected_day: u8,
     }
 
     fn check_case(case: TestCase) {
-        let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+        let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
         let saka = iso.to_calendar(Indian);
         assert_eq!(
             saka.year().era_year_or_extended(),

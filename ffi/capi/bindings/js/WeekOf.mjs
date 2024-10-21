@@ -38,7 +38,7 @@ export class WeekOf {
         appendArrayMap,
         forcePadding
     ) {
-        return [this.#week, ...diplomatRuntime.maybePaddingFields(forcePadding, 1 /* x i16 */), this.#unit.ffiValue]
+        return [this.#week, ...diplomatRuntime.maybePaddingFields(forcePadding, 3 /* x i8 */), this.#unit.ffiValue]
     }
 
     _writeToArrayBuffer(
@@ -48,7 +48,7 @@ export class WeekOf {
         appendArrayMap,
         forcePadding
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#week, Uint16Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#week, Uint8Array);
         diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#unit.ffiValue, Int32Array);
     }
 
@@ -58,7 +58,7 @@ export class WeekOf {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
-        const weekDeref = (new Uint16Array(wasm.memory.buffer, ptr, 1))[0];
+        const weekDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0];
         this.#week = weekDeref;
         const unitDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#unit = new WeekRelativeUnit(diplomatRuntime.internalConstructor, unitDeref);

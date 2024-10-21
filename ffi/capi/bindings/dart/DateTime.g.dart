@@ -360,7 +360,7 @@ external int _icu4x_DateTime_nanosecond_mv1(ffi.Pointer<ffi.Opaque> self);
 external int _icu4x_DateTime_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_day_of_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_day_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_DateTime_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
@@ -370,7 +370,7 @@ external int _icu4x_DateTime_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 external int _icu4x_DateTime_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTime_week_of_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTime_week_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_DateTime_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 

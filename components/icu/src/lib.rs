@@ -28,12 +28,12 @@
 //! Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 //!
 //! ```
-//! use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+//! use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
 //! use icu::locale::locale;
 //!
-//! let dtf = NeoFormatter::try_new(
+//! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es-US").into(),
-//!     NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
+//!     YMD::medium(),
 //! )
 //! .expect("compiled data should include 'es-US'");
 //! ```
@@ -51,7 +51,7 @@
 //! special constructors:
 //!
 //! ```no_run
-//! use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+//! use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
 //! use icu::locale::locale;
 //! use icu::locale::fallback::LocaleFallbacker;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -67,10 +67,10 @@
 //!
 //! let provider = LocaleFallbackProvider::new(provider, fallbacker);
 //!
-//! let dtf = NeoFormatter::try_new_with_buffer_provider(
+//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
 //!     &provider,
 //!     &locale!("es-US").into(),
-//!     NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
+//!     YMD::medium(),
 //! )
 //! .expect("data should include 'es-US', 'es', or 'und'");
 //! ```

@@ -11,6 +11,7 @@ use crate::options::{self, length};
 use crate::pattern::CoarseHourCycle;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
+use icu_timezone::scaffold::IntoOption;
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -30,6 +31,13 @@ pub enum NeoSkeletonLength {
     Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
     Short = 1,
+}
+
+impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
 }
 
 impl NeoSkeletonLength {
@@ -82,6 +90,13 @@ pub enum Alignment {
     Column,
 }
 
+impl IntoOption<Alignment> for Alignment {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
 /// A specification of how to render the year and the era.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -122,6 +137,13 @@ pub enum YearStyle {
     // TODO(#4478): add Hide and Never options once there is data to back them
 }
 
+impl IntoOption<YearStyle> for YearStyle {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -153,6 +175,13 @@ pub enum FractionalSecondDigits {
     F8,
     /// Nine fractional digits.
     F9,
+}
+
+impl IntoOption<FractionalSecondDigits> for FractionalSecondDigits {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
@@ -418,6 +447,21 @@ impl NeoDateComponents {
             Self::AutoWeekday => true,
         }
     }
+
+    /// Creates a skeleton for this field set with a long length.
+    pub fn long(self) -> NeoDateSkeleton {
+        NeoDateSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this field set with a medium length.
+    pub fn medium(self) -> NeoDateSkeleton {
+        NeoDateSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this field set with a short length.
+    pub fn short(self) -> NeoDateSkeleton {
+        NeoDateSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
+    }
 }
 
 /// A specification for a set of parts of a date.
@@ -500,6 +544,21 @@ impl NeoCalendarPeriodComponents {
             Self::Year => false,
             Self::YearWeek => false,
         }
+    }
+
+    /// Creates a skeleton for this field set with a long length.
+    pub fn long(self) -> NeoCalendarPeriodSkeleton {
+        NeoCalendarPeriodSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this field set with a medium length.
+    pub fn medium(self) -> NeoCalendarPeriodSkeleton {
+        NeoCalendarPeriodSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this field set with a short length.
+    pub fn short(self) -> NeoCalendarPeriodSkeleton {
+        NeoCalendarPeriodSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
     }
 }
 
@@ -707,6 +766,21 @@ impl NeoTimeComponents {
                 | NeoTimeComponents::Hour24MinuteSecond
         )
     }
+
+    /// Creates a skeleton for this field set with a long length.
+    pub fn long(self) -> NeoTimeSkeleton {
+        NeoTimeSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this field set with a medium length.
+    pub fn medium(self) -> NeoTimeSkeleton {
+        NeoTimeSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this field set with a short length.
+    pub fn short(self) -> NeoTimeSkeleton {
+        NeoTimeSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
+    }
 }
 
 /// A specification of components for parts of a datetime.
@@ -715,6 +789,8 @@ impl NeoTimeComponents {
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
     Date(NeoDateComponents),
+    /// Components for parts of a date with fields larger than a date.
+    CalendarPeriod(NeoCalendarPeriodComponents),
     /// Components for parts of a time.
     Time(NeoTimeComponents),
     /// Components for parts of a date and time together.
@@ -727,9 +803,48 @@ impl From<NeoDateComponents> for NeoDateTimeComponents {
     }
 }
 
+impl From<NeoCalendarPeriodComponents> for NeoDateTimeComponents {
+    fn from(value: NeoCalendarPeriodComponents) -> Self {
+        Self::CalendarPeriod(value)
+    }
+}
+
 impl From<NeoTimeComponents> for NeoDateTimeComponents {
     fn from(value: NeoTimeComponents) -> Self {
         Self::Time(value)
+    }
+}
+
+impl NeoDateTimeComponents {
+    /// Returns a [`NeoDateTimeComponents`] if it is a subset of the [`NeoComponents`] argument.
+    ///
+    /// If the [`NeoComponents`] contains a time zone, this function returns `None`.
+    pub fn try_from_components(components: NeoComponents) -> Option<Self> {
+        match components {
+            NeoComponents::Date(d) => Some(Self::Date(d)),
+            NeoComponents::CalendarPeriod(cp) => Some(Self::CalendarPeriod(cp)),
+            NeoComponents::Time(t) => Some(Self::Time(t)),
+            NeoComponents::Zone(_) => None,
+            NeoComponents::DateTime(d, t) => Some(Self::DateTime(d, t)),
+            NeoComponents::DateZone(_, _) => None,
+            NeoComponents::TimeZone(_, _) => None,
+            NeoComponents::DateTimeZone(_, _, _) => None,
+        }
+    }
+
+    /// Creates a skeleton for this field set with a long length.
+    pub fn long(self) -> NeoDateTimeSkeleton {
+        NeoDateTimeSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this field set with a medium length.
+    pub fn medium(self) -> NeoDateTimeSkeleton {
+        NeoDateTimeSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this field set with a short length.
+    pub fn short(self) -> NeoDateTimeSkeleton {
+        NeoDateTimeSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
     }
 }
 
@@ -782,6 +897,7 @@ impl From<NeoDateTimeComponents> for NeoComponents {
     fn from(value: NeoDateTimeComponents) -> Self {
         match value {
             NeoDateTimeComponents::Date(components) => components.into(),
+            NeoDateTimeComponents::CalendarPeriod(components) => components.into(),
             NeoDateTimeComponents::Time(components) => components.into(),
             NeoDateTimeComponents::DateTime(day, time) => NeoComponents::DateTime(day, time),
         }
@@ -946,6 +1062,21 @@ impl NeoComponents {
             NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_second(),
         }
     }
+
+    /// Creates a skeleton for this field set with a long length.
+    pub fn long(self) -> NeoSkeleton {
+        NeoSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this field set with a medium length.
+    pub fn medium(self) -> NeoSkeleton {
+        NeoSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this field set with a short length.
+    pub fn short(self) -> NeoSkeleton {
+        NeoSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
+    }
 }
 
 /// Specification of the time zone display style.
@@ -999,6 +1130,21 @@ pub struct NeoTimeZoneSkeleton {
 impl NeoTimeZoneStyle {
     pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
         crate::tz_registry::skeleton_to_resolved(self, length)
+    }
+
+    /// Creates a skeleton for this time zone style with a long length.
+    pub fn long(self) -> NeoTimeZoneSkeleton {
+        NeoTimeZoneSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
+    }
+
+    /// Creates a skeleton for this time zone style with a medium length.
+    pub fn medium(self) -> NeoTimeZoneSkeleton {
+        NeoTimeZoneSkeleton::for_length_and_components(NeoSkeletonLength::Medium, self)
+    }
+
+    /// Creates a skeleton for this time zone style with a short length.
+    pub fn short(self) -> NeoTimeZoneSkeleton {
+        NeoTimeZoneSkeleton::for_length_and_components(NeoSkeletonLength::Short, self)
     }
 }
 

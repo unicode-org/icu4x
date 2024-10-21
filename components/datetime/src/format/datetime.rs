@@ -557,25 +557,22 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
     #[test]
     fn test_mixed_calendar_eras() {
-        use crate::neo::NeoFormatter;
+        use crate::neo::DateTimeFormatter;
         use crate::options::length;
-        use icu_calendar::japanese::JapaneseExtended;
+        use icu_calendar::cal::JapaneseExtended;
         use icu_calendar::Date;
 
         let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf = NeoFormatter::try_new(
-            &locale.into(),
-            NeoAutoDateMarker::with_length(NeoSkeletonLength::Medium),
-        )
-        .expect("DateTimeFormat construction succeeds");
+        let dtf = DateTimeFormatter::try_new(&locale.into(), YMD::medium())
+            .expect("DateTimeFormat construction succeeds");
 
-        let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
+        let date = Date::try_new_gregorian(1800, 9, 1).expect("Failed to construct Date.");
         let date = date
             .to_calendar(JapaneseExtended::new())
             .into_japanese_date()

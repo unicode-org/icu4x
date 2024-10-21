@@ -94,17 +94,17 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::maximize, FnInStruct)]
         pub fn maximize(&self, locale: &mut Locale) -> TransformResult {
-            self.0.maximize(&mut locale.0).into()
+            self.0.maximize(&mut locale.0.id).into()
         }
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::minimize, FnInStruct)]
         pub fn minimize(&self, locale: &mut Locale) -> TransformResult {
-            self.0.minimize(&mut locale.0).into()
+            self.0.minimize(&mut locale.0.id).into()
         }
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::minimize_favor_script, FnInStruct)]
         pub fn minimize_favor_script(&self, locale: &mut Locale) -> TransformResult {
-            self.0.minimize_favor_script(&mut locale.0).into()
+            self.0.minimize_favor_script(&mut locale.0.id).into()
         }
     }
 }

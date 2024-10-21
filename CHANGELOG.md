@@ -6,12 +6,16 @@
   - General
     - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
   - `icu_calendar`
+    - Consistently name calendar-specific `Date`/`DateTime` functions that have a calendar argument (https://github.com/unicode-org/icu4x/pull/5692)
+    - Move all calendar types to `cal` module (https://github.com/unicode-org/icu4x/pull/5701)
+    - Shorten integer types returned by `day_of_month()`, `week_of_month()`, and `week_of_year()` to `u8` (https://github.com/unicode-org/icu4x/pull/5702)
   - `icu_collections`
   - `icu_normalizer`
   - `icu_datetime`
   - `icu_experimental`
   - `icu_locale`
     - New crate
+    - Allow `LocaleDirectionality` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5704)
   - `icu_locale_core`
     - New crate, renamed from `icu_locid`
     - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
