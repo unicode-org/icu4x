@@ -448,7 +448,11 @@ impl Iso {
     fn year_as_iso(year: i32) -> types::YearInfo {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_sole_era(tinystr!(16, "default"), year),
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0),
+                standard_era: tinystr!(16, "default").into(),
+                era_year: year,
+            },
         )
     }
 }

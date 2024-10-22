@@ -345,7 +345,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
-///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
+///     "It is: mon M11 20 2023 (era unknown) at 11:35:03.000 AM +0000",
 ///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon

@@ -581,10 +581,9 @@ mod tests {
         writeable::assert_try_writeable_eq!(
             dtf.strict_format(&date).unwrap(),
             "Sep 1, 12 (era unknown)",
-            Err(DateTimeWriteError::MissingEraSymbol(FormattingEra::Code(tinystr!(
-                16,
-                "kansei-1789"
-            ).into())))
+            Err(DateTimeWriteError::MissingEraSymbol(FormattingEra::Code(
+                tinystr!(16, "kansei-1789").into()
+            )))
         );
     }
 

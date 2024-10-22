@@ -161,18 +161,6 @@ pub struct EraYear {
     pub era_year: i32,
 }
 
-impl EraYear {
-    /// Construct an EraYear given the single era of the calendar and the year in the era.
-    /// Should only be used with calendars that have a single era.
-    pub(crate) fn new_with_sole_era(era: TinyStr16, era_year: i32) -> Self {
-        Self {
-            formatting_era: FormattingEra::Index(0),
-            standard_era: era.into(),
-            era_year,
-        }
-    }
-}
-
 /// Year information for a year that is specified as a cyclic year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
