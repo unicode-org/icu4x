@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "antes de Cristo",
-    "ce": "después de Cristo"
-  }
+  "FixedEras": [
+    "antes de Cristo",
+    "después de Cristo"
+  ]
 }

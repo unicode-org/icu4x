@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "ad": "ap. D.",
-    "bd": "av. D."
-  }
+  "FixedEras": [
+    "av. D.",
+    "ap. D."
+  ]
 }
