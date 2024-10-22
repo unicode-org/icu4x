@@ -311,7 +311,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
             year,
             types::EraYear {
                 standard_era: tinystr!(16, "coptic").into(),
-                formatting_era: tinystr!(16, "ad").into(),
+                formatting_era: types::FormattingEra::Index(1),
                 era_year: year,
             },
         )
@@ -320,7 +320,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
             year,
             types::EraYear {
                 standard_era: tinystr!(16, "coptic-inverse").into(),
-                formatting_era: tinystr!(16, "bd").into(),
+                formatting_era: types::FormattingEra::Index(0),
                 era_year: 1 - year,
             },
         )

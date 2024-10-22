@@ -252,7 +252,7 @@ impl ExtractedInput {
                 Some(year) if year.era_year_or_extended() < 1000 => YearDistance::Distant,
                 Some(year)
                     if year.formatting_era()
-                        != Some(icu_calendar::types::Era(tinystr::tinystr!(16, "ce"))) =>
+                        != Some(icu_calendar::types::FormattingEra::Index(1)) =>
                 {
                     YearDistance::Distant
                 }

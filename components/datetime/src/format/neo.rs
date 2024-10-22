@@ -26,7 +26,7 @@ use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::Era;
+use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
@@ -2566,7 +2566,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
     pub(crate) fn get_name_for_era(
         &self,
         field_length: FieldLength,
-        era_code: Era,
+        era: FormattingEra,
     ) -> Result<&str, GetSymbolForEraError> {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -2578,12 +2578,16 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             .year_names
             .get_with_variables(field_length)
             .ok_or(GetSymbolForEraError::MissingNames(field))?;
-        let YearNamesV1::Eras(era_names) = year_names else {
-            return Err(GetSymbolForEraError::MissingNames(field));
-        };
-        era_names
-            .get(era_code.0.as_str().into())
-            .ok_or(GetSymbolForEraError::Missing)
+
+        match (year_names, era) {
+            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
+                .get(era_code.0.as_str().into())
+                .ok_or(GetSymbolForEraError::Missing),
+            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index)) => era_names
+                .get(index.into())
+                .ok_or(GetSymbolForEraError::Missing),
+            _ => Err(GetSymbolForEraError::Missing),
+        }
     }
 }
 

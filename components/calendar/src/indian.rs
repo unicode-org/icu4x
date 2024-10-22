@@ -198,7 +198,7 @@ impl Calendar for Indian {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         types::YearInfo::new(
             date.0.year,
-            types::EraYear::new(tinystr!(16, "saka"), date.0.year),
+            types::EraYear::new_with_sole_era(tinystr!(16, "saka"), date.0.year),
         )
     }
 
@@ -217,11 +217,11 @@ impl Calendar for Indian {
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
         let prev_year = types::YearInfo::new(
             date.0.year - 1,
-            types::EraYear::new(tinystr!(16, "saka"), date.0.year - 1),
+            types::EraYear::new_with_sole_era(tinystr!(16, "saka"), date.0.year - 1),
         );
         let next_year = types::YearInfo::new(
             date.0.year + 1,
-            types::EraYear::new(tinystr!(16, "saka"), date.0.year + 1),
+            types::EraYear::new_with_sole_era(tinystr!(16, "saka"), date.0.year + 1),
         );
 
         types::DayOfYearInfo {

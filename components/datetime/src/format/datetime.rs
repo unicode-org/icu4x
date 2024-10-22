@@ -19,7 +19,7 @@ use crate::time_zone::{
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
 use icu_calendar::types::{
-    Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
+    FormattingEra, {DayOfWeekInMonth, IsoWeekday, MonthCode},
 };
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
@@ -120,7 +120,7 @@ pub enum DateTimeWriteError {
     MissingMonthSymbol(MonthCode),
     /// Missing era symbol
     #[displaydoc("Cannot find symbol for era {0:?}")]
-    MissingEraSymbol(Era),
+    MissingEraSymbol(FormattingEra),
     /// Missing weekday symbol
     #[displaydoc("Cannot find symbol for weekday {0:?}")]
     MissingWeekdaySymbol(IsoWeekday),
@@ -194,7 +194,7 @@ where
                         });
                     match era_symbol {
                         Err(e) => {
-                            w.with_part(Part::ERROR, |w| w.write_str(&era.0))?;
+                            w.with_part(Part::ERROR, |w| w.write_str("(era unknown)"))?;
                             Err(e)
                         }
                         Ok(era) => Ok(w.write_str(era)?),
@@ -557,6 +557,7 @@ where
 mod tests {
     use super::*;
     use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use icu_calendar::types::Era;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 

@@ -302,7 +302,7 @@ impl Ethiopian {
                 year,
                 types::EraYear {
                     standard_era: tinystr!(16, "ethioaa").into(),
-                    formatting_era: tinystr!(16, "mundi").into(),
+                    formatting_era: types::FormattingEra::Index(0),
                     era_year: year + AMETE_ALEM_OFFSET,
                 },
             )
@@ -311,7 +311,7 @@ impl Ethiopian {
                 year,
                 types::EraYear {
                     standard_era: tinystr!(16, "ethiopic").into(),
-                    formatting_era: tinystr!(16, "incar").into(),
+                    formatting_era: types::FormattingEra::Index(2),
                     era_year: year,
                 },
             )
@@ -320,7 +320,7 @@ impl Ethiopian {
                 year,
                 types::EraYear {
                     standard_era: tinystr!(16, "ethiopic-inverse").into(),
-                    formatting_era: tinystr!(16, "pre-incar").into(),
+                    formatting_era: types::FormattingEra::Index(1),
                     era_year: 1 - year,
                 },
             )

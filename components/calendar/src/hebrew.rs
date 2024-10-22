@@ -340,7 +340,7 @@ impl Hebrew {
     fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
         types::YearInfo::new(
             civil_year,
-            types::EraYear::new(tinystr!(16, "hebrew"), civil_year),
+            types::EraYear::new_with_sole_era(tinystr!(16, "hebrew"), civil_year),
         )
     }
 }

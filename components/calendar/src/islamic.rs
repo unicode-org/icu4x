@@ -58,7 +58,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
     types::YearInfo::new(
         year,
         types::EraYear {
-            formatting_era: tinystr!(16, "ah").into(),
+            formatting_era: types::FormattingEra::Index(0),
             standard_era: standard_era.into(),
             era_year: year,
         },

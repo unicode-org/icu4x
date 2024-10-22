@@ -135,7 +135,7 @@ where
                     .with_display_context(req.id.marker_attributes.as_str()))
             }
         };
-        Ok(YearNamesV1::Eras(result.clone()))
+        Ok(YearNamesV1::VariableEras(result.clone()))
     })?;
     Ok(DataResponse {
         payload: new_payload,
