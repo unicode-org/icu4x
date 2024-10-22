@@ -122,7 +122,13 @@ impl CldrCache {
                             &bcp47_alias,
                             source.clone(),
                             [metadata.alias.as_deref().unwrap_or(
-                                format!("{}-{}", metadata.source, metadata.target).as_str(),
+                                match metadata.variant.as_deref() {
+                                    None => format!("{}-{}", metadata.source, metadata.target),
+                                    Some(v) => {
+                                        format!("{}-{}/{v}", metadata.source, metadata.target)
+                                    }
+                                }
+                                .as_str(),
                             )]
                             .into_iter()
                             .chain(
@@ -156,7 +162,13 @@ impl CldrCache {
                             &bcp47_alias,
                             source,
                             [metadata.backward_alias.as_deref().unwrap_or(
-                                format!("{}-{}", metadata.target, metadata.source).as_str(),
+                                match metadata.variant.as_deref() {
+                                    None => format!("{}-{}", metadata.target, metadata.source),
+                                    Some(v) => {
+                                        format!("{}-{}/{v}", metadata.target, metadata.source)
+                                    }
+                                }
+                                .as_str(),
                             )]
                             .into_iter()
                             .chain(

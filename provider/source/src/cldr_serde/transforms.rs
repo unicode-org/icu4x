@@ -59,6 +59,8 @@ pub(crate) struct Resource {
     pub(crate) source: String,
     #[serde(rename = "_target")]
     pub(crate) target: String,
+    #[serde(rename = "_variant")]
+    pub(crate) variant: Option<String>,
     #[serde(rename = "_alias", default)]
     pub(crate) alias: Option<String>,
     #[serde(rename = "_backwardAlias", default)]
