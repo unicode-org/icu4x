@@ -557,7 +557,7 @@ where
 mod tests {
     use super::*;
     use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
-    use icu_calendar::types::Era;
+    use icu_calendar::types::FormattingEra;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
@@ -580,11 +580,11 @@ mod tests {
 
         writeable::assert_try_writeable_eq!(
             dtf.strict_format(&date).unwrap(),
-            "Sep 1, 12 kansei-1789",
-            Err(DateTimeWriteError::MissingEraSymbol(Era(tinystr!(
+            "Sep 1, 12 (era unknown)",
+            Err(DateTimeWriteError::MissingEraSymbol(FormattingEra::Code(tinystr!(
                 16,
                 "kansei-1789"
-            ))))
+            ).into())))
         );
     }
 
