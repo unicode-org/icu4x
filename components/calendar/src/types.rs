@@ -162,9 +162,8 @@ pub struct EraYear {
 }
 
 impl EraYear {
-    /// Construct an EraYear given the single era of the calendar and the year in the era
-    ///
-    /// The era is assumed to be both the Temporal and the Formatting era code.
+    /// Construct an EraYear given the single era of the calendar and the year in the era.
+    /// Should only be used with calendars that have a single era.
     pub(crate) fn new_with_sole_era(era: TinyStr16, era_year: i32) -> Self {
         Self {
             formatting_era: FormattingEra::Index(0),
