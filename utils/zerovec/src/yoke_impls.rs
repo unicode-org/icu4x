@@ -325,7 +325,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroVec {
-                _data: crate::VarZeroVec::new(),
+                _data: crate::vecs::VarZeroVec16::new(),
             },
             zerovec,
         );
@@ -345,7 +345,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroSlice<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroSlice {
-                _data: crate::VarZeroSlice::new_empty()
+                _data: crate::vecs::VarZeroSlice16::new_empty()
             },
             zerovec,
         );
@@ -369,8 +369,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        crate::VarZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -396,8 +396,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::maps::ZeroMapBorrowed::from_parts_unchecked(
-                        crate::VarZeroSlice::new_empty(),
-                        crate::VarZeroSlice::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
                     )
                 },
             },
@@ -423,8 +423,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        crate::VarZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -453,7 +453,7 @@ mod test {
                         crate::ZeroVec::new(),
                         crate::ZeroVec::new(),
                         crate::ZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -482,7 +482,7 @@ mod test {
                         crate::ZeroSlice::new_empty(),
                         crate::ZeroSlice::new_empty(),
                         crate::ZeroSlice::new_empty(),
-                        crate::VarZeroSlice::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
                     )
                 },
             },

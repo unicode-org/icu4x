@@ -291,6 +291,11 @@ pub mod vecs {
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
     pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat, VarZeroVecOwned};
+
+    pub type VarZeroVec16<'a, T> = VarZeroVec<'a, T, Index16>;
+    pub type VarZeroVec32<'a, T> = VarZeroVec<'a, T, Index16>;
+    pub type VarZeroSlice16<T> = VarZeroSlice<T, Index16>;
+    pub type VarZeroSlice32<T> = VarZeroSlice<T, Index16>;
 }
 
 // Proc macro reexports
