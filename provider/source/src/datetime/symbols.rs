@@ -445,7 +445,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_eras_wide:?}"),
-            "Eras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
+            "VariableEras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
         );
     }
 
