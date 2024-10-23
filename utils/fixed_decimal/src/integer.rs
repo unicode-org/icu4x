@@ -79,11 +79,11 @@ impl writeable::Writeable for FixedInteger {
 
 impl TryFrom<SignedFixedDecimal> for FixedInteger {
     type Error = LimitError;
-    fn try_from(value: SignedFixedDecimal) -> Result<Self, Self::Error> {
-        if value.magnitude_range().start() != &0 {
+    fn try_from(signed_fd: SignedFixedDecimal) -> Result<Self, Self::Error> {
+        if signed_fd.value.magnitude_range().start() != &0 {
             Err(LimitError)
         } else {
-            Ok(FixedInteger(value))
+            Ok(FixedInteger(signed_fd))
         }
     }
 }
