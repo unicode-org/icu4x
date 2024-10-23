@@ -62,7 +62,10 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
                 time: greg.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::<icu_timezone::models::Full> {
+                    local_time: (datetime.0.date, datetime.0.time),
+                    ..time_zone.0.try_into()?
+                },
             };
             let _infallible = self.0.format(&zdt).try_write_to(write);
             Ok(())
@@ -125,7 +128,10 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::<icu_timezone::models::Full> {
+                    local_time: (datetime.0.date, datetime.0.time),
+                    ..time_zone.0.try_into()?
+                },
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
