@@ -112,7 +112,14 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::from(&time_zone.0)
+                    .at_time((datetime.0.date.to_iso(), datetime.0.time))
+                    .with_zone_variant(
+                        time_zone
+                            .0
+                            .zone_variant
+                            .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+                    ),
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
