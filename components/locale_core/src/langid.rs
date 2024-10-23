@@ -10,7 +10,7 @@ use crate::parser::{
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
-use alloc::string::String;
+use alloc::borrow::Cow;
 use writeable::Writeable;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
@@ -168,6 +168,8 @@ impl LanguageIdentifier {
             && self.variants.is_empty()
     }
 
+    /// Canonicalize the language identifier (operating on UTF-8 formatted byte slices)
+    ///
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
@@ -183,9 +185,46 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
+    pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input.as_ref())?;
-        Ok(lang_id.write_to_string().into_owned())
+        let cow = lang_id.write_to_string();
+        if cow.as_bytes() == input {
+            if let Ok(s) = core::str::from_utf8(input) {
+                Ok(s.into())
+            } else {
+                Ok(cow.into_owned().into())
+            }
+        } else {
+            Ok(cow.into_owned().into())
+        }
+    }
+
+    /// Canonicalize the language identifier (operating on strings)
+    ///
+    /// This is a best-effort operation that performs all available levels of canonicalization.
+    ///
+    /// At the moment the operation will normalize casing and the separator, but in the future
+    /// it may also validate and update from deprecated subtags to canonical ones.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    ///
+    /// assert_eq!(
+    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
+    /// );
+    /// ```
+    pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
+        let lang_id = Self::try_from_str(input.as_ref())?;
+        let cow = lang_id.write_to_string();
+
+        if cow == input {
+            Ok(input.into())
+        } else {
+            Ok(cow.into_owned().into())
+        }
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.

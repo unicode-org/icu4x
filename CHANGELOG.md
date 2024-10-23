@@ -17,6 +17,7 @@
     - New crate
     - Allow `LocaleDirectionality` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5704)
     - Allow `LocaleCanonicalizer` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5718)
+    - Split `canonicalize()` on `Locale` and `LanguageIdentifier` into `canonicalize()` and `canonicalize_utf8()`, and have it return a `Cow` (https://github.com/unicode-org/icu4x/pull/5727)
   - `icu_locale_core`
     - New crate, renamed from `icu_locid`
     - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
