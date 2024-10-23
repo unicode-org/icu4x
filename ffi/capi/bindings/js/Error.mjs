@@ -36,6 +36,10 @@ export class Error {
         ["DateTimeZoneInfoMissingFieldsError", 2176]
     ]);
 
+    static getAllEntries() {
+        return Error.#values.entries();
+    }
+
     constructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*

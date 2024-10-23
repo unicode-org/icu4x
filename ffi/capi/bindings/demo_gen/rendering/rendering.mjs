@@ -142,10 +142,8 @@ class EnumTemplate extends ParameterTemplate {
         let options = clone.querySelector("*[data-options]");
 
         if (this.default === null) {
-            this.default = enumType.values.values().next().value;
-
-            for (let value of enumType.values) {
-                options.append(...(new EnumOption(value[0])).children);
+            for (let entry of enumType.getAllEntries()) {
+                options.append(...(new EnumOption(entry[0])).children);
             }
         }
     }
@@ -171,7 +169,7 @@ class TerminusParams extends HTMLElement {
 
             var newChild;
 
-            switch (param.type) {
+            switch (param.typeUse) {
                 case "string":
                     newChild = new StringTemplate(param);
                     this.#params[i] = "";
@@ -188,17 +186,18 @@ class TerminusParams extends HTMLElement {
                     newChild = new StringArrayTemplate(param);
                     this.#params[i] = [];
                     break;
+                case "enumerator":
+                    newChild = new EnumTemplate(param, library[param.type]);
+                    this.#params[i] = newChild.default
+                    break;
+                case "external":
+                    let updateParamEvent = (value) => {
+                        this.#params[i] = value;
+                    };
+                    evaluateExternal(param, updateParamEvent);
+                    break;
                 default:
-                    if (param.type in library && "values" in library[param.type]) {
-                        newChild = new EnumTemplate(param, library[param.type]);
-                        this.#params[i] = newChild.default
-                    } else {
-                        let updateParamEvent = (value) => {
-                            this.#params[i] = value;
-                        };
-                        evaluateExternal(param, updateParamEvent);
-                        continue;
-                    }
+                    console.error("Unrecognized parameter: ", param);
                     break;
             }
 

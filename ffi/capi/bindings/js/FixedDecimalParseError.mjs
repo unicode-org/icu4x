@@ -14,6 +14,10 @@ export class FixedDecimalParseError {
         ["Syntax", 2]
     ]);
 
+    static getAllEntries() {
+        return FixedDecimalParseError.#values.entries();
+    }
+
     constructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
