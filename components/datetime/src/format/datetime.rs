@@ -194,7 +194,7 @@ where
                         });
                     match era_symbol {
                         Err(e) => {
-                            w.with_part(Part::ERROR, |w| w.write_str("(era unknown)"))?;
+                            w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_era()))?;
                             Err(e)
                         }
                         Ok(era) => Ok(w.write_str(era)?),
@@ -580,7 +580,7 @@ mod tests {
 
         writeable::assert_try_writeable_eq!(
             dtf.strict_format(&date).unwrap(),
-            "Sep 1, 12 (era unknown)",
+            "Sep 1, 12 kansei-1789",
             Err(DateTimeWriteError::MissingEraSymbol(FormattingEra::Code(
                 tinystr!(16, "kansei-1789").into()
             )))

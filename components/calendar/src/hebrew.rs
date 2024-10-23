@@ -341,7 +341,7 @@ impl Hebrew {
         types::YearInfo::new(
             civil_year,
             types::EraYear {
-                formatting_era: types::FormattingEra::Index(0),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
                 standard_era: tinystr!(16, "hebrew").into(),
                 era_year: civil_year,
             },

@@ -133,12 +133,25 @@ pub enum FormattingEra {
     ///
     /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
     /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce, and
-    Index(u8),
+    /// bce < ce, and mundi < pre-incar < incar for Ethiopian.
+    ///
+    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
+    /// be something sensible (or empty).
+    Index(u8, TinyStr16),
     /// An era code, for calendars with a large set of era codes (Japanese)
     ///
     /// This code may not be the canonical era code, but will typically be a valid era alias
     Code(Era),
+}
+
+impl FormattingEra {
+    /// Get a fallback era name suitable for display to the user when the real era name is not availabe
+    pub fn fallback_era(self) -> TinyStr16 {
+        match self {
+            Self::Index(_idx, fallback) => fallback,
+            Self::Code(era) => era.0,
+        }
+    }
 }
 
 /// Year information for a year that is specified with an era

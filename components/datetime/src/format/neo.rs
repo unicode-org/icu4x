@@ -345,14 +345,14 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
-///     "It is: mon M11 20 2023 (era unknown) at 11:35:03.000 AM +0000",
+///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
 ///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (11, 14, Part::ERROR), // M11
-///         (23, 36, Part::ERROR), // (era unknown)
-///         (53, 55, Part::ERROR), // AM
-///         (56, 61, Part::ERROR), // +0000
+///         (23, 25, Part::ERROR), // CE
+///         (42, 44, Part::ERROR), // AM
+///         (45, 50, Part::ERROR), // +0000
 ///     ]
 /// );
 /// ```
@@ -2583,9 +2583,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
                 .get(era_code.0.as_str().into())
                 .ok_or(GetSymbolForEraError::Missing),
-            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index)) => era_names
-                .get(index.into())
-                .ok_or(GetSymbolForEraError::Missing),
+            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
+                era_names
+                    .get(index.into())
+                    .ok_or(GetSymbolForEraError::Missing)
+            }
             _ => Err(GetSymbolForEraError::Missing),
         }
     }

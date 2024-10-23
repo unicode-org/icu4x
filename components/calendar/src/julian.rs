@@ -226,7 +226,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
             year,
             types::EraYear {
                 standard_era: tinystr!(16, "julian").into(),
-                formatting_era: types::FormattingEra::Index(1),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
                 era_year: year,
             },
         )
@@ -235,7 +235,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
             year,
             types::EraYear {
                 standard_era: tinystr!(16, "julian-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
                 era_year: 1_i32.saturating_sub(year),
             },
         )

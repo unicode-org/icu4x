@@ -449,7 +449,7 @@ impl Iso {
         types::YearInfo::new(
             year,
             types::EraYear {
-                formatting_era: types::FormattingEra::Index(0),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
                 standard_era: tinystr!(16, "default").into(),
                 era_year: year,
             },

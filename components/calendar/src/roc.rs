@@ -273,7 +273,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
             year_i32,
             types::EraYear {
                 standard_era: tinystr!(16, "roc").into(),
-                formatting_era: types::FormattingEra::Index(1),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
                 era_year: year_i32.saturating_sub(ROC_ERA_OFFSET),
             },
         )
@@ -282,7 +282,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
             year_i32,
             types::EraYear {
                 standard_era: tinystr!(16, "roc-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
                 era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
             },
         )
