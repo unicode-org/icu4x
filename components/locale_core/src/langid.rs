@@ -186,7 +186,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
-        let lang_id = Self::try_from_utf8(input.as_ref())?;
+        let lang_id = Self::try_from_utf8(input)?;
         let cow = lang_id.write_to_string();
         if cow.as_bytes() == input {
             // Safety: input is known to be valid UTF-8 since it has the same
@@ -216,7 +216,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        let lang_id = Self::try_from_str(input.as_ref())?;
+        let lang_id = Self::try_from_str(input)?;
         let cow = lang_id.write_to_string();
 
         if cow == input {
