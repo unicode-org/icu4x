@@ -224,7 +224,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
         self.script_direction
             .get()
             .rtl
-            .binary_search(&script.into_tinystr().to_unvalidated())
+            .binary_search(&script.to_tinystr().to_unvalidated())
             .is_ok()
     }
 
@@ -232,7 +232,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
         self.script_direction
             .get()
             .ltr
-            .binary_search(&script.into_tinystr().to_unvalidated())
+            .binary_search(&script.to_tinystr().to_unvalidated())
             .is_ok()
     }
 }

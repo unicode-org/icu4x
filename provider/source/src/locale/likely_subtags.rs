@@ -283,24 +283,24 @@ pub(crate) fn transform<'x>(
         if !entry.0.language.is_default() {
             let lang = entry.0.language;
             if let Some(script) = entry.0.script {
-                with_diff!((Language::UND, None, Some(region)) => language_script.insert((lang.into_tinystr(), script.into_tinystr()), region));
+                with_diff!((Language::UND, None, Some(region)) => language_script.insert((lang.to_tinystr(), script.to_tinystr()), region));
             } else if let Some(region) = entry.0.region {
-                with_diff!((Language::UND, Some(script), None) => language_region.insert((lang.into_tinystr(), region.into_tinystr()), script));
+                with_diff!((Language::UND, Some(script), None) => language_region.insert((lang.to_tinystr(), region.to_tinystr()), script));
             } else {
-                with_diff!((Language::UND, Some(script), Some(region)) => language.insert(lang.into_tinystr(), (script, region)));
+                with_diff!((Language::UND, Some(script), Some(region)) => language.insert(lang.to_tinystr(), (script, region)));
             }
         } else if let Some(scr) = entry.0.script {
             if let Some(region) = entry.0.region {
                 // Some of the target regions here are not equal to the source, such as und-Latn-001 -> en-Latn-US.
                 // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-                with_diff!((language, None, _) => script_region.insert((scr.into_tinystr(), region.into_tinystr()), language));
+                with_diff!((language, None, _) => script_region.insert((scr.to_tinystr(), region.to_tinystr()), language));
             } else {
-                with_diff!((language, None, Some(region)) => script.insert(scr.into_tinystr(), (language, region)));
+                with_diff!((language, None, Some(region)) => script.insert(scr.to_tinystr(), (language, region)));
             }
         } else if let Some(reg) = entry.0.region {
             // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
             // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-            with_diff!((language, Some(script), _) => region.insert(reg.into_tinystr(), (language, script)));
+            with_diff!((language, Some(script), _) => region.insert(reg.to_tinystr(), (language, script)));
         } else {
             und = Some((
                 entry.1.language,
@@ -335,7 +335,7 @@ fn test_basic() {
         .payload
         .get()
         .script
-        .get_copied(&script!("Hant").into_tinystr().to_unvalidated())
+        .get_copied(&script!("Hant").to_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("zh"));
     assert_eq!(entry.1, region!("TW"));
@@ -344,7 +344,7 @@ fn test_basic() {
         .payload
         .get()
         .script
-        .get_copied(&script!("Glag").into_tinystr().to_unvalidated())
+        .get_copied(&script!("Glag").to_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));

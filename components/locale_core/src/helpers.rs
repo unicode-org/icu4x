@@ -99,7 +99,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc(hidden)]
-            pub const fn into_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
+            pub const fn to_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
                 self.0
             }
 
@@ -144,7 +144,7 @@ macro_rules! impl_tinystr_subtag {
 
         impl From<$name> for tinystr::TinyAsciiStr<$len_end> {
             fn from(input: $name) -> Self {
-                input.into_tinystr()
+                input.to_tinystr()
             }
         }
 
