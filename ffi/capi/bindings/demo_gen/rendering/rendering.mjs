@@ -34,7 +34,7 @@ class ParameterTemplate extends HTMLElement {
         if ("defaultValue" in options) {
             this.default = options.defaultValue;
             this.setValue(options.defaultValue);
-        } else {
+        } else if (this.default === null) {
             this.default = defaultValue;
         }
     }
@@ -140,11 +140,13 @@ class EnumTemplate extends ParameterTemplate {
 
     initialize(clone, enumType) {
         let options = clone.querySelector("*[data-options]");
-
-        if (this.default === null) {
-            for (let entry of enumType.getAllEntries()) {
-                options.append(...(new EnumOption(entry[0])).children);
+        
+        for (let entry of enumType.getAllEntries()) {
+            
+            if (this.default === null) {
+                this.default = entry[0];
             }
+            options.append(...(new EnumOption(entry[0])).children);
         }
     }
 
