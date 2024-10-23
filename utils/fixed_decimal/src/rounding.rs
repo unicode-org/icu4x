@@ -8,9 +8,9 @@
 // This allows reducing the codesize for the common case of no increment.
 
 #[derive(Copy, Clone, PartialEq)]
-struct NoIncrement;
+pub(crate) struct NoIncrement;
 
-trait IncrementLike: Copy + Sized + PartialEq {
+pub(crate) trait IncrementLike: Copy + Sized + PartialEq {
     const MULTIPLES_OF_1: Option<Self>;
     const MULTIPLES_OF_2: Option<Self>;
     const MULTIPLES_OF_5: Option<Self>;

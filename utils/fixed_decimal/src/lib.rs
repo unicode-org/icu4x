@@ -82,6 +82,9 @@ pub use signed_decimal::SignedFixedDecimal;
 pub use variations::Sign;
 pub use variations::SignDisplay;
 
+pub(crate) use rounding::IncrementLike;
+pub(crate) use rounding::NoIncrement;
+
 /// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`].
 ///
 /// The highest

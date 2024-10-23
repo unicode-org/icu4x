@@ -10,10 +10,9 @@ use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 
-use crate::uint_iterator::IntIterator;
-
 #[cfg(feature = "ryu")]
 use crate::LimitError;
+use crate::{uint_iterator::IntIterator, IncrementLike, NoIncrement};
 use crate::{FloatPrecision, ParseError};
 
 // UnsignedFixedDecimal assumes usize (digits.len()) is at least as big as a u16
