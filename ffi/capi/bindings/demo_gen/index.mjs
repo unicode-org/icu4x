@@ -1282,6 +1282,24 @@ let termini = Object.assign({
         funcName: "TimeZoneInfo.timeZoneId",
         parameters: [
             
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
+            }
+            
         ]
     },
 
@@ -1290,6 +1308,24 @@ let termini = Object.assign({
         // For avoiding webpacking minifying issues:
         funcName: "TimeZoneInfo.zoneVariant",
         parameters: [
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
+            }
             
         ]
     },
@@ -1442,6 +1478,24 @@ let termini = Object.assign({
                 name: "Nanosecond",
                 type: "number",
                 typeUse: "number"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]
@@ -1511,6 +1565,24 @@ let termini = Object.assign({
                 name: "Name",
                 type: "string",
                 typeUse: "string"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]
@@ -1574,6 +1646,24 @@ let termini = Object.assign({
                 name: "Nanosecond",
                 type: "number",
                 typeUse: "number"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]

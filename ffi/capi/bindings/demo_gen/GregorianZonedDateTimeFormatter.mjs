@@ -37,9 +37,12 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     terminusArgs[8]
                 ]
             ),
-            TimeZoneInfo.unknown.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
+                    terminusArgs[9],
+                    terminusArgs[10],
+                    terminusArgs[11]
                 ]
             )
         ]

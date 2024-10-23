@@ -34,6 +34,8 @@ public:
 
   inline static std::unique_ptr<icu4x::TimeZoneInfo> utc();
 
+  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(std::string_view bcp47_id, int32_t offset_seconds, bool dst);
+
   inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_offset_seconds(int32_t offset_seconds);
 
   inline void set_offset_eighths_of_hour(int8_t offset_eighths_of_hour);

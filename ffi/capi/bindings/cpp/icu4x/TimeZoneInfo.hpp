@@ -23,6 +23,8 @@ namespace capi {
     
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_utc_mv1(void);
     
+    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(diplomat::capi::DiplomatStringView bcp47_id, int32_t offset_seconds, bool dst);
+    
     typedef struct icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result;
     icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result icu4x_TimeZoneInfo_try_set_offset_seconds_mv1(icu4x::capi::TimeZoneInfo* self, int32_t offset_seconds);
     
@@ -98,6 +100,13 @@ inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::unknown() {
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::utc() {
   auto result = icu4x::capi::icu4x_TimeZoneInfo_utc_mv1();
+  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::from_parts(std::string_view bcp47_id, int32_t offset_seconds, bool dst) {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_from_parts_mv1({bcp47_id.data(), bcp47_id.size()},
+    offset_seconds,
+    dst);
   return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
