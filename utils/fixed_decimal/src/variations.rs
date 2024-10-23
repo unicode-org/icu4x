@@ -39,11 +39,12 @@ pub enum FloatPrecision {
 
 // TODO: move to sign.rs
 /// A specification of the sign used when formatting a number.
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 #[allow(clippy::exhaustive_enums)]
 // There are only 3 sign values, and they correspond to the low-level data model of FixedDecimal and UTS 35.
 pub enum Sign {
     /// No sign (implicitly positive, e.g., 1729).
+    #[default]
     None,
     /// A negative sign, e.g., -1729.
     Negative,
@@ -77,7 +78,7 @@ pub enum SignDisplay {
 }
 
 /// The `Signed` struct represents a numeric value with an associated sign.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Signed<T> {
     pub sign: Sign,
     pub value: T,
