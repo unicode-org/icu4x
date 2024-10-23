@@ -2018,11 +2018,6 @@ impl UnsignedFixedDecimal {
 /// ```
 impl writeable::Writeable for UnsignedFixedDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        match self.sign {
-            Sign::Negative => sink.write_char('-')?,
-            Sign::Positive => sink.write_char('+')?,
-            Sign::None => (),
-        }
         for m in self.magnitude_range().rev() {
             if m == -1 {
                 sink.write_char('.')?;
@@ -2036,7 +2031,6 @@ impl writeable::Writeable for UnsignedFixedDecimal {
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
-            + (self.sign != Sign::None) as usize
             + (self.lower_magnitude < 0) as usize
     }
 }
