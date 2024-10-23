@@ -162,10 +162,10 @@ impl BlobExporter<'_> {
                         .iter_mut()
                         .for_each(|(_, id)| *id = *remap.get(id).expect("in-bound index"));
                     let zerotrie = ZeroTrieSimpleAscii::try_from(&sub_map).expect("in-bounds");
-                    zerotrie.take_store()
+                    zerotrie.into_store()
                 } else {
                     // Key with no locales: insert an empty ZeroTrie
-                    ZeroTrieSimpleAscii::default().take_store()
+                    ZeroTrieSimpleAscii::default().into_store()
                 }
             })
             .collect();

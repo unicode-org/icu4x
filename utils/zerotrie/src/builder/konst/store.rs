@@ -161,7 +161,7 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
 impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
     /// Takes a fully initialized builder as an array. Panics if the builder is not
     /// fully initialized.
-    pub const fn const_take_or_panic(self) -> [T; N] {
+    pub const fn const_build_or_panic(self) -> [T; N] {
         if self.start != 0 || self.limit != N {
             let actual_len = self.limit - self.start;
             const PREFIX: &[u8; 31] = b"Buffer too large. Size needed: ";

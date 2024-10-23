@@ -400,9 +400,9 @@ mod tests {
         assert_eq!(original.trie, bincode_recovered.trie);
         assert_eq!(original.trie, rmp_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -431,9 +431,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -462,9 +462,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -487,9 +487,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -512,9 +512,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -543,9 +543,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -568,9 +568,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -607,8 +607,8 @@ mod tests_zerovec {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(json_recovered.trie.take_store().is_owned());
-        assert!(!bincode_recovered.trie.take_store().is_owned());
+        assert!(json_recovered.trie.into_store().is_owned());
+        assert!(!bincode_recovered.trie.into_store().is_owned());
     }
 
     #[derive(Serialize, Deserialize)]
@@ -636,7 +636,7 @@ mod tests_zerovec {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(json_recovered.trie.take_store().is_owned());
-        assert!(!bincode_recovered.trie.take_store().is_owned());
+        assert!(json_recovered.trie.into_store().is_owned());
+        assert!(!bincode_recovered.trie.into_store().is_owned());
     }
 }
