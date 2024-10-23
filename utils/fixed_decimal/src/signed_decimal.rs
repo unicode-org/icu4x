@@ -132,12 +132,6 @@ impl SignedFixedDecimal {
         self.sign
     }
 
-    /// Clears all the fields and sets the number to zero.
-    fn clear(&mut self) {
-        self.value.clear();
-        self.sign = Sign::None;
-    }
-
     /// Changes the sign of this number to the one given.
     ///
     /// # Examples

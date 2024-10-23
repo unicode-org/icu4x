@@ -146,17 +146,10 @@ pub fn test_within_ranges() {
             let mut fd = UnsignedFixedDecimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "000", "{rounding_mode_name}: {n}");
-            let (mut fd, expected) = if n < 0 {
-                (
-                    UnsignedFixedDecimal::from(n - 1000000).multiplied_pow10(-5),
-                    "-10.00",
-                )
-            } else {
-                (
-                    UnsignedFixedDecimal::from(n + 1000000).multiplied_pow10(-5),
-                    "10.00",
-                )
-            };
+            let (mut fd, expected) = (
+                UnsignedFixedDecimal::from(n + 1000000).multiplied_pow10(-5),
+                "10.00",
+            );
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
