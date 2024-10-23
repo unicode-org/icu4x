@@ -1396,15 +1396,10 @@ impl UnsignedFixedDecimal {
     }
 
     fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        if self.sign == Sign::Negative {
-            self.trunc_to_increment_internal(position, increment);
-            return;
-        }
-
         self.expand_to_increment_internal(position, increment);
     }
 
-    fn expand_to_increment_internal<R: IncrementLike>(
+    pub(crate) fn expand_to_increment_internal<R: IncrementLike>(
         &mut self,
         position: i16,
         inner_increment: R,
@@ -1650,15 +1645,14 @@ impl UnsignedFixedDecimal {
     }
 
     fn floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        if self.sign == Sign::Negative {
-            self.expand_to_increment_internal(position, increment);
-            return;
-        }
-
         self.trunc_to_increment_internal(position, increment);
     }
 
-    fn trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, inner_increment: R) {
+    pub(crate) fn trunc_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        inner_increment: R,
+    ) {
         let increment = Some(inner_increment);
 
         // 1. Set upper and lower magnitude
@@ -1781,16 +1775,19 @@ impl UnsignedFixedDecimal {
         self.check_invariants();
     }
 
-    fn half_ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        if self.sign == Sign::Negative {
-            self.half_trunc_to_increment_internal(position, increment);
-            return;
-        }
-
+    pub(crate) fn half_ceil_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        increment: R,
+    ) {
         self.half_expand_to_increment_internal(position, increment);
     }
 
-    fn half_even_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+    pub(crate) fn half_even_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        increment: R,
+    ) {
         let should_expand = match self.half_increment_at_magnitude(position, increment) {
             Ordering::Greater => true,
             Ordering::Less => false,
@@ -1843,7 +1840,11 @@ impl UnsignedFixedDecimal {
         }
     }
 
-    fn half_expand_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+    pub(crate) fn half_expand_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        increment: R,
+    ) {
         // Only truncate if the rounding position is strictly less than the half increment.
         // At the half increment, `half_expand` always expands.
         let should_trunc = self.half_increment_at_magnitude(position, increment) == Ordering::Less;
@@ -1856,15 +1857,14 @@ impl UnsignedFixedDecimal {
     }
 
     fn half_floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        if self.sign == Sign::Negative {
-            self.half_expand_to_increment_internal(position, increment);
-            return;
-        }
-
         self.half_trunc_to_increment_internal(position, increment);
     }
 
-    fn half_trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+    pub(crate) fn half_trunc_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        increment: R,
+    ) {
         // Only expand if the rounding position is strictly greater than the half increment.
         // At the half increment, `half_trunc` always truncates.
         let should_expand =

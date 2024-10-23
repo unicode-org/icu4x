@@ -6,7 +6,9 @@ use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
 use crate::{variations::Signed, UnsignedFixedDecimal};
-use crate::{ParseError, Sign, SignDisplay};
+use crate::{
+    IncrementLike, NoIncrement, ParseError, RoundingIncrement, RoundingMode, Sign, SignDisplay,
+};
 
 /// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`].
 ///
@@ -234,12 +236,12 @@ impl SignedFixedDecimal {
     ///
     /// # Examples
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use fixed_decimal::SignDisplay::*;
     ///
     /// assert_eq!(
     ///     "+1729",
-    ///     FixedDecimal::from(1729)
+    ///     SignedFixedDecimal::from(1729)
     ///         .with_sign_display(ExceptZero)
     ///         .to_string()
     /// );
@@ -303,3 +305,559 @@ impl_from_unsigned_integer_type!(u64);
 impl_from_unsigned_integer_type!(u32);
 impl_from_unsigned_integer_type!(u16);
 impl_from_unsigned_integer_type!(u8);
+
+/// All the rounding and rounding related logic is implmented in this implmentation block.
+impl SignedFixedDecimal {
+    /// Rounds this number at a particular digit position.
+    ///
+    /// This uses half to even rounding, which rounds to the nearest integer and resolves ties by
+    /// selecting the nearest even integer to the original value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// dec.round(0);
+    /// assert_eq!("-2", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// dec.round(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// dec.round(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// dec.round(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// dec.round(0);
+    /// assert_eq!("2", dec.to_string());
+    /// ```
+    pub fn round(&mut self, position: i16) {
+        self.half_even_to_increment_internal(position, NoIncrement)
+    }
+
+    /// Returns this number rounded at a particular digit position.
+    ///
+    /// This uses half to even rounding by default, which rounds to the nearest integer and
+    /// resolves ties by selecting the nearest even integer to the original value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.rounded(0).to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.rounded(0).to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.rounded(0).to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.rounded(0).to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.rounded(0).to_string());
+    /// ```
+    pub fn rounded(mut self, position: i16) -> Self {
+        self.round(position);
+        self
+    }
+
+    /// Rounds this number towards positive infinity at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("-1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// dec.ceil(0);
+    /// assert_eq!("2", dec.to_string());
+    /// ```
+    #[inline(never)]
+    pub fn ceil(&mut self, position: i16) {
+        self.ceil_to_increment_internal(position, NoIncrement);
+    }
+
+    /// Returns this number rounded towards positive infinity at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.ceiled(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.ceiled(0).to_string());
+    /// ```
+    pub fn ceiled(mut self, position: i16) -> Self {
+        self.ceil(position);
+        self
+    }
+
+    /// Rounds this number away from zero at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("-2", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// dec.expand(0);
+    /// assert_eq!("2", dec.to_string());
+    /// ```
+    #[inline(never)]
+    pub fn expand(&mut self, position: i16) {
+        self.expand_to_increment_internal(position, NoIncrement)
+    }
+
+    /// Returns this number rounded away from zero at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.expanded(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.expanded(0).to_string());
+    /// ```
+    pub fn expanded(mut self, position: i16) -> Self {
+        self.expand(position);
+        self
+    }
+
+    /// Rounds this number towards negative infinity at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("-2", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// dec.floor(0);
+    /// assert_eq!("1", dec.to_string());
+    /// ```
+    #[inline(never)]
+    pub fn floor(&mut self, position: i16) {
+        self.floor_to_increment_internal(position, NoIncrement);
+    }
+
+    /// Returns this number rounded towards negative infinity at a particular digit position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.floored(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.floored(0).to_string());
+    /// ```
+    pub fn floored(mut self, position: i16) -> Self {
+        self.floor(position);
+        self
+    }
+
+    /// Rounds this number towards zero at a particular digit position.
+    ///
+    /// Also see [`FixedDecimal::pad_end()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// dec.trunc(0);
+    /// assert_eq!("-1", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// dec.trunc(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// dec.trunc(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// dec.trunc(0);
+    /// assert_eq!("0", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// dec.trunc(0);
+    /// assert_eq!("1", dec.to_string());
+    /// ```
+    #[inline(never)]
+    pub fn trunc(&mut self, position: i16) {
+        self.trunc_to_increment_internal(position, NoIncrement)
+    }
+
+    /// Returns this number rounded towards zero at a particular digit position.
+    ///
+    /// Also see [`FixedDecimal::padded_end()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = SignedFixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.trunced(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = SignedFixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.trunced(0).to_string());
+    /// ```
+    pub fn trunced(mut self, position: i16) -> Self {
+        self.trunc(position);
+        self
+    }
+
+    /// Rounds this number at a particular digit position, using the specified rounding mode.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingMode};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// dec.round_with_mode(0, RoundingMode::Floor);
+    /// assert_eq!("-4", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// dec.round_with_mode(0, RoundingMode::Ceil);
+    /// assert_eq!("-3", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
+    /// dec.round_with_mode(-2, RoundingMode::HalfExpand);
+    /// assert_eq!("5.46", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
+    /// dec.round_with_mode(-2, RoundingMode::HalfTrunc);
+    /// assert_eq!("-7.23", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
+    /// dec.round_with_mode(-1, RoundingMode::HalfEven);
+    /// assert_eq!("9.8", dec.to_string());
+    /// ```
+    pub fn round_with_mode(&mut self, position: i16, mode: RoundingMode) {
+        match mode {
+            RoundingMode::Ceil => self.ceil_to_increment_internal(position, NoIncrement),
+            RoundingMode::Expand => self.expand_to_increment_internal(position, NoIncrement),
+            RoundingMode::Floor => self.floor_to_increment_internal(position, NoIncrement),
+            RoundingMode::Trunc => self.trunc_to_increment_internal(position, NoIncrement),
+            RoundingMode::HalfCeil => self.half_ceil_to_increment_internal(position, NoIncrement),
+            RoundingMode::HalfExpand => {
+                self.half_expand_to_increment_internal(position, NoIncrement)
+            }
+            RoundingMode::HalfFloor => self.half_floor_to_increment_internal(position, NoIncrement),
+            RoundingMode::HalfTrunc => self.half_trunc_to_increment_internal(position, NoIncrement),
+            RoundingMode::HalfEven => self.half_even_to_increment_internal(position, NoIncrement),
+        }
+    }
+
+    /// Returns this number rounded at a particular digit position, using the specified rounding mode.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingMode};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// assert_eq!(
+    ///     "-4",
+    ///     dec.rounded_with_mode(0, RoundingMode::Floor).to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// assert_eq!(
+    ///     "-3",
+    ///     dec.rounded_with_mode(0, RoundingMode::Ceil).to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
+    /// assert_eq!(
+    ///     "5.46",
+    ///     dec.rounded_with_mode(-2, RoundingMode::HalfExpand)
+    ///         .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
+    /// assert_eq!(
+    ///     "-7.23",
+    ///     dec.rounded_with_mode(-2, RoundingMode::HalfTrunc)
+    ///         .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
+    /// assert_eq!(
+    ///     "9.8",
+    ///     dec.rounded_with_mode(-1, RoundingMode::HalfEven)
+    ///         .to_string()
+    /// );
+    /// ```
+    pub fn rounded_with_mode(mut self, position: i16, mode: RoundingMode) -> Self {
+        self.round_with_mode(position, mode);
+        self
+    }
+
+    /// Rounds this number at a particular digit position and increment, using the specified rounding mode.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingIncrement, RoundingMode};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// dec.round_with_mode_and_increment(
+    ///     0,
+    ///     RoundingMode::Floor,
+    ///     RoundingIncrement::MultiplesOf1,
+    /// );
+    /// assert_eq!("-4", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("-3.59").unwrap();
+    /// dec.round_with_mode_and_increment(
+    ///     -1,
+    ///     RoundingMode::Ceil,
+    ///     RoundingIncrement::MultiplesOf2,
+    /// );
+    /// assert_eq!("-3.4", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
+    /// dec.round_with_mode_and_increment(
+    ///     -2,
+    ///     RoundingMode::HalfExpand,
+    ///     RoundingIncrement::MultiplesOf5,
+    /// );
+    /// assert_eq!("5.45", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
+    /// dec.round_with_mode_and_increment(
+    ///     -2,
+    ///     RoundingMode::HalfTrunc,
+    ///     RoundingIncrement::MultiplesOf25,
+    /// );
+    /// assert_eq!("-7.25", dec.to_string());
+    /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
+    /// dec.round_with_mode_and_increment(
+    ///     -1,
+    ///     RoundingMode::HalfEven,
+    ///     RoundingIncrement::MultiplesOf5,
+    /// );
+    /// assert_eq!("10.0", dec.to_string());
+    /// ```
+    pub fn round_with_mode_and_increment(
+        &mut self,
+        position: i16,
+        mode: RoundingMode,
+        increment: RoundingIncrement,
+    ) {
+        match mode {
+            RoundingMode::Ceil => self.ceil_to_increment_internal(position, increment),
+            RoundingMode::Expand => self.expand_to_increment_internal(position, increment),
+            RoundingMode::Floor => self.floor_to_increment_internal(position, increment),
+            RoundingMode::Trunc => self.trunc_to_increment_internal(position, increment),
+            RoundingMode::HalfCeil => self.half_ceil_to_increment_internal(position, increment),
+            RoundingMode::HalfExpand => self.half_expand_to_increment_internal(position, increment),
+            RoundingMode::HalfFloor => self.half_floor_to_increment_internal(position, increment),
+            RoundingMode::HalfTrunc => self.half_trunc_to_increment_internal(position, increment),
+            RoundingMode::HalfEven => self.half_even_to_increment_internal(position, increment),
+        }
+    }
+
+    /// Returns this number rounded at a particular digit position and increment, using the specified rounding mode.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingIncrement, RoundingMode};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
+    /// assert_eq!(
+    ///     "-4",
+    ///     dec.rounded_with_mode_and_increment(
+    ///         0,
+    ///         RoundingMode::Floor,
+    ///         RoundingIncrement::MultiplesOf1
+    ///     )
+    ///     .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("-3.59").unwrap();
+    /// assert_eq!(
+    ///     "-3.4",
+    ///     dec.rounded_with_mode_and_increment(
+    ///         -1,
+    ///         RoundingMode::Ceil,
+    ///         RoundingIncrement::MultiplesOf2
+    ///     )
+    ///     .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
+    /// assert_eq!(
+    ///     "5.45",
+    ///     dec.rounded_with_mode_and_increment(
+    ///         -2,
+    ///         RoundingMode::HalfExpand,
+    ///         RoundingIncrement::MultiplesOf5
+    ///     )
+    ///     .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
+    /// assert_eq!(
+    ///     "-7.25",
+    ///     dec.rounded_with_mode_and_increment(
+    ///         -2,
+    ///         RoundingMode::HalfTrunc,
+    ///         RoundingIncrement::MultiplesOf25
+    ///     )
+    ///     .to_string()
+    /// );
+    /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
+    /// assert_eq!(
+    ///     "10.0",
+    ///     dec.rounded_with_mode_and_increment(
+    ///         -1,
+    ///         RoundingMode::HalfEven,
+    ///         RoundingIncrement::MultiplesOf5
+    ///     )
+    ///     .to_string()
+    /// );
+    /// ```
+    pub fn rounded_with_mode_and_increment(
+        mut self,
+        position: i16,
+        mode: RoundingMode,
+        increment: RoundingIncrement,
+    ) -> Self {
+        self.round_with_mode_and_increment(position, mode, increment);
+        self
+    }
+
+    fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        if self.sign == Sign::Negative {
+            self.value.trunc_to_increment_internal(position, increment);
+            return;
+        }
+
+        self.value.expand_to_increment_internal(position, increment);
+    }
+
+    fn trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, inner_increment: R) {
+        self.value
+            .trunc_to_increment_internal(position, inner_increment);
+    }
+
+    fn half_trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        self.value
+            .half_trunc_to_increment_internal(position, increment);
+    }
+
+    fn half_ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        if self.sign == Sign::Negative {
+            self.half_trunc_to_increment_internal(position, increment);
+            return;
+        }
+
+        self.half_expand_to_increment_internal(position, increment);
+    }
+
+    fn expand_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        inner_increment: R,
+    ) {
+        self.value
+            .expand_to_increment_internal(position, inner_increment);
+    }
+
+    fn half_expand_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        self.value
+            .half_expand_to_increment_internal(position, increment);
+    }
+
+    fn half_even_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        self.value
+            .half_even_to_increment_internal(position, increment);
+    }
+
+    fn floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        if self.sign == Sign::Negative {
+            self.expand_to_increment_internal(position, increment);
+            return;
+        }
+
+        self.trunc_to_increment_internal(position, increment);
+    }
+
+    fn half_floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
+        if self.sign == Sign::Negative {
+            self.half_expand_to_increment_internal(position, increment);
+            return;
+        }
+
+        self.half_trunc_to_increment_internal(position, increment);
+    }
+}
