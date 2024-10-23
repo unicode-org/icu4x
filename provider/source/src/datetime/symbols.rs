@@ -424,32 +424,6 @@ mod tests {
     }
 
     #[test]
-    fn test_adapter_eras() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("4"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_eras_wide:?}"),
-            "VariableEras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
-        );
-    }
-
-    #[test]
     fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = SourceDataProvider::new_testing()
             .load(DataRequest {
