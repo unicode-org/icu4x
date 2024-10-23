@@ -2548,7 +2548,7 @@ fn test_float() {
 fn test_basic() {
     #[derive(Debug)]
     struct TestCase {
-        pub input: isize,
+        pub input: usize,
         pub delta: i16,
         pub expected: &'static str,
     }
@@ -2622,26 +2622,6 @@ fn test_basic() {
             input: 500,
             delta: 3,
             expected: "500000",
-        },
-        TestCase {
-            input: -123,
-            delta: 0,
-            expected: "-123",
-        },
-        TestCase {
-            input: -123,
-            delta: -2,
-            expected: "-1.23",
-        },
-        TestCase {
-            input: -123,
-            delta: -5,
-            expected: "-0.00123",
-        },
-        TestCase {
-            input: -123,
-            delta: 3,
-            expected: "-123000",
         },
     ];
     for cas in &cases {
@@ -2837,8 +2817,8 @@ fn test_from_str_scientific() {
 }
 
 #[test]
-fn test_isize_limits() {
-    for num in &[isize::MAX, isize::MIN] {
+fn test_usize_limits() {
+    for num in &[usize::MAX, usize::MIN] {
         let dec: UnsignedFixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
@@ -2848,14 +2828,7 @@ fn test_isize_limits() {
 }
 
 #[test]
-fn test_ui128_limits() {
-    for num in &[i128::MAX, i128::MIN] {
-        let dec: UnsignedFixedDecimal = (*num).into();
-        let dec_str = dec.to_string();
-        assert_eq!(num.to_string(), dec_str);
-        assert_eq!(dec, UnsignedFixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec, dec_str);
-    }
+fn test_u128_limits() {
     for num in &[u128::MAX, u128::MIN] {
         let dec: UnsignedFixedDecimal = (*num).into();
         let dec_str = dec.to_string();
@@ -3064,113 +3037,6 @@ fn test_pad() {
 
     dec.pad_start(2);
     assert_eq!("-00.42", dec.to_string());
-}
-
-#[test]
-fn test_sign_display() {
-    use SignDisplay::*;
-    let positive_nonzero = UnsignedFixedDecimal::from(163u32);
-    let negative_nonzero = UnsignedFixedDecimal::from(-163);
-    let positive_zero = UnsignedFixedDecimal::from(0u32);
-    let negative_zero = UnsignedFixedDecimal::from(0u32).with_sign(Sign::Negative);
-    assert_eq!(
-        "163",
-        positive_nonzero.clone().with_sign_display(Auto).to_string()
-    );
-    assert_eq!(
-        "-163",
-        negative_nonzero.clone().with_sign_display(Auto).to_string()
-    );
-    assert_eq!(
-        "0",
-        positive_zero.clone().with_sign_display(Auto).to_string()
-    );
-    assert_eq!(
-        "-0",
-        negative_zero.clone().with_sign_display(Auto).to_string()
-    );
-    assert_eq!(
-        "+163",
-        positive_nonzero
-            .clone()
-            .with_sign_display(Always)
-            .to_string()
-    );
-    assert_eq!(
-        "-163",
-        negative_nonzero
-            .clone()
-            .with_sign_display(Always)
-            .to_string()
-    );
-    assert_eq!(
-        "+0",
-        positive_zero.clone().with_sign_display(Always).to_string()
-    );
-    assert_eq!(
-        "-0",
-        negative_zero.clone().with_sign_display(Always).to_string()
-    );
-    assert_eq!(
-        "163",
-        positive_nonzero
-            .clone()
-            .with_sign_display(Never)
-            .to_string()
-    );
-    assert_eq!(
-        "163",
-        negative_nonzero
-            .clone()
-            .with_sign_display(Never)
-            .to_string()
-    );
-    assert_eq!(
-        "0",
-        positive_zero.clone().with_sign_display(Never).to_string()
-    );
-    assert_eq!(
-        "0",
-        negative_zero.clone().with_sign_display(Never).to_string()
-    );
-    assert_eq!(
-        "+163",
-        positive_nonzero
-            .clone()
-            .with_sign_display(ExceptZero)
-            .to_string()
-    );
-    assert_eq!(
-        "-163",
-        negative_nonzero
-            .clone()
-            .with_sign_display(ExceptZero)
-            .to_string()
-    );
-    assert_eq!(
-        "0",
-        positive_zero
-            .clone()
-            .with_sign_display(ExceptZero)
-            .to_string()
-    );
-    assert_eq!(
-        "0",
-        negative_zero
-            .clone()
-            .with_sign_display(ExceptZero)
-            .to_string()
-    );
-    assert_eq!(
-        "163",
-        positive_nonzero.with_sign_display(Negative).to_string()
-    );
-    assert_eq!(
-        "-163",
-        negative_nonzero.with_sign_display(Negative).to_string()
-    );
-    assert_eq!("0", positive_zero.with_sign_display(Negative).to_string());
-    assert_eq!("0", negative_zero.with_sign_display(Negative).to_string());
 }
 
 #[test]
@@ -3942,7 +3808,7 @@ fn test_rounding_increment() {
         dec
     );
 
-    let mut dec = UnsignedFixedDecimal::from(70).multiplied_pow10(i16::MIN);
+    let mut dec = UnsignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Expand,
