@@ -361,7 +361,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         let max_day = C::month_days(year, month, ());
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,

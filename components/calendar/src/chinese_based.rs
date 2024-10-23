@@ -344,7 +344,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         year_info: ChineseBasedYearInfo,
     ) -> Result<ArithmeticDate<C>, DateError> {
         let max_month = Self::months_in_year_with_info(year_info);
-        if !(1..=max_month).contains(&month) {
+        if month == 0 || !(1..=max_month).contains(&month) {
             return Err(DateError::Range {
                 field: "month",
                 value: month as i32,
@@ -352,17 +352,9 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
                 max: max_month as i32,
             });
         }
-        if month == 0 {
-            return Err(DateError::Range {
-                field: "month",
-                value: 0,
-                min: 1,
-                max: 12,
-            });
-        }
 
         let max_day = year_info.days_in_month(month);
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,
