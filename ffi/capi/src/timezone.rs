@@ -35,9 +35,7 @@ pub mod ffi {
             Box::new(Self(icu_timezone::TimeZoneInfo::utc().into()))
         }
 
-        /// Creates a time zone for UTC (Coordinated Universal Time).
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::utc, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
+        /// Creates a time zone.
         #[diplomat::attr(auto, constructor)]
         pub fn from_parts(
             bcp47_id: &DiplomatStr,
