@@ -16,6 +16,8 @@ export class TimeZoneInfo {
 
     static utc(): TimeZoneInfo;
 
+    static fromParts(bcp47Id: string, offsetSeconds: number, dst: boolean): TimeZoneInfo;
+
     trySetOffsetSeconds(offsetSeconds: number): void;
 
     setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;

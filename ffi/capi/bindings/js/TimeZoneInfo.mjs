@@ -59,6 +59,22 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    static fromParts(bcp47Id, offsetSeconds, dst) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const bcp47IdSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, bcp47Id));
+        
+        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(...bcp47IdSlice.splat(), offsetSeconds, dst);
+    
+        try {
+            return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        }
+    }
+
     trySetOffsetSeconds(offsetSeconds) {
         const result = wasm.icu4x_TimeZoneInfo_try_set_offset_seconds_mv1(this.ffiValue, offsetSeconds);
     

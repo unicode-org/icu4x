@@ -9,7 +9,8 @@ pub mod ffi {
     use super::TimeZoneInfoBuilder;
     use alloc::boxed::Box;
     use core::fmt::Write;
-    use icu_timezone::TimeZoneBcp47Id;
+    use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+    use tinystr::TinyAsciiStr;
 
     use crate::{datetime::ffi::IsoDateTime, errors::ffi::TimeZoneInvalidOffsetError};
 
@@ -21,7 +22,7 @@ pub mod ffi {
         /// Creates a time zone with no information.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::unknown, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::unknown, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn unknown() -> Box<TimeZoneInfo> {
             Box::new(Self(icu_timezone::TimeZoneInfo::unknown().into()))
         }
@@ -32,6 +33,28 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn utc() -> Box<TimeZoneInfo> {
             Box::new(Self(icu_timezone::TimeZoneInfo::utc().into()))
+        }
+
+        /// Creates a time zone.
+        #[diplomat::attr(auto, constructor)]
+        pub fn from_parts(
+            bcp47_id: &DiplomatStr,
+            offset_seconds: i32,
+            dst: bool,
+        ) -> Box<TimeZoneInfo> {
+            Box::new(Self(TimeZoneInfoBuilder {
+                time_zone_id: TinyAsciiStr::try_from_utf8(bcp47_id)
+                    .ok()
+                    .map(TimeZoneBcp47Id)
+                    .unwrap_or(TimeZoneBcp47Id::unknown()),
+                offset: UtcOffset::try_from_seconds(offset_seconds).ok(),
+                zone_variant: Some(if dst {
+                    ZoneVariant::daylight()
+                } else {
+                    ZoneVariant::standard()
+                }),
+                local_time: None,
+            }))
         }
 
         /// Sets the `offset` field from offset seconds.
