@@ -13,7 +13,7 @@ use core::str::FromStr;
 #[cfg(feature = "ryu")]
 use crate::LimitError;
 use crate::{uint_iterator::IntIterator, IncrementLike, NoIncrement};
-use crate::{FloatPrecision, ParseError};
+use crate::{FloatPrecision, ParseError, RoundingIncrement, RoundingMode};
 
 // UnsignedFixedDecimal assumes usize (digits.len()) is at least as big as a u16
 #[cfg(not(any(
@@ -2878,7 +2878,7 @@ fn test_ui128_limits() {
 
 #[test]
 fn test_upper_magnitude_bounds() {
-    let mut dec: UnsignedFixedDecimal = 98765.into();
+    let mut dec: UnsignedFixedDecimal = 98765u32.into();
     assert_eq!(dec.upper_magnitude, 4);
     dec.multiply_pow10(i16::MAX - 4);
     assert_eq!(dec.upper_magnitude, i16::MAX);
@@ -2895,7 +2895,7 @@ fn test_upper_magnitude_bounds() {
 
 #[test]
 fn test_lower_magnitude_bounds() {
-    let mut dec: UnsignedFixedDecimal = 98765.into();
+    let mut dec: UnsignedFixedDecimal = 98765u32.into();
     assert_eq!(dec.lower_magnitude, 0);
     dec.multiply_pow10(i16::MIN);
     assert_eq!(dec.lower_magnitude, i16::MIN);
