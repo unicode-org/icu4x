@@ -8,6 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{fieldset::YMDHMSV, neo_skeleton::NeoSkeletonLength};
+    use icu_timezone::ZoneVariant;
 
     use crate::{
         datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
@@ -62,7 +63,9 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
                 time: greg.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::from(&time_zone.0)
+                    .at_time((datetime.0.date, datetime.0.time))
+                    .with_zone_variant(time_zone.0.zone_variant.unwrap_or(ZoneVariant::standard())),
             };
             let _infallible = self.0.format(&zdt).try_write_to(write);
             Ok(())
@@ -109,7 +112,14 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::from(&time_zone.0)
+                    .at_time((datetime.0.date.to_iso(), datetime.0.time))
+                    .with_zone_variant(
+                        time_zone
+                            .0
+                            .zone_variant
+                            .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+                    ),
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
@@ -125,7 +135,9 @@ pub mod ffi {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
-                zone: icu_timezone::TimeZoneInfo::try_from(time_zone.0)?,
+                zone: icu_timezone::TimeZoneInfo::from(&time_zone.0)
+                    .at_time((datetime.0.date, datetime.0.time))
+                    .with_zone_variant(time_zone.0.zone_variant.unwrap_or(ZoneVariant::standard())),
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())

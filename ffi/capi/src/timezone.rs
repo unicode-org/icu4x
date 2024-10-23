@@ -311,23 +311,11 @@ impl From<icu_timezone::TimeZoneInfo<icu_timezone::models::Base>> for TimeZoneIn
     }
 }
 
-impl TryFrom<TimeZoneInfoBuilder> for icu_timezone::TimeZoneInfo<icu_timezone::models::Full> {
-    type Error = crate::errors::ffi::Error;
-    fn try_from(other: TimeZoneInfoBuilder) -> Result<Self, crate::errors::ffi::Error> {
-        use crate::errors::ffi::Error;
+impl From<&'_ TimeZoneInfoBuilder> for icu_timezone::TimeZoneInfo<icu_timezone::models::Base> {
+    fn from(other: &TimeZoneInfoBuilder) -> Self {
         let mut time_zone_info = icu_timezone::TimeZoneInfo::unknown();
         time_zone_info.offset = other.offset;
         time_zone_info.time_zone_id = other.time_zone_id;
-        Ok(time_zone_info
-            .at_time(
-                other
-                    .local_time
-                    .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
-            )
-            .with_zone_variant(
-                other
-                    .zone_variant
-                    .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
-            ))
+        time_zone_info
     }
 }
