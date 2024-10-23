@@ -38,7 +38,6 @@ pub mod ffi {
         /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn from_parts(
             bcp47_id: &DiplomatStr,
