@@ -15,6 +15,10 @@ export class LocaleParseError {
         ["Extension", 3]
     ]);
 
+    static getAllEntries() {
+        return LocaleParseError.#values.entries();
+    }
+
     constructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
