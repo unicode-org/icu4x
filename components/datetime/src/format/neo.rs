@@ -350,9 +350,9 @@ size_test!(
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (11, 14, Part::ERROR), // M11
-///         (23, 25, Part::ERROR), // ce
-///         (42, 44, Part::ERROR), // AM
-///         (45, 50, Part::ERROR), // +0000
+///         (23, 36, Part::ERROR), // (era unknown)
+///         (53, 55, Part::ERROR), // AM
+///         (56, 61, Part::ERROR), // +0000
 ///     ]
 /// );
 /// ```
