@@ -138,11 +138,12 @@ pub mod ffi {
         ///
         /// Use LocaleCanonicalizer for better control and functionality
         #[diplomat::rust_link(icu::locale::Locale::canonicalize, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::canonicalize_utf8, FnInStruct, hidden)]
         pub fn canonicalize(
             s: &DiplomatStr,
             write: &mut DiplomatWrite,
         ) -> Result<(), LocaleParseError> {
-            let _infallible = icu_locale_core::Locale::canonicalize(s)?.write_to(write);
+            let _infallible = icu_locale_core::Locale::canonicalize_utf8(s)?.write_to(write);
             Ok(())
         }
         /// Returns a string representation of [`Locale`].
