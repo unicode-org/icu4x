@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt;
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
@@ -861,3 +862,37 @@ impl SignedFixedDecimal {
         self.half_trunc_to_increment_internal(position, increment);
     }
 }
+
+/// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
+///
+/// # Examples
+///
+/// ```
+/// # use fixed_decimal::FixedDecimal;
+/// # use writeable::assert_writeable_eq;
+/// #
+/// assert_writeable_eq!(FixedDecimal::from(42), "42");
+/// ```
+impl writeable::Writeable for SignedFixedDecimal {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        match self.sign {
+            Sign::Negative => sink.write_char('-')?,
+            Sign::Positive => sink.write_char('+')?,
+            Sign::None => (),
+        }
+        for m in self.value.magnitude_range().rev() {
+            if m == -1 {
+                sink.write_char('.')?;
+            }
+            let d = self.value.digit_at(m);
+            sink.write_char((b'0' + d) as char)?;
+        }
+        Ok(())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        self.value.writeable_length_hint() + (self.sign != Sign::None) as usize
+    }
+}
+
+writeable::impl_display_with_writeable!(SignedFixedDecimal);

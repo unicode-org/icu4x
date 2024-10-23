@@ -2057,19 +2057,14 @@ impl UnsignedFixedDecimal {
             return Err(ParseError::Syntax);
         }
         #[allow(clippy::indexing_slicing)] // The string is not empty.
-        let sign = match input_str[0] {
-            b'-' => Sign::Negative,
-            b'+' => Sign::Positive,
-            _ => Sign::None,
+        let skip_first_char = match input_str[0] {
+            b'-' => return Err(ParseError::Syntax),
+            b'+' => true,
+            _ => false,
         };
 
-        // There is no negative sign for the `UnsignedFixedDecimal`
-        if sign == Sign::Negative {
-            return Err(ParseError::Syntax);
-        }
-
         #[allow(clippy::indexing_slicing)] // The string is not empty.
-        let no_sign_str = if sign == Sign::None {
+        let no_sign_str = if !skip_first_char {
             input_str
         } else {
             &input_str[1..]
