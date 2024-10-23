@@ -189,11 +189,10 @@ impl LanguageIdentifier {
         let lang_id = Self::try_from_utf8(input.as_ref())?;
         let cow = lang_id.write_to_string();
         if cow.as_bytes() == input {
-            if let Ok(s) = core::str::from_utf8(input) {
-                Ok(s.into())
-            } else {
-                Ok(cow.into_owned().into())
-            }
+            // Safety: input is known to be valid UTF-8 since it has the same
+            // bytes as `cow`, which is a `str`.
+            let s = unsafe { core::str::from_utf8_unchecked(input) };
+            Ok(s.into())
         } else {
             Ok(cow.into_owned().into())
         }

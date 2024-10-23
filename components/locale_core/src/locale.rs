@@ -171,13 +171,12 @@ impl Locale {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
-        let cow = locale.write_to_string();
+        let cow: Cow<str> = locale.write_to_string();
         if cow.as_bytes() == input {
-            if let Ok(s) = core::str::from_utf8(input) {
-                Ok(s.into())
-            } else {
-                Ok(cow.into_owned().into())
-            }
+            // Safety: input is known to be valid UTF-8 since it has the same
+            // bytes as `cow`, which is a `str`.
+            let s = unsafe { core::str::from_utf8_unchecked(input) };
+            Ok(s.into())
         } else {
             Ok(cow.into_owned().into())
         }
