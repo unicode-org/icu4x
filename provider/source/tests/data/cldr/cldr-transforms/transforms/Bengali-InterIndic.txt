@@ -1,4 +1,3 @@
-
 # Bengali-InterIndic
 ো→\uE04B; # VOWEL SIGN O
 ৌ→\uE04C; # VOWEL SIGN AU
@@ -96,4 +95,3 @@
 ॥→\uE065;        # DOUBLE DANDA
 #    :: NFC (NFD) ;
 # eof
-
