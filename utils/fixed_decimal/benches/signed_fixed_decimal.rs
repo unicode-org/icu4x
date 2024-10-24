@@ -9,17 +9,17 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 
 // TODO: move to helpers.rs
-fn triangular_nums_unsigned(range: f64) -> Vec<usize> {
+fn triangular_nums(range: f64) -> Vec<isize> {
     // Use Lcg64Xsh32, a small, fast PRNG.
-    // Generate 1000 numbers between 0 and +range, weighted around range/2.
-    let rng = Lcg64Xsh32::seed_from_u64(2024);
-    let dist = Triangular::new(0.0, range, range / 2.0).unwrap();
+    // Generate 1000 numbers between -range and +range, weighted around 0.
+    let rng = Lcg64Xsh32::seed_from_u64(2020);
+    let dist = Triangular::new(-range, range, 0.0).unwrap();
     dist.sample_iter(rng)
         .take(1000)
-        .map(|v| v as usize)
+        .map(|v| v as isize)
         .collect()
 }
 
@@ -34,7 +34,7 @@ fn triangular_floats(range: f64) -> impl Iterator<Item = f64> {
 }
 
 fn overview_bench(c: &mut Criterion) {
-    let nums = triangular_nums_unsigned(1e4);
+    let nums = triangular_nums(1e4);
     let values: Vec<_> = nums.iter().map(|n| n.to_string()).collect();
     c.bench_function("fixed_decimal/overview", |b| {
         #[allow(clippy::suspicious_map)]
@@ -45,12 +45,12 @@ fn overview_bench(c: &mut Criterion) {
             // * Serialization of FixedDecimal to string
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(UnsignedFixedDecimal::from)
+                .map(SignedFixedDecimal::from)
                 .count();
             let fds: Vec<_> = values
                 .iter()
                 .map(black_box)
-                .map(|v| UnsignedFixedDecimal::from_str(v).expect("Failed to parse"))
+                .map(|v| SignedFixedDecimal::from_str(v).expect("Failed to parse"))
                 .collect();
             fds.iter().map(black_box).map(|v| v.to_string()).count();
         });
@@ -69,7 +69,7 @@ fn overview_bench(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn smaller_isize_benches(c: &mut Criterion) {
     // Smaller nums: -1e4 to 1e4
-    let nums = triangular_nums_unsigned(1e4);
+    let nums = triangular_nums(1e4);
 
     // Note: this could be bench_function_with_inputs, but there are 1000 random inputs.
     // Instead, consider all inputs together in the same benchmark.
@@ -78,7 +78,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
             #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(UnsignedFixedDecimal::from)
+                .map(SignedFixedDecimal::from)
                 .count()
         });
     });
@@ -87,7 +87,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn larger_isize_benches(c: &mut Criterion) {
     // Larger nums: -1e16 to 1e16
-    let nums = triangular_nums_unsigned(1e16);
+    let nums = triangular_nums(1e16);
 
     // Note: this could be bench_function_with_inputs, but there are 1000 random inputs.
     // Instead, consider all inputs together in the same benchmark.
@@ -96,7 +96,7 @@ fn larger_isize_benches(c: &mut Criterion) {
             #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(UnsignedFixedDecimal::from)
+                .map(SignedFixedDecimal::from)
                 .count()
         });
     });
@@ -108,8 +108,8 @@ fn to_string_benches(c: &mut Criterion) {
     use writeable::Writeable;
 
     let objects = [
-        UnsignedFixedDecimal::from(2250u32).multiplied_pow10(-2),
-        UnsignedFixedDecimal::from(908070605040302010u128),
+        SignedFixedDecimal::from(2250).multiplied_pow10(-2),
+        SignedFixedDecimal::from(908070605040302010u128),
     ];
 
     {
@@ -163,7 +163,7 @@ fn from_string_benches(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
-                |b, object| b.iter(|| UnsignedFixedDecimal::from_str(object).unwrap()),
+                |b, object| b.iter(|| SignedFixedDecimal::from_str(object).unwrap()),
             );
         }
         group.finish();
@@ -186,7 +186,7 @@ fn rounding_benches(c: &mut Criterion) {
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
-        .map(|f| UnsignedFixedDecimal::try_from_f64(f, FloatPrecision::RoundTrip).unwrap())
+        .map(|f| SignedFixedDecimal::try_from_f64(f, FloatPrecision::RoundTrip).unwrap())
         .collect();
     let mut group = c.benchmark_group("rounding");
 
@@ -197,7 +197,7 @@ fn rounding_benches(c: &mut Criterion) {
                     nums.iter()
                         .cloned()
                         .map(|num| {
-                            UnsignedFixedDecimal::rounded_with_mode(
+                            SignedFixedDecimal::rounded_with_mode(
                                 black_box(num),
                                 offset,
                                 rounding_mode,
