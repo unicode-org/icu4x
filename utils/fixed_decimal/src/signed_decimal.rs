@@ -8,7 +8,8 @@ use core::str::FromStr;
 use crate::uint_iterator::IntIterator;
 use crate::{variations::Signed, UnsignedFixedDecimal};
 use crate::{
-    IncrementLike, NoIncrement, ParseError, RoundingIncrement, RoundingMode, Sign, SignDisplay,
+    FloatPrecision, IncrementLike, LimitError, NoIncrement, ParseError, RoundingIncrement,
+    RoundingMode, Sign, SignDisplay,
 };
 
 /// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`].
@@ -342,6 +343,67 @@ impl_from_unsigned_integer_type!(u64);
 impl_from_unsigned_integer_type!(u32);
 impl_from_unsigned_integer_type!(u16);
 impl_from_unsigned_integer_type!(u8);
+
+#[cfg(feature = "ryu")]
+impl SignedFixedDecimal {
+    /// Constructs a [`SignedFixedDecimal`] from an f64.
+    ///
+    /// Since f64 values do not carry a notion of their precision, the second argument to this
+    /// function specifies the type of precision associated with the f64. For more information,
+    /// see [`FloatPrecision`].
+    ///
+    /// This function uses `ryu`, which is an efficient double-to-string algorithm, but other
+    /// implementations may yield higher performance; for more details, see
+    /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
+    ///
+    /// This function can be made available with the `"ryu"` Cargo feature.
+    ///
+    /// ```rust
+    /// use fixed_decimal::{SignedFixedDecimal, FloatPrecision};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let decimal =
+    ///     SignedFixedDecimal::try_from_f64(-5.1, FloatPrecision::Magnitude(-2))
+    ///         .expect("Finite quantity with limited precision");
+    /// assert_writeable_eq!(decimal, "-5.10");
+    ///
+    /// let decimal =
+    ///     SignedFixedDecimal::try_from_f64(0.012345678, FloatPrecision::RoundTrip)
+    ///         .expect("Finite quantity");
+    /// assert_writeable_eq!(decimal, "0.012345678");
+    ///
+    /// let decimal =
+    ///     SignedFixedDecimal::try_from_f64(12345678000., FloatPrecision::Integer)
+    ///         .expect("Finite, integer-valued quantity");
+    /// assert_writeable_eq!(decimal, "12345678000");
+    /// ```
+    ///
+    /// Negative zero is supported.
+    ///
+    /// ```rust
+    /// use fixed_decimal::{SignedFixedDecimal, FloatPrecision};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // IEEE 754 for floating point defines the sign bit separate
+    /// // from the mantissa and exponent, allowing for -0.
+    /// let negative_zero =
+    ///     SignedFixedDecimal::try_from_f64(-0.0, FloatPrecision::Integer)
+    ///         .expect("Negative zero");
+    /// assert_writeable_eq!(negative_zero, "-0");
+    /// ```
+    pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, LimitError> {
+        match float.is_sign_negative() {
+            true => Ok(SignedFixedDecimal {
+                sign: Sign::Negative,
+                value: UnsignedFixedDecimal::try_from_f64(-float, precision)?,
+            }),
+            false => Ok(SignedFixedDecimal {
+                sign: Sign::None,
+                value: UnsignedFixedDecimal::try_from_f64(float, precision)?,
+            }),
+        }
+    }
+}
 
 /// All the rounding and rounding related logic is implmented in this implmentation block.
 impl SignedFixedDecimal {

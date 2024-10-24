@@ -2265,7 +2265,7 @@ impl FromStr for UnsignedFixedDecimal {
 
 #[cfg(feature = "ryu")]
 impl UnsignedFixedDecimal {
-    /// Constructs a [`FixedDecimal`] from an f64.
+    /// Constructs a [`UnsignedFixedDecimal`] from an f64.
     ///
     /// Since f64 values do not carry a notion of their precision, the second argument to this
     /// function specifies the type of precision associated with the f64. For more information,
@@ -2276,6 +2276,9 @@ impl UnsignedFixedDecimal {
     /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
     /// This function can be made available with the `"ryu"` Cargo feature.
+    ///
+    /// NOTE:
+    ///   Negative numbers are not supported.
     ///
     /// ```rust
     /// use fixed_decimal::{FixedDecimal, FloatPrecision};
@@ -2295,20 +2298,6 @@ impl UnsignedFixedDecimal {
     ///     FixedDecimal::try_from_f64(12345678000., FloatPrecision::Integer)
     ///         .expect("Finite, integer-valued quantity");
     /// assert_writeable_eq!(decimal, "12345678000");
-    /// ```
-    ///
-    /// Negative zero is supported.
-    ///
-    /// ```rust
-    /// use fixed_decimal::{FixedDecimal, FloatPrecision};
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // IEEE 754 for floating point defines the sign bit separate
-    /// // from the mantissa and exponent, allowing for -0.
-    /// let negative_zero =
-    ///     FixedDecimal::try_from_f64(-0.0, FloatPrecision::Integer)
-    ///         .expect("Negative zero");
-    /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, LimitError> {
         let mut decimal = Self::new_from_f64_raw(float)?;
@@ -2352,7 +2341,7 @@ impl UnsignedFixedDecimal {
 
     /// Internal function for parsing directly from floats using ryū
     fn new_from_f64_raw(float: f64) -> Result<Self, LimitError> {
-        if !float.is_finite() {
+        if !float.is_finite() || float.is_sign_negative() {
             return Err(LimitError);
         }
         // note: this does not heap allocate
