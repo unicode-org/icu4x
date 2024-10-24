@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
@@ -14,7 +14,7 @@ use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 use super::CurrencyCode;
 
 pub struct LongFormattedCurrency<'l> {
-    pub(crate) value: &'l UnsignedFixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
