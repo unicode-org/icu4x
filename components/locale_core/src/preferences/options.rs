@@ -7,22 +7,13 @@
 #[doc(hidden)]
 macro_rules! __options {
     ($name:ident,
-     $resolved_name:ident,
      {$($key:ident => $pref:ty),*}
      ) => (
-        #[derive(Default, Debug, PartialEq)]
+        #[derive(Default, Debug, Clone)]
         #[non_exhaustive]
         pub struct $name {
             $(
                 pub $key: Option<$pref>,
-            )*
-        }
-
-        #[non_exhaustive]
-        #[derive(Debug, PartialEq)]
-        pub struct $resolved_name {
-            $(
-                pub $key: $pref,
             )*
         }
 
