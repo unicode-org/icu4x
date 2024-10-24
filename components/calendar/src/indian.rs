@@ -148,18 +148,18 @@ impl Calendar for Indian {
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let day_of_year_indian = date.0.day_of_year();
+        let day_of_year_indian = date.0.day_of_year(); // 1-indexed
         let days_in_year = date.0.days_in_year();
 
         let mut year = date.0.year + YEAR_OFFSET;
-        let day_of_year_iso = if day_of_year_indian + DAY_OFFSET >= days_in_year {
+        // days_in_year is a valid day of the year, so we check > not >=
+        let day_of_year_iso = if day_of_year_indian + DAY_OFFSET > days_in_year {
             year += 1;
             // calculate day of year in next year
             day_of_year_indian + DAY_OFFSET - days_in_year
         } else {
             day_of_year_indian + DAY_OFFSET
         };
-
         Iso::iso_from_year_day(year, day_of_year_iso)
     }
 
