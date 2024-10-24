@@ -292,7 +292,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         ArithmeticDate {
             year,
             month,
-            day: day.try_into().unwrap_or(0),
+            day: day.try_into().unwrap_or(1),
             year_info: (),
             marker: PhantomData,
         }
