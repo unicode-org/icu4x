@@ -5,12 +5,27 @@
 use crate::provider::*;
 use crate::ListLength;
 use core::fmt::{self, Write};
+use icu_locale_core::preferences::{define_options, define_preferences};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use writeable::*;
 
 #[cfg(doc)]
 extern crate writeable;
+
+define_preferences!(
+    /// The preferences for list formatting.
+    ListFormatterPreferences,
+    {}
+);
+define_options!(
+    /// The options for list formatting.
+    ListFormatterOptions,
+    {
+        /// Style
+        style: ListLength
+    }
+);
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
@@ -22,7 +37,7 @@ pub struct ListFormatter {
 macro_rules! constructor {
     ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
         icu_provider::gen_any_buffer_data_constructors!(
-            (locale, style: ListLength) ->  error: DataError,
+            (prefs: ListFormatterPreferences, options: ListFormatterOptions) ->  error: DataError,
             #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
@@ -43,18 +58,20 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
             provider: &(impl DataProvider<$marker> + ?Sized),
-            locale: &DataLocale,
-            length: ListLength,
+            prefs: ListFormatterPreferences,
+            options: ListFormatterOptions,
         ) -> Result<Self, DataError> {
+            let length = match options.style.unwrap_or_default() {
+                ListLength::Narrow => ListFormatterPatternsV2::NARROW,
+                ListLength::Short => ListFormatterPatternsV2::SHORT,
+                ListLength::Wide => ListFormatterPatternsV2::WIDE,
+            };
+            let locale = get_data_locale_from_prefs(prefs);
             let data = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        match length {
-                            ListLength::Narrow => ListFormatterPatternsV2::NARROW,
-                            ListLength::Short => ListFormatterPatternsV2::SHORT,
-                            ListLength::Wide => ListFormatterPatternsV2::WIDE,
-                        },
-                        locale),
+                        length,
+                        &locale),
                     ..Default::default()
                 })?
                 .payload
@@ -62,6 +79,16 @@ macro_rules! constructor {
             Ok(Self { data })
         }
     };
+}
+
+fn get_data_locale_from_prefs(prefs: ListFormatterPreferences) -> DataLocale {
+    DataLocale::from_subtags(
+        prefs.language,
+        prefs.script,
+        prefs.region,
+        prefs.variant,
+        prefs.subdivision,
+    )
 }
 
 impl ListFormatter {
@@ -103,8 +130,9 @@ impl ListFormatter {
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and_with_length(
-    ///     &locale!("fr").into(),
-    ///     ListLength::Wide,
+    ///     locale!("fr").into(),
+    ///     ListFormatterOptions::new()
+    ///         .style(ListLength::Wide)
     /// )
     /// .unwrap();
     /// let pays = ["Italie", "France", "Espagne", "Allemagne"];
@@ -356,8 +384,8 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
-                &icu::locale::locale!($locale).into(),
-                ListLength::Wide
+                icu::locale::locale!($locale).into(),
+                Default::default(),
             ).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);

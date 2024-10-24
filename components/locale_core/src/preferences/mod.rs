@@ -11,44 +11,6 @@
 //! The crate is intended primarily to be used by components constructors to normalize the format
 //! of ingesting preferences across all of [`ICU4X`].
 //!
-//! # Examples:
-//!
-//! ```
-//! use icu::locale::preferences::{
-//!   preferences,
-//!   extensions::unicode::keywords::HourCycle,
-//! };
-//! use icu::locale::LanguageIdentifier;
-//!
-//! pub fn get_defaults(lid: &Option<LanguageIdentifier>) -> ExampleComponentResolvedPreferences {
-//!     unimplemented!()
-//! }
-//!
-//! preferences!(
-//!     ExampleComponentPreferences,
-//!     ExampleComponentResolvedPreferences,
-//!     {
-//!         hour_cycle: HourCycle
-//!     }
-//! );
-//!
-//! pub struct ExampleComponent {
-//!     resolved_prefs: ExampleComponentResolvedPreferences,
-//! }
-//!
-//! impl ExampleComponent {
-//!     pub fn new(prefs: ExampleComponentPreferences) -> Self {
-//!         // Retrieve the default values for the given [`LanguageIdentifier`].
-//!         let mut resolved_prefs = get_defaults(&prefs.lid);
-//!
-//!         // Resolve them against provided preferences.
-//!         resolved_prefs.extend(prefs);
-//!
-//!         Self { resolved_prefs }
-//!     }
-//! }
-//! ```
-//!
 //! [`ICU4X`]: ../icu/index.html
 //! [`Locale`]: crate::Locale
 
@@ -56,7 +18,7 @@ pub mod extensions;
 mod options;
 
 #[doc(inline)]
-pub use options::options;
+pub use options::define_options;
 
 /// TODO
 pub trait PreferenceKey {
@@ -84,11 +46,10 @@ pub trait PreferenceKey {
 #[macro_export]
 #[doc(hidden)]
 /// TODO
-macro_rules! __preferences {
+macro_rules! __define_preferences {
     (
         $(#[$doc:meta])*
         $name:ident,
-        $resolved_name:ident,
         {
             $(
                 $(#[$key_doc:meta])*
@@ -96,36 +57,32 @@ macro_rules! __preferences {
             ),*
         }
      ) => (
-        #[derive(Default, Debug, Clone)]
         $(#[$doc])*
+        #[derive(Default, Debug, Clone)]
         #[non_exhaustive]
         pub struct $name {
-            #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: Option<$crate::LanguageIdentifier>,
+            pub(crate) language: $crate::subtags::Language,
+            pub(crate) script: Option<$crate::subtags::Script>,
+            pub(crate) region: Option<$crate::subtags::Region>,
+            pub(crate) variant: Option<$crate::subtags::Variant>,
+            pub(crate) subdivision: Option<$crate::subtags::Subtag>,
+            pub(crate) ue_region: Option<$crate::subtags::Region>,
+
             $(
                 $(#[$key_doc])*
                 pub $key: Option<$pref>,
             )*
         }
 
-        #[non_exhaustive]
-        #[derive(Debug, Clone)]
-        #[doc = concat!("The resolved version of `", stringify!($name), "`.")]
-        pub struct $resolved_name {
-            #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: $crate::LanguageIdentifier,
-
-            $(
-                $(#[$key_doc])*
-                pub $key: $pref,
-            )*
-        }
-
         impl From<$crate::Locale> for $name {
             fn from(loc: $crate::Locale) -> Self {
-                use $crate::preferences::PreferenceKey;
+                $name::from(&loc)
+            }
+        }
 
-                let lid = Some(loc.id);
+        impl From<&$crate::Locale> for $name {
+            fn from(loc: &$crate::Locale) -> Self {
+                use $crate::preferences::PreferenceKey;
 
                 $(
                     let mut $key = None;
@@ -143,10 +100,69 @@ macro_rules! __preferences {
                     )*
                 }
 
+                let sd = loc
+                    .extensions
+                    .unicode
+                    .keywords
+                    .get(&$crate::extensions::unicode::key!("sd"))
+                    .and_then(|v| v.as_single_subtag().copied());
+                let ue_region = loc
+                        .extensions
+                        .unicode
+                        .keywords
+                        .get(&$crate::extensions::unicode::key!("rg"))
+                        .and_then(|v| v.as_single_subtag()
+                            .and_then(|s| $crate::subtags::Region::try_from_str(s.as_str()).ok()));
                 Self {
-                    lid,
+                    language: loc.id.language,
+                    script: loc.id.script,
+                    region: loc.id.region,
+                    variant: loc.id.variants.iter().copied().next(),
+                    subdivision: sd,
+                    ue_region,
+
                     $(
                         $key,
+                    )*
+                }
+            }
+        }
+
+        impl From<$crate::LanguageIdentifier> for $name {
+            fn from(lid: $crate::LanguageIdentifier) -> Self {
+                $name::from(&lid)
+            }
+        }
+
+        impl From<&$crate::LanguageIdentifier> for $name {
+            fn from(lid: &$crate::LanguageIdentifier) -> Self {
+                Self {
+                    language: lid.language,
+                    script: lid.script,
+                    region: lid.region,
+                    variant: lid.variants.iter().copied().next(),
+                    subdivision: None,
+                    ue_region: None,
+
+                    $(
+                        $key: None,
+                    )*
+                }
+            }
+        }
+
+        impl From<&icu_provider::DataLocale> for $name {
+            fn from(loc: &icu_provider::DataLocale) -> Self {
+                Self {
+                    language: loc.language,
+                    script: loc.script,
+                    region: loc.region,
+                    variant: loc.variant,
+                    subdivision: loc.subdivision,
+                    ue_region: None,
+
+                    $(
+                        $key: None,
                     )*
                 }
             }
@@ -156,19 +172,42 @@ macro_rules! __preferences {
             /// Constructs a `Locale` corresponding to these preferences.
             pub fn into_locale(self) -> $crate::Locale {
                 use $crate::preferences::PreferenceKey;
-                let id = self.lid.unwrap_or_default();
-                let mut extensions = $crate::extensions::Extensions::new();
-                $(
-                    if let Some(value) = &self.$key {
-                        if let Some(ue) = <$pref>::unicode_extension_key() {
-                            let val = value.unicode_extension_value().unwrap();
-                            extensions.unicode.keywords.set(ue, val);
-                        }
-                    }
-                )*
                 $crate::Locale {
-                    id,
-                    extensions
+                    id: $crate::LanguageIdentifier {
+                        language: self.language,
+                        script: self.script,
+                        region: self.region,
+                        variants: self
+                            .variant
+                            .map($crate::subtags::Variants::from_variant)
+                            .unwrap_or_default(),
+                    },
+                    extensions: {
+                        let mut extensions = $crate::extensions::Extensions::default();
+                        if self.subdivision.is_some() || self.ue_region.is_some() {
+                            if let Some(sd) = self.subdivision {
+                                extensions.unicode.keywords.set(
+                                    $crate::extensions::unicode::key!("sd"),
+                                    $crate::extensions::unicode::Value::from_subtag(Some(sd))
+                                );
+                            }
+                            if let Some(rg) = self.ue_region {
+                                extensions.unicode.keywords.set(
+                                    $crate::extensions::unicode::key!("rg"),
+                                    $crate::extensions::unicode::Value::try_from_str(rg.as_str()).unwrap()
+                                );
+                            }
+                        }
+                        $(
+                            if let Some(value) = &self.$key {
+                                if let Some(ue) = <$pref>::unicode_extension_key() {
+                                    let val = value.unicode_extension_value().unwrap();
+                                    extensions.unicode.keywords.set(ue, val);
+                                }
+                            }
+                        )*
+                        extensions
+                    },
                 }
             }
 
@@ -193,21 +232,10 @@ macro_rules! __preferences {
                 )*
             }
         }
-
-        impl $resolved_name {
-            /// TODO
-            pub fn extend(&mut self, prefs: $name) {
-                $(
-                    if let Some(v) = prefs.$key {
-                        self.$key = v;
-                    }
-                )*
-            }
-        }
     )
 }
 #[doc(inline)]
-pub use __preferences as preferences;
+pub use __define_preferences as define_preferences;
 
 #[cfg(test)]
 mod tests {
@@ -223,10 +251,9 @@ mod tests {
             "default" => Default,
         }, "ab");
 
-        preferences!(
+        define_preferences!(
             /// Preferences for the dummy formatter
             DummyPreferences,
-            DummyResolvedPreferences,
             {
                 /// Controls how dummyly the formatter behaves
                 dummy_keyword: DummyKeyword
@@ -235,7 +262,7 @@ mod tests {
 
         let loc: Locale = "und-u-ab-default-cd-foo".parse().unwrap();
 
-        let prefs = DummyPreferences::from(loc);
+        let prefs = DummyPreferences::from(&loc);
         assert_eq!(prefs.dummy_keyword, Some(DummyKeyword::Default));
     }
 }

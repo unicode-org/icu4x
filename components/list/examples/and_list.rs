@@ -6,12 +6,15 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu::list::{ListFormatter, ListLength};
+use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
 use icu::locale::locale;
 
 fn main() {
-    let list_formatter =
-        ListFormatter::try_new_and_with_length(&locale!("es").into(), ListLength::Wide).unwrap();
+    let list_formatter = ListFormatter::try_new_and_with_length(
+        locale!("es").into(),
+        ListFormatterOptions::new().style(ListLength::Wide),
+    )
+    .unwrap();
 
     println!(
         "{}",

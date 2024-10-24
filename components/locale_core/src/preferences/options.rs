@@ -5,28 +5,42 @@
 #[macro_export]
 /// TODO
 #[doc(hidden)]
-macro_rules! __options {
-    ($name:ident,
-     $resolved_name:ident,
-     {$($key:ident => $pref:ty),*}
+macro_rules! __define_options {
+    (
+        $(#[$doc:meta])*
+        $name:ident,
+        {
+            $(
+                $(#[$key_doc:meta])*
+                $key:ident: $pref:ty
+            ),*
+        }
      ) => (
-        #[derive(Default, Debug, PartialEq)]
+        $(#[$doc])*
+        #[derive(Default, Debug, Clone)]
         #[non_exhaustive]
         pub struct $name {
             $(
+                $(#[$key_doc])*
                 pub $key: Option<$pref>,
             )*
         }
 
-        #[non_exhaustive]
-        #[derive(Debug, PartialEq)]
-        pub struct $resolved_name {
-            $(
-                pub $key: $pref,
-            )*
-        }
-
         impl $name {
+            /// TODO
+            pub fn new() -> Self {
+                Self::default()
+            }
+
+            $(
+                /// TODO
+                pub fn $key(mut self, value: $pref) -> Self {
+                    self.$key = Some(value);
+                    self
+                }
+            )*
+
+            /// TODO
             pub fn extend(&mut self, other: $name) {
                 $(
                     if let Some(value) = other.$key {
@@ -39,4 +53,4 @@ macro_rules! __options {
 }
 
 #[doc(inline)]
-pub use __options as options;
+pub use __define_options as define_options;
