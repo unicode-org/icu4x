@@ -6,7 +6,7 @@ use core::fmt;
 use core::str::FromStr;
 
 use crate::ParseError;
-use crate::UnsignedFixedDecimal;
+use crate::SignedFixedDecimal;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in compact notation (such as 1.2M).
@@ -19,13 +19,13 @@ use crate::UnsignedFixedDecimal;
 /// nor a sign in the exponent, and behaves differently in pluralization.
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompactDecimal {
-    significand: UnsignedFixedDecimal,
+    significand: SignedFixedDecimal,
     exponent: u8,
 }
 
 impl CompactDecimal {
     /// Constructs a [`CompactDecimal`] from its significand and exponent.
-    pub fn from_significand_and_exponent(significand: UnsignedFixedDecimal, exponent: u8) -> Self {
+    pub fn from_significand_and_exponent(significand: SignedFixedDecimal, exponent: u8) -> Self {
         Self {
             significand,
             exponent,
@@ -43,7 +43,7 @@ impl CompactDecimal {
     ///     &FixedDecimal::from_str("+1.20").unwrap()
     /// );
     /// ```
-    pub fn significand(&self) -> &UnsignedFixedDecimal {
+    pub fn significand(&self) -> &SignedFixedDecimal {
         &self.significand
     }
 
@@ -60,7 +60,7 @@ impl CompactDecimal {
     ///     FixedDecimal::from_str("+1.20").unwrap()
     /// );
     /// ```
-    pub fn into_significand(self) -> UnsignedFixedDecimal {
+    pub fn into_significand(self) -> SignedFixedDecimal {
         self.significand
     }
 
@@ -128,7 +128,7 @@ impl CompactDecimal {
         }
         let mut parts = code_units.split(|&c| c == b'c');
         let significand =
-            UnsignedFixedDecimal::try_from_utf8(parts.next().ok_or(ParseError::Syntax)?)?;
+            SignedFixedDecimal::try_from_utf8(parts.next().ok_or(ParseError::Syntax)?)?;
         match parts.next() {
             None => Ok(CompactDecimal {
                 significand,
