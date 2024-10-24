@@ -154,7 +154,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
-                let mut options = CollatorOptions::new();
+                let mut options = CollatorOptions::default();
                 options.strength = Some(*strength);
                 let collator = Collator::try_new(&locale_under_bench, options).unwrap();
                 // ICU4X collator performance, sort is locale-aware

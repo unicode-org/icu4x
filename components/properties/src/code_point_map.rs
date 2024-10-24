@@ -36,7 +36,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     where
         T: EnumeratedProperty,
     {
-        CodePointMapDataBorrowed { map: T::SINGLETON }
+        CodePointMapDataBorrowed::new()
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -272,7 +272,29 @@ impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl<T: EnumeratedProperty> Default for CodePointMapDataBorrowed<'static, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
+    /// Creates a new [`CodePointMapDataBorrowed`] for a [`EnumeratedProperty`].
+    ///
+    /// See the documentation on [`EnumeratedProperty`] implementations for details.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self
+    where
+        T: EnumeratedProperty,
+    {
+        CodePointMapDataBorrowed { map: T::SINGLETON }
+    }
+
     /// Cheaply converts a [`CodePointMapDataBorrowed<'static>`] into a [`CodePointMapData`].
     ///
     /// Note: Due to branching and indirection, using [`CodePointMapData`] might inhibit some

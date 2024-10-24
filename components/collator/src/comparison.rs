@@ -168,7 +168,7 @@ impl LocaleSpecificDataHolder {
             return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
         }
 
-        let mut altered_defaults = CollatorOptionsBitField::new();
+        let mut altered_defaults = CollatorOptionsBitField::default();
 
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));

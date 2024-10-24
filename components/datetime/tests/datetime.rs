@@ -488,9 +488,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     use icu_datetime::fieldset::O;
 
     let time_zone = TimeZoneInfo {
-        time_zone_id: TimeZoneIdMapper::new()
-            .as_borrowed()
-            .iana_to_bcp47("America/Los_Angeles"),
+        time_zone_id: TimeZoneIdMapper::new().iana_to_bcp47("America/Los_Angeles"),
         ..TimeZoneInfo::unknown()
     };
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
