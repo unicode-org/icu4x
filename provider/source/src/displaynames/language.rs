@@ -105,18 +105,18 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
         for entry in other.main.value.localedisplaynames.languages.iter() {
             if let Some(lang) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
                 if let Ok(lang) = lang.parse::<Language>() {
-                    short_names.insert(lang.into_tinystr(), entry.1.as_ref());
+                    short_names.insert(lang.to_tinystr(), entry.1.as_ref());
                 }
             } else if let Some(lang) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
                 if let Ok(lang) = lang.parse::<Language>() {
-                    long_names.insert(lang.into_tinystr(), entry.1.as_ref());
+                    long_names.insert(lang.to_tinystr(), entry.1.as_ref());
                 }
             } else if let Some(lang) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
                 if let Ok(lang) = lang.parse::<Language>() {
-                    menu_names.insert(lang.into_tinystr(), entry.1.as_ref());
+                    menu_names.insert(lang.to_tinystr(), entry.1.as_ref());
                 }
             } else if let Ok(lang) = entry.0.parse::<Language>() {
-                names.insert(lang.into_tinystr(), entry.1.as_ref());
+                names.insert(lang.to_tinystr(), entry.1.as_ref());
             }
         }
         Self {
@@ -216,7 +216,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&language!("aa").into_tinystr().to_unvalidated())
+                .get(&language!("aa").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Afar"
         );
@@ -237,7 +237,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&language!("az").into_tinystr().to_unvalidated())
+                .get(&language!("az").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Azeri"
         );
@@ -258,7 +258,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .long_names
-                .get(&language!("zh").into_tinystr().to_unvalidated())
+                .get(&language!("zh").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Mandarin Chinese"
         );
@@ -279,7 +279,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .menu_names
-                .get(&language!("zh").into_tinystr().to_unvalidated())
+                .get(&language!("zh").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Chinese, Mandarin"
         );

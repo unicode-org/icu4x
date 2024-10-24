@@ -326,7 +326,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                             .aliases
                             .get()
                             .sgn_region
-                            .get(&region.into_tinystr().to_unvalidated())
+                            .get(&region.to_tinystr().to_unvalidated())
                         {
                             uts35_replacement::<core::iter::Empty<&str>>(
                                 &mut locale.id,
@@ -355,7 +355,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                     .aliases
                     .get()
                     .script
-                    .get(&script.into_tinystr().to_unvalidated())
+                    .get(&script.to_tinystr().to_unvalidated())
                 {
                     locale.id.script = Some(replacement);
                     result = TransformResult::Modified;
@@ -368,12 +368,12 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                     self.aliases
                         .get()
                         .region_alpha
-                        .get(&region.into_tinystr().resize().to_unvalidated())
+                        .get(&region.to_tinystr().resize().to_unvalidated())
                 } else {
                     self.aliases
                         .get()
                         .region_num
-                        .get(&region.into_tinystr().to_unvalidated())
+                        .get(&region.to_tinystr().to_unvalidated())
                 };
                 if let Some(&replacement) = replacement {
                     locale.id.region = Some(replacement);
@@ -385,7 +385,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                     .aliases
                     .get()
                     .complex_region
-                    .get(&region.into_tinystr().to_unvalidated())
+                    .get(&region.to_tinystr().to_unvalidated())
                 {
                     // Skip if regions are empty
                     if let Some(default_region) = regions.get(0) {
@@ -422,7 +422,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                         .aliases
                         .get()
                         .variant
-                        .get(&variant.into_tinystr().to_unvalidated())
+                        .get(&variant.to_tinystr().to_unvalidated())
                     {
                         if modified.is_empty() {
                             modified = locale.id.variants.to_vec();
@@ -468,7 +468,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                             .aliases
                             .get()
                             .subdivision
-                            .get(&only_value.into_tinystr().resize().to_unvalidated())
+                            .get(&only_value.to_tinystr().resize().to_unvalidated())
                         {
                             if let Ok(modified_value) = modified_value.parse() {
                                 *value = modified_value;

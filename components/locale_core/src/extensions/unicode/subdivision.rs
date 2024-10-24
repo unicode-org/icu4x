@@ -136,7 +136,7 @@ impl SubdivisionId {
 impl writeable::Writeable for SubdivisionId {
     #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.region.into_tinystr().to_ascii_lowercase().as_str())?;
+        sink.write_str(self.region.to_tinystr().to_ascii_lowercase().as_str())?;
         sink.write_str(self.suffix.as_str())
     }
 

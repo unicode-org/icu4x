@@ -370,10 +370,10 @@ impl LanguageIdentifier {
     {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
-            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(script.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         if let Some(ref region) = self.region {
-            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(region.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         for variant in self.variants.iter() {
             f(variant.as_str())?;

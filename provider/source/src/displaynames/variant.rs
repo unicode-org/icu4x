@@ -63,7 +63,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
             // TODO: Support alt variants for variant display names.
             if !entry.0.contains(ALT_SUBSTRING) {
                 names.insert(
-                    Variant::try_from_str(entry.0)?.into_tinystr(),
+                    Variant::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
             }
@@ -99,7 +99,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&variant!("POSIX").into_tinystr().to_unvalidated())
+                .get(&variant!("POSIX").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Computer"
         );
