@@ -17,7 +17,7 @@ use crate::time_zone::{
 };
 
 use core::fmt::{self, Write};
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::{SignedFixedDecimal, UnsignedFixedDecimal};
 use icu_calendar::types::{
     Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
 };
@@ -29,7 +29,7 @@ use writeable::{Part, Writeable};
 fn try_write_number<W>(
     result: &mut W,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    mut num: UnsignedFixedDecimal,
+    mut num: SignedFixedDecimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -39,20 +39,20 @@ where
         match length {
             FieldLength::One | FieldLength::NumericOverride(_) => {}
             FieldLength::TwoDigit => {
-                num.pad_start(2);
-                num.set_max_position(2);
+                num.value.pad_start(2);
+                num.value.set_max_position(2);
             }
             FieldLength::Abbreviated => {
-                num.pad_start(3);
+                num.value.pad_start(3);
             }
             FieldLength::Wide => {
-                num.pad_start(4);
+                num.value.pad_start(4);
             }
             FieldLength::Narrow => {
-                num.pad_start(5);
+                num.value.pad_start(5);
             }
             FieldLength::Six => {
-                num.pad_start(6);
+                num.value.pad_start(6);
             }
         }
 
@@ -417,14 +417,14 @@ where
                 }
                 (Some(second), Some(ns)) => {
                     // Formatting with fractional seconds
-                    let mut s = UnsignedFixedDecimal::from(usize::from(second));
-                    let _infallible = s.concatenate_end(
+                    let mut s = SignedFixedDecimal::from(usize::from(second));
+                    let _infallible = s.value.concatenate_end(
                         UnsignedFixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
                     );
                     debug_assert!(_infallible.is_ok());
                     let position = -(decimal_second as i16);
-                    s.trunc(position);
-                    s.pad_end(position);
+                    s.value.trunc(position);
+                    s.value.pad_end(position);
                     try_write_number(w, fdf, s, l)?
                 }
             }
@@ -615,7 +615,7 @@ mod tests {
                 try_write_number(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
                     Some(&fixed_decimal_format),
-                    UnsignedFixedDecimal::from(*value),
+                    SignedFixedDecimal::from(*value),
                     *length,
                 )
                 .unwrap()
