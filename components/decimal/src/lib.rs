@@ -98,7 +98,7 @@ pub mod provider;
 pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -157,7 +157,7 @@ impl FixedDecimalFormatter {
     }
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
-    pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
+    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedFixedDecimal<'l> {
         FormattedFixedDecimal {
             value,
             options: &self.options,
@@ -166,7 +166,7 @@ impl FixedDecimalFormatter {
     }
 
     /// Formats a [`FixedDecimal`], returning a [`String`].
-    pub fn format_to_string(&self, value: &FixedDecimal) -> String {
+    pub fn format_to_string(&self, value: &SignedFixedDecimal) -> String {
         self.format(value).write_to_string().into_owned()
     }
 }

@@ -54,3 +54,7 @@ denylist = ["bench"]
 [[bench]]
 name = "fixed_decimal"
 harness = false
+
+[[bench]]
+name = "signed_fixed_decimal"
+harness = false
