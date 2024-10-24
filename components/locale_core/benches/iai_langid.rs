@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, subtags::language, subtags::region, LanguageIdentifier};
-use writeable::Writeable;
 use std::borrow::Cow;
+use writeable::Writeable;
 
 const LIDS: &[LanguageIdentifier] = &[
     langid!("en"),
