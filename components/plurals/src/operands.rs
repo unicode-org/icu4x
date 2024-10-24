@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{CompactDecimal, UnsignedFixedDecimal};
+use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 ///
@@ -226,24 +226,24 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &UnsignedFixedDecimal, exp: u8) -> PluralOperands {
+    fn from_significand_and_exponent(dec: &SignedFixedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
-        let mag_range = dec.magnitude_range();
+        let mag_range = dec.value.magnitude_range();
         let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
         let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.digit_at(magnitude - exp_i16) as u64;
+            i += dec.value.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.digit_at(magnitude - exp_i16) as u64;
+            let digit = dec.value.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {
@@ -287,10 +287,10 @@ impl PluralOperands {
     }
 }
 
-impl From<&UnsignedFixedDecimal> for PluralOperands {
+impl From<&SignedFixedDecimal> for PluralOperands {
     /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
-    fn from(dec: &UnsignedFixedDecimal) -> Self {
+    fn from(dec: &SignedFixedDecimal) -> Self {
         Self::from_significand_and_exponent(dec, 0)
     }
 }
