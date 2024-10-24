@@ -8,14 +8,14 @@ use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
 use fixed_decimal::Sign;
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
-    pub(crate) value: &'l UnsignedFixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
@@ -39,14 +39,14 @@ impl Writeable for FormattedFixedDecimal<'_> {
         if let Some(affixes) = affixes {
             sink.write_str(&affixes.prefix)?;
         }
-        let range = self.value.magnitude_range();
+        let range = self.value.value.magnitude_range();
         let upper_magnitude = *range.end();
         for m in range.rev() {
             if m == -1 {
                 sink.write_str(&self.symbols.decimal_separator)?;
             }
             #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-            sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
+            sink.write_char(self.symbols.digits[self.value.value.digit_at(m) as usize])?;
             if grouper::check(
                 upper_magnitude,
                 m,
