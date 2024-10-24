@@ -57,7 +57,11 @@ pub mod ffi {
     impl LocaleFallbacker {
         /// Creates a new `LocaleFallbacker` from a data provider.
         #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::new, FnInStruct)]
-        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackerBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::fallback::LocaleFallbackerBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<LocaleFallbacker>, DataError> {
             Ok(Box::new(LocaleFallbacker(call_constructor!(
