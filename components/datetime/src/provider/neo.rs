@@ -346,9 +346,15 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNamesV1<'data> {
-    /// This calendar uses eras with numeric years, this stores the era names mapped from
-    /// era code to the name
-    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, PotentialUtf8, str>),
+    /// This calendar has a small, fixed set of eras with numeric years, this stores the era names in chronological order.
+    ///
+    /// See FormattableEra for a definition of what chronological order is in this context.
+    FixedEras(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+    /// This calendar has a variable set of eras with numeric years, this stores the era names mapped from
+    /// era code to the name.
+    ///
+    /// Only the Japanese calendars need this
+    VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, PotentialUtf8, str>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }

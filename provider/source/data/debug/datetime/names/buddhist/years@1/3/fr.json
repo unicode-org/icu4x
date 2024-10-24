@@ -1,5 +1,5 @@
 {
-  "Eras": {
-    "be": "E. B."
-  }
+  "FixedEras": [
+    "E. B."
+  ]
 }

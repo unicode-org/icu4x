@@ -1,5 +1,5 @@
 {
-  "Eras": {
-    "ah": "ère de l’Hégire"
-  }
+  "FixedEras": [
+    "ère de l’Hégire"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "Eras": {
-    "incar": "av. Inc.",
-    "mundi": "ERA0",
-    "pre-incar": "ap. Inc."
-  }
+  "FixedEras": [
+    "ERA0",
+    "ap. Inc.",
+    "av. Inc."
+  ]
 }

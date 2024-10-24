@@ -253,7 +253,6 @@ fn eras_convert(
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
     let map = super::symbols::get_era_code_map(&calendar_str);
-    let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
     // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
@@ -285,13 +284,7 @@ fn eras_convert(
         None
     };
 
-    let modern_japanese_eras = if *calendar == value!("japanese") {
-        Some(datagen.cldr()?.modern_japanese_eras()?)
-    } else {
-        None
-    };
-
-    let extra_japanese = if *calendar == value!("japanese") || *calendar == value!("japanext") {
+    if *calendar == value!("japanese") || *calendar == value!("japanext") {
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
@@ -305,54 +298,65 @@ fn eras_convert(
             .get("gregorian")
             .expect("CLDR gregorian.json contains the expected calendar");
 
-        let eras = greg_data
+        let greg_eras = greg_data
             .eras
             .as_ref()
             .expect("gregorian must have eras")
             .load(length);
-        Some((
-            eras.get("0").expect("gregorian calendar must have 0 era"),
-            eras.get("1").expect("gregorian calendar must have 1 era"),
-        ))
-    } else {
-        None
-    };
+        let ce = greg_eras
+            .get("0")
+            .expect("gregorian calendar must have 0 era");
+        let bce = greg_eras
+            .get("1")
+            .expect("gregorian calendar must have 1 era");
+        let modern_japanese_eras = if *calendar == value!("japanese") {
+            Some(datagen.cldr()?.modern_japanese_eras()?)
+        } else {
+            None
+        };
 
-    for (cldr, code) in map {
-        if let Some(name) = eras.get(cldr) {
-            if let Some(modern_japanese_eras) = modern_japanese_eras {
-                if !modern_japanese_eras.contains(cldr) {
-                    continue;
+        let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
+
+        for (cldr, code) in map {
+            if let Some(name) = eras.get(cldr) {
+                if let Some(modern_japanese_eras) = modern_japanese_eras {
+                    if !modern_japanese_eras.contains(cldr) {
+                        continue;
+                    }
                 }
-            }
-            out_eras.insert(code, &**name);
-        } else if let Some(extra_ethiopic) = extra_ethiopic {
-            if cldr == "2" {
-                out_eras.insert(code, extra_ethiopic);
-            } else {
-                panic!("Unknown ethiopic era number {cldr}");
-            }
-        } else if let Some(extra_japanese) = extra_japanese {
-            if cldr == "-1" {
-                // AD era
-                out_eras.insert(code, extra_japanese.0);
+                out_eras.insert(code, &**name);
+            } else if cldr == "-1" {
+                out_eras.insert(code, ce);
             } else if cldr == "-2" {
-                // BC era
-                out_eras.insert(code, extra_japanese.1);
+                out_eras.insert(code, bce);
             } else {
                 panic!("Unknown japanese era number {cldr}");
             }
-        } else {
-            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {locale}");
         }
-    }
+        Ok(YearNamesV1::VariableEras(
+            out_eras
+                .iter()
+                .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
+                .collect(),
+        ))
+    } else {
+        let mut out_eras: Vec<&str> = Vec::new();
+        for (index, (cldr, _code)) in map.enumerate() {
+            if let Some(name) = eras.get(cldr) {
+                out_eras.push(&**name)
+            } else if let Some(extra_ethiopic) = extra_ethiopic {
+                if cldr == "2" {
+                    out_eras.push(extra_ethiopic);
+                } else {
+                    panic!("Unknown ethiopic era number {cldr}");
+                }
+            } else {
+                panic!("Did not find era data for era index {index} (CLDR: #{cldr}) for {calendar} and {locale}");
+            }
+        }
 
-    Ok(YearNamesV1::Eras(
-        out_eras
-            .iter()
-            .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
-            .collect(),
-    ))
+        Ok(YearNamesV1::FixedEras((&out_eras).into()))
+    }
 }
 fn years_convert(
     datagen: &SourceDataProvider,

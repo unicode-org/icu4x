@@ -1,5 +1,5 @@
 {
-  "Eras": {
-    "hebrew": "ص"
-  }
+  "FixedEras": [
+    "ص"
+  ]
 }

@@ -26,7 +26,7 @@ use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::Era;
+use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
@@ -345,12 +345,12 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
-///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
+///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
 ///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (11, 14, Part::ERROR), // M11
-///         (23, 25, Part::ERROR), // ce
+///         (23, 25, Part::ERROR), // CE
 ///         (42, 44, Part::ERROR), // AM
 ///         (45, 50, Part::ERROR), // +0000
 ///     ]
@@ -2566,7 +2566,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
     pub(crate) fn get_name_for_era(
         &self,
         field_length: FieldLength,
-        era_code: Era,
+        era: FormattingEra,
     ) -> Result<&str, GetSymbolForEraError> {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -2578,12 +2578,18 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             .year_names
             .get_with_variables(field_length)
             .ok_or(GetSymbolForEraError::MissingNames(field))?;
-        let YearNamesV1::Eras(era_names) = year_names else {
-            return Err(GetSymbolForEraError::MissingNames(field));
-        };
-        era_names
-            .get(era_code.0.as_str().into())
-            .ok_or(GetSymbolForEraError::Missing)
+
+        match (year_names, era) {
+            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
+                .get(era_code.0.as_str().into())
+                .ok_or(GetSymbolForEraError::Missing),
+            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
+                era_names
+                    .get(index.into())
+                    .ok_or(GetSymbolForEraError::Missing)
+            }
+            _ => Err(GetSymbolForEraError::Missing),
+        }
     }
 }
 

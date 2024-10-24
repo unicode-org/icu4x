@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "ad": "ERA1",
-    "bd": "ERA0"
-  }
+  "FixedEras": [
+    "ERA0",
+    "ERA1"
+  ]
 }

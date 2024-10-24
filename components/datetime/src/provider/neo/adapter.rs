@@ -115,34 +115,6 @@ where
     })
 }
 
-fn era_symbols_map_project_cloned<M, P>(
-    payload: &DataPayload<M>,
-    req: DataRequest,
-) -> Result<DataResponse<P>, DataError>
-where
-    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
-    P: DataMarker<DataStruct = YearNamesV1<'static>>,
-{
-    let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use key_attr_consts::*;
-        let result = match req.id.marker_attributes.as_str() {
-            FORMAT_ABBR_STR => &payload.eras.abbr,
-            FORMAT_WIDE_STR => &payload.eras.names,
-            FORMAT_NARW_STR => &payload.eras.narrow,
-            _ => {
-                return Err(DataError::custom("Unknown marker attribute")
-                    .with_marker(M::INFO)
-                    .with_display_context(req.id.marker_attributes.as_str()))
-            }
-        };
-        Ok(YearNamesV1::Eras(result.clone()))
-    })?;
-    Ok(DataResponse {
-        payload: new_payload,
-        metadata: Default::default(),
-    })
-}
-
 fn dayperiod_symbols_map_project_cloned<M, P>(
     payload: &DataPayload<M>,
     req: DataRequest,
@@ -378,73 +350,6 @@ impl_data_provider_adapter!(
     WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
-
-impl_data_provider_adapter!(
-    BuddhistDateSymbolsV1Marker,
-    BuddhistYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    ChineseDateSymbolsV1Marker,
-    ChineseYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    CopticDateSymbolsV1Marker,
-    CopticYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    DangiDateSymbolsV1Marker,
-    DangiYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    EthiopianDateSymbolsV1Marker,
-    EthiopianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    GregorianDateSymbolsV1Marker,
-    GregorianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    HebrewDateSymbolsV1Marker,
-    HebrewYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    IndianDateSymbolsV1Marker,
-    IndianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    IslamicDateSymbolsV1Marker,
-    IslamicYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    JapaneseDateSymbolsV1Marker,
-    JapaneseYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    JapaneseExtendedDateSymbolsV1Marker,
-    JapaneseExtendedYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    PersianDateSymbolsV1Marker,
-    PersianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    RocDateSymbolsV1Marker,
-    RocYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-
 impl_data_provider_adapter!(
     TimeSymbolsV1Marker,
     DayPeriodNamesV1Marker,

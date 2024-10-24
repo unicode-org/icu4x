@@ -226,7 +226,7 @@ impl Persian {
             year,
             types::EraYear {
                 standard_era: tinystr!(16, "persian").into(),
-                formatting_era: tinystr!(16, "ah").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
                 era_year: year,
             },
         )

@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "roc": "RdC",
-    "roc-inverse": "avant RdC"
-  }
+  "FixedEras": [
+    "avant RdC",
+    "RdC"
+  ]
 }

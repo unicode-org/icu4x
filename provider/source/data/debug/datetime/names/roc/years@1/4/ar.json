@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "roc": "جمهورية الصي",
-    "roc-inverse": "Before R.O.C."
-  }
+  "FixedEras": [
+    "Before R.O.C.",
+    "جمهورية الصي"
+  ]
 }

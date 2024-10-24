@@ -1,7 +1,7 @@
 {
-  "Eras": {
-    "incar": "avant l’Incarnation",
-    "mundi": "ERA0",
-    "pre-incar": "après l’Incarnation"
-  }
+  "FixedEras": [
+    "ERA0",
+    "après l’Incarnation",
+    "avant l’Incarnation"
+  ]
 }
