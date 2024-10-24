@@ -292,7 +292,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         ArithmeticDate {
             year,
             month,
-            day: day.try_into().unwrap_or(0),
+            day: day.try_into().unwrap_or(1),
             year_info: (),
             marker: PhantomData,
         }
@@ -361,7 +361,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         let max_day = C::month_days(year, month, ());
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,
@@ -392,7 +392,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         info: C::YearInfo,
     ) -> Result<Self, RangeError> {
         let max_month = C::months_for_every_year(year, info);
-        if month > max_month {
+        if month == 0 || month > max_month {
             return Err(RangeError {
                 field: "month",
                 value: month as i32,
@@ -401,7 +401,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             });
         }
         let max_day = C::month_days(year, month, info);
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(RangeError {
                 field: "day",
                 value: day as i32,
@@ -446,5 +446,13 @@ mod tests {
                 assert_eq!(i.cmp(&j), i_date.cmp(j_date));
             }
         }
+    }
+
+    #[test]
+    pub fn zero() {
+        use crate::Date;
+        Date::try_new_iso(2024, 0, 1).unwrap_err();
+        Date::try_new_iso(2024, 1, 0).unwrap_err();
+        Date::try_new_iso(2024, 0, 0).unwrap_err();
     }
 }
