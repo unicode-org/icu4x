@@ -17,7 +17,7 @@ pub mod ffi {
     pub struct Collator(pub icu_collator::Collator);
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
-    #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::collator::CollatorOptions::default, FnInStruct, hidden)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
     pub struct CollatorOptionsV1 {
         pub strength: DiplomatOption<CollatorStrength>,
@@ -172,7 +172,7 @@ pub mod ffi {
 
 impl From<ffi::CollatorOptionsV1> for icu_collator::CollatorOptions {
     fn from(options: ffi::CollatorOptionsV1) -> icu_collator::CollatorOptions {
-        let mut result = icu_collator::CollatorOptions::new();
+        let mut result = icu_collator::CollatorOptions::default();
         result.strength = options.strength.into_converted_option();
         result.alternate_handling = options.alternate_handling.into_converted_option();
         result.case_first = options.case_first.into_converted_option();

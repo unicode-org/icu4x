@@ -38,17 +38,6 @@ pub struct WindowsTimeZoneMapper {
     data: DataPayload<WindowsZonesToBcp47MapV1Marker>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for WindowsTimeZoneMapper {
-    fn default() -> Self {
-        Self {
-            data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
-            ),
-        }
-    }
-}
-
 impl WindowsTimeZoneMapper {
     /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[allow(clippy::new_ret_no_self)]
@@ -104,14 +93,9 @@ impl Default for WindowsTimeZoneMapperBorrowed<'_> {
 impl WindowsTimeZoneMapperBorrowed<'_> {
     /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::expect_used)]
     pub fn new() -> Self {
         WindowsTimeZoneMapperBorrowed {
-            data: DataPayload::<WindowsZonesToBcp47MapV1Marker>::from_static_ref(
-                crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
-            )
-            .get_static()
-            .expect("The singleton is a DataPayload::StaticRef so this MUST return Some."),
+            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
         }
     }
 
