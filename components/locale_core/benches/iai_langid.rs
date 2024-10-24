@@ -4,6 +4,7 @@
 
 use icu_locale_core::{langid, subtags::language, subtags::region, LanguageIdentifier};
 use writeable::Writeable;
+use std::borrow::Cow;
 
 const LIDS: &[LanguageIdentifier] = &[
     langid!("en"),
@@ -105,7 +106,7 @@ fn bench_langid_serialize_writeable() {
 fn bench_langid_canonicalize() {
     // Tests canonicalization of strings.
 
-    let _: Vec<String> = LIDS_STR
+    let _: Vec<Cow<str>> = LIDS_STR
         .iter()
         .map(|l| LanguageIdentifier::canonicalize(l).expect("Canonicalization failed"))
         .collect();
