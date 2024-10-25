@@ -7,40 +7,64 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
-enum SliceOrString<'a> {
-    Slice(&'a [u8]),
-    String(String),
-}
-
-struct WriteOrRef<'a> {
-    // Safety Invariant: the string is valid UTF-8 up to the offset.
-    string: SliceOrString<'a>,
+/// Bytes that have been partially validated as UTF-8 up to an offset.
+struct PartiallyValidatedUtf8<'a> {
+    // Safety Invariant: the slice is valid UTF-8 up to the offset.
+    slice: &'a [u8],
     offset: usize,
 }
 
+impl<'a> PartiallyValidatedUtf8<'a> {
+    fn new(slice: &'a [u8]) -> Self {
+        Self { slice, offset: 0 }
+    }
+
+    /// Check whether the given string is the next chunk of unvalidated bytes.
+    /// If so, increment offset and return true. Otherwise, return false.
+    fn try_push(&mut self, valid_str: &str) -> bool {
+        if self.slice.get(self.offset..self.offset + valid_str.len()) == Some(valid_str.as_bytes())
+        {
+            // Safety Invariant: `valid_str` is valid UTF-8, and we are
+            // incrementing the offset to cover bytes equal to `valid_str`
+            self.offset += valid_str.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Return the validated portion as `&str`.
+    fn validated_as_str(&self) -> &'a str {
+        let valid_slice = self.slice.get(..self.offset).unwrap_or_else(|| {
+            debug_assert!(false, "self.offset always in range");
+            &[]
+        });
+        debug_assert!(core::str::from_utf8(valid_slice).is_ok());
+        // Safety: the UTF-8 of slice has been validated up to offset
+        unsafe { core::str::from_utf8_unchecked(valid_slice) }
+    }
+}
+
+enum SliceOrString<'a> {
+    Slice(PartiallyValidatedUtf8<'a>),
+    String(String),
+}
+
 /// This is an infallible impl. Functions always return Ok, not Err.
-impl fmt::Write for WriteOrRef<'_> {
+impl fmt::Write for SliceOrString<'_> {
     #[inline]
     fn write_str(&mut self, other: &str) -> fmt::Result {
-        let owned: &mut String = match &mut self.string {
+        let owned: &mut String = match self {
             SliceOrString::Slice(slice) => {
-                if slice.get(self.offset..self.offset + other.len()) == Some(other.as_bytes()) {
-                    // Safety Invariant: `other` is valid UTF-8, and we are
-                    // incrementing the offset to cover bytes equal to `other`
-                    self.offset += other.len();
+                if slice.try_push(other) {
                     return Ok(());
                 }
-                let valid_slice = slice.get(..self.offset).unwrap_or_else(|| {
-                    debug_assert!(false, "self.offset always in range");
-                    &[]
-                });
-                debug_assert!(core::str::from_utf8(valid_slice).is_ok());
-                // Safety: the UTF-8 of slice has been validated up to offset
-                let valid_str = unsafe { core::str::from_utf8_unchecked(valid_slice) };
-                // Convert to owned, put it in the field, and get it out again
+                // We failed to match. Convert to owned, put it in the field,
+                // and get it out again.
+                let valid_str = slice.validated_as_str();
                 let owned = String::from(valid_str);
-                self.string = SliceOrString::String(owned);
-                let SliceOrString::String(owned) = &mut self.string else {
+                *self = SliceOrString::String(owned);
+                let SliceOrString::String(owned) = self else {
                     unreachable!()
                 };
                 owned
@@ -51,28 +75,16 @@ impl fmt::Write for WriteOrRef<'_> {
     }
 }
 
-impl<'a> WriteOrRef<'a> {
+impl<'a> SliceOrString<'a> {
     #[inline]
     fn new(slice: &'a [u8]) -> Self {
-        Self {
-            string: SliceOrString::Slice(slice),
-            offset: 0,
-        }
+        Self::Slice(PartiallyValidatedUtf8::new(slice))
     }
 
     #[inline]
     fn finish(self) -> Cow<'a, str> {
-        match self.string {
-            SliceOrString::Slice(slice) => {
-                let valid_slice = slice.get(..self.offset).unwrap_or_else(|| {
-                    debug_assert!(false, "self.offset always in range");
-                    &[]
-                });
-                debug_assert!(core::str::from_utf8(valid_slice).is_ok());
-                // Safety: the UTF-8 of slice has been validated up to offset
-                let valid_str = unsafe { core::str::from_utf8_unchecked(valid_slice) };
-                Cow::Borrowed(valid_str)
-            }
+        match self {
+            SliceOrString::Slice(slice) => Cow::Borrowed(slice.validated_as_str()),
             SliceOrString::String(owned) => Cow::Owned(owned),
         }
     }
@@ -184,7 +196,7 @@ impl<'a> WriteOrRef<'a> {
 /// ));
 /// ```
 pub fn write_or_ref<'a>(writeable: &impl Writeable, reference_bytes: &'a [u8]) -> Cow<'a, str> {
-    let mut sink = WriteOrRef::new(reference_bytes);
+    let mut sink = SliceOrString::new(reference_bytes);
     let _ = writeable.write_to(&mut sink);
     sink.finish()
 }
