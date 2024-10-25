@@ -30,18 +30,18 @@ final class ExemplarCharacters implements ffi.Finalizable {
 
   /// Checks whether the string is in the set.
   ///
-  /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
-  bool contains(String s) {
+  /// See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
+  bool containsStr(String s) {
     final temp = _FinalizedArena();
-    final result = _icu4x_ExemplarCharacters_contains_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    final result = _icu4x_ExemplarCharacters_contains_str_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return result;
   }
 
   /// Checks whether the code point is in the set.
   ///
-  /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_char) for more information.
-  bool containsChar(Rune cp) {
-    final result = _icu4x_ExemplarCharacters_contains_char_mv1(_ffi, cp);
+  /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
+  bool contains(Rune cp) {
+    final result = _icu4x_ExemplarCharacters_contains_mv1(_ffi, cp);
     return result;
   }
 
@@ -101,42 +101,42 @@ final class ExemplarCharacters implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ExemplarCharacters_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_contains_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_mv1')
+@meta.RecordUse()
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_str_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ExemplarCharacters_contains_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+external bool _icu4x_ExemplarCharacters_contains_str_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_contains_char_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_char_mv1')
+@meta.RecordUse()
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ExemplarCharacters_contains_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
+external bool _icu4x_ExemplarCharacters_contains_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_try_new_main_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_main_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_main_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_try_new_auxiliary_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_auxiliary_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_auxiliary_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_try_new_punctuation_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_punctuation_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_punctuation_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_try_new_numbers_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_numbers_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_numbers_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_ExemplarCharacters_try_new_index_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_index_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_index_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);

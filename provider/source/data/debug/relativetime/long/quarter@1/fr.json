@@ -5,27 +5,63 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\bil y a  trimestre"
-      ],
-      "other": [
-        0,
-        "\bil y a  trimestres"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006dans  trimestre"
-      ],
-      "other": [
-        0,
-        "\u0006dans  trimestres"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
+    ]
   }
 }

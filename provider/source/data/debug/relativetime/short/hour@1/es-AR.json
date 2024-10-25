@@ -3,19 +3,35 @@
     "0": "esta hora"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006hace  h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u000bdentro de  h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
       ]
-    }
+    ]
   }
 }

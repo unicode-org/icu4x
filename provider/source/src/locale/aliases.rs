@@ -109,7 +109,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
-                            let lang = langid.language.into_tinystr();
+                            let lang = langid.language.to_tinystr();
                             if lang.len() == 2 {
                                 language_len2.insert(lang.resize(), to.replacement.as_str());
                             } else {
@@ -124,7 +124,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                                 && replacement.region.is_none()
                                 && replacement.variants.is_empty() =>
                         {
-                            sgn_region.insert(region.into_tinystr(), replacement.language);
+                            sgn_region.insert(region.to_tinystr(), replacement.language);
                         }
                         _ => language.push((langid, replacement)),
                     }
@@ -300,7 +300,7 @@ fn test_basic() {
         data.payload
             .get()
             .language_len2
-            .get(&language!("iw").into_tinystr().resize().to_unvalidated())
+            .get(&language!("iw").to_tinystr().resize().to_unvalidated())
             .unwrap(),
         "he"
     );
@@ -309,13 +309,13 @@ fn test_basic() {
         .payload
         .get()
         .language_len3
-        .get(&language!("iw").into_tinystr().to_unvalidated())
+        .get(&language!("iw").to_tinystr().to_unvalidated())
         .is_none());
 
     assert_eq!(
         data.payload.get().script.iter().next().unwrap(),
         (
-            &script!("Qaai").into_tinystr().to_unvalidated(),
+            &script!("Qaai").to_tinystr().to_unvalidated(),
             &script!("Zinh")
         )
     );
@@ -324,7 +324,7 @@ fn test_basic() {
         data.payload
             .get()
             .region_num
-            .get(&region!("768").into_tinystr().to_unvalidated())
+            .get(&region!("768").to_tinystr().to_unvalidated())
             .unwrap(),
         &region!("TG")
     );

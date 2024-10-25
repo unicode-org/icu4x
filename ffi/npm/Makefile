@@ -29,7 +29,7 @@ demo/index.mjs: FORCE
 		--release \
 		-p icu_capi \
 		--crate-type cdylib \
-		--features buffer_provider
+		--features buffer_provider,icu_segmenter/lstm
 
 icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
 	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm

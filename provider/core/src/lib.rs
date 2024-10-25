@@ -128,7 +128,7 @@ pub use data_provider::{
 };
 
 mod error;
-pub use error::{DataError, DataErrorKind};
+pub use error::{DataError, DataErrorKind, ResultDataError};
 
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;
@@ -150,7 +150,7 @@ pub mod marker {
 
     pub use super::marker_full::{
         data_marker_path, impl_data_provider_never_marker, DataMarkerPath, DataMarkerPathHash,
-        NeverMarker,
+        ErasedMarker, NeverMarker,
     };
 }
 
@@ -172,7 +172,7 @@ pub mod prelude {
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
         DataResponseMetadata, DryDataProvider, DynamicDataMarker, DynamicDataProvider,
-        DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
+        DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider, ResultDataError,
     };
 
     #[doc(no_inline)]

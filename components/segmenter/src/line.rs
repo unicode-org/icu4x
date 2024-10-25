@@ -10,6 +10,8 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+use icu_locale_core::subtags::language;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -184,28 +186,50 @@ pub enum LineBreakWordOption {
 /// Options to tailor line-breaking behavior.
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-pub struct LineBreakOptions {
+pub struct LineBreakOptions<'a> {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
     pub strictness: LineBreakStrictness,
 
     /// Line break opportunities between letters. See [`LineBreakWordOption`].
     pub word_option: LineBreakWordOption,
 
-    /// Use `true` as a hint to the line segmenter that the writing
-    /// system is Chinese or Japanese. This allows more break opportunities when
-    /// `LineBreakStrictness` is `Normal` or `Loose`. See
-    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
+    /// Content locale for line segmenter
     ///
+    /// This allows more break opportunities when `LineBreakStrictness` is
+    /// `Normal` or `Loose`. See
+    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     /// This option has no effect in Latin-1 mode.
-    pub ja_zh: bool,
+    pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
-impl Default for LineBreakOptions {
+impl Default for LineBreakOptions<'_> {
     fn default() -> Self {
         Self {
             strictness: LineBreakStrictness::Strict,
             word_option: LineBreakWordOption::Normal,
-            ja_zh: false,
+            content_locale: None,
+        }
+    }
+}
+
+#[derive(Debug)]
+struct ResolvedLineBreakOptions {
+    strictness: LineBreakStrictness,
+    word_option: LineBreakWordOption,
+    ja_zh: bool,
+}
+
+impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
+    fn from(options: LineBreakOptions<'_>) -> Self {
+        let ja_zh = if let Some(content_locale) = options.content_locale.as_ref() {
+            content_locale.language == language!("ja") || content_locale.language == language!("zh")
+        } else {
+            false
+        };
+        Self {
+            strictness: options.strictness,
+            word_option: options.word_option,
+            ja_zh,
         }
     }
 }
@@ -303,7 +327,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let mut options = LineBreakOptions::default();
 /// options.strictness = LineBreakStrictness::Strict;
 /// options.word_option = LineBreakWordOption::BreakAll;
-/// options.ja_zh = false;
+/// options.content_locale = None;
 /// let segmenter = LineSegmenter::new_auto_with_options(options);
 ///
 /// let breakpoints: Vec<usize> =
@@ -326,7 +350,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Separate mandatory breaks from the break opportunities:
 ///
 /// ```rust
-/// use icu::properties::{maps, LineBreak};
+/// use icu::properties::{CodePointMapData, props::LineBreak};
 /// use icu::segmenter::LineSegmenter;
 ///
 /// # let segmenter = LineSegmenter::new_auto();
@@ -339,7 +363,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///     .filter(|&i| {
 ///         text[..i].chars().next_back().map_or(false, |c| {
 ///             matches!(
-///                 maps::line_break().get(c),
+///                 CodePointMapData::<LineBreak>::new().get(c),
 ///                 LineBreak::MandatoryBreak
 ///                     | LineBreak::CarriageReturn
 ///                     | LineBreak::LineFeed
@@ -352,7 +376,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```
 #[derive(Debug)]
 pub struct LineSegmenter {
-    options: LineBreakOptions,
+    options: ResolvedLineBreakOptions,
     payload: DataPayload<LineBreakDataV2Marker>,
     complex: ComplexPayloads,
 }
@@ -535,7 +559,7 @@ impl LineSegmenter {
     #[cfg(feature = "compiled_data")]
     pub fn new_lstm_with_options(options: LineBreakOptions) -> Self {
         Self {
-            options,
+            options: options.into(),
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
@@ -568,7 +592,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            options,
+            options: options.into(),
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
@@ -588,7 +612,7 @@ impl LineSegmenter {
     #[cfg(feature = "compiled_data")]
     pub fn new_dictionary_with_options(options: LineBreakOptions) -> Self {
         Self {
-            options,
+            options: options.into(),
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
@@ -625,7 +649,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         Ok(Self {
-            options,
+            options: options.into(),
             payload: provider.load(Default::default())?.payload,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -851,7 +875,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV2<'l>,
-    options: &'l LineBreakOptions,
+    options: &'l ResolvedLineBreakOptions,
     complex: &'l ComplexPayloads,
 }
 
@@ -1277,7 +1301,7 @@ where
 #[derive(Debug)]
 pub struct LineBreakTypeLatin1;
 
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
+impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -1307,7 +1331,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
 #[derive(Debug)]
 pub struct LineBreakTypeUtf16;
 
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
+impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

@@ -1,18 +1,37 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 килограмм"
-      ],
-      "many": [
-        0,
-        "\u0001 килограмм"
-      ],
-      "other": [
-        0,
-        "\u0001 килограмма"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмм"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмм"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмма"
+        }
+      ]
+    ]
   }
 }

@@ -43,7 +43,7 @@ mod reference {
     #[allow(clippy::upper_case_acronyms)]
     pub(crate) struct DeserializePatternUTS35String;
 
-    impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
+    impl de::Visitor<'_> for DeserializePatternUTS35String {
         type Value = Pattern;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

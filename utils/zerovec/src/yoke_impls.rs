@@ -9,7 +9,6 @@
 #![allow(clippy::forget_copy)]
 #![allow(clippy::forget_non_drop)]
 
-use crate::flexzerovec::FlexZeroVec;
 use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map2d::ZeroMap2dBorrowed;
@@ -50,34 +49,6 @@ unsafe impl<'a, T: 'static + AsULE> Yokeable<'a> for ZeroVec<'static, T> {
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
-    #[inline]
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    #[inline]
-    fn transform_owned(self) -> Self::Output {
-        self
-    }
-    #[inline]
-    unsafe fn make(from: Self::Output) -> Self {
-        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
-        let from = mem::ManuallyDrop::new(from);
-        let ptr: *const Self = (&*from as *const Self::Output).cast();
-        ptr::read(ptr)
-    }
-    #[inline]
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
-    }
-}
-
-// This impl is similar to the impl on Cow and is safe for the same reasons
-/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-unsafe impl<'a> Yokeable<'a> for FlexZeroVec<'static> {
-    type Output = FlexZeroVec<'a>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self
@@ -294,7 +265,7 @@ where
 #[allow(non_camel_case_types, non_snake_case)]
 mod test {
     use super::*;
-    use crate::{vecs::FlexZeroSlice, VarZeroSlice, ZeroSlice};
+    use crate::{VarZeroSlice, ZeroSlice};
     use databake::*;
 
     // Note: The following derives cover Yoke as well as Serde and databake. These may partially
@@ -344,46 +315,6 @@ mod test {
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
-    struct DeriveTest_FlexZeroVec<'data> {
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        _data: FlexZeroVec<'data>,
-    }
-
-    #[test]
-    fn bake_FlexZeroVec() {
-        test_bake!(
-            DeriveTest_FlexZeroVec<'static>,
-            crate::yoke_impls::test::DeriveTest_FlexZeroVec {
-                _data: crate::vecs::FlexZeroVec::new(),
-            },
-            zerovec,
-        );
-    }
-
-    #[derive(yoke::Yokeable)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake))]
-    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
-    struct DeriveTest_FlexZeroSlice<'data> {
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        _data: &'data FlexZeroSlice,
-    }
-
-    #[test]
-    fn bake_FlexZeroSlice() {
-        test_bake!(
-            DeriveTest_FlexZeroSlice<'static>,
-            crate::yoke_impls::test::DeriveTest_FlexZeroSlice {
-                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x01\0") },
-            },
-            zerovec,
-        );
-    }
-
-    #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake))]
-    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: VarZeroVec<'data, str>,
@@ -394,7 +325,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroVec {
-                _data: crate::VarZeroVec::new(),
+                _data: crate::vecs::VarZeroVec16::new(),
             },
             zerovec,
         );
@@ -414,7 +345,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroSlice<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroSlice {
-                _data: crate::VarZeroSlice::new_empty()
+                _data: crate::vecs::VarZeroSlice16::new_empty()
             },
             zerovec,
         );
@@ -438,8 +369,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        crate::VarZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -465,8 +396,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::maps::ZeroMapBorrowed::from_parts_unchecked(
-                        crate::VarZeroSlice::new_empty(),
-                        crate::VarZeroSlice::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
                     )
                 },
             },
@@ -492,8 +423,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        crate::VarZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -522,7 +453,7 @@ mod test {
                         crate::ZeroVec::new(),
                         crate::ZeroVec::new(),
                         crate::ZeroVec::new(),
-                        crate::VarZeroVec::new(),
+                        crate::vecs::VarZeroVec16::new(),
                     )
                 },
             },
@@ -551,7 +482,7 @@ mod test {
                         crate::ZeroSlice::new_empty(),
                         crate::ZeroSlice::new_empty(),
                         crate::ZeroSlice::new_empty(),
-                        crate::VarZeroSlice::new_empty(),
+                        crate::vecs::VarZeroSlice16::new_empty(),
                     )
                 },
             },

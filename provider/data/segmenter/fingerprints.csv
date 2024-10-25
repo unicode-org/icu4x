@@ -10,11 +10,11 @@ segmenter/dictionary/wl_ext@1, und/thaidict, 225002B, 224981B, f2d574736bb1a754
 segmenter/grapheme@2, <singleton>, 9836B, 9730B, 48b8793855ce3f6f
 segmenter/line@2, <singleton>, 19872B, 19767B, 765afed5083e597f
 segmenter/lstm/wl_auto@1, <lookup>, 199B, 4 identifiers
-segmenter/lstm/wl_auto@1, <total>, 310533B, 309347B, 4 unique payloads
-segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91369B, 91074B, eec2f7a1f6819f91
-segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74669B, 74372B, b25f5219c4b970f2
-segmenter/lstm/wl_auto@1, und/Lao_codepoints_exclusive_model4_heavy, 72164B, 71867B, 7e0c3ea7801791bd
-segmenter/lstm/wl_auto@1, und/Thai_codepoints_exclusive_model4_heavy, 72331B, 72034B, c46e2e0c098c1fc1
+segmenter/lstm/wl_auto@1, <total>, 310517B, 309331B, 4 unique payloads
+segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91365B, 91070B, 6e46dc061672ffe5
+segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74665B, 74368B, cc6fe9f66fed196d
+segmenter/lstm/wl_auto@1, und/Lao_codepoints_exclusive_model4_heavy, 72160B, 71863B, 3f52a4025c7d618f
+segmenter/lstm/wl_auto@1, und/Thai_codepoints_exclusive_model4_heavy, 72327B, 72030B, 4486b38238d7c651
 segmenter/sentence/override@1, <lookup>, 35B, 1 identifiers
 segmenter/sentence/override@1, <total>, 332B, 273B, 1 unique payloads
 segmenter/sentence/override@1, el, 332B, 273B, 745d858a06d47385

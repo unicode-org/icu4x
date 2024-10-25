@@ -5,19 +5,35 @@
     "1": "sledeće n."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  n."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " n."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  n."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " n."
+        }
       ]
-    }
+    ]
   }
 }

@@ -23,7 +23,7 @@
 //!     .with_markers([icu::list::provider::AndListV2Marker::INFO])
 //!     .export(
 //!         &provider,
-//!         BlobExporter::new_v2_with_sink(Box::new(
+//!         BlobExporter::new_with_sink(Box::new(
 //!             File::create("data.postcard").unwrap(),
 //!         )),
 //!     )
@@ -58,6 +58,7 @@
 
 mod export_impl;
 mod locale_family;
+use icu_provider::export::ExporterCloseMetadata;
 pub use locale_family::*;
 
 #[cfg(feature = "baked_exporter")]
@@ -80,6 +81,8 @@ pub mod prelude {
 }
 
 use icu_locale::LocaleFallbacker;
+use icu_provider::export::DataExporter;
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -263,6 +266,30 @@ impl ExportDriver {
         let set = models.into_iter().collect::<HashSet<_>>();
         self.with_marker_attributes_filter("segmenter", move |attrs| set.contains(attrs.as_str()))
     }
+
+    /// Exports data from the given provider to the given exporter.
+    ///
+    /// See
+    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
+    /// [`BlobExporter`](icu_provider_blob::export),
+    /// [`FileSystemExporter`](icu_provider_fs::export),
+    /// and [`BakedExporter`](icu_provider_baked::export).
+    pub fn export(
+        self,
+        provider: &impl ExportableProvider,
+        mut sink: impl DataExporter,
+    ) -> Result<ExportMetadata, DataError> {
+        // Avoids multiple monomorphizations
+        self.export_dyn(provider, &mut sink)
+    }
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone)]
+/// Contains information about a successful export.
+pub struct ExportMetadata {
+    /// The metadata coming from the [`DataExporter`].
+    pub exporter: ExporterCloseMetadata,
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is disabled.

@@ -5,19 +5,29 @@
     "1": "来年"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001年前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "年前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001年後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "年後"
+        }
       ]
-    }
+    ]
   }
 }

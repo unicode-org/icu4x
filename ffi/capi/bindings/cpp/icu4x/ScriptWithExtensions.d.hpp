@@ -34,9 +34,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline uint16_t get_script_val(uint32_t code_point) const;
+  inline uint16_t get_script_val(char32_t ch) const;
 
-  inline bool has_script(uint32_t code_point, uint16_t script) const;
+  inline bool has_script(char32_t ch, uint16_t script) const;
 
   inline std::unique_ptr<icu4x::ScriptWithExtensionsBorrowed> as_borrowed() const;
 

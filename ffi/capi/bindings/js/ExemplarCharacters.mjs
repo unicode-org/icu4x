@@ -45,12 +45,12 @@ export class ExemplarCharacters {
         return this.#ptr;
     }
 
-    contains(s) {
+    containsStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
-        const result = wasm.icu4x_ExemplarCharacters_contains_mv1(this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_ExemplarCharacters_contains_str_mv1(this.ffiValue, ...sSlice.splat());
     
         try {
             return result;
@@ -61,8 +61,8 @@ export class ExemplarCharacters {
         }
     }
 
-    containsChar(cp) {
-        const result = wasm.icu4x_ExemplarCharacters_contains_char_mv1(this.ffiValue, cp);
+    contains(cp) {
+        const result = wasm.icu4x_ExemplarCharacters_contains_mv1(this.ffiValue, cp);
     
         try {
             return result;

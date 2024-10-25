@@ -5,19 +5,32 @@
     "1": "susunod na taon"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 taon ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " taon ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  taon"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " taon"
+        }
       ]
-    }
+    ]
   }
 }

@@ -4,24 +4,22 @@
 
 use icu_calendar::{AsCalendar, Date, Iso, Time};
 
-use crate::CustomTimeZone;
-
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct CustomZonedDateTime<A: AsCalendar> {
+pub struct CustomZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone
     pub date: Date<A>,
     /// The time, local to the time zone
     pub time: Time,
     /// The time zone
-    pub zone: CustomTimeZone,
+    pub zone: Z,
 }
 
-impl<A: AsCalendar> CustomZonedDateTime<A> {
+impl<A: AsCalendar, Z: Copy> CustomZonedDateTime<A, Z> {
     /// Convert the CustomZonedDateTime to an ISO CustomZonedDateTime
     #[inline]
-    pub fn to_iso(&self) -> CustomZonedDateTime<Iso> {
+    pub fn to_iso(&self) -> CustomZonedDateTime<Iso, Z> {
         CustomZonedDateTime {
             date: self.date.to_iso(),
             time: self.time,
@@ -31,7 +29,7 @@ impl<A: AsCalendar> CustomZonedDateTime<A> {
 
     /// Convert the CustomZonedDateTime to a CustomZonedDateTime in a different calendar
     #[inline]
-    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> CustomZonedDateTime<A2> {
+    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> CustomZonedDateTime<A2, Z> {
         CustomZonedDateTime {
             date: self.date.to_calendar(calendar),
             time: self.time,

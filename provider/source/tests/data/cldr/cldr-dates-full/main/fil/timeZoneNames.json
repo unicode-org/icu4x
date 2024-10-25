@@ -424,13 +424,6 @@
                 "daylight": "Daylight Time sa China"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "Oras sa Choibalsan",
-                "standard": "Standard na Oras sa Choibalsan",
-                "daylight": "Oras sa Tag-init ng Choibalsan"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "Oras sa Christmas Island"

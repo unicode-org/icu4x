@@ -10,7 +10,7 @@ use crate::parser::{
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
-use alloc::string::String;
+use alloc::borrow::Cow;
 use writeable::Writeable;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
@@ -26,8 +26,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed language identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation is performed.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
+///
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
@@ -166,6 +168,8 @@ impl LanguageIdentifier {
             && self.variants.is_empty()
     }
 
+    /// Canonicalize the language identifier (operating on UTF-8 formatted byte slices)
+    ///
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
@@ -181,9 +185,45 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let lang_id = Self::try_from_utf8(input.as_ref())?;
-        Ok(lang_id.write_to_string().into_owned())
+    pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let lang_id = Self::try_from_utf8(input)?;
+        let cow = lang_id.write_to_string();
+        if cow.as_bytes() == input {
+            // Safety: input is known to be valid UTF-8 since it has the same
+            // bytes as `cow`, which is a `str`.
+            let s = unsafe { core::str::from_utf8_unchecked(input) };
+            Ok(s.into())
+        } else {
+            Ok(cow.into_owned().into())
+        }
+    }
+
+    /// Canonicalize the language identifier (operating on strings)
+    ///
+    /// This is a best-effort operation that performs all available levels of canonicalization.
+    ///
+    /// At the moment the operation will normalize casing and the separator, but in the future
+    /// it may also validate and update from deprecated subtags to canonical ones.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    ///
+    /// assert_eq!(
+    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
+    /// );
+    /// ```
+    pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
+        let lang_id = Self::try_from_str(input)?;
+        let cow = lang_id.write_to_string();
+
+        if cow == input {
+            Ok(input.into())
+        } else {
+            Ok(cow.into_owned().into())
+        }
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -368,10 +408,10 @@ impl LanguageIdentifier {
     {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
-            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(script.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         if let Some(ref region) = self.region {
-            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(region.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         for variant in self.variants.iter() {
             f(variant.as_str())?;
@@ -410,19 +450,6 @@ impl LanguageIdentifier {
             }
             sink.write_str(subtag)
         })
-    }
-}
-
-impl AsRef<LanguageIdentifier> for LanguageIdentifier {
-    #[inline(always)]
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-
-impl AsMut<LanguageIdentifier> for LanguageIdentifier {
-    fn as_mut(&mut self) -> &mut Self {
-        self
     }
 }
 

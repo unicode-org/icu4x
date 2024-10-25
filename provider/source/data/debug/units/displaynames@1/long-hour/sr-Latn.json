@@ -1,18 +1,37 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 sat"
-      ],
-      "few": [
-        0,
-        "\u0001 sata"
-      ],
-      "other": [
-        0,
-        "\u0001 sati"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sat"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
+    ]
   }
 }

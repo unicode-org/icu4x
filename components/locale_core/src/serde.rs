@@ -22,7 +22,7 @@ impl<'de> Deserialize<'de> for LanguageIdentifier {
     {
         struct LanguageIdentifierVisitor;
 
-        impl<'de> serde::de::Visitor<'de> for LanguageIdentifierVisitor {
+        impl serde::de::Visitor<'_> for LanguageIdentifierVisitor {
             type Value = LanguageIdentifier;
 
             fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {

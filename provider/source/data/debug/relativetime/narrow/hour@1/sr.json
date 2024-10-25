@@ -3,19 +3,35 @@
     "0": "овог сата"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  ч."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  ч."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч."
+        }
       ]
-    }
+    ]
   }
 }

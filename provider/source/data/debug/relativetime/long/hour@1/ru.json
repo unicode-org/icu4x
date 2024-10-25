@@ -3,35 +3,82 @@
     "0": "в этот час"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 час назад"
-      ],
-      "many": [
-        0,
-        "\u0001 часов назад"
-      ],
-      "other": [
-        0,
-        "\u0001 часа назад"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " час назад"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часов назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часа назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\fчерез  час"
-      ],
-      "many": [
-        0,
-        "\fчерез  часов"
-      ],
-      "other": [
-        0,
-        "\fчерез  часа"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " час"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часов"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часа"
+        }
+      ]
+    ]
   }
 }

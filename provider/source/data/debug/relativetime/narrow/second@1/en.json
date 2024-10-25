@@ -3,19 +3,32 @@
     "0": "now"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001s ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "s ago"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004in s"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "s"
+        }
       ]
-    }
+    ]
   }
 }

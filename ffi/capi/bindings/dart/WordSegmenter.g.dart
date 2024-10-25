@@ -135,42 +135,42 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_WordSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_auto_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_auto_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_auto_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_auto_with_content_locale_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_auto_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_auto_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_lstm_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_lstm_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_lstm_with_content_locale_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_lstm_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_dictionary_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_dictionary_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('icu4x_WordSegmenter_segment_utf16_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_segment_utf16_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 input);

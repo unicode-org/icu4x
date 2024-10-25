@@ -43,7 +43,7 @@ pub struct CaseMapExceptions<'data> {
     pub exceptions: VarZeroVec<'data, ExceptionULE>,
 }
 
-impl<'data> CaseMapExceptions<'data> {
+impl CaseMapExceptions<'_> {
     /// Obtain the exception at index `idx`. Will
     /// return a default value if not present (GIGO behavior),
     /// as these indices should come from a paired CaseMapData object
@@ -444,7 +444,7 @@ pub struct DecodedException<'a> {
     pub full: Option<[Cow<'a, str>; 4]>,
 }
 
-impl<'a> DecodedException<'a> {
+impl DecodedException<'_> {
     /// Convert to a wire-format encodeable (VarULE-encodeable) [`Exception`]
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;

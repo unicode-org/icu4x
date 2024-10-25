@@ -5,19 +5,35 @@
     "1": "sledeće g."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  g."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " g."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  g."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " g."
+        }
       ]
-    }
+    ]
   }
 }

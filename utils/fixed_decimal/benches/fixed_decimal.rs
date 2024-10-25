@@ -184,7 +184,7 @@ fn rounding_benches(c: &mut Criterion) {
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
-        .map(|f| FixedDecimal::try_from_f64(f, FloatPrecision::Floating).unwrap())
+        .map(|f| FixedDecimal::try_from_f64(f, FloatPrecision::RoundTrip).unwrap())
         .collect();
     let mut group = c.benchmark_group("rounding");
 

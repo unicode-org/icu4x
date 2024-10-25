@@ -10,7 +10,7 @@ use alloc::string::ToString;
 use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_locale_core::Locale;
-use zerovec::VarZeroVec;
+use zerovec::{vecs::Index32, VarZeroVec};
 
 type Result<T> = core::result::Result<T, CompileError>;
 
@@ -219,7 +219,7 @@ enum LiteralOrStandin<'a> {
 }
 
 // gives us `to_string` and makes clippy happy
-impl<'a> Display for LiteralOrStandin<'a> {
+impl Display for LiteralOrStandin<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
             LiteralOrStandin::Literal(s) => write!(f, "{}", s),
@@ -253,7 +253,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
             curr_segment: 0,
         };
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
-        let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
+        let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE, Index32>> =
+            Vec::new();
 
         for (transform_group, conversion_group) in pass1.groups {
             let compiled_transform_group: Vec<_> = transform_group
@@ -389,13 +390,31 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
-        let mut unparsed = id.basic_id.to_string();
-        let string = if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
+        let unparsed = id.basic_id.to_string();
+
+        let string = if matches!(
+            unparsed.as_str(),
+            "any-nfc"
+                | "any-nfkc"
+                | "any-nfd"
+                | "any-nfkd"
+                | "any-null"
+                | "any-remove"
+                | "any-lower"
+                | "any-upper"
+                | "any-title"
+                | "any-hex/unicode"
+                | "any-hex/rust"
+                | "any-hex/xml"
+                | "any-hex/perl"
+                | "any-hex/plain"
+        ) {
+            unparsed
+        } else if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
             bcp47_id.to_string()
         } else {
-            // Non-BCP47 ids get prefixed with `x-`.
-            unparsed.replace_range(0..0, "x-");
-            unparsed
+            icu_provider::log::warn!("Reference to unknown transliterator: {unparsed}");
+            format!("x-{unparsed}")
         };
         ds::SimpleId {
             id: string.into(),

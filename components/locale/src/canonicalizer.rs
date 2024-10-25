@@ -37,11 +37,11 @@ use tinystr::TinyAsciiStr;
 ///
 /// [UTS #35: Annex C, LocaleId Canonicalization]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization
 #[derive(Debug)]
-pub struct LocaleCanonicalizer {
+pub struct LocaleCanonicalizer<Expander = LocaleExpander> {
     /// Data to support canonicalization.
     aliases: DataPayload<AliasesV2Marker>,
     /// Likely subtags implementation for delegation.
-    expander: LocaleExpander,
+    expander: Expander,
 }
 
 fn uts35_rule_matches<'a, I>(
@@ -197,13 +197,13 @@ fn uts35_check_language_rules(
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for LocaleCanonicalizer {
+impl Default for LocaleCanonicalizer<LocaleExpander> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl LocaleCanonicalizer {
+impl LocaleCanonicalizer<LocaleExpander> {
     /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -235,14 +235,16 @@ impl LocaleCanonicalizer {
         let expander = LocaleExpander::try_new_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
     }
+}
 
+impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] and compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+    pub const fn new_with_expander(expander: Expander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER,
@@ -254,7 +256,7 @@ impl LocaleCanonicalizer {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
-        expander: LocaleExpander,
+        expander: Expander,
     ) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker> + ?Sized,
@@ -264,7 +266,7 @@ impl LocaleCanonicalizer {
         Ok(Self { aliases, expander })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((options: LocaleExpander) -> error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!((options: Expander) -> error: DataError,
         functions: [
             new_with_expander: skip,
             try_new_with_expander_with_any_provider,
@@ -324,7 +326,7 @@ impl LocaleCanonicalizer {
                             .aliases
                             .get()
                             .sgn_region
-                            .get(&region.into_tinystr().to_unvalidated())
+                            .get(&region.to_tinystr().to_unvalidated())
                         {
                             uts35_replacement::<core::iter::Empty<&str>>(
                                 &mut locale.id,
@@ -353,7 +355,7 @@ impl LocaleCanonicalizer {
                     .aliases
                     .get()
                     .script
-                    .get(&script.into_tinystr().to_unvalidated())
+                    .get(&script.to_tinystr().to_unvalidated())
                 {
                     locale.id.script = Some(replacement);
                     result = TransformResult::Modified;
@@ -366,12 +368,12 @@ impl LocaleCanonicalizer {
                     self.aliases
                         .get()
                         .region_alpha
-                        .get(&region.into_tinystr().resize().to_unvalidated())
+                        .get(&region.to_tinystr().resize().to_unvalidated())
                 } else {
                     self.aliases
                         .get()
                         .region_num
-                        .get(&region.into_tinystr().to_unvalidated())
+                        .get(&region.to_tinystr().to_unvalidated())
                 };
                 if let Some(&replacement) = replacement {
                     locale.id.region = Some(replacement);
@@ -383,7 +385,7 @@ impl LocaleCanonicalizer {
                     .aliases
                     .get()
                     .complex_region
-                    .get(&region.into_tinystr().to_unvalidated())
+                    .get(&region.to_tinystr().to_unvalidated())
                 {
                     // Skip if regions are empty
                     if let Some(default_region) = regions.get(0) {
@@ -395,7 +397,10 @@ impl LocaleCanonicalizer {
                         };
 
                         locale.id.region = Some(
-                            match (self.expander.maximize(&mut maximized), maximized.region) {
+                            match (
+                                self.expander.as_ref().maximize(&mut maximized),
+                                maximized.region,
+                            ) {
                                 (TransformResult::Modified, Some(candidate))
                                     if regions.iter().any(|x| x == candidate) =>
                                 {
@@ -417,7 +422,7 @@ impl LocaleCanonicalizer {
                         .aliases
                         .get()
                         .variant
-                        .get(&variant.into_tinystr().to_unvalidated())
+                        .get(&variant.to_tinystr().to_unvalidated())
                     {
                         if modified.is_empty() {
                             modified = locale.id.variants.to_vec();
@@ -463,7 +468,7 @@ impl LocaleCanonicalizer {
                             .aliases
                             .get()
                             .subdivision
-                            .get(&only_value.into_tinystr().resize().to_unvalidated())
+                            .get(&only_value.to_tinystr().resize().to_unvalidated())
                         {
                             if let Ok(modified_value) = modified_value.parse() {
                                 *value = modified_value;

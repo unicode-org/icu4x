@@ -36,10 +36,10 @@ pub mod ffi {
 
     impl IsoDate {
         /// Creates a new [`IsoDate`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(year: i32, month: u8, day: u8) -> Result<Box<IsoDate>, CalendarError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso_date(
+            Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso(
                 year, month, day,
             )?)))
         }
@@ -81,7 +81,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.day_of_month().0
         }
 
@@ -102,7 +102,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.week_of_month(first_weekday.into()).0
         }
 
@@ -184,7 +184,7 @@ pub mod ffi {
         ) -> Result<Box<Date>, CalendarError> {
             let cal = calendar.0.clone();
             Ok(Box::new(Date(
-                icu_calendar::Date::try_new_iso_date(year, month, day)?.to_calendar(cal),
+                icu_calendar::Date::try_new_iso(year, month, day)?.to_calendar(cal),
             )))
         }
 
@@ -251,7 +251,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.day_of_month().0
         }
 
@@ -272,7 +272,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.week_of_month(first_weekday.into()).0
         }
 

@@ -88,42 +88,42 @@ final class BidiParagraph implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_BidiParagraph_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_set_paragraph_in_text_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_set_paragraph_in_text_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_BidiParagraph_set_paragraph_in_text_mv1(ffi.Pointer<ffi.Opaque> self, int n);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_direction_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_direction_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiParagraph_direction_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_size_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_size_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiParagraph_size_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_range_start_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_range_start_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiParagraph_range_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_range_end_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_range_end_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiParagraph_range_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_reorder_line_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_reorder_line_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_BidiParagraph_reorder_line_mv1(ffi.Pointer<ffi.Opaque> self, int rangeStart, int rangeEnd, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_BidiParagraph_level_at_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_BidiParagraph_level_at_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiParagraph_level_at_mv1(ffi.Pointer<ffi.Opaque> self, int pos);

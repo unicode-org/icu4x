@@ -17,6 +17,7 @@ use std::collections::HashSet;
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
     /// Save a `payload` corresponding to the given marker and locale.
+    ///
     /// Takes non-mut self as it can be called concurrently.
     fn put_payload(
         &self,
@@ -26,30 +27,45 @@ pub trait DataExporter: Sync {
     ) -> Result<(), DataError>;
 
     /// Function called for singleton markers.
+    ///
     /// Takes non-mut self as it can be called concurrently.
     fn flush_singleton(
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         self.put_payload(marker, Default::default(), payload)?;
-        self.flush(marker)
+        self.flush(marker, metadata)
     }
 
     /// Function called after a non-singleton marker has been fully enumerated.
-    /// Does not include built-in fallback.
     ///
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
         Ok(())
     }
 
     /// This function has to be called before the object is dropped (after all
     /// markers have been fully dumped). This conceptually takes ownership, so
     /// clients *may not* interact with this object after close has been called.
-    fn close(&mut self) -> Result<(), DataError> {
-        Ok(())
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
+        Ok(ExporterCloseMetadata)
     }
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Default)]
+/// Contains information about a successful export.
+pub struct ExporterCloseMetadata;
+
+/// Metadata for [`DataExporter::flush`]
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, Default)]
+pub struct FlushMetadata {
+    /// Whether the data was generated in such a way that a [`DryDataProvider`] implementation
+    /// makes sense.
+    pub supports_dry_provider: bool,
 }
 
 impl DataExporter for Box<dyn DataExporter> {
@@ -66,15 +82,16 @@ impl DataExporter for Box<dyn DataExporter> {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        (**self).flush_singleton(marker, payload)
+        (**self).flush_singleton(marker, payload, metadata)
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        (**self).flush(marker)
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        (**self).flush(marker, metadata)
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         (**self).close()
     }
 }
@@ -170,17 +187,21 @@ impl DataExporter for MultiExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.flush_singleton(marker, payload))
+            .try_for_each(|e| e.flush_singleton(marker, payload, metadata))
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        self.0.iter().try_for_each(|e| e.flush(marker))
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.iter().try_for_each(|e| e.flush(marker, metadata))
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
-        self.0.iter_mut().try_for_each(|e| e.close())
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
+        self.0.iter_mut().try_fold(ExporterCloseMetadata, |m, e| {
+            e.close()?;
+            Ok(m)
+        })
     }
 }

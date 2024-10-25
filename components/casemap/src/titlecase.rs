@@ -7,9 +7,9 @@ use crate::provider::CaseMapV1Marker;
 use crate::CaseMapper;
 use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
-use icu_properties::maps::CodePointMapData;
+use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::{GeneralCategory, GeneralCategoryGroup};
+use icu_properties::CodePointMapData;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -221,7 +221,8 @@ impl TitlecaseMapper<CaseMapper> {
     pub const fn new() -> Self {
         Self {
             cm: CaseMapper::new(),
-            gc: icu_properties::maps::general_category().static_to_owned(),
+            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new()
+                .static_to_owned(),
         }
     }
 
@@ -240,7 +241,7 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = icu_properties::maps::load_general_category(provider)?;
+        let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
         Ok(Self { cm, gc })
     }
 }
@@ -266,7 +267,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     pub const fn new_with_mapper(casemapper: CM) -> Self {
         Self {
             cm: casemapper,
-            gc: icu_properties::maps::general_category().static_to_owned(),
+            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new()
+                .static_to_owned(),
         }
     }
 
@@ -276,7 +278,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = icu_properties::maps::load_general_category(provider)?;
+        let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
         Ok(Self { cm: casemapper, gc })
     }
 

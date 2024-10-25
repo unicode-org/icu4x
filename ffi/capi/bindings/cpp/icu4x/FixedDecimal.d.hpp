@@ -45,7 +45,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_significant_digits(double f, uint8_t digits);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_floating_precision(double f);
+  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_round_trip_precision(double f);
 
   inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalParseError> from_string(std::string_view v);
 

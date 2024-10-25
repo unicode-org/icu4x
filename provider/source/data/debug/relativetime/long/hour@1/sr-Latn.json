@@ -3,35 +3,91 @@
     "0": "ovog sata"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0005pre  sata"
-      ],
-      "few": [
-        0,
-        "\u0005pre  sata"
-      ],
-      "other": [
-        0,
-        "\u0005pre  sati"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  sat"
-      ],
-      "few": [
-        0,
-        "\u0004za  sata"
-      ],
-      "other": [
-        0,
-        "\u0004za  sati"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sat"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
+    ]
   }
 }

@@ -5,19 +5,35 @@
     "1": "la semaine prochaine"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
       ]
-    }
+    ]
   }
 }

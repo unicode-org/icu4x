@@ -75,7 +75,7 @@ impl Value {
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// let value1 = Value::from_str("foo")
     ///     .expect("failed to parse a Value");
@@ -96,7 +96,7 @@ impl Value {
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// let value1 = Value::from_str("foo")
     ///     .expect("failed to parse a Value");

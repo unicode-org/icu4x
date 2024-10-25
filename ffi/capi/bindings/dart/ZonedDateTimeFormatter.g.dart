@@ -38,10 +38,10 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
+  /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
   ///
   /// Throws [Error] on failure.
-  String formatDatetimeWithCustomTimeZone(DateTime datetime, CustomTimeZone timeZone) {
+  String formatDatetimeWithCustomTimeZone(DateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     final result = _icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     if (!result.isOk) {
@@ -50,10 +50,10 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+  /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
   ///
   /// Throws [Error] on failure.
-  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, CustomTimeZone timeZone) {
+  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     final result = _icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     if (!result.isOk) {
@@ -63,22 +63,22 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_ZonedDateTimeFormatter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ZonedDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_ZonedDateTimeFormatter_create_with_length_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_with_length_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);

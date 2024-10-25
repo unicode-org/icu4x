@@ -5,19 +5,35 @@
     "1": "sledećeg mes."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  mes."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  mes."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes."
+        }
       ]
-    }
+    ]
   }
 }

@@ -3,19 +3,32 @@
     "0": "ชั่วโมงนี้"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 ชั่วโมงที่ผ่านมา"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชั่วโมงที่ผ่านมา"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0011ในอีก  ชั่วโมง"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ในอีก "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชั่วโมง"
+        }
       ]
-    }
+    ]
   }
 }

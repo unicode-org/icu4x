@@ -1,18 +1,37 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 sekunda"
-      ],
-      "few": [
-        0,
-        "\u0001 sekunde"
-      ],
-      "other": [
-        0,
-        "\u0001 sekundi"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunda"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundi"
+        }
+      ]
+    ]
   }
 }

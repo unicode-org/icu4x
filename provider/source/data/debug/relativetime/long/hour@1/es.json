@@ -3,27 +3,63 @@
     "0": "esta hora"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  hora"
-      ],
-      "other": [
-        0,
-        "\u0006hace  horas"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hora"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " horas"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  hora"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  horas"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hora"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " horas"
+        }
+      ]
+    ]
   }
 }

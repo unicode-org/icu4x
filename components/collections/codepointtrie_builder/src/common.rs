@@ -11,9 +11,9 @@ pub(crate) fn args_for_build_immutable<U>(trie_type: TrieType) -> (u32, u32) {
         TrieType::Small => 1,
     };
     let width = match core::mem::size_of::<U>() {
-        2 => 0, // UCPTRIE_VALUE_BITS_16
-        4 => 1, // UCPTRIE_VALUE_BITS_32
-        1 => 2, // UCPTRIE_VALUE_BITS_8
+        1 => 2,     // UCPTRIE_VALUE_BITS_8
+        2 => 0,     // UCPTRIE_VALUE_BITS_16
+        3 | 4 => 1, // UCPTRIE_VALUE_BITS_32
         other => panic!("Don't know how to make trie with width {other}"),
     };
     (trie_type, width)

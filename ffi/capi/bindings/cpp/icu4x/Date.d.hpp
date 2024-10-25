@@ -47,11 +47,11 @@ public:
 
   inline uint16_t day_of_year() const;
 
-  inline uint32_t day_of_month() const;
+  inline uint8_t day_of_month() const;
 
   inline icu4x::IsoWeekday day_of_week() const;
 
-  inline uint32_t week_of_month(icu4x::IsoWeekday first_weekday) const;
+  inline uint8_t week_of_month(icu4x::IsoWeekday first_weekday) const;
 
   inline icu4x::WeekOf week_of_year(const icu4x::WeekCalculator& calculator) const;
 

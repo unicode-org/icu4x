@@ -1,14 +1,26 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 pied"
-      ],
-      "other": [
-        0,
-        "\u0001 pieds"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " pied"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " pieds"
+        }
+      ]
+    ]
   }
 }

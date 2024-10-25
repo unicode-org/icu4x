@@ -3,35 +3,82 @@
     "0": "сейчас"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 секунду назад"
-      ],
-      "many": [
-        0,
-        "\u0001 секунд назад"
-      ],
-      "other": [
-        0,
-        "\u0001 секунды назад"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунду назад"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунд назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунды назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\fчерез  секунду"
-      ],
-      "many": [
-        0,
-        "\fчерез  секунд"
-      ],
-      "other": [
-        0,
-        "\fчерез  секунды"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунду"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунд"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунды"
+        }
+      ]
+    ]
   }
 }

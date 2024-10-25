@@ -8,7 +8,7 @@ use crate::parser::{
 };
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
-use alloc::string::String;
+use alloc::borrow::Cow;
 use core::cmp::Ordering;
 use core::str::FromStr;
 use writeable::Writeable;
@@ -33,9 +33,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed locale identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// No subtag validation or alias resolution is performed.
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
@@ -151,7 +152,37 @@ impl Locale {
         }
     }
 
+    /// Canonicalize the locale (operating on UTF-8 formatted byte slices)
+    ///
     /// This is a best-effort operation that performs all available levels of canonicalization.
+    ///
+    /// At the moment the operation will normalize casing and the separator, but in the future
+    /// it may also validate and update from deprecated subtags to canonical ones.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::Locale;
+    ///
+    /// assert_eq!(
+    ///     Locale::canonicalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Ok("pl-Latn-PL-u-hc-h12")
+    /// );
+    /// ```
+    pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let locale = Self::try_from_utf8(input)?;
+        let cow: Cow<str> = locale.write_to_string();
+        if cow.as_bytes() == input {
+            // Safety: input is known to be valid UTF-8 since it has the same
+            // bytes as `cow`, which is a `str`.
+            let s = unsafe { core::str::from_utf8_unchecked(input) };
+            Ok(s.into())
+        } else {
+            Ok(cow.into_owned().into())
+        }
+    }
+
+    /// Canonicalize the locale (operating on strings)
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
     /// it may also validate and update from deprecated subtags to canonical ones.
@@ -166,9 +197,14 @@ impl Locale {
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let locale = Self::try_from_utf8(input.as_ref())?;
-        Ok(locale.write_to_string().into_owned())
+    pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
+        let locale = Self::try_from_str(input)?;
+        let cow = locale.write_to_string();
+        if cow == input {
+            Ok(input.into())
+        } else {
+            Ok(cow.into_owned().into())
+        }
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.
@@ -394,19 +430,6 @@ impl From<LanguageIdentifier> for Locale {
 impl From<Locale> for LanguageIdentifier {
     fn from(loc: Locale) -> Self {
         loc.id
-    }
-}
-
-impl AsRef<LanguageIdentifier> for Locale {
-    #[inline(always)]
-    fn as_ref(&self) -> &LanguageIdentifier {
-        &self.id
-    }
-}
-
-impl AsMut<LanguageIdentifier> for Locale {
-    fn as_mut(&mut self) -> &mut LanguageIdentifier {
-        &mut self.id
     }
 }
 

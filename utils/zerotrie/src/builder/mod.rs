@@ -231,7 +231,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
         let byte_str_slice = ByteStr::from_byte_slice_with_value(tuples);
         let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         match result {
-            Ok(s) => Self::from_store(s.take_or_panic()),
+            Ok(s) => Self::from_store(s.build_or_panic()),
             Err(_) => panic!("Failed to build ZeroTrie"),
         }
     }
@@ -291,7 +291,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
         // encountered, this number may need to be increased.
         let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         match result {
-            Ok(s) => Self::from_store(s.take_or_panic()),
+            Ok(s) => Self::from_store(s.build_or_panic()),
             Err(_) => panic!("Failed to build ZeroTrie"),
         }
     }

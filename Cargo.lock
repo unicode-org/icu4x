@@ -613,7 +613,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=fe5201dd04ee6614942f817b291e90cb01440c19#fe5201dd04ee6614942f817b291e90cb01440c19"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=808d18ae8a1e687e0ccaa41c74ea626157f88826#808d18ae8a1e687e0ccaa41c74ea626157f88826"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -643,7 +643,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=fe5201dd04ee6614942f817b291e90cb01440c19#fe5201dd04ee6614942f817b291e90cb01440c19"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=808d18ae8a1e687e0ccaa41c74ea626157f88826#808d18ae8a1e687e0ccaa41c74ea626157f88826"
 dependencies = [
  "log",
 ]
@@ -651,7 +651,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=fe5201dd04ee6614942f817b291e90cb01440c19#fe5201dd04ee6614942f817b291e90cb01440c19"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=808d18ae8a1e687e0ccaa41c74ea626157f88826#808d18ae8a1e687e0ccaa41c74ea626157f88826"
 dependencies = [
  "askama",
  "clap",
@@ -671,7 +671,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=fe5201dd04ee6614942f817b291e90cb01440c19#fe5201dd04ee6614942f817b291e90cb01440c19"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=808d18ae8a1e687e0ccaa41c74ea626157f88826#808d18ae8a1e687e0ccaa41c74ea626157f88826"
 dependencies = [
  "displaydoc",
  "either",
@@ -679,7 +679,7 @@ dependencies = [
  "quote",
  "serde",
  "smallvec",
- "strck_ident",
+ "strck",
  "syn 2.0.75",
 ]
 
@@ -955,6 +955,7 @@ dependencies = [
  "icu_list",
  "icu_locale",
  "icu_normalizer",
+ "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1165,6 +1166,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_properties",
  "postcard",
+ "potential_utf",
  "serde",
  "serde_json",
  "toml",
@@ -1189,6 +1191,7 @@ dependencies = [
  "icu_datetime_data",
  "icu_decimal",
  "icu_locale_core",
+ "icu_pattern",
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
@@ -1460,15 +1463,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_preferences"
-version = "0.0.0"
-dependencies = [
- "icu_datetime",
- "icu_locale_core",
- "tinystr",
-]
-
-[[package]]
 name = "icu_properties"
 version = "1.5.0"
 dependencies = [
@@ -1482,6 +1476,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "unicode-bidi",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1897,6 +1892,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_export",
  "icu_provider_fs",
+ "icu_provider_source",
  "itertools",
  "litemap",
  "lru",
@@ -2493,9 +2489,9 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.22.0"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c7a12c7506980eaac5c9851a04e90e0062eb4417aa188a512bf7a64a1ef290f"
+checksum = "0904b9147011800e63763fb9e49bbeaf76c1b6ab8982824c659dce5433712559"
 dependencies = [
  "serde",
 ]
@@ -2685,17 +2681,10 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "strck"
-version = "0.1.2"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be91090ded9d8f979d9fe921777342d37e769e0b6b7296843a7a38247240e917"
-
-[[package]]
-name = "strck_ident"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1c3802b169b3858a44667f221c9a0b3136e6019936ea926fc97fbad8af77202"
+checksum = "42316e70da376f3d113a68d138a60d8a9883c604fe97942721ec2068dab13a9f"
 dependencies = [
- "strck",
  "unicode-ident",
 ]
 

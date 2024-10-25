@@ -9,6 +9,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
@@ -54,26 +55,17 @@ where
 {
     let mut map = BTreeMap::new();
     for value in values {
-        let discr = transform_u32(value.discr)?;
-        map.insert(
-            NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
-            discr,
-        );
+        let discr = transform_u32(value.discr)? as usize;
+        map.insert(value.long.as_bytes(), discr);
         if let Some(ref short) = value.short {
-            map.insert(
-                NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()),
-                discr,
-            );
+            map.insert(short.as_bytes(), discr);
         }
         for alias in &value.aliases {
-            map.insert(
-                NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()),
-                discr,
-            );
+            map.insert(alias.as_bytes(), discr);
         }
     }
     Ok(PropertyValueNameToEnumMapV1 {
-        map: map.into_iter().collect(),
+        map: ZeroTrieSimpleAscii::from_iter(map).convert_store(),
     })
 }
 
@@ -381,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider {
+impl DataProvider<GeneralCategoryMaskNameToValueV2Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-        use icu::properties::GeneralCategoryGroup;
+    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2Marker>, DataError> {
+        use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
+        self.check_req::<GeneralCategoryMaskNameToValueV2Marker>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -410,7 +402,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker>
+impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
     for SourceDataProvider
 {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -422,7 +414,7 @@ impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker>
 expand!(
     (
         CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClassNameToValueV1Marker,
+        CanonicalCombiningClassNameToValueV2Marker,
         (
             sparse: CanonicalCombiningClassValueToShortNameV1Marker,
             CanonicalCombiningClassValueToLongNameV1Marker
@@ -431,7 +423,7 @@ expand!(
     ),
     (
         GeneralCategoryV1Marker,
-        GeneralCategoryNameToValueV1Marker,
+        GeneralCategoryNameToValueV2Marker,
         (
             linear: GeneralCategoryValueToShortNameV1Marker,
             GeneralCategoryValueToLongNameV1Marker
@@ -440,7 +432,7 @@ expand!(
     ),
     (
         BidiClassV1Marker,
-        BidiClassNameToValueV1Marker,
+        BidiClassNameToValueV2Marker,
         (
             linear: BidiClassValueToShortNameV1Marker,
             BidiClassValueToLongNameV1Marker
@@ -449,7 +441,7 @@ expand!(
     ),
     (
         ScriptV1Marker,
-        ScriptNameToValueV1Marker,
+        ScriptNameToValueV2Marker,
         (
             linear4: ScriptValueToShortNameV1Marker,
             ScriptValueToLongNameV1Marker
@@ -458,7 +450,7 @@ expand!(
     ),
     (
         HangulSyllableTypeV1Marker,
-        HangulSyllableTypeNameToValueV1Marker,
+        HangulSyllableTypeNameToValueV2Marker,
         (
             linear: HangulSyllableTypeValueToShortNameV1Marker,
             HangulSyllableTypeValueToLongNameV1Marker
@@ -467,7 +459,7 @@ expand!(
     ),
     (
         EastAsianWidthV1Marker,
-        EastAsianWidthNameToValueV1Marker,
+        EastAsianWidthNameToValueV2Marker,
         (
             linear: EastAsianWidthValueToShortNameV1Marker,
             EastAsianWidthValueToLongNameV1Marker
@@ -476,7 +468,7 @@ expand!(
     ),
     (
         IndicSyllabicCategoryV1Marker,
-        IndicSyllabicCategoryNameToValueV1Marker,
+        IndicSyllabicCategoryNameToValueV2Marker,
         (
             linear: IndicSyllabicCategoryValueToShortNameV1Marker,
             IndicSyllabicCategoryValueToLongNameV1Marker
@@ -485,7 +477,7 @@ expand!(
     ),
     (
         LineBreakV1Marker,
-        LineBreakNameToValueV1Marker,
+        LineBreakNameToValueV2Marker,
         (
             linear: LineBreakValueToShortNameV1Marker,
             LineBreakValueToLongNameV1Marker
@@ -494,7 +486,7 @@ expand!(
     ),
     (
         GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreakNameToValueV1Marker,
+        GraphemeClusterBreakNameToValueV2Marker,
         (
             linear: GraphemeClusterBreakValueToShortNameV1Marker,
             GraphemeClusterBreakValueToLongNameV1Marker
@@ -503,7 +495,7 @@ expand!(
     ),
     (
         WordBreakV1Marker,
-        WordBreakNameToValueV1Marker,
+        WordBreakNameToValueV2Marker,
         (
             linear: WordBreakValueToShortNameV1Marker,
             WordBreakValueToLongNameV1Marker
@@ -512,7 +504,7 @@ expand!(
     ),
     (
         SentenceBreakV1Marker,
-        SentenceBreakNameToValueV1Marker,
+        SentenceBreakNameToValueV2Marker,
         (
             linear: SentenceBreakValueToShortNameV1Marker,
             SentenceBreakValueToLongNameV1Marker
@@ -521,7 +513,7 @@ expand!(
     ),
     (
         JoiningTypeV1Marker,
-        JoiningTypeNameToValueV1Marker,
+        JoiningTypeNameToValueV2Marker,
         (
             linear: JoiningTypeValueToShortNameV1Marker,
             JoiningTypeValueToLongNameV1Marker
@@ -533,7 +525,6 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
@@ -541,9 +532,10 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
+        use icu::properties::{props::GeneralCategory, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
-        let trie = icu::properties::maps::load_general_category(&provider).unwrap();
+        let trie = CodePointMapData::<GeneralCategory>::try_new_unstable(&provider).unwrap();
         let trie = trie.as_code_point_trie().unwrap();
 
         assert_eq!(trie.get32('꣓' as u32), GeneralCategory::DecimalNumber);
@@ -552,9 +544,10 @@ mod tests {
 
     #[test]
     fn test_script() {
+        use icu::properties::{props::Script, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
-        let trie = icu::properties::maps::load_script(&provider).unwrap();
+        let trie = CodePointMapData::<Script>::try_new_unstable(&provider).unwrap();
         let trie = trie.as_code_point_trie().unwrap();
 
         assert_eq!(trie.get32('꣓' as u32), Script::Saurashtra);

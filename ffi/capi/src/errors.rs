@@ -79,14 +79,6 @@ pub mod ffi {
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
-    pub struct TimeZoneInvalidIdError;
-
-    #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
-    pub struct TimeZoneUnknownError;
-
-    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// Legacy error
     // TODO(2.0): remove
@@ -111,9 +103,6 @@ pub mod ffi {
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
 
-        // property errors
-        PropertyUnexpectedPropertyNameError = 0x4_02,
-
         // datetime format errors
         DateTimePatternError = 0x8_00,
         DateTimeMissingInputFieldError = 0x8_01,
@@ -127,6 +116,7 @@ pub mod ffi {
         DateTimeDuplicateFieldError = 0x8_09,
         DateTimeTooNarrowError = 0x8_0A,
         DateTimeMissingNamesError = 0x8_0B,
+        DateTimeZoneInfoMissingFieldsError = 0x8_80, // FFI-only error
     }
 }
 
@@ -164,18 +154,6 @@ impl From<icu_provider::DataError> for DataError {
             ))]
             icu_provider::DataErrorKind::Io(..) => Self::Io,
             _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "properties")]
-impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
-    fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
-        match e {
-            icu_properties::UnexpectedPropertyNameOrDataError::Data(e) => e.into(),
-            icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName => {
-                Error::PropertyUnexpectedPropertyNameError
-            }
         }
     }
 }
@@ -259,13 +237,6 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 #[cfg(any(feature = "timezone", feature = "datetime"))]
 impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_timezone::InvalidOffsetError) -> Self {
-        Self
-    }
-}
-
-#[cfg(any(feature = "timezone", feature = "datetime"))]
-impl From<icu_timezone::UnknownTimeZoneError> for TimeZoneUnknownError {
-    fn from(_: icu_timezone::UnknownTimeZoneError) -> Self {
         Self
     }
 }

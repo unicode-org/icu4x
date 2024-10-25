@@ -5,35 +5,91 @@
     "1": "следећег месеца"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\bпре  месеца"
-      ],
-      "few": [
-        0,
-        "\bпре  месеца"
-      ],
-      "other": [
-        0,
-        "\bпре  месеци"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеци"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006за  месец"
-      ],
-      "few": [
-        0,
-        "\u0006за  месеца"
-      ],
-      "other": [
-        0,
-        "\u0006за  месеци"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месец"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеци"
+        }
+      ]
+    ]
   }
 }

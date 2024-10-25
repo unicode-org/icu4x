@@ -193,7 +193,7 @@ impl<'l> Lexer<'l> {
     }
 }
 
-impl<'l> Iterator for Lexer<'l> {
+impl Iterator for Lexer<'_> {
     type Item = Token;
 
     #[inline]

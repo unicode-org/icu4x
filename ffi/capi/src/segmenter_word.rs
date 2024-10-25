@@ -23,6 +23,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
+    #[diplomat::demo(custom_func = "../../npm/demo_gen_custom/WordSegmenter.mjs")]
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
     #[diplomat::opaque]
@@ -297,10 +298,10 @@ pub mod ffi {
     }
 }
 
-impl From<&crate::locale_core::ffi::Locale> for icu_segmenter::WordBreakOptions {
-    fn from(other: &crate::locale_core::ffi::Locale) -> Self {
+impl<'a> From<&'a crate::locale_core::ffi::Locale> for icu_segmenter::WordBreakOptions<'a> {
+    fn from(other: &'a crate::locale_core::ffi::Locale) -> Self {
         let mut options = icu_segmenter::WordBreakOptions::default();
-        options.content_locale = Some(other.to_datalocale());
+        options.content_locale = Some(&other.0.id);
         options
     }
 }

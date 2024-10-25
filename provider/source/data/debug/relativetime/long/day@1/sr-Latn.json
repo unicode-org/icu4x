@@ -7,23 +7,49 @@
     "2": "prekosutra"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  dana"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " dana"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  dan"
-      ],
-      "other": [
-        0,
-        "\u0004za  dana"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " dan"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " dana"
+        }
+      ]
+    ]
   }
 }

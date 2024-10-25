@@ -4,6 +4,8 @@
 
 use super::ForkByErrorPredicate;
 use alloc::{collections::BTreeSet, vec::Vec};
+#[cfg(feature = "export")]
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
@@ -156,6 +158,20 @@ where
             _ => (),
         };
         self.1.iter_ids_for_marker(marker)
+    }
+}
+
+#[cfg(feature = "export")]
+impl<P0, P1, F> ExportableProvider for ForkByErrorProvider<P0, P1, F>
+where
+    P0: ExportableProvider,
+    P1: ExportableProvider,
+    F: ForkByErrorPredicate + Sync,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        let mut markers = self.0.supported_markers();
+        markers.extend(self.1.supported_markers());
+        markers
     }
 }
 
@@ -332,5 +348,19 @@ where
             };
         }
         Err(last_error)
+    }
+}
+
+#[cfg(feature = "export")]
+impl<P, F> ExportableProvider for MultiForkByErrorProvider<P, F>
+where
+    P: ExportableProvider,
+    F: ForkByErrorPredicate + Sync,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        self.providers
+            .iter()
+            .flat_map(|p| p.supported_markers())
+            .collect()
     }
 }

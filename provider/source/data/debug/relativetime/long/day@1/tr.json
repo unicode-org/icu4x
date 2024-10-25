@@ -7,19 +7,29 @@
     "2": "öbür gün"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 gün önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " gün önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 gün sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " gün sonra"
+        }
       ]
-    }
+    ]
   }
 }

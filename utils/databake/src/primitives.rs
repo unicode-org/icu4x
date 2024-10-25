@@ -34,7 +34,7 @@ fn literal() {
     assert_eq!(42u16.borrows_size(), 0);
 }
 
-impl<'a> Bake for &'a str {
+impl Bake for &str {
     fn bake(&self, _: &CrateEnv) -> TokenStream {
         quote! {
             #self
@@ -42,13 +42,13 @@ impl<'a> Bake for &'a str {
     }
 }
 
-impl<'a> BakeSize for &'a str {
+impl BakeSize for &str {
     fn borrows_size(&self) -> usize {
         self.len()
     }
 }
 
-impl<'a, T> Bake for &'a T
+impl<T> Bake for &T
 where
     T: Bake,
 {
@@ -60,7 +60,7 @@ where
     }
 }
 
-impl<'a, T> BakeSize for &'a T
+impl<T> BakeSize for &T
 where
     T: BakeSize,
 {
@@ -75,7 +75,7 @@ fn r#ref() {
     assert_eq!(BakeSize::borrows_size(&&934.34f32), 4);
 }
 
-impl<'a, T> Bake for &'a [T]
+impl<T> Bake for &[T]
 where
     T: Bake,
 {
@@ -97,7 +97,7 @@ where
     }
 }
 
-impl<'a, T> BakeSize for &'a [T]
+impl<T> BakeSize for &[T]
 where
     T: BakeSize,
 {

@@ -4,26 +4,24 @@
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
-    neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
-        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+        Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
+        NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, YearStyle,
     },
     options::{components, preferences},
+    FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::locale;
 use icu_locale_core::Locale;
 
 fn assert_resolved_components(
-    field_set: NeoDateTimeComponents,
-    options: NeoOptions<NeoDateTimeComponents>,
+    skeleton: NeoDateTimeSkeleton,
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
         &locale.into(),
-        field_set,
-        options,
+        skeleton,
     )
     .unwrap();
     let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
@@ -33,21 +31,25 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto));
-    let length = NeoSkeletonLength::Medium;
+    let skeleton = NeoDateTimeSkeleton::for_length_and_components(
+        NeoSkeletonLength::Medium,
+        NeoDateTimeComponents::Date(NeoDateComponents::Auto),
+    );
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
     components_bag.month = Some(components::Month::Short);
     components_bag.day = Some(components::Day::NumericDayOfMonth);
 
-    assert_resolved_components(field_set, length.into(), &components_bag, locale!("en"));
+    assert_resolved_components(skeleton, &components_bag, locale!("en"));
 }
 
 #[test]
 fn test_length_time() {
-    let field_set = NeoDateTimeComponents::Time(NeoTimeComponents::Auto);
-    let length = NeoSkeletonLength::Medium;
+    let skeleton = NeoDateTimeSkeleton::for_length_and_components(
+        NeoSkeletonLength::Medium,
+        NeoDateTimeComponents::Time(NeoTimeComponents::Auto),
+    );
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
@@ -58,8 +60,7 @@ fn test_length_time() {
     ));
 
     assert_resolved_components(
-        field_set,
-        length.into(),
+        skeleton,
         &components_bag,
         "en-u-hc-h12".parse::<Locale>().unwrap(),
     );
@@ -67,9 +68,11 @@ fn test_length_time() {
 
 #[test]
 fn test_length_time_preferences() {
-    let field_set = NeoDateTimeComponents::Time(NeoTimeComponents::Auto);
-    let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.alignment = Some(Alignment::Column);
+    let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
+        NeoSkeletonLength::Medium,
+        NeoDateTimeComponents::Time(NeoTimeComponents::Auto),
+    );
+    skeleton.alignment = Some(Alignment::Column);
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);
@@ -80,8 +83,7 @@ fn test_length_time_preferences() {
     ));
 
     assert_resolved_components(
-        field_set,
-        options,
+        skeleton,
         &components_bag,
         "en-u-hc-h24".parse::<Locale>().unwrap(),
     );
@@ -89,14 +91,16 @@ fn test_length_time_preferences() {
 
 #[test]
 fn test_date_and_time() {
-    let field_set = NeoDateTimeComponents::DateTime(
-        NeoDayComponents::EraYearMonthDayWeekday,
-        NeoTimeComponents::Auto,
+    let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
+        NeoSkeletonLength::Medium,
+        NeoDateTimeComponents::DateTime(
+            NeoDateComponents::YearMonthDayWeekday,
+            NeoTimeComponents::Auto,
+        ),
     );
-    let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.era_display = Some(EraDisplay::Always);
-    options.fractional_second_digits = Some(FractionalSecondDigits::F4);
-    options.alignment = Some(Alignment::Column);
+    skeleton.year_style = Some(YearStyle::Always);
+    skeleton.fractional_second_digits = Some(FractionalSecondDigits::F4);
+    skeleton.alignment = Some(Alignment::Column);
 
     let mut input_bag = components::Bag::default();
     input_bag.era = Some(components::Text::Short);
@@ -116,8 +120,7 @@ fn test_date_and_time() {
     ));
 
     assert_resolved_components(
-        field_set,
-        options,
+        skeleton,
         &output_bag,
         "en-u-hc-h23".parse::<Locale>().unwrap(),
     );

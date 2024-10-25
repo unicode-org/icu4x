@@ -880,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "চিতা"
               },
-              "Choibalsan": {
-                "exemplarCity": "চোইবাল্‌স্যান"
-              },
               "Colombo": {
                 "exemplarCity": "কলম্বো"
               },
@@ -1547,13 +1544,6 @@
                 "generic": "চীন সময়",
                 "standard": "চীন মানক সময়",
                 "daylight": "চীন দিবালোক সময়"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "চয়বালসন সময়",
-                "standard": "চয়বালসন মানক সময়",
-                "daylight": "চয়বালসন গ্রীষ্মকালীন সময়"
               }
             },
             "Christmas": {

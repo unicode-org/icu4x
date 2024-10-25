@@ -880,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "チタ"
               },
-              "Choibalsan": {
-                "exemplarCity": "チョイバルサン"
-              },
               "Colombo": {
                 "exemplarCity": "コロンボ"
               },
@@ -1573,13 +1570,6 @@
                 "generic": "中国時間",
                 "standard": "中国標準時",
                 "daylight": "中国夏時間"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "チョイバルサン時間",
-                "standard": "チョイバルサン標準時",
-                "daylight": "チョイバルサン夏時間"
               }
             },
             "Christmas": {

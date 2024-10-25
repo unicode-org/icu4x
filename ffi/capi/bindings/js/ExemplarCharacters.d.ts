@@ -18,9 +18,9 @@ export class ExemplarCharacters {
 
     get ffiValue(): pointer;
 
-    contains(s: string): boolean;
+    containsStr(s: string): boolean;
 
-    containsChar(cp: codepoint): boolean;
+    contains(cp: codepoint): boolean;
 
     static tryNewMain(provider: DataProvider, locale: Locale): ExemplarCharacters;
 

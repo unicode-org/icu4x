@@ -37,7 +37,6 @@ inline icu4x::Error icu4x::Error::FromFFI(icu4x::capi::Error c_enum) {
     case icu4x::capi::Error_DataCustomError:
     case icu4x::capi::Error_DataIoError:
     case icu4x::capi::Error_DataUnavailableBufferFormatError:
-    case icu4x::capi::Error_PropertyUnexpectedPropertyNameError:
     case icu4x::capi::Error_DateTimePatternError:
     case icu4x::capi::Error_DateTimeMissingInputFieldError:
     case icu4x::capi::Error_DateTimeSkeletonError:
@@ -50,6 +49,7 @@ inline icu4x::Error icu4x::Error::FromFFI(icu4x::capi::Error c_enum) {
     case icu4x::capi::Error_DateTimeDuplicateFieldError:
     case icu4x::capi::Error_DateTimeTooNarrowError:
     case icu4x::capi::Error_DateTimeMissingNamesError:
+    case icu4x::capi::Error_DateTimeZoneInfoMissingFieldsError:
       return static_cast<icu4x::Error::Value>(c_enum);
     default:
       abort();

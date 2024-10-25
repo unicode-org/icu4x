@@ -5,19 +5,35 @@
     "1": "sledeće god."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  god."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  god."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
       ]
-    }
+    ]
   }
 }

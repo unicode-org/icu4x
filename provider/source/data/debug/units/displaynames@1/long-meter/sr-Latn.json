@@ -1,18 +1,37 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 metar"
-      ],
-      "few": [
-        0,
-        "\u0001 metra"
-      ],
-      "other": [
-        0,
-        "\u0001 metara"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " metar"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " metra"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " metara"
+        }
+      ]
+    ]
   }
 }

@@ -80,6 +80,7 @@ pub use parser::errors::ParseError;
 pub mod extensions;
 #[macro_use]
 pub mod subtags;
+pub mod preferences;
 pub mod zerovec;
 
 #[cfg(feature = "serde")]

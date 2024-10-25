@@ -5,19 +5,29 @@
     "1": "gelecek çyr."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 çyr. önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " çyr. önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 çyr. sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " çyr. sonra"
+        }
       ]
-    }
+    ]
   }
 }

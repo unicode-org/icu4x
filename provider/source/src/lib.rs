@@ -36,7 +36,6 @@ mod datetime;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
-#[cfg(feature = "experimental")]
 mod duration;
 mod list;
 mod locale;
@@ -111,7 +110,7 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "46.0.0-ALPHA0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "46.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-05-16/75.x";
@@ -200,7 +199,8 @@ impl SourceDataProvider {
         Ok(Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new(root)?,
-                cache: Default::default(),
+                transitions: Default::default(),
+                zone_tab: Default::default(),
             })),
             ..self
         })
@@ -268,10 +268,11 @@ impl SourceDataProvider {
     pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
         Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
-                root: AbstractFs::new_from_url(dbg!(format!(
+                root: AbstractFs::new_from_url(format!(
                     "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
-                ))),
-                cache: Default::default(),
+                )),
+                transitions: Default::default(),
+                zone_tab: Default::default(),
             })),
             ..self
         }

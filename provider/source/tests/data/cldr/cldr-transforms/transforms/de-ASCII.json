@@ -1,0 +1,8 @@
+{
+  "_visibility": "external",
+  "_aliasBcp47": "de-t-de-d0-ascii",
+  "_source": "de",
+  "_direction": "forward",
+  "_target": "ASCII",
+  "_rulesFile": "de-ASCII.txt"
+}

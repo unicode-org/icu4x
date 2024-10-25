@@ -17,7 +17,6 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use icu_provider::DynamicDataMarker;
 
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
@@ -100,12 +99,6 @@ impl ListFormatterPatternsV2<'_> {
     pub const WIDE: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("W");
     #[doc(hidden)]
     pub const WIDE_STR: &'static str = Self::WIDE.as_str();
-}
-
-pub(crate) struct ErasedListV2Marker;
-
-impl DynamicDataMarker for ErasedListV2Marker {
-    type DataStruct = ListFormatterPatternsV2<'static>;
 }
 
 /// A pattern that can behave conditionally on the next element.

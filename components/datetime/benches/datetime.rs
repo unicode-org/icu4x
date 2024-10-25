@@ -5,11 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
-use icu_calendar::{DateTime, Gregorian};
+use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -20,10 +20,10 @@ fn datetime_benches(c: &mut Criterion) {
 
     let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
         let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
-        group.bench_function(&format!("semantic/{name}"), |b| {
+        group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -35,7 +35,9 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: CustomTimeZone::utc(),
+                                    zone: TimeZoneInfo::utc()
+                                        .at_time((Date::unix_epoch(), Time::midnight()))
+                                        .with_zone_variant(ZoneVariant::standard()),
                                 }
                             }
                         })
@@ -45,21 +47,18 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+                            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
-                                skeleton.components,
-                                skeleton.length.into(),
+                                skeleton,
                             )
-                            .expect("Failed to create TypedNeoFormatter.")
+                            .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };
 
                         let mut result = String::new();
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            fdt.try_write_to(&mut result)
-                                .unwrap()
-                                .expect("Failed to write to date time format.");
+                            let _ = fdt.try_write_to(&mut result).unwrap();
                             result.clear();
                         }
                     }

@@ -5,19 +5,35 @@
     "1": "next month"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- m"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ m"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
       ]
-    }
+    ]
   }
 }

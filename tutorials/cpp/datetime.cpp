@@ -7,7 +7,7 @@
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/TimeFormatter.hpp>
 #include <icu4x/Logger.hpp>
-#include <icu4x/CustomTimeZone.hpp>
+#include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/TimeZoneIdMapper.hpp>
 #include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
@@ -62,69 +62,54 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00").ok().value();
-    int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -18000) {
-        std::cout << "GMT offset doesn't parse" << std::endl;
-        return 1;
-    }
-    std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
-    std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
-    time_zone->try_set_iana_time_zone_id(*mapper.get(), "america/chicago").ok().value();
-    std::string time_zone_id_return = time_zone->time_zone_id().value();
-    if (time_zone_id_return != "uschi") {
-        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
-        return 1;
-    }
-    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().ok().value();
+    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
     if (normalized_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
         return 1;
     }
-    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().ok().value();
+    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().value();
     if (canonicalied_iana_id != "Asia/Kolkata") {
         std::cout << "Time zone ID does not canonicalize: " << canonicalied_iana_id << std::endl;
         return 1;
     }
-    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").ok().value();
+    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").value();
     if (slow_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
         return 1;
     }
     std::unique_ptr<TimeZoneIdMapperWithFastCanonicalization> reverse_mapper = TimeZoneIdMapperWithFastCanonicalization::create(*dp.get()).ok().value();
-    std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").ok().value();
+    std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").value();
     if (fast_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;
         return 1;
     }
-    std::unique_ptr<IsoDateTime> local_datetime = IsoDateTime::create(2022, 8, 25, 0, 0, 0, 0).ok().value();
-    time_zone->maybe_calculate_metazone(*mzcalc.get(), *local_datetime.get());
-    std::string metazone_id_return = time_zone->metazone_id().value();
-    if (metazone_id_return != "amce") {
-        std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
+
+    std::unique_ptr<TimeZoneInfo> time_zone = TimeZoneInfo::unknown();
+    time_zone->try_set_offset_str("-05:00").ok().value();
+    int32_t offset = time_zone->offset_seconds().value();
+    if (offset != -18000) {
+        std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
     }
-    time_zone->maybe_calculate_zone_variant(*zocalc.get(), *local_datetime.get());
-    if (!time_zone->is_daylight_time()) {
-        std::cout << "ZoneVariant not calculated correctly" << std::endl;
+    time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
+    std::string time_zone_id_return = time_zone->time_zone_id();
+    if (time_zone_id_return != "uschi") {
+        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
         return 1;
     }
-    // Note: The daylight time switch should normally come from TZDB calculations.
-    time_zone->set_daylight_time();
-    std::string zone_variant_return = time_zone->zone_variant().value();
-    if (zone_variant_return != "dt") {
-        std::cout << "Zone variant not calculated correctly; got " << zone_variant_return << std::endl;
-        return 1;
-    }
+    time_zone->set_local_time(*date.get());
+    time_zone->try_set_zone_variant("dt");
 
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get());
+    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    time_zone->set_local_time(*any_date->to_iso().get());
 
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = zdtf->format_datetime_with_custom_time_zone(*any_date.get(), *time_zone.get()).ok().value();

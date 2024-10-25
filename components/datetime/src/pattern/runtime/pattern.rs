@@ -7,6 +7,7 @@
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::vec::Vec;
 use core::str::FromStr;
+use icu_plurals::provider::FourBitMetadata;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
@@ -75,6 +76,15 @@ impl PatternMetadata {
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
         self.0 = time_granularity.ordinal();
     }
+
+    pub(crate) fn to_four_bit_metadata(self) -> FourBitMetadata {
+        #[allow(clippy::unwrap_used)] // valid values for self.0 are 0, 1, 2, 3, or 4
+        FourBitMetadata::try_from_byte(self.0).unwrap()
+    }
+
+    pub(crate) fn from_u8(other: u8) -> Self {
+        Self(TimeGranularity::from_ordinal(other).ordinal())
+    }
 }
 
 impl Default for PatternMetadata {
@@ -84,7 +94,7 @@ impl Default for PatternMetadata {
     }
 }
 
-impl<'data> Pattern<'data> {
+impl Pattern<'_> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
@@ -97,6 +107,10 @@ impl<'data> Pattern<'data> {
             items: &self.items,
             metadata: self.metadata,
         }
+    }
+
+    pub fn as_ref(&self) -> Pattern<'_> {
+        self.as_borrowed().as_pattern()
     }
 }
 

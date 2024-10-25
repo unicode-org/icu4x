@@ -2,22 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data structs and markers for semantic skeletons and datetime names.
+
 mod adapter;
 
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
+use core::ops::Range;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use zerovec::{
-    ule::{AsULE, ULE},
-    VarZeroVec, ZeroMap,
-};
+use zerovec::{VarZeroVec, ZeroMap};
 
-use crate::neo_skeleton::NeoSkeletonLength;
-use crate::pattern::runtime::PatternBorrowed;
-use core::ops::Range;
-
-/// Helpers involving the data marker attributes used for date symbols.
+/// Helpers involving the data marker attributes used for date names.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -204,16 +200,14 @@ pub mod marker_attrs {
         DateTimeZone,
     }
 
-    /// Parses a symbol data marker attribute to enum values.
+    /// Parses a name data marker attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_marker_attr_info(
-        marker_attr: &DataMarkerAttributes,
-    ) -> Option<(Context, Length)> {
+    pub fn name_marker_attr_info(marker_attr: &DataMarkerAttributes) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
         match &**marker_attr {
             NUMERIC_STR => Some((Format, Numeric)),
@@ -261,14 +255,14 @@ pub mod marker_attrs {
         }
     }
 
-    /// Creates a symbol data marker attribute from the enum values.
+    /// Creates a name data marker attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_attr_for(context: Context, length: Length) -> &'static DataMarkerAttributes {
+    pub fn name_attr_for(context: Context, length: Length) -> &'static DataMarkerAttributes {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -311,7 +305,7 @@ pub mod marker_attrs {
 
 size_test!(YearNamesV1, year_names_v1_size, 48);
 
-/// Symbols used for representing the year name
+/// Names used for representing the year.
 ///
 /// This uses a data marker attribute for length. The value is simply the number of
 /// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
@@ -323,6 +317,7 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
+///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -331,19 +326,19 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistYearNamesV1Marker, "datetime/symbols/buddhist/years@1"),
-    marker(ChineseYearNamesV1Marker, "datetime/symbols/chinese/years@1"),
-    marker(CopticYearNamesV1Marker, "datetime/symbols/coptic/years@1"),
-    marker(DangiYearNamesV1Marker, "datetime/symbols/dangi/years@1"),
-    marker(EthiopianYearNamesV1Marker, "datetime/symbols/ethiopic/years@1"),
-    marker(GregorianYearNamesV1Marker, "datetime/symbols/gregory/years@1"),
-    marker(HebrewYearNamesV1Marker, "datetime/symbols/hebrew/years@1"),
-    marker(IndianYearNamesV1Marker, "datetime/symbols/indian/years@1"),
-    marker(IslamicYearNamesV1Marker, "datetime/symbols/islamic/years@1"),
-    marker(JapaneseYearNamesV1Marker, "datetime/symbols/japanese/years@1"),
-    marker(JapaneseExtendedYearNamesV1Marker, "datetime/symbols/japanext/years@1"),
-    marker(PersianYearNamesV1Marker, "datetime/symbols/persian/years@1"),
-    marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
+    marker(BuddhistYearNamesV1Marker, "datetime/names/buddhist/years@1"),
+    marker(ChineseYearNamesV1Marker, "datetime/names/chinese/years@1"),
+    marker(CopticYearNamesV1Marker, "datetime/names/coptic/years@1"),
+    marker(DangiYearNamesV1Marker, "datetime/names/dangi/years@1"),
+    marker(EthiopianYearNamesV1Marker, "datetime/names/ethiopic/years@1"),
+    marker(GregorianYearNamesV1Marker, "datetime/names/gregory/years@1"),
+    marker(HebrewYearNamesV1Marker, "datetime/names/hebrew/years@1"),
+    marker(IndianYearNamesV1Marker, "datetime/names/indian/years@1"),
+    marker(IslamicYearNamesV1Marker, "datetime/names/islamic/years@1"),
+    marker(JapaneseYearNamesV1Marker, "datetime/names/japanese/years@1"),
+    marker(JapaneseExtendedYearNamesV1Marker, "datetime/names/japanext/years@1"),
+    marker(PersianYearNamesV1Marker, "datetime/names/persian/years@1"),
+    marker(RocYearNamesV1Marker, "datetime/names/roc/years@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -360,10 +355,10 @@ pub enum YearNamesV1<'data> {
 
 size_test!(MonthNamesV1, month_names_v1_size, 32);
 
-/// Symbols used for representing the month name
+/// Names used for representing the month.
 ///
 /// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme. This
-/// has an additional `1` value used for numeric symbols, only found for calendars with leap months.
+/// has an additional `1` value used for numeric names, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -372,22 +367,19 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistMonthNamesV1Marker, "datetime/symbols/buddhist/months@1"),
-    marker(ChineseMonthNamesV1Marker, "datetime/symbols/chinese/months@1"),
-    marker(CopticMonthNamesV1Marker, "datetime/symbols/coptic/months@1"),
-    marker(DangiMonthNamesV1Marker, "datetime/symbols/dangi/months@1"),
-    marker(EthiopianMonthNamesV1Marker, "datetime/symbols/ethiopic/months@1"),
-    marker(GregorianMonthNamesV1Marker, "datetime/symbols/gregory/months@1"),
-    marker(HebrewMonthNamesV1Marker, "datetime/symbols/hebrew/months@1"),
-    marker(IndianMonthNamesV1Marker, "datetime/symbols/indian/months@1"),
-    marker(IslamicMonthNamesV1Marker, "datetime/symbols/islamic/months@1"),
-    marker(JapaneseMonthNamesV1Marker, "datetime/symbols/japanese/months@1"),
-    marker(
-        JapaneseExtendedMonthNamesV1Marker,
-        "datetime/symbols/japanext/months@1"
-    ),
-    marker(PersianMonthNamesV1Marker, "datetime/symbols/persian/months@1"),
-    marker(RocMonthNamesV1Marker, "datetime/symbols/roc/months@1")
+    marker(BuddhistMonthNamesV1Marker, "datetime/names/buddhist/months@1"),
+    marker(ChineseMonthNamesV1Marker, "datetime/names/chinese/months@1"),
+    marker(CopticMonthNamesV1Marker, "datetime/names/coptic/months@1"),
+    marker(DangiMonthNamesV1Marker, "datetime/names/dangi/months@1"),
+    marker(EthiopianMonthNamesV1Marker, "datetime/names/ethiopic/months@1"),
+    marker(GregorianMonthNamesV1Marker, "datetime/names/gregory/months@1"),
+    marker(HebrewMonthNamesV1Marker, "datetime/names/hebrew/months@1"),
+    marker(IndianMonthNamesV1Marker, "datetime/names/indian/months@1"),
+    marker(IslamicMonthNamesV1Marker, "datetime/names/islamic/months@1"),
+    marker(JapaneseMonthNamesV1Marker, "datetime/names/japanese/months@1"),
+    marker(JapaneseExtendedMonthNamesV1Marker, "datetime/names/japanext/months@1"),
+    marker(PersianMonthNamesV1Marker, "datetime/names/persian/months@1"),
+    marker(RocMonthNamesV1Marker, "datetime/names/roc/months@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -448,7 +440,7 @@ impl SimpleSubstitutionPattern<'_> {
 
 size_test!(LinearNamesV1, linear_names_v1_size, 24);
 
-/// Symbols that can be stored as a simple linear array.
+/// Names that can be stored as a simple linear array.
 ///
 /// - For weekdays, element 0 is Sunday
 /// - For dayperiods, the elements are in order: AM, PM, (noon), (midnight), where the latter two are optional.
@@ -464,14 +456,14 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(WeekdayNamesV1Marker, "datetime/symbols/weekdays@1"),
-    marker(DayPeriodNamesV1Marker, "datetime/symbols/dayperiods@1"),
+    marker(WeekdayNamesV1Marker, "datetime/names/weekdays@1"),
+    marker(DayPeriodNamesV1Marker, "datetime/names/dayperiods@1"),
 
-    // We're not producing or using day symbols yet, but this is where they would go
-    marker(ChineseDaySymbolsV1Marker, "datetime/symbols/chinese/days@1"),
-    marker(DangiDaySymbolsV1Marker, "datetime/symbols/dangi/days@1"),
-    // for calendars that don't use day symbols
-    marker(PlaceholderDaySymbolsV1Marker, "datetime/symbols/placeholder/days@1"),
+    // We're not producing or using day names yet, but this is where they would go
+    marker(ChineseDayNamesV1Marker, "datetime/names/chinese/days@1"),
+    marker(DangiDayNamesV1Marker, "datetime/names/dangi/days@1"),
+    // for calendars that don't use day names
+    marker(PlaceholderDayNamesV1Marker, "datetime/names/placeholder/days@1"),
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -480,29 +472,29 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 #[yoke(prove_covariance_manually)]
 pub struct LinearNamesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The symbols, in order. Order specified on the struct docs.
+    /// The names, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
-    pub symbols: VarZeroVec<'data, str>,
+    pub names: VarZeroVec<'data, str>,
 }
 
-impl<'data> LinearNamesV1<'data> {
-    /// Gets the 'am' symbol assuming this struct contains day period data.
+impl LinearNamesV1<'_> {
+    /// Gets the 'am' name assuming this struct contains day period data.
     pub(crate) fn am(&self) -> Option<&str> {
-        self.symbols.get(0)
+        self.names.get(0)
     }
-    /// Gets the 'pm' symbol assuming this struct contains day period data.
+    /// Gets the 'pm' name assuming this struct contains day period data.
     pub(crate) fn pm(&self) -> Option<&str> {
-        self.symbols.get(1)
+        self.names.get(1)
     }
-    /// Gets the 'noon' symbol assuming this struct contains day period data.
+    /// Gets the 'noon' name assuming this struct contains day period data.
     pub(crate) fn noon(&self) -> Option<&str> {
-        self.symbols
+        self.names
             .get(2)
             .and_then(|s| if s.is_empty() { None } else { Some(s) })
     }
-    /// Gets the 'midnight' symbol assuming this struct contains day period data.
+    /// Gets the 'midnight' name assuming this struct contains day period data.
     pub(crate) fn midnight(&self) -> Option<&str> {
-        self.symbols.get(3)
+        self.names.get(3)
     }
 }
 
@@ -533,143 +525,6 @@ pub struct GluePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
-}
-
-// conceptually:
-// {
-//   has_long: bool,
-//   has_medium: bool,
-//   has_short: bool,
-//   index: u16, // index of first pattern (long if present, else medium, else short)
-// }
-#[allow(missing_docs)] // TODO
-#[derive(Debug, Copy, Clone, PartialEq)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct SkeletonDataIndex {
-    /// If true, the first pattern is for `Long`.
-    /// If false, fall back to the next pattern (`Medium``).
-    pub has_long: bool,
-    /// If true, the next pattern is for `Long`.
-    /// If false, fall back to the next pattern (`Short`).
-    pub has_medium: bool,
-    /// If true, there are 6 plural variants for each pattern.
-    /// If false, it is just a single variant.
-    pub has_plurals: bool,
-    /// If true, there are 2 era variants for each pattern.
-    /// The first does not have an era, and the second has an era.
-    /// if false, there is no era variant.
-    pub has_eras: bool,
-}
-
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct PatternSelectionOptions {
-    pub(crate) length: NeoSkeletonLength,
-    pub(crate) should_display_era: Option<bool>,
-}
-
-impl SkeletonDataIndex {
-    // TODO: This should handle plurals
-    pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
-        let chunk_number = match (options.length, self.has_long, self.has_medium) {
-            (NeoSkeletonLength::Long, _, _) => 0,
-            (NeoSkeletonLength::Medium, true, _) => 1,
-            (NeoSkeletonLength::Medium, false, _) => 0,
-            (NeoSkeletonLength::Short, true, true) => 2,
-            (NeoSkeletonLength::Short, true, false) => 1,
-            (NeoSkeletonLength::Short, false, true) => 1,
-            (NeoSkeletonLength::Short, false, false) => 0,
-        };
-        if !self.has_eras {
-            // chunks are size 1
-            return chunk_number;
-        }
-        let offset = match options.should_display_era {
-            Some(false) => 0,
-            Some(true) | None => 1,
-        };
-        let chunk_size = 2;
-        offset + chunk_number * chunk_size
-    }
-}
-
-/// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
-#[derive(Debug, Copy, Clone, ULE)]
-#[repr(transparent)]
-pub struct SkeletonDataIndexULE(u8);
-
-impl AsULE for SkeletonDataIndex {
-    type ULE = SkeletonDataIndexULE;
-
-    fn to_unaligned(self) -> Self::ULE {
-        let mut flags = 0;
-        flags |= (self.has_long as u8) << 7;
-        flags |= (self.has_medium as u8) << 6;
-        flags |= (self.has_plurals as u8) << 5;
-        flags |= (self.has_eras as u8) << 4;
-        SkeletonDataIndexULE(flags)
-    }
-
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let flags = unaligned.0;
-        // TODO: `flags` could have more bits set, but we don't check that here.
-        SkeletonDataIndex {
-            has_long: (flags & (1 << 7)) != 0,
-            has_medium: (flags & (1 << 6)) != 0,
-            has_plurals: (flags & (1 << 5)) != 0,
-            has_eras: (flags & (1 << 4)) != 0,
-        }
-    }
-}
-
-#[icu_provider::data_struct(
-    // date patterns
-    marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),
-    marker(ChineseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/chinese/skeleton@1"),
-    marker(CopticDateNeoSkeletonPatternsV1Marker, "datetime/patterns/coptic/skeleton@1"),
-    marker(DangiDateNeoSkeletonPatternsV1Marker, "datetime/patterns/dangi/skeleton@1"),
-    marker(EthiopianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/ethiopic/skeleton@1"),
-    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
-    marker(HebrewDateNeoSkeletonPatternsV1Marker, "datetime/patterns/hebrew/skeleton@1"),
-    marker(IndianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/indian/skeleton@1"),
-    marker(IslamicDateNeoSkeletonPatternsV1Marker, "datetime/patterns/islamic/skeleton@1"),
-    marker(JapaneseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanese/skeleton@1"),
-    marker(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanext/skeleton@1"),
-    marker(PersianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/persian/skeleton@1"),
-    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1"),
-    // Time patterns
-    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
-)]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(missing_docs)] // TODO
-pub struct PackedSkeletonDataV1<'data> {
-    #[allow(missing_docs)] // TODO
-    // TODO: Use the bitpacked version here
-    pub index_info: SkeletonDataIndex,
-    // TODO: This should support plurals
-    #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: VarZeroVec<'data, PatternULE>,
-}
-
-impl<'data> PackedSkeletonDataV1<'data> {
-    /// Gets a pattern according to a length and a numeric variant.
-    pub(crate) fn get_pattern(&self, options: PatternSelectionOptions) -> PatternBorrowed {
-        match self
-            .patterns
-            .get(self.index_info.index_for(options) as usize)
-        {
-            Some(pattern_ule) => pattern_ule.as_borrowed(),
-            None => {
-                debug_assert!(false, "failed to load a pattern for {options:?}");
-                PatternBorrowed::DEFAULT
-            }
-        }
-    }
 }
 
 #[icu_provider::data_struct(marker(
@@ -703,11 +558,4 @@ impl DynamicDataMarker for YearNamesV1Marker {
 pub struct MonthNamesV1Marker;
 impl DynamicDataMarker for MonthNamesV1Marker {
     type DataStruct = MonthNamesV1<'static>;
-}
-
-/// Calendar-agnostic date/time skeleta data marker
-#[derive(Debug)]
-pub struct SkeletaV1Marker;
-impl DynamicDataMarker for SkeletaV1Marker {
-    type DataStruct = PackedSkeletonDataV1<'static>;
 }

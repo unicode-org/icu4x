@@ -36,11 +36,11 @@ Date* icu4x_IsoDate_to_any_mv1(const IsoDate* self);
 
 uint16_t icu4x_IsoDate_day_of_year_mv1(const IsoDate* self);
 
-uint32_t icu4x_IsoDate_day_of_month_mv1(const IsoDate* self);
+uint8_t icu4x_IsoDate_day_of_month_mv1(const IsoDate* self);
 
 IsoWeekday icu4x_IsoDate_day_of_week_mv1(const IsoDate* self);
 
-uint32_t icu4x_IsoDate_week_of_month_mv1(const IsoDate* self, IsoWeekday first_weekday);
+uint8_t icu4x_IsoDate_week_of_month_mv1(const IsoDate* self, IsoWeekday first_weekday);
 
 WeekOf icu4x_IsoDate_week_of_year_mv1(const IsoDate* self, const WeekCalculator* calculator);
 

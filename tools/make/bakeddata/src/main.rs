@@ -220,15 +220,16 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        self.0.flush_singleton(marker, payload)
+        self.0.flush_singleton(marker, payload, metadata)
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        self.0.flush(marker)
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.flush(marker, metadata)
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         self.0.close()
     }
 }
@@ -273,11 +274,11 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         Ok(())
     }
 
-    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
         Ok(())
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         let data = core::mem::take(self.data.get_mut().expect("poison"));
 
         let mut lines = Vec::new();
@@ -332,6 +333,6 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
             writeln!(&mut self.fingerprints, "{line}")?;
         }
 
-        Ok(())
+        Ok(Default::default())
     }
 }

@@ -345,7 +345,7 @@ dependencies = [
  "serde",
  "writeable",
  "yoke",
- "zerofrom",
+ "zerovec",
 ]
 
 [[package]]

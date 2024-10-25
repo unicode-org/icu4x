@@ -16,12 +16,14 @@
 //! Read more about data providers: [`icu_provider`]
 
 pub mod calendar;
-pub(crate) mod date_time;
+pub mod neo;
+pub(crate) mod packed_pattern;
 pub mod time_zones;
 
-/// Module for new DateSymbols design
-/// <https://github.com/unicode-org/icu4x/issues/3865>
-pub mod neo;
+pub use packed_pattern::*;
+
+pub(crate) type ErasedPackedPatterns =
+    icu_provider::marker::ErasedMarker<PackedPatternsV1<'static>>;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -34,9 +36,6 @@ pub mod neo;
 /// </div>
 pub struct Baked;
 
-#[cfg(feature = "datagen")]
-include!("../../tests/data/date_skeleton_patterns_v1_marker.rs.data");
-
 #[cfg(feature = "compiled_data")]
 #[allow(unused_imports)]
 const _: () = {
@@ -46,43 +45,14 @@ const _: () = {
         pub use icu_datetime_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_buddhist_date_lengths_v1_marker!(Baked);
-    impl_buddhist_date_symbols_v1_marker!(Baked);
-    impl_chinese_date_lengths_v1_marker!(Baked);
-    impl_chinese_date_symbols_v1_marker!(Baked);
-    impl_coptic_date_lengths_v1_marker!(Baked);
-    impl_coptic_date_symbols_v1_marker!(Baked);
-    impl_dangi_date_lengths_v1_marker!(Baked);
-    impl_dangi_date_symbols_v1_marker!(Baked);
-    impl_ethiopian_date_lengths_v1_marker!(Baked);
-    impl_ethiopian_date_symbols_v1_marker!(Baked);
-    impl_gregorian_date_lengths_v1_marker!(Baked);
-    impl_gregorian_date_symbols_v1_marker!(Baked);
-    impl_hebrew_date_lengths_v1_marker!(Baked);
-    impl_hebrew_date_symbols_v1_marker!(Baked);
-    impl_indian_date_lengths_v1_marker!(Baked);
-    impl_indian_date_symbols_v1_marker!(Baked);
-    impl_islamic_date_lengths_v1_marker!(Baked);
-    impl_islamic_date_symbols_v1_marker!(Baked);
-    impl_japanese_date_lengths_v1_marker!(Baked);
-    impl_japanese_date_symbols_v1_marker!(Baked);
-    impl_japanese_extended_date_lengths_v1_marker!(Baked);
-    impl_japanese_extended_date_symbols_v1_marker!(Baked);
-    impl_persian_date_lengths_v1_marker!(Baked);
-    impl_persian_date_symbols_v1_marker!(Baked);
-    impl_roc_date_lengths_v1_marker!(Baked);
-    impl_roc_date_symbols_v1_marker!(Baked);
-    impl_time_lengths_v1_marker!(Baked);
-    impl_time_symbols_v1_marker!(Baked);
-    impl_exemplar_cities_v1_marker!(Baked);
+
+    impl_locations_v1_marker!(Baked);
     impl_metazone_generic_names_long_v1_marker!(Baked);
     impl_metazone_generic_names_short_v1_marker!(Baked);
+    impl_metazone_period_v1_marker!(Baked);
     impl_metazone_specific_names_long_v1_marker!(Baked);
     impl_metazone_specific_names_short_v1_marker!(Baked);
-    impl_time_zone_formats_v1_marker!(Baked);
-
-    #[cfg(feature = "datagen")]
-    impl_date_skeleton_patterns_v1_marker!(Baked);
+    impl_time_zone_essentials_v1_marker!(Baked);
 
     impl_weekday_names_v1_marker!(Baked);
     impl_day_period_names_v1_marker!(Baked);
@@ -138,44 +108,17 @@ use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    calendar::BuddhistDateLengthsV1Marker::INFO,
-    calendar::BuddhistDateSymbolsV1Marker::INFO,
-    calendar::ChineseDateLengthsV1Marker::INFO,
-    calendar::ChineseDateSymbolsV1Marker::INFO,
-    calendar::CopticDateLengthsV1Marker::INFO,
-    calendar::CopticDateSymbolsV1Marker::INFO,
-    calendar::DangiDateLengthsV1Marker::INFO,
-    calendar::DangiDateSymbolsV1Marker::INFO,
-    calendar::EthiopianDateLengthsV1Marker::INFO,
-    calendar::EthiopianDateSymbolsV1Marker::INFO,
-    calendar::GregorianDateLengthsV1Marker::INFO,
-    calendar::GregorianDateSymbolsV1Marker::INFO,
-    calendar::HebrewDateLengthsV1Marker::INFO,
-    calendar::HebrewDateSymbolsV1Marker::INFO,
-    calendar::IndianDateLengthsV1Marker::INFO,
-    calendar::IndianDateSymbolsV1Marker::INFO,
-    calendar::IslamicDateLengthsV1Marker::INFO,
-    calendar::IslamicDateSymbolsV1Marker::INFO,
-    calendar::JapaneseDateLengthsV1Marker::INFO,
-    calendar::JapaneseDateSymbolsV1Marker::INFO,
-    calendar::JapaneseExtendedDateLengthsV1Marker::INFO,
-    calendar::JapaneseExtendedDateSymbolsV1Marker::INFO,
-    calendar::PersianDateLengthsV1Marker::INFO,
-    calendar::PersianDateSymbolsV1Marker::INFO,
-    calendar::RocDateLengthsV1Marker::INFO,
-    calendar::RocDateSymbolsV1Marker::INFO,
-    calendar::TimeLengthsV1Marker::INFO,
-    calendar::TimeSymbolsV1Marker::INFO,
-    time_zones::ExemplarCitiesV1Marker::INFO,
+    time_zones::LocationsV1Marker::INFO,
     time_zones::MetazoneGenericNamesLongV1Marker::INFO,
     time_zones::MetazoneGenericNamesShortV1Marker::INFO,
+    time_zones::MetazonePeriodV1Marker::INFO,
     time_zones::MetazoneSpecificNamesLongV1Marker::INFO,
     time_zones::MetazoneSpecificNamesShortV1Marker::INFO,
-    time_zones::TimeZoneFormatsV1Marker::INFO,
+    time_zones::TimeZoneEssentialsV1Marker::INFO,
     neo::WeekdayNamesV1Marker::INFO,
     neo::DayPeriodNamesV1Marker::INFO,
     neo::GluePatternV1Marker::INFO,
-    neo::TimeNeoSkeletonPatternsV1Marker::INFO,
+    TimeNeoSkeletonPatternsV1Marker::INFO,
     neo::BuddhistYearNamesV1Marker::INFO,
     neo::ChineseYearNamesV1Marker::INFO,
     neo::CopticYearNamesV1Marker::INFO,
@@ -202,17 +145,17 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::JapaneseExtendedMonthNamesV1Marker::INFO,
     neo::PersianMonthNamesV1Marker::INFO,
     neo::RocMonthNamesV1Marker::INFO,
-    neo::BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::ChineseDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::CopticDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::DangiDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::EthiopianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::HebrewDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::IndianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::IslamicDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::JapaneseDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::PersianDateNeoSkeletonPatternsV1Marker::INFO,
-    neo::RocDateNeoSkeletonPatternsV1Marker::INFO,
+    BuddhistDateNeoSkeletonPatternsV1Marker::INFO,
+    ChineseDateNeoSkeletonPatternsV1Marker::INFO,
+    CopticDateNeoSkeletonPatternsV1Marker::INFO,
+    DangiDateNeoSkeletonPatternsV1Marker::INFO,
+    EthiopianDateNeoSkeletonPatternsV1Marker::INFO,
+    GregorianDateNeoSkeletonPatternsV1Marker::INFO,
+    HebrewDateNeoSkeletonPatternsV1Marker::INFO,
+    IndianDateNeoSkeletonPatternsV1Marker::INFO,
+    IslamicDateNeoSkeletonPatternsV1Marker::INFO,
+    JapaneseDateNeoSkeletonPatternsV1Marker::INFO,
+    JapaneseExtendedDateNeoSkeletonPatternsV1Marker::INFO,
+    PersianDateNeoSkeletonPatternsV1Marker::INFO,
+    RocDateNeoSkeletonPatternsV1Marker::INFO,
 ];

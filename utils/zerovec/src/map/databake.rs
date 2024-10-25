@@ -68,12 +68,12 @@ fn test_baked_map() {
             #[allow(unused_unsafe)]
             crate::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(
+                    crate::vecs::VarZeroVec16::from_bytes_unchecked(
                         b"\x02\0\0\0\0\0\0\0\x02\0\0\0adbc"
                     )
                 },
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(
+                    crate::vecs::VarZeroVec16::from_bytes_unchecked(
                         b"\x02\0\0\0\0\0\0\0\x04\0\0\0ERA1ERA0"
                     )
                 },
@@ -92,12 +92,12 @@ fn test_baked_borrowed_map() {
             #[allow(unused_unsafe)]
             crate::maps::ZeroMapBorrowed::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(
+                    crate::vecs::VarZeroSlice16::from_bytes_unchecked(
                         b"\x02\0\0\0\0\0\0\0\x02\0\0\0adbc"
                     )
                 },
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(
+                    crate::vecs::VarZeroSlice16::from_bytes_unchecked(
                         b"\x02\0\0\0\0\0\0\0\x04\0\0\0ERA1ERA0"
                     )
                 },

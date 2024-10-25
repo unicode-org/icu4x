@@ -5,7 +5,6 @@ include!("islamic_observational_cache_v1_marker.rs.data");
 include!("islamic_umm_al_qura_cache_v1_marker.rs.data");
 include!("japanese_eras_v1_marker.rs.data");
 include!("japanese_extended_eras_v1_marker.rs.data");
-include!("week_data_v1_marker.rs.data");
 include!("week_data_v2_marker.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -42,7 +41,6 @@ macro_rules! impl_data_provider {
         impl_islamic_umm_al_qura_cache_v1_marker!($provider);
         impl_japanese_eras_v1_marker!($provider);
         impl_japanese_extended_eras_v1_marker!($provider);
-        impl_week_data_v1_marker!($provider);
         impl_week_data_v2_marker!($provider);
     };
 }
@@ -59,7 +57,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::calendar::provider::IslamicUmmAlQuraCacheV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::calendar::provider::IslamicUmmAlQuraCacheV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::JapaneseErasV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::JapaneseExtendedErasV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseExtendedErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }

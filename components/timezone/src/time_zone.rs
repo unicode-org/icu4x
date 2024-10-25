@@ -2,261 +2,166 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    MetazoneCalculator, MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
-};
-#[cfg(feature = "compiled_data")]
-use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
-use icu_calendar::{DateTime, Iso};
-use tinystr::TinyAsciiStr;
+use core::fmt;
 
-/// A utility type that can hold time zone information.
-///
-/// The UTC offset is used as a final fallback for formatting. The other three fields are used
-/// for more human-friendly rendering of the time zone.
-///
-/// This type does not enforce that the four fields are consistent with each other. If they do not
-/// represent a real time zone, unexpected results when formatting may occur.
-///
-/// # Examples
-///
-/// ```
-/// use icu::timezone::{CustomTimeZone, UtcOffset};
-///
-/// let tz1 = CustomTimeZone {
-///     offset: Some(UtcOffset::default()),
-///     time_zone_id: None,
-///     metazone_id: None,
-///     zone_variant: None,
-/// };
-///
-/// let tz2: CustomTimeZone =
-///     "+05:00".parse().expect("Failed to parse a time zone.");
-/// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
-pub struct CustomTimeZone {
-    /// The UTC offset.
-    pub offset: Option<UtcOffset>,
-    /// The BCP47 time-zone identifier
-    pub time_zone_id: Option<TimeZoneBcp47Id>,
-    /// The CLDR metazone identifier
-    pub metazone_id: Option<MetazoneId>,
-    /// The time variant e.g. daylight or standard
-    pub zone_variant: Option<ZoneVariant>,
+use crate::{scaffold::IntoOption, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_calendar::{Date, Iso, Time};
+
+// TODO: Make the trait sealed
+/// Trait encoding a particular data model for time zones.
+pub trait TimeZoneModel {
+    /// The zone variant, if required for this time zone model.
+    type ZoneVariant: IntoOption<ZoneVariant> + fmt::Debug + Copy;
+    /// The local time, if required for this time zone model.
+    type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
 }
 
-impl CustomTimeZone {
-    /// Creates a new [`CustomTimeZone`] with the given UTC offset.
-    pub const fn new_with_offset(offset: UtcOffset) -> Self {
-        Self {
-            offset: Some(offset),
-            time_zone_id: None,
-            metazone_id: None,
-            zone_variant: None,
-        }
+/// Time zone data model choices.
+pub mod models {
+    use super::*;
+
+    /// A time zone containing a time zone ID and optional offset.
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum Base {}
+
+    impl TimeZoneModel for Base {
+        type ZoneVariant = ();
+        type LocalTime = ();
     }
 
-    /// Creates a new [`CustomTimeZone`] with a given BCP47 time zone identifier.
-    pub const fn new_with_bcp47_id(time_zone_id: TimeZoneBcp47Id) -> Self {
-        Self {
-            offset: None,
-            time_zone_id: Some(time_zone_id),
-            metazone_id: None,
-            zone_variant: None,
-        }
+    /// A time zone containing a time zone ID, optional offset, and local time.
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum AtTime {}
+
+    impl TimeZoneModel for AtTime {
+        type ZoneVariant = ();
+        type LocalTime = (Date<Iso>, Time);
     }
 
-    /// Creates a time zone with no information.
+    /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum Full {}
+
+    impl TimeZoneModel for Full {
+        type ZoneVariant = ZoneVariant;
+        type LocalTime = (Date<Iso>, Time);
+    }
+}
+
+// TODO: Make the fields private
+
+/// A utility type that can hold time zone information.
+#[derive(Debug, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
+pub struct TimeZoneInfo<Model: TimeZoneModel> {
+    /// The BCP47 time-zone identifier.
+    pub time_zone_id: TimeZoneBcp47Id,
+    /// The UTC offset, if known.
     ///
-    /// One or more fields must be specified before this time zone is usable.
-    pub const fn new_empty() -> Self {
+    /// This field is not enforced to be consistent with the time zone id.
+    pub offset: Option<UtcOffset>,
+    /// The time variant e.g. daylight or standard, if known.
+    pub zone_variant: Model::ZoneVariant,
+    /// The time at which to interpret the time zone.
+    pub local_time: Model::LocalTime,
+}
+
+impl<Model: TimeZoneModel> Clone for TimeZoneInfo<Model> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<Model: TimeZoneModel> Copy for TimeZoneInfo<Model> {}
+
+impl UtcOffset {
+    /// Associates this [`UtcOffset`] with a time zone ID, returning a [`TimeZoneInfo`].
+    pub const fn with_id(self, time_zone_id: TimeZoneBcp47Id) -> TimeZoneInfo<models::Base> {
+        TimeZoneInfo {
+            offset: Some(self),
+            time_zone_id,
+            zone_variant: (),
+            local_time: (),
+        }
+    }
+}
+
+impl TimeZoneBcp47Id {
+    /// Associates this [`TimeZoneBcp47Id`] with a UTC offset, returning a [`TimeZoneInfo`].
+    pub const fn with_offset(self, offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
+        TimeZoneInfo {
+            offset,
+            time_zone_id: self,
+            zone_variant: (),
+            local_time: (),
+        }
+    }
+}
+
+impl TimeZoneInfo<models::Base> {
+    /// Creates a time zone info with no information.
+    pub const fn unknown() -> Self {
         Self {
             offset: None,
-            time_zone_id: None,
-            metazone_id: None,
-            zone_variant: None,
+            time_zone_id: TimeZoneBcp47Id::unknown(),
+            zone_variant: (),
+            local_time: (),
         }
     }
 
-    /// Creates a time zone infallibly from raw parts.
-    pub const fn from_parts(
-        offset_eighths_of_hour: i8,
-        time_zone_id: TinyAsciiStr<8>,
-        metazone_id: TinyAsciiStr<4>,
-        zone_variant: TinyAsciiStr<2>,
-    ) -> Self {
-        Self {
-            offset: Some(UtcOffset::from_offset_eighths_of_hour(
-                offset_eighths_of_hour,
-            )),
-            time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
-            metazone_id: Some(MetazoneId(metazone_id)),
-            zone_variant: Some(ZoneVariant(zone_variant)),
-        }
-    }
-
-    /// Creates a new [`CustomTimeZone`] for the UTC time zone.
+    /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
         Self {
             offset: Some(UtcOffset::zero()),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr::tinystr!(8, "Etc/UTC"))),
-            metazone_id: Some(MetazoneId(tinystr::tinystr!(4, "utc"))),
-            zone_variant: Some(ZoneVariant::standard()),
+            time_zone_id: TimeZoneBcp47Id(tinystr::tinystr!(8, "utc")),
+            zone_variant: (),
+            local_time: (),
         }
     }
 
-    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a UTC offset
-    /// or an IANA time zone identifier.
-    ///
-    /// This is a convenience constructor that uses compiled data. For a custom data provider,
-    /// use [`UtcOffset`] or [`TimeZoneIdMapper`] directly.
-    ///
-    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_iso_from_str`].
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::UtcOffset;
-    ///
-    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_str("+02")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_str("-0230")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
-    ///     .expect("Failed to parse a time zone");
-    ///
-    /// assert_eq!(tz0.offset.map(UtcOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.offset.map(UtcOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.offset.map(UtcOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.offset.map(UtcOffset::offset_seconds), Some(9000));
-    /// ```
-    ///
-    /// [`CustomZonedDateTime::try_iso_from_str`]: crate::CustomZonedDateTime::try_iso_from_str
-    #[cfg(feature = "compiled_data")]
-    #[inline]
-    pub fn try_from_str(s: &str) -> Result<Self, UnknownTimeZoneError> {
-        Self::try_from_utf8(s.as_bytes())
+    /// Creates a new [`TimeZoneInfo`] with the given offset and time zone ID.
+    pub const fn from_id_and_offset(time_zone_id: TimeZoneBcp47Id, offset: UtcOffset) -> Self {
+        Self {
+            offset: Some(offset),
+            time_zone_id,
+            zone_variant: (),
+            local_time: (),
+        }
     }
 
-    /// See [`Self::try_from_str`]
-    #[cfg(feature = "compiled_data")]
-    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, UnknownTimeZoneError> {
-        if let Ok(offset) = UtcOffset::try_from_utf8(code_units) {
-            return Ok(Self {
-                offset: Some(offset),
-                time_zone_id: None,
-                metazone_id: None,
-                zone_variant: None,
-            });
+    /// Sets a local time on this time zone.
+    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
+        TimeZoneInfo {
+            offset: self.offset,
+            time_zone_id: self.time_zone_id,
+            zone_variant: (),
+            local_time,
         }
-        let mapper = TimeZoneIdMapper::new();
-        if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
-            return Ok(Self {
-                offset: None,
-                time_zone_id: Some(bcp47_id),
-                metazone_id: None,
-                zone_variant: None,
-            });
-        }
-        Err(UnknownTimeZoneError)
-    }
-
-    /// Infer the metazone ID.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::timezone::MetazoneId;
-    /// use icu::timezone::TimeZoneBcp47Id;
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::MetazoneCalculator;
-    /// use tinystr::tinystr;
-    ///
-    /// let mzc = MetazoneCalculator::new();
-    /// let mut tz = CustomTimeZone {
-    ///     offset: Some("+11".parse().expect("Failed to parse a UTC offset.")),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// };
-    /// tz.maybe_calculate_metazone(
-    ///     &mzc,
-    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
-    /// );
-    /// assert_eq!(tz.metazone_id, Some(MetazoneId(tinystr!(4, "guam"))));
-    /// ```
-    pub fn maybe_calculate_metazone(
-        &mut self,
-        metazone_calculator: &MetazoneCalculator,
-        local_datetime: &DateTime<Iso>,
-    ) -> &mut Self {
-        if let Some(time_zone_id) = self.time_zone_id {
-            self.metazone_id =
-                metazone_calculator.compute_metazone_from_time_zone(time_zone_id, local_datetime);
-        }
-        self
-    }
-
-    /// Infer the zone variant.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::timezone::ZoneVariant;
-    /// use icu::timezone::TimeZoneBcp47Id;
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::ZoneOffsetCalculator;
-    /// use tinystr::tinystr;
-    ///
-    /// let zoc = ZoneOffsetCalculator::new();
-    /// let mut tz = CustomTimeZone {
-    ///     offset: Some("+10".parse().expect("Failed to parse a UTC offset.")),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// };
-    /// tz.maybe_calculate_zone_variant(
-    ///     &zoc,
-    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
-    /// );
-    /// assert_eq!(tz.zone_variant, Some(ZoneVariant::standard()));
-    /// ```
-    pub fn maybe_calculate_zone_variant(
-        &mut self,
-        zone_offset_calculator: &ZoneOffsetCalculator,
-        local_datetime: &DateTime<Iso>,
-    ) -> &mut Self {
-        if let Some(offset) = self.offset {
-            if let Some(time_zone_id) = self.time_zone_id {
-                if let Some((std, dst)) = zone_offset_calculator
-                    .compute_offsets_from_time_zone(time_zone_id, local_datetime)
-                {
-                    if offset == std {
-                        self.zone_variant = Some(ZoneVariant::standard());
-                    } else if Some(offset) == dst {
-                        self.zone_variant = Some(ZoneVariant::daylight());
-                    }
-                }
-            }
-        }
-        self
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl core::str::FromStr for CustomTimeZone {
-    type Err = UnknownTimeZoneError;
+impl TimeZoneInfo<models::AtTime> {
+    /// Sets a zone variant on this time zone.
+    pub const fn with_zone_variant(self, zone_variant: ZoneVariant) -> TimeZoneInfo<models::Full> {
+        TimeZoneInfo {
+            offset: self.offset,
+            time_zone_id: self.time_zone_id,
+            zone_variant,
+            local_time: self.local_time,
+        }
+    }
+}
 
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(s)
+impl From<UtcOffset> for TimeZoneInfo<models::Base> {
+    fn from(offset: UtcOffset) -> Self {
+        Self {
+            offset: Some(offset),
+            time_zone_id: TimeZoneBcp47Id::unknown(),
+            zone_variant: (),
+            local_time: (),
+        }
     }
 }

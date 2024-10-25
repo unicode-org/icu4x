@@ -7,9 +7,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** A type capable of looking up a property value from a string name.
 *
-*See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
+*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
 *
-*See the [Rust documentation for `PropertyValueNameToEnumMapperBorrowed`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html) for more information.
+*See the [Rust documentation for `PropertyParserBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html) for more information.
+*
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html#method.new) for more information.
 */
 const PropertyValueNameToEnumMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_PropertyValueNameToEnumMapper_destroy_mv1(ptr);

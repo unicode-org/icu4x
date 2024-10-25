@@ -130,7 +130,7 @@ pub struct CodePointTrieBuilder<'a, T> {
 
 impl<T> CodePointTrieBuilder<'_, T>
 where
-    T: TrieValue + Into<u32>,
+    T: TrieValue,
 {
     /// Build the [`CodePointTrie`].
     ///

@@ -27,7 +27,7 @@ pub mod ffi {
 
     impl IsoDateTime {
         /// Creates a new [`IsoDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso_datetime, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             year: i32,
@@ -38,9 +38,8 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
         ) -> Result<Box<IsoDateTime>, CalendarError> {
-            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
-                year, month, day, hour, minute, second,
-            )?;
+            let mut dt =
+                icu_calendar::DateTime::try_new_iso(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(IsoDateTime(dt)))
         }
@@ -154,7 +153,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.date.day_of_month().0
         }
 
@@ -175,7 +174,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.date.week_of_month(first_weekday.into()).0
         }
 
@@ -258,9 +257,8 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarError> {
             let cal = calendar.0.clone();
-            let mut dt = icu_calendar::DateTime::try_new_iso_datetime(
-                year, month, day, hour, minute, second,
-            )?;
+            let mut dt =
+                icu_calendar::DateTime::try_new_iso(year, month, day, hour, minute, second)?;
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(DateTime(dt.to_calendar(cal))))
         }
@@ -388,7 +386,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_month(&self) -> u32 {
+        pub fn day_of_month(&self) -> u8 {
             self.0.date.day_of_month().0
         }
 
@@ -409,7 +407,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u32 {
+        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
             self.0.date.week_of_month(first_weekday.into()).0
         }
 

@@ -3,35 +3,82 @@
     "0": "в эту минуту"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 минуту назад"
-      ],
-      "many": [
-        0,
-        "\u0001 минут назад"
-      ],
-      "other": [
-        0,
-        "\u0001 минуты назад"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуту назад"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуты назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\fчерез  минуту"
-      ],
-      "many": [
-        0,
-        "\fчерез  минут"
-      ],
-      "other": [
-        0,
-        "\fчерез  минуты"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуту"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуты"
+        }
+      ]
+    ]
   }
 }

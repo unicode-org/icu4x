@@ -5,11 +5,11 @@
 #include <icu4x/CodePointMapData16.hpp>
 #include <icu4x/CodePointMapData8.hpp>
 #include <icu4x/CodePointSetData.hpp>
+#include <icu4x/EmojiSetData.hpp>
 #include <icu4x/ExemplarCharacters.hpp>
 #include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/PropertyValueNameToEnumMapper.hpp>
-#include <icu4x/UnicodeSetData.hpp>
 
 #include <iostream>
 
@@ -93,10 +93,10 @@ int main() {
         return result;
     }
 
-    std::unique_ptr<UnicodeSetData> basic_emoji = UnicodeSetData::load_basic_emoji(*dp.get()).ok().value();
+    std::unique_ptr<EmojiSetData> basic_emoji = EmojiSetData::load_basic(*dp.get()).ok().value();
     std::string letter = u8"hello";
 
-    if (!basic_emoji->contains_char(U'🔥')) {
+    if (!basic_emoji->contains(U'🔥')) {
         std::cout << "Character 🔥 not found in Basic_Emoji set" << std::endl;
         result = 1;
     }
@@ -105,7 +105,7 @@ int main() {
         std::cout << "String \"🗺️\" (U+1F5FA U+FE0F) not found in Basic_Emoji set" << std::endl;
         result = 1;
     }
-    if (basic_emoji->contains_char(U'a')) {
+    if (basic_emoji->contains(U'a')) {
         std::cout << "Character a found in Basic_Emoji set" << std::endl;
         result = 1;
     }
@@ -122,7 +122,7 @@ int main() {
     }
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
     std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::try_new_main(*dp.get(), *locale.get()).ok().value();
-    if (!exemplars->contains_char(U'ব')) {
+    if (!exemplars->contains(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;
         result = 1;
     }
@@ -131,7 +131,7 @@ int main() {
         std::cout << "String \"ক্ষ\" (U+0995U+09CDU+09B7) not found in Bangla exemplar chars set" << std::endl;
         result = 1;
     }
-    if (exemplars->contains_char(U'a')) {
+    if (exemplars->contains(U'a')) {
         std::cout << "Character a found in Bangla exemplar chars set" << std::endl;
         result = 1;
     }

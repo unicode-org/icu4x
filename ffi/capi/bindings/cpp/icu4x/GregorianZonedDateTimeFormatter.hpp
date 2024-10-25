@@ -10,12 +10,12 @@
 #include <memory>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "CustomTimeZone.hpp"
 #include "DataProvider.hpp"
 #include "DateTimeLength.hpp"
 #include "Error.hpp"
 #include "IsoDateTime.hpp"
 #include "Locale.hpp"
+#include "TimeZoneInfo.hpp"
 
 
 namespace icu4x {
@@ -25,7 +25,8 @@ namespace capi {
     typedef struct icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result {union {icu4x::capi::GregorianZonedDateTimeFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result;
     icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
-    void icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const icu4x::capi::GregorianZonedDateTimeFormatter* self, const icu4x::capi::IsoDateTime* datetime, const icu4x::capi::CustomTimeZone* time_zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
+    icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const icu4x::capi::GregorianZonedDateTimeFormatter* self, const icu4x::capi::IsoDateTime* datetime, const icu4x::capi::TimeZoneInfo* time_zone, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(GregorianZonedDateTimeFormatter* self);
@@ -41,14 +42,14 @@ inline diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>,
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::Error>(diplomat::Ok<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>>(std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>(icu4x::GregorianZonedDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 
-inline std::string icu4x::GregorianZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::CustomTimeZone& time_zone) const {
+inline diplomat::result<std::string, icu4x::Error> icu4x::GregorianZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this->AsFFI(),
     datetime.AsFFI(),
     time_zone.AsFFI(),
     &write);
-  return output;
+  return result.is_ok ? diplomat::result<std::string, icu4x::Error>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::GregorianZonedDateTimeFormatter* icu4x::GregorianZonedDateTimeFormatter::AsFFI() const {

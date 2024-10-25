@@ -5,27 +5,63 @@
     "1": "el próximo año"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  año"
-      ],
-      "other": [
-        0,
-        "\u0006hace  años"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " año"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " años"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  año"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  años"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " año"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " años"
+        }
+      ]
+    ]
   }
 }

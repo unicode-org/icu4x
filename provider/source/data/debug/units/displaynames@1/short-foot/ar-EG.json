@@ -1,14 +1,23 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0000قدم"
-      ],
-      "other": [
-        0,
-        "\u0001 قدم"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "قدم"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " قدم"
+        }
+      ]
+    ]
   }
 }

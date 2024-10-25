@@ -901,13 +901,6 @@
                 "daylight": "hora de verano de China"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "hora de Choibalsan",
-                "standard": "hora estándar de Choibalsan",
-                "daylight": "hora de verano de Choibalsan"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "hora de la Isla de Navidad"

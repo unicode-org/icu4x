@@ -67,6 +67,21 @@
 
 extern crate alloc;
 
+// We don't depend on icu_properties to minimize deps, but we want to be able
+// to ensure we're using the right CCC values
+macro_rules! ccc {
+    ($name:ident, $num:expr) => {{
+        const X: CanonicalCombiningClass = {
+            #[cfg(feature = "icu_properties")]
+            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
+                panic!("icu_normalizer has incorrect ccc values")
+            }
+            CanonicalCombiningClass($num)
+        };
+        X
+    }};
+}
+
 pub mod properties;
 pub mod provider;
 pub mod uts46;
@@ -84,7 +99,8 @@ use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::CanonicalCombiningClass;
+#[cfg(feature = "icu_properties")]
+use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -96,6 +112,15 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
 use zerovec::{zeroslice, ZeroSlice};
+
+/// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
+/// It should not be exposed to users.
+#[cfg(not(feature = "icu_properties"))]
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
+struct CanonicalCombiningClass(pub(crate) u8);
+
+const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
+const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
 
 #[derive(Debug)]
 enum SupplementPayloadHolder {
@@ -197,7 +222,7 @@ fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
         CanonicalCombiningClass(trie_value as u8)
     } else {
         debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
-        CanonicalCombiningClass::NotReordered
+        CCC_NOT_REORDERED
     }
 }
 
@@ -481,14 +506,18 @@ impl CharacterAndClass {
     pub fn new_starter(c: char) -> Self {
         CharacterAndClass(u32::from(c))
     }
+    /// This method must exist for Pernosco to apply its special rendering.
+    /// Also, this must not be dead code!
     pub fn character(&self) -> char {
         // Safe, because the low 24 bits came from a `char`
         // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
+    /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
+
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
@@ -740,7 +769,7 @@ where
                 } else {
                     '\u{309A}'
                 },
-                0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
+                0xD800 | ccc!(KanaVoicing, 8).0 as u32,
             ));
         }
         let trie_value = supplementary.get32(u32::from(c));
@@ -933,47 +962,39 @@ where
                 let mapped = match ch_and_trie_val.character {
                     '\u{0340}' => {
                         // COMBINING GRAVE TONE MARK
-                        CharacterAndClass::new('\u{0300}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0300}', CCC_ABOVE)
                     }
                     '\u{0341}' => {
                         // COMBINING ACUTE TONE MARK
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
                     }
                     '\u{0343}' => {
                         // COMBINING GREEK KORONIS
-                        CharacterAndClass::new('\u{0313}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0313}', CCC_ABOVE)
                     }
                     '\u{0344}' => {
                         // COMBINING GREEK DIALYTIKA TONOS
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0308}',
-                            CanonicalCombiningClass::Above,
-                        ));
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
                     }
                     '\u{0F73}' => {
                         // TIBETAN VOWEL SIGN II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F72}', CanonicalCombiningClass::CCC130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
                     }
                     '\u{0F75}' => {
                         // TIBETAN VOWEL SIGN UU
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F74}', CanonicalCombiningClass::CCC132)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
                     }
                     '\u{0F81}' => {
                         // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass::CCC130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
                     }
                     _ => {
                         // GIGO case
@@ -994,7 +1015,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Decomposition<'data, I>
+impl<I> Iterator for Decomposition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1074,7 +1095,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Composition<'data, I>
+impl<I> Iterator for Composition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1098,7 +1119,7 @@ where
                         self.decomposition.buffer.clear();
                         self.decomposition.buffer_pos = 0;
                     }
-                    if ccc == CanonicalCombiningClass::NotReordered {
+                    if ccc == CCC_NOT_REORDERED {
                         // Previous decomposition contains a starter. This must
                         // now become the `unprocessed_starter` for it to have
                         // a chance to compose with the upcoming characters.
@@ -1190,7 +1211,7 @@ where
                         .drain(0..self.decomposition.buffer_pos);
                 }
                 self.decomposition.buffer_pos = 0;
-                if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
+                if most_recent_skipped_ccc == CCC_NOT_REORDERED {
                     // We failed to compose a starter. Discontiguous match not allowed.
                     // We leave the starter in `buffer` for `next()` to find.
                     return Some(starter);
@@ -1202,7 +1223,7 @@ where
                     .get(i)
                     .map(|c| c.character_and_ccc())
                 {
-                    if ccc == CanonicalCombiningClass::NotReordered {
+                    if ccc == CCC_NOT_REORDERED {
                         // Discontiguous match not allowed.
                         return Some(starter);
                     }
@@ -1346,7 +1367,7 @@ macro_rules! composing_normalize_to {
                             continue;
                         }
                         let mut most_recent_skipped_ccc = ccc;
-                        if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
+                        if most_recent_skipped_ccc == CCC_NOT_REORDERED {
                             // We failed to compose a starter. Discontiguous match not allowed.
                             // Write the current `starter` we've been composing, make the unmatched
                             // starter in the buffer the new `starter` (we know it's been decomposed)
@@ -1371,7 +1392,7 @@ macro_rules! composing_normalize_to {
                             .get(i)
                             .map(|c| c.character_and_ccc())
                         {
-                            if ccc == CanonicalCombiningClass::NotReordered {
+                            if ccc == CCC_NOT_REORDERED {
                                 // Discontiguous match not allowed.
                                 $sink.write_char(starter)?;
                                 for cc in $composition.decomposition.buffer.drain(..i) {
@@ -1791,7 +1812,7 @@ impl DecomposingNormalizerBorrowed<'static> {
     }
 }
 
-impl<'a> DecomposingNormalizerBorrowed<'a> {
+impl DecomposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
@@ -2361,7 +2382,7 @@ impl ComposingNormalizerBorrowed<'static> {
     }
 }
 
-impl<'a> ComposingNormalizerBorrowed<'a> {
+impl ComposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<I> {
@@ -2820,7 +2841,7 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     }
 }
 
-impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
+impl Write16 for IsNormalizedSinkUtf16<'_> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2862,7 +2883,7 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
+impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2904,7 +2925,7 @@ impl<'a> IsNormalizedSinkStr<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
+impl core::fmt::Write for IsNormalizedSinkStr<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because

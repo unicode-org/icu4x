@@ -5,19 +5,19 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::japanese::Japanese;
+//! use icu::calendar::cal::Japanese;
 //! use icu::calendar::{types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
 //! let japanese_calendar = Japanese::new();
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar.clone());
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_japanese =
 //!     DateTime::new_from_iso(datetime_iso, japanese_calendar.clone());
@@ -415,7 +415,7 @@ impl Date<Japanese> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::cal::Japanese;
     /// use icu::calendar::{types, Date, Ref};
     /// use tinystr::tinystr;
     ///
@@ -425,7 +425,7 @@ impl Date<Japanese> {
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let date = Date::try_new_japanese_date(era, 14, 1, 2, japanese_calendar)
+    /// let date = Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap(), era);
@@ -436,16 +436,16 @@ impl Date<Japanese> {
     /// // This function will error for eras that are out of bounds:
     /// // (Heisei was 32 years long, Heisei 33 is in Reiwa)
     /// let oob_date =
-    ///     Date::try_new_japanese_date(era, 33, 1, 2, japanese_calendar);
+    ///     Date::try_new_japanese_with_calendar(era, 33, 1, 2, japanese_calendar);
     /// assert!(oob_date.is_err());
     ///
     /// // and for unknown eras
     /// let fake_era = types::Era(tinystr!(16, "neko")); // 🐱
     /// let fake_date =
-    ///     Date::try_new_japanese_date(fake_era, 10, 1, 2, japanese_calendar);
+    ///     Date::try_new_japanese_with_calendar(fake_era, 10, 1, 2, japanese_calendar);
     /// assert!(fake_date.is_err());
     /// ```
-    pub fn try_new_japanese_date<A: AsCalendar<Calendar = Japanese>>(
+    pub fn try_new_japanese_with_calendar<A: AsCalendar<Calendar = Japanese>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -469,7 +469,7 @@ impl Date<JapaneseExtended> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::JapaneseExtended;
+    /// use icu::calendar::cal::JapaneseExtended;
     /// use icu::calendar::{types, Date, Ref};
     /// use tinystr::tinystr;
     ///
@@ -480,7 +480,7 @@ impl Date<JapaneseExtended> {
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
     /// let date =
-    ///     Date::try_new_japanese_extended_date(era, 7, 1, 2, japanext_calendar)
+    ///     Date::try_new_japanese_extended_with_calendar(era, 7, 1, 2, japanext_calendar)
     ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap(), era);
@@ -488,7 +488,7 @@ impl Date<JapaneseExtended> {
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
-    pub fn try_new_japanese_extended_date<A: AsCalendar<Calendar = JapaneseExtended>>(
+    pub fn try_new_japanese_extended_with_calendar<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -514,7 +514,7 @@ impl DateTime<Japanese> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::cal::Japanese;
     /// use icu::calendar::{types, DateTime};
     /// use tinystr::tinystr;
     ///
@@ -522,7 +522,7 @@ impl DateTime<Japanese> {
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let datetime = DateTime::try_new_japanese_datetime(
+    /// let datetime = DateTime::try_new_japanese_with_calendar(
     ///     era,
     ///     14,
     ///     1,
@@ -544,8 +544,8 @@ impl DateTime<Japanese> {
     /// ```
     #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
                                          // if people wish to construct this by parts they can use
-                                         // Date::try_new_japanese_date() + DateTime::new(date, time)
-    pub fn try_new_japanese_datetime<A: AsCalendar<Calendar = Japanese>>(
+                                         // Date::try_new_japanese_with_calendar() + DateTime::new(date, time)
+    pub fn try_new_japanese_with_calendar<A: AsCalendar<Calendar = Japanese>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -556,7 +556,7 @@ impl DateTime<Japanese> {
         japanese_calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_japanese_date(era, year, month, day, japanese_calendar)?,
+            date: Date::try_new_japanese_with_calendar(era, year, month, day, japanese_calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -568,7 +568,7 @@ impl DateTime<JapaneseExtended> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::japanese::JapaneseExtended;
+    /// use icu::calendar::cal::JapaneseExtended;
     /// use icu::calendar::{types, DateTime};
     /// use tinystr::tinystr;
     ///
@@ -576,7 +576,7 @@ impl DateTime<JapaneseExtended> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let datetime = DateTime::try_new_japanese_extended_datetime(
+    /// let datetime = DateTime::try_new_japanese_extended_with_calendar(
     ///     era,
     ///     7,
     ///     1,
@@ -598,8 +598,8 @@ impl DateTime<JapaneseExtended> {
     /// ```
     #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
                                          // if people wish to construct this by parts they can use
-                                         // Date::try_new_japanese_date() + DateTime::new(date, time)
-    pub fn try_new_japanese_extended_datetime<A: AsCalendar<Calendar = JapaneseExtended>>(
+                                         // Date::try_new_japanese_with_calendar() + DateTime::new(date, time)
+    pub fn try_new_japanese_extended_with_calendar<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -610,7 +610,13 @@ impl DateTime<JapaneseExtended> {
         japanext_calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_japanese_extended_date(era, year, month, day, japanext_calendar)?,
+            date: Date::try_new_japanese_extended_with_calendar(
+                era,
+                year,
+                month,
+                day,
+                japanext_calendar,
+            )?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -769,7 +775,7 @@ impl Japanese {
                     max: i32::MAX,
                 });
             }
-            return Ok(Date::try_new_iso_date(1 - year, month, day)?
+            return Ok(Date::try_new_iso(1 - year, month, day)?
                 .to_calendar(cal)
                 .inner);
         } else if era.0 == tinystr!(16, "ce") || era.0 == tinystr!(16, "japanese") {
@@ -781,9 +787,7 @@ impl Japanese {
                     max: i32::MAX,
                 });
             }
-            return Ok(Date::try_new_iso_date(year, month, day)?
-                .to_calendar(cal)
-                .inner);
+            return Ok(Date::try_new_iso(year, month, day)?.to_calendar(cal).inner);
         }
 
         let (era_start, next_era_start) = self.japanese_era_range_for(era.0)?;
@@ -852,7 +856,7 @@ impl Japanese {
             });
         }
 
-        let iso = Date::try_new_iso_date(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
+        let iso = Date::try_new_iso(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
         Ok(JapaneseDateInner {
             inner: iso.inner,
             adjusted_year: year,
@@ -869,8 +873,8 @@ mod tests {
     fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date =
-            Date::try_new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
+        let date = Date::try_new_japanese_with_calendar(era, year, month, day, calendar)
+            .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
         let iso = date.to_iso();
@@ -894,7 +898,7 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::try_new_japanese_extended_date(era, year, month, day, calendar)
+        let date = Date::try_new_japanese_extended_with_calendar(era, year, month, day, calendar)
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
@@ -919,14 +923,14 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let era2 = types::Era(era2.parse().expect("era must parse"));
 
-        let expected = Date::try_new_japanese_extended_date(era2, year2, month, day, calendar)
+        let expected = Date::try_new_japanese_extended_with_calendar(era2, year2, month, day, calendar)
             .unwrap_or_else(|e| {
                 panic!(
                     "Failed to construct expectation date with {era2:?}, {year2}, {month}, {day}: {e:?}"
                 )
             });
 
-        let date = Date::try_new_japanese_extended_date(era, year, month, day, calendar)
+        let date = Date::try_new_japanese_extended_with_calendar(era, year, month, day, calendar)
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
@@ -948,7 +952,7 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::try_new_japanese_date(era, year, month, day, calendar);
+        let date = Date::try_new_japanese_with_calendar(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
@@ -966,7 +970,7 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::try_new_japanese_extended_date(era, year, month, day, calendar);
+        let date = Date::try_new_japanese_extended_with_calendar(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
