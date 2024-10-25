@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::Writeable;
 use core::cmp::Ordering;
 use core::fmt;
 
@@ -43,6 +44,51 @@ impl<'a> WriteComparator<'a> {
             self.result
         }
     }
+}
+
+/// Compares the contents of a `Writeable` to the given bytes
+/// without allocating a String to hold the `Writeable` contents.
+///
+/// This returns a lexicographical comparison, the same as if the Writeable
+/// were first converted to a String and then compared with `Ord`. For a
+/// locale-sensitive string ordering, use an ICU4X Collator.
+///
+/// # Examples
+///
+/// ```
+/// use core::cmp::Ordering;
+/// use core::fmt;
+/// use writeable::Writeable;
+///
+/// struct WelcomeMessage<'s> {
+///     pub name: &'s str,
+/// }
+///
+/// impl<'s> Writeable for WelcomeMessage<'s> {
+///     // see impl in Writeable docs
+/// #    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+/// #        sink.write_str("Hello, ")?;
+/// #        sink.write_str(self.name)?;
+/// #        sink.write_char('!')?;
+/// #        Ok(())
+/// #    }
+/// }
+///
+/// let message = WelcomeMessage { name: "Alice" };
+/// let message_str = message.write_to_string();
+///
+/// assert_eq!(Ordering::Equal, writeable::cmp_bytes(message, b"Hello, Alice!"));
+///
+/// assert_eq!(Ordering::Greater, writeable::cmp_bytes(message, b"Alice!"));
+/// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
+///
+/// assert_eq!(Ordering::Less, writeable::cmp_bytes(message, b"Hello, Bob!"));
+/// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
+/// ```
+pub fn cmp_bytes(writeable: &impl Writeable, other: &[u8]) -> Ordering {
+    let mut wc = WriteComparator::new(other);
+    let _ = writeable.write_to(&mut wc);
+    wc.finish().reverse()
 }
 
 #[cfg(test)]
