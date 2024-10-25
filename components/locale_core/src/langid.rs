@@ -11,7 +11,6 @@ use crate::parser::{
 };
 use crate::subtags;
 use alloc::borrow::Cow;
-use writeable::Writeable;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
@@ -187,15 +186,7 @@ impl LanguageIdentifier {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
-        let cow = lang_id.write_to_string();
-        if cow.as_bytes() == input {
-            // Safety: input is known to be valid UTF-8 since it has the same
-            // bytes as `cow`, which is a `str`.
-            let s = unsafe { core::str::from_utf8_unchecked(input) };
-            Ok(s.into())
-        } else {
-            Ok(cow.into_owned().into())
-        }
+        Ok(writeable::write_or_ref(&lang_id, input))
     }
 
     /// Canonicalize the language identifier (operating on strings)
@@ -216,14 +207,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        let lang_id = Self::try_from_str(input)?;
-        let cow = lang_id.write_to_string();
-
-        if cow == input {
-            Ok(input.into())
-        } else {
-            Ok(cow.into_owned().into())
-        }
+        Self::canonicalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
