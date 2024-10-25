@@ -1,4 +1,3 @@
-
 # This handles only Latin, Common, and IDEOGRAPHIC NUMBER ZERO (Han).
 #
 :: [[:Latin:][:Common:][:Inherited:][〇]] ;
@@ -906,4 +905,3 @@
 ⩴ → '::=' ; # 2A74;DOUBLE COLON EQUAL (compat)
 ⩵ → '==' ; # 2A75;TWO CONSECUTIVE EQUALS SIGNS (compat)
 ⩶ → '===' ; # 2A76;THREE CONSECUTIVE EQUALS SIGNS (compat)
-

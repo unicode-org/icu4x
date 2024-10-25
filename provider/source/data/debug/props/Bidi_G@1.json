@@ -2655,7 +2655,7 @@
       },
       {
         "mirroring_glyph": null,
-        "mirrored": false,
+        "mirrored": true,
         "paired_bracket_type": "None"
       },
       {

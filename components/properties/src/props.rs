@@ -1369,6 +1369,7 @@ impl IndicSyllabicCategory {
     pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33);
     pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34);
     pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
+    pub const ReorderingKiller: IndicSyllabicCategory = IndicSyllabicCategory(36);
 }
 }
 

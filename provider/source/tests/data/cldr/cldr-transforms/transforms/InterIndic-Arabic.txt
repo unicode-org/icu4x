@@ -1,4 +1,3 @@
-
 $nonword = [^\uE000-\uE0FF];
 $wordBoundary = [^[:L:][:M:][:N:]];
 \uE015\uE03F\uE02F\uE03E } $nonword→كيا; # किया
@@ -125,4 +124,3 @@ $wordBoundary {\uE00F} → إي; # word-initial ए
 ::null;
 $alif = [أإآا] [:M:]*;
 ($alif) $alif+ → $1;
-
