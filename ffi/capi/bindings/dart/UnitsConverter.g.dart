@@ -45,17 +45,17 @@ final class UnitsConverter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_UnitsConverter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_UnitsConverter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverter_convert_double_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_convert_double_mv1')
 // ignore: non_constant_identifier_names
 external double _icu4x_UnitsConverter_convert_double_mv1(ffi.Pointer<ffi.Opaque> self, double value);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverter_clone_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverter_clone_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverter_clone_mv1(ffi.Pointer<ffi.Opaque> self);

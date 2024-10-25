@@ -225,6 +225,8 @@ pub enum UtLocalIndicator {
     Local,
 }
 
+/// A `TZif` data block.
+///
 /// A `TZif` data block consists of seven variable-length elements, each of
 /// which is a series of items.  The number of items in each series is
 /// determined by the corresponding count field in the header.  The total

@@ -71,7 +71,7 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 /// A CodePointInversionList was constructed with an invalid inversion list
 #[displaydoc("Invalid set: {0:?}")]
-pub struct InvalidSetError(pub Vec<u32>);
+pub struct InvalidSetError(pub Vec<potential_utf::PotentialCodePoint>);
 
 /// A CodePointInversionList was constructed from an invalid range
 #[derive(Display, Debug)]

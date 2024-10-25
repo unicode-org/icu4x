@@ -99,13 +99,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
             std::process::Command::new("rustup")
-                .args(["install", "nightly-2023-08-08"])
+                .args(["install", "nightly-2024-01-01"])
                 .output()
                 .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2023-08-08",
+                    "nightly-2024-01-01",
                     "cargo",
                     "rustdoc",
                     "-Zsparse-registry",
@@ -357,39 +357,17 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Macro(_) => {
                         insert_ty(types, path, ast::DocType::Macro);
                     }
-                    ItemEnum::Typedef(_) => {
+                    ItemEnum::TypeAlias(_) => {
                         insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);
                     }
                     ItemEnum::AssocConst { .. } => {
-                        let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr))
-                                if check_ignored_assoc_item(item_name, tr) =>
-                            {
-                                return
-                            }
-                            Some(In::Enum(_)) => ast::DocType::AssociatedConstantInEnum,
-                            Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
-                            Some(In::Struct(_)) => ast::DocType::AssociatedConstantInStruct,
-                            _ => panic!("AssocConst needs In"),
-                        };
-                        insert_ty(types, path, doc_type);
+                        // Skip
                     }
                     ItemEnum::AssocType { .. } => {
-                        let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr))
-                                if check_ignored_assoc_item(item_name, tr) =>
-                            {
-                                return
-                            }
-                            Some(In::Enum(_)) => ast::DocType::AssociatedTypeInEnum,
-                            Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
-                            Some(In::Struct(_)) => ast::DocType::AssociatedTypeInStruct,
-                            _ => panic!("AssocType needs In"),
-                        };
-                        insert_ty(types, path, doc_type);
+                        // Skip
                     }
                     ItemEnum::ProcMacro(..) => {}
                     _ => todo!("{:?}", item),

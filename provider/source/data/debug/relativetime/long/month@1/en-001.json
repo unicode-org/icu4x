@@ -5,27 +5,57 @@
     "1": "next month"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 month ago"
-      ],
-      "other": [
-        0,
-        "\u0001 months ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " month ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " months ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  month"
-      ],
-      "other": [
-        0,
-        "\u0004in  months"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " month"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " months"
+        }
+      ]
+    ]
   }
 }

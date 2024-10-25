@@ -5,19 +5,35 @@
     "1": "следеће год."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  год."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  год."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год."
+        }
       ]
-    }
+    ]
   }
 }

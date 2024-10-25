@@ -20,7 +20,7 @@ pub struct FormattedUnit<'l> {
     pub(crate) plural_rules: &'l PluralRules,
 }
 
-impl<'l> Writeable for FormattedUnit<'l> {
+impl Writeable for FormattedUnit<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

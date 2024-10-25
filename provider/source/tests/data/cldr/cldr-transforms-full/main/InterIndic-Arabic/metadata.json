@@ -1,9 +1,0 @@
-{
-    "direction": "forward",
-    "source": "InterIndic",
-    "target": "Arabic",
-    "visibility": "internal",
-    "alias": [
-        "und-Arab-t-s0-intindic"
-    ]
-}

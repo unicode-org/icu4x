@@ -4877,6 +4877,10 @@
             "_reason": "overlong",
             "_replacement": "GP"
           },
+          "frgua": {
+            "_reason": "deprecated",
+            "_replacement": "GP"
+          },
           "frh": {
             "_reason": "deprecated",
             "_replacement": "frcor"
@@ -4897,9 +4901,17 @@
             "_reason": "deprecated",
             "_replacement": "frnaq"
           },
+          "frlre": {
+            "_reason": "deprecated",
+            "_replacement": "RE"
+          },
           "frm": {
             "_reason": "deprecated",
             "_replacement": "frges"
+          },
+          "frmay": {
+            "_reason": "deprecated",
+            "_replacement": "YT"
           },
           "frmf": {
             "_reason": "overlong",
@@ -5204,6 +5216,10 @@
             }
           },
           "Asia": {
+            "Choibalsan": {
+              "_reason": "deprecated",
+              "_replacement": "Asia/Ulaanbaatar"
+            },
             "Chongqing": {
               "_reason": "deprecated",
               "_replacement": "Asia/Shanghai"

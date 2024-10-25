@@ -23,6 +23,8 @@
 mod impls;
 
 use alloc::collections::BTreeSet;
+#[cfg(feature = "export")]
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
 /// A data provider that selectively filters out data requests.
@@ -163,5 +165,17 @@ where
                 .filter(|id| (self.predicate)(id.as_borrowed()))
                 .collect()
         })
+    }
+}
+
+#[cfg(feature = "export")]
+impl<P0, F> ExportableProvider for FilterDataProvider<P0, F>
+where
+    P0: ExportableProvider,
+    F: Fn(DataIdentifierBorrowed) -> bool + Sync,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        // The predicate only takes DataIdentifier, not DataMarker, so we are not impacted
+        self.inner.supported_markers()
     }
 }

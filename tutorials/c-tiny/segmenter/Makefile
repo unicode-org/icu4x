@@ -15,9 +15,9 @@ ALL_HEADERS := $(wildcard ${HEADERS}/*)
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-16
-LLD := lld-16
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2023-08-08"
+CLANG := clang-17
+LLD := lld-17
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2024-01-01"
 
 target/debug/libicu_capi.a: FORCE
 	cargo rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/segmenter,icu_capi/std

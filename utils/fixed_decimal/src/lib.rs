@@ -75,7 +75,9 @@ use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use scientific::ScientificDecimal;
 
-/// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`]. The highest
+/// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`].
+///
+/// The highest
 /// magnitude of the most significant digit is [`i16::MAX`], and the lowest magnitude of the
 /// least significant digit is [`i16::MIN`].
 ///

@@ -267,10 +267,10 @@ where
             )
             .unwrap();
     }
-    exporter.flush(M::INFO).unwrap();
+    exporter.flush(M::INFO, Default::default()).unwrap();
 }
 
-fn make_blob_v1() -> Vec<u8> {
+fn make_blob_v3() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     put_payloads::<MarkerA>(&mut exporter);
@@ -279,30 +279,14 @@ fn make_blob_v1() -> Vec<u8> {
     put_payloads::<MarkerD>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 115274);
-    assert!(blob.len() > 100);
-    blob
-}
-
-fn make_blob_v2() -> Vec<u8> {
-    let mut blob: Vec<u8> = Vec::new();
-    let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    put_payloads::<MarkerA>(&mut exporter);
-    put_payloads::<MarkerB>(&mut exporter);
-    put_payloads::<MarkerC>(&mut exporter);
-    put_payloads::<MarkerD>(&mut exporter);
-    exporter.close().unwrap();
-    drop(exporter);
-    assert_eq!(blob.len(), 32982);
+    assert_eq!(blob.len(), 32974);
     assert!(blob.len() > 100);
     blob
 }
 
 fn auxkey_bench(c: &mut Criterion) {
-    let blob_v1 = make_blob_v1();
-    auxkey_bench_for_version(c, &blob_v1, "v1");
-    let blob_v2 = make_blob_v2();
-    auxkey_bench_for_version(c, &blob_v2, "v2");
+    let blob_v3 = make_blob_v3();
+    auxkey_bench_for_version(c, &blob_v3, "v3");
 }
 
 fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {

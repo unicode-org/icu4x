@@ -5,35 +5,82 @@
     "1": "в следующем году"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 год назад"
-      ],
-      "many": [
-        0,
-        "\u0001 лет назад"
-      ],
-      "other": [
-        0,
-        "\u0001 года назад"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год назад"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " лет назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " года назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\fчерез  год"
-      ],
-      "many": [
-        0,
-        "\fчерез  лет"
-      ],
-      "other": [
-        0,
-        "\fчерез  года"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " лет"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " года"
+        }
+      ]
+    ]
   }
 }

@@ -3,19 +3,35 @@
     "0": "сада"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  сек."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сек."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  сек."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сек."
+        }
       ]
-    }
+    ]
   }
 }

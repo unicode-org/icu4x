@@ -5,18 +5,18 @@
 //! This module contains types and implementations for the Korean Dangi calendar.
 //!
 //! ```rust
-//! use icu::calendar::dangi::Dangi;
+//! use icu::calendar::cal::Dangi;
 //! use icu::calendar::{Date, DateTime, Ref};
 //!
 //! let dangi = Dangi::new();
 //! let dangi = Ref(&dangi); // to avoid cloning
 //!
 //! // `Date` type
-//! let dangi_date = Date::try_new_dangi_date_with_calendar(4356, 6, 6, dangi)
+//! let dangi_date = Date::try_new_dangi_with_calendar(4356, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
 //! // `DateTime` type
-//! let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
+//! let dangi_datetime = DateTime::try_new_dangi_with_calendar(
 //!     4356, 6, 6, 13, 1, 0, dangi,
 //! )
 //! .expect("Failed to initialize Dangi DateTime instance.");
@@ -69,17 +69,18 @@ use tinystr::tinystr;
 /// going to be perfect.
 ///
 /// ```rust
-/// use icu::calendar::{chinese::Chinese, dangi::Dangi, Date};
+/// use icu::calendar::cal::{Chinese, Dangi};
+/// use icu::calendar::Date;
 /// use tinystr::tinystr;
 ///
-/// let iso_a = Date::try_new_iso_date(2012, 4, 23).unwrap();
+/// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
 /// let dangi_a = iso_a.to_calendar(Dangi::new());
 /// let chinese_a = iso_a.to_calendar(Chinese::new());
 ///
 /// assert_eq!(dangi_a.month().standard_code.0, tinystr!(4, "M03L"));
 /// assert_eq!(chinese_a.month().standard_code.0, tinystr!(4, "M04"));
 ///
-/// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
+/// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
 /// let dangi_b = iso_b.to_calendar(Dangi::new());
 /// let chinese_b = iso_b.to_calendar(Chinese::new());
 ///
@@ -265,7 +266,7 @@ impl Calendar for Dangi {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> crate::types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day as u32)
+        types::DayOfMonth(date.0 .0.day)
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> crate::types::DayOfYearInfo {
@@ -299,12 +300,12 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::cal::Dangi;
     /// use icu::calendar::Date;
     ///
     /// let dangi = Dangi::new();
     ///
-    /// let date_dangi = Date::try_new_dangi_date_with_calendar(4356, 6, 18, dangi)
+    /// let date_dangi = Date::try_new_dangi_with_calendar(4356, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().era_year_or_extended(), 4356);
@@ -312,7 +313,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
-    pub fn try_new_dangi_date_with_calendar(
+    pub fn try_new_dangi_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -331,18 +332,18 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
 }
 
 impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
-    /// Construct a new Dangi DateTime from integers. See `try_new_dangi_date_with_calendar`.
+    /// Construct a new Dangi DateTime from integers. See `try_new_dangi_with_calendar`.
     ///
     /// This datetime will not use any precomputed calendrical calculations,
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::cal::Dangi;
     /// use icu::calendar::DateTime;
     ///
     /// let dangi = Dangi::new();
     ///
-    /// let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
+    /// let dangi_datetime = DateTime::try_new_dangi_with_calendar(
     ///     4356, 6, 6, 13, 1, 0, dangi,
     /// )
     /// .expect("Failed to initialize Dangi DateTime instance.");
@@ -355,7 +356,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// assert_eq!(dangi_datetime.time.minute.number(), 1);
     /// assert_eq!(dangi_datetime.time.second.number(), 0);
     /// ```
-    pub fn try_new_dangi_datetime_with_calendar(
+    pub fn try_new_dangi_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -365,7 +366,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
         calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_dangi_date_with_calendar(year, month, day, calendar)?,
+            date: Date::try_new_dangi_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -418,7 +419,7 @@ mod test {
     }
 
     fn check_cyclic_and_rel_iso(year: i32) {
-        let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
+        let iso = Date::try_new_iso(year, 6, 6).unwrap();
         let chinese = iso.to_calendar(Chinese::new_always_calculating());
         let dangi = iso.to_calendar(Dangi::new_always_calculating());
         let chinese_year = chinese.year().cyclic();
@@ -491,7 +492,7 @@ mod test {
             expected_rel_iso: i32,
             expected_cyclic: u8,
             expected_month: u8,
-            expected_day: u32,
+            expected_day: u8,
         }
 
         let cases = [
@@ -986,7 +987,7 @@ mod test {
         let dangi_cached = Dangi::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
                 let dangi = iso.to_calendar(dangi);
                 let dangi_rel_iso = dangi.year().related_iso();

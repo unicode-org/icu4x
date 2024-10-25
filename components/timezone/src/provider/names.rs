@@ -51,6 +51,7 @@ pub struct IanaToBcp47MapV1<'data> {
 }
 
 /// [`IanaToBcp47MapV3`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
+///
 /// Therefore, any ID that is not of the shape `{region}/{city}` gets prefixed with this character
 /// inside the trie.
 ///

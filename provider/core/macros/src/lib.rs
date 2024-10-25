@@ -37,8 +37,6 @@ use syn::{Ident, LitStr, Path, Token};
 #[cfg(test)]
 mod tests;
 
-#[proc_macro_attribute]
-
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`.
 ///
@@ -93,6 +91,7 @@ mod tests;
 ///     LocaleFallbackPriority::Region
 /// );
 /// ```
+#[proc_macro_attribute]
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
         parse_macro_input!(attr as DataStructArgs),

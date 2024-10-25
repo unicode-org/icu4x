@@ -5,19 +5,35 @@
     "1": "sledećeg kvartala"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  kv."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kv."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  kv."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kv."
+        }
       ]
-    }
+    ]
   }
 }

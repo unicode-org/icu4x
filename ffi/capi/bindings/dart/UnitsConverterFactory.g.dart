@@ -4,6 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
 /// for converting between two [`MeasureUnit`]s.
+///
 /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 ///
 /// See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
@@ -60,22 +61,22 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_UnitsConverterFactory_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_create_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_converter_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_converter_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_converter_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
-@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_parser_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_parser_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_parser_mv1(ffi.Pointer<ffi.Opaque> self);

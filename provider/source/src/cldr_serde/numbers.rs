@@ -7,6 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json>
 
+use icu_pattern::{DoublePlaceholder, PatternString};
 use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
@@ -121,28 +122,28 @@ pub(crate) struct CurrencyFormattingPatterns {
     pub(crate) standard_alpha_next_to_number: Option<String>,
 
     #[serde(rename = "unitPattern-count-0")]
-    pub(crate) pattern_explicit_zero: Option<String>,
+    pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-1")]
-    pub(crate) pattern_explicit_one: Option<String>,
+    pub(crate) pattern_explicit_one: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-zero")]
-    pub(crate) pattern_zero: Option<String>,
+    pub(crate) pattern_zero: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-one")]
-    pub(crate) pattern_one: Option<String>,
+    pub(crate) pattern_one: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-two")]
-    pub(crate) pattern_two: Option<String>,
+    pub(crate) pattern_two: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-few")]
-    pub(crate) pattern_few: Option<String>,
+    pub(crate) pattern_few: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-many")]
-    pub(crate) pattern_many: Option<String>,
+    pub(crate) pattern_many: Option<PatternString<DoublePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-other")]
-    pub(crate) pattern_other: Option<String>,
+    pub(crate) pattern_other: Option<PatternString<DoublePlaceholder>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

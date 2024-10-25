@@ -3,19 +3,29 @@
     "0": "今"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 秒前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 秒前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 秒後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 秒後"
+        }
       ]
-    }
+    ]
   }
 }

@@ -1,9 +1,0 @@
-{
-  "direction": "forward",
-  "source": "Test",
-  "target": "Test",
-  "variant": "HexUnicodeWrapper",
-  "alias": [
-    "und-t-und-s0-test-d0-test-m0-hexuni"
-  ]
-}

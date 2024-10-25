@@ -15,7 +15,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
-/// Most clients should use [`NeoFormatter`](crate::neo::NeoFormatter) instead of directly
+/// Most clients should use [`DateTimeFormatter`](crate::neo::DateTimeFormatter) instead of directly
 /// formatting with patterns.
 ///
 /// There are two ways to make one of these:
@@ -39,11 +39,10 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::neo::TypedNeoFormatter;
-/// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+/// use icu::datetime::fieldset::YMD;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::datetime::options::components;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -54,16 +53,15 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
 /// // Load data that resolves to the same pattern:
-/// let data_pattern =
-///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-///         &locale!("es-MX").into(),
-///         NeoSkeletonLength::Medium.into(),
-///     )
-///     .unwrap()
-///     // The pattern can depend on the datetime being formatted.
-///     // For this example, we'll choose the local Unix epoch.
-///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
-///     .pattern();
+/// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+///     &locale!("es-MX").into(),
+///     YMD::medium(),
+/// )
+/// .unwrap()
+/// // The pattern can depend on the datetime being formatted.
+/// // For this example, we'll choose the local Unix epoch.
+/// .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
+/// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
 ///
@@ -77,7 +75,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
-/// [`FormattedNeoDateTime::pattern`]: crate::neo::FormattedNeoDateTime::pattern
+/// [`FormattedNeoDateTime::pattern`]: crate::FormattedNeoDateTime::pattern
 /// [`TypedDateTimeNames`]: crate::TypedDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {

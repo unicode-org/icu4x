@@ -80,7 +80,7 @@ fn make_testdata() {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
     })
     .export(&provider, exporter)
-    .unwrap()
+    .unwrap();
 }
 
 struct ZeroCopyCheckExporter {
@@ -194,7 +194,7 @@ impl DataExporter for ZeroCopyCheckExporter {
         Ok(())
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         assert_eq!(
             self.rountrip_errors.get_mut().expect("poison"),
             &mut BTreeSet::default()
@@ -225,7 +225,7 @@ impl DataExporter for ZeroCopyCheckExporter {
             Expected:\n{EXPECTED_VIOLATIONS:?}\nFound:\n{violations:?}\nExpected (transient):\n{EXPECTED_TRANSIENT_VIOLATIONS:?}\nFound (transient):\n{transient_violations:?}"
         );
 
-        Ok(())
+        Ok(Default::default())
     }
 }
 

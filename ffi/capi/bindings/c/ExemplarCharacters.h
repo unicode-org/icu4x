@@ -18,9 +18,9 @@
 
 
 
-bool icu4x_ExemplarCharacters_contains_mv1(const ExemplarCharacters* self, DiplomatStringView s);
+bool icu4x_ExemplarCharacters_contains_str_mv1(const ExemplarCharacters* self, DiplomatStringView s);
 
-bool icu4x_ExemplarCharacters_contains_char_mv1(const ExemplarCharacters* self, char32_t cp);
+bool icu4x_ExemplarCharacters_contains_mv1(const ExemplarCharacters* self, char32_t cp);
 
 typedef struct icu4x_ExemplarCharacters_try_new_main_mv1_result {union {ExemplarCharacters* ok; DataError err;}; bool is_ok;} icu4x_ExemplarCharacters_try_new_main_mv1_result;
 icu4x_ExemplarCharacters_try_new_main_mv1_result icu4x_ExemplarCharacters_try_new_main_mv1(const DataProvider* provider, const Locale* locale);

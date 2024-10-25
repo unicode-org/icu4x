@@ -5,15 +5,15 @@
 //! This module contains types and implementations for the Gregorian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
+//! use icu::calendar::{cal::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
@@ -184,19 +184,15 @@ impl Date<Gregorian> {
     /// use icu::calendar::Date;
     ///
     /// // Conversion from ISO to Gregorian
-    /// let date_gregorian = Date::try_new_gregorian_date(1970, 1, 2)
+    /// let date_gregorian = Date::try_new_gregorian(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
     /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
-    pub fn try_new_gregorian_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Gregorian>, RangeError> {
-        Date::try_new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
+    pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
+        Date::try_new_iso(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }
 
@@ -209,7 +205,7 @@ impl DateTime<Gregorian> {
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_gregorian =
-    ///     DateTime::try_new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
+    ///     DateTime::try_new_gregorian(1970, 1, 2, 13, 1, 0)
     ///         .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
@@ -219,7 +215,7 @@ impl DateTime<Gregorian> {
     /// assert_eq!(datetime_gregorian.time.minute.number(), 1);
     /// assert_eq!(datetime_gregorian.time.second.number(), 0);
     /// ```
-    pub fn try_new_gregorian_datetime(
+    pub fn try_new_gregorian(
         year: i32,
         month: u8,
         day: u8,
@@ -228,7 +224,7 @@ impl DateTime<Gregorian> {
         second: u8,
     ) -> Result<DateTime<Gregorian>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_gregorian_date(year, month, day)?,
+            date: Date::try_new_gregorian(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -347,7 +343,7 @@ mod test {
         ];
 
         for case in cases {
-            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_gregorian(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
@@ -378,7 +374,7 @@ mod test {
         expected_year: i32,
         expected_era: Era,
         expected_month: u8,
-        expected_day: u32,
+        expected_day: u8,
     }
 
     fn check_test_case(case: TestCase) {
@@ -394,7 +390,7 @@ mod test {
             "Failed day check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
 
         let iso_date_man: Date<Iso> =
-            Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+            Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
                 .expect("Failed to initialize ISO date for {case:?}");
         let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
         assert_eq!(iso_from_fixed, iso_date_man,
@@ -557,7 +553,7 @@ mod test {
         ];
 
         for case in cases {
-            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_gregorian(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)

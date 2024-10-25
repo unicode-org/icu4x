@@ -254,7 +254,7 @@ macro_rules! impl_zerotrie_subtype {
             }
             /// Takes the byte store from this trie.
             #[inline]
-            pub fn take_store(self) -> Store {
+            pub fn into_store(self) -> Store {
                 self.store
             }
             /// Converts this trie's store to a different store implementing the `From` trait.
@@ -718,8 +718,8 @@ macro_rules! impl_dispatch {
 
 impl<Store> ZeroTrie<Store> {
     /// Takes the byte store from this trie.
-    pub fn take_store(self) -> Store {
-        impl_dispatch!(self, take_store())
+    pub fn into_store(self) -> Store {
+        impl_dispatch!(self, into_store())
     }
     /// Converts this trie's store to a different store implementing the `From` trait.
     ///

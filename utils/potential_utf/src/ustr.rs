@@ -26,7 +26,7 @@ use core::ops::Deref;
 /// use zerovec::ZeroMap;
 ///
 /// // This map is cheap to deserialize, as we don't need to perform UTF-8 validation.
-/// let map: ZeroMap<PotentialUtf8, usize> = [
+/// let map: ZeroMap<PotentialUtf8, u8> = [
 ///     (PotentialUtf8::from_bytes(b"abc"), 11),
 ///     (PotentialUtf8::from_bytes(b"def"), 22),
 ///     (PotentialUtf8::from_bytes(b"ghi"), 33),

@@ -5,27 +5,63 @@
     "1": "в сл. г."
   },
   "past": {
-    "strings": {
-      "many": [
-        0,
-        "\u0002- л."
-      ],
-      "other": [
-        0,
-        "\u0002- г."
+    "many": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л."
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "many": [
-        0,
-        "\u0002+ л."
-      ],
-      "other": [
-        0,
-        "\u0002+ г."
+    "many": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л."
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
+      ]
+    ]
   }
 }

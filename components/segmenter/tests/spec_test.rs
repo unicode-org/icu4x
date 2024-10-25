@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::locale;
+use icu_locale_core::langid;
+use icu_properties::PropertyNamesLong;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
@@ -116,10 +117,14 @@ fn line_break_test(file: &'static str) {
             test.break_result_utf8.insert(0, 0);
         }
         if result != test.break_result_utf8 {
-            let lb = icu::properties::maps::line_break();
-            let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
-            let gc = icu::properties::maps::general_category();
-            let gc_name = icu::properties::GeneralCategory::enum_to_long_name_mapper();
+            use icu::properties::{
+                props::{GeneralCategory, LineBreak},
+                CodePointMapData,
+            };
+            let lb = CodePointMapData::<LineBreak>::new();
+            let lb_name = PropertyNamesLong::<LineBreak>::new();
+            let gc = CodePointMapData::<GeneralCategory>::new();
+            let gc_name = PropertyNamesLong::<GeneralCategory>::new();
 
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
@@ -199,7 +204,8 @@ fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     // Default word segmenter isn't UAX29 rule. Swedish is UAX29 rule.
     let mut options = WordBreakOptions::default();
-    options.content_locale = Some(locale!("sv").into());
+    let langid = langid!("sv");
+    options.content_locale = Some(&langid);
     let segmenter =
         WordSegmenter::try_new_dictionary_with_options(options).expect("Loading should succeed!");
     for (i, test) in test_iter.enumerate() {
@@ -207,8 +213,9 @@ fn word_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let wb = icu::properties::maps::word_break();
-            let wb_name = icu::properties::WordBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::WordBreak, CodePointMapData};
+            let wb = CodePointMapData::<WordBreak>::new();
+            let wb_name = PropertyNamesLong::<WordBreak>::new();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. |   Word_Break   | State | Literal");
@@ -280,8 +287,9 @@ fn grapheme_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let gcb = icu::properties::maps::grapheme_cluster_break();
-            let gcb_name = icu::properties::GraphemeClusterBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
+            let gcb = CodePointMapData::<GraphemeClusterBreak>::new();
+            let gcb_name = PropertyNamesLong::<GraphemeClusterBreak>::new();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. |            GCB | State | Literal");
@@ -353,8 +361,9 @@ fn sentence_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let sb = icu::properties::maps::sentence_break();
-            let sb_name = icu::properties::SentenceBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::SentenceBreak, CodePointMapData};
+            let sb = CodePointMapData::<SentenceBreak>::new();
+            let sb_name = PropertyNamesLong::<SentenceBreak>::new();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. | Sentence_Break | State | Literal");

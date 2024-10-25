@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::options::CompactDecimalFormatterOptions;
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
+    options::CompactDecimalFormatterOptions,
     provider::{
-        Count, ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker,
-        PatternULE, ShortCompactDecimalFormatDataV1Marker,
+        CompactDecimalPatternDataV1, Count, LongCompactDecimalFormatDataV1Marker, PatternULE,
+        ShortCompactDecimalFormatDataV1Marker,
     },
     ExponentError,
 };
@@ -16,8 +16,8 @@ use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
-use icu_provider::prelude::*;
 use icu_provider::DataError;
+use icu_provider::{marker::ErasedMarker, prelude::*};
 use zerovec::maps::ZeroMap2dCursor;
 
 /// A formatter that renders locale-sensitive compact numbers.
@@ -59,7 +59,7 @@ use zerovec::maps::ZeroMap2dCursor;
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
-    pub(crate) compact_data: DataPayload<ErasedCompactDecimalFormatDataV1Marker>,
+    pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternDataV1<'static>>>,
 }
 
 impl CompactDecimalFormatter {
@@ -342,10 +342,10 @@ impl CompactDecimalFormatter {
         &self,
         value: f64,
     ) -> Result<FormattedCompactDecimal<'_>, fixed_decimal::LimitError> {
-        use fixed_decimal::FloatPrecision::Floating;
+        use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = FixedDecimal::try_from_f64(value, Floating)?;
+        let partly_rounded = FixedDecimal::try_from_f64(value, RoundTrip)?;
         Ok(self.format_fixed_decimal(partly_rounded))
     }
 

@@ -6,7 +6,9 @@ use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
 /// An object that accepts characters and/or strings
 /// to be used with [`CaseMapCloser::add_string_case_closure_to()`]
-/// and [`CaseMapCloser::add_case_closure_to()`]. Usually this object
+/// and [`CaseMapCloser::add_case_closure_to()`].
+///
+/// Usually this object
 /// will be some kind of set over codepoints and strings, or something that
 /// can be built into one.
 ///

@@ -60,38 +60,38 @@ fn test_basic() {
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
         .is_err());
     assert!(data
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
         .is_err());
 }

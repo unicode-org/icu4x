@@ -342,9 +342,6 @@
               "Chita": {
                 "exemplarCity": "Tchita"
               },
-              "Choibalsan": {
-                "exemplarCity": "Tchoïbalsan"
-              },
               "Damascus": {
                 "exemplarCity": "Damas"
               },
@@ -782,13 +779,6 @@
                 "generic": "heure de la Chine",
                 "standard": "heure normale de la Chine",
                 "daylight": "heure d’été de Chine"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "heure de Choibalsan",
-                "standard": "heure normale de Choibalsan",
-                "daylight": "heure d’été de Choibalsan"
               }
             },
             "Christmas": {

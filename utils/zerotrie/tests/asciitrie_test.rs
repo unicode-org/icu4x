@@ -58,7 +58,7 @@ fn test_basic() {
     }
 
     // Compare the size to a postcard ZeroMap
-    let zm: ZeroMap<[u8], usize> = data_ascii.iter().copied().collect();
+    let zm: ZeroMap<[u8], u32> = data_ascii.iter().map(|(a, b)| (*a, *b as u32)).collect();
     let mut serializer = postcard::Serializer {
         output: AllocVec::new(),
     };
@@ -69,5 +69,5 @@ fn test_basic() {
         .expect("Failed to finalize serializer output");
 
     assert_eq!(26, bytes_ascii.len());
-    assert_eq!(61, zeromap_bytes.len());
+    assert_eq!(77, zeromap_bytes.len());
 }

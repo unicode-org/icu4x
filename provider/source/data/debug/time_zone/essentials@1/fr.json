@@ -1,0 +1,13 @@
+{
+  "offset_separator": ":",
+  "offset_pattern": [
+    {
+      "Literal": "UTC"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "offset_zero": "UTC",
+  "offset_unknown": "UTC+?"
+}

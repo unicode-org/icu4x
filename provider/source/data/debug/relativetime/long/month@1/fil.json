@@ -5,19 +5,32 @@
     "1": "susunod na buwan"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 buwan ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " buwan ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  buwan"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " buwan"
+        }
       ]
-    }
+    ]
   }
 }

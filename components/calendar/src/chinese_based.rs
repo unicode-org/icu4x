@@ -6,9 +6,9 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 //!
 //! ```rust
-//! use icu::calendar::{chinese::Chinese, Date, Iso};
+//! use icu::calendar::{cal::Chinese, Date, Iso};
 //!
-//! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
+//! let iso_date = Date::try_new_iso(2023, 6, 23).unwrap();
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
@@ -128,8 +128,8 @@ pub(crate) fn compute_many_packed<CB: ChineseBased>(
         .collect()
 }
 
-impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
-    for ChineseBasedPrecomputedData<'b, CB>
+impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
+    for ChineseBasedPrecomputedData<'_, CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
         self.data
@@ -344,7 +344,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         year_info: ChineseBasedYearInfo,
     ) -> Result<ArithmeticDate<C>, DateError> {
         let max_month = Self::months_in_year_with_info(year_info);
-        if !(1..=max_month).contains(&month) {
+        if month == 0 || !(1..=max_month).contains(&month) {
             return Err(DateError::Range {
                 field: "month",
                 value: month as i32,
@@ -352,17 +352,9 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
                 max: max_month as i32,
             });
         }
-        if month == 0 {
-            return Err(DateError::Range {
-                field: "month",
-                value: 0,
-                min: 1,
-                max: 12,
-            });
-        }
 
         let max_day = year_info.days_in_month(month);
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,

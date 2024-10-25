@@ -38,7 +38,7 @@ icu = { workspace = true, features = ["datagen"] }
 calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
-icu_pattern = { workspace = true, features = ["alloc"] }
+icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
 icu_provider_registry = { workspace = true }

@@ -10,7 +10,7 @@ class ParameterTemplate extends HTMLElement {
     inputElement = null;
 
     static baseTemplate;
-    constructor(options = {}, className, selector, ...args) {
+    constructor(options = {}, className, selector, defaultValue=null, ...args) {
         super();
         generateTemplate(ParameterTemplate, "baseTemplate", "#parameter");
         generateTemplate(className, "template", selector);
@@ -34,6 +34,8 @@ class ParameterTemplate extends HTMLElement {
         if ("defaultValue" in options) {
             this.default = options.defaultValue;
             this.setValue(options.defaultValue);
+        } else if (this.default === null) {
+            this.default = defaultValue;
         }
     }
 
@@ -61,10 +63,9 @@ class ParameterTemplate extends HTMLElement {
 customElements.define("terminus-param", ParameterTemplate);
 
 class BooleanTemplate extends ParameterTemplate {
-    default = false;
     static template;
     constructor(options) {
-        super(options, BooleanTemplate, "template#boolean");
+        super(options, BooleanTemplate, "template#boolean", false);
     }
 
     getEventValue(event) {
@@ -79,10 +80,9 @@ class BooleanTemplate extends ParameterTemplate {
 customElements.define("terminus-param-boolean", BooleanTemplate);
 
 class NumberTemplate extends ParameterTemplate {
-    default = 0;
     static template;
     constructor(options) {
-        super(options, NumberTemplate, "template#number");
+        super(options, NumberTemplate, "template#number", 0);
     }
     
     getEventValue(event) {
@@ -93,20 +93,18 @@ class NumberTemplate extends ParameterTemplate {
 customElements.define("terminus-param-number", NumberTemplate);
 
 class StringTemplate extends ParameterTemplate {
-    default = "";
     static template;
     constructor(options) {
-        super(options, StringTemplate, "template#string");
+        super(options, StringTemplate, "template#string", "");
     }
 }
 
 customElements.define("terminus-param-string", StringTemplate);
 
 class StringArrayTemplate extends ParameterTemplate {
-    default = [];
     static template;
     constructor(options) {
-        super(options, StringArrayTemplate, "template#string-array");
+        super(options, StringArrayTemplate, "template#string-array", []);
     }
 
     getEventValue(event) {
@@ -136,19 +134,19 @@ class EnumTemplate extends ParameterTemplate {
 
     #enumType;
     constructor(options, enumType) {
-        super(options, EnumTemplate, "template#enum", enumType);
+        super(options, EnumTemplate, "template#enum", null, enumType);
         this.#enumType = enumType;
     }
 
     initialize(clone, enumType) {
         let options = clone.querySelector("*[data-options]");
-
-        if (this.default === null) {
-            this.default = enumType.values.values().next().value;
-
-            for (let value of enumType.values) {
-                options.append(...(new EnumOption(value[0])).children);
+        
+        for (let entry of enumType.getAllEntries()) {
+            
+            if (this.default === null) {
+                this.default = entry[0];
             }
+            options.append(...(new EnumOption(entry[0])).children);
         }
     }
 
@@ -173,7 +171,7 @@ class TerminusParams extends HTMLElement {
 
             var newChild;
 
-            switch (param.type) {
+            switch (param.typeUse) {
                 case "string":
                     newChild = new StringTemplate(param);
                     this.#params[i] = "";
@@ -190,17 +188,18 @@ class TerminusParams extends HTMLElement {
                     newChild = new StringArrayTemplate(param);
                     this.#params[i] = [];
                     break;
+                case "enumerator":
+                    newChild = new EnumTemplate(param, library[param.type]);
+                    this.#params[i] = newChild.default
+                    break;
+                case "external":
+                    let updateParamEvent = (value) => {
+                        this.#params[i] = value;
+                    };
+                    evaluateExternal(param, updateParamEvent);
+                    break;
                 default:
-                    if (param.type in library && "values" in library[param.type]) {
-                        newChild = new EnumTemplate(param, library[param.type]);
-                        this.#params[i] = newChild.default
-                    } else {
-                        let updateParamEvent = (value) => {
-                            this.#params[i] = value;
-                        };
-                        evaluateExternal(param, updateParamEvent);
-                        continue;
-                    }
+                    console.error("Unrecognized parameter: ", param);
                     break;
             }
 

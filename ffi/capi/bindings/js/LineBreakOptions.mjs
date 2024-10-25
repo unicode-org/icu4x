@@ -24,14 +24,6 @@ export class LineBreakOptions {
     set wordOption(value) {
         this.#wordOption = value;
     }
-
-    #jaZh;
-    get jaZh()  {
-        return this.#jaZh;
-    }
-    set jaZh(value) {
-        this.#jaZh = value;
-    }
     constructor() {
         if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
             this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
@@ -39,7 +31,6 @@ export class LineBreakOptions {
             
             this.#strictness = arguments[0];
             this.#wordOption = arguments[1];
-            this.#jaZh = arguments[2];
         }
     }
 
@@ -50,7 +41,7 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#jaZh, 1, 1, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array)]), /* [2 x i8] padding */ 0, 0 /* end padding */]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     _writeToArrayBuffer(
@@ -61,7 +52,6 @@ export class LineBreakOptions {
     ) {
         diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
         diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#jaZh, 1, 1, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -74,7 +64,5 @@ export class LineBreakOptions {
         this.#strictness = diplomatRuntime.readOption(wasm, strictnessDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakStrictness(diplomatRuntime.internalConstructor, deref) });
         const wordOptionDeref = ptr + 8;
         this.#wordOption = diplomatRuntime.readOption(wasm, wordOptionDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakWordOption(diplomatRuntime.internalConstructor, deref) });
-        const jaZhDeref = ptr + 16;
-        this.#jaZh = diplomatRuntime.readOption(wasm, jaZhDeref, 1, (wasm, offset) => { const deref = (new Uint8Array(wasm.memory.buffer, offset, 1))[0] === 1; return deref });
     }
 }

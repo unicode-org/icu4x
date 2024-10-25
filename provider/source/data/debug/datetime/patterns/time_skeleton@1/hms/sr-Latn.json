@@ -1,11 +1,13 @@
 {
-  "index_info": {
-    "has_long": false,
-    "has_medium": false,
-    "has_plurals": false,
-    "has_eras": false
-  },
-  "patterns": [
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
     "hh:mm:ss a"
   ]
 }

@@ -115,14 +115,14 @@ impl<'a> Hide<'a> {
     }
 }
 
-impl<'a> Deref for Hide<'a> {
+impl Deref for Hide<'_> {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
         &self.raw[self.hide_pre_len..self.raw.len() - self.hide_post_len]
     }
 }
 
-impl<'a> DerefMut for Hide<'a> {
+impl DerefMut for Hide<'_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         let len = self.raw.len();
         &mut self.raw[self.hide_pre_len..len - self.hide_post_len]
@@ -359,7 +359,7 @@ impl<'a> Replaceable<'a> {
     }
 }
 
-impl<'a> Debug for Replaceable<'a> {
+impl Debug for Replaceable<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self.content.hidden_prefix())?;
         write!(f, "[[[")?;
@@ -441,7 +441,7 @@ impl<'a, 'b> RepMatcher<'a, 'b, false> {
     }
 }
 
-impl<'a, 'b, const KEY_FINISHED: bool> RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> RepMatcher<'_, '_, KEY_FINISHED> {
     fn remaining(&self) -> usize {
         if KEY_FINISHED {
             self.rep.content.len() - self.forward_cursor
@@ -469,7 +469,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> RepMatcher<'a, 'b, KEY_FINISHED> {
     }
 }
 
-impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'_, '_, KEY_FINISHED> {
     fn cursor(&self) -> usize {
         self.forward_cursor
     }
@@ -517,7 +517,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, '
 }
 
 // we can always reverse match, no matter if the key has finished matching or not
-impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'_, '_, KEY_FINISHED> {
     fn cursor(&self) -> usize {
         self.ante_cursor()
     }
@@ -587,7 +587,6 @@ impl MatchDirection for Reverse {}
 ///
 /// The used indices in method parameters are all compatible with each other.
 // Thought: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
-
 pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
     fn cursor(&self) -> usize;
 
@@ -912,13 +911,13 @@ impl<'a, 'b> Insertable<'a, 'b> {
     }
 }
 
-impl<'a, 'b> Drop for Insertable<'a, 'b> {
+impl Drop for Insertable<'_, '_> {
     fn drop(&mut self) {
         self.cleanup();
     }
 }
 
-impl<'a, 'b> Debug for Insertable<'a, 'b> {
+impl Debug for Insertable<'_, '_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}|{}", self.curr_replacement(), self.free_range().len())
     }
@@ -935,7 +934,7 @@ where
     on_drop: F,
 }
 
-impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
@@ -976,7 +975,7 @@ where
     }
 }
 
-impl<'a, 'b, F> Drop for InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> Drop for InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
@@ -995,7 +994,7 @@ where
     }
 }
 
-impl<'a, 'b, F> DerefMut for InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> DerefMut for InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
@@ -1025,7 +1024,7 @@ where
     }
 }
 
-impl<'a, F> Drop for InsertableGuard<'a, F>
+impl<F> Drop for InsertableGuard<'_, F>
 where
     F: FnMut(&[u8]),
 {

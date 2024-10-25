@@ -5,19 +5,32 @@
     "1": "susunod na linggo"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 linggo ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  linggo"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo"
+        }
       ]
-    }
+    ]
   }
 }

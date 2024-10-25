@@ -40,14 +40,14 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::sets::CodePointSetData::from_code_point_inversion_list,
+            icu::properties::CodePointSetData::from_code_point_inversion_list,
             FnInStruct,
             hidden
         )]
         pub fn build(&mut self) -> Box<CodePointSetData> {
             let inner = core::mem::take(&mut self.0);
             let built = inner.build();
-            let set = icu_properties::sets::CodePointSetData::from_code_point_inversion_list(built);
+            let set = icu_properties::CodePointSetData::from_code_point_inversion_list(built);
             Box::new(CodePointSetData(set))
         }
 
@@ -106,12 +106,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::sets::CodePointSetData::as_code_point_inversion_list,
+            icu::properties::CodePointSetData::as_code_point_inversion_list,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::properties::sets::CodePointSetData::to_code_point_inversion_list,
+            icu::properties::CodePointSetData::to_code_point_inversion_list,
             FnInStruct,
             hidden
         )]

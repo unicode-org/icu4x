@@ -3,19 +3,29 @@
     "0": "bu saat"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 sa. önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 sa. sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. sonra"
+        }
       ]
-    }
+    ]
   }
 }

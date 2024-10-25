@@ -23,6 +23,7 @@ use crate::provider::NonRecursiveDecompositionSupplementV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
 use crate::trie_value_indicates_special_non_starter_decomposition;
+use crate::CanonicalCombiningClass;
 use crate::BACKWARD_COMBINING_STARTER_MARKER;
 use crate::FDFA_MARKER;
 use crate::HANGUL_L_BASE;
@@ -34,9 +35,6 @@ use crate::HANGUL_T_COUNT;
 use crate::HANGUL_V_BASE;
 use crate::NON_ROUND_TRIP_MARKER;
 use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
-/// want access to the underlying properties e.g. for use in a
-/// glyph-availability-guided custom normalizer.
-use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -51,13 +49,38 @@ pub struct CanonicalCompositionBorrowed<'a> {
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for CanonicalCompositionBorrowed<'a> {
+impl Default for CanonicalCompositionBorrowed<'static> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> CanonicalCompositionBorrowed<'a> {
+impl CanonicalCompositionBorrowed<'static> {
+    /// Cheaply converts a [`CanonicalCompositionBorrowed<'static>`] into a [`CanonicalComposition`].
+    ///
+    /// Note: Due to branching and indirection, using [`CanonicalComposition`] might inhibit some
+    /// compile-time optimizations that are possible with [`CanonicalCompositionBorrowed`].
+    pub const fn static_to_owned(self) -> CanonicalComposition {
+        CanonicalComposition {
+            canonical_compositions: DataPayload::from_static_ref(self.canonical_compositions),
+        }
+    }
+
+    /// Constructs a new `CanonicalComposition` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            canonical_compositions:
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+        }
+    }
+}
+
+impl CanonicalCompositionBorrowed<'_> {
     /// Performs canonical composition (including Hangul) on a pair of
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
@@ -83,19 +106,6 @@ impl<'a> CanonicalCompositionBorrowed<'a> {
             second,
         )
     }
-
-    /// Constructs a new `CanonicalComposition` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            canonical_compositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
-        }
-    }
 }
 
 /// The raw canonical composition operation.
@@ -112,7 +122,7 @@ pub struct CanonicalComposition {
 #[cfg(feature = "compiled_data")]
 impl Default for CanonicalComposition {
     fn default() -> Self {
-        Self::new()
+        Self::new().static_to_owned()
     }
 }
 
@@ -124,21 +134,15 @@ impl CanonicalComposition {
         }
     }
 
-    /// Constructs a new `CanonicalComposition` using compiled data.
-    ///
-    /// Unless you know you need this constructor, using
-    /// `CanonicalCompositionBorrowed::new()` is likely a better idea.
+    /// Constructs a new `CanonicalCompositionBorrowed` using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
-            ),
-        }
+    #[allow(clippy::new_ret_no_self)]
+    pub const fn new() -> CanonicalCompositionBorrowed<'static> {
+        CanonicalCompositionBorrowed::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
@@ -190,13 +194,54 @@ pub struct CanonicalDecompositionBorrowed<'a> {
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for CanonicalDecompositionBorrowed<'a> {
+impl Default for CanonicalDecompositionBorrowed<'static> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> CanonicalDecompositionBorrowed<'a> {
+impl CanonicalDecompositionBorrowed<'static> {
+    /// Cheaply converts a [`CanonicalDecompositionBorrowed<'static>`] into a [`CanonicalDecomposition`].
+    ///
+    /// Note: Due to branching and indirection, using [`CanonicalDecomposition`] might inhibit some
+    /// compile-time optimizations that are possible with [`CanonicalDecompositionBorrowed`].
+    pub const fn static_to_owned(self) -> CanonicalDecomposition {
+        CanonicalDecomposition {
+            decompositions: DataPayload::from_static_ref(self.decompositions),
+            tables: DataPayload::from_static_ref(self.tables),
+            non_recursive: DataPayload::from_static_ref(self.non_recursive),
+        }
+    }
+
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "future extension"
+        );
+
+        Self {
+            decompositions:
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            non_recursive:
+                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
+        }
+    }
+}
+
+impl CanonicalDecompositionBorrowed<'_> {
     /// Performs non-recursive canonical decomposition (including for Hangul).
     ///
     /// ```
@@ -400,33 +445,6 @@ impl<'a> CanonicalDecompositionBorrowed<'a> {
         debug_assert!(false);
         Decomposed::Default
     }
-
-    /// Construct from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                .scalars16
-                .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                <= 0xFFF,
-            "future extension"
-        );
-
-        Self {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            non_recursive:
-                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
-        }
-    }
 }
 
 /// The raw (non-recursive) canonical decomposition operation.
@@ -445,7 +463,7 @@ pub struct CanonicalDecomposition {
 #[cfg(feature = "compiled_data")]
 impl Default for CanonicalDecomposition {
     fn default() -> Self {
-        Self::new()
+        Self::new().static_to_owned()
     }
 }
 
@@ -461,36 +479,13 @@ impl CanonicalDecomposition {
 
     /// Construct from compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `CanonicalDecompositionBorrowed::new()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                .scalars16
-                .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                <= 0xFFF,
-            "future extension"
-        );
-
-        Self {
-            decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-            tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            ),
-            non_recursive: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
-            ),
-        }
+    #[allow(clippy::new_ret_no_self)]
+    pub const fn new() -> CanonicalDecompositionBorrowed<'static> {
+        CanonicalDecompositionBorrowed::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
@@ -542,7 +537,7 @@ impl CanonicalDecomposition {
 /// # Example
 ///
 /// ```
-/// use icu::properties::CanonicalCombiningClass;
+/// use icu::properties::props::CanonicalCombiningClass;
 /// use icu::normalizer::properties::CanonicalCombiningClassMapBorrowed;
 ///
 /// let map = CanonicalCombiningClassMapBorrowed::new();
@@ -556,33 +551,20 @@ pub struct CanonicalCombiningClassMapBorrowed<'a> {
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for CanonicalCombiningClassMapBorrowed<'a> {
+impl Default for CanonicalCombiningClassMapBorrowed<'static> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
-    /// Look up the canonical combining class for a scalar value
-    #[inline(always)]
-    pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        self.get32(u32::from(c))
-    }
-
-    /// Look up the canonical combining class for a scalar value
-    /// represented as `u32`. If the argument is outside the scalar
-    /// value range, `CanonicalCombiningClass::NotReordered` is returned.
-    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        let trie_value = self.decompositions.trie.get32(c);
-        if trie_value_has_ccc(trie_value) {
-            CanonicalCombiningClass(trie_value as u8)
-        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
-            match c {
-                0x0340 | 0x0341 | 0x0343 | 0x0344 => CanonicalCombiningClass::Above,
-                _ => CanonicalCombiningClass::NotReordered,
-            }
-        } else {
-            CanonicalCombiningClass::NotReordered
+impl CanonicalCombiningClassMapBorrowed<'static> {
+    /// Cheaply converts a [`CanonicalCombiningClassMapBorrowed<'static>`] into a [`CanonicalCombiningClassMap`].
+    ///
+    /// Note: Due to branching and indirection, using [`CanonicalCombiningClassMap`] might inhibit some
+    /// compile-time optimizations that are possible with [`CanonicalCombiningClassMapBorrowed`].
+    pub const fn static_to_owned(self) -> CanonicalCombiningClassMap {
+        CanonicalCombiningClassMap {
+            decompositions: DataPayload::from_static_ref(self.decompositions),
         }
     }
 
@@ -600,6 +582,58 @@ impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
     }
 }
 
+impl CanonicalCombiningClassMapBorrowed<'_> {
+    /// Look up the canonical combining class for a scalar value.
+    ///
+    /// The return value is a u8 representing the canonical combining class,
+    /// you may enable the `"icu_properties"` feature if you would like to use a typed
+    /// `CanonicalCombiningClass`.
+    #[inline(always)]
+    pub fn get_u8(&self, c: char) -> u8 {
+        self.get32_u8(u32::from(c))
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    /// represented as `u32`. If the argument is outside the scalar
+    /// value range, `Not_Reordered` is returned.
+    ///
+    /// The return value is a u8 representing the canonical combining class,
+    /// you may enable the `"icu_properties"` feature if you would like to use a typed
+    /// `CanonicalCombiningClass`.
+    pub fn get32_u8(&self, c: u32) -> u8 {
+        let trie_value = self.decompositions.trie.get32(c);
+        if trie_value_has_ccc(trie_value) {
+            trie_value as u8
+        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
+            match c {
+                0x0340 | 0x0341 | 0x0343 | 0x0344 => ccc!(Above, 230).0,
+                _ => ccc!(NotReordered, 0).0,
+            }
+        } else {
+            ccc!(NotReordered, 0).0
+        }
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    ///
+    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
+    #[inline(always)]
+    #[cfg(feature = "icu_properties")]
+    pub fn get(&self, c: char) -> CanonicalCombiningClass {
+        CanonicalCombiningClass(self.get_u8(c))
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    /// represented as `u32`. If the argument is outside the scalar
+    /// value range, `CanonicalCombiningClass::NotReordered` is returned.
+    ///
+    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
+    #[cfg(feature = "icu_properties")]
+    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
+        CanonicalCombiningClass(self.get32_u8(c))
+    }
+}
+
 /// Lookup of the Canonical_Combining_Class Unicode property.
 #[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
@@ -610,7 +644,7 @@ pub struct CanonicalCombiningClassMap {
 #[cfg(feature = "compiled_data")]
 impl Default for CanonicalCombiningClassMap {
     fn default() -> Self {
-        Self::new()
+        Self::new().static_to_owned()
     }
 }
 
@@ -624,19 +658,13 @@ impl CanonicalCombiningClassMap {
 
     /// Construct from compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `CanonicalCombiningClassMapBorrowed::new()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        CanonicalCombiningClassMap {
-            decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-        }
+    #[allow(clippy::new_ret_no_self)]
+    pub const fn new() -> CanonicalCombiningClassMapBorrowed<'static> {
+        CanonicalCombiningClassMapBorrowed::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,

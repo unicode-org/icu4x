@@ -3,35 +3,91 @@
     "0": "sada"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0005pre  sekunde"
-      ],
-      "few": [
-        0,
-        "\u0005pre  sekunde"
-      ],
-      "other": [
-        0,
-        "\u0005pre  sekundi"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundi"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  sekundu"
-      ],
-      "few": [
-        0,
-        "\u0004za  sekunde"
-      ],
-      "other": [
-        0,
-        "\u0004za  sekundi"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundu"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundi"
+        }
+      ]
+    ]
   }
 }

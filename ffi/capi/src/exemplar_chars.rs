@@ -22,18 +22,19 @@ pub mod ffi {
     impl ExemplarCharacters {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(
-            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains,
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains_str,
             FnInStruct
         )]
-        pub fn contains(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::attr(supports = method_overloading, rename = "contains")]
+        pub fn contains_str(&self, s: &DiplomatStr) -> bool {
             let Ok(s) = core::str::from_utf8(s) else {
                 return false;
             };
-            self.0.as_borrowed().contains(s)
+            self.0.as_borrowed().contains_str(s)
         }
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(
-            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains_char,
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains,
             FnInStruct
         )]
         #[diplomat::rust_link(
@@ -41,18 +42,13 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
             self.0.as_borrowed().contains32(cp)
         }
 
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "main")]
         pub fn try_new_main(
@@ -72,11 +68,6 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary")]
         pub fn try_new_auxiliary(
             provider: &DataProvider,
@@ -94,11 +85,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation")]
         pub fn try_new_punctuation(
@@ -118,11 +104,6 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers")]
         pub fn try_new_numbers(
             provider: &DataProvider,
@@ -140,11 +121,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "index")]
         pub fn try_new_index(

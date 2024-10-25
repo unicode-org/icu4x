@@ -7,19 +7,35 @@
     "2": "après-demain"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
       ]
-    }
+    ]
   }
 }

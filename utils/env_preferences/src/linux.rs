@@ -83,7 +83,9 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
     Ok(locale_map)
 }
 
-/// This only returns the calendar locale,`gnome-calendar` is the default calendar in linux
+/// Get the system calendar locale (LC_TIME).
+///
+/// This only returns the calendar locale, `gnome-calendar` is the default calendar in linux
 /// The locale returned is for `Gregorian` calendar
 /// Related issue: `<https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998>`
 pub fn get_system_calendars() -> Result<String, RetrievalError> {

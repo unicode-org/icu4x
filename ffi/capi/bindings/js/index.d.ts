@@ -10,11 +10,7 @@ export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
-
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
-
-export { TimeZoneUnknownError } from "./TimeZoneUnknownError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
@@ -98,8 +94,6 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
-export { MetazoneCalculator } from "./MetazoneCalculator"
-
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"
@@ -126,7 +120,7 @@ export { PropertyValueNameToEnumMapper } from "./PropertyValueNameToEnumMapper"
 
 export { CodePointSetData } from "./CodePointSetData"
 
-export { UnicodeSetData } from "./UnicodeSetData"
+export { EmojiSetData } from "./EmojiSetData"
 
 export { DataProvider } from "./DataProvider"
 
@@ -170,7 +164,7 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
-export { CustomTimeZone } from "./CustomTimeZone"
+export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 
@@ -185,8 +179,6 @@ export { UnitsConverter } from "./UnitsConverter"
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { WeekCalculator } from "./WeekCalculator"
-
-export { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 

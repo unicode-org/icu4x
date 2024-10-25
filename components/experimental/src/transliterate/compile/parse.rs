@@ -266,6 +266,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -287,7 +289,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -306,7 +308,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -315,11 +317,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -1284,15 +1286,16 @@ where
 
 #[cfg(test)]
 pub(super) fn parse(source: &str) -> Result<Vec<Rule>> {
+    use icu::properties::CodePointSetData;
     Parser::run(
         source,
-        &sets::xid_start()
+        &CodePointSetData::new::<XidStart>()
             .static_to_owned()
             .to_code_point_inversion_list(),
-        &sets::xid_continue()
+        &CodePointSetData::new::<XidContinue>()
             .static_to_owned()
             .to_code_point_inversion_list(),
-        &sets::pattern_white_space()
+        &CodePointSetData::new::<PatternWhiteSpace>()
             .static_to_owned()
             .to_code_point_inversion_list(),
         &icu_properties::provider::Baked,

@@ -881,9 +881,6 @@
               "Chita": {
                 "exemplarCity": "تشيتا"
               },
-              "Choibalsan": {
-                "exemplarCity": "تشوبالسان"
-              },
               "Colombo": {
                 "exemplarCity": "كولومبو"
               },
@@ -1541,13 +1538,6 @@
                 "generic": "توقيت الصين",
                 "standard": "توقيت الصين الرسمي",
                 "daylight": "توقيت الصين الصيفي"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "توقيت شويبالسان",
-                "standard": "توقيت شويبالسان الرسمي",
-                "daylight": "التوقيت الصيفي لشويبالسان"
               }
             },
             "Christmas": {

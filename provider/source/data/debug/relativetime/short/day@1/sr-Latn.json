@@ -7,19 +7,35 @@
     "2": "prekosutra"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  d."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  d."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d."
+        }
       ]
-    }
+    ]
   }
 }

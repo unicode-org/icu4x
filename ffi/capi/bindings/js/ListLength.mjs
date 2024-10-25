@@ -14,6 +14,10 @@ export class ListLength {
         ["Narrow", 2]
     ]);
 
+    static getAllEntries() {
+        return ListLength.#values.entries();
+    }
+
     constructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*

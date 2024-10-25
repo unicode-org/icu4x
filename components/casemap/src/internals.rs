@@ -42,7 +42,7 @@ pub(crate) struct StringAndWriteable<'a, W> {
     pub writeable: W,
 }
 
-impl<'a, Wr: Writeable> Writeable for StringAndWriteable<'a, Wr> {
+impl<Wr: Writeable> Writeable for StringAndWriteable<'_, Wr> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_str(self.string)?;
         self.writeable.write_to(sink)
@@ -60,7 +60,7 @@ pub(crate) struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
     titlecase_tail_casing: TrailingCase,
 }
 
-impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, IS_TITLE_CONTEXT> {
+impl<const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'_, IS_TITLE_CONTEXT> {
     #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let src = self.src;
@@ -684,7 +684,7 @@ pub enum FullMappingResult<'a> {
     String(&'a str),
 }
 
-impl<'a> FullMappingResult<'a> {
+impl FullMappingResult<'_> {
     #[allow(dead_code)]
     fn add_to_set<S: ClosureSink>(&self, set: &mut S) {
         match *self {

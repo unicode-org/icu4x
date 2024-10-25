@@ -5,35 +5,91 @@
     "1": "sledeće nedelje"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0005pre  nedelje"
-      ],
-      "few": [
-        0,
-        "\u0005pre  nedelje"
-      ],
-      "other": [
-        0,
-        "\u0005pre  nedelja"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelja"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  nedelju"
-      ],
-      "few": [
-        0,
-        "\u0004za  nedelje"
-      ],
-      "other": [
-        0,
-        "\u0004za  nedelja"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelju"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelja"
+        }
+      ]
+    ]
   }
 }

@@ -5,19 +5,29 @@
     "1": "পরের মাস"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 মাস আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাস আগে"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 মাসে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাসে"
+        }
       ]
-    }
+    ]
   }
 }

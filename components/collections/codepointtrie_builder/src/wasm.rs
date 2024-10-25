@@ -9,6 +9,7 @@ use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieValue;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
 use zerovec::ZeroSlice;
+use zerovec::ZeroVec;
 
 const UCPTRIE_WRAP_WAT: &str = include_str!("../cpp/ucptrie_wrap.wat");
 
@@ -210,21 +211,21 @@ pub(crate) fn run_wasmi_ucptrie_wrap<T>(
     builder: &CodePointTrieBuilder<T>,
 ) -> CodePointTrie<'static, T>
 where
-    T: TrieValue + Into<u32>,
+    T: TrieValue,
 {
     let mut wasm = WasmWrap::create();
 
     let error_code_ptr = wasm.create_uerrorcode();
     let trie_ptr = wasm.umutablecptrie_open(
-        builder.default_value.into() as i32,
-        builder.error_value.into() as i32,
+        builder.default_value.to_u32() as i32,
+        builder.error_value.to_u32() as i32,
         &error_code_ptr,
     );
 
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
     for (cp, value) in values.iter().enumerate() {
-        let num: u32 = (*value).into();
-        if num != builder.default_value.into() {
+        let num = value.to_u32();
+        if num != builder.default_value.to_u32() {
             wasm.umutablecptrie_set(&trie_ptr, cp as u32, num, &error_code_ptr);
         }
     }
@@ -250,22 +251,35 @@ where
     let data_ptr = wasm.get_data_ptr(&ucptrie_ptr);
     let data_length = wasm.get_data_length(&ucptrie_ptr);
 
-    let index_slice = ZeroSlice::<u16>::parse_byte_slice(
+    let index = ZeroSlice::<u16>::parse_byte_slice(
         wasm.get_bytes_at_ptr(&index_ptr, index_length * core::mem::size_of::<u16>()),
     )
-    .unwrap();
+    .unwrap()
+    .as_zerovec()
+    .into_owned();
 
-    let data_slice = ZeroSlice::<T>::parse_byte_slice(
-        wasm.get_bytes_at_ptr(&data_ptr, data_length * core::mem::size_of::<T::ULE>()),
-    )
-    .unwrap();
+    let data = if core::mem::size_of::<T::ULE>() == 3 {
+        // need to reallocate 32-bit trie as 24-bit zerovec
+        ZeroVec::<T>::parse_byte_slice(
+            &wasm
+                .get_bytes_at_ptr(&data_ptr, data_length * 4)
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| i % 4 != 3)
+                .map(|(_, b)| *b)
+                .collect::<Vec<_>>(),
+        )
+        .unwrap()
+        .into_owned()
+    } else {
+        ZeroVec::<T>::parse_byte_slice(
+            wasm.get_bytes_at_ptr(&data_ptr, data_length * core::mem::size_of::<T::ULE>()),
+        )
+        .unwrap()
+        .into_owned()
+    };
 
-    let built_trie = CodePointTrie::try_new(
-        header,
-        index_slice.as_zerovec().into_owned(),
-        data_slice.as_zerovec().into_owned(),
-    )
-    .expect("Failed to construct");
+    let built_trie = CodePointTrie::try_new(header, index, data).expect("Failed to construct");
 
     wasm.ucptrie_close(&ucptrie_ptr);
     wasm.umutablecptrie_close(&trie_ptr);

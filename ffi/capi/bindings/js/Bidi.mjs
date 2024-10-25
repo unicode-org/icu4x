@@ -10,6 +10,8 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** An ICU4X Bidi object, containing loaded bidi data
 *
 *See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
+*
+*See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 */
 const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Bidi_destroy_mv1(ptr);

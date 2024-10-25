@@ -19,7 +19,6 @@ pub struct TimeZoneTest {
 pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
     pub configs: Vec<TimeZoneFormatterConfig>,
-    pub fallback_formats: Vec<FallbackFormat>,
     pub expected: Vec<String>,
 }
 
@@ -62,37 +61,55 @@ pub enum TimeZoneFormatterConfig {
     GenericLocation,
     SpecificNonLocationLong,
     SpecificNonLocationShort,
-    LocalizedOffset,
+    LocalizedOffsetLong,
+    LocalizedOffsetShort,
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
 }
 
 impl TimeZoneFormatterConfig {
     pub fn to_semantic_skeleton(self) -> NeoTimeZoneSkeleton {
-        let mut skeleton = NeoTimeZoneSkeleton::default();
         match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
-                skeleton.style = NeoTimeZoneStyle::NonLocation;
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Long,
+                    NeoTimeZoneStyle::Generic,
+                )
             }
             TimeZoneFormatterConfig::GenericNonLocationShort => {
-                skeleton.length = Some(NeoSkeletonLength::Short);
-                skeleton.style = NeoTimeZoneStyle::NonLocation;
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Short,
+                    NeoTimeZoneStyle::Generic,
+                )
             }
             TimeZoneFormatterConfig::GenericLocation => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
-                skeleton.style = NeoTimeZoneStyle::Location;
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Long,
+                    NeoTimeZoneStyle::Location,
+                )
             }
             TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
-                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Long,
+                    NeoTimeZoneStyle::Specific,
+                )
             }
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                skeleton.length = Some(NeoSkeletonLength::Short);
-                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Short,
+                    NeoTimeZoneStyle::Specific,
+                )
             }
-            TimeZoneFormatterConfig::LocalizedOffset => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
-                skeleton.style = NeoTimeZoneStyle::Offset;
+            TimeZoneFormatterConfig::LocalizedOffsetLong => {
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Long,
+                    NeoTimeZoneStyle::Offset,
+                )
+            }
+            TimeZoneFormatterConfig::LocalizedOffsetShort => {
+                NeoTimeZoneSkeleton::for_length_and_components(
+                    NeoSkeletonLength::Short,
+                    NeoTimeZoneStyle::Offset,
+                )
             }
             TimeZoneFormatterConfig::Iso8601(
                 IsoFormat::UtcBasic,
@@ -178,6 +195,5 @@ impl TimeZoneFormatterConfig {
                 todo!()
             }
         }
-        skeleton
     }
 }

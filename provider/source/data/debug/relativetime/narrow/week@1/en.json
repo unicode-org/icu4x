@@ -5,19 +5,32 @@
     "1": "next wk."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001w ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "w ago"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004in w"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "w"
+        }
       ]
-    }
+    ]
   }
 }

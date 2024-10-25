@@ -5,19 +5,29 @@
     "1": "gelecek yıl"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 yıl önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yıl önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 yıl sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yıl sonra"
+        }
       ]
-    }
+    ]
   }
 }

@@ -32,9 +32,9 @@
                     "era": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear"],
+                    "fieldSet": ["year"],
                     "length": "medium",
-                    "eraDisplay": "always"
+                    "yearStyle": "always"
                 }
             }
         },
@@ -97,8 +97,9 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month", "day"],
-                    "length": "short"
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short",
+                    "yearStyle": "full"
                 }
             }
         },

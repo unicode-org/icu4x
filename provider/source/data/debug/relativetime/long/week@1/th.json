@@ -5,19 +5,32 @@
     "1": "สัปดาห์หน้า"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 สัปดาห์ที่ผ่านมา"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " สัปดาห์ที่ผ่านมา"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0011ในอีก  สัปดาห์"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ในอีก "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " สัปดาห์"
+        }
       ]
-    }
+    ]
   }
 }

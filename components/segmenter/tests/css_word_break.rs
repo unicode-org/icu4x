@@ -31,7 +31,7 @@ fn break_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Strict;
     options.word_option = LineBreakWordOption::BreakAll;
-    options.ja_zh = false;
+    options.content_locale = None;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
@@ -39,7 +39,7 @@ fn keep_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Strict;
     options.word_option = LineBreakWordOption::KeepAll;
-    options.ja_zh = false;
+    options.content_locale = None;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
@@ -47,7 +47,7 @@ fn normal(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Strict;
     options.word_option = LineBreakWordOption::Normal;
-    options.ja_zh = false;
+    options.content_locale = None;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 

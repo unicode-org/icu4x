@@ -4960,32 +4960,8 @@
             "instrumental-count-other": "{0} имп. кварты"
           },
           "speed-light-speed": {
-            "gender": "feminine",
-            "displayName": "скорость света",
-            "unitPattern-count-one": "{0} скорость света",
-            "accusative-count-one": "{0} скорость света",
-            "dative-count-one": "{0} скорости света",
-            "genitive-count-one": "{0} скорости света",
-            "instrumental-count-one": "{0} скоростью света",
-            "prepositional-count-one": "{0} скорости света",
-            "unitPattern-count-few": "{0} скорости света",
-            "accusative-count-few": "{0} скорости света",
-            "dative-count-few": "{0} скоростям света",
-            "genitive-count-few": "{0} скоростей света",
-            "instrumental-count-few": "{0} скоростями света",
-            "prepositional-count-few": "{0} скоростях света",
-            "unitPattern-count-many": "{0} скоростей света",
-            "accusative-count-many": "{0} скоростей света",
-            "dative-count-many": "{0} скоростям света",
-            "genitive-count-many": "{0} скоростей света",
-            "instrumental-count-many": "{0} скоростями света",
-            "prepositional-count-many": "{0} скоростях света",
-            "unitPattern-count-other": "{0} скорости света",
-            "accusative-count-other": "{0} скорости света",
-            "dative-count-other": "{0} скорости света",
-            "genitive-count-other": "{0} скорости света",
-            "instrumental-count-other": "{0} скорости света",
-            "prepositional-count-other": "{0} скорости света"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "gender": "feminine",
@@ -6439,11 +6415,8 @@
             "unitPattern-count-other": "{0} имп. кварт."
           },
           "speed-light-speed": {
-            "displayName": "ск. света",
-            "unitPattern-count-one": "{0} ск. света",
-            "unitPattern-count-few": "{0} ск. света",
-            "unitPattern-count-many": "{0} ск. света",
-            "unitPattern-count-other": "{0} ск. света"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "ppb",
@@ -7852,11 +7825,8 @@
             "unitPattern-count-other": "{0} имп. кварт."
           },
           "speed-light-speed": {
-            "displayName": "c",
-            "unitPattern-count-one": "{0} c",
-            "unitPattern-count-few": "{0} c",
-            "unitPattern-count-many": "{0} c",
-            "unitPattern-count-other": "{0} c"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "ppb",

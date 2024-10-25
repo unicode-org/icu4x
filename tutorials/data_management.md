@@ -98,7 +98,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, neo_skeleton::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{DateTimeFormatter, neo_skeleton::YMDHMS, NeoSkeletonLength};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -109,10 +109,10 @@ impl_data_provider!(MyDataProvider);
 fn main() {
     let baked_provider = MyDataProvider;
 
-    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
+    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("ja data should be available");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
@@ -135,15 +135,13 @@ $ cargo add icu --features serde
 $ cargo add icu_provider_blob
 ```
 
-We can generate data for it using the `--format blob2` flag:
+We can generate data for it using the `--format blob` flag:
 
 ```console
-$ icu4x-datagen --markers all --locales ja --format blob2 --out my_data_blob.postcard
+$ icu4x-datagen --markers all --locales ja --format blob --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
-
-💡 Note: `--format blob2` generates version 2 of the blob format. Alternatively, `--format blob` produces an older blob format which works with ICU4X prior to 1.4 but is not as optimized.
 
 ## Locale Fallbacking
 
@@ -156,7 +154,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDHMS};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -173,10 +171,14 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
-        .expect("blob should contain required markers and `ja` data");
+    let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+        &buffer_provider,
+        &LOCALE.into(),
+        YMDHMS::medium()
+    )
+    .expect("blob should contain required markers and `ja` data");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
@@ -193,19 +195,19 @@ As you can see in the second `expect` message, it's not possible to statically t
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob2 --out my_data_blob.postcard --overwrite
+$ icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
 
 The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include markers that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
-We can instead use `TypedNeoFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
+We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{TypedNeoFormatter, neo_marker::NeoAutoDateTimeMarker, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::YMDHMS, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -222,10 +224,14 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let dtf = TypedNeoFormatter::<Gregorian, NeoAutoDateTimeMarker>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
-        .expect("blob should contain required data");
+    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
+        &buffer_provider,
+        &LOCALE.into(),
+        YMDHMS::medium(),
+    )
+    .expect("blob should contain required data");
 
-    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_gregorian(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
     let formatted_date = dtf.format(&date).to_string_lossy();
@@ -234,7 +240,7 @@ fn main() {
 }
 ```
 
-This has two advantages: it reduces our code size, as `NeoFormatter` includes much more functionality than `TypedNeoFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `FixedCalendarDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 

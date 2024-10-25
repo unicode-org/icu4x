@@ -6,8 +6,9 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
+use icu::plurals::provider::PluralElementsPackedCow;
 use icu::plurals::PluralElements;
-use icu_pattern::SinglePlaceholder;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
@@ -103,8 +104,8 @@ macro_rules! make_data_provider {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(RelativeTimePatternDataV1 {
                             relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
-                            past: (&data.past).try_into()?,
-                            future: (&data.future).try_into()?,
+                            past: (&data.past).into(),
+                            future: (&data.future).into(),
                         }),
                     })
                 }
@@ -124,12 +125,11 @@ macro_rules! make_data_provider {
     };
 }
 
-impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
-    for PluralPatterns<'_, SinglePlaceholder>
+impl From<&cldr_serde::date_fields::PluralRulesPattern>
+    for PluralElementsPackedCow<'_, SinglePlaceholderPattern>
 {
-    type Error = DataError;
-    fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
-        PluralElements::new(field.other.as_str())
+    fn from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Self {
+        PluralElements::new(&*field.other)
             .with_zero_value(field.zero.as_deref())
             .with_one_value(field.one.as_deref())
             .with_two_value(field.two.as_deref())
@@ -137,8 +137,7 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
             .with_many_value(field.many.as_deref())
             .with_explicit_one_value(field.explicit_one.as_deref())
             .with_explicit_zero_value(field.explicit_zero.as_deref())
-            .try_into()
-            .map_err(|_| DataError::custom("Invalid pattern"))
+            .into()
     }
 }
 

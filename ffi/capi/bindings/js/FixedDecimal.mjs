@@ -98,10 +98,10 @@ export class FixedDecimal {
         }
     }
 
-    static fromNumberWithFloatingPrecision(f) {
+    static fromNumberWithRoundTripPrecision(f) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(diplomatReceive.buffer, f);
+        const result = wasm.icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1(diplomatReceive.buffer, f);
     
         try {
             if (!diplomatReceive.resultFlag) {

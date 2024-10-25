@@ -21,7 +21,6 @@ export class Error {
         ["DataCustomError", 266],
         ["DataIoError", 267],
         ["DataUnavailableBufferFormatError", 268],
-        ["PropertyUnexpectedPropertyNameError", 1026],
         ["DateTimePatternError", 2048],
         ["DateTimeMissingInputFieldError", 2049],
         ["DateTimeSkeletonError", 2050],
@@ -33,8 +32,13 @@ export class Error {
         ["DateTimeMismatchedCalendarError", 2056],
         ["DateTimeDuplicateFieldError", 2057],
         ["DateTimeTooNarrowError", 2058],
-        ["DateTimeMissingNamesError", 2059]
+        ["DateTimeMissingNamesError", 2059],
+        ["DateTimeZoneInfoMissingFieldsError", 2176]
     ]);
+
+    static getAllEntries() {
+        return Error.#values.entries();
+    }
 
     constructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
@@ -83,7 +87,6 @@ export class Error {
         [266]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 266),
         [267]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 267),
         [268]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 268),
-        [1026]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1026),
         [2048]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2048),
         [2049]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2049),
         [2050]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2050),
@@ -96,6 +99,7 @@ export class Error {
         [2057]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2057),
         [2058]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2058),
         [2059]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2059),
+        [2176]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2176),
     };
 
     static UnknownError = Error.#objectValues[0];
@@ -108,7 +112,6 @@ export class Error {
     static DataCustomError = Error.#objectValues[266];
     static DataIoError = Error.#objectValues[267];
     static DataUnavailableBufferFormatError = Error.#objectValues[268];
-    static PropertyUnexpectedPropertyNameError = Error.#objectValues[1026];
     static DateTimePatternError = Error.#objectValues[2048];
     static DateTimeMissingInputFieldError = Error.#objectValues[2049];
     static DateTimeSkeletonError = Error.#objectValues[2050];
@@ -121,4 +124,5 @@ export class Error {
     static DateTimeDuplicateFieldError = Error.#objectValues[2057];
     static DateTimeTooNarrowError = Error.#objectValues[2058];
     static DateTimeMissingNamesError = Error.#objectValues[2059];
+    static DateTimeZoneInfoMissingFieldsError = Error.#objectValues[2176];
 }

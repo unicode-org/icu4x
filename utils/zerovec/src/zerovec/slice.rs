@@ -7,7 +7,9 @@ use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::ops::Range;
 
-/// A zero-copy "slice", i.e. the zero-copy version of `[T]`. This behaves
+/// A zero-copy "slice", i.e. the zero-copy version of `[T]`.
+///
+/// This behaves
 /// similarly to [`ZeroVec<T>`], however [`ZeroVec<T>`] is allowed to contain
 /// owned data and as such is ideal for deserialization since most human readable
 /// serialization formats cannot unconditionally deserialize zero-copy.

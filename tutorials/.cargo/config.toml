@@ -9,6 +9,10 @@
 [patch.crates-io]
 # KEEP IN SYNC WITH TOP-LEVEL Cargo.toml
 
+# ICU4X core
+icu_provider = { path = "../provider/core" }
+icu_locale_core = { path = "../components/locale_core" }
+
 # Components
 icu = { path = "../components/icu" }
 icu_calendar = { path = "../components/calendar" }
@@ -20,9 +24,9 @@ icu_datetime = { path = "../components/datetime" }
 icu_decimal = { path = "../components/decimal" }
 icu_experimental = { path = "../components/experimental" }
 icu_list = { path = "../components/list" }
-icu_locale_core = { path = "../components/locale_core" }
 icu_locale = { path = "../components/locale" }
 icu_normalizer = { path = "../components/normalizer" }
+icu_pattern = { path = "../components/pattern" }
 icu_plurals = { path = "../components/plurals" }
 icu_properties = { path = "../components/properties" }
 icu_segmenter = { path = "../components/segmenter" }
@@ -37,7 +41,6 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 # Provider
 icu_provider_export = { path = "../provider/export" }
 icu_provider_source = { path = "../provider/source" }
-icu_provider = { path = "../provider/core" }
 icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }
@@ -67,7 +70,6 @@ databake = { path = "../utils/databake" }
 databake-derive = { path = "../utils/databake/derive" }
 deduplicating_array = { path = "../utils/deduplicating_array" }
 fixed_decimal = { path = "../utils/fixed_decimal" }
-icu_pattern = { path = "../utils/pattern" }
 ixdtf = { path = "../utils/ixdtf" }
 litemap = { path = "../utils/litemap" }
 tinystr = { path = "../utils/tinystr" }

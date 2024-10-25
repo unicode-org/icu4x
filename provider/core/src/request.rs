@@ -293,16 +293,23 @@ impl Hash for DataLocale {
     }
 }
 
-impl<'a> Default for &'a DataLocale {
-    fn default() -> Self {
-        static DEFAULT: DataLocale = DataLocale {
+impl DataLocale {
+    /// `const` version of `Default::default`
+    pub const fn default() -> Self {
+        DataLocale {
             language: Language::UND,
             script: None,
             region: None,
             variant: None,
             subdivision: None,
             keywords: unicode_ext::Keywords::new(),
-        };
+        }
+    }
+}
+
+impl Default for &DataLocale {
+    fn default() -> Self {
+        static DEFAULT: DataLocale = DataLocale::default();
         &DEFAULT
     }
 }
@@ -598,7 +605,7 @@ pub struct DataMarkerAttributes {
     value: str,
 }
 
-impl<'a> Default for &'a DataMarkerAttributes {
+impl Default for &DataMarkerAttributes {
     fn default() -> Self {
         DataMarkerAttributes::empty()
     }

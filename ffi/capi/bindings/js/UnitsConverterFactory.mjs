@@ -10,6 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
 *for converting between two [`MeasureUnit`]s.
+*
 *Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 *
 *See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.

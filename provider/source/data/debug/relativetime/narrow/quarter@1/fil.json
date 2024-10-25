@@ -5,19 +5,32 @@
     "1": "susunod na quarter"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 quarter ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  quarter"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter"
+        }
       ]
-    }
+    ]
   }
 }

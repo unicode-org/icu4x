@@ -5,15 +5,15 @@
 //! This module contains types and implementations for the Republic of China calendar.
 //!
 //! ```rust
-//! use icu::calendar::{roc::Roc, Date, DateTime};
+//! use icu::calendar::{cal::Roc, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_roc = Date::new_from_iso(date_iso, Roc);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_roc = DateTime::new_from_iso(datetime_iso, Roc);
 //!
@@ -197,11 +197,11 @@ impl Date<Roc> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use icu::calendar::gregorian::Gregorian;
+    /// use icu::calendar::cal::Gregorian;
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC Date
-    /// let date_roc = Date::try_new_roc_date(1, 2, 3)
+    /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
     /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "roc"));
@@ -215,9 +215,9 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
-    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
+    pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
         let iso_year = year.saturating_add(ROC_ERA_OFFSET);
-        Date::try_new_iso_date(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
+        Date::try_new_iso(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
     }
 }
 
@@ -231,7 +231,7 @@ impl DateTime<Roc> {
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC DateTime
-    /// let datetime_roc = DateTime::try_new_roc_datetime(1, 2, 3, 13, 1, 0)
+    /// let datetime_roc = DateTime::try_new_roc(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
     /// assert_eq!(datetime_roc.date.year().standard_era().unwrap().0, tinystr!(16, "roc"));
@@ -250,7 +250,7 @@ impl DateTime<Roc> {
     /// assert_eq!(datetime_roc.time.minute.number(), 1);
     /// assert_eq!(datetime_roc.time.second.number(), 0);
     /// ```
-    pub fn try_new_roc_datetime(
+    pub fn try_new_roc(
         year: i32,
         month: u8,
         day: u8,
@@ -259,7 +259,7 @@ impl DateTime<Roc> {
         second: u8,
     ) -> Result<DateTime<Roc>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_roc_date(year, month, day)?,
+            date: Date::try_new_roc(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -300,7 +300,7 @@ mod test {
         expected_year: i32,
         expected_era: Era,
         expected_month: u8,
-        expected_day: u32,
+        expected_day: u8,
     }
 
     fn check_test_case(case: TestCase) {
@@ -315,7 +315,7 @@ mod test {
         assert_eq!(roc_from_fixed.day_of_month().0, case.expected_day,
             "Failed day_of_month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
 
-        let iso_from_case = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+        let iso_from_case = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
             .expect("Failed to initialize ISO date for {case:?}");
         let roc_from_case = Date::new_from_iso(iso_from_case, Roc);
         assert_eq!(iso_from_fixed, iso_from_case,
