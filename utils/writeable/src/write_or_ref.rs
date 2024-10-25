@@ -9,7 +9,9 @@ use core::fmt;
 
 /// Bytes that have been partially validated as UTF-8 up to an offset.
 struct PartiallyValidatedUtf8<'a> {
-    // Safety Invariant: the slice is valid UTF-8 up to the offset.
+    // Safety Invariants:
+    // 1. The offset is less than or equal to the length of the slice.
+    // 2. The slice is valid UTF-8 up to the offset.
     slice: &'a [u8],
     offset: usize,
 }
@@ -35,10 +37,9 @@ impl<'a> PartiallyValidatedUtf8<'a> {
 
     /// Return the validated portion as `&str`.
     fn validated_as_str(&self) -> &'a str {
-        let valid_slice = self.slice.get(..self.offset).unwrap_or_else(|| {
-            debug_assert!(false, "self.offset always in range");
-            &[]
-        });
+        debug_assert!(self.offset <= self.slice.len());
+        // Safety: self.offset is a valid end index in a range
+        let valid_slice = unsafe { self.slice.get_unchecked(..self.offset) };
         debug_assert!(core::str::from_utf8(valid_slice).is_ok());
         // Safety: the UTF-8 of slice has been validated up to offset
         unsafe { core::str::from_utf8_unchecked(valid_slice) }
