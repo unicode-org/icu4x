@@ -6,7 +6,7 @@ use crate::Writeable;
 use core::cmp::Ordering;
 use core::fmt;
 
-pub(crate) struct WriteComparator<'a> {
+struct WriteComparator<'a> {
     code_units: &'a [u8],
     result: Ordering,
 }
@@ -28,7 +28,7 @@ impl fmt::Write for WriteComparator<'_> {
 
 impl<'a> WriteComparator<'a> {
     #[inline]
-    pub fn new(code_units: &'a [u8]) -> Self {
+    fn new(code_units: &'a [u8]) -> Self {
         Self {
             code_units,
             result: Ordering::Equal,
@@ -36,7 +36,7 @@ impl<'a> WriteComparator<'a> {
     }
 
     #[inline]
-    pub fn finish(self) -> Ordering {
+    fn finish(self) -> Ordering {
         if matches!(self.result, Ordering::Equal) && !self.code_units.is_empty() {
             // Self is longer than Other
             Ordering::Greater
