@@ -77,12 +77,12 @@ impl<'a> WriteComparator<'a> {
 /// let message = WelcomeMessage { name: "Alice" };
 /// let message_str = message.write_to_string();
 ///
-/// assert_eq!(Ordering::Equal, writeable::cmp_bytes(message, b"Hello, Alice!"));
+/// assert_eq!(Ordering::Equal, writeable::cmp_bytes(&message, b"Hello, Alice!"));
 ///
-/// assert_eq!(Ordering::Greater, writeable::cmp_bytes(message, b"Alice!"));
+/// assert_eq!(Ordering::Greater, writeable::cmp_bytes(&message, b"Alice!"));
 /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
 ///
-/// assert_eq!(Ordering::Less, writeable::cmp_bytes(message, b"Hello, Bob!"));
+/// assert_eq!(Ordering::Less, writeable::cmp_bytes(&message, b"Hello, Bob!"));
 /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
 /// ```
 pub fn cmp_bytes(writeable: &impl Writeable, other: &[u8]) -> Ordering {
