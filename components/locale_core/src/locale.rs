@@ -171,14 +171,14 @@ impl Locale {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
-        let cow: Cow<str> = locale.write_to_string();
-        if cow.as_bytes() == input {
-            // Safety: input is known to be valid UTF-8 since it has the same
-            // bytes as `cow`, which is a `str`.
-            let s = unsafe { core::str::from_utf8_unchecked(input) };
+        if locale.writeable_cmp_bytes(input) == Ordering::Equal {
+            let Ok(s) = core::str::from_utf8(input) else {
+                debug_assert!(false, "parsing should have failed");
+                return Err(ParseError::InvalidLanguage);
+            };
             Ok(s.into())
         } else {
-            Ok(cow.into_owned().into())
+            Ok(locale.write_to_string().into_owned().into())
         }
     }
 
@@ -198,12 +198,11 @@ impl Locale {
     /// );
     /// ```
     pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        let locale = Self::try_from_str(input)?;
-        let cow = locale.write_to_string();
-        if cow == input {
+        let locale = Self::try_from_utf8(input.as_bytes())?;
+        if locale.writeable_cmp_bytes(input.as_bytes()) == Ordering::Equal {
             Ok(input.into())
         } else {
-            Ok(cow.into_owned().into())
+            Ok(locale.write_to_string().into_owned().into())
         }
     }
 
