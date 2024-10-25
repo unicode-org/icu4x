@@ -7,7 +7,6 @@ use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
 use alloc::vec::Vec;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
 ///
@@ -306,7 +305,7 @@ impl FromStr for Value {
 
 impl PartialEq<&str> for Value {
     fn eq(&self, other: &&str) -> bool {
-        self.writeable_cmp_bytes(other.as_bytes()).is_eq()
+        writeable::cmp_bytes(self, other.as_bytes()).is_eq()
     }
 }
 
