@@ -131,6 +131,19 @@ fn writeable_benches(c: &mut Criterion) {
             .into_owned()
         });
     });
+    c.bench_function("writeable/writeable_cmp_bytes", |b| {
+        b.iter(|| {
+            let short = black_box(SHORT_STR);
+            let medium = black_box(MEDIUM_STR);
+            let long = black_box(LONG_STR);
+            [short, medium, long].map(|s1| {
+                [short, medium, long].map(|s2| {
+                    let message = WriteableMessage { message: s1 };
+                    message.writeable_cmp_bytes(s2.as_bytes())
+                })
+            })
+        });
+    });
 }
 
 #[cfg(feature = "bench")]
@@ -212,6 +225,20 @@ fn complex_benches(c: &mut Criterion) {
     });
     c.bench_function("complex/display_to_string/medium", |b| {
         b.iter(|| black_box(COMPLEX_WRITEABLE_MEDIUM).to_string());
+    });
+    const REFERENCE_STRS: [&str; 6] = [
+        "There are 55 apples and 8124 oranges",
+        "There are 55 apples and 0 oranges",
+        "There are no apples",
+        SHORT_STR,
+        MEDIUM_STR,
+        LONG_STR,
+    ];
+    c.bench_function("complex/writeable_cmp_bytes", |b| {
+        b.iter(|| {
+            black_box(REFERENCE_STRS)
+                .map(|s| black_box(COMPLEX_WRITEABLE_MEDIUM).writeable_cmp_bytes(s.as_bytes()))
+        });
     });
 }
 
