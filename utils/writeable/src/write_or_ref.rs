@@ -24,7 +24,7 @@ impl fmt::Write for WriteOrRef<'_> {
     fn write_str(&mut self, other: &str) -> fmt::Result {
         let owned: &mut String = match &mut self.string {
             SliceOrString::Slice(slice) => {
-                if slice.get(self.offset..other.len()) == Some(other.as_bytes()) {
+                if slice.get(self.offset..self.offset + other.len()) == Some(other.as_bytes()) {
                     // Safety Invariant: `other` is valid UTF-8, and we are
                     // incrementing the offset to cover bytes equal to `other`
                     self.offset += other.len();
@@ -78,6 +78,111 @@ impl<'a> WriteOrRef<'a> {
     }
 }
 
+/// Writes the contents of a `Writeable` to a string, returning a reference
+/// to a slice if it matches, and allocating a string otherwise.
+///
+/// This function is useful if you have borrowed bytes which you expect
+/// to be equal to a writeable a high percentage of the time.
+///
+/// You can also use this function to make a more efficient implementation of
+/// [`Writeable::write_to_string`].
+///
+/// # Examples
+///
+/// Basic usage and behavior:
+///
+/// ```
+/// use std::fmt;
+/// use std::borrow::Cow;
+/// use writeable::Writeable;
+///
+/// struct WelcomeMessage<'s> {
+///     pub name: &'s str,
+/// }
+///
+/// impl<'s> Writeable for WelcomeMessage<'s> {
+///     // see impl in Writeable docs
+/// #    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+/// #        sink.write_str("Hello, ")?;
+/// #        sink.write_str(self.name)?;
+/// #        sink.write_char('!')?;
+/// #        Ok(())
+/// #    }
+/// }
+///
+/// let message = WelcomeMessage { name: "Alice" };
+///
+/// assert!(matches!(
+///     writeable::write_or_ref(&message, b""),
+///     Cow::Owned(s) if s == "Hello, Alice!"
+/// ));
+/// assert!(matches!(
+///     writeable::write_or_ref(&message, b"Hello"),
+///     Cow::Owned(s) if s == "Hello, Alice!"
+/// ));
+/// assert!(matches!(
+///     writeable::write_or_ref(&message, b"Hello, Bob!"),
+///     Cow::Owned(s) if s == "Hello, Alice!"
+/// ));
+/// assert!(matches!(
+///     writeable::write_or_ref(&message, b"Hello, Alice!"),
+///     Cow::Borrowed("Hello, Alice!")
+/// ));
+///
+/// // Junk at the end is ignored:
+/// assert!(matches!(
+///     writeable::write_or_ref(&message, b"Hello, Alice!..\xFF\x00\xFF"),
+///     Cow::Borrowed("Hello, Alice!")
+/// ));
+/// ```
+///
+/// Example use case: a function that transforms a string to lowercase.
+/// We are also able to write a more efficient implementation of
+/// [`Writeable::write_to_string`] in this situation.
+///
+/// ```
+/// use std::fmt;
+/// use std::borrow::Cow;
+/// use writeable::Writeable;
+///
+/// struct MakeAsciiLower<'a>(&'a str);
+///
+/// impl<'a> Writeable for MakeAsciiLower<'a> {
+///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+///         for c in self.0.chars() {
+///             sink.write_char(c.to_ascii_lowercase())?;
+///         }
+///         Ok(())
+///     }
+///     #[inline]
+///     fn write_to_string(&self) -> Cow<str> {
+///         writeable::write_or_ref(self, self.0.as_bytes())
+///     }
+/// }
+///
+/// fn make_lowercase(input: &str) -> Cow<str> {
+///     let writeable = MakeAsciiLower(input);
+///     writeable::write_or_ref(&writeable, input.as_bytes())
+/// }
+///
+/// assert!(matches!(
+///     make_lowercase("this is lowercase"),
+///     Cow::Borrowed("this is lowercase")
+/// ));
+/// assert!(matches!(
+///     make_lowercase("this is UPPERCASE"),
+///     Cow::Owned(s) if s == "this is uppercase"
+/// ));
+///
+/// assert!(matches!(
+///     MakeAsciiLower("this is lowercase").write_to_string(),
+///     Cow::Borrowed("this is lowercase")
+/// ));
+/// assert!(matches!(
+///     MakeAsciiLower("this is UPPERCASE").write_to_string(),
+///     Cow::Owned(s) if s == "this is uppercase"
+/// ));
+/// ```
 pub fn write_or_ref<'a>(writeable: &impl Writeable, reference_bytes: &'a [u8]) -> Cow<'a, str> {
     let mut sink = WriteOrRef::new(reference_bytes);
     let _ = writeable.write_to(&mut sink);
