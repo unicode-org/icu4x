@@ -183,41 +183,20 @@ lazy_static::lazy_static! {
         "icu::calendar::types::YearInfo::cyclic",
         "icu::calendar::types::YearInfo::related_iso",
 
-        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
-        // Potential solutions:
-        // - borrow and clone (cheap as long it's not json)
-        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
-        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
-        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
-        //   can be destructively passed to these constructors via &mut self. All future
-        //   specialized constructors show up on this type instead.
-        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::FixedCalendarDateTimeFormatter::try_from_date_and_time",
-
-        // experimental
-        "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::FixedCalendarDateTimeFormatter::resolve_components",
-
         // Experimental API mostly used for provider, components bags, and patterns,
         // may in the future be exposed for options
         "icu::datetime::fields",
 
         // experimental
-        "icu::datetime::neo",
-        "icu::datetime::neo_marker",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental",
         "icu::datetime::DateTimeWriteError",
         "icu::datetime::LoadError",
         "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
-        "icu::datetime::FixedCalendarDateTimeFormatter::try_new_experimental",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
         // experimental
         "icu::experimental",
@@ -335,26 +314,6 @@ lazy_static::lazy_static! {
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::calendar::types::Time",
 
-
-        // TODO-2.0 these errors will have changed
-        "fixed_decimal::Error",
-        "icu::calendar::Error",
-        "icu::collator::Error",
-        "icu::collections::codepointinvlist::Error",
-        "icu::compactdecimal::Error",
-        "icu::datetime::Error",
-        "icu::decimal::Error",
-        "icu::list::Error",
-        "icu::locale::Error",
-        "icu::locale::Error",
-        "icu::normalizer::Error",
-        "icu::plurals::Error",
-        "icu::properties::Error",
-        "icu::relativetime::Error",
-        "icu::segmenter::Error",
-        "icu::timezone::Error",
-        "icu::transliterator::Error",
-
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
@@ -388,10 +347,6 @@ lazy_static::lazy_static! {
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::FixedDecimalFormatterOptions",
 
-        // Constructing an error is not useful over FFI because it gets turned into
-        // a flat ICU4XError anyway
-        "icu::calendar::CalendarError::unknown_any_calendar_kind",
-
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types::MonthCode",
@@ -406,16 +361,9 @@ lazy_static::lazy_static! {
         "icu::calendar::types::IsoWeekday",
         "icu::calendar::types::Era",
 
-        // Rusty input trait
-        "icu::datetime::input",
-
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
         "icu::plurals::PluralCategory::all",
-
-        // locale_core comparison iteration
-        "icu::locale::Locale::strict_cmp_iter",
-        "icu::locale::SubtagOrderingResult",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
