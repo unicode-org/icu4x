@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "roc": "minguo",
-    "roc-inverse": "antes de RDC"
-  }
+  "FixedEras": [
+    "antes de RDC",
+    "minguo"
+  ]
 }

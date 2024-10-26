@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "BCE",
-    "ce": "CE"
-  }
+  "FixedEras": [
+    "BCE",
+    "CE"
+  ]
 }

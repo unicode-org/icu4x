@@ -393,7 +393,7 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
         let calendar = self.calendar.as_calendar().debug_name();
         match self.year().kind {
             types::YearKind::Era(e) => {
-                let era = e.formatting_era.0;
+                let era = e.standard_era.0;
                 let era_year = e.era_year;
                 write!(
                     f,
