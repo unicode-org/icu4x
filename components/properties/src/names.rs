@@ -90,10 +90,7 @@ impl<T> PropertyParser<T> {
     where
         T: ParseableEnumeratedProperty,
     {
-        PropertyParserBorrowed {
-            map: T::SINGLETON,
-            markers: PhantomData,
-        }
+        PropertyParserBorrowed::new()
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -244,7 +241,30 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl<T: ParseableEnumeratedProperty> Default for PropertyParserBorrowed<'static, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
+    /// Creates a new instance of `PropertyParserBorrowed<T>` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> Self
+    where
+        T: ParseableEnumeratedProperty,
+    {
+        Self {
+            map: T::SINGLETON,
+            markers: PhantomData,
+        }
+    }
+
     /// Cheaply converts a [`PropertyParserBorrowed<'static>`] into a [`PropertyParser`].
     ///
     /// Note: Due to branching and indirection, using [`PropertyParser`] might inhibit some
@@ -356,7 +376,7 @@ impl<T: NamedEnumeratedProperty> Clone for PropertyNamesLongBorrowed<'_, T> {
 impl<T: NamedEnumeratedProperty> Copy for PropertyNamesLongBorrowed<'_, T> {}
 
 impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
-    /// Creates a new instance of `PropertyNamesLong<T>`.
+    /// Creates a new instance of `PropertyNamesLongBorrowed<T>`.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -364,9 +384,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub fn new() -> PropertyNamesLongBorrowed<'static, T> {
-        PropertyNamesLongBorrowed {
-            map: T::SINGLETON_LONG,
-        }
+        PropertyNamesLongBorrowed::new()
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -418,7 +436,26 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'_, T> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl<T: NamedEnumeratedProperty> Default for PropertyNamesLongBorrowed<'static, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
+    /// Creates a new instance of `PropertyNamesLongBorrowed<T>`.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> Self {
+        Self {
+            map: T::SINGLETON_LONG,
+        }
+    }
+
     /// Cheaply converts a [`PropertyNamesLongBorrowed<'static>`] into a [`PropertyNamesLong`].
     ///
     /// Note: Due to branching and indirection, using [`PropertyNamesLong`] might inhibit some
@@ -478,7 +515,7 @@ impl<T: NamedEnumeratedProperty> Clone for PropertyNamesShortBorrowed<'_, T> {
 impl<T: NamedEnumeratedProperty> Copy for PropertyNamesShortBorrowed<'_, T> {}
 
 impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
-    /// Creates a new instance of `PropertyNamesShort<T>`.
+    /// Creates a new instance of `PropertyNamesShortBorrowed<T>`.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -486,9 +523,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub fn new() -> PropertyNamesShortBorrowed<'static, T> {
-        PropertyNamesShortBorrowed {
-            map: T::SINGLETON_SHORT,
-        }
+        PropertyNamesShortBorrowed::new()
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -574,7 +609,26 @@ impl PropertyNamesShortBorrowed<'_, Script> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl<T: NamedEnumeratedProperty> Default for PropertyNamesShortBorrowed<'static, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'static, T> {
+    /// Creates a new instance of `PropertyNamesShortBorrowed<T>`.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> Self {
+        Self {
+            map: T::SINGLETON_SHORT,
+        }
+    }
+
     /// Cheaply converts a [`PropertyNamesShortBorrowed<'static>`] into a [`PropertyNamesShort`].
     ///
     /// Note: Due to branching and indirection, using [`PropertyNamesShort`] might inhibit some

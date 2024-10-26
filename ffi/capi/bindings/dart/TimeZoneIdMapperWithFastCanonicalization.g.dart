@@ -29,6 +29,8 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
   ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.new) for more information.
+  ///
   /// Throws [DataError] on failure.
   factory TimeZoneIdMapperWithFastCanonicalization(DataProvider provider) {
     final result = _icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(provider._ffi);

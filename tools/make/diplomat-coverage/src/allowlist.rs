@@ -104,6 +104,11 @@ lazy_static::lazy_static! {
         // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",
+        // Not planned for 2.0 but would be nice to return 'static refs
+        // with Diplomat support.
+        // Borrowed <-> owned converters
+        "static_to_owned",
+        "as_borrowed",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -290,44 +295,6 @@ lazy_static::lazy_static! {
         // fork by locale/key ones. Could be added if we have callbacks.
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
-
-        // Not planned for 2.0 but would be nice to return 'static refs
-        // with Diplomat support.
-        // Borrowed <-> owned converters
-        "icu::collator::Collator::as_borrowed",
-        "icu::collator::CollatorBorrowed::static_to_owned",
-        "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
-        "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
-        "icu::locale::fallback::LocaleFallbacker::as_borrowed",
-        "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
-        "icu::normalizer::ComposingNormalizer::as_borrowed",
-        "icu::normalizer::ComposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::DecomposingNormalizer::as_borrowed",
-        "icu::normalizer::DecomposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalCombiningClassMap::as_borrowed",
-        "icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalComposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalCompositionBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalDecomposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalDecompositionBorrowed::static_to_owned",
-        "icu::normalizer::uts46::Uts46Mapper::as_borrowed",
-        "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
-        "icu::properties::CodePointMapData::as_borrowed",
-        "icu::properties::CodePointMapDataBorrowed::static_to_owned",
-        "icu::properties::CodePointSetData::as_borrowed",
-        "icu::properties::CodePointSetDataBorrowed::static_to_owned",
-        "icu::properties::EmojiSetData::as_borrowed",
-        "icu::properties::EmojiSetDataBorrowed::static_to_owned",
-        "icu::properties::PropertyNamesLong::as_borrowed",
-        "icu::properties::PropertyNamesShort::as_borrowed",
-        "icu::properties::PropertyNamesLongBorrowed::static_to_owned",
-        "icu::properties::PropertyNamesShortBorrowed::static_to_owned",
-        "icu::properties::PropertyParser::as_borrowed",
-        "icu::properties::PropertyParserBorrowed::static_to_owned",
-        "icu::properties::script::ScriptMapper::as_borrowed",
-        "icu::properties::script::ScriptMapperBorrowed::static_to_owned",
-        "icu::properties::script::ScriptWithExtensions::as_borrowed",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
