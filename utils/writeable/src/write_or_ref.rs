@@ -18,17 +18,24 @@ struct PartiallyValidatedUtf8<'a> {
 
 impl<'a> PartiallyValidatedUtf8<'a> {
     fn new(slice: &'a [u8]) -> Self {
+        // Safety: Field invariants maintained here trivially:
+        //   1. The offset 0 is ≤ all possible lengths of slice
+        //   2. The slice contains nothing up to the offset zero
         Self { slice, offset: 0 }
     }
 
     /// Check whether the given string is the next chunk of unvalidated bytes.
     /// If so, increment offset and return true. Otherwise, return false.
     fn try_push(&mut self, valid_str: &str) -> bool {
-        if self.slice.get(self.offset..self.offset + valid_str.len()) == Some(valid_str.as_bytes())
-        {
-            // Safety Invariant: `valid_str` is valid UTF-8, and we are
-            // incrementing the offset to cover bytes equal to `valid_str`
-            self.offset += valid_str.len();
+        let new_offset = self.offset + valid_str.len();
+        if self.slice.get(self.offset..new_offset) == Some(valid_str.as_bytes()) {
+            // Safety: Field invariants maintained here:
+            //   1. In the line above, `self.slice.get()` returned `Some()` for `new_offset` at
+            //      the end of a `Range`, so `new_offset` is ≤ the length of `self.slice`.
+            //   2. By invariant, we have already validated the string up to `self.offset`, and
+            //      the portion of the slice between `self.offset` and `new_offset` is equal to
+            //      `valid_str`, which is a `&str`, so the string is valid up to `new_offset`.
+            self.offset = new_offset;
             true
         } else {
             false
@@ -38,10 +45,10 @@ impl<'a> PartiallyValidatedUtf8<'a> {
     /// Return the validated portion as `&str`.
     fn validated_as_str(&self) -> &'a str {
         debug_assert!(self.offset <= self.slice.len());
-        // Safety: self.offset is a valid end index in a range
+        // Safety: self.offset is a valid end index in a range (from field invariant)
         let valid_slice = unsafe { self.slice.get_unchecked(..self.offset) };
         debug_assert!(core::str::from_utf8(valid_slice).is_ok());
-        // Safety: the UTF-8 of slice has been validated up to offset
+        // Safety: the UTF-8 of slice has been validated up to offset (from field invariant)
         unsafe { core::str::from_utf8_unchecked(valid_slice) }
     }
 }
