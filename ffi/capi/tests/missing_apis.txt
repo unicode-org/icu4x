@@ -371,7 +371,6 @@ icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
 icu::timezone::WindowsTimeZoneMapperBorrowed::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
-icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id_with_region#FnInStruct
 icu::timezone::ZoneOffsetCalculator#Struct
 icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
