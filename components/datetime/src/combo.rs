@@ -19,7 +19,7 @@ use icu_provider::marker::NeverMarker;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::CustomZonedDateTime;
+/// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = DateTimeFormatter::try_new(
@@ -28,7 +28,7 @@ use icu_provider::marker::NeverMarker;
 /// )
 /// .unwrap();
 ///
-/// let zdt = CustomZonedDateTime::try_location_only_from_str(
+/// let zdt = IxdtfParser::new().try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
 /// )
 /// .unwrap();
@@ -46,7 +46,7 @@ use icu_provider::marker::NeverMarker;
 /// use icu::datetime::fieldset::{Combo, E, HM, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::CustomZonedDateTime;
+/// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -55,7 +55,7 @@ use icu_provider::marker::NeverMarker;
 /// )
 /// .unwrap();
 ///
-/// let zdt = CustomZonedDateTime::try_location_only_iso_from_str(
+/// let zdt = IxdtfParser::new().try_location_only_iso_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
 /// )
 /// .unwrap()

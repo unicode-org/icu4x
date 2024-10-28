@@ -98,7 +98,7 @@ mod zoned_datetime;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
 #[cfg(feature = "ixdtf")]
-pub use ixdtf::IxdtfParser;
+pub use self::ixdtf::IxdtfParser;
 
 pub use error::InvalidOffsetError;
 pub use ids::{
