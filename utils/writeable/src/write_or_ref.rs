@@ -55,24 +55,18 @@ enum SliceOrString<'a> {
 impl fmt::Write for SliceOrString<'_> {
     #[inline]
     fn write_str(&mut self, other: &str) -> fmt::Result {
-        let owned: &mut String = match self {
+        match self {
             SliceOrString::Slice(slice) => {
-                if slice.try_push(other) {
-                    return Ok(());
+                if !slice.try_push(other) {
+                    // We failed to match. Convert to owned.
+                    let valid_str = slice.validated_as_str();
+                    let owned = alloc::format!("{valid_str}{other}");
+                    *self = SliceOrString::String(owned);
                 }
-                // We failed to match. Convert to owned, put it in the field,
-                // and get it out again.
-                let valid_str = slice.validated_as_str();
-                let owned = String::from(valid_str);
-                *self = SliceOrString::String(owned);
-                let SliceOrString::String(owned) = self else {
-                    unreachable!()
-                };
-                owned
+                Ok(())
             }
-            SliceOrString::String(owned) => owned,
-        };
-        owned.write_str(other)
+            SliceOrString::String(owned) => owned.write_str(other),
+        }
     }
 }
 
