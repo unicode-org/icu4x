@@ -60,7 +60,9 @@ impl fmt::Write for SliceOrString<'_> {
                 if !slice.try_push(other) {
                     // We failed to match. Convert to owned.
                     let valid_str = slice.validated_as_str();
-                    let owned = alloc::format!("{valid_str}{other}");
+                    let mut owned = String::with_capacity(valid_str.len() + other.len());
+                    owned.push_str(valid_str);
+                    owned.push_str(other);
                     *self = SliceOrString::String(owned);
                 }
                 Ok(())
