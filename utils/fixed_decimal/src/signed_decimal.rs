@@ -309,7 +309,10 @@ macro_rules! impl_from_signed_integer_type {
                 };
                 let value = UnsignedFixedDecimal::from_ascending(int_iterator)
                     .expect("All built-in integer types should fit");
-                SignedFixedDecimal { sign, value }
+                SignedFixedDecimal {
+                    sign,
+                    absolute: value,
+                }
             }
         }
     };
@@ -329,7 +332,7 @@ macro_rules! impl_from_unsigned_integer_type {
                 let int_iterator: IntIterator<$utype> = value.into();
                 Self {
                     sign: Sign::None,
-                    value: UnsignedFixedDecimal::from_ascending(int_iterator)
+                    absolute: UnsignedFixedDecimal::from_ascending(int_iterator)
                         .expect("All built-in integer types should fit"),
                 }
             }
