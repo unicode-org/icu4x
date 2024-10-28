@@ -98,16 +98,17 @@ pub enum WithNaN<T> {
     N(T),
 }
 
-/// The `WithCompactExponent` struct represents a numeric value with a compact exponent.
-#[derive(Debug)]
-pub struct WithCompactExponent<T> {
-    pub exponent: u8,
-    pub significand: T,
-}
+// TODO(#5065): implement `WithCompactExponent` and `WithScientificExponent`.
+// /// The `WithCompactExponent` struct represents a numeric value with a compact exponent.
+// #[derive(Debug)]
+// pub struct WithCompactExponent<T> {
+//     pub exponent: u8,
+//     pub significand: T,
+// }
 
-/// The `WithScientificExponent` struct represents a numeric value with a scientific exponent.
-#[derive(Debug)]
-pub struct WithScientificExponent<T> {
-    pub exponent: i16,
-    pub significand: T,
-}
+// /// The `WithScientificExponent` struct represents a numeric value with a scientific exponent.
+// #[derive(Debug)]
+// pub struct WithScientificExponent<T> {
+//     pub exponent: i16,
+//     pub significand: T,
+// }
