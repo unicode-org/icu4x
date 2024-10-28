@@ -95,7 +95,8 @@ impl<'a> SliceOrString<'a> {
 }
 
 /// Writes the contents of a `Writeable` to a string, returning a reference
-/// to a slice if it matches, and allocating a string otherwise.
+/// to a slice if it matches the provided reference bytes, and allocating a
+/// String otherwise.
 ///
 /// This function is useful if you have borrowed bytes which you expect
 /// to be equal to a writeable a high percentage of the time.
@@ -145,7 +146,7 @@ impl<'a> SliceOrString<'a> {
 ///     Cow::Borrowed("Hello, Alice!")
 /// ));
 ///
-/// // Junk at the end is ignored:
+/// // Borrowing can use a prefix:
 /// assert!(matches!(
 ///     writeable::write_or_ref(&message, b"Hello, Alice!..\xFF\x00\xFF"),
 ///     Cow::Borrowed("Hello, Alice!")
