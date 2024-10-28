@@ -5,7 +5,7 @@
 mod fixtures;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_plurals::PluralOperands;
 
 fn operands(c: &mut Criterion) {
@@ -27,8 +27,8 @@ fn operands(c: &mut Criterion) {
                     .expect("Failed to parse a number into an operands.");
             }
             for s in &data.fixed_decimals {
-                let f: UnsignedFixedDecimal =
-                    UnsignedFixedDecimal::from(s.value).multiplied_pow10(s.exponent);
+                let f: SignedFixedDecimal =
+                    SignedFixedDecimal::from(s.value).multiplied_pow10(s.exponent);
                 let _: PluralOperands = PluralOperands::from(black_box(&f));
             }
         })
@@ -97,8 +97,8 @@ fn operands(c: &mut Criterion) {
         c.bench_function("plurals/operands/create/from_fixed_decimal", |b| {
             b.iter(|| {
                 for s in &data.fixed_decimals {
-                    let f: UnsignedFixedDecimal =
-                        UnsignedFixedDecimal::from(s.value).multiplied_pow10(s.exponent);
+                    let f: SignedFixedDecimal =
+                        SignedFixedDecimal::from(s.value).multiplied_pow10(s.exponent);
                     let _: PluralOperands = PluralOperands::from(black_box(&f));
                 }
             });
@@ -106,9 +106,9 @@ fn operands(c: &mut Criterion) {
 
         {
             let samples = [
-                UnsignedFixedDecimal::from(1_i128).multiplied_pow10(0),
-                UnsignedFixedDecimal::from(123450_i128).multiplied_pow10(-4),
-                UnsignedFixedDecimal::from(2500_i128).multiplied_pow10(-2),
+                SignedFixedDecimal::from(1_i128).multiplied_pow10(0),
+                SignedFixedDecimal::from(123450_i128).multiplied_pow10(-4),
+                SignedFixedDecimal::from(2500_i128).multiplied_pow10(-2),
             ];
             let mut group = c.benchmark_group("plurals/operands/create/from_fixed_decimal/samples");
             for s in samples.iter() {

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 #[cfg(feature = "experimental")]
 use icu_plurals::PluralOperands;
 use icu_plurals::{PluralCategory, PluralRuleType};
@@ -40,9 +40,9 @@ pub struct FixedDecimalInput {
     pow10: i16,
 }
 
-impl From<&FixedDecimalInput> for UnsignedFixedDecimal {
+impl From<&FixedDecimalInput> for SignedFixedDecimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        UnsignedFixedDecimal::from(f.from).multiplied_pow10(f.pow10)
+        SignedFixedDecimal::from(f.from).multiplied_pow10(f.pow10)
     }
 }
 

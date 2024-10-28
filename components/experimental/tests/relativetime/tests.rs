@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::UnsignedFixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
 };
@@ -23,7 +23,7 @@ macro_rules! generate_test {
 
             $(
                 assert_writeable_eq!(
-                    relative_time_formatter.format(FixedDecimal::from($en_time)),
+                    relative_time_formatter.format(SignedFixedDecimal::from($en_time)),
                     $en_expected
                 );
             )+
@@ -36,7 +36,7 @@ macro_rules! generate_test {
 
             $(
                 assert_writeable_eq!(
-                    relative_time_formatter.format(FixedDecimal::from($ar_time)),
+                    relative_time_formatter.format(SignedFixedDecimal::from($ar_time)),
                     $ar_expected
                 );
             )+

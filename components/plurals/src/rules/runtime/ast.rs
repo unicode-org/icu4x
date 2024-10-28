@@ -491,7 +491,7 @@ mod test {
             }
         );
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(1);
+        let fd = fixed_decimal::SignedFixedDecimal::from(1);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
@@ -502,27 +502,27 @@ mod test {
         let ref_rule = reference::parse(input.as_bytes()).expect("Failed to parse Rule");
         let rule = Rule::try_from(&ref_rule).expect("Failed to convert Rule");
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(0);
+        let fd = fixed_decimal::SignedFixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(13);
+        let fd = fixed_decimal::SignedFixedDecimal::from(13);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(103);
+        let fd = fixed_decimal::SignedFixedDecimal::from(103);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(113);
+        let fd = fixed_decimal::SignedFixedDecimal::from(113);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(178);
+        let fd = fixed_decimal::SignedFixedDecimal::from(178);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::UnsignedFixedDecimal::from(0);
+        let fd = fixed_decimal::SignedFixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
