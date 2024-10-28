@@ -72,7 +72,7 @@ writeable::impl_display_with_writeable!(ComplexWriteable<'_>);
 
 const SHORT_STR: &str = "short";
 const MEDIUM_STR: &str = "this is a medium-length string";
-const LONG_STR: &str = "this is a very very very very very very very very very very very very very very very very very very very very very very very very long string";
+const LONG_STR: &str = "this is a very very very very very very very very very very very very very very very very very very very very very very verrrry long string";
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("writeable/overview", |b| {
