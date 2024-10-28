@@ -77,7 +77,7 @@ struct LocaleExpanderBorrowed<'a> {
 
 impl LocaleExpanderBorrowed<'_> {
     fn get_l(&self, l: Language) -> Option<(Script, Region)> {
-        let key = &l.into_tinystr().to_unvalidated();
+        let key = &l.to_tinystr().to_unvalidated();
         self.likely_subtags_l.language.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.language.get_copied(key))
@@ -86,8 +86,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
         let key = &(
-            l.into_tinystr().to_unvalidated(),
-            s.into_tinystr().to_unvalidated(),
+            l.to_tinystr().to_unvalidated(),
+            s.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_l
             .language_script
@@ -100,8 +100,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
         let key = &(
-            l.into_tinystr().to_unvalidated(),
-            r.into_tinystr().to_unvalidated(),
+            l.to_tinystr().to_unvalidated(),
+            r.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_l
             .language_region
@@ -113,7 +113,7 @@ impl LocaleExpanderBorrowed<'_> {
     }
 
     fn get_s(&self, s: Script) -> Option<(Language, Region)> {
-        let key = &s.into_tinystr().to_unvalidated();
+        let key = &s.to_tinystr().to_unvalidated();
         self.likely_subtags_sr.script.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.script.get_copied(key))
@@ -122,8 +122,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
         let key = &(
-            s.into_tinystr().to_unvalidated(),
-            r.into_tinystr().to_unvalidated(),
+            s.to_tinystr().to_unvalidated(),
+            r.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_sr
             .script_region
@@ -135,7 +135,7 @@ impl LocaleExpanderBorrowed<'_> {
     }
 
     fn get_r(&self, r: Region) -> Option<(Language, Script)> {
-        let key = &r.into_tinystr().to_unvalidated();
+        let key = &r.to_tinystr().to_unvalidated();
         self.likely_subtags_sr.region.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.region.get_copied(key))

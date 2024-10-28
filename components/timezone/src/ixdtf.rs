@@ -174,8 +174,7 @@ impl<'a> Intermediate<'a> {
         let Some(iana_identifier) = self.iana_identifier else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let mapper = TimeZoneIdMapper::new();
-        let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
+        let time_zone_id = TimeZoneIdMapper::new().iana_bytes_to_bcp47(iana_identifier);
         let iso = DateTime::<Iso>::try_new_iso(
             self.date.year,
             self.date.month,
@@ -193,10 +192,7 @@ impl<'a> Intermediate<'a> {
             None => None,
         };
         let time_zone_id = match self.iana_identifier {
-            Some(iana_identifier) => {
-                let mapper = TimeZoneIdMapper::new();
-                mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier)
-            }
+            Some(iana_identifier) => TimeZoneIdMapper::new().iana_bytes_to_bcp47(iana_identifier),
             None => TimeZoneBcp47Id::unknown(),
         };
         let iso = DateTime::<Iso>::try_new_iso(
@@ -219,8 +215,7 @@ impl<'a> Intermediate<'a> {
         let Some(iana_identifier) = self.iana_identifier else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let mapper = TimeZoneIdMapper::new();
-        let time_zone_id = mapper.as_borrowed().iana_bytes_to_bcp47(iana_identifier);
+        let time_zone_id = TimeZoneIdMapper::new().iana_bytes_to_bcp47(iana_identifier);
         let iso = DateTime::<Iso>::try_new_iso(
             self.date.year,
             self.date.month,

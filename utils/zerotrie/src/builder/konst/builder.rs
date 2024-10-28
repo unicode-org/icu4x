@@ -24,8 +24,8 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     }
 
     /// Returns the trie data, panicking if the buffer is the wrong size.
-    pub const fn take_or_panic(self) -> [u8; N] {
-        self.data.const_take_or_panic()
+    pub const fn build_or_panic(self) -> [u8; N] {
+        self.data.const_build_or_panic()
     }
 
     /// Creates a new empty builder.

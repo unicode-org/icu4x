@@ -63,9 +63,9 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
         let mut short_names = BTreeMap::new();
         for (region, value) in other.main.value.localedisplaynames.regions.iter() {
             if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
-                short_names.insert(Region::try_from_str(region)?.into_tinystr(), value.as_str());
+                short_names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
             } else if !region.contains(ALT_SUBSTRING) {
-                names.insert(Region::try_from_str(region)?.into_tinystr(), value.as_str());
+                names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
             }
         }
         Ok(Self {
@@ -104,7 +104,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&region!("AE").into_tinystr().to_unvalidated())
+                .get(&region!("AE").to_tinystr().to_unvalidated())
                 .unwrap(),
             "United Arab Emirates"
         );
@@ -125,7 +125,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&region!("BA").into_tinystr().to_unvalidated())
+                .get(&region!("BA").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Bosnia"
         );

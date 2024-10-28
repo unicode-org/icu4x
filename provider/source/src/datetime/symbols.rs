@@ -96,6 +96,15 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     }
 }
 
+/// Produces a map from the CLDR era index, to the era code and the ICU4X era index.
+///
+/// Eras are returned in chronological order; which is what ICU4X uses for indexing eras.
+/// Therefore the first era returned by this function is FormattableEra::Index(0), etc, for
+/// calendars which use FormattableEra.
+///
+/// See FormattableEra for a definition of what chronological order is in this context.
+///
+/// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
 pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
@@ -121,9 +130,9 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
         "persian" => &[("0", tinystr!(16, "ah"))],
         "hebrew" => &[("0", tinystr!(16, "hebrew"))],
         "ethiopic" => &[
-            ("0", tinystr!(16, "incar")),
-            ("1", tinystr!(16, "pre-incar")),
             ("2", tinystr!(16, "mundi")),
+            ("1", tinystr!(16, "pre-incar")),
+            ("0", tinystr!(16, "incar")),
         ],
         "roc" => &[
             ("0", tinystr!(16, "roc-inverse")),
@@ -411,32 +420,6 @@ mod tests {
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
             "LinearNamesV1 { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
-        );
-    }
-
-    #[test]
-    fn test_adapter_eras() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("4"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_eras_wide:?}"),
-            "Eras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
         );
     }
 

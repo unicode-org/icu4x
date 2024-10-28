@@ -21,6 +21,8 @@ TimeZoneInfo* icu4x_TimeZoneInfo_unknown_mv1(void);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_utc_mv1(void);
 
+TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(DiplomatStringView bcp47_id, int32_t offset_seconds, bool dst);
+
 typedef struct icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result;
 icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result icu4x_TimeZoneInfo_try_set_offset_seconds_mv1(TimeZoneInfo* self, int32_t offset_seconds);
 

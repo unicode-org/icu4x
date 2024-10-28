@@ -92,7 +92,7 @@ impl YearInfo {
     }
 
     /// Get the era, if available
-    pub fn formatting_era(self) -> Option<Era> {
+    pub fn formatting_era(self) -> Option<FormattingEra> {
         match self.kind {
             YearKind::Era(e) => Some(e.formatting_era),
             YearKind::Cyclic(..) => None,
@@ -123,6 +123,37 @@ impl YearInfo {
     }
 }
 
+/// Information about the era as usable for formatting
+///
+/// This is optimized for storing datetime formatting data.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum FormattingEra {
+    /// An Era Index, for calendars with a small, fixed set of eras. The eras are indexed chronologically.
+    ///
+    /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
+    /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
+    /// bce < ce, and mundi < pre-incar < incar for Ethiopian.
+    ///
+    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
+    /// be something sensible (or empty).
+    Index(u8, TinyStr16),
+    /// An era code, for calendars with a large set of era codes (Japanese)
+    ///
+    /// This code may not be the canonical era code, but will typically be a valid era alias
+    Code(Era),
+}
+
+impl FormattingEra {
+    /// Get a fallback era name suitable for display to the user when the real era name is not availabe
+    pub fn fallback_era(self) -> TinyStr16 {
+        match self {
+            Self::Index(_idx, fallback) => fallback,
+            Self::Code(era) => era.0,
+        }
+    }
+}
+
 /// Year information for a year that is specified with an era
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -133,7 +164,7 @@ pub struct EraYear {
     /// It will typically be a valid era alias.
     ///
     /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
-    pub formatting_era: Era,
+    pub formatting_era: FormattingEra,
     /// The era code as expected by Temporal/CLDR. This era code is unique for the calendar
     /// and follows a particular scheme.
     ///
@@ -141,19 +172,6 @@ pub struct EraYear {
     pub standard_era: Era,
     /// The numeric year in that era
     pub era_year: i32,
-}
-
-impl EraYear {
-    /// Construct an EraYear given the era and the year in the era
-    ///
-    /// The era is assumed to be both the Temporal and the Formatting era code.
-    pub(crate) fn new(era: TinyStr16, era_year: i32) -> Self {
-        Self {
-            formatting_era: era.into(),
-            standard_era: era.into(),
-            era_year,
-        }
-    }
 }
 
 /// Year information for a year that is specified as a cyclic year

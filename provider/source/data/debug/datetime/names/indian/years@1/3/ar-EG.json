@@ -1,5 +1,5 @@
 {
-  "Eras": {
-    "saka": "Saka"
-  }
+  "FixedEras": [
+    "Saka"
+  ]
 }

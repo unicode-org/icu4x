@@ -49,11 +49,6 @@ impl CldrCache {
                         continue;
                     }
 
-                    if transform == "Han-Latin-Names" {
-                        // Alias clash with Han-Latin
-                        continue;
-                    }
-
                     if transform == "Thai-Latin" {
                         // References an unknown transliterator (Any-BreakInternal)
                         continue;

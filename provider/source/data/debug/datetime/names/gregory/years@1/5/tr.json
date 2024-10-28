@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "Milattan Önce",
-    "ce": "Milattan Sonra"
-  }
+  "FixedEras": [
+    "Milattan Önce",
+    "Milattan Sonra"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "Eras": {
-    "incar": "যুগ ০",
-    "mundi": "ERA0",
-    "pre-incar": "যুগ ১"
-  }
+  "FixedEras": [
+    "ERA0",
+    "যুগ ১",
+    "যুগ ০"
+  ]
 }

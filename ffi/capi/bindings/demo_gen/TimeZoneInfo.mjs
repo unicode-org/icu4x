@@ -4,9 +4,12 @@ export function timeZoneId() {
     return (function (...args) { return args[0].timeZoneId }).apply(
         null,
         [
-            TimeZoneInfo.unknown.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
+                    terminusArgs[0],
+                    terminusArgs[1],
+                    terminusArgs[2]
                 ]
             )
         ]
@@ -17,9 +20,12 @@ export function zoneVariant() {
     return (function (...args) { return args[0].zoneVariant }).apply(
         null,
         [
-            TimeZoneInfo.unknown.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
+                    terminusArgs[0],
+                    terminusArgs[1],
+                    terminusArgs[2]
                 ]
             )
         ]

@@ -25,7 +25,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// Creates a time zone with no information.
   ///
   /// See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.unknown) for more information.
-  factory TimeZoneInfo() {
+  factory TimeZoneInfo.unknown() {
     final result = _icu4x_TimeZoneInfo_unknown_mv1();
     return TimeZoneInfo._fromFfi(result, []);
   }
@@ -35,6 +35,13 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.utc) for more information.
   factory TimeZoneInfo.utc() {
     final result = _icu4x_TimeZoneInfo_utc_mv1();
+    return TimeZoneInfo._fromFfi(result, []);
+  }
+
+  /// Creates a time zone.
+  factory TimeZoneInfo(String bcp47Id, int offsetSeconds, bool dst) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZoneInfo_from_parts_mv1(bcp47Id._utf8AllocIn(temp.arena), offsetSeconds, dst);
     return TimeZoneInfo._fromFfi(result, []);
   }
 
@@ -333,6 +340,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_unknown_mv1();
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_utc_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_utc_mv1();
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, ffi.Int32, ffi.Bool)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_from_parts_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_from_parts_mv1(_SliceUtf8 bcp47Id, int offsetSeconds, bool dst);
 
 @meta.RecordUse()
 @ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_try_set_offset_seconds_mv1')

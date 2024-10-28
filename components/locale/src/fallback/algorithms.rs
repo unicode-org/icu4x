@@ -14,7 +14,7 @@ impl LocaleFallbackerWithConfig<'_> {
             if let Some(region) = locale.region {
                 if subdivision
                     .as_str()
-                    .starts_with(region.into_tinystr().to_ascii_lowercase().as_str())
+                    .starts_with(region.to_tinystr().to_ascii_lowercase().as_str())
                 {
                     locale.subdivision = Some(subdivision);
                 }
@@ -29,8 +29,8 @@ impl LocaleFallbackerWithConfig<'_> {
                     .likely_subtags
                     .language_script
                     .get(&(
-                        language.into_tinystr().to_unvalidated(),
-                        script.into_tinystr().to_unvalidated(),
+                        language.to_tinystr().to_unvalidated(),
+                        script.to_tinystr().to_unvalidated(),
                     ))
                     .copied();
             }
@@ -39,7 +39,7 @@ impl LocaleFallbackerWithConfig<'_> {
                 locale.region = self
                     .likely_subtags
                     .language
-                    .get_copied(&language.into_tinystr().to_unvalidated())
+                    .get_copied(&language.to_tinystr().to_unvalidated())
                     .map(|(_s, r)| r);
             }
         }
@@ -49,14 +49,14 @@ impl LocaleFallbackerWithConfig<'_> {
                 .region
                 .and_then(|region| {
                     self.likely_subtags.language_region.get_copied(&(
-                        language.into_tinystr().to_unvalidated(),
-                        region.into_tinystr().to_unvalidated(),
+                        language.to_tinystr().to_unvalidated(),
+                        region.to_tinystr().to_unvalidated(),
                     ))
                 })
                 .or_else(|| {
                     self.likely_subtags
                         .language
-                        .get_copied(&language.into_tinystr().to_unvalidated())
+                        .get_copied(&language.to_tinystr().to_unvalidated())
                         .map(|(s, _r)| s)
                 });
             if locale.script == *default_script {
@@ -110,8 +110,8 @@ impl LocaleFallbackIteratorInner<'_> {
             if locale.script.is_none() {
                 let language = locale.language;
                 if let Some(script) = self.likely_subtags.language_region.get_copied(&(
-                    language.into_tinystr().to_unvalidated(),
-                    region.into_tinystr().to_unvalidated(),
+                    language.to_tinystr().to_unvalidated(),
+                    region.to_tinystr().to_unvalidated(),
                 )) {
                     locale.script = Some(script);
                 }
@@ -179,7 +179,7 @@ impl LocaleFallbackIteratorInner<'_> {
             let language_implied_script = self
                 .likely_subtags
                 .language
-                .get_copied(&locale.language.into_tinystr().to_unvalidated())
+                .get_copied(&locale.language.to_tinystr().to_unvalidated())
                 .map(|(s, _r)| s);
             if language_implied_script != self.max_script {
                 locale.script = self.max_script;
@@ -194,7 +194,7 @@ impl LocaleFallbackIteratorInner<'_> {
             let language_implied_script = self
                 .likely_subtags
                 .language
-                .get_copied(&locale.language.into_tinystr().to_unvalidated())
+                .get_copied(&locale.language.to_tinystr().to_unvalidated())
                 .map(|(s, _r)| s);
             if locale.script.is_some() && language_implied_script == locale.script {
                 locale.script = None;

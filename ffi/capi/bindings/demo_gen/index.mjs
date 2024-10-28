@@ -54,12 +54,14 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -73,12 +75,14 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -92,22 +96,26 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "LeadingAdjustment",
-                type: "LeadingAdjustment"
+                type: "LeadingAdjustment",
+                typeUse: "enumerator"
             },
             
             {
                 name: "TrailingCase",
-                type: "TrailingCase"
+                type: "TrailingCase",
+                typeUse: "enumerator"
             }
             
         ]
@@ -121,7 +129,8 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -135,7 +144,8 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -149,22 +159,26 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "LeadingAdjustment",
-                type: "LeadingAdjustment"
+                type: "LeadingAdjustment",
+                typeUse: "enumerator"
             },
             
             {
                 name: "TrailingCase",
-                type: "TrailingCase"
+                type: "TrailingCase",
+                typeUse: "enumerator"
             }
             
         ]
@@ -178,22 +192,26 @@ let termini = Object.assign({
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -207,22 +225,26 @@ let termini = Object.assign({
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -236,42 +258,50 @@ let termini = Object.assign({
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -285,42 +315,50 @@ let termini = Object.assign({
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -334,32 +372,38 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -373,27 +417,32 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -407,52 +456,62 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -466,47 +525,56 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -520,52 +588,62 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -579,47 +657,56 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -633,27 +720,32 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -667,47 +759,56 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -721,47 +822,56 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -775,32 +885,38 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -814,52 +930,62 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -873,47 +999,56 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -927,22 +1062,26 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "GroupingStrategy",
-                type: "FixedDecimalGroupingStrategy"
+                type: "FixedDecimalGroupingStrategy",
+                typeUse: "enumerator"
             },
             
             {
                 name: "F",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Magnitude",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -956,12 +1095,14 @@ let termini = Object.assign({
             
             {
                 name: "F",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Magnitude",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             }
             
         ]
@@ -975,17 +1116,20 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "ListLength"
+                type: "ListLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "List",
-                type: "Array<string>"
+                type: "Array<string>",
+                typeUse: "Array<string>"
             }
             
         ]
@@ -999,7 +1143,8 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1013,12 +1158,14 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1032,7 +1179,8 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1046,7 +1194,8 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1060,7 +1209,8 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1074,7 +1224,8 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1088,7 +1239,8 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1102,7 +1254,8 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1116,7 +1269,8 @@ let termini = Object.assign({
             
             {
                 name: "S",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1128,6 +1282,24 @@ let termini = Object.assign({
         funcName: "TimeZoneInfo.timeZoneId",
         parameters: [
             
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
+            }
+            
         ]
     },
 
@@ -1136,6 +1308,24 @@ let termini = Object.assign({
         // For avoiding webpacking minifying issues:
         funcName: "TimeZoneInfo.zoneVariant",
         parameters: [
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
+            }
             
         ]
     },
@@ -1148,7 +1338,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1162,7 +1353,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1176,7 +1368,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1190,7 +1383,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1204,7 +1398,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1218,7 +1413,8 @@ let termini = Object.assign({
             
             {
                 name: "Value",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1232,47 +1428,74 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]
@@ -1286,52 +1509,80 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]
@@ -1345,47 +1596,74 @@ let termini = Object.assign({
             
             {
                 name: "Name",
-                type: "string"
+                type: "string",
+                typeUse: "string"
             },
             
             {
                 name: "Length",
-                type: "DateTimeLength"
+                type: "DateTimeLength",
+                typeUse: "enumerator"
             },
             
             {
                 name: "Year",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Month",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Day",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Hour",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Minute",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Second",
-                type: "number"
+                type: "number",
+                typeUse: "number"
             },
             
             {
                 name: "Nanosecond",
-                type: "number"
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Bcp47Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "OffsetSeconds",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Dst",
+                type: "boolean",
+                typeUse: "boolean"
             }
             
         ]
@@ -1399,7 +1677,8 @@ let termini = Object.assign({
             
             {
                 name: "Self",
-                type: "AnyCalendarKind"
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
             }
             
         ]
