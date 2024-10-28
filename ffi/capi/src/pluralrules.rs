@@ -110,7 +110,7 @@ pub mod ffi {
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::FixedDecimal) -> Box<Self> {
+        pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::SignedFixedDecimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }
     }

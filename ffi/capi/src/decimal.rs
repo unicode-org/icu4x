@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::{
-        errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal, locale_core::ffi::Locale,
+        errors::ffi::DataError, fixed_decimal::ffi::SignedFixedDecimal, locale_core::ffi::Locale,
         provider::ffi::DataProvider,
     };
 
@@ -135,7 +135,7 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal, Struct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal::write_to, FnInStruct, hidden)]
-        pub fn format(&self, value: &FixedDecimal, write: &mut diplomat_runtime::DiplomatWrite) {
+        pub fn format(&self, value: &SignedFixedDecimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
     }

@@ -14,7 +14,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
-    pub struct FixedDecimal(pub fixed_decimal::UnsignedFixedDecimal);
+    pub struct SignedFixedDecimal(pub fixed_decimal::SignedFixedDecimal);
 
     /// The sign of a FixedDecimal, as shown in formatting.
     #[diplomat::rust_link(fixed_decimal::Sign, Enum)]
@@ -64,15 +64,15 @@ pub mod ffi {
         HalfEven,
     }
 
-    impl FixedDecimal {
+    impl SignedFixedDecimal {
         /// Construct an [`FixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, rename = "from_number")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_int32(v: i32) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
+        pub fn from_int32(v: i32) -> Box<SignedFixedDecimal> {
+            Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -81,8 +81,8 @@ pub mod ffi {
         #[diplomat::attr(js, disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_uint32(v: u32) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
+        pub fn from_uint32(v: u32) -> Box<SignedFixedDecimal> {
+            Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -91,8 +91,8 @@ pub mod ffi {
         #[diplomat::attr(js, rename = "from_big_int")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_int64(v: i64) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
+        pub fn from_int64(v: i64) -> Box<SignedFixedDecimal> {
+            Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
@@ -100,8 +100,8 @@ pub mod ffi {
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_uint64(v: u64) -> Box<FixedDecimal> {
-            Box::new(FixedDecimal(fixed_decimal::UnsignedFixedDecimal::from(v)))
+        pub fn from_uint64(v: u64) -> Box<SignedFixedDecimal> {
+            Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer-valued float
@@ -112,10 +112,10 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_double_with_integer_precision(
             f: f64,
-        ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
+        ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Integer;
-            Ok(Box::new(FixedDecimal(
-                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
+            Ok(Box::new(SignedFixedDecimal(
+                fixed_decimal::SignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -129,10 +129,10 @@ pub mod ffi {
         pub fn from_double_with_lower_magnitude(
             f: f64,
             magnitude: i16,
-        ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
+        ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Magnitude(magnitude);
-            Ok(Box::new(FixedDecimal(
-                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
+            Ok(Box::new(SignedFixedDecimal(
+                fixed_decimal::SignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
@@ -145,98 +145,98 @@ pub mod ffi {
         pub fn from_double_with_significant_digits(
             f: f64,
             digits: u8,
-        ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
+        ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::SignificantDigits(digits);
-            Ok(Box::new(FixedDecimal(
-                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
+            Ok(Box::new(SignedFixedDecimal(
+                fixed_decimal::SignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
         /// Construct an [`FixedDecimal`] from an float, with enough digits to recover
         /// the original floating point in IEEE 754 without needing trailing zeros
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_round_trip_precision")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_double_with_round_trip_precision(
             f: f64,
-        ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
+        ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::RoundTrip;
-            Ok(Box::new(FixedDecimal(
-                fixed_decimal::UnsignedFixedDecimal::try_from_f64(f, precision)?,
+            Ok(Box::new(SignedFixedDecimal(
+                fixed_decimal::SignedFixedDecimal::try_from_f64(f, precision)?,
             )))
         }
 
         /// Construct an [`FixedDecimal`] from a string.
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
-            Ok(Box::new(FixedDecimal(
-                fixed_decimal::UnsignedFixedDecimal::try_from_utf8(v)?,
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<SignedFixedDecimal>, FixedDecimalParseError> {
+            Ok(Box::new(SignedFixedDecimal(
+                fixed_decimal::SignedFixedDecimal::try_from_utf8(v)?,
             )))
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::digit_at, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::digit_at, FnInStruct)]
         pub fn digit_at(&self, magnitude: i16) -> u8 {
-            self.0.digit_at(magnitude)
+            self.0.absolute.digit_at(magnitude)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::magnitude_range, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::magnitude_range, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn magnitude_start(&self) -> i16 {
-            *self.0.magnitude_range().start()
+            *self.0.absolute.magnitude_range().start()
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::magnitude_range, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::magnitude_range, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn magnitude_end(&self) -> i16 {
-            *self.0.magnitude_range().end()
+            *self.0.absolute.magnitude_range().end()
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::nonzero_magnitude_start, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::nonzero_magnitude_start, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_start(&self) -> i16 {
-            self.0.nonzero_magnitude_start()
+            self.0.absolute.nonzero_magnitude_start()
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::nonzero_magnitude_end, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::nonzero_magnitude_end, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_end(&self) -> i16 {
-            self.0.nonzero_magnitude_end()
+            self.0.absolute.nonzero_magnitude_end()
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::is_zero, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::is_zero, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_zero(&self) -> bool {
-            self.0.is_zero()
+            self.0.absolute.is_zero()
         }
 
         /// Multiply the [`FixedDecimal`] by a given power of ten.
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::multiply_pow10, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::multiplied_pow10, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::multiply_pow10, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::multiplied_pow10, FnInStruct, hidden)]
         pub fn multiply_pow10(&mut self, power: i16) {
-            self.0.multiply_pow10(power)
+            self.0.absolute.multiply_pow10(power)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::sign, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::sign, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn sign(&self) -> FixedDecimalSign {
             self.0.sign().into()
         }
 
-        /// Set the sign of the [`FixedDecimal`].
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::set_sign, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::with_sign, FnInStruct, hidden)]
+        /// Set the sign of the [`SignedFixedDecimal`].
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::set_sign, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::with_sign, FnInStruct, hidden)]
         #[diplomat::attr(auto, setter = "sign")]
         pub fn set_sign(&mut self, sign: FixedDecimalSign) {
             self.0.set_sign(sign.into())
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::apply_sign_display, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::with_sign_display, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::apply_sign_display, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::with_sign_display, FnInStruct, hidden)]
         pub fn apply_sign_display(&mut self, sign_display: FixedDecimalSignDisplay) {
             self.0.apply_sign_display(sign_display.into())
         }
@@ -244,27 +244,27 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::trim_start, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::trimmed_start, FnInStruct, hidden)]
         pub fn trim_start(&mut self) {
-            self.0.trim_start()
+            self.0.absolute.trim_start()
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::trim_end, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::trimmed_end, FnInStruct, hidden)]
         pub fn trim_end(&mut self) {
-            self.0.trim_end()
+            self.0.absolute.trim_end()
         }
 
         /// Zero-pad the [`FixedDecimal`] on the left to a particular position
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::pad_start, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::padded_start, FnInStruct, hidden)]
         pub fn pad_start(&mut self, position: i16) {
-            self.0.pad_start(position)
+            self.0.absolute.pad_start(position)
         }
 
         /// Zero-pad the [`FixedDecimal`] on the right to a particular position
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::pad_end, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::padded_end, FnInStruct, hidden)]
         pub fn pad_end(&mut self, position: i16) {
-            self.0.pad_end(position)
+            self.0.absolute.pad_end(position)
         }
 
         /// Truncate the [`FixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
@@ -272,45 +272,45 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::set_max_position, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::with_max_position, FnInStruct, hidden)]
         pub fn set_max_position(&mut self, position: i16) {
-            self.0.set_max_position(position)
+            self.0.absolute.set_max_position(position)
         }
 
         /// Round the number at a particular digit position.
         ///
         /// This uses half to even rounding, which resolves ties by selecting the nearest
         /// even integer to the original value.
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::round, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::rounded, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::round, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::rounded, FnInStruct, hidden)]
         pub fn round(&mut self, position: i16) {
             self.0.round(position)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceil, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceiled, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::ceil, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::ceiled, FnInStruct, hidden)]
         pub fn ceil(&mut self, position: i16) {
             self.0.ceil(position)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::expand, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::expanded, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::expand, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::expanded, FnInStruct, hidden)]
         pub fn expand(&mut self, position: i16) {
             self.0.expand(position)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::floor, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::floored, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::floor, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::floored, FnInStruct, hidden)]
         pub fn floor(&mut self, position: i16) {
             self.0.floor(position)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::trunc, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::trunced, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::trunc, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::trunced, FnInStruct, hidden)]
         pub fn trunc(&mut self, position: i16) {
             self.0.trunc(position)
         }
 
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::round_with_mode, FnInStruct)]
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::rounded_with_mode, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::round_with_mode, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::rounded_with_mode, FnInStruct, hidden)]
         pub fn round_with_mode(&mut self, position: i16, mode: FixedDecimalRoundingMode) {
             self.0.round_with_mode(position, mode.into())
         }
@@ -341,10 +341,10 @@ pub mod ffi {
         /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::concatenate_end, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::concatenated_end, FnInStruct, hidden)]
-        pub fn concatenate_end(&mut self, other: &mut FixedDecimal) -> Result<(), ()> {
+        pub fn concatenate_end(&mut self, other: &mut SignedFixedDecimal) -> Result<(), ()> {
             let x = core::mem::take(&mut other.0);
-            self.0.concatenate_end(x).map_err(|y| {
-                other.0 = y;
+            self.0.absolute.concatenate_end(x.absolute).map_err(|y| {
+                other.0.absolute = y;
             })
         }
 
