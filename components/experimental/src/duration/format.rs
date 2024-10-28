@@ -158,7 +158,7 @@ impl FormattedDuration<'_> {
         // 7. If hoursStyle is "2-digit", then
         if self.fmt.options.hour == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.value.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 8. If signDisplayed is false, then
@@ -204,7 +204,7 @@ impl FormattedDuration<'_> {
         // 8. If minutesStyle is "2-digit", then
         if self.fmt.options.minute == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.value.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -238,19 +238,19 @@ impl FormattedDuration<'_> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted.value = prev_formatted
-                    .value
+                prev_formatted.absolute = prev_formatted
+                    .absolute
                     // TODO: remove this clone.
                     .clone()
-                    .concatenated_end(prev_formatted.value.multiplied_pow10(-3))
+                    .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
 
                 prev_val = val;
             } else {
                 return SignedFixedDecimal {
                     sign: prev_formatted.sign,
-                    value: UnsignedFixedDecimal::from(val)
-                        .concatenated_end(prev_formatted.value.multiplied_pow10(-3))
+                    absolute: UnsignedFixedDecimal::from(val)
+                        .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                         .unwrap(),
                 };
             }
@@ -293,7 +293,7 @@ impl FormattedDuration<'_> {
         // 8. If secondsStyle is "2-digit", then
         if self.fmt.options.second == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            second_fd.value.pad_start(2);
+            second_fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -310,7 +310,7 @@ impl FormattedDuration<'_> {
                 // a. Let maximumFractionDigits be 9𝔽.
                 // b. Let minimumFractionDigits be +0𝔽.
                 second_fd.trunc(-9);
-                second_fd.value.pad_end(0);
+                second_fd.absolute.pad_end(0);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
@@ -318,7 +318,7 @@ impl FormattedDuration<'_> {
                 // a. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                 second_fd.trunc(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_fd.value.pad_end(-i);
+                second_fd.absolute.pad_end(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
               // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
@@ -508,7 +508,7 @@ impl FormattedDuration<'_> {
                                 // i. Let maximumFractionDigits be 9𝔽.
                                 formatted_value.trunc(-9);
                                 // ii. Let minimumFractionDigits be +0𝔽.
-                                formatted_value.value.pad_end(0);
+                                formatted_value.absolute.pad_end(0);
                             }
                             // c. Else,
                             FractionalDigits::Fixed(i) => {
@@ -516,7 +516,7 @@ impl FormattedDuration<'_> {
                                 // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                                 formatted_value.trunc(-i);
                                 // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                                formatted_value.value.pad_end(-i);
+                                formatted_value.absolute.pad_end(-i);
                             }
                         } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
                           // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).

@@ -229,21 +229,21 @@ impl PluralOperands {
     fn from_significand_and_exponent(dec: &SignedFixedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
-        let mag_range = dec.value.magnitude_range();
+        let mag_range = dec.absolute.magnitude_range();
         let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
         let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.value.digit_at(magnitude - exp_i16) as u64;
+            i += dec.absolute.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.value.digit_at(magnitude - exp_i16) as u64;
+            let digit = dec.absolute.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {

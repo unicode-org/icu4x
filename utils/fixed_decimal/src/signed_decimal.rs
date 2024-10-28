@@ -106,7 +106,7 @@ impl SignedFixedDecimal {
         let unsigned_decimal = UnsignedFixedDecimal::try_from_no_sign_utf8(no_sign_str)?;
         Ok(Self {
             sign,
-            value: unsigned_decimal,
+            absolute: unsigned_decimal,
         })
     }
 
@@ -214,14 +214,14 @@ impl SignedFixedDecimal {
             }
             SignDisplay::Never => self.sign = None,
             SignDisplay::ExceptZero => {
-                if self.value.is_zero() {
+                if self.absolute.is_zero() {
                     self.sign = None
                 } else if self.sign != Negative {
                     self.sign = Positive
                 }
             }
             SignDisplay::Negative => {
-                if self.sign != Negative || self.value.is_zero() {
+                if self.sign != Negative || self.absolute.is_zero() {
                     self.sign = None
                 }
             }
@@ -266,7 +266,7 @@ impl SignedFixedDecimal {
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiply_pow10(&mut self, delta: i16) {
-        self.value.multiply_pow10(delta);
+        self.absolute.multiply_pow10(delta);
     }
 
     /// Returns this number with its digits shifted by a power of 10.
@@ -395,11 +395,11 @@ impl SignedFixedDecimal {
         match float.is_sign_negative() {
             true => Ok(SignedFixedDecimal {
                 sign: Sign::Negative,
-                value: UnsignedFixedDecimal::try_from_f64(-float, precision)?,
+                absolute: UnsignedFixedDecimal::try_from_f64(-float, precision)?,
             }),
             false => Ok(SignedFixedDecimal {
                 sign: Sign::None,
-                value: UnsignedFixedDecimal::try_from_f64(float, precision)?,
+                absolute: UnsignedFixedDecimal::try_from_f64(float, precision)?,
             }),
         }
     }
@@ -897,20 +897,22 @@ impl SignedFixedDecimal {
 
     fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.value.trunc_to_increment_internal(position, increment);
+            self.absolute
+                .trunc_to_increment_internal(position, increment);
             return;
         }
 
-        self.value.expand_to_increment_internal(position, increment);
+        self.absolute
+            .expand_to_increment_internal(position, increment);
     }
 
     fn trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, inner_increment: R) {
-        self.value
+        self.absolute
             .trunc_to_increment_internal(position, inner_increment);
     }
 
     fn half_trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.value
+        self.absolute
             .half_trunc_to_increment_internal(position, increment);
     }
 
@@ -928,17 +930,17 @@ impl SignedFixedDecimal {
         position: i16,
         inner_increment: R,
     ) {
-        self.value
+        self.absolute
             .expand_to_increment_internal(position, inner_increment);
     }
 
     fn half_expand_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.value
+        self.absolute
             .half_expand_to_increment_internal(position, increment);
     }
 
     fn half_even_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.value
+        self.absolute
             .half_even_to_increment_internal(position, increment);
     }
 
@@ -978,18 +980,18 @@ impl writeable::Writeable for SignedFixedDecimal {
             Sign::Positive => sink.write_char('+')?,
             Sign::None => (),
         }
-        for m in self.value.magnitude_range().rev() {
+        for m in self.absolute.magnitude_range().rev() {
             if m == -1 {
                 sink.write_char('.')?;
             }
-            let d = self.value.digit_at(m);
+            let d = self.absolute.digit_at(m);
             sink.write_char((b'0' + d) as char)?;
         }
         Ok(())
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.value.writeable_length_hint() + (self.sign != Sign::None) as usize
+        self.absolute.writeable_length_hint() + (self.sign != Sign::None) as usize
     }
 }
 
@@ -1098,7 +1100,7 @@ fn test_basic() {
     for cas in &cases {
         let mut dec: SignedFixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
-        dec.value.multiply_pow10(cas.delta);
+        dec.absolute.multiply_pow10(cas.delta);
         writeable::assert_writeable_eq!(dec, cas.expected, "{:?}", cas);
     }
 }
@@ -1234,17 +1236,17 @@ fn test_from_str() {
     for cas in &cases {
         let fd = SignedFixedDecimal::from_str(cas.input_str).unwrap();
         assert_eq!(
-            fd.value.magnitude_range(),
+            fd.absolute.magnitude_range(),
             cas.magnitudes[3]..=cas.magnitudes[0],
             "{cas:?}"
         );
         assert_eq!(
-            fd.value.nonzero_magnitude_start(),
+            fd.absolute.nonzero_magnitude_start(),
             cas.magnitudes[1],
             "{cas:?}"
         );
         assert_eq!(
-            fd.value.nonzero_magnitude_end(),
+            fd.absolute.nonzero_magnitude_end(),
             cas.magnitudes[2],
             "{cas:?}"
         );
@@ -1481,13 +1483,13 @@ fn test_pad() {
     let mut dec = SignedFixedDecimal::from_str("-0.42").unwrap();
     assert_eq!("-0.42", dec.to_string());
 
-    dec.value.pad_start(1);
+    dec.absolute.pad_start(1);
     assert_eq!("-0.42", dec.to_string());
 
-    dec.value.pad_start(4);
+    dec.absolute.pad_start(4);
     assert_eq!("-0000.42", dec.to_string());
 
-    dec.value.pad_start(2);
+    dec.absolute.pad_start(2);
     assert_eq!("-00.42", dec.to_string());
 }
 
@@ -1603,35 +1605,35 @@ fn test_set_max_position() {
     let mut dec = SignedFixedDecimal::from(1000u32);
     assert_eq!("1000", dec.to_string());
 
-    dec.value.set_max_position(2);
+    dec.absolute.set_max_position(2);
     assert_eq!("00", dec.to_string());
 
-    dec.value.set_max_position(0);
+    dec.absolute.set_max_position(0);
     assert_eq!("0", dec.to_string());
 
-    dec.value.set_max_position(3);
+    dec.absolute.set_max_position(3);
     assert_eq!("000", dec.to_string());
 
     let mut dec = SignedFixedDecimal::from_str("0.456").unwrap();
     assert_eq!("0.456", dec.to_string());
 
-    dec.value.set_max_position(0);
+    dec.absolute.set_max_position(0);
     assert_eq!("0.456", dec.to_string());
 
-    dec.value.set_max_position(-1);
+    dec.absolute.set_max_position(-1);
     assert_eq!("0.056", dec.to_string());
 
-    dec.value.set_max_position(-2);
+    dec.absolute.set_max_position(-2);
     assert_eq!("0.006", dec.to_string());
 
-    dec.value.set_max_position(-3);
+    dec.absolute.set_max_position(-3);
     assert_eq!("0.000", dec.to_string());
 
-    dec.value.set_max_position(-4);
+    dec.absolute.set_max_position(-4);
     assert_eq!("0.0000", dec.to_string());
 
     let mut dec = SignedFixedDecimal::from_str("100.01").unwrap();
-    dec.value.set_max_position(1);
+    dec.absolute.set_max_position(1);
     assert_eq!("0.01", dec.to_string());
 }
 
@@ -1640,13 +1642,13 @@ fn test_pad_start_bounds() {
     let mut dec = SignedFixedDecimal::from_str("299792.458").unwrap();
     let max_integer_digits = i16::MAX as usize + 1;
 
-    dec.value.pad_start(i16::MAX - 1);
+    dec.absolute.pad_start(i16::MAX - 1);
     assert_eq!(
         max_integer_digits - 2,
         dec.to_string().split_once('.').unwrap().0.len()
     );
 
-    dec.value.pad_start(i16::MAX);
+    dec.absolute.pad_start(i16::MAX);
     assert_eq!(
         max_integer_digits - 1,
         dec.to_string().split_once('.').unwrap().0.len()
@@ -1658,13 +1660,13 @@ fn test_pad_end_bounds() {
     let mut dec = SignedFixedDecimal::from_str("299792.458").unwrap();
     let max_fractional_digits = -(i16::MIN as isize) as usize;
 
-    dec.value.pad_end(i16::MIN + 1);
+    dec.absolute.pad_end(i16::MIN + 1);
     assert_eq!(
         max_fractional_digits - 1,
         dec.to_string().split_once('.').unwrap().1.len()
     );
 
-    dec.value.pad_end(i16::MIN);
+    dec.absolute.pad_end(i16::MIN);
     assert_eq!(
         max_fractional_digits,
         dec.to_string().split_once('.').unwrap().1.len()
@@ -2172,7 +2174,7 @@ fn test_concatenate() {
     for cas in &cases {
         let fd1 = SignedFixedDecimal::from_str(cas.input_1).unwrap();
         let fd2 = SignedFixedDecimal::from_str(cas.input_2).unwrap();
-        match fd1.value.concatenated_end(fd2.value) {
+        match fd1.absolute.concatenated_end(fd2.absolute) {
             Ok(fd) => {
                 assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{cas:?}");
             }

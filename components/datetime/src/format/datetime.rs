@@ -39,20 +39,20 @@ where
         match length {
             FieldLength::One | FieldLength::NumericOverride(_) => {}
             FieldLength::TwoDigit => {
-                num.value.pad_start(2);
-                num.value.set_max_position(2);
+                num.absolute.pad_start(2);
+                num.absolute.set_max_position(2);
             }
             FieldLength::Abbreviated => {
-                num.value.pad_start(3);
+                num.absolute.pad_start(3);
             }
             FieldLength::Wide => {
-                num.value.pad_start(4);
+                num.absolute.pad_start(4);
             }
             FieldLength::Narrow => {
-                num.value.pad_start(5);
+                num.absolute.pad_start(5);
             }
             FieldLength::Six => {
-                num.value.pad_start(6);
+                num.absolute.pad_start(6);
             }
         }
 
@@ -418,13 +418,13 @@ where
                 (Some(second), Some(ns)) => {
                     // Formatting with fractional seconds
                     let mut s = SignedFixedDecimal::from(usize::from(second));
-                    let _infallible = s.value.concatenate_end(
+                    let _infallible = s.absolute.concatenate_end(
                         UnsignedFixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
                     );
                     debug_assert!(_infallible.is_ok());
                     let position = -(decimal_second as i16);
-                    s.value.trunc(position);
-                    s.value.pad_end(position);
+                    s.absolute.trunc(position);
+                    s.absolute.pad_end(position);
                     try_write_number(w, fdf, s, l)?
                 }
             }

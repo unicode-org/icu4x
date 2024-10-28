@@ -448,11 +448,11 @@ impl CompactDecimalFormatter {
     /// );
     /// ```
     pub fn format_fixed_decimal(&self, value: SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
-        let log10_type = value.value.nonzero_magnitude_start();
+        let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = value.multiplied_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
-        if significand.value.nonzero_magnitude_start() == 0 {
+        if significand.absolute.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
             significand.round(-1);
         } else {
@@ -460,7 +460,8 @@ impl CompactDecimalFormatter {
             // so round to eliminate the fractional part.
             significand.round(0);
         }
-        let rounded_magnitude = significand.value.nonzero_magnitude_start() + i16::from(exponent);
+        let rounded_magnitude =
+            significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
         if rounded_magnitude > log10_type {
             // We got bumped up a magnitude by rounding.
             // This means that `significand` is a power of 10.
@@ -476,7 +477,7 @@ impl CompactDecimalFormatter {
             // only have become larger, it is already the correct rounding of
             // `unrounded` to the precision we want to show.
         }
-        significand.value.trim_end();
+        significand.absolute.trim_end();
         FormattedCompactDecimal {
             formatter: self,
             plural_map,
@@ -589,7 +590,7 @@ impl CompactDecimalFormatter {
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, ExponentError> {
         let log10_type =
-            value.significand().value.nonzero_magnitude_start() + i16::from(value.exponent());
+            value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);

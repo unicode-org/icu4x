@@ -81,7 +81,7 @@ pub enum SignDisplay {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Signed<T> {
     pub sign: Sign,
-    pub value: T,
+    pub absolute: T,
 }
 
 /// The `WithInfinity` enum represents a numeric value that may be either infinite or finite.
