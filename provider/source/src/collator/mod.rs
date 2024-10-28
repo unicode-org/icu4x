@@ -262,7 +262,7 @@ impl TryInto<CollationSpecialPrimariesV1<'static>> for &collator_serde::Collatio
 
 fn test_zh_non_baked() {
     use core::cmp::Ordering;
-    use icu::collator::{Collator, CollatorOptions};
+    use icu::collator::Collator;
     use icu::locale::fallback::LocaleFallbacker;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
@@ -275,7 +275,7 @@ fn test_zh_non_baked() {
     {
         let locale: icu::locale::Locale = "zh-u-co-gb2312".parse().unwrap();
         let owned =
-            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), Default::default()).unwrap();
         let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
@@ -293,7 +293,7 @@ fn test_zh_non_baked() {
     {
         let locale: icu::locale::Locale = "zh-u-co-big5han".parse().unwrap();
         let owned =
-            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), Default::default()).unwrap();
         let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);

@@ -72,7 +72,10 @@ writeable::impl_display_with_writeable!(ComplexWriteable<'_>);
 
 const SHORT_STR: &str = "short";
 const MEDIUM_STR: &str = "this is a medium-length string";
-const LONG_STR: &str = "this is a very very very very very very very very very very very very very very very very very very very very very very very very long string";
+const LONG_STR: &str = "this string is very very very very very very very very very very very very very very very very very very very very very very very very long";
+#[cfg(feature = "bench")]
+const LONG_OVERLAP_STR: &str =
+    "this string is very very very very very very very long but different";
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("writeable/overview", |b| {
@@ -136,8 +139,9 @@ fn writeable_benches(c: &mut Criterion) {
             let short = black_box(SHORT_STR);
             let medium = black_box(MEDIUM_STR);
             let long = black_box(LONG_STR);
-            [short, medium, long].map(|s1| {
-                [short, medium, long].map(|s2| {
+            let long_overlap = black_box(LONG_OVERLAP_STR);
+            [short, medium, long, long_overlap].map(|s1| {
+                [short, medium, long, long_overlap].map(|s2| {
                     let message = WriteableMessage { message: s1 };
                     writeable::cmp_bytes(&message, s2.as_bytes())
                 })

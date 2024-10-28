@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "MÖ",
-    "ce": "MS"
-  }
+  "FixedEras": [
+    "MÖ",
+    "MS"
+  ]
 }

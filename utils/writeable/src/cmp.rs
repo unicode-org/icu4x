@@ -51,7 +51,8 @@ impl<'a> WriteComparator<'a> {
 ///
 /// This returns a lexicographical comparison, the same as if the Writeable
 /// were first converted to a String and then compared with `Ord`. For a
-/// locale-sensitive string ordering, use an ICU4X Collator.
+/// string ordering suitable for display to end users, use a localized
+/// collation crate, such as `icu_collator`.
 ///
 /// # Examples
 ///

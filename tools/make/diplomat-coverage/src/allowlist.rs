@@ -104,6 +104,11 @@ lazy_static::lazy_static! {
         // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",
+        // Not planned for 2.0 but would be nice to return 'static refs
+        // with Diplomat support.
+        // Borrowed <-> owned converters
+        "static_to_owned",
+        "as_borrowed",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -168,6 +173,7 @@ lazy_static::lazy_static! {
         // Calendar structs mostly for internal use but which might expose
         // useful information to clients.
         "icu::calendar::types::MonthInfo",
+        "icu::calendar::types::FormattingEra",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
@@ -177,41 +183,20 @@ lazy_static::lazy_static! {
         "icu::calendar::types::YearInfo::cyclic",
         "icu::calendar::types::YearInfo::related_iso",
 
-        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
-        // Potential solutions:
-        // - borrow and clone (cheap as long it's not json)
-        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
-        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
-        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
-        //   can be destructively passed to these constructors via &mut self. All future
-        //   specialized constructors show up on this type instead.
-        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::FixedCalendarDateTimeFormatter::try_from_date_and_time",
-
-        // experimental
-        "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::FixedCalendarDateTimeFormatter::resolve_components",
-
         // Experimental API mostly used for provider, components bags, and patterns,
         // may in the future be exposed for options
         "icu::datetime::fields",
 
         // experimental
-        "icu::datetime::neo",
-        "icu::datetime::neo_marker",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental",
         "icu::datetime::DateTimeWriteError",
         "icu::datetime::LoadError",
         "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
-        "icu::datetime::FixedCalendarDateTimeFormatter::try_new_experimental",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
         // experimental
         "icu::experimental",
@@ -290,44 +275,6 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
-        // Not planned for 2.0 but would be nice to return 'static refs
-        // with Diplomat support.
-        // Borrowed <-> owned converters
-        "icu::collator::Collator::as_borrowed",
-        "icu::collator::CollatorBorrowed::static_to_owned",
-        "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
-        "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
-        "icu::locale::fallback::LocaleFallbacker::as_borrowed",
-        "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
-        "icu::normalizer::ComposingNormalizer::as_borrowed",
-        "icu::normalizer::ComposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::DecomposingNormalizer::as_borrowed",
-        "icu::normalizer::DecomposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalCombiningClassMap::as_borrowed",
-        "icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalComposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalCompositionBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalDecomposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalDecompositionBorrowed::static_to_owned",
-        "icu::normalizer::uts46::Uts46Mapper::as_borrowed",
-        "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
-        "icu::properties::CodePointMapData::as_borrowed",
-        "icu::properties::CodePointMapDataBorrowed::static_to_owned",
-        "icu::properties::CodePointSetData::as_borrowed",
-        "icu::properties::CodePointSetDataBorrowed::static_to_owned",
-        "icu::properties::EmojiSetData::as_borrowed",
-        "icu::properties::EmojiSetDataBorrowed::static_to_owned",
-        "icu::properties::PropertyNamesLong::as_borrowed",
-        "icu::properties::PropertyNamesShort::as_borrowed",
-        "icu::properties::PropertyNamesLongBorrowed::static_to_owned",
-        "icu::properties::PropertyNamesShortBorrowed::static_to_owned",
-        "icu::properties::PropertyParser::as_borrowed",
-        "icu::properties::PropertyParserBorrowed::static_to_owned",
-        "icu::properties::script::ScriptMapper::as_borrowed",
-        "icu::properties::script::ScriptMapperBorrowed::static_to_owned",
-        "icu::properties::script::ScriptWithExtensions::as_borrowed",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
-
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -367,26 +314,6 @@ lazy_static::lazy_static! {
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::calendar::types::Time",
 
-
-        // TODO-2.0 these errors will have changed
-        "fixed_decimal::Error",
-        "icu::calendar::Error",
-        "icu::collator::Error",
-        "icu::collections::codepointinvlist::Error",
-        "icu::compactdecimal::Error",
-        "icu::datetime::Error",
-        "icu::decimal::Error",
-        "icu::list::Error",
-        "icu::locale::Error",
-        "icu::locale::Error",
-        "icu::normalizer::Error",
-        "icu::plurals::Error",
-        "icu::properties::Error",
-        "icu::relativetime::Error",
-        "icu::segmenter::Error",
-        "icu::timezone::Error",
-        "icu::transliterator::Error",
-
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
@@ -420,10 +347,6 @@ lazy_static::lazy_static! {
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::FixedDecimalFormatterOptions",
 
-        // Constructing an error is not useful over FFI because it gets turned into
-        // a flat ICU4XError anyway
-        "icu::calendar::CalendarError::unknown_any_calendar_kind",
-
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types::MonthCode",
@@ -438,16 +361,9 @@ lazy_static::lazy_static! {
         "icu::calendar::types::IsoWeekday",
         "icu::calendar::types::Era",
 
-        // Rusty input trait
-        "icu::datetime::input",
-
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
         "icu::plurals::PluralCategory::all",
-
-        // locale_core comparison iteration
-        "icu::locale::Locale::strict_cmp_iter",
-        "icu::locale::SubtagOrderingResult",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",

@@ -22,6 +22,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper, Struct)]
     #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::as_borrowed, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed, Struct, hidden)]
+    #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::new, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::timezone::NormalizedIana, Struct, hidden)]
     pub struct TimeZoneIdMapper(pub icu_timezone::TimeZoneIdMapper);
 
@@ -30,7 +31,7 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<TimeZoneIdMapper>, DataError> {
             Ok(Box::new(TimeZoneIdMapper(call_constructor!(
-                icu_timezone::TimeZoneIdMapper::new [r => Ok(r)],
+                icu_timezone::TimeZoneIdMapper::new [r => Ok(r.static_to_owned())],
                 icu_timezone::TimeZoneIdMapper::try_new_with_any_provider,
                 icu_timezone::TimeZoneIdMapper::try_new_with_buffer_provider,
                 provider,
@@ -133,13 +134,17 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::new,
+            FnInStruct
+        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {
             Ok(Box::new(TimeZoneIdMapperWithFastCanonicalization(
                 call_constructor!(
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r)],
+                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r.static_to_owned())],
                     icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_any_provider,
                     icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider,
                     provider,
