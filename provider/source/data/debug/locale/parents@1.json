@@ -665,6 +665,16 @@
       null,
       "PT"
     ],
+    "und-Hans": [
+      "und",
+      "Hani",
+      null
+    ],
+    "und-Hant": [
+      "und",
+      "Hani",
+      null
+    ],
     "zh-Hant-MO": [
       "zh",
       "Hant",

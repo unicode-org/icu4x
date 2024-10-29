@@ -5,7 +5,7 @@ collator/dia@1, und, 182B, 160B, 8ace760351a33687
 collator/dia@1, vi, 182B, 160B, 6b057eec42bee512
 collator/dia@1, vi/trad, -> vi
 collator/jamo@1, <singleton>, 1048B, 1026B, ccbfc88a6d3a411e
-collator/meta@1, <lookup>, 520B, 108 identifiers
+collator/meta@1, <lookup>, 537B, 110 identifiers
 collator/meta@1, <total>, 36B, 12B, 9 unique payloads
 collator/meta@1, af, 4B, 1B, 9aab82d56f3b362e
 collator/meta@1, am, 4B, 1B, d1dcef7af54c8272
@@ -103,6 +103,12 @@ collator/meta@1, tr, -> af
 collator/meta@1, ug, -> ar
 collator/meta@1, uk, -> ar
 collator/meta@1, und, 4B, 1B, 667dd5401e6fd800
+collator/meta@1, und-Hani/pinyin, -> ar
+collator/meta@1, und-Hani/stroke, -> ar
+collator/meta@1, und-Hani/unihan, -> ar
+collator/meta@1, und-Hani/zhuyin, -> ar
+collator/meta@1, und-Hans, -> ar
+collator/meta@1, und-Hant, -> ar
 collator/meta@1, und/emoji, -> und
 collator/meta@1, und/eor, -> und
 collator/meta@1, ur, -> ar
@@ -111,12 +117,8 @@ collator/meta@1, vi, -> ee
 collator/meta@1, vi/trad, -> ee
 collator/meta@1, wo, -> af
 collator/meta@1, yo, -> af
-collator/meta@1, zh, -> ar
-collator/meta@1, zh/stroke, -> ar
-collator/meta@1, zh/unihan, -> ar
-collator/meta@1, zh/zhuyin, -> ar
 collator/prim@1, <singleton>, 40B, 10B, c72898bdaad773b1
-collator/reord@1, <lookup>, 293B, 56 identifiers
+collator/reord@1, <lookup>, 314B, 58 identifiers
 collator/reord@1, <total>, 9464B, 8024B, 30 unique payloads
 collator/reord@1, am, 320B, 272B, 3989bb25c1c894c
 collator/reord@1, ar, 312B, 264B, 44ac22224ef1784d
@@ -169,13 +171,15 @@ collator/reord@1, te, 316B, 268B, 53be041ee9b02cf9
 collator/reord@1, th, 312B, 264B, 69513292284ea3de
 collator/reord@1, ug, -> ar
 collator/reord@1, uk, -> be
+collator/reord@1, und-Hani/pinyin, 312B, 264B, 699fda2876be5c76
+collator/reord@1, und-Hani/stroke, 324B, 276B, f800a05acd7a58c1
+collator/reord@1, und-Hani/unihan, -> und-Hani/stroke
+collator/reord@1, und-Hani/zhuyin, -> und-Hani/stroke
+collator/reord@1, und-Hans, -> und-Hani/pinyin
+collator/reord@1, und-Hant, -> und-Hani/stroke
 collator/reord@1, ur, -> ar
-collator/reord@1, zh, 312B, 264B, 699fda2876be5c76
-collator/reord@1, zh/stroke, 324B, 276B, f800a05acd7a58c1
-collator/reord@1, zh/unihan, -> zh/stroke
-collator/reord@1, zh/zhuyin, -> zh/stroke
 collator/root@1, <singleton>, 129820B, 129703B, 7e63bc9ada35e94
-collator/tailoring@1, <lookup>, 577B, 98 identifiers
+collator/tailoring@1, <lookup>, 596B, 100 identifiers
 collator/tailoring@1, <total>, 950740B, 939172B, 91 unique payloads
 collator/tailoring@1, af, 1416B, 1288B, bdc4ac64cc63ff0f
 collator/tailoring@1, ar, 8392B, 8267B, fb18ec596d8ddece
@@ -263,6 +267,12 @@ collator/tailoring@1, to, 1716B, 1589B, d22e1e0b0111552a
 collator/tailoring@1, tr, 1548B, 1421B, f4f47fb5a2c0003
 collator/tailoring@1, ug, 1900B, 1772B, 677d97f2d30caaf0
 collator/tailoring@1, uk, 1960B, 1832B, d0864a679db986ec
+collator/tailoring@1, und-Hani/pinyin, 104866B, 104742B, 268c68ad6387f5ee
+collator/tailoring@1, und-Hani/stroke, 174942B, 174818B, 9d2ad0f336b435d6
+collator/tailoring@1, und-Hani/unihan, 4116B, 3990B, c41f1c0b687c1259
+collator/tailoring@1, und-Hani/zhuyin, 129206B, 129082B, 40a2f9a76f043f9d
+collator/tailoring@1, und-Hans, -> und-Hani/pinyin
+collator/tailoring@1, und-Hant, -> und-Hani/stroke
 collator/tailoring@1, und/emoji, 30910B, 30784B, 9c1b9376d11f6436
 collator/tailoring@1, und/eor, 6268B, 6140B, 96ca4327c318259f
 collator/tailoring@1, ur, 2572B, 2445B, 2ad77b180d7824d9
@@ -271,7 +281,3 @@ collator/tailoring@1, vi, 1536B, 1409B, 7643d941a22cc0b2
 collator/tailoring@1, vi/trad, 1880B, 1753B, 45a30adb3ba0eb0f
 collator/tailoring@1, wo, 1528B, 1400B, 344d707597bb2c32
 collator/tailoring@1, yo, 1274B, 1146B, f8f8dcc72fee6ec1
-collator/tailoring@1, zh, 104866B, 104742B, 268c68ad6387f5ee
-collator/tailoring@1, zh/stroke, 174942B, 174818B, 9d2ad0f336b435d6
-collator/tailoring@1, zh/unihan, 4116B, 3990B, c41f1c0b687c1259
-collator/tailoring@1, zh/zhuyin, 129206B, 129082B, 40a2f9a76f043f9d
