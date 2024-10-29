@@ -84,19 +84,20 @@ pub struct Signed<T> {
     pub absolute: T,
 }
 
-/// The `WithInfinity` enum represents a numeric value that may be either infinite or finite.
-#[derive(Debug)]
-pub enum WithInfinity<T> {
-    Infinity,
-    Finite(T),
-}
+// TODO(#5065): implement `WithCompactExponent` and `WithScientificExponent`.
+// /// The `WithInfinity` enum represents a numeric value that may be either infinite or finite.
+// #[derive(Debug)]
+// pub enum WithInfinity<T> {
+//     Infinity,
+//     Finite(T),
+// }
 
-/// The `WithNaN` enum represents a numeric value that may be NaN.
-#[derive(Debug)]
-pub enum WithNaN<T> {
-    NaN,
-    N(T),
-}
+// /// The `WithNaN` enum represents a numeric value that may be NaN.
+// #[derive(Debug)]
+// pub enum WithNaN<T> {
+//     NaN,
+//     N(T),
+// }
 
 // TODO(#5065): implement `WithCompactExponent` and `WithScientificExponent`.
 // /// The `WithCompactExponent` struct represents a numeric value with a compact exponent.
