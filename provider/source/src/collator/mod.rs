@@ -9,7 +9,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
-use icu::locale::subtags::language;
+use icu::locale::subtags::{language, script};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -27,37 +27,58 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if !id.marker_attributes.is_empty() {
-        s.push('_');
-        s.push_str(match id.marker_attributes.as_str() {
-            "trad" => "traditional",
-            "phonebk" => "phonebook",
-            "dict" => "dictionary",
-            "gb2312" => "gb2312han",
-            extension => extension,
-        });
-    } else if id.locale.language == language!("zh") {
-        // "zh" uses "_pinyin" as the default
-        s.push_str("_pinyin");
-    } else {
-        // Everyting else uses "_standard"
-        s.push_str("_standard");
+
+    // und-Hant -> zh_stroke
+    // und-Hans -> zh_pinyin
+    // und-Hani/x -> zh_x
+
+    if s == "und_Hant" {
+        return "zh_stroke".into();
+    } else if s == "und_Hans" {
+        return "zh_pinyin".into();
+    } else if s == "und_Hani" {
+        s = "zh".into();
     }
+
+    s.push('_');
+    s.push_str(match id.marker_attributes.as_str() {
+        "" => "standard",
+        "trad" => "traditional",
+        "phonebk" => "phonebook",
+        "dict" => "dictionary",
+        "gb2312" => "gb2312han",
+        extension => extension,
+    });
     s
 }
 
-fn file_name_to_id(file_name: &str) -> Option<DataIdentifierCow<'static>> {
-    let (language, mut variant) = file_name.rsplit_once('_').unwrap();
-    let locale = if language == "root" {
-        DataLocale::default()
-    } else {
-        language.parse().ok()?
+fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
+    let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
+    if language == "root" {
+        language = "und";
+    }
+
+    let mut r = vec![];
+
+    let Ok(mut locale) = DataLocale::try_from_str(language) else {
+        return Default::default();
     };
 
-    // See above for the two special cases.
     if language == "zh" {
+        locale.language = language!("und");
+        locale.script = Some(script!("Hani"));
         if variant == "pinyin" {
-            variant = "";
+            // Pinyin is stored in both und-Hans and und-Hani/pinyin
+            r.push(DataIdentifierCow::from_borrowed_and_owned(
+                Default::default(),
+                "und-Hans".parse().unwrap(),
+            ));
+        } else if variant == "stroke" {
+            // Stroke is stored in both und-Hans and und-Hani/stroke
+            r.push(DataIdentifierCow::from_borrowed_and_owned(
+                Default::default(),
+                "und-Hant".parse().unwrap(),
+            ));
         }
     } else if variant == "standard" {
         variant = "";
@@ -68,10 +89,14 @@ fn file_name_to_id(file_name: &str) -> Option<DataIdentifierCow<'static>> {
         "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
         "dictionary" => DataMarkerAttributes::from_str_or_panic("dict").to_owned(),
         "gb2312han" => DataMarkerAttributes::from_str_or_panic("gb2312").to_owned(),
-        v => DataMarkerAttributes::try_from_str(v).ok()?.to_owned(),
+        v => match DataMarkerAttributes::try_from_str(v) {
+            Ok(s) => s.to_owned(),
+            _ => return r,
+        },
     };
 
-    Some(DataIdentifierCow::from_owned(marker_attributes, locale))
+    r.push(DataIdentifierCow::from_owned(marker_attributes, locale));
+    r
 }
 
 impl SourceDataProvider {
@@ -105,7 +130,7 @@ impl SourceDataProvider {
                     file_name
                 })
             })
-            .filter_map(|s| file_name_to_id(&s))
+            .flat_map(|s| file_name_to_id(&s))
             .collect())
     }
 }
