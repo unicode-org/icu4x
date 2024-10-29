@@ -8,7 +8,9 @@ use crate::{
     CustomZonedDateTime, InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper,
     TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
 };
-use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
+#[cfg(feature = "compiled_data")]
+use icu_calendar::AnyCalendar;
+use icu_calendar::{Date, DateError, DateTime, Iso, RangeError, Time};
 use icu_provider::prelude::*;
 use ixdtf::{
     parsers::records::{
@@ -464,6 +466,7 @@ impl IxdtfParser {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
     ///
     /// This function is "strict": the string should have only an offset and no named time zone.
+    #[cfg(feature = "compiled_data")]
     pub fn try_offset_only_from_str(
         &self,
         ixdtf_str: &str,
@@ -474,6 +477,7 @@ impl IxdtfParser {
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax UTF-8 bytes.
     ///
     /// This function is "strict": the string should have only an offset and no named time zone.
+    #[cfg(feature = "compiled_data")]
     pub fn try_offset_only_from_utf8(
         &self,
         ixdtf_str: &[u8],
@@ -487,6 +491,7 @@ impl IxdtfParser {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
     ///
     /// This function is "strict": the string should have only a named time zone and no offset.
+    #[cfg(feature = "compiled_data")]
     pub fn try_location_only_from_str(
         &self,
         ixdtf_str: &str,
@@ -497,6 +502,7 @@ impl IxdtfParser {
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax UTF-8 bytes.
     ///
     /// This function is "strict": the string should have only a named time zone and no offset.
+    #[cfg(feature = "compiled_data")]
     pub fn try_location_only_from_utf8(
         &self,
         ixdtf_str: &[u8],
@@ -514,6 +520,7 @@ impl IxdtfParser {
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
     /// [`Self::try_from_str`].
+    #[cfg(feature = "compiled_data")]
     pub fn try_loose_from_str(
         &self,
         ixdtf_str: &str,
@@ -528,6 +535,7 @@ impl IxdtfParser {
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
     /// [`Self::try_from_utf8`].
+    #[cfg(feature = "compiled_data")]
     pub fn try_loose_from_utf8(
         &self,
         ixdtf_str: &[u8],
@@ -661,6 +669,7 @@ impl IxdtfParser {
     ///
     /// assert!(matches!(inconsistent_tz_from_both, Err(ParseError::InconsistentTimeZoneOffsets)));
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_from_str(
         &self,
         ixdtf_str: &str,
@@ -673,6 +682,7 @@ impl IxdtfParser {
     /// The string should have both an offset and a named time zone.
     ///
     /// See [`Self::try_from_str`].
+    #[cfg(feature = "compiled_data")]
     pub fn try_from_utf8(
         &self,
         ixdtf_str: &[u8],
@@ -683,6 +693,7 @@ impl IxdtfParser {
         self.try_from_ixdtf_record(&ixdtf_record, time_zone)
     }
 
+    #[cfg(feature = "compiled_data")]
     fn try_from_ixdtf_record<Z>(
         &self,
         ixdtf_record: &IxdtfParseRecord,
