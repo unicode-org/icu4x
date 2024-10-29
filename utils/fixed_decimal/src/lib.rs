@@ -62,7 +62,7 @@ mod uint_iterator;
 mod variations;
 
 #[cfg(feature = "ryu")]
-pub use variations::FloatPrecision;
+pub use rounding::FloatPrecision;
 
 // use variations::Signed;
 // use variations::WithInfinity;
