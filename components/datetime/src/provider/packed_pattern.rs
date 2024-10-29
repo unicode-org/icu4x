@@ -4,14 +4,11 @@
 
 //! Data structures for packing of datetime patterns.
 
-use crate::{
-    helpers::size_test,
-    NeoSkeletonLength,
-};
 use super::pattern::{
     runtime::{Pattern, PatternBorrowed, PatternMetadata},
     PatternItem,
 };
+use crate::{helpers::size_test, NeoSkeletonLength};
 use alloc::vec::Vec;
 use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},

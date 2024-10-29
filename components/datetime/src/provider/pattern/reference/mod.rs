@@ -13,5 +13,5 @@ mod parser;
 pub(crate) mod pattern;
 
 pub use generic::GenericPattern;
-pub use parser::Parser;
+pub(crate) use parser::Parser;
 pub use pattern::Pattern;

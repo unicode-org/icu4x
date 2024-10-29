@@ -2,17 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Internal structured pattern types.
+//! Structured datetime pattern types for datagen and the data provider.
 
 mod common;
 mod error;
-pub mod hour_cycle;
+mod hour_cycle;
 mod item;
 pub mod reference;
 pub mod runtime;
 
 use crate::fields;
 pub use error::PatternError;
+pub(crate) use hour_cycle::naively_apply_preferences;
 pub use hour_cycle::CoarseHourCycle;
 use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};

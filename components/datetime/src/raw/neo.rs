@@ -11,11 +11,11 @@ use crate::neo_skeleton::{
     NeoTimeZoneStyle, YearStyle,
 };
 use crate::options::preferences::HourCycle;
-use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
+use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
