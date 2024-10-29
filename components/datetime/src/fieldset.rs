@@ -582,7 +582,7 @@ macro_rules! impl_zone_marker {
             ///
             /// ```
             /// use icu::calendar::{Date, Time};
-            /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+            /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
@@ -738,7 +738,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
         /// use icu::datetime::DateTimeFormatter;
         #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
         /// use icu::locale::locale;
@@ -750,7 +750,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// )
         /// .unwrap();
         ///
-        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
+        /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
@@ -762,7 +762,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
+        /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
@@ -775,7 +775,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// )
         /// .unwrap();
         ///
-        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
+        /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
         ///     .to_calendar(Gregorian);
         ///
@@ -981,7 +981,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Z;
@@ -1056,7 +1056,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
@@ -1079,7 +1079,7 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// let dtz = CustomZonedDateTime::try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
+    /// let dtz = IxdtfParser::new().try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),
@@ -1206,7 +1206,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::V;
@@ -1278,7 +1278,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZoneInfo, CustomZonedDateTime};
+    /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
@@ -1301,7 +1301,7 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// let dtz = CustomZonedDateTime::try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
+    /// let dtz = IxdtfParser::new().try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),

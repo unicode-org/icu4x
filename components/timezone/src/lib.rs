@@ -95,8 +95,10 @@ mod windows_tz;
 mod zone_offset;
 mod zoned_datetime;
 
-#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
+#[cfg(feature = "ixdtf")]
 mod ixdtf;
+#[cfg(feature = "ixdtf")]
+pub use self::ixdtf::IxdtfParser;
 
 pub use error::InvalidOffsetError;
 pub use ids::{
