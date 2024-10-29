@@ -10,25 +10,16 @@ use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
     pub pivot_field: Week,
 
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub other: Pattern<'data>,
 }
 
@@ -118,9 +109,6 @@ impl<'data> PluralPattern<'data> {
 /// Currently, the plural forms are only based on the week number.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),

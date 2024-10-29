@@ -145,11 +145,7 @@ pub mod patterns {
 
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub(crate) struct PatternPluralsV1<'data>(
-        #[cfg_attr(feature = "serde", serde(borrow))] pub PatternPlurals<'data>,
-    );
+    pub(crate) struct PatternPluralsV1<'data>(pub PatternPlurals<'data>);
 
     impl<'data> From<PatternPlurals<'data>> for PatternPluralsV1<'data> {
         fn from(pattern: PatternPlurals<'data>) -> Self {
