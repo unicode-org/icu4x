@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt;
+use core::ops::{Deref, DerefMut};
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
@@ -405,6 +406,19 @@ impl SignedFixedDecimal {
                 absolute: UnsignedFixedDecimal::try_from_f64(float, precision)?,
             }),
         }
+    }
+}
+
+impl Deref for SignedFixedDecimal {
+    type Target = UnsignedFixedDecimal;
+    fn deref(&self) -> &Self::Target {
+        &self.absolute
+    }
+}
+
+impl DerefMut for SignedFixedDecimal {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.absolute
     }
 }
 
@@ -900,23 +914,11 @@ impl SignedFixedDecimal {
 
     fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.absolute
-                .trunc_to_increment_internal(position, increment);
+            self.trunc_to_increment_internal(position, increment);
             return;
         }
 
-        self.absolute
-            .expand_to_increment_internal(position, increment);
-    }
-
-    fn trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, inner_increment: R) {
-        self.absolute
-            .trunc_to_increment_internal(position, inner_increment);
-    }
-
-    fn half_trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.absolute
-            .half_trunc_to_increment_internal(position, increment);
+        self.expand_to_increment_internal(position, increment);
     }
 
     fn half_ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
@@ -926,25 +928,6 @@ impl SignedFixedDecimal {
         }
 
         self.half_expand_to_increment_internal(position, increment);
-    }
-
-    fn expand_to_increment_internal<R: IncrementLike>(
-        &mut self,
-        position: i16,
-        inner_increment: R,
-    ) {
-        self.absolute
-            .expand_to_increment_internal(position, inner_increment);
-    }
-
-    fn half_expand_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.absolute
-            .half_expand_to_increment_internal(position, increment);
-    }
-
-    fn half_even_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.absolute
-            .half_even_to_increment_internal(position, increment);
     }
 
     fn floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
