@@ -52,6 +52,24 @@ pub struct Signed<T> {
     pub absolute: T,
 }
 
+impl<T> Signed<T> {
+    /// Returns the sign of this signed number.
+    pub fn sign(&self) -> Sign {
+        self.sign
+    }
+
+    /// Changes the sign of this signed number to the one given.
+    pub fn set_sign(&mut self, sign: Sign) {
+        self.sign = sign;
+    }
+
+    /// Returns this number with the sign changed to the one given.
+    pub fn with_sign(mut self, sign: Sign) -> Self {
+        self.set_sign(sign);
+        self
+    }
+}
+
 // TODO(#5065): implement `WithCompactExponent` and `WithScientificExponent`.
 // /// The `WithInfinity` enum represents a numeric value that may be either infinite or finite.
 // #[derive(Debug)]

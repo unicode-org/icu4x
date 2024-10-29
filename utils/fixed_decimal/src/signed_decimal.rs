@@ -111,83 +111,7 @@ impl SignedFixedDecimal {
         })
     }
 
-    /// Returns the sign of this number.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
-    /// use fixed_decimal::Sign;
-    /// # use std::str::FromStr;
-    ///
-    /// assert_eq!(SignedFixedDecimal::from(1729).sign(), Sign::None);
-    /// assert_eq!(
-    ///     SignedFixedDecimal::from(-1729).sign(),
-    ///     Sign::Negative
-    /// );
-    /// assert_eq!(
-    ///     SignedFixedDecimal::from(1729).sign(),
-    ///     Sign::Positive
-    /// );
-    /// ```
-    pub fn sign(&self) -> Sign {
-        self.sign
-    }
-
-    /// Changes the sign of this number to the one given.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
-    /// use fixed_decimal::Sign;
-    ///
-    /// let mut dec = SignedFixedDecimal::from(1729);
-    /// assert_eq!("1729", dec.to_string());
-    ///
-    /// dec.set_sign(Sign::Negative);
-    /// assert_eq!("-1729", dec.to_string());
-    ///
-    /// dec.set_sign(Sign::Positive);
-    /// assert_eq!("+1729", dec.to_string());
-    ///
-    /// dec.set_sign(Sign::None);
-    /// assert_eq!("1729", dec.to_string());
-    /// ```
-    pub fn set_sign(&mut self, sign: Sign) {
-        self.sign = sign;
-    }
-
-    /// Returns this number with the sign changed to the one given.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
-    /// use fixed_decimal::Sign;
-    ///
-    /// assert_eq!(
-    ///     "+1729",
-    ///     SignedFixedDecimal::from(1729)
-    ///         .with_sign(Sign::Positive)
-    ///         .to_string()
-    /// );
-    /// assert_eq!(
-    ///     "1729",
-    ///     SignedFixedDecimal::from(-1729).with_sign(Sign::None).to_string()
-    /// );
-    /// assert_eq!(
-    ///     "-1729",
-    ///     SignedFixedDecimal::from(1729)
-    ///         .with_sign(Sign::Negative)
-    ///         .to_string()
-    /// );
-    /// ```
-    pub fn with_sign(mut self, sign: Sign) -> Self {
-        self.set_sign(sign);
-        self
-    }
-
+    // TODO: Shall we add this method to `Signed<T>`?
     /// Sets the sign of this number according to the given sign display strategy.
     ///
     /// # Examples
@@ -229,6 +153,7 @@ impl SignedFixedDecimal {
         }
     }
 
+    // TODO: Shall we add this method to `Signed<T>`?
     /// Returns this number with its sign set according to the given sign display strategy.
     ///
     /// # Examples
