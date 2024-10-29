@@ -523,7 +523,7 @@
   },
   {
     "locale": "ru",
-    "datetime": "2021-01-11T12:00:00.000Z[Antarctica/Troll]",
+    "datetime": "2021-01-11T12:00:00.000+00:00[Antarctica/Troll]",
     "expectations": [
       {
         "patterns": [
