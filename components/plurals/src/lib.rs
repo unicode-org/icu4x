@@ -1072,16 +1072,4 @@ impl<T: PartialEq> PluralElements<T> {
             ..self.0
         })
     }
-
-    /// Sets the value for the given category enum variant.
-    pub fn set_category(&mut self, category: PluralCategory, value: T) {
-        match category {
-            PluralCategory::Zero => self.0.zero = Some(value),
-            PluralCategory::One => self.0.one = Some(value),
-            PluralCategory::Two => self.0.two = Some(value),
-            PluralCategory::Few => self.0.few = Some(value),
-            PluralCategory::Many => self.0.many = Some(value),
-            PluralCategory::Other => self.0.other = value,
-        }
-    }
 }
