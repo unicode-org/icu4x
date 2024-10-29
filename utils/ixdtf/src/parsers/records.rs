@@ -13,7 +13,7 @@ pub struct IxdtfParseRecord<'a> {
     /// Parsed `TimeRecord`
     pub time: Option<TimeRecord>,
     /// Parsed UtcOffset
-    pub offset: Option<UTCOffsetRecord>,
+    pub offset: Option<UtcOffsetRecordOrZ>,
     /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
     pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
@@ -75,7 +75,7 @@ pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
     Name(&'a [u8]),
     /// TimeZoneOffset
-    Offset(UTCOffsetRecord),
+    Offset(UtcOffsetRecord),
 }
 
 /// The parsed sign value, representing whether its struct is positive or negative.
@@ -101,7 +101,7 @@ impl From<bool> for Sign {
 /// A full precision `UtcOffsetRecord`
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct UTCOffsetRecord {
+pub struct UtcOffsetRecord {
     /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
     /// The hour value of the `UtcOffsetRecord`.
@@ -112,6 +112,29 @@ pub struct UTCOffsetRecord {
     pub second: u8,
     /// Any nanosecond value of the `UTCOffsetRecord`.
     pub nanosecond: u32,
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum UtcOffsetRecordOrZ {
+    Offset(UtcOffsetRecord),
+    Z,
+}
+
+impl UtcOffsetRecordOrZ {
+    /// Resolves to a [`UtcOffsetRecord`] according to RFC9557: "Z" == "-00:00"
+    pub fn resolve_rfc_9557(self) -> UtcOffsetRecord {
+        match self {
+            UtcOffsetRecordOrZ::Offset(o) => o,
+            UtcOffsetRecordOrZ::Z => UtcOffsetRecord {
+                sign: Sign::Negative,
+                hour: 0,
+                minute: 0,
+                second: 0,
+                nanosecond: 0,
+            },
+        }
+    }
 }
 
 /// The resulting record of parsing a `Duration` string.

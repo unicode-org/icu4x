@@ -18,7 +18,7 @@ use crate::{
     ParseError, ParserResult,
 };
 
-use super::records::{Annotation, UTCOffsetRecord};
+use super::records::{Annotation, UtcOffsetRecordOrZ};
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.
@@ -28,7 +28,7 @@ pub(crate) struct DateTimeRecord {
     /// Time
     pub(crate) time: Option<TimeRecord>,
     /// Tz Offset
-    pub(crate) time_zone: Option<UTCOffsetRecord>,
+    pub(crate) time_zone: Option<UtcOffsetRecordOrZ>,
 }
 
 /// This function handles parsing for [`AnnotatedDateTime`][datetime],
