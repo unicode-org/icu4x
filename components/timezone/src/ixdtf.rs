@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use ixdtf::{
     parsers::records::{
         DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
-        UTCOffsetRecord,
+        UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
     ParseError as IxdtfParseError,
 };
@@ -40,6 +40,23 @@ pub enum ParseError {
     MismatchedTimeZoneFields,
     /// An unknown calendar was provided.
     UnknownCalendar,
+    /// A timezone calculation is required to interpret this string, which is not supported.
+    ///
+    /// # Example
+    /// ```
+    /// use icu::timezone::{IxdtfParser, ParseError};
+    ///
+    /// // This timestamp is in UTC, and requires a time zone calculation in order to display a Zurich time.
+    /// assert_eq!(
+    ///     IxdtfParser::new().try_loose_iso_from_str("2024-08-12T12:32:00Z[Europe/Zurich]").unwrap_err(),
+    ///     ParseError::RequiresCalculation,
+    /// );
+    ///
+    /// // These timestamps are in local time
+    /// IxdtfParser::new().try_loose_iso_from_str("2024-08-12T14:32:00+02:00[Europe/Zurich]").unwrap();
+    /// IxdtfParser::new().try_loose_iso_from_str("2024-08-12T14:32:00[Europe/Zurich]").unwrap();
+    /// ```
+    RequiresCalculation,
 }
 
 impl From<IxdtfParseError> for ParseError {
@@ -67,7 +84,7 @@ impl From<InvalidOffsetError> for ParseError {
 }
 
 impl UtcOffset {
-    fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
+    fn try_from_utc_offset_record(record: UtcOffsetRecord) -> Result<Self, ParseError> {
         let hour_seconds = i32::from(record.hour) * 3600;
         let minute_seconds = i32::from(record.minute) * 60;
         Self::try_from_seconds(
@@ -120,10 +137,10 @@ impl IxdtfParser {
 }
 
 struct Intermediate<'a> {
-    offset: Option<&'a UTCOffsetRecord>,
+    offset: Option<UtcOffsetRecord>,
     iana_identifier: Option<&'a [u8]>,
-    date: &'a DateRecord,
-    time: &'a TimeRecord,
+    date: DateRecord,
+    time: TimeRecord,
 }
 
 impl<'a> Intermediate<'a> {
@@ -131,9 +148,10 @@ impl<'a> Intermediate<'a> {
         let (offset, iana_identifier) = match ixdtf_record {
             // empty
             // -0800
+            // Z
             IxdtfParseRecord {
                 offset, tz: None, ..
-            } => (offset.as_ref(), None),
+            } => (offset.map(UtcOffsetRecordOrZ::resolve_rfc_9557), None),
             // [-0800]
             IxdtfParseRecord {
                 offset: None,
@@ -143,10 +161,10 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (Some(offset), None),
+            } => (Some(*offset), None),
             // -0800[-0800]
             IxdtfParseRecord {
-                offset: Some(offset),
+                offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
                 tz:
                     Some(TimeZoneAnnotation {
                         tz: TimeZoneRecord::Offset(offset1),
@@ -157,34 +175,49 @@ impl<'a> Intermediate<'a> {
                 if offset != offset1 {
                     return Err(ParseError::InconsistentTimeZoneOffsets);
                 }
-                (Some(offset), None)
+                (Some(*offset), None)
             }
-            // [America/Los_Angeles]
             // -0800[America/Los_Angeles]
             IxdtfParseRecord {
-                offset,
+                offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
                 tz:
                     Some(TimeZoneAnnotation {
                         tz: TimeZoneRecord::Name(iana_identifier),
                         ..
                     }),
                 ..
-            } => (offset.as_ref(), Some(*iana_identifier)),
+            } => (Some(*offset), Some(*iana_identifier)),
+            // Z[-0800]
+            // Z[America/Los_Angeles]
+            IxdtfParseRecord {
+                offset: Some(UtcOffsetRecordOrZ::Z),
+                tz: Some(_),
+                ..
+            } => return Err(ParseError::RequiresCalculation),
+            // [America/Los_Angeles]
+            IxdtfParseRecord {
+                offset: None,
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Name(iana_identifier),
+                        ..
+                    }),
+                ..
+            } => (None, Some(*iana_identifier)),
             // non_exhaustive match: maybe something like [u-tz=uslax] in the future
             IxdtfParseRecord {
-                offset,
                 tz: Some(TimeZoneAnnotation { tz, .. }),
                 ..
             } => {
                 debug_assert!(false, "unexpected TimeZoneRecord: {tz:?}");
-                (offset.as_ref(), None)
+                (None, None)
             }
         };
         let IxdtfParseRecord {
             date: Some(date),
             time: Some(time),
             ..
-        } = ixdtf_record
+        } = *ixdtf_record
         else {
             // Date or time was missing
             return Err(ParseError::MismatchedTimeZoneFields);
@@ -696,24 +729,39 @@ mod test {
 
     #[test]
     fn max_possible_ixdtf_utc_offset() {
-        let ixdtf_record = ixdtf::parsers::IxdtfParser::from_utf8(
-            "2024-08-08T12:08:19+23:59:60.999999999".as_bytes(),
-        )
-        .parse()
-        .unwrap();
-        let result = UtcOffset::try_from_utc_offset_record(&ixdtf_record.offset.unwrap());
-        assert_eq!(result, Err(ParseError::InvalidOffsetError));
+        assert_eq!(
+            IxdtfParser::new()
+                .try_offset_only_iso_from_str("2024-08-08T12:08:19+23:59:60.999999999")
+                .unwrap_err(),
+            ParseError::InvalidOffsetError
+        );
+    }
+
+    #[test]
+    fn zone_calculations() {
+        IxdtfParser::new()
+            .try_offset_only_iso_from_str("2024-08-08T12:08:19Z")
+            .unwrap();
+        assert_eq!(
+            IxdtfParser::new()
+                .try_offset_only_iso_from_str("2024-08-08T12:08:19Z[+08:00]")
+                .unwrap_err(),
+            ParseError::RequiresCalculation
+        );
+        assert_eq!(
+            IxdtfParser::new()
+                .try_offset_only_iso_from_str("2024-08-08T12:08:19Z[Europe/Zurich]")
+                .unwrap_err(),
+            ParseError::RequiresCalculation
+        );
     }
 
     #[test]
     fn future_zone() {
-        let ixdtf_record =
-            ixdtf::parsers::IxdtfParser::from_utf8("2024-08-08T12:08:19[Future/Zone]".as_bytes())
-                .parse()
-                .unwrap();
-        let intermediate = Intermediate::try_from_ixdtf_record(&ixdtf_record).unwrap();
-        let result = intermediate.loose(TimeZoneIdMapperBorrowed::new()).unwrap();
-        assert_eq!(result.time_zone_id, TimeZoneBcp47Id::unknown());
-        assert_eq!(result.offset, None);
+        let result = IxdtfParser::new()
+            .try_loose_from_str("2024-08-08T12:08:19[Future/Zone]")
+            .unwrap();
+        assert_eq!(result.zone.time_zone_id, TimeZoneBcp47Id::unknown());
+        assert_eq!(result.zone.offset, None);
     }
 }
