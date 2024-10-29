@@ -47,16 +47,6 @@ impl AnyCalendarKind {
     }
 }
 
-impl AnyCalendar {
-    #[cfg(feature = "compiled_data")]
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
-        let calendar_kind =
-            AnyCalendarKind::try_from_ixdtf_record(ixdtf_record)?.unwrap_or(AnyCalendarKind::Iso);
-        let calendar = AnyCalendar::new(calendar_kind);
-        Ok(calendar)
-    }
-}
-
 impl Date<Iso> {
     /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
@@ -153,53 +143,6 @@ impl TaggedDate {
 }
 
 impl FromStr for TaggedDate {
-    type Err = ParseError;
-    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(ixdtf_str)
-    }
-}
-
-impl Date<AnyCalendar> {
-    /// Creates a [`Date`] in any calendar from an IXDTF syntax string with compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    ///
-    /// let date = Date::try_from_str("2024-07-17[u-ca=hebrew]").unwrap();
-    ///
-    /// assert_eq!(date.year().era_year_or_extended(), 5784);
-    /// assert_eq!(
-    ///     date.month().standard_code,
-    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
-    /// );
-    /// assert_eq!(date.day_of_month().0, 11);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_from_utf8(ixdtf_str.as_bytes())
-    }
-
-    /// Creates a [`Date`] in any calendar from an IXDTF syntax string with compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    ///
-    /// See [`Self::try_from_str()`].
-    #[cfg(feature = "compiled_data")]
-    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        let iso_date = Date::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
-        let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
-        let date = iso_date.to_any().to_calendar(calendar);
-        Ok(date)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl FromStr for Date<AnyCalendar> {
     type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(ixdtf_str)
@@ -309,57 +252,5 @@ impl FromStr for DateTime<Iso> {
     type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_iso_from_str(ixdtf_str)
-    }
-}
-
-impl DateTime<AnyCalendar> {
-    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime = DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
-    ///
-    /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
-    /// assert_eq!(
-    ///     datetime.date.month().standard_code,
-    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
-    /// );
-    /// assert_eq!(datetime.date.day_of_month().0, 11);
-    ///
-    /// assert_eq!(datetime.time.hour.number(), 16);
-    /// assert_eq!(datetime.time.minute.number(), 1);
-    /// assert_eq!(datetime.time.second.number(), 17);
-    /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_from_utf8(ixdtf_str.as_bytes())
-    }
-
-    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
-    ///
-    /// See [`Self::try_from_str()`].
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    #[cfg(feature = "compiled_data")]
-    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        let iso_datetime = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
-        let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
-        let datetime = iso_datetime.to_any().to_calendar(calendar);
-        Ok(datetime)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl FromStr for DateTime<AnyCalendar> {
-    type Err = ParseError;
-    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(ixdtf_str)
     }
 }
