@@ -11,22 +11,29 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 
+/// A fully-owned, non-zero-copy type corresponding to [`Pattern`](super::runtime::Pattern).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct Pattern {
-    pub items: Vec<PatternItem>,
+    pub(crate) items: Vec<PatternItem>,
     pub(crate) time_granularity: TimeGranularity,
 }
 
 impl Pattern {
-    pub fn items(&self) -> &[PatternItem] {
+    pub(crate) fn items(&self) -> &[PatternItem] {
         &self.items
     }
 
-    pub fn items_mut(&mut self) -> &mut [PatternItem] {
+    pub(crate) fn items_mut(&mut self) -> &mut [PatternItem] {
         &mut self.items
     }
 
-    pub fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
+    pub(crate) fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
         runtime::Pattern::from(self)
     }
 }

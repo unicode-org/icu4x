@@ -7,6 +7,12 @@
 //! for parsing/inspecting/modifying and serialization.
 //!
 //! The runtime `Pattern` uses parsing/serialization from this module.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 
 mod generic;
 mod parser;

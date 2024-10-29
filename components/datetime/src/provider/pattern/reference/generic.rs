@@ -10,14 +10,21 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 
+/// A fully-owned, non-zero-copy type corresponding to [`GenericPattern`](super::runtime::GenericPattern).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct GenericPattern {
-    pub items: Vec<GenericPatternItem>,
+    pub(crate) items: Vec<GenericPatternItem>,
 }
 
 impl GenericPattern {
-    pub fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
+    pub(crate) fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
         let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
         let mut result = Vec::with_capacity(self.items.len() + size);
 
