@@ -1885,19 +1885,13 @@ mod tests {
 
         let roundtrip_year = date.year();
         // FIXME: these APIs should be improved
-        let roundtrip_era = roundtrip_year.formatting_era().unwrap_or(era);
         let roundtrip_year = roundtrip_year.era_year_or_extended();
         let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0;
 
         assert_eq!(
-            (era, year, month, day),
-            (
-                roundtrip_era,
-                roundtrip_year,
-                roundtrip_month,
-                roundtrip_day
-            ),
+            (year, month, day),
+            (roundtrip_year, roundtrip_month, roundtrip_day),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );

@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "roc": "Minguo",
-    "roc-inverse": "B.R.O.C."
-  }
+  "FixedEras": [
+    "B.R.O.C.",
+    "Minguo"
+  ]
 }

@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "av. J.-C.",
-    "ce": "ap. J.-C."
-  }
+  "FixedEras": [
+    "av. J.-C.",
+    "ap. J.-C."
+  ]
 }

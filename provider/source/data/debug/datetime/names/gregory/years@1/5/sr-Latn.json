@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "bce": "pre nove ere",
-    "ce": "nove ere"
-  }
+  "FixedEras": [
+    "pre nove ere",
+    "nove ere"
+  ]
 }

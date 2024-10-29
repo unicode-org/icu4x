@@ -30,7 +30,7 @@
 //!
 //! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
-//! let offset = result.offset.unwrap();
+//! let offset = result.offset.unwrap().resolve_rfc_9557();
 //! let tz_annotation = result.tz.unwrap();
 //!
 //! assert_eq!(date.year, 2024);
@@ -81,7 +81,7 @@
 //!
 //! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
-//! let offset = result.offset.unwrap();
+//! let offset = result.offset.unwrap().resolve_rfc_9557();
 //! let tz_annotation = result.tz.unwrap();
 //!
 //! assert_eq!(date.year, 2024);
@@ -135,7 +135,7 @@
 //! let result = IxdtfParser::from_str(zulu_offset).parse().unwrap();
 //!
 //! let tz_annotation = result.tz.unwrap();
-//! let offset = result.offset.unwrap();
+//! let offset = result.offset.unwrap().resolve_rfc_9557();
 //!
 //! // The offset is `Z`/`-00:00`, so the application can use the rules of
 //! // "America/New_York" to calculate the time for IXDTF string.
@@ -284,7 +284,7 @@
 //! let result = IxdtfParser::from_str(example_two).parse().unwrap();
 //!
 //! let tz_annotation = result.tz.unwrap();
-//! let offset = result.offset.unwrap();
+//! let offset = result.offset.unwrap().resolve_rfc_9557();
 //!
 //! // The time zone annotation and offset conflict with each other, and must therefore be
 //! // resolved by the user.

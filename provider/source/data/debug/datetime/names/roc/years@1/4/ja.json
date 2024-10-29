@@ -1,6 +1,6 @@
 {
-  "Eras": {
-    "roc": "民国",
-    "roc-inverse": "民国前"
-  }
+  "FixedEras": [
+    "民国前",
+    "民国"
+  ]
 }

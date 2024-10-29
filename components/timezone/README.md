@@ -6,7 +6,7 @@ Types for resolving and manipulating time zones.
 
 ## Fields
 
-In ICU4X, a [formattable time zone](TimeZoneInfo) consists of four different fields:
+In ICU4X, a [formattable time zone](TimeZoneInfo) consists of up to four different fields:
 
 1. The time zone ID
 2. The offset from UTC
@@ -57,13 +57,11 @@ use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
 use tinystr::{tinystr, TinyAsciiStr};
 
-let mapper = TimeZoneIdMapper::new();
 // Create a time zone for America/Chicago at UTC-6:
-let mut time_zone = TimeZoneInfo {
-    time_zone_id: mapper.as_borrowed().iana_to_bcp47("America/Chicago"),
-    offset: Some("-0600".parse().unwrap()),
-    ..TimeZoneInfo::unknown()
-};
+let mut time_zone = TimeZoneInfo::from_id_and_offset(
+    TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago"),
+    "-0600".parse().unwrap(),
+);
 
 // Alternatively, set it directly from the BCP-47 ID
 assert_eq!(time_zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));

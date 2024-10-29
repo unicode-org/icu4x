@@ -319,11 +319,13 @@ icu::properties::PropertyNamesLong#Struct
 icu::properties::PropertyNamesLong::new#FnInStruct
 icu::properties::PropertyNamesLongBorrowed#Struct
 icu::properties::PropertyNamesLongBorrowed::get#FnInStruct
+icu::properties::PropertyNamesLongBorrowed::new#FnInStruct
 icu::properties::PropertyNamesShort#Struct
 icu::properties::PropertyNamesShort::new#FnInStruct
 icu::properties::PropertyNamesShortBorrowed#Struct
 icu::properties::PropertyNamesShortBorrowed::get#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
+icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
 icu::properties::props::CanonicalCombiningClass#Struct
@@ -365,12 +367,10 @@ icu::timezone::TimeZoneInfo::with_zone_variant#FnInStruct
 icu::timezone::UtcOffset::into_option#FnInStruct
 icu::timezone::UtcOffset::with_id#FnInStruct
 icu::timezone::WindowsTimeZoneMapper#Struct
-icu::timezone::WindowsTimeZoneMapper::as_borrowed#FnInStruct
 icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
 icu::timezone::WindowsTimeZoneMapperBorrowed::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
-icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id_with_region#FnInStruct
 icu::timezone::ZoneOffsetCalculator#Struct
 icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct

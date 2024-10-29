@@ -1,5 +1,5 @@
 {
-  "Eras": {
-    "ah": "Anno Persico"
-  }
+  "FixedEras": [
+    "Anno Persico"
+  ]
 }

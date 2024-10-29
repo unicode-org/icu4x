@@ -302,7 +302,7 @@ pub struct ScriptWithExtensionsBorrowed<'a> {
 }
 
 impl ScriptWithExtensions {
-    /// Creates a new instance of `ScriptWithExtensions` using compiled data.
+    /// Creates a new instance of `ScriptWithExtensionsBorrowed` using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -310,9 +310,7 @@ impl ScriptWithExtensions {
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub fn new() -> ScriptWithExtensionsBorrowed<'static> {
-        ScriptWithExtensionsBorrowed {
-            data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
-        }
+        ScriptWithExtensionsBorrowed::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
@@ -645,7 +643,26 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for ScriptWithExtensionsBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ScriptWithExtensionsBorrowed<'static> {
+    /// Creates a new instance of `ScriptWithExtensionsBorrowed` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> Self {
+        Self {
+            data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
+        }
+    }
+
     /// Cheaply converts a [`ScriptWithExtensionsBorrowed<'static>`] into a [`ScriptWithExtensions`].
     ///
     /// Note: Due to branching and indirection, using [`ScriptWithExtensions`] might inhibit some
