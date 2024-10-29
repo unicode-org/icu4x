@@ -64,9 +64,9 @@ mod variations;
 #[cfg(feature = "ryu")]
 pub use variations::FloatPrecision;
 
-use variations::Signed;
-use variations::WithInfinity;
-use variations::WithNaN;
+// use variations::Signed;
+// use variations::WithInfinity;
+// use variations::WithNaN;
 #[cfg(feature = "ryu")]
 #[doc(no_inline)]
 pub use FloatPrecision as DoublePrecision;
@@ -130,8 +130,7 @@ pub enum ParseError {
 #[cfg(feature = "std")]
 impl std::error::Error for ParseError {}
 
-pub type FixedDecimalOrInfinity = WithInfinity<UnsignedFixedDecimal>;
-
-pub type SignedFixedDecimalOrInfinity = Signed<FixedDecimalOrInfinity>;
-
-pub type SignedFixedDecimalOrInfinityOrNan = WithNaN<SignedFixedDecimalOrInfinity>;
+// TODO(#5065): implement these while `WithCompactExponent` and `WithScientificExponent` are implemented.
+// pub type FixedDecimalOrInfinity = WithInfinity<UnsignedFixedDecimal>;
+// pub type SignedFixedDecimalOrInfinity = Signed<FixedDecimalOrInfinity>;
+// pub type SignedFixedDecimalOrInfinityOrNan = WithNaN<SignedFixedDecimalOrInfinity>;
