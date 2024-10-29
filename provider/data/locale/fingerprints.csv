@@ -742,5 +742,5 @@ locale/exemplarchars/punctuation@1, zh-Hant, -> yue
 locale/likelysubtags_ext@1, <singleton>, 72368B, 72100B, f9b76ab2aa433a36
 locale/likelysubtags_l@1, <singleton>, 2330B, 2191B, 85986e5c29062319
 locale/likelysubtags_sr@1, <singleton>, 3264B, 3132B, da2dd95b1c90ffeb
-locale/parents@1, <singleton>, 2593B, 2549B, 4990eb1d8b918b0e
+locale/parents@1, <singleton>, 2637B, 2593B, 1166a5ec9d185213
 locale/script_dir@1, <singleton>, 740B, 696B, b43c5a46f6b655d7
