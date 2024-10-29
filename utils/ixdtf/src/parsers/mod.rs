@@ -44,7 +44,7 @@ macro_rules! assert_syntax {
 ///
 /// ```rust
 /// use ixdtf::parsers::{
-///     records::{Sign, TimeZoneRecord, UTCOffsetRecord},
+///     records::{Sign, TimeZoneRecord, UtcOffsetRecord},
 ///     IxdtfParser,
 /// };
 ///
@@ -54,7 +54,7 @@ macro_rules! assert_syntax {
 ///
 /// let date = result.date.unwrap();
 /// let time = result.time.unwrap();
-/// let offset = result.offset.unwrap();
+/// let offset = result.offset.unwrap().resolve_rfc_9557();
 /// let tz_annotation = result.tz.unwrap();
 ///
 /// assert_eq!(date.year, 2024);
@@ -194,7 +194,7 @@ impl<'a> IxdtfParser<'a> {
     /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
     ///
     /// let time = result.time.unwrap();
-    /// let offset = result.offset.unwrap();
+    /// let offset = result.offset.unwrap().resolve_rfc_9557();
     /// let tz_annotation = result.tz.unwrap();
     ///
     /// assert_eq!(time.hour, 12);

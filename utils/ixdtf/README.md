@@ -30,7 +30,7 @@ let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 
 let date = result.date.unwrap();
 let time = result.time.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 let tz_annotation = result.tz.unwrap();
 
 assert_eq!(date.year, 2024);
@@ -81,7 +81,7 @@ let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 
 let date = result.date.unwrap();
 let time = result.time.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 let tz_annotation = result.tz.unwrap();
 
 assert_eq!(date.year, 2024);
@@ -135,7 +135,7 @@ let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
 let result = IxdtfParser::from_str(zulu_offset).parse().unwrap();
 
 let tz_annotation = result.tz.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 
 // The offset is `Z`/`-00:00`, so the application can use the rules of
 // "America/New_York" to calculate the time for IXDTF string.
@@ -284,7 +284,7 @@ let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 let result = IxdtfParser::from_str(example_two).parse().unwrap();
 
 let tz_annotation = result.tz.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 
 // The time zone annotation and offset conflict with each other, and must therefore be
 // resolved by the user.
