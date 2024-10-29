@@ -182,6 +182,7 @@ mod julian;
 mod persian;
 pub mod provider;
 mod roc;
+mod tagged;
 #[cfg(test)]
 mod tests;
 pub mod types;
@@ -211,4 +212,5 @@ pub use error::{DateError, RangeError};
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
+pub use tagged::TaggedDate;
 pub use types::Time;

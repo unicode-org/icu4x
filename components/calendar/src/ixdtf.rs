@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use crate::{AnyCalendar, Date, DateTime, Iso, RangeError, Time};
+use crate::{AnyCalendar, AnyCalendarKind, Date, DateTime, Iso, RangeError, TaggedDate, Time};
 use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParseError as IxdtfError;
@@ -35,12 +35,23 @@ impl From<IxdtfError> for ParseError {
     }
 }
 
+impl AnyCalendarKind {
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Option<Self>, ParseError> {
+        let Some(calendar_id) = ixdtf_record.calendar else {
+            return Ok(None);
+        };
+        match AnyCalendarKind::get_for_bcp47_bytes(calendar_id) {
+            Some(kind) => Ok(Some(kind)),
+            None => Err(ParseError::UnknownCalendar),
+        }
+    }
+}
+
 impl AnyCalendar {
     #[cfg(feature = "compiled_data")]
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
-        let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
-        let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
-            .ok_or(ParseError::UnknownCalendar)?;
+        let calendar_kind =
+            AnyCalendarKind::try_from_ixdtf_record(ixdtf_record)?.unwrap_or(AnyCalendarKind::Iso);
         let calendar = AnyCalendar::new(calendar_kind);
         Ok(calendar)
     }
@@ -49,7 +60,8 @@ impl AnyCalendar {
 impl Date<Iso> {
     /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
     ///
-    /// Ignores any calendar annotations in the string.
+    /// Ignores any calendar annotations in the string. This might not be what
+    /// you want! Consider using [`TaggedDate::try_from_str`].
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -92,6 +104,58 @@ impl FromStr for Date<Iso> {
     type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_iso_from_str(ixdtf_str)
+    }
+}
+
+impl TaggedDate {
+    /// Creates a [`TaggedDate`] from an IXDTF syntax string, retaining the
+    /// calendar annotation if present.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::TaggedDate;
+    ///
+    /// let date = TaggedDate::try_from_str("2024-10-28[u-ca=hebrew]")
+    ///     .unwrap()
+    ///     .to_any_date();
+    ///
+    /// assert_eq!(date.year().era_year_or_extended(), 5785);
+    /// assert_eq!(
+    ///     date.month().standard_code,
+    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M01"))
+    /// );
+    /// assert_eq!(date.day_of_month().0, 26);
+    /// ```
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Creates a [`TaggedDate`] from an IXDTF syntax string, retaining the
+    /// calendar annotation if present.
+    ///
+    /// See [`Self::try_from_str()`].
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        Self::try_from_ixdtf_record(&ixdtf_record)
+    }
+
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
+        let date = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
+        let kind = AnyCalendarKind::try_from_ixdtf_record(ixdtf_record)?;
+        Ok(Self::from_iso_date_and_kind(date, kind))
+    }
+}
+
+impl FromStr for TaggedDate {
+    type Err = ParseError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(ixdtf_str)
     }
 }
 
