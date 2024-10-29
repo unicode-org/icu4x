@@ -5,7 +5,7 @@
 use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences::HourCycle};
 #[cfg(feature = "datagen")]
-use crate::{options::preferences, provider, skeleton};
+use crate::{options::preferences, provider::{self, skeleton}};
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these

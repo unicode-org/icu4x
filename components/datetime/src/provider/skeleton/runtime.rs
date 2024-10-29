@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::Field;
-use crate::skeleton::reference;
+use super::reference;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
