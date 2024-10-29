@@ -24,7 +24,7 @@ pub use hour_cycle::CoarseHourCycle;
 use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
 
-/// The granularity of time represented in a pattern item.
+/// The granularity of time represented in a [`Pattern`].
 /// Ordered from least granular to most granular for comparison.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
@@ -34,10 +34,15 @@ pub use item::{GenericPatternItem, PatternItem};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeGranularity {
+    /// No time is in the pattern.
     None,
+    /// Smallest time unit = hours.
     Hours,
+    /// Smallest time unit = minutes.
     Minutes,
+    /// Smallest time unit = seconds.
     Seconds,
+    /// Smallest time unit = nanoseconds.
     Nanoseconds,
 }
 

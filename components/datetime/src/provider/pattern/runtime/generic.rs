@@ -28,7 +28,7 @@ use zerovec::ZeroVec;
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
 pub struct GenericPattern<'data> {
-    /// The list of [`PatternItems`].
+    /// The list of [`GenericPatternItem`]s.
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 

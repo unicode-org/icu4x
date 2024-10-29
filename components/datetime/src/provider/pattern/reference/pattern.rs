@@ -11,7 +11,7 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 
-/// A fully-owned, non-zero-copy type corresponding to [`Pattern`](super::runtime::Pattern).
+/// A fully-owned, non-zero-copy type corresponding to [`Pattern`](super::super::runtime::Pattern).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

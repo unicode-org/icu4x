@@ -2,15 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{
-    super::PatternError,
-    super::{GenericPatternItem, PatternItem},
-    Parser, Pattern,
-};
+use super::{super::GenericPatternItem, super::PatternError, Parser};
+#[cfg(test)]
+use super::{super::PatternItem, Pattern};
 use alloc::vec::Vec;
 use core::str::FromStr;
 
-/// A fully-owned, non-zero-copy type corresponding to [`GenericPattern`](super::runtime::GenericPattern).
+/// A fully-owned, non-zero-copy type corresponding to [`GenericPattern`](super::super::runtime::GenericPattern).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -24,6 +22,7 @@ pub struct GenericPattern {
 }
 
 impl GenericPattern {
+    #[cfg(test)]
     pub(crate) fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
         let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
         let mut result = Vec::with_capacity(self.items.len() + size);

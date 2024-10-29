@@ -30,7 +30,7 @@ use zerovec::{ZeroSlice, ZeroVec};
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct Pattern<'data> {
-    /// The list of [`PatternItems`].
+    /// The list of [`PatternItem`]s.
     pub items: ZeroVec<'data, PatternItem>,
     /// Pre-computed metadata about the pattern.
     ///
