@@ -13,8 +13,9 @@ use icu::datetime::neo_skeleton::{
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::pattern::runtime::{self, PatternPlurals};
+use icu::datetime::provider::pattern::runtime;
 use icu::datetime::provider::*;
+use icu::datetime::skeleton::plural::PatternPlurals;
 use icu::locale::extensions::unicode::{value, Value};
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;

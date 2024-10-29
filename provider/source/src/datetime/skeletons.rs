@@ -4,7 +4,7 @@
 
 use crate::cldr_serde;
 use icu::datetime::provider::calendar::*;
-use icu::datetime::provider::pattern::runtime::{PatternPlurals, PluralPattern};
+use icu::datetime::skeleton::plural::{PatternPlurals, PluralPattern};
 use icu::datetime::skeleton::reference::Skeleton;
 use icu::datetime::skeleton::SkeletonError;
 use icu::plurals::PluralCategory;

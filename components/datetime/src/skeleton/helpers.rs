@@ -6,16 +6,13 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
+use super::plural::PatternPlurals;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
     options::{components, length, DateTimeFormatterOptions},
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
-    provider::pattern::{
-        naively_apply_preferences,
-        runtime::{self, PatternPlurals},
-        PatternItem, TimeGranularity,
-    },
+    provider::pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
 };
 
 #[cfg(feature = "datagen")]
