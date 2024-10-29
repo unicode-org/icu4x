@@ -13,7 +13,7 @@ use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
@@ -178,7 +178,7 @@ impl FromStr for Pattern<'_> {
     type Err = PatternError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let reference = crate::pattern::reference::Pattern::from_str(input)?;
+        let reference = reference::Pattern::from_str(input)?;
         Ok(Self::from(&reference))
     }
 }
@@ -198,7 +198,7 @@ impl databake::Bake for PatternMetadata {
         ctx.insert("icu_datetime");
         let time_granularity = databake::Bake::bake(&self.time_granularity(), ctx);
         databake::quote! {
-            icu_datetime::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+            icu_datetime::provider::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
         }
     }
 }
@@ -216,8 +216,8 @@ fn databake() {
     databake::test_bake!(
         PatternMetadata,
         const,
-        crate::pattern::runtime::PatternMetadata::from_time_granularity(
-            crate::pattern::TimeGranularity::Hours
+        super::super::runtime::PatternMetadata::from_time_granularity(
+            super::super::TimeGranularity::Hours
         ),
         icu_datetime,
     );

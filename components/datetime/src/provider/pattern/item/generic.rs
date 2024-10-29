@@ -4,7 +4,7 @@
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum GenericPatternItem {

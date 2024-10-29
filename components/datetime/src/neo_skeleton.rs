@@ -8,7 +8,7 @@
 use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
-use crate::pattern::CoarseHourCycle;
+use crate::provider::pattern::CoarseHourCycle;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 use icu_timezone::scaffold::IntoOption;

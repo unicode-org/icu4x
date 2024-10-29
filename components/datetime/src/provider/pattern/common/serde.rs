@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::pattern::{PatternItem, TimeGranularity};
+use super::super::{PatternItem, TimeGranularity};
 use ::serde::{de, Deserialize, Deserializer};
 use alloc::{fmt, format, vec::Vec};
 
@@ -10,8 +10,8 @@ use alloc::{fmt, format, vec::Vec};
 use ::serde::{ser, Serialize};
 
 mod reference {
+    use super::super::super::reference::Pattern;
     use super::*;
-    use crate::pattern::reference::Pattern;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
@@ -118,8 +118,8 @@ mod reference {
 }
 
 mod runtime {
+    use super::super::super::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use super::*;
-    use crate::pattern::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use zerovec::ZeroVec;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
@@ -221,8 +221,8 @@ mod runtime {
     mod plural {
         // Can't use `serde(untagged)` on `PatternPlurals` because
         // Postcard can't handle enums not discriminated at compilation time.
+        use super::super::super::super::runtime::{PatternPlurals, PluralPattern};
         use super::*;
-        use crate::pattern::runtime::{PatternPlurals, PluralPattern};
         use core::fmt;
 
         /// A helper struct that is shaped exactly like `runtime::PatternPlurals`
@@ -379,8 +379,8 @@ mod runtime {
     }
 
     mod generic {
+        use super::super::super::super::runtime::GenericPattern;
         use super::*;
-        use crate::pattern::runtime::GenericPattern;
 
         #[allow(clippy::upper_case_acronyms)]
         struct DeserializeGenericPatternUTS35String;

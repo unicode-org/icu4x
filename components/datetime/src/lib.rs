@@ -103,8 +103,6 @@ pub mod neo_pattern;
 mod neo_serde;
 pub mod neo_skeleton;
 pub mod options;
-#[doc(hidden)]
-pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;

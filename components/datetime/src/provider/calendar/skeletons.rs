@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    pattern::runtime::PatternPlurals,
+    provider::pattern::runtime::PatternPlurals,
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;

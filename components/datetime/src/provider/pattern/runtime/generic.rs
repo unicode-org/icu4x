@@ -15,7 +15,7 @@ use zerovec::ZeroVec;
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
@@ -38,7 +38,7 @@ impl<'data> GenericPattern<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::pattern::runtime::{GenericPattern, Pattern};
+    /// use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
     ///
     /// let date: Pattern = "Y-m-d".parse().expect("Failed to parse pattern");
     /// let time: Pattern = "HH:mm".parse().expect("Failed to parse pattern");

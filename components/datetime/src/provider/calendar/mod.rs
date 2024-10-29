@@ -8,7 +8,7 @@
 mod skeletons;
 mod symbols;
 
-use crate::pattern;
+use crate::provider::pattern;
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 pub use skeletons::*;
@@ -89,7 +89,7 @@ pub struct TimeLengthsV1<'data> {
 /// and/or plural forms.
 pub mod patterns {
     use super::*;
-    use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
+    use crate::provider::pattern::runtime::{self, GenericPattern, PatternPlurals};
 
     /// Data struct for date/time patterns broken down by pattern length.
     ///

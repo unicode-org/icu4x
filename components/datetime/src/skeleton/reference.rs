@@ -5,7 +5,7 @@
 use super::error::SkeletonError;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 #[cfg(feature = "datagen")]
-use crate::pattern::reference::Pattern;
+use crate::provider::pattern::reference::Pattern;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
 use smallvec::SmallVec;
@@ -72,7 +72,7 @@ impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
         for item in pattern.items() {
-            if let crate::pattern::PatternItem::Field(field) = item {
+            if let crate::provider::pattern::PatternItem::Field(field) = item {
                 let mut field = *field;
 
                 // Skeletons only have a subset of available fields, these are then mapped to more

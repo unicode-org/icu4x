@@ -10,12 +10,12 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
     options::{components, length, DateTimeFormatterOptions},
-    pattern::{
+    provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
+    provider::pattern::{
         hour_cycle,
         runtime::{self, PatternPlurals},
         PatternItem, TimeGranularity,
     },
-    provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
 };
 
 #[cfg(feature = "datagen")]
@@ -228,7 +228,7 @@ pub fn create_best_pattern_for_fields<'data>(
                 None => length::Date::Short,
             };
 
-            use crate::pattern::runtime::GenericPattern;
+            use crate::provider::pattern::runtime::GenericPattern;
             let dt_pattern: &GenericPattern<'data> = match length {
                 length::Date::Full => &length_patterns.full,
                 length::Date::Long => &length_patterns.long,
@@ -536,8 +536,8 @@ impl DateTimeFormatterOptions {
         time_patterns: &TimeLengthsV1<'data>,
     ) -> PatternPlurals<'data> {
         use crate::options::preferences::HourCycle;
-        use crate::pattern::hour_cycle::CoarseHourCycle;
-        use crate::pattern::runtime::Pattern;
+        use crate::provider::pattern::hour_cycle::CoarseHourCycle;
+        use crate::provider::pattern::runtime::Pattern;
 
         let default_hour_cycle = match time_patterns.preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,

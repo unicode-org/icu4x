@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use icu::datetime::pattern::runtime::{PatternPlurals, PluralPattern};
+use icu::datetime::provider::pattern::runtime::{PatternPlurals, PluralPattern};
 use icu::datetime::provider::calendar::*;
 use icu::datetime::skeleton::reference::Skeleton;
 use icu::datetime::skeleton::SkeletonError;

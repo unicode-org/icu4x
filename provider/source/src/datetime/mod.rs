@@ -398,7 +398,7 @@ mod test {
 
     #[test]
     fn test_datetime_skeletons() {
-        use icu::datetime::pattern::runtime::{Pattern, PluralPattern};
+        use icu::datetime::provider::pattern::runtime::{Pattern, PluralPattern};
         use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 

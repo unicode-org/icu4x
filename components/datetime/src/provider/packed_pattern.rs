@@ -4,14 +4,13 @@
 
 //! Data structures for packing of datetime patterns.
 
-use crate::pattern::runtime::Pattern;
 use crate::{
     helpers::size_test,
-    pattern::{
-        runtime::{PatternBorrowed, PatternMetadata},
-        PatternItem,
-    },
     NeoSkeletonLength,
+};
+use super::pattern::{
+    runtime::{Pattern, PatternBorrowed, PatternMetadata},
+    PatternItem,
 };
 use alloc::vec::Vec;
 use icu_plurals::{
@@ -521,7 +520,7 @@ impl PackedPatternsV1<'_> {
 #[cfg(feature = "serde")]
 mod _serde {
     use super::*;
-    use crate::pattern::reference;
+    use crate::provider::pattern::reference;
     use zerovec::VarZeroSlice;
 
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -653,7 +652,7 @@ mod _serde {
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use crate::pattern::reference;
+    use crate::provider::pattern::reference;
 
     const PATTERN_STRS: &[&str] = &[
         "M/d/y",

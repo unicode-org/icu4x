@@ -17,6 +17,7 @@
 
 pub mod calendar;
 pub mod neo;
+pub mod pattern;
 pub(crate) mod packed_pattern;
 pub mod time_zones;
 

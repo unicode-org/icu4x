@@ -12,7 +12,7 @@ use icu::datetime::neo_skeleton::{
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
-use icu::datetime::pattern::runtime::{self, PatternPlurals};
+use icu::datetime::provider::pattern::runtime::{self, PatternPlurals};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
@@ -63,7 +63,7 @@ impl SourceDataProvider {
 
         fn expand_pp_to_pe(
             pp: PatternPlurals,
-        ) -> PluralElements<icu::datetime::pattern::runtime::Pattern> {
+        ) -> PluralElements<icu::datetime::provider::pattern::runtime::Pattern> {
             match pp {
                 PatternPlurals::MultipleVariants(variants) => PluralElements::new(variants.other)
                     .with_zero_value(variants.zero.clone())
