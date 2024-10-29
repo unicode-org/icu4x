@@ -73,16 +73,16 @@ mod impls;
 mod ops;
 mod parts_write_adapter;
 mod testing;
+mod to_string_or_borrow;
 mod try_writeable;
-mod write_or_ref;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
 pub use cmp::cmp_bytes;
+pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
-pub use write_or_ref::write_or_ref;
 
 /// Helper types for trait impls.
 pub mod adapters {

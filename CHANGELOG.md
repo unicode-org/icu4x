@@ -56,7 +56,7 @@
       - Remove `FlexZeroVec` (https://github.com/unicode-org/icu4x/pull/5604)
     - `writeable`
       - Make `Writeable::writeable_cmp_bytes` a free function `writeable::cmp_bytes` (https://github.com/unicode-org/icu4x/pull/5737)
-      - Add `writeable::write_or_ref` for writing with reference bytes (https://github.com/unicode-org/icu4x/pull/5738)
+      - Add `writeable::to_string_or_borrow` for writing with reference bytes (https://github.com/unicode-org/icu4x/pull/5738)
 
 
 ## icu4x 1.5.x

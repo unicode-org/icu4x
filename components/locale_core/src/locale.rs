@@ -170,7 +170,7 @@ impl Locale {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
-        Ok(writeable::write_or_ref(&locale, input))
+        Ok(writeable::to_string_or_borrow(&locale, input))
     }
 
     /// Canonicalize the locale (operating on strings)

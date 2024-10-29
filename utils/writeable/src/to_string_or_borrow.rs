@@ -130,25 +130,25 @@ impl<'a> SliceOrString<'a> {
 /// let message = WelcomeMessage { name: "Alice" };
 ///
 /// assert!(matches!(
-///     writeable::write_or_ref(&message, b""),
+///     writeable::to_string_or_borrow(&message, b""),
 ///     Cow::Owned(s) if s == "Hello, Alice!"
 /// ));
 /// assert!(matches!(
-///     writeable::write_or_ref(&message, b"Hello"),
+///     writeable::to_string_or_borrow(&message, b"Hello"),
 ///     Cow::Owned(s) if s == "Hello, Alice!"
 /// ));
 /// assert!(matches!(
-///     writeable::write_or_ref(&message, b"Hello, Bob!"),
+///     writeable::to_string_or_borrow(&message, b"Hello, Bob!"),
 ///     Cow::Owned(s) if s == "Hello, Alice!"
 /// ));
 /// assert!(matches!(
-///     writeable::write_or_ref(&message, b"Hello, Alice!"),
+///     writeable::to_string_or_borrow(&message, b"Hello, Alice!"),
 ///     Cow::Borrowed("Hello, Alice!")
 /// ));
 ///
 /// // Borrowing can use a prefix:
 /// assert!(matches!(
-///     writeable::write_or_ref(&message, b"Hello, Alice!..\xFF\x00\xFF"),
+///     writeable::to_string_or_borrow(&message, b"Hello, Alice!..\xFF\x00\xFF"),
 ///     Cow::Borrowed("Hello, Alice!")
 /// ));
 /// ```
@@ -173,13 +173,13 @@ impl<'a> SliceOrString<'a> {
 ///     }
 ///     #[inline]
 ///     fn write_to_string(&self) -> Cow<str> {
-///         writeable::write_or_ref(self, self.0.as_bytes())
+///         writeable::to_string_or_borrow(self, self.0.as_bytes())
 ///     }
 /// }
 ///
 /// fn make_lowercase(input: &str) -> Cow<str> {
 ///     let writeable = MakeAsciiLower(input);
-///     writeable::write_or_ref(&writeable, input.as_bytes())
+///     writeable::to_string_or_borrow(&writeable, input.as_bytes())
 /// }
 ///
 /// assert!(matches!(
@@ -200,7 +200,10 @@ impl<'a> SliceOrString<'a> {
 ///     Cow::Owned(s) if s == "this is uppercase"
 /// ));
 /// ```
-pub fn write_or_ref<'a>(writeable: &impl Writeable, reference_bytes: &'a [u8]) -> Cow<'a, str> {
+pub fn to_string_or_borrow<'a>(
+    writeable: &impl Writeable,
+    reference_bytes: &'a [u8],
+) -> Cow<'a, str> {
     let mut sink = SliceOrString::new(reference_bytes);
     let _ = writeable.write_to(&mut sink);
     sink.finish()

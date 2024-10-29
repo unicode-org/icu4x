@@ -186,7 +186,7 @@ impl LanguageIdentifier {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
-        Ok(writeable::write_or_ref(&lang_id, input))
+        Ok(writeable::to_string_or_borrow(&lang_id, input))
     }
 
     /// Canonicalize the language identifier (operating on strings)
