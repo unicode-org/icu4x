@@ -5,38 +5,6 @@
 /// This module defines variations of numeric types, including signed values,
 /// values with infinity, and values with NaN.
 
-/// Specifies the precision of a floating point value when constructing a FixedDecimal.
-///
-/// IEEE 754 is a representation of a point on the number line. On the other hand, FixedDecimal
-/// specifies not only the point on the number line but also the precision of the number to a
-/// specific power of 10. This enum augments a floating-point value with the additional
-/// information required by FixedDecimal.
-#[non_exhaustive]
-#[cfg(feature = "ryu")]
-#[derive(Debug, Clone, Copy)]
-pub enum FloatPrecision {
-    /// Specify that the floating point number is integer-valued.
-    ///
-    /// If the floating point is not actually integer-valued, an error will be returned.
-    Integer,
-
-    /// Specify that the floating point number is precise to a specific power of 10.
-    /// The number may be rounded or trailing zeros may be added as necessary.
-    Magnitude(i16),
-
-    /// Specify that the floating point number is precise to a specific number of significant digits.
-    /// The number may be rounded or trailing zeros may be added as necessary.
-    ///
-    /// The number requested may not be zero
-    SignificantDigits(u8),
-
-    /// Specify that the floating point number is precise to the maximum representable by IEEE.
-    ///
-    /// This results in a FixedDecimal having enough digits to recover the original floating point
-    /// value, with no trailing zeros.
-    RoundTrip,
-}
-
 // TODO: move to sign.rs
 /// A specification of the sign used when formatting a number.
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
