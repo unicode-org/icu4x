@@ -19,6 +19,8 @@ pub mod calendar;
 pub mod neo;
 pub(crate) mod packed_pattern;
 pub mod pattern;
+#[cfg(feature = "datagen")]
+pub mod skeleton;
 pub mod time_zones;
 
 pub use packed_pattern::*;
