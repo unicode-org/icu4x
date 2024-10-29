@@ -86,7 +86,7 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
     provider::pattern::{runtime::Pattern, PatternItem},
-    provider::skeleton::plural::PatternPlurals,
+    provider::skeleton::PatternPlurals,
 };
 
 use super::preferences;

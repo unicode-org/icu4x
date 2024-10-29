@@ -6,10 +6,11 @@
 
 mod error;
 mod helpers;
-pub mod plural;
+mod plural;
 pub mod reference;
 pub mod runtime;
 #[cfg(feature = "serde")]
 mod serde;
 pub use error::*;
 pub use helpers::*;
+pub use plural::*;
