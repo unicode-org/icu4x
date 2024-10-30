@@ -117,16 +117,11 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        CollationRootV1Marker,
-        "collator/root@1",
-        singleton,
-    ),
+    marker(CollationRootV1Marker, "collator/root@1", singleton),
     marker(
         CollationTailoringV1Marker,
         "collator/tailoring@1",
-        // TODO(#3867): Use script fallback
-        fallback_by = "language",
+        fallback_by = "script",
         attributes_domain = "collator",
     )
 )]
@@ -243,7 +238,7 @@ impl<'data> CollationDataV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
@@ -288,7 +283,7 @@ pub struct CollationJamoV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
@@ -378,7 +373,7 @@ impl CollationReorderingV1<'_> {
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone, Copy)]

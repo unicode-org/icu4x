@@ -35,6 +35,7 @@
     "Visarga",
     "Vowel",
     "Vowel_Dependent",
-    "Vowel_Independent"
+    "Vowel_Independent",
+    "Reordering_Killer"
   ]
 }

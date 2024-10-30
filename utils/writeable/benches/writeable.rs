@@ -73,6 +73,9 @@ writeable::impl_display_with_writeable!(ComplexWriteable<'_>);
 const SHORT_STR: &str = "short";
 const MEDIUM_STR: &str = "this is a medium-length string";
 const LONG_STR: &str = "this string is very very very very very very very very very very very very very very very very very very very very very very very very long";
+#[cfg(feature = "bench")]
+const LONG_OVERLAP_STR: &str =
+    "this string is very very very very very very very long but different";
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("writeable/overview", |b| {
@@ -129,6 +132,20 @@ fn writeable_benches(c: &mut Criterion) {
             }
             .write_to_string()
             .into_owned()
+        });
+    });
+    c.bench_function("writeable/cmp_bytes", |b| {
+        b.iter(|| {
+            let short = black_box(SHORT_STR);
+            let medium = black_box(MEDIUM_STR);
+            let long = black_box(LONG_STR);
+            let long_overlap = black_box(LONG_OVERLAP_STR);
+            [short, medium, long, long_overlap].map(|s1| {
+                [short, medium, long, long_overlap].map(|s2| {
+                    let message = WriteableMessage { message: s1 };
+                    writeable::cmp_bytes(&message, s2.as_bytes())
+                })
+            })
         });
     });
 }
@@ -212,6 +229,20 @@ fn complex_benches(c: &mut Criterion) {
     });
     c.bench_function("complex/display_to_string/medium", |b| {
         b.iter(|| black_box(COMPLEX_WRITEABLE_MEDIUM).to_string());
+    });
+    const REFERENCE_STRS: [&str; 6] = [
+        "There are 55 apples and 8124 oranges",
+        "There are 55 apples and 0 oranges",
+        "There are no apples",
+        SHORT_STR,
+        MEDIUM_STR,
+        LONG_STR,
+    ];
+    c.bench_function("complex/cmp_bytes", |b| {
+        b.iter(|| {
+            black_box(REFERENCE_STRS)
+                .map(|s| writeable::cmp_bytes(black_box(&COMPLEX_WRITEABLE_MEDIUM), s.as_bytes()))
+        });
     });
 }
 

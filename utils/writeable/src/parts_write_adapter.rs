@@ -105,11 +105,6 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
     fn write_to_string(&self) -> Cow<str> {
         self.writeable.write_to_string()
     }
-
-    #[inline]
-    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        self.writeable.writeable_cmp_bytes(other)
-    }
 }
 
 impl<T: Writeable + ?Sized> fmt::Display for WithPart<T> {

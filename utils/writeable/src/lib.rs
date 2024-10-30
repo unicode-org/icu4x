@@ -73,12 +73,15 @@ mod impls;
 mod ops;
 mod parts_write_adapter;
 mod testing;
+mod to_string_or_borrow;
 mod try_writeable;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
+pub use cmp::cmp_bytes;
+pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
 
 /// Helper types for trait impls.
@@ -304,51 +307,6 @@ pub trait Writeable {
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
-
-    /// Compares the contents of this `Writeable` to the given bytes
-    /// without allocating a String to hold the `Writeable` contents.
-    ///
-    /// This returns a lexicographical comparison, the same as if the Writeable
-    /// were first converted to a String and then compared with `Ord`. For a
-    /// locale-sensitive string ordering, use an ICU4X Collator.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use core::cmp::Ordering;
-    /// use core::fmt;
-    /// use writeable::Writeable;
-    ///
-    /// struct WelcomeMessage<'s> {
-    ///     pub name: &'s str,
-    /// }
-    ///
-    /// impl<'s> Writeable for WelcomeMessage<'s> {
-    ///     // see impl in Writeable docs
-    /// #    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-    /// #        sink.write_str("Hello, ")?;
-    /// #        sink.write_str(self.name)?;
-    /// #        sink.write_char('!')?;
-    /// #        Ok(())
-    /// #    }
-    /// }
-    ///
-    /// let message = WelcomeMessage { name: "Alice" };
-    /// let message_str = message.write_to_string();
-    ///
-    /// assert_eq!(Ordering::Equal, message.writeable_cmp_bytes(b"Hello, Alice!"));
-    ///
-    /// assert_eq!(Ordering::Greater, message.writeable_cmp_bytes(b"Alice!"));
-    /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
-    ///
-    /// assert_eq!(Ordering::Less, message.writeable_cmp_bytes(b"Hello, Bob!"));
-    /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
-    /// ```
-    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        let mut wc = cmp::WriteComparator::new(other);
-        let _ = self.write_to(&mut wc);
-        wc.finish().reverse()
-    }
 }
 
 /// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
@@ -460,14 +418,6 @@ macro_rules! assert_writeable_eq {
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
-        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, $expected_str.as_bytes());
-        assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
-        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "\u{10FFFF}".as_bytes());
-        assert_eq!(ordering, core::cmp::Ordering::Less, $($arg)*);
-        if $expected_str != "" {
-            let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "".as_bytes());
-            assert_eq!(ordering, core::cmp::Ordering::Greater, $($arg)*);
-        }
         actual_parts // return for assert_writeable_parts_eq
     }};
 }

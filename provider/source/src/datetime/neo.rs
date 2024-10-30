@@ -6,7 +6,7 @@ use super::supported_cals;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::datetime::pattern;
+use icu::datetime::provider::pattern;
 
 use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};

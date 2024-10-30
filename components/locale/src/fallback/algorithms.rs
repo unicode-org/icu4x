@@ -121,7 +121,7 @@ impl LocaleFallbackIteratorInner<'_> {
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language.is_default()); // don't call .step() on und
+        debug_assert!(!locale.language.is_default() || locale.script.is_some()); // don't call .step() on und
         locale.script = None;
         locale.language = Language::UND;
     }
@@ -415,28 +415,28 @@ mod tests {
             // The fallback algorithm does not visit the language-script bundle when the
             // script is the default for the language
             expected_language_chain: &["zh-CN", "zh"],
-            expected_script_chain: &["zh-CN", "zh", "und-Hans"],
+            expected_script_chain: &["zh-CN", "zh", "und-Hans", "und-Hani"],
             expected_region_chain: &["zh-CN", "und-CN"],
         },
         TestCase {
             input: "zh-TW",
             requires_data: true,
             expected_language_chain: &["zh-TW", "zh-Hant"],
-            expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant"],
+            expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant", "und-Hani"],
             expected_region_chain: &["zh-TW", "und-TW"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
             expected_language_chain: &["yue-HK", "yue"],
-            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant", "und-Hani"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
             expected_language_chain: &["yue-HK", "yue"],
-            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant", "und-Hani"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
         TestCase {

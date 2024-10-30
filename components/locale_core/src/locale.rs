@@ -11,7 +11,6 @@ use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::borrow::Cow;
 use core::cmp::Ordering;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -171,15 +170,7 @@ impl Locale {
     /// ```
     pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
-        let cow: Cow<str> = locale.write_to_string();
-        if cow.as_bytes() == input {
-            // Safety: input is known to be valid UTF-8 since it has the same
-            // bytes as `cow`, which is a `str`.
-            let s = unsafe { core::str::from_utf8_unchecked(input) };
-            Ok(s.into())
-        } else {
-            Ok(cow.into_owned().into())
-        }
+        Ok(writeable::to_string_or_borrow(&locale, input))
     }
 
     /// Canonicalize the locale (operating on strings)
@@ -198,13 +189,7 @@ impl Locale {
     /// );
     /// ```
     pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        let locale = Self::try_from_str(input)?;
-        let cow = locale.write_to_string();
-        if cow == input {
-            Ok(input.into())
-        } else {
-            Ok(cow.into_owned().into())
-        }
+        Self::canonicalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.
@@ -241,7 +226,7 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_bytes(self, other)
     }
 
     #[allow(clippy::type_complexity)]

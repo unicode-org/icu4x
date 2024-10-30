@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::{models, CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
+use icu_timezone::{models, CustomZonedDateTime, IxdtfParser, TimeZoneInfo, ZoneVariant};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -58,10 +58,10 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
 ) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
-    let iso_zdt = match CustomZonedDateTime::try_iso_from_str(input) {
+    let iso_zdt = match IxdtfParser::new().try_iso_from_str(input) {
         Ok(zdt) => zdt,
         Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
-            match CustomZonedDateTime::try_loose_iso_from_str(input) {
+            match IxdtfParser::new().try_loose_iso_from_str(input) {
                 Ok(zdt) => {
                     CustomZonedDateTime {
                         date: zdt.date,
