@@ -987,7 +987,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     Z::short(),
+    ///     Z::long(),
     /// )
     /// .unwrap();
     ///
@@ -999,7 +999,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
-    ///     "GMT-3"
+    ///     "Brasilia Standard Time"
     /// );
     /// ```
     ///
@@ -1206,19 +1206,18 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
-    ///     V::short(),
+    ///     V::long(),
     /// )
     /// .unwrap();
     ///
-    /// // Time zone info for America/Sao_Paulo in the winter
+    /// // Time zone info for America/Sao_Paulo
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
     ///     .with_offset("-03".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::standard());
+    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
-    ///     "Sao Paulo Time"
+    ///     "Brasilia Time"
     /// );
     /// ```
     ///
