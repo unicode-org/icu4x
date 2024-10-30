@@ -86,7 +86,8 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
         let region_display_names = if req.id.locale.is_default() {
             BTreeMap::default()
         } else {
-            self.cldr()?
+            let regions = &self
+                .cldr()?
                 .displaynames()
                 .read_and_parse::<cldr_serde::displaynames::region::Resource>(
                     req.id.locale,
@@ -95,21 +96,22 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                 .main
                 .value
                 .localedisplaynames
-                .regions
+                .regions;
+            regions
                 .iter()
-                .filter(|&(k, _)| {
-                    /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
-                    const ALT_SUBSTRING: &str = "-alt-";
-                    /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
-                    const SHORT_SUBSTRING: &str = "-alt-short";
-                    !k.contains(ALT_SUBSTRING) && !k.contains(SHORT_SUBSTRING)
-                })
                 .filter_map(|(region, value)| {
                     Some((
                         icu::locale::subtags::Region::try_from_str(region).ok()?,
                         value.as_str(),
                     ))
                 })
+                // Overwrite with short names, as we want to use those
+                .chain(regions.iter().filter_map(|(region, value)| {
+                    Some((
+                        icu::locale::subtags::Region::try_from_str(region.strip_suffix("-alt-short")?).ok()?,
+                        value.as_str(),
+                    ))
+                }))
                 .filter(|(r, _)| primary_zones_values.contains(r))
                 .collect()
         };
