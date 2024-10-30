@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{reference, runtime, PatternItem};
+use super::{reference, PatternItem};
 use crate::{fields, options::preferences::HourCycle};
 #[cfg(feature = "datagen")]
 use crate::{options::preferences, provider::{self, skeleton}};
+#[cfg(feature = "datagen")]
+use super::runtime;
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
