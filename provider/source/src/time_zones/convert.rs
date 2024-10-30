@@ -7,8 +7,9 @@ use crate::SourceDataProvider;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
-use icu::calendar::DateTime;
+use icu::calendar::Date;
 use icu::calendar::Iso;
+use icu::calendar::Time;
 use icu::datetime::provider::time_zones::*;
 use icu::timezone::provider::*;
 use icu::timezone::UtcOffset;
@@ -259,8 +260,12 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
                                     .from
                                     .as_deref()
                                     .map(parse_mzone_from)
-                                    .unwrap_or(DateTime::try_new_iso(1970, 1, 1, 0, 0, 0).unwrap())
-                                    .minutes_since_local_unix_epoch(),
+                                    .map(|(date, time)| {
+                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                            + (time.hour.number() as i32 * 60
+                                                + time.minute.number() as i32)
+                                    })
+                                    .unwrap_or_default(),
                                 meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
                             ))
                         })
@@ -312,6 +317,10 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
                         for zone_info in zoneset.iter() {
                             let local_end_time = zone_info
                                 .end_time
+                                // WARNING: This produces a *local* timestamp, i.e. seconds since 1970-01-01 00:00:00 *wall time*,
+                                // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
+                                // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
+                                // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
                                 .map(|t| (t.to_timestamp() / 60) as IsoMinutesSinceEpoch)
                                 .unwrap_or(IsoMinutesSinceEpoch::MAX);
 
@@ -632,7 +641,7 @@ fn convert_cldr_zone_variant(
         })
 }
 
-fn parse_mzone_from(from: &str) -> DateTime<Iso> {
+fn parse_mzone_from(from: &str) -> (Date<Iso>, Time) {
     // TODO(#2127): Ideally this parsing can move into a library function
     let parts: Vec<String> = from.split(' ').map(|s| s.to_string()).collect();
     let date = &parts[0];
@@ -644,5 +653,8 @@ fn parse_mzone_from(from: &str) -> DateTime<Iso> {
     let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
     let hour = time_parts[0].parse::<u8>().unwrap();
     let minute = time_parts[1].parse::<u8>().unwrap();
-    DateTime::try_new_iso(year, month, day, hour, minute, 0).unwrap()
+    (
+        Date::try_new_iso(year, month, day).unwrap(),
+        Time::try_new(hour, minute, 0, 0).unwrap(),
+    )
 }

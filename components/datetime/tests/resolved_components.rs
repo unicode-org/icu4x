@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{DateTime, Gregorian};
+use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
     neo_skeleton::{
         Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
@@ -24,7 +24,10 @@ fn assert_resolved_components(
         skeleton,
     )
     .unwrap();
-    let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
+        time: Time::midnight(),
+    };
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);
 }

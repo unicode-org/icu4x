@@ -38,7 +38,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// then check the resolved components:
 ///
 /// ```
-/// use icu::calendar::DateTime;
+/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldset::YMD;
 /// use icu::datetime::neo_pattern::DateTimePattern;
@@ -60,8 +60,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// )
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.
-/// // For this example, we'll choose the local Unix epoch.
-/// .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
+/// .format(&Date::try_new_iso(2024, 1, 1).unwrap().to_calendar(Gregorian))
 /// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);

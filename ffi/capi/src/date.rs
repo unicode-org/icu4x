@@ -53,13 +53,6 @@ pub mod ffi {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
         }
 
-        /// Creates a new [`IsoDate`] representing January 1, 1970.
-        #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn unix_epoch() -> Box<IsoDate> {
-            Box::new(IsoDate(icu_calendar::Date::unix_epoch()))
-        }
-
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<Date> {
