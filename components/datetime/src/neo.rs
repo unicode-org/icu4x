@@ -199,9 +199,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized
-            // Date formatting markers
-            + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        crate::provider::Baked: Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -359,9 +357,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized
-            // Date formatting markers
-            + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        crate::provider::Baked: Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -416,9 +412,7 @@ where
         components: NeoComponents,
     ) -> Result<Self, LoadError>
     where
-        P: ?Sized
-            // Date formatting markers
-            + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
@@ -600,9 +594,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized
-            // Date formatting markers
-            + AllAnyCalendarFormattingDataMarkers<FSet>,
+        crate::provider::Baked: Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -754,9 +746,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized
-            // Date formatting markers
-            + AllAnyCalendarFormattingDataMarkers<FSet>,
+        crate::provider::Baked: Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -809,9 +799,7 @@ where
         components: NeoComponents,
     ) -> Result<Self, LoadError>
     where
-        P: ?Sized
-            // Date formatting markers
-            + AllAnyCalendarFormattingDataMarkers<FSet>,
+        P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
