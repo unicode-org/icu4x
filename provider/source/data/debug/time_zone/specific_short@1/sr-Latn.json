@@ -1,24 +1,62 @@
 {
-  "defaults": {
-    "euce": {
-      "dt": "CEST",
-      "st": "CET"
-    },
-    "euea": {
-      "dt": "EEST",
-      "st": "EET"
-    },
-    "euwe": {
-      "dt": "WEST",
-      "st": "WET"
-    },
-    "mgmt": {
-      "st": "GMT"
-    }
-  },
-  "overrides": {
-    "utc": {
-      "st": "UTC"
-    }
-  }
+  "defaults": [
+    [
+      [
+        "euce",
+        "dt"
+      ],
+      "CEST"
+    ],
+    [
+      [
+        "euce",
+        "st"
+      ],
+      "CET"
+    ],
+    [
+      [
+        "euea",
+        "dt"
+      ],
+      "EEST"
+    ],
+    [
+      [
+        "euea",
+        "st"
+      ],
+      "EET"
+    ],
+    [
+      [
+        "euwe",
+        "dt"
+      ],
+      "WEST"
+    ],
+    [
+      [
+        "euwe",
+        "st"
+      ],
+      "WET"
+    ],
+    [
+      [
+        "mgmt",
+        "st"
+      ],
+      "GMT"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "st"
+      ],
+      "UTC"
+    ]
+  ]
 }

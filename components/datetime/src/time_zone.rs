@@ -436,8 +436,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
             names
                 .overrides
-                .get_2d(&time_zone_id, &zone_variant)
-                .or_else(|| names.defaults.get_2d(&mz, &zone_variant))
+                .get(&(time_zone_id, zone_variant))
+                .or_else(|| names.defaults.get(&(mz, zone_variant)))
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
