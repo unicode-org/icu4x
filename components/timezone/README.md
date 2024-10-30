@@ -10,8 +10,8 @@ In ICU4X, a [formattable time zone](TimeZoneInfo) consists of up to four differe
 
 1. The time zone ID
 2. The offset from UTC
-3. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
-4. A timestamp, as time zone names can change over time
+3. A timestamp, as time zone names can change over time
+4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 
 ### Time Zone
 
@@ -34,6 +34,15 @@ Coordinated Universal Time (UTC).
 In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
 use the term "GMT" instead of "UTC").
 
+### Timestamp
+
+Some time zones change names over time, such as when changing "metazone". For example, Portugal changed from
+"Western European Time" to "Central European Time" and back in the 1990s, without changing time zone id
+(`Europe/Lisbon`/`ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
+
+It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
+formats may be unsupported.
+
 ### Zone Variant
 
 Many zones use different names and offsets in the summer than in the winter. In ICU4X,
@@ -43,24 +52,32 @@ CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the ma
 variants to specific observed offsets varies from time zone to time zone, and they may not
 consistently represent winter versus summer time.
 
-Note: It is optional (not required) to set the zone variant when constructing a
-[`TimeZoneInfo`]. Therefore, the list of possible variants does not include a generic variant
-to represent the lack of a preference.
+Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
+formats may be unsupported.
 
 ## Examples
 
 ```rust
+use icu::calendar::{Date, Time};
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
+use icu::timezone::ZoneVariant;
 use tinystr::tinystr;
 
-// Create a time zone for America/Chicago at UTC-6:
-let time_zone = 
-    TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago").with_offset("-0600".parse().ok());
+// Parse the IANA ID
+let id = TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago");
 
-// Alternatively, set it directly from the BCP-47 ID:
-let time_zone = 
-    TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-0600".parse().ok());
+// Alternatively, use the BCP47 ID directly
+let id = TimeZoneBcp47Id(tinystr!(8, "uschi"));
+
+// Create a TimeZoneInfo<Base> by associating the ID with an offset
+let time_zone = id.with_offset("-0600".parse().ok());
+
+// Extend to a TimeZoneInfo<AtTime> by adding a local time
+let time_zone_at_time = time_zone.at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
+
+// Extend to a TimeZoneInfo<Full> by adding a zone variant
+let time_zone_with_variant = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
 ```
 
 <!-- cargo-rdme end -->

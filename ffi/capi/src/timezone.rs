@@ -117,6 +117,7 @@ pub mod ffi {
         /// Returns the value of the `offset` field as offset seconds.
         ///
         /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::offset, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::to_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::attr(auto, getter)]
@@ -172,7 +173,7 @@ pub mod ffi {
         /// Sets the `time_zone_id` field from a BCP-47 string.
         ///
         /// Errors if the string is not a valid BCP-47 time zone ID.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::time_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::time_zone_id, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
@@ -200,7 +201,7 @@ pub mod ffi {
         /// Writes the value of the `time_zone_id` field as a string.
         ///
         /// Returns null if the `time_zone_id` field is empty.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::time_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::time_zone_id, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn time_zone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) {
@@ -210,7 +211,6 @@ pub mod ffi {
         /// Sets the `zone_variant` field from a string.
         ///
         /// Returns null if the string is not a valid zone variant.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
@@ -221,7 +221,6 @@ pub mod ffi {
         }
 
         /// Clears the `zone_variant` field.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         pub fn clear_zone_variant(&mut self) {
             self.zone_variant.take();
@@ -230,7 +229,7 @@ pub mod ffi {
         /// Writes the value of the `zone_variant` field as a string.
         ///
         /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
@@ -241,7 +240,6 @@ pub mod ffi {
         /// Sets the `zone_variant` field to "standard" time, which may or may
         /// not correspond to a display name with "Standard" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField, compact)]
         pub fn set_standard_time(&mut self) {
             self.zone_variant = Some(icu_timezone::ZoneVariant::standard())
         }
@@ -249,7 +247,6 @@ pub mod ffi {
         /// Sets the `zone_variant` field to "daylight" time, which may or may
         /// not correspond to a display name with "Daylight" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField, compact)]
         pub fn set_daylight_time(&mut self) {
             self.zone_variant = Some(icu_timezone::ZoneVariant::daylight())
         }
@@ -258,7 +255,7 @@ pub mod ffi {
         ///
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn is_standard_time(&self) -> Option<bool> {
             Some(self.zone_variant? == icu_timezone::ZoneVariant::standard())
@@ -268,26 +265,24 @@ pub mod ffi {
         ///
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, StructField, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn is_daylight_time(&self) -> Option<bool> {
             Some(self.zone_variant? == icu_timezone::ZoneVariant::daylight())
         }
 
         /// Sets the `local_time` field.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField)]
         pub fn set_local_time(&mut self, datetime: &IsoDateTime) {
             self.local_time = Some((datetime.0.date, datetime.0.time));
         }
 
         /// Clears the `local_time` field.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField)]
         pub fn clear_local_time(&mut self) {
             self.local_time.take();
         }
 
         /// Returns a copy of the `local_time` field.
-        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, StructField, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, FnInStruct, compact)]
         pub fn get_local_time(&self) -> Option<Box<IsoDateTime>> {
             self.local_time
                 .map(|(date, time)| Box::new(IsoDateTime(icu_calendar::DateTime { date, time })))
