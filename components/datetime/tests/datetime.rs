@@ -477,23 +477,28 @@ fn test_time_zone_format_configs() {
 fn test_time_zone_format_offset_seconds() {
     use icu_datetime::fieldset::O;
 
-    let time_zone = TimeZoneInfo::from(UtcOffset::try_from_seconds(12).unwrap());
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+0:00:12",);
+    assert_try_writeable_eq!(
+        tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
+        "GMT+0:00:12",
+    );
 }
 
 #[test]
-fn test_time_zone_format_offset_not_set_debug_assert_panic() {
+fn test_time_zone_format_offset_fallback() {
     use icu_datetime::fieldset::O;
 
-    let time_zone = TimeZoneInfo {
-        time_zone_id: TimeZoneIdMapper::new().iana_to_bcp47("America/Los_Angeles"),
-        ..TimeZoneInfo::unknown()
-    };
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(tzf.format(&time_zone), "GMT+?",);
+    assert_try_writeable_eq!(
+        tzf.format(
+            &TimeZoneIdMapper::new()
+                .iana_to_bcp47("America/Los_Angeles")
+                .with_offset(None)
+        ),
+        "GMT+?",
+    );
 }
 
 #[test]

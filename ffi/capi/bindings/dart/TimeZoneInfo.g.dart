@@ -122,9 +122,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `offset` field is empty.
   ///
-  /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.is_positive) for more information.
-  bool? get isOffsetPositive {
-    final result = _icu4x_TimeZoneInfo_is_offset_positive_mv1(_ffi);
+  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.is_non_negative) for more information.
+  bool? get isOffsetNonNegative {
+    final result = _icu4x_TimeZoneInfo_is_offset_non_negative_mv1(_ffi);
     if (!result.isOk) {
       return null;
     }
@@ -377,9 +377,9 @@ external void _icu4x_TimeZoneInfo_clear_offset_mv1(ffi.Pointer<ffi.Opaque> self)
 external _ResultInt32Void _icu4x_TimeZoneInfo_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_positive_mv1')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_non_negative_mv1')
 // ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_positive_mv1(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_non_negative_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_zero_mv1')

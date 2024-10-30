@@ -727,7 +727,7 @@ impl Iso8601Format {
 
         let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
 
-        sink.write_char(if offset.is_positive() { '+' } else { '-' })?;
+        sink.write_char(if offset.is_non_negative() { '+' } else { '-' })?;
 
         format_time_segment(sink, offset.hours_part().unsigned_abs())?;
 

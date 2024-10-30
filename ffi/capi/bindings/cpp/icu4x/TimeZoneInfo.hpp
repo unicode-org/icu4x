@@ -41,8 +41,8 @@ namespace capi {
     typedef struct icu4x_TimeZoneInfo_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_seconds_mv1_result;
     icu4x_TimeZoneInfo_offset_seconds_mv1_result icu4x_TimeZoneInfo_offset_seconds_mv1(const icu4x::capi::TimeZoneInfo* self);
     
-    typedef struct icu4x_TimeZoneInfo_is_offset_positive_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_positive_mv1_result;
-    icu4x_TimeZoneInfo_is_offset_positive_mv1_result icu4x_TimeZoneInfo_is_offset_positive_mv1(const icu4x::capi::TimeZoneInfo* self);
+    typedef struct icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result;
+    icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result icu4x_TimeZoneInfo_is_offset_non_negative_mv1(const icu4x::capi::TimeZoneInfo* self);
     
     typedef struct icu4x_TimeZoneInfo_is_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_zero_mv1_result;
     icu4x_TimeZoneInfo_is_offset_zero_mv1_result icu4x_TimeZoneInfo_is_offset_zero_mv1(const icu4x::capi::TimeZoneInfo* self);
@@ -141,8 +141,8 @@ inline std::optional<int32_t> icu4x::TimeZoneInfo::offset_seconds() const {
   return result.is_ok ? std::optional<int32_t>(result.ok) : std::nullopt;
 }
 
-inline std::optional<bool> icu4x::TimeZoneInfo::is_offset_positive() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_is_offset_positive_mv1(this->AsFFI());
+inline std::optional<bool> icu4x::TimeZoneInfo::is_offset_non_negative() const {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_is_offset_non_negative_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 

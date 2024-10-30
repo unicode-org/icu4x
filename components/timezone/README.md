@@ -50,21 +50,17 @@ to represent the lack of a preference.
 ## Examples
 
 ```rust
-use icu::calendar::DateTime;
-use icu::timezone::TimeZoneInfo;
-use icu::timezone::UtcOffset;
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::tinystr;
 
 // Create a time zone for America/Chicago at UTC-6:
-let mut time_zone = TimeZoneInfo::from_id_and_offset(
-    TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago"),
-    "-0600".parse().unwrap(),
-);
+let time_zone = 
+    TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago").with_offset("-0600".parse().ok());
 
-// Alternatively, set it directly from the BCP-47 ID
-assert_eq!(time_zone.time_zone_id, TimeZoneBcp47Id(tinystr!(8, "uschi")));
+// Alternatively, set it directly from the BCP-47 ID:
+let time_zone = 
+    TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-0600".parse().ok());
 ```
 
 <!-- cargo-rdme end -->

@@ -352,7 +352,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZoneBcp47Id {
-        self.time_zone_id
+        self.time_zone_id()
     }
 }
 
@@ -362,7 +362,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
-        self.offset
+        self.offset()
     }
 }
 
@@ -372,7 +372,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> ZoneVariant {
-        self.zone_variant
+        self.zone_variant()
     }
 }
 
@@ -382,7 +382,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> (Date<Iso>, Time) {
-        self.local_time
+        self.local_time()
     }
 }
 

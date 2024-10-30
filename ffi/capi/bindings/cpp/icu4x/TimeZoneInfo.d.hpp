@@ -48,7 +48,7 @@ public:
 
   inline std::optional<int32_t> offset_seconds() const;
 
-  inline std::optional<bool> is_offset_positive() const;
+  inline std::optional<bool> is_offset_non_negative() const;
 
   inline std::optional<bool> is_offset_zero() const;
 

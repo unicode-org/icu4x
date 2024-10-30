@@ -7,9 +7,12 @@ use core::fmt;
 use crate::{scaffold::IntoOption, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use icu_calendar::{Date, Iso, Time};
 
-// TODO: Make the trait sealed
+mod private {
+    pub trait Sealed {}
+}
+
 /// Trait encoding a particular data model for time zones.
-pub trait TimeZoneModel {
+pub trait TimeZoneModel: private::Sealed {
     /// The zone variant, if required for this time zone model.
     type ZoneVariant: IntoOption<ZoneVariant> + fmt::Debug + Copy;
     /// The local time, if required for this time zone model.
@@ -25,6 +28,7 @@ pub mod models {
     #[non_exhaustive]
     pub enum Base {}
 
+    impl super::private::Sealed for Base {}
     impl TimeZoneModel for Base {
         type ZoneVariant = ();
         type LocalTime = ();
@@ -35,6 +39,7 @@ pub mod models {
     #[non_exhaustive]
     pub enum AtTime {}
 
+    impl super::private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type ZoneVariant = ();
         type LocalTime = (Date<Iso>, Time);
@@ -45,28 +50,21 @@ pub mod models {
     #[non_exhaustive]
     pub enum Full {}
 
+    impl super::private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type ZoneVariant = ZoneVariant;
         type LocalTime = (Date<Iso>, Time);
     }
 }
 
-// TODO: Make the fields private
-
 /// A utility type that can hold time zone information.
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct TimeZoneInfo<Model: TimeZoneModel> {
-    /// The BCP47 time-zone identifier.
-    pub time_zone_id: TimeZoneBcp47Id,
-    /// The UTC offset, if known.
-    ///
-    /// This field is not enforced to be consistent with the time zone id.
-    pub offset: Option<UtcOffset>,
-    /// The time variant e.g. daylight or standard, if known.
-    pub zone_variant: Model::ZoneVariant,
-    /// The time at which to interpret the time zone.
-    pub local_time: Model::LocalTime,
+    time_zone_id: TimeZoneBcp47Id,
+    offset: Option<UtcOffset>,
+    local_time: Model::LocalTime,
+    zone_variant: Model::ZoneVariant,
 }
 
 impl<Model: TimeZoneModel> Clone for TimeZoneInfo<Model> {
@@ -77,15 +75,39 @@ impl<Model: TimeZoneModel> Clone for TimeZoneInfo<Model> {
 
 impl<Model: TimeZoneModel> Copy for TimeZoneInfo<Model> {}
 
-impl UtcOffset {
-    /// Associates this [`UtcOffset`] with a time zone ID, returning a [`TimeZoneInfo`].
-    pub const fn with_id(self, time_zone_id: TimeZoneBcp47Id) -> TimeZoneInfo<models::Base> {
-        TimeZoneInfo {
-            offset: Some(self),
-            time_zone_id,
-            zone_variant: (),
-            local_time: (),
-        }
+impl<Model: TimeZoneModel> TimeZoneInfo<Model> {
+    /// The BCP47 time-zone identifier.
+    pub fn time_zone_id(self) -> TimeZoneBcp47Id {
+        self.time_zone_id
+    }
+
+    /// The UTC offset, if known.
+    ///
+    /// This field is not enforced to be consistent with the time zone id.
+    pub fn offset(self) -> Option<UtcOffset> {
+        self.offset
+    }
+}
+
+impl<Model> TimeZoneInfo<Model>
+where
+    Model: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+{
+    /// The time at which to interpret the time zone.
+    pub fn local_time(self) -> (Date<Iso>, Time) {
+        self.local_time
+    }
+}
+
+impl<Model> TimeZoneInfo<Model>
+where
+    Model: TimeZoneModel<ZoneVariant = ZoneVariant>,
+{
+    /// The time variant e.g. daylight or standard, if known.
+    ///
+    /// This field is not enforced to be consistent with the time zone id and offset.
+    pub fn zone_variant(self) -> ZoneVariant {
+        self.zone_variant
     }
 }
 
@@ -95,8 +117,8 @@ impl TimeZoneBcp47Id {
         TimeZoneInfo {
             offset,
             time_zone_id: self,
-            zone_variant: (),
             local_time: (),
+            zone_variant: (),
         }
     }
 }
@@ -104,32 +126,12 @@ impl TimeZoneBcp47Id {
 impl TimeZoneInfo<models::Base> {
     /// Creates a time zone info with no information.
     pub const fn unknown() -> Self {
-        Self {
-            offset: None,
-            time_zone_id: TimeZoneBcp47Id::unknown(),
-            zone_variant: (),
-            local_time: (),
-        }
+        TimeZoneBcp47Id::unknown().with_offset(None)
     }
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
-        Self {
-            offset: Some(UtcOffset::zero()),
-            time_zone_id: TimeZoneBcp47Id(tinystr::tinystr!(8, "utc")),
-            zone_variant: (),
-            local_time: (),
-        }
-    }
-
-    /// Creates a new [`TimeZoneInfo`] with the given offset and time zone ID.
-    pub const fn from_id_and_offset(time_zone_id: TimeZoneBcp47Id, offset: UtcOffset) -> Self {
-        Self {
-            offset: Some(offset),
-            time_zone_id,
-            zone_variant: (),
-            local_time: (),
-        }
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "utc")).with_offset(Some(UtcOffset::zero()))
     }
 
     /// Sets a local time on this time zone.
@@ -137,8 +139,8 @@ impl TimeZoneInfo<models::Base> {
         TimeZoneInfo {
             offset: self.offset,
             time_zone_id: self.time_zone_id,
-            zone_variant: (),
             local_time,
+            zone_variant: (),
         }
     }
 }
@@ -149,19 +151,8 @@ impl TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             time_zone_id: self.time_zone_id,
-            zone_variant,
             local_time: self.local_time,
-        }
-    }
-}
-
-impl From<UtcOffset> for TimeZoneInfo<models::Base> {
-    fn from(offset: UtcOffset) -> Self {
-        Self {
-            offset: Some(offset),
-            time_zone_id: TimeZoneBcp47Id::unknown(),
-            zone_variant: (),
-            local_time: (),
+            zone_variant,
         }
     }
 }
