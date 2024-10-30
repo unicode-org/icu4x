@@ -214,7 +214,7 @@
         "configs": [
           "GenericLocation"
         ],
-        "expected": ["United Kingdom Time"]
+        "expected": ["UK Time"]
       },
       {
         "patterns": [],
