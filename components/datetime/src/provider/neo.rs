@@ -5,6 +5,7 @@
 //! Data structs and markers for semantic skeletons and datetime names.
 
 mod adapter;
+mod packed_pattern;
 
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
