@@ -199,7 +199,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -357,7 +357,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -594,7 +594,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
+        crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -746,7 +746,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
     where
-        crate::provider::Baked: Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
+        crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
