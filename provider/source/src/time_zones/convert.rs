@@ -462,7 +462,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {
             let tz = *cursor.key0();
-            for mz in cursor.iter1_copied().map(|(_, mz)| mz).flatten() {
+            for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
                 reverse_meta_zone_id_data.entry(mz).or_default().insert(tz);
             }
         }
