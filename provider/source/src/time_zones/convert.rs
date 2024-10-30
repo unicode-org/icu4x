@@ -553,7 +553,7 @@ macro_rules! long_short_impls {
                                 })
                                 .flat_map(|(meta, zone_format)| {
                                     convert_cldr_zone_variant(zone_format.0)
-                                        .map(move |(variant, value)| (meta, variant, value))
+                                        .map(move |(variant, value)| ((*meta, variant), value))
                                 })
                                 .collect(),
                         },
@@ -593,7 +593,7 @@ macro_rules! long_short_impls {
                             })
                             .flat_map(|(bcp47, zone_format)| {
                                 convert_cldr_zone_variant(zone_format.0)
-                                    .map(move |(variant, value)| (bcp47, variant, value))
+                                    .map(move |(variant, value)| ((*bcp47, variant), value))
                             })
                             .collect(),
                     }),

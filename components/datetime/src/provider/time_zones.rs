@@ -170,10 +170,10 @@ pub struct MetazoneGenericNamesV1<'data> {
 pub struct MetazoneSpecificNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, MetazoneId, ZoneVariant, str>,
+    pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, ZoneVariant, str>,
+    pub overrides: ZeroMap<'data, (TimeZoneBcp47Id, ZoneVariant), str>,
 }
 
 /// Metazone ID in a compact format
