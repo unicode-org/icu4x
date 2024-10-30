@@ -63,26 +63,6 @@ pub mod ffi {
             )))
         }
 
-        /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
-        #[diplomat::rust_link(icu::calendar::DateTime::local_unix_epoch, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn local_unix_epoch() -> Box<IsoDateTime> {
-            let dt = icu_calendar::DateTime::local_unix_epoch();
-            Box::new(IsoDateTime(dt))
-        }
-
-        /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
-        #[diplomat::rust_link(
-            icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
-            FnInStruct
-        )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_minutes_since_local_unix_epoch(minutes: i32) -> Box<IsoDateTime> {
-            Box::new(IsoDateTime(
-                icu_calendar::DateTime::from_minutes_since_local_unix_epoch(minutes),
-            ))
-        }
-
         /// Gets the date contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
         #[diplomat::attr(auto, getter)]
@@ -103,13 +83,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::new_from_iso, FnInStruct, hidden)]
         pub fn to_any(&self) -> Box<DateTime> {
             Box::new(DateTime(self.0.to_any().wrap_calendar_in_arc()))
-        }
-
-        /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
-        #[diplomat::rust_link(icu::calendar::DateTime::minutes_since_local_unix_epoch, FnInStruct)]
-        #[diplomat::attr(auto, getter)]
-        pub fn minutes_since_local_unix_epoch(&self) -> i32 {
-            self.0.minutes_since_local_unix_epoch()
         }
 
         /// Convert this datetime to one in a different calendar

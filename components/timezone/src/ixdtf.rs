@@ -302,35 +302,30 @@ impl<'a> Intermediate<'a> {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
-        let iso = DateTime::<Iso>::try_new_iso(
-            self.date.year,
-            self.date.month,
-            self.date.day,
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-        )?;
+        let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        let zone_variant =
-            match zone_offset_calculator.compute_offsets_from_time_zone(time_zone_id, &iso) {
-                Some(ZoneOffsets { standard, daylight }) => {
-                    if offset == standard {
-                        ZoneVariant::standard()
-                    } else if Some(offset) == daylight {
-                        ZoneVariant::daylight()
-                    } else {
-                        return Err(ParseError::InvalidOffsetError);
-                    }
-                }
-                None => {
-                    // time_zone_id not found; Etc/Unknown?
-                    debug_assert_eq!(time_zone_id.0.as_str(), "unk");
+        let zone_variant = match zone_offset_calculator
+            .compute_offsets_from_time_zone(time_zone_id, (date, time))
+        {
+            Some(ZoneOffsets { standard, daylight }) => {
+                if offset == standard {
                     ZoneVariant::standard()
+                } else if Some(offset) == daylight {
+                    ZoneVariant::daylight()
+                } else {
+                    return Err(ParseError::InvalidOffsetError);
                 }
-            };
+            }
+            None => {
+                // time_zone_id not found; Etc/Unknown?
+                debug_assert_eq!(time_zone_id.0.as_str(), "unk");
+                ZoneVariant::standard()
+            }
+        };
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_time((iso.date, iso.time))
+            .at_time((date, time))
             .with_zone_variant(zone_variant))
     }
 }

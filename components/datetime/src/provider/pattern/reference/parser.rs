@@ -5,8 +5,9 @@
 use super::{
     super::error::PatternError,
     super::{GenericPatternItem, PatternItem},
-    GenericPattern, Pattern,
 };
+#[cfg(test)]
+use super::{GenericPattern, Pattern};
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use alloc::string::String;
 use alloc::vec;
@@ -332,6 +333,7 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
+    #[cfg(test)]
     pub fn parse_placeholders(
         self,
         replacements: Vec<Pattern>,
@@ -345,9 +347,9 @@ impl<'p> Parser<'p> {
 
 #[cfg(test)]
 mod tests {
+    use super::super::super::reference::Pattern;
     use super::*;
     use crate::fields::{self, FieldLength};
-    use crate::pattern::reference::Pattern;
 
     #[test]
     fn pattern_parse_simple() {

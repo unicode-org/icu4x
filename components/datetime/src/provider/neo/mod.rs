@@ -6,7 +6,7 @@
 
 mod adapter;
 
-use crate::pattern::runtime::{self, PatternULE};
+use crate::provider::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use core::ops::Range;
 use icu_provider::prelude::*;

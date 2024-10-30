@@ -103,15 +103,9 @@ pub mod neo_pattern;
 mod neo_serde;
 pub mod neo_skeleton;
 pub mod options;
-#[doc(hidden)]
-pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
-#[doc(hidden)]
-#[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
-#[cfg(feature = "datagen")]
-pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 

@@ -2,39 +2,30 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    fields::{Field, FieldSymbol, Week},
-    pattern::{runtime::Pattern, PatternError, PatternItem},
-};
+use crate::fields::{Field, FieldSymbol, Week};
+use crate::provider::pattern::{runtime::Pattern, PatternError, PatternItem};
 use either::Either;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_structs)] // part of data struct
+#[allow(missing_docs)]
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
     pub pivot_field: Week,
 
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Pattern<'data>>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub other: Pattern<'data>,
 }
 
+#[allow(missing_docs)]
 impl<'data> PluralPattern<'data> {
+    /// Creates a [`PluralPattern`] from a pattern containing a pivot field.
     pub fn new(pattern: Pattern<'data>) -> Result<Self, PatternError> {
         let pivot_field = pattern
             .items
@@ -59,7 +50,7 @@ impl<'data> PluralPattern<'data> {
         })
     }
 
-    /// Returns which week field determines the [icu::plurals::PluralCategory] used to select a pattern variant for a given date.
+    /// Returns which week field determines the [icu_plurals::PluralCategory] used to select a pattern variant for a given date.
     pub fn pivot_field(&self) -> Week {
         self.pivot_field
     }
@@ -120,9 +111,6 @@ impl<'data> PluralPattern<'data> {
 /// Currently, the plural forms are only based on the week number.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),
@@ -130,6 +118,7 @@ pub enum PatternPlurals<'data> {
     SinglePattern(Pattern<'data>),
 }
 
+#[allow(missing_docs)]
 impl<'data> PatternPlurals<'data> {
     pub fn into_owned(self) -> PatternPlurals<'static> {
         match self {
@@ -172,7 +161,7 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
-    // Removes redundant patterns & transforms singleton [PatternPlurals::MultipleVariants] into a [PatternPlurals::SinglePattern].
+    /// Removes redundant patterns & transforms singleton [PatternPlurals::MultipleVariants] into a [PatternPlurals::SinglePattern].
     pub fn normalize(&mut self) {
         if let Self::MultipleVariants(patterns) = self {
             if patterns.patterns_iter().count() == 1 {

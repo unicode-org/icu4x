@@ -99,26 +99,6 @@ export class IsoDateTime {
         }
     }
 
-    static localUnixEpoch() {
-        const result = wasm.icu4x_IsoDateTime_local_unix_epoch_mv1();
-    
-        try {
-            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static fromMinutesSinceLocalUnixEpoch(minutes) {
-        const result = wasm.icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(minutes);
-    
-        try {
-            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
     get date() {
         const result = wasm.icu4x_IsoDateTime_date_mv1(this.ffiValue);
     
@@ -144,16 +124,6 @@ export class IsoDateTime {
     
         try {
             return new DateTime(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    get minutesSinceLocalUnixEpoch() {
-        const result = wasm.icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(this.ffiValue);
-    
-        try {
-            return result;
         }
         
         finally {}

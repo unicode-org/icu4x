@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use icu::datetime::pattern::runtime::{PatternPlurals, PluralPattern};
 use icu::datetime::provider::calendar::*;
-use icu::datetime::skeleton::reference::Skeleton;
-use icu::datetime::skeleton::SkeletonError;
+use icu::datetime::provider::skeleton::reference::Skeleton;
+use icu::datetime::provider::skeleton::SkeletonError;
+use icu::datetime::provider::skeleton::{PatternPlurals, PluralPattern};
 use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;
@@ -79,13 +79,13 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use either::Either;
-    use icu::datetime::skeleton::reference::Skeleton;
-    use icu::datetime::skeleton::*;
+    use icu::datetime::provider::skeleton::reference::Skeleton;
+    use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::{components, preferences},
-        pattern::{reference, runtime},
         provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
+        provider::pattern::{reference, runtime},
     };
     use icu::locale::locale;
     use litemap::LiteMap;

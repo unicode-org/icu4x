@@ -2,33 +2,48 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Structured datetime pattern types for datagen and the data provider.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+
 mod common;
 mod error;
-pub mod hour_cycle;
+mod hour_cycle;
 mod item;
 pub mod reference;
 pub mod runtime;
 
 use crate::fields;
 pub use error::PatternError;
+#[cfg(feature = "datagen")]
+pub(crate) use hour_cycle::naively_apply_preferences;
 pub use hour_cycle::CoarseHourCycle;
 use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
 
-/// The granularity of time represented in a pattern item.
+/// The granularity of time represented in a [`Pattern`](runtime::Pattern).
 /// Ordered from least granular to most granular for comparison.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeGranularity {
+    /// No time is in the pattern.
     None,
+    /// Smallest time unit = hours.
     Hours,
+    /// Smallest time unit = minutes.
     Minutes,
+    /// Smallest time unit = seconds.
     Seconds,
+    /// Smallest time unit = nanoseconds.
     Nanoseconds,
 }
 

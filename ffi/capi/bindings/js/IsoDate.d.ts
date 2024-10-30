@@ -22,8 +22,6 @@ export class IsoDate {
 
     static fromString(v: string): IsoDate;
 
-    static unixEpoch(): IsoDate;
-
     toCalendar(calendar: Calendar): Date;
 
     toAny(): Date;

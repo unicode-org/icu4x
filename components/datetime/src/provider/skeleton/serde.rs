@@ -7,8 +7,8 @@ use core::convert::TryFrom;
 use smallvec::SmallVec;
 
 pub mod reference {
+    use super::super::reference::Skeleton;
     use super::*;
-    use crate::skeleton::reference::Skeleton;
 
     #[cfg(feature = "datagen")]
     use ::serde::{ser, Serialize};
@@ -74,7 +74,7 @@ pub mod reference {
 }
 
 pub mod runtime {
-    use crate::skeleton::runtime::Skeleton;
+    use super::super::runtime::Skeleton;
     use zerovec::ZeroVec;
 
     #[cfg(feature = "datagen")]

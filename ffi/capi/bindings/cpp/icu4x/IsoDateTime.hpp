@@ -33,17 +33,11 @@ namespace capi {
     typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {icu4x::capi::IsoDateTime* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
     icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v);
     
-    icu4x::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
-    
-    icu4x::capi::IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
-    
     icu4x::capi::IsoDate* icu4x_IsoDateTime_date_mv1(const icu4x::capi::IsoDateTime* self);
     
     icu4x::capi::Time* icu4x_IsoDateTime_time_mv1(const icu4x::capi::IsoDateTime* self);
     
     icu4x::capi::DateTime* icu4x_IsoDateTime_to_any_mv1(const icu4x::capi::IsoDateTime* self);
-    
-    int32_t icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(const icu4x::capi::IsoDateTime* self);
     
     icu4x::capi::DateTime* icu4x_IsoDateTime_to_calendar_mv1(const icu4x::capi::IsoDateTime* self, const icu4x::capi::Calendar* calendar);
     
@@ -106,16 +100,6 @@ inline diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarPars
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDateTime>>(std::unique_ptr<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::IsoDateTime> icu4x::IsoDateTime::local_unix_epoch() {
-  auto result = icu4x::capi::icu4x_IsoDateTime_local_unix_epoch_mv1();
-  return std::unique_ptr<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result));
-}
-
-inline std::unique_ptr<icu4x::IsoDateTime> icu4x::IsoDateTime::from_minutes_since_local_unix_epoch(int32_t minutes) {
-  auto result = icu4x::capi::icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(minutes);
-  return std::unique_ptr<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result));
-}
-
 inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDateTime::date() const {
   auto result = icu4x::capi::icu4x_IsoDateTime_date_mv1(this->AsFFI());
   return std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result));
@@ -129,11 +113,6 @@ inline std::unique_ptr<icu4x::Time> icu4x::IsoDateTime::time() const {
 inline std::unique_ptr<icu4x::DateTime> icu4x::IsoDateTime::to_any() const {
   auto result = icu4x::capi::icu4x_IsoDateTime_to_any_mv1(this->AsFFI());
   return std::unique_ptr<icu4x::DateTime>(icu4x::DateTime::FromFFI(result));
-}
-
-inline int32_t icu4x::IsoDateTime::minutes_since_local_unix_epoch() const {
-  auto result = icu4x::capi::icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(this->AsFFI());
-  return result;
 }
 
 inline std::unique_ptr<icu4x::DateTime> icu4x::IsoDateTime::to_calendar(const icu4x::Calendar& calendar) const {

@@ -231,7 +231,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriodV1<'data>(
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local unix epoch. It represents when the metazone started to be used.
+    /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, Option<MetazoneId>>,
 );

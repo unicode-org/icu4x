@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use calendrical_calculations::rata_die::RataDie;
 use core::ops::Deref;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -113,8 +114,12 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
-/// Storage type for storing `DateTime<Iso>` as minutes since the UNIX epoch.
+/// Storage type for storing `DateTime<Iso>` as minutes since [`EPOCH`].
 pub type IsoMinutesSinceEpoch = i32;
+/// The epoch for [`IsoMinutesSinceEpoch`].
+///
+/// This is 1970-01-01, but this is coincidental to anything UNIX and should be changed to 0 in the future.
+pub const EPOCH: RataDie = RataDie::new(719163);
 
 /// An ICU4X mapping to the time zone offsets at a given period.
 ///
@@ -135,7 +140,7 @@ pub type IsoMinutesSinceEpoch = i32;
 #[yoke(prove_covariance_manually)]
 pub struct ZoneOffsetPeriodV1<'data>(
     /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local unix epoch. It represents when the offsets ended to be used.
+    /// the number of minutes since the local [`EPOCH`]. It represents when the offsets ended to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
