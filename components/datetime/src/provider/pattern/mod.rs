@@ -24,7 +24,7 @@ pub use hour_cycle::CoarseHourCycle;
 use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
 
-/// The granularity of time represented in a [`Pattern`].
+/// The granularity of time represented in a [`Pattern`](runtime::Pattern).
 /// Ordered from least granular to most granular for comparison.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,

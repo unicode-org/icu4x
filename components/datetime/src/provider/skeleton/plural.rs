@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[allow(clippy::exhaustive_structs)] // part of data struct
+#[allow(missing_docs)]
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
     pub pivot_field: Week,
@@ -23,7 +23,9 @@ pub struct PluralPattern<'data> {
     pub other: Pattern<'data>,
 }
 
+#[allow(missing_docs)]
 impl<'data> PluralPattern<'data> {
+    /// Creates a [`PluralPattern`] from a pattern containing a pivot field.
     pub fn new(pattern: Pattern<'data>) -> Result<Self, PatternError> {
         let pivot_field = pattern
             .items
@@ -48,7 +50,7 @@ impl<'data> PluralPattern<'data> {
         })
     }
 
-    /// Returns which week field determines the [icu::plurals::PluralCategory] used to select a pattern variant for a given date.
+    /// Returns which week field determines the [icu_plurals::PluralCategory] used to select a pattern variant for a given date.
     pub fn pivot_field(&self) -> Week {
         self.pivot_field
     }
@@ -116,6 +118,7 @@ pub enum PatternPlurals<'data> {
     SinglePattern(Pattern<'data>),
 }
 
+#[allow(missing_docs)]
 impl<'data> PatternPlurals<'data> {
     pub fn into_owned(self) -> PatternPlurals<'static> {
         match self {
@@ -158,7 +161,7 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
-    // Removes redundant patterns & transforms singleton [PatternPlurals::MultipleVariants] into a [PatternPlurals::SinglePattern].
+    /// Removes redundant patterns & transforms singleton [PatternPlurals::MultipleVariants] into a [PatternPlurals::SinglePattern].
     pub fn normalize(&mut self) {
         if let Self::MultipleVariants(patterns) = self {
             if patterns.patterns_iter().count() == 1 {
