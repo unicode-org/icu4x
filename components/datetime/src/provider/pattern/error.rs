@@ -5,12 +5,15 @@
 use crate::fields;
 use displaydoc::Display;
 
+/// A low-level pattern parsing error.
+///
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// <https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other>
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[allow(missing_docs)]
 #[non_exhaustive]
 pub enum PatternError {
     #[displaydoc("{0:?} invalid field length in pattern")]

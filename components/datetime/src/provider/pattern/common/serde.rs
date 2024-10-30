@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::pattern::{PatternItem, TimeGranularity};
+use super::super::{PatternItem, TimeGranularity};
 use ::serde::{de, Deserialize, Deserializer};
 use alloc::{fmt, format, vec::Vec};
 
@@ -10,8 +10,8 @@ use alloc::{fmt, format, vec::Vec};
 use ::serde::{ser, Serialize};
 
 mod reference {
+    use super::super::super::reference::Pattern;
     use super::*;
-    use crate::pattern::reference::Pattern;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
@@ -118,8 +118,8 @@ mod reference {
 }
 
 mod runtime {
+    use super::super::super::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use super::*;
-    use crate::pattern::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use zerovec::ZeroVec;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
@@ -218,169 +218,9 @@ mod runtime {
         }
     }
 
-    mod plural {
-        // Can't use `serde(untagged)` on `PatternPlurals` because
-        // Postcard can't handle enums not discriminated at compilation time.
-        use super::*;
-        use crate::pattern::runtime::{PatternPlurals, PluralPattern};
-        use core::fmt;
-
-        /// A helper struct that is shaped exactly like `runtime::PatternPlurals`
-        /// and is used to aid in quick deserialization.
-        #[derive(Debug, Clone, PartialEq, Deserialize)]
-        #[cfg_attr(feature = "datagen", derive(Serialize))]
-        #[allow(clippy::large_enum_variant)]
-        enum PatternPluralsForSerde<'data> {
-            #[serde(borrow)]
-            MultipleVariants(PluralPattern<'data>),
-            #[serde(borrow)]
-            SinglePattern(Pattern<'data>),
-        }
-
-        impl<'data> From<PatternPluralsForSerde<'data>> for PatternPlurals<'data> {
-            fn from(pfs: PatternPluralsForSerde<'data>) -> Self {
-                match pfs {
-                    PatternPluralsForSerde::MultipleVariants(variants) => {
-                        Self::MultipleVariants(variants)
-                    }
-                    PatternPluralsForSerde::SinglePattern(pattern) => Self::SinglePattern(pattern),
-                }
-            }
-        }
-
-        impl<'data> From<&PatternPlurals<'data>> for PatternPluralsForSerde<'data> {
-            fn from(pfs: &PatternPlurals<'data>) -> Self {
-                match pfs.clone() {
-                    PatternPlurals::MultipleVariants(variants) => Self::MultipleVariants(variants),
-                    PatternPlurals::SinglePattern(pattern) => Self::SinglePattern(pattern),
-                }
-            }
-        }
-
-        struct DeserializePatternPlurals;
-
-        impl<'de> de::Visitor<'de> for DeserializePatternPlurals {
-            type Value = PatternPlurals<'de>;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                write!(formatter, "a valid pattern.")
-            }
-
-            fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                let reference_deserializer = super::super::reference::DeserializePatternUTS35String;
-                let pattern = reference_deserializer.visit_str(pattern_string)?;
-
-                Ok(PatternPlurals::SinglePattern(Pattern::from(&pattern)))
-            }
-
-            fn visit_map<V>(self, map: V) -> Result<Self::Value, V::Error>
-            where
-                V: de::MapAccess<'de>,
-            {
-                Ok(PatternPlurals::MultipleVariants(
-                    PluralPattern::deserialize(de::value::MapAccessDeserializer::new(map))?,
-                ))
-            }
-        }
-
-        impl<'de: 'data, 'data> Deserialize<'de> for PatternPlurals<'data> {
-            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-            where
-                D: Deserializer<'de>,
-            {
-                if deserializer.is_human_readable() {
-                    // deserializer.deserialize_enum("PatternPlurals", &["Single", "Multiple"], DeserializePatternPlurals)
-                    deserializer.deserialize_any(DeserializePatternPlurals)
-                } else {
-                    let pattern = PatternPluralsForSerde::deserialize(deserializer)?;
-                    Ok(Self::from(pattern))
-                }
-            }
-        }
-
-        #[cfg(feature = "datagen")]
-        impl Serialize for PatternPlurals<'_> {
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: ser::Serializer,
-            {
-                if serializer.is_human_readable() {
-                    // match self {
-                    //     Self::SinglePattern(pattern) => serializer.serialize_newtype_variant("PatternPlurals", 0, "Single", pattern),
-                    //     Self::MultipleVariants(variants) => serializer.serialize_newtype_variant("PatternPlurals", 1, "Multiple", variants),
-                    // }
-                    match self {
-                        Self::SinglePattern(pattern) => {
-                            serializer.serialize_str(&pattern.to_string())
-                        }
-                        Self::MultipleVariants(variants) => variants.serialize(serializer),
-                    }
-                } else {
-                    let pfs: PatternPluralsForSerde = self.into();
-                    pfs.serialize(serializer)
-                }
-            }
-        }
-
-        #[cfg(all(test, feature = "datagen"))]
-        mod test {
-            use super::*;
-            use icu_plurals::PluralCategory;
-
-            #[test]
-            fn runtime_pattern_plurals_serde_human_readable_test() {
-                let pattern_other: Pattern = "Y-m-d w 'other' HH:mm"
-                    .parse()
-                    .expect("Failed to parse pattern");
-                let pattern_two: Pattern = "Y-m-d w 'two' HH:mm"
-                    .parse()
-                    .expect("Failed to parse pattern");
-
-                let mut plural_pattern =
-                    PluralPattern::new(pattern_other).expect("Failed to create PluralPattern");
-
-                plural_pattern.maybe_set_variant(PluralCategory::Two, pattern_two);
-
-                let pattern_plurals = PatternPlurals::from(plural_pattern);
-
-                let json = serde_json::to_string(&pattern_plurals)
-                    .expect("Failed to serialize pattern plurals");
-                let result: PatternPlurals =
-                    serde_json::from_str(&json).expect("Failed to deserialize pattern plurals");
-                assert_eq!(pattern_plurals, result);
-            }
-
-            #[test]
-            fn runtime_pattern_plurals_serde_bincode_test() {
-                let pattern_other: Pattern = "Y-m-d w 'other' HH:mm"
-                    .parse()
-                    .expect("Failed to parse pattern");
-                let pattern_two: Pattern = "Y-m-d w 'two' HH:mm"
-                    .parse()
-                    .expect("Failed to parse pattern");
-
-                let mut plural_pattern =
-                    PluralPattern::new(pattern_other).expect("Failed to create PluralPattern");
-
-                plural_pattern.maybe_set_variant(PluralCategory::Two, pattern_two);
-
-                let pattern_plurals = PatternPlurals::from(plural_pattern);
-
-                let bytes = bincode::serialize(&pattern_plurals)
-                    .expect("Failed to serialize pattern plurals");
-                let result: PatternPlurals =
-                    bincode::deserialize(&bytes).expect("Failed to deserialize pattern plurals");
-                assert_eq!(pattern_plurals, result);
-            }
-        }
-    }
-
     mod generic {
+        use super::super::super::super::runtime::GenericPattern;
         use super::*;
-        use crate::pattern::runtime::GenericPattern;
 
         #[allow(clippy::upper_case_acronyms)]
         struct DeserializeGenericPatternUTS35String;

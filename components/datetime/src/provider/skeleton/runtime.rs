@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Runtime `Skeleton` implementation for more efficient deserialization.
+
+use super::reference;
 use crate::fields::Field;
-use crate::skeleton::reference;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
+/// A skeleton that supports zero-copy deserialization.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Skeleton<'data>(pub(crate) ZeroVec<'data, Field>);
 

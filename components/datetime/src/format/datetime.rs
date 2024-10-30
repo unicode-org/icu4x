@@ -9,8 +9,8 @@ use super::{
 };
 use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
-use crate::pattern::runtime::PatternMetadata;
-use crate::pattern::PatternItem;
+use crate::provider::pattern::runtime::PatternMetadata;
+use crate::provider::pattern::PatternItem;
 use crate::time_zone::{
     FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
     ResolvedNeoTimeZoneSkeleton,
@@ -556,7 +556,7 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, provider::pattern::runtime};
     use icu_calendar::types::FormattingEra;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;

@@ -14,8 +14,8 @@ use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeSkeleton;
-use crate::pattern::PatternItem;
 use crate::provider::neo::*;
+use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::scaffold::*;
 use crate::scaffold::{

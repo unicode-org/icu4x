@@ -9,29 +9,50 @@ use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_plurals::provider::FourBitMetadata;
 use icu_provider::prelude::*;
-use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
+use zerovec::{ZeroSlice, ZeroVec};
 
+/// A raw, low-level pattern for datetime formatting.
+///
+/// It consists of an owned-or-borrowed list of [`PatternItem`]s corresponding
+/// to either fields or literal characters.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct Pattern<'data> {
+    /// The list of [`PatternItem`]s.
     pub items: ZeroVec<'data, PatternItem>,
+    /// Pre-computed metadata about the pattern.
+    ///
     /// This field should contain the smallest time unit from the `items` vec.
     /// If it doesn't, unexpected results for day periods may be encountered.
     pub metadata: PatternMetadata,
 }
 
+/// Fully borrowed version of [`Pattern`].
 #[derive(Debug, Copy, Clone)]
-pub struct PatternBorrowed<'data> {
-    pub items: &'data ZeroSlice<PatternItem>,
-    pub metadata: PatternMetadata,
+pub(crate) struct PatternBorrowed<'data> {
+    pub(crate) items: &'data ZeroSlice<PatternItem>,
+    pub(crate) metadata: PatternMetadata,
 }
 
+/// Metadata associated with a [`Pattern`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[zerovec::make_ule(PatternMetadataULE)]
 #[zerovec::skip_derive(Ord)]
@@ -65,8 +86,8 @@ impl PatternMetadata {
         time
     }
 
+    /// Creates a [`PatternMetadata`] from the [`TimeGranularity`] enum.
     #[inline]
-    #[doc(hidden)] // databake
     pub const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
         Self(time_granularity.ordinal())
     }
@@ -95,31 +116,24 @@ impl Default for PatternMetadata {
 }
 
 impl Pattern<'_> {
-    pub fn into_owned(self) -> Pattern<'static> {
+    #[cfg(feature = "datagen")]
+    pub(crate) fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
             metadata: self.metadata,
         }
     }
 
-    pub fn as_borrowed(&self) -> PatternBorrowed {
+    pub(crate) fn as_borrowed(&self) -> PatternBorrowed {
         PatternBorrowed {
             items: &self.items,
             metadata: self.metadata,
         }
     }
 
+    /// Borrows a [`Pattern`] from another [`Pattern`].
     pub fn as_ref(&self) -> Pattern<'_> {
         self.as_borrowed().as_pattern()
-    }
-}
-
-impl PatternULE {
-    pub fn as_borrowed(&self) -> PatternBorrowed {
-        PatternBorrowed {
-            items: &self.items,
-            metadata: PatternMetadata::from_unaligned(self.metadata),
-        }
     }
 }
 
@@ -129,7 +143,7 @@ impl<'data> PatternBorrowed<'data> {
         metadata: PatternMetadata::DEFAULT,
     };
 
-    pub fn as_pattern(&self) -> Pattern<'data> {
+    pub(crate) fn as_pattern(&self) -> Pattern<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,
@@ -178,7 +192,7 @@ impl FromStr for Pattern<'_> {
     type Err = PatternError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let reference = crate::pattern::reference::Pattern::from_str(input)?;
+        let reference = reference::Pattern::from_str(input)?;
         Ok(Self::from(&reference))
     }
 }
@@ -198,7 +212,7 @@ impl databake::Bake for PatternMetadata {
         ctx.insert("icu_datetime");
         let time_granularity = databake::Bake::bake(&self.time_granularity(), ctx);
         databake::quote! {
-            icu_datetime::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+            icu_datetime::provider::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
         }
     }
 }
@@ -216,8 +230,8 @@ fn databake() {
     databake::test_bake!(
         PatternMetadata,
         const,
-        crate::pattern::runtime::PatternMetadata::from_time_granularity(
-            crate::pattern::TimeGranularity::Hours
+        crate::provider::pattern::runtime::PatternMetadata::from_time_granularity(
+            crate::provider::pattern::TimeGranularity::Hours
         ),
         icu_datetime,
     );

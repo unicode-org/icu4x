@@ -8,7 +8,7 @@
 mod skeletons;
 mod symbols;
 
-use crate::pattern;
+use crate::provider::pattern;
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 pub use skeletons::*;
@@ -89,7 +89,7 @@ pub struct TimeLengthsV1<'data> {
 /// and/or plural forms.
 pub mod patterns {
     use super::*;
-    use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
+    use crate::provider::pattern::runtime::{self, GenericPattern};
 
     /// Data struct for date/time patterns broken down by pattern length.
     ///
@@ -141,20 +141,6 @@ pub mod patterns {
         /// A short length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub short: GenericPattern<'data>,
-    }
-
-    #[icu_provider::data_struct]
-    #[derive(Debug, PartialEq, Clone, Default)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub(crate) struct PatternPluralsV1<'data>(
-        #[cfg_attr(feature = "serde", serde(borrow))] pub PatternPlurals<'data>,
-    );
-
-    impl<'data> From<PatternPlurals<'data>> for PatternPluralsV1<'data> {
-        fn from(pattern: PatternPlurals<'data>) -> Self {
-            Self(pattern)
-        }
     }
 
     /// A general purpose pattern representation. Used for date-time glue patterns.

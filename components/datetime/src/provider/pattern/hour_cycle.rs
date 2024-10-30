@@ -2,17 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "datagen")]
+use super::runtime;
 use super::{reference, PatternItem};
 use crate::{fields, options::preferences::HourCycle};
 #[cfg(feature = "datagen")]
-use crate::{options::preferences, pattern::runtime, provider, skeleton};
+use crate::{
+    options::preferences,
+    provider::{self, skeleton},
+};
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {

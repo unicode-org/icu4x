@@ -9,14 +9,15 @@ use core::str::FromStr;
 use writeable::{impl_display_with_writeable, Writeable};
 
 use crate::helpers::size_test;
-use crate::pattern::{runtime, PatternError, PatternItem};
+use crate::provider::pattern::{runtime, PatternError, PatternItem};
 
 size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
-/// Most clients should use [`DateTimeFormatter`](crate::neo::DateTimeFormatter) instead of directly
-/// formatting with patterns.
+/// [`DateTimePattern`] forgoes most internationalization functionality of the datetime crate.
+/// It assumes that the pattern is already localized for the customer's locale. Most clients
+/// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
 /// There are two ways to make one of these:
 ///
