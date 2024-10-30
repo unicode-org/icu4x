@@ -108,7 +108,10 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                 // Overwrite with short names, as we want to use those
                 .chain(regions.iter().filter_map(|(region, value)| {
                     Some((
-                        icu::locale::subtags::Region::try_from_str(region.strip_suffix("-alt-short")?).ok()?,
+                        icu::locale::subtags::Region::try_from_str(
+                            region.strip_suffix("-alt-short")?,
+                        )
+                        .ok()?,
                         value.as_str(),
                     ))
                 }))
