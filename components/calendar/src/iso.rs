@@ -32,7 +32,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
-use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
+use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -252,11 +252,6 @@ impl Date<Iso> {
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
     }
-
-    /// Constructs an ISO date representing the UNIX epoch on January 1, 1970.
-    pub fn unix_epoch() -> Self {
-        Date::from_raw(IsoDateInner(ArithmeticDate::new_unchecked(1970, 1, 1)), Iso)
-    }
 }
 
 impl DateTime<Iso> {
@@ -287,83 +282,6 @@ impl DateTime<Iso> {
             date: Date::try_new_iso(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
-    }
-
-    /// Constructs an ISO datetime representing the UNIX epoch on January 1, 1970
-    /// at midnight.
-    pub fn local_unix_epoch() -> Self {
-        DateTime {
-            date: Date::unix_epoch(),
-            time: Time::midnight(),
-        }
-    }
-
-    /// Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let today = DateTime::try_new_iso(2020, 2, 29, 0, 0, 0).unwrap();
-    ///
-    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(
-    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
-    ///     today
-    /// );
-    ///
-    /// let today = DateTime::try_new_iso(1970, 1, 1, 0, 0, 0).unwrap();
-    ///
-    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
-    /// ```
-    pub fn minutes_since_local_unix_epoch(&self) -> i32 {
-        let minutes_a_hour = 60;
-        let hours_a_day = 24;
-        let minutes_a_day = minutes_a_hour * hours_a_day;
-        let unix_epoch = Iso::fixed_from_iso(Date::unix_epoch().inner);
-        let result = (Iso::fixed_from_iso(*self.date.inner()) - unix_epoch) * minutes_a_day
-            + i64::from(self.time.hour.number()) * minutes_a_hour
-            + i64::from(self.time.minute.number());
-        i64_to_saturated_i32(result)
-    }
-
-    /// Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// // After Unix Epoch
-    /// let today = DateTime::try_new_iso(2020, 2, 29, 0, 0, 0).unwrap();
-    ///
-    /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(
-    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
-    ///     today
-    /// );
-    ///
-    /// // Unix Epoch
-    /// let today = DateTime::try_new_iso(1970, 1, 1, 0, 0, 0).unwrap();
-    ///
-    /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
-    ///
-    /// // Before Unix Epoch
-    /// let today = DateTime::try_new_iso(1967, 4, 6, 20, 40, 0).unwrap();
-    ///
-    /// assert_eq!(today.minutes_since_local_unix_epoch(), -1440200);
-    /// assert_eq!(
-    ///     DateTime::from_minutes_since_local_unix_epoch(-1440200),
-    ///     today
-    /// );
-    /// ```
-    pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
-        let (time, extra_days) = Time::from_minute_with_remainder_days(minute);
-        let unix_epoch = Date::unix_epoch();
-        let unix_epoch_days = Iso::fixed_from_iso(unix_epoch.inner);
-        let date = Iso::iso_from_fixed(unix_epoch_days + extra_days as i64);
-        DateTime { date, time }
     }
 }
 
@@ -822,22 +740,5 @@ mod test {
         check(1460, 4, 12, 30);
         check(1461, 4, 12, 31); // leap year
         check(1462, 5, 1, 1);
-    }
-
-    #[test]
-    fn test_from_minutes_since_local_unix_epoch() {
-        fn check(minutes: i32, year: i32, month: u8, day: u8, hour: u8, minute: u8) {
-            let today = DateTime::try_new_iso(year, month, day, hour, minute, 0).unwrap();
-            assert_eq!(today.minutes_since_local_unix_epoch(), minutes);
-            assert_eq!(
-                DateTime::from_minutes_since_local_unix_epoch(minutes),
-                today
-            );
-        }
-
-        check(-1441, 1969, 12, 30, 23, 59);
-        check(-1440, 1969, 12, 31, 0, 0);
-        check(-1439, 1969, 12, 31, 0, 1);
-        check(-2879, 1969, 12, 30, 0, 1);
     }
 }

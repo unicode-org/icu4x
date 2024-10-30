@@ -14,6 +14,7 @@ use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_calendar::{Date, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
+use icu_timezone::provider::EPOCH;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
@@ -230,11 +231,10 @@ fn metazone(
 ) -> Option<MetazoneId> {
     let cursor = metazone_period.0.get0(&time_zone_id)?;
     let mut metazone_id = None;
-    let minutes_since_local_unix_epoch =
-        icu_calendar::DateTime { date, time }.minutes_since_local_unix_epoch();
+    let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
+        + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
     for (minutes, id) in cursor.iter1() {
-        if minutes_since_local_unix_epoch >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
-        {
+        if minutes_since_epoch_walltime >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes) {
             metazone_id = id.get()
         } else {
             break;
