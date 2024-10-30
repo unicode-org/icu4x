@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! UTS 35 classical datetime skeletons.
-//! 
+//!
 //! Semantic skeletons (field sets) use classical skeletons for pattern matching in datagen.
-//! 
+//!
 //! See the [`Skeleton`](reference::Skeleton) struct for more information.
 //!
 //! <div class="stab unstable">

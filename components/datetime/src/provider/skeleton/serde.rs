@@ -7,8 +7,8 @@ use core::convert::TryFrom;
 use smallvec::SmallVec;
 
 pub mod reference {
-    use super::*;
     use super::super::reference::Skeleton;
+    use super::*;
 
     #[cfg(feature = "datagen")]
     use ::serde::{ser, Serialize};

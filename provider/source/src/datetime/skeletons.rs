@@ -4,9 +4,9 @@
 
 use crate::cldr_serde;
 use icu::datetime::provider::calendar::*;
-use icu::datetime::provider::skeleton::{PatternPlurals, PluralPattern};
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::SkeletonError;
+use icu::datetime::provider::skeleton::{PatternPlurals, PluralPattern};
 use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;

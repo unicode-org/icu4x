@@ -230,8 +230,8 @@ fn databake() {
     databake::test_bake!(
         PatternMetadata,
         const,
-        super::super::runtime::PatternMetadata::from_time_granularity(
-            super::super::TimeGranularity::Hours
+        crate::provider::pattern::runtime::PatternMetadata::from_time_granularity(
+            crate::provider::pattern::TimeGranularity::Hours
         ),
         icu_datetime,
     );
