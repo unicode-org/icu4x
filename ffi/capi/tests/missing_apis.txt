@@ -363,10 +363,8 @@ icu::timezone::ParseError#Enum
 icu::timezone::TimeZoneBcp47Id::into_option#FnInStruct
 icu::timezone::TimeZoneBcp47Id::with_offset#FnInStruct
 icu::timezone::TimeZoneInfo::at_time#FnInStruct
-icu::timezone::TimeZoneInfo::from_id_and_offset#FnInStruct
 icu::timezone::TimeZoneInfo::with_zone_variant#FnInStruct
 icu::timezone::UtcOffset::into_option#FnInStruct
-icu::timezone::UtcOffset::with_id#FnInStruct
 icu::timezone::WindowsTimeZoneMapper#Struct
 icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
@@ -375,6 +373,7 @@ icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
 icu::timezone::ZoneOffsetCalculator#Struct
 icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
+icu::timezone::ZoneOffsets#Struct
 icu::timezone::ZoneVariant::into_option#FnInStruct
 icu::timezone::models::AtTime#Enum
 icu::timezone::models::Base#Enum

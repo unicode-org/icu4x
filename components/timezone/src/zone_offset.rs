@@ -73,28 +73,26 @@ impl ZoneOffsetCalculator {
     /// let zoc = ZoneOffsetCalculator::new();
     ///
     /// // America/Denver observes DST
-    /// assert_eq!(
-    ///     zoc.compute_offsets_from_time_zone(
-    ///         TimeZoneBcp47Id(tinystr!(8, "usden")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
-    ///     ),
-    ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())))
-    /// );
+    /// let offsets = zoc.compute_offsets_from_time_zone(
+    ///     TimeZoneBcp47Id(tinystr!(8, "usden")),
+    ///     (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    /// ).unwrap();
+    /// assert_eq!(offsets.standard, UtcOffset::try_from_seconds(-7 * 3600).unwrap());
+    /// assert_eq!(offsets.daylight, Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap()));
     ///
     /// // America/Phoenix does not
-    /// assert_eq!(
-    ///     zoc.compute_offsets_from_time_zone(
-    ///         TimeZoneBcp47Id(tinystr!(8, "usphx")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
-    ///     ),
-    ///     Some((UtcOffset::try_from_seconds(-7 * 3600).unwrap(), None))
-    /// );
+    /// let offsets = zoc.compute_offsets_from_time_zone(
+    ///     TimeZoneBcp47Id(tinystr!(8, "usphx")),
+    ///     (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    /// ).unwrap();
+    /// assert_eq!(offsets.standard, UtcOffset::try_from_seconds(-7 * 3600).unwrap());
+    /// assert_eq!(offsets.daylight, None);
     /// ```
     pub fn compute_offsets_from_time_zone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
         (date, time): (Date<Iso>, Time),
-    ) -> Option<(UtcOffset, Option<UtcOffset>)> {
+    ) -> Option<ZoneOffsets> {
         use zerovec::ule::AsULE;
         match self.offset_period.get().0.get0(&time_zone_id) {
             Some(cursor) => {
@@ -109,13 +107,23 @@ impl ZoneOffsetCalculator {
                     }
                 }
                 let offsets = offsets?;
-                Some((
-                    UtcOffset::from_eighths_of_hour(offsets.0),
-                    (offsets.1 != 0)
+                Some(ZoneOffsets {
+                    standard: UtcOffset::from_eighths_of_hour(offsets.0),
+                    daylight: (offsets.1 != 0)
                         .then_some(UtcOffset::from_eighths_of_hour(offsets.0 + offsets.1)),
-                ))
+                })
             }
             None => None,
         }
     }
+}
+
+/// Represents the different offsets in use for a time zone
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy)]
+pub struct ZoneOffsets {
+    /// The standard offset.
+    pub standard: UtcOffset,
+    /// The daylight-saving offset, if used.
+    pub daylight: Option<UtcOffset>,
 }

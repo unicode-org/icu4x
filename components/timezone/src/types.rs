@@ -8,19 +8,14 @@ use tinystr::{tinystr, TinyAsciiStr};
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
-/// The UTC offset in seconds for a timezone
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+/// An offset from Coordinated Universal Time (UTC)
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
 pub struct UtcOffset(i32);
 
-impl Default for UtcOffset {
-    fn default() -> Self {
-        Self::zero()
-    }
-}
-
 impl UtcOffset {
-    /// Attempt to create a [`UtcOffset`] from a seconds input. It returns
-    /// [`InvalidOffsetError`] when the seconds are out of bounds.
+    /// Attempt to create a [`UtcOffset`] from a seconds input.
+    ///
+    /// Returns [`InvalidOffsetError`] if the seconds are out of bounds.
     pub fn try_from_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
             Err(InvalidOffsetError)
@@ -48,7 +43,7 @@ impl UtcOffset {
         Self(eighths_of_hour as i32 * 450)
     }
 
-    /// Creates a [`UtcOffset`] of 0.
+    /// Creates a [`UtcOffset`] of zero.
     pub const fn zero() -> Self {
         Self(0)
     }
@@ -133,12 +128,8 @@ impl UtcOffset {
     }
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
-    ///
-    /// # Safety
-    ///
-    /// The seconds must be a valid value as returned by [`Self::to_seconds`].
     #[inline]
-    pub unsafe fn from_seconds_unchecked(seconds: i32) -> Self {
+    pub fn from_seconds_unchecked(seconds: i32) -> Self {
         Self(seconds)
     }
 
@@ -152,12 +143,12 @@ impl UtcOffset {
         (self.0 / 450) as i8
     }
 
-    /// Returns `true` if the [`UtcOffset`] is positive, otherwise `false`.
-    pub fn is_positive(self) -> bool {
+    /// Whether the [`UtcOffset`] is non-negative.
+    pub fn is_non_negative(self) -> bool {
         self.0 >= 0
     }
 
-    /// Returns `true` if the [`UtcOffset`] is zero, otherwise `false`.
+    /// Whether the [`UtcOffset`] is zero.
     pub fn is_zero(self) -> bool {
         self.0 == 0
     }

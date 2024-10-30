@@ -39,8 +39,8 @@ void icu4x_TimeZoneInfo_clear_offset_mv1(TimeZoneInfo* self);
 typedef struct icu4x_TimeZoneInfo_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_seconds_mv1_result;
 icu4x_TimeZoneInfo_offset_seconds_mv1_result icu4x_TimeZoneInfo_offset_seconds_mv1(const TimeZoneInfo* self);
 
-typedef struct icu4x_TimeZoneInfo_is_offset_positive_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_positive_mv1_result;
-icu4x_TimeZoneInfo_is_offset_positive_mv1_result icu4x_TimeZoneInfo_is_offset_positive_mv1(const TimeZoneInfo* self);
+typedef struct icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result;
+icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result icu4x_TimeZoneInfo_is_offset_non_negative_mv1(const TimeZoneInfo* self);
 
 typedef struct icu4x_TimeZoneInfo_is_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_zero_mv1_result;
 icu4x_TimeZoneInfo_is_offset_zero_mv1_result icu4x_TimeZoneInfo_is_offset_zero_mv1(const TimeZoneInfo* self);

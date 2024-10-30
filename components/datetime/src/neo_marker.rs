@@ -265,12 +265,6 @@
 //! use tinystr::tinystr;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! // Set up the time zone. Note: the inputs here are
-//! //   1. The offset
-//! //   2. The IANA time zone ID
-//! //   3. A date and time (for non-location name resolution)
-//! //   4. Note: we do not need the zone variant because of `load_generic_*()`
-//!
 //! // Set up the formatter
 //! let mut tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en").into(),
@@ -278,34 +272,31 @@
 //! )
 //! .unwrap();
 //!
-//! // "uschi" - has symbol data for generic_non_location_short
-//! let time_zone = TimeZoneInfo::from_id_and_offset(
-//!     TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago"),
-//!     UtcOffset::from_eighths_of_hour(-5 * 8),
-//! )
-//! .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+//! // "uschi" - has symbol data for short generic non-location
+//! let time_zone = TimeZoneIdMapper::new()
+//!     .iana_to_bcp47("America/Chicago")
+//!     .with_offset("-05".parse().ok())
+//!     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
 //! );
 //!
-//! // "ushnl" - has time zone override symbol data for generic_non_location_short
-//! let time_zone = TimeZoneInfo::from_id_and_offset(
-//!     TimeZoneIdMapper::new().iana_to_bcp47("Pacific/Honolulu"),
-//!     UtcOffset::from_eighths_of_hour(-10 * 8),
-//! )
-//! .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+//! // "ushnl" - has time zone override symbol data for short generic non-location
+//! let time_zone = TimeZoneIdMapper::new()
+//!     .iana_to_bcp47("Pacific/Honolulu")
+//!     .with_offset("-10".parse().ok())
+//!     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
 //! );
 //!
-//! // Mis-spelling of "America/Chicago" results in a fallback to GMT format
-//! let time_zone = TimeZoneInfo::from_id_and_offset(
-//!     TimeZoneIdMapper::new().iana_to_bcp47("America/Chigagou"),
-//!     UtcOffset::from_eighths_of_hour(-5 * 8),
-//! )
-//! .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+//! // Mis-spelling of "America/Chicago" results in a fallback to offset format
+//! let time_zone = TimeZoneIdMapper::new()
+//!     .iana_to_bcp47("America/Chigagou")
+//!     .with_offset("-05".parse().ok())
+//!     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "GMT-5"
