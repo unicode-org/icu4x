@@ -7,6 +7,7 @@ use crate::SourceDataProvider;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
+use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::calendar::Time;
@@ -449,8 +450,36 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = &self.compute_bcp47_tzids_btreemap()?;
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
+        let mz_periods =
+            DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
+        let locations = DataProvider::<LocationsV1Marker>::load(self, req)?.payload;
+        let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
+            BTreeMap::new();
+        for cursor in mz_periods.get().0.iter0() {
+            let tz = *cursor.key0();
+            for mz in cursor.iter1_copied().map(|(_, mz)| mz).flatten() {
+                reverse_meta_zone_id_data.entry(mz).or_default().insert(tz);
+            }
+        }
+
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
+            .filter(|&(mz, v)| {
+                let Some(tzs) = reverse_meta_zone_id_data.get(&mz) else {
+                    log::warn!("No tzs for {mz:?}");
+                    return false;
+                };
+                tzs.iter().any(|tz| {
+                    let Some(location) = locations.get().locations.get(tz) else {
+                        return true;
+                    };
+                    let eq = writeable::cmp_bytes(
+                        &locations.get().pattern_generic.interpolate([location]),
+                        v.as_bytes(),
+                    );
+                    eq != Ordering::Equal
+                })
+            })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
             .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
