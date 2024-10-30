@@ -1,41 +1,18 @@
 {
-  "defaults": [
-    [
-      [
-        "arge",
-        "Standard"
-      ],
-      "ART"
-    ],
-    [
-      [
-        "arge",
-        "Daylight"
-      ],
-      "ARST"
-    ],
-    [
-      [
-        "arwe",
-        "Standard"
-      ],
-      "WART"
-    ],
-    [
-      [
-        "arwe",
-        "Daylight"
-      ],
-      "WARST"
-    ]
-  ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "standard": {
+    "defaults": {
+      "arge": "ART",
+      "arwe": "WART"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
+  },
+  "daylight": {
+    "defaults": {
+      "arge": "ARST",
+      "arwe": "WARST"
+    },
+    "overrides": {}
+  }
 }

@@ -215,9 +215,9 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The language specific location names, e.g. Italy
     pub(crate) locations: Option<&'a provider::time_zones::LocationsV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
+    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneNamesV1<'a>>,
     /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
+    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneNamesV1<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
@@ -430,20 +430,21 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
+        let names = match zone_variant {
+            ZoneVariant::Standard => &names.standard,
+            ZoneVariant::Daylight => &names.daylight,
+            // Compiles out due to tilde dependency on `icu_timezone`
+            _ => unreachable!(),
+        };
         let Some(metazone_period) = data_payloads.mz_periods else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names
-            .overrides
-            .get(&(time_zone_id, zone_variant))
-            .or_else(|| {
-                names.defaults.get(&(
-                    metazone(time_zone_id, local_time, metazone_period)?,
-                    zone_variant,
-                ))
-            })
-        else {
+        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
+            names
+                .defaults
+                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 

@@ -13,7 +13,7 @@ use zerovec::{
     ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec,
 };
 
-use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant};
+use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
@@ -21,7 +21,7 @@ pub(crate) mod tz {
     pub(crate) use super::LocationsV1Marker;
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
     pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
-    pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
+    pub(crate) use super::MetazoneNamesV1 as MzGenericV1;
     pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
     pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
@@ -140,7 +140,7 @@ pub struct LocationsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneGenericNamesV1<'data> {
+pub struct MetazoneNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
@@ -168,12 +168,12 @@ pub struct MetazoneGenericNamesV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesV1<'data> {
-    /// The default mapping between metazone id and localized metazone name.
+    /// The standard time names.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
-    /// The override mapping between timezone id and localized metazone name.
+    pub standard: MetazoneNamesV1<'data>,
+    /// The daylight time names.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, (TimeZoneBcp47Id, ZoneVariant), str>,
+    pub daylight: MetazoneNamesV1<'data>,
 }
 
 /// Metazone ID in a compact format

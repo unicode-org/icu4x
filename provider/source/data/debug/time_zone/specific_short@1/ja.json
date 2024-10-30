@@ -1,27 +1,16 @@
 {
-  "defaults": [
-    [
-      [
-        "japa",
-        "Standard"
-      ],
-      "JST"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "JDT"
-    ]
-  ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "standard": {
+    "defaults": {
+      "japa": "JST"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
+  },
+  "daylight": {
+    "defaults": {
+      "japa": "JDT"
+    },
+    "overrides": {}
+  }
 }

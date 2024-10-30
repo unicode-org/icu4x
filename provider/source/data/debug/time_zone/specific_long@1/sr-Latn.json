@@ -1,1714 +1,258 @@
 {
-  "defaults": [
-    [
-      [
-        "acre",
-        "Standard"
-      ],
-      "Akre standardno vreme"
-    ],
-    [
-      [
-        "acre",
-        "Daylight"
-      ],
-      "Akre letnje računanje vremena"
-    ],
-    [
-      [
-        "afce",
-        "Standard"
-      ],
-      "Centralno-afričko vreme"
-    ],
-    [
-      [
-        "afea",
-        "Standard"
-      ],
-      "Istočno-afričko vreme"
-    ],
-    [
-      [
-        "afgh",
-        "Standard"
-      ],
-      "Avganistan vreme"
-    ],
-    [
-      [
-        "afso",
-        "Standard"
-      ],
-      "Južno-afričko vreme"
-    ],
-    [
-      [
-        "afwe",
-        "Standard"
-      ],
-      "Zapadno-afričko standardno vreme"
-    ],
-    [
-      [
-        "afwe",
-        "Daylight"
-      ],
-      "Zapadno-afričko letnje vreme"
-    ],
-    [
-      [
-        "alam",
-        "Standard"
-      ],
-      "Almati standardno vreme"
-    ],
-    [
-      [
-        "alam",
-        "Daylight"
-      ],
-      "Almati letnje računanje vremena"
-    ],
-    [
-      [
-        "alas",
-        "Standard"
-      ],
-      "Aljaska, standardno vreme"
-    ],
-    [
-      [
-        "alas",
-        "Daylight"
-      ],
-      "Aljaska, letnje vreme"
-    ],
-    [
-      [
-        "amaz",
-        "Standard"
-      ],
-      "Amazon, standardno vreme"
-    ],
-    [
-      [
-        "amaz",
-        "Daylight"
-      ],
-      "Amazon, letnje vreme"
-    ],
-    [
-      [
-        "amce",
-        "Standard"
-      ],
-      "Severnoameričko centralno standardno vreme"
-    ],
-    [
-      [
-        "amce",
-        "Daylight"
-      ],
-      "Severnoameričko centralno letnje vreme"
-    ],
-    [
-      [
-        "amea",
-        "Standard"
-      ],
-      "Severnoameričko istočno standardno vreme"
-    ],
-    [
-      [
-        "amea",
-        "Daylight"
-      ],
-      "Severnoameričko istočno letnje vreme"
-    ],
-    [
-      [
-        "ammo",
-        "Standard"
-      ],
-      "Severnoameričko planinsko standardno vreme"
-    ],
-    [
-      [
-        "ammo",
-        "Daylight"
-      ],
-      "Severnoameričko planinsko letnje vreme"
-    ],
-    [
-      [
-        "ampa",
-        "Standard"
-      ],
-      "Severnoameričko pacifičko standardno vreme"
-    ],
-    [
-      [
-        "ampa",
-        "Daylight"
-      ],
-      "Severnoameričko pacifičko letnje vreme"
-    ],
-    [
-      [
-        "anad",
-        "Standard"
-      ],
-      "Anadir standardno vreme"
-    ],
-    [
-      [
-        "anad",
-        "Daylight"
-      ],
-      "Anadir letnje računanje vremena"
-    ],
-    [
-      [
-        "apia",
-        "Standard"
-      ],
-      "Apija, standardno vreme"
-    ],
-    [
-      [
-        "apia",
-        "Daylight"
-      ],
-      "Apija, letnje vreme"
-    ],
-    [
-      [
-        "aqta",
-        "Standard"
-      ],
-      "Akvatau standardno vreme"
-    ],
-    [
-      [
-        "aqta",
-        "Daylight"
-      ],
-      "Akvatau letnje računanje vremena"
-    ],
-    [
-      [
-        "aqto",
-        "Standard"
-      ],
-      "Akutobe standardno vreme"
-    ],
-    [
-      [
-        "aqto",
-        "Daylight"
-      ],
-      "Akutobe letnje računanje vremena"
-    ],
-    [
-      [
-        "arab",
-        "Standard"
-      ],
-      "Arabijsko standardno vreme"
-    ],
-    [
-      [
-        "arab",
-        "Daylight"
-      ],
-      "Arabijsko letnje vreme"
-    ],
-    [
-      [
-        "arge",
-        "Standard"
-      ],
-      "Argentina, standardno vreme"
-    ],
-    [
-      [
-        "arge",
-        "Daylight"
-      ],
-      "Argentina, letnje vreme"
-    ],
-    [
-      [
-        "arme",
-        "Standard"
-      ],
-      "Jermenija, standardno vreme"
-    ],
-    [
-      [
-        "arme",
-        "Daylight"
-      ],
-      "Jermenija, letnje vreme"
-    ],
-    [
-      [
-        "arwe",
-        "Standard"
-      ],
-      "Zapadna Argentina, standardno vreme"
-    ],
-    [
-      [
-        "arwe",
-        "Daylight"
-      ],
-      "Zapadna Argentina, letnje vreme"
-    ],
-    [
-      [
-        "atla",
-        "Standard"
-      ],
-      "Atlantsko standardno vreme"
-    ],
-    [
-      [
-        "atla",
-        "Daylight"
-      ],
-      "Atlantsko letnje vreme"
-    ],
-    [
-      [
-        "auce",
-        "Standard"
-      ],
-      "Australijsko centralno standardno vreme"
-    ],
-    [
-      [
-        "auce",
-        "Daylight"
-      ],
-      "Australijsko centralno letnje vreme"
-    ],
-    [
-      [
-        "aucw",
-        "Standard"
-      ],
-      "Australijsko centralno zapadno standardno vreme"
-    ],
-    [
-      [
-        "aucw",
-        "Daylight"
-      ],
-      "Australijsko centralno zapadno letnje vreme"
-    ],
-    [
-      [
-        "auea",
-        "Standard"
-      ],
-      "Australijsko istočno standardno vreme"
-    ],
-    [
-      [
-        "auea",
-        "Daylight"
-      ],
-      "Australijsko istočno letnje vreme"
-    ],
-    [
-      [
-        "auwe",
-        "Standard"
-      ],
-      "Australijsko zapadno standardno vreme"
-    ],
-    [
-      [
-        "auwe",
-        "Daylight"
-      ],
-      "Australijsko zapadno letnje vreme"
-    ],
-    [
-      [
-        "azer",
-        "Standard"
-      ],
-      "Azerbejdžan, standardno vreme"
-    ],
-    [
-      [
-        "azer",
-        "Daylight"
-      ],
-      "Azerbejdžan, letnje vreme"
-    ],
-    [
-      [
-        "azor",
-        "Standard"
-      ],
-      "Azori, standardno vreme"
-    ],
-    [
-      [
-        "azor",
-        "Daylight"
-      ],
-      "Azori, letnje vreme"
-    ],
-    [
-      [
-        "bang",
-        "Standard"
-      ],
-      "Bangladeš, standardno vreme"
-    ],
-    [
-      [
-        "bang",
-        "Daylight"
-      ],
-      "Bangladeš, letnje vreme"
-    ],
-    [
-      [
-        "bhut",
-        "Standard"
-      ],
-      "Butan vreme"
-    ],
-    [
-      [
-        "boli",
-        "Standard"
-      ],
-      "Bolivija vreme"
-    ],
-    [
-      [
-        "bras",
-        "Standard"
-      ],
-      "Brazilija, standardno vreme"
-    ],
-    [
-      [
-        "bras",
-        "Daylight"
-      ],
-      "Brazilija, letnje vreme"
-    ],
-    [
-      [
-        "brun",
-        "Standard"
-      ],
-      "Brunej Darusalum vreme"
-    ],
-    [
-      [
-        "cave",
-        "Standard"
-      ],
-      "Zelenortska Ostrva, standardno vreme"
-    ],
-    [
-      [
-        "cave",
-        "Daylight"
-      ],
-      "Zelenortska Ostrva, letnje vreme"
-    ],
-    [
-      [
-        "cham",
-        "Standard"
-      ],
-      "Čamoro vreme"
-    ],
-    [
-      [
-        "chat",
-        "Standard"
-      ],
-      "Čatam, standardno vreme"
-    ],
-    [
-      [
-        "chat",
-        "Daylight"
-      ],
-      "Čatam, letnje vreme"
-    ],
-    [
-      [
-        "chil",
-        "Standard"
-      ],
-      "Čile, standardno vreme"
-    ],
-    [
-      [
-        "chil",
-        "Daylight"
-      ],
-      "Čile, letnje vreme"
-    ],
-    [
-      [
-        "chin",
-        "Standard"
-      ],
-      "Kinesko standardno vreme"
-    ],
-    [
-      [
-        "chin",
-        "Daylight"
-      ],
-      "Kina, letnje vreme"
-    ],
-    [
-      [
-        "chri",
-        "Standard"
-      ],
-      "Božićno ostrvo vreme"
-    ],
-    [
-      [
-        "coco",
-        "Standard"
-      ],
-      "Kokos (Keling) Ostrva vreme"
-    ],
-    [
-      [
-        "colo",
-        "Standard"
-      ],
-      "Kolumbija, standardno vreme"
-    ],
-    [
-      [
-        "colo",
-        "Daylight"
-      ],
-      "Kolumbija, letnje vreme"
-    ],
-    [
-      [
-        "cook",
-        "Standard"
-      ],
-      "Kukova ostrva, standardno vreme"
-    ],
-    [
-      [
-        "cook",
-        "Daylight"
-      ],
-      "Kukova ostrva, polu-letnje vreme"
-    ],
-    [
-      [
-        "cuba",
-        "Standard"
-      ],
-      "Kuba, standardno vreme"
-    ],
-    [
-      [
-        "cuba",
-        "Daylight"
-      ],
-      "Kuba, letnje vreme"
-    ],
-    [
-      [
-        "davi",
-        "Standard"
-      ],
-      "Dejvis vreme"
-    ],
-    [
-      [
-        "dumo",
-        "Standard"
-      ],
-      "Dimon d’Urvil vreme"
-    ],
-    [
-      [
-        "east",
-        "Standard"
-      ],
-      "Uskršnja ostrva, standardno vreme"
-    ],
-    [
-      [
-        "east",
-        "Daylight"
-      ],
-      "Uskršnja ostrva, letnje vreme"
-    ],
-    [
-      [
-        "eati",
-        "Standard"
-      ],
-      "Istočni timor vreme"
-    ],
-    [
-      [
-        "ecua",
-        "Standard"
-      ],
-      "Ekvador vreme"
-    ],
-    [
-      [
-        "euce",
-        "Standard"
-      ],
-      "Srednjeevropsko standardno vreme"
-    ],
-    [
-      [
-        "euce",
-        "Daylight"
-      ],
-      "Srednjeevropsko letnje vreme"
-    ],
-    [
-      [
-        "euea",
-        "Standard"
-      ],
-      "Istočnoevropsko standardno vreme"
-    ],
-    [
-      [
-        "euea",
-        "Daylight"
-      ],
-      "Istočnoevropsko letnje vreme"
-    ],
-    [
-      [
-        "eufe",
-        "Standard"
-      ],
-      "Vreme daljeg istoka Evrope"
-    ],
-    [
-      [
-        "euwe",
-        "Standard"
-      ],
-      "Zapadnoevropsko standardno vreme"
-    ],
-    [
-      [
-        "euwe",
-        "Daylight"
-      ],
-      "Zapadnoevropsko letnje vreme"
-    ],
-    [
-      [
-        "falk",
-        "Standard"
-      ],
-      "Folklandska Ostrva, standardno vreme"
-    ],
-    [
-      [
-        "falk",
-        "Daylight"
-      ],
-      "Folklandska Ostrva, letnje vreme"
-    ],
-    [
-      [
-        "fiji",
-        "Standard"
-      ],
-      "Fidži, standardno vreme"
-    ],
-    [
-      [
-        "fiji",
-        "Daylight"
-      ],
-      "Fidži, letnje vreme"
-    ],
-    [
-      [
-        "frgu",
-        "Standard"
-      ],
-      "Francuska Gvajana vreme"
-    ],
-    [
-      [
-        "frso",
-        "Standard"
-      ],
-      "Francusko južno i antarktičko vreme"
-    ],
-    [
-      [
-        "gala",
-        "Standard"
-      ],
-      "Galapagos vreme"
-    ],
-    [
-      [
-        "gamb",
-        "Standard"
-      ],
-      "Gambije vreme"
-    ],
-    [
-      [
-        "geor",
-        "Standard"
-      ],
-      "Gruzija, standardno vreme"
-    ],
-    [
-      [
-        "geor",
-        "Daylight"
-      ],
-      "Gruzija, letnje vreme"
-    ],
-    [
-      [
-        "giis",
-        "Standard"
-      ],
-      "Gilbert ostrva vreme"
-    ],
-    [
-      [
-        "grea",
-        "Standard"
-      ],
-      "Istočni Grenland, standardno vreme"
-    ],
-    [
-      [
-        "grea",
-        "Daylight"
-      ],
-      "Istočni Grenland, letnje vreme"
-    ],
-    [
-      [
-        "grwe",
-        "Standard"
-      ],
-      "Zapadni Grenland, standardno vreme"
-    ],
-    [
-      [
-        "grwe",
-        "Daylight"
-      ],
-      "Zapadni Grenland, letnje vreme"
-    ],
-    [
-      [
-        "guam",
-        "Standard"
-      ],
-      "Guam standardno vreme"
-    ],
-    [
-      [
-        "gulf",
-        "Standard"
-      ],
-      "Zalivsko vreme"
-    ],
-    [
-      [
-        "guya",
-        "Standard"
-      ],
-      "Gvajana vreme"
-    ],
-    [
-      [
-        "haal",
-        "Standard"
-      ],
-      "Havajsko-aleutsko standardno vreme"
-    ],
-    [
-      [
-        "haal",
-        "Daylight"
-      ],
-      "Havajsko-aleutsko letnje vreme"
-    ],
-    [
-      [
-        "hoko",
-        "Standard"
-      ],
-      "Hong Kong, standardno vreme"
-    ],
-    [
-      [
-        "hoko",
-        "Daylight"
-      ],
-      "Hong Kong, letnje vreme"
-    ],
-    [
-      [
-        "hovd",
-        "Standard"
-      ],
-      "Hovd, standardno vreme"
-    ],
-    [
-      [
-        "hovd",
-        "Daylight"
-      ],
-      "Hovd, letnje vreme"
-    ],
-    [
-      [
-        "ince",
-        "Standard"
-      ],
-      "Centralno-indonezijsko vreme"
-    ],
-    [
-      [
-        "indi",
-        "Standard"
-      ],
-      "Indijsko standardno vreme"
-    ],
-    [
-      [
-        "indo",
-        "Standard"
-      ],
-      "Indokina vreme"
-    ],
-    [
-      [
-        "inea",
-        "Standard"
-      ],
-      "Istočno-indonezijsko vreme"
-    ],
-    [
-      [
-        "inoc",
-        "Standard"
-      ],
-      "Indijsko okeansko vreme"
-    ],
-    [
-      [
-        "inwe",
-        "Standard"
-      ],
-      "Zapadno-indonezijsko vreme"
-    ],
-    [
-      [
-        "iran",
-        "Standard"
-      ],
-      "Iran, standardno vreme"
-    ],
-    [
-      [
-        "iran",
-        "Daylight"
-      ],
-      "Iran, letnje vreme"
-    ],
-    [
-      [
-        "irku",
-        "Standard"
-      ],
-      "Irkuck, standardno vreme"
-    ],
-    [
-      [
-        "irku",
-        "Daylight"
-      ],
-      "Irkuck, letnje vreme"
-    ],
-    [
-      [
-        "isra",
-        "Standard"
-      ],
-      "Izraelsko standardno vreme"
-    ],
-    [
-      [
-        "isra",
-        "Daylight"
-      ],
-      "Izraelsko letnje vreme"
-    ],
-    [
-      [
-        "japa",
-        "Standard"
-      ],
-      "Japansko standardno vreme"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "Japansko letnje vreme"
-    ],
-    [
-      [
-        "kaea",
-        "Standard"
-      ],
-      "Istočno-kazahstansko vreme"
-    ],
-    [
-      [
-        "kamc",
-        "Standard"
-      ],
-      "Petropavlovsko-kamčatsko standardno vreme"
-    ],
-    [
-      [
-        "kamc",
-        "Daylight"
-      ],
-      "Petropavlovsko-kamčatsko letnje računanje vremena"
-    ],
-    [
-      [
-        "kawe",
-        "Standard"
-      ],
-      "Zapadno-kazahstansko vreme"
-    ],
-    [
-      [
-        "kaza",
-        "Standard"
-      ],
-      "Kazahstansko vreme"
-    ],
-    [
-      [
-        "kore",
-        "Standard"
-      ],
-      "Korejsko standardno vreme"
-    ],
-    [
-      [
-        "kore",
-        "Daylight"
-      ],
-      "Korejsko letnje vreme"
-    ],
-    [
-      [
-        "kosr",
-        "Standard"
-      ],
-      "Košre vreme"
-    ],
-    [
-      [
-        "kras",
-        "Standard"
-      ],
-      "Krasnojarsk, standardno vreme"
-    ],
-    [
-      [
-        "kras",
-        "Daylight"
-      ],
-      "Krasnojarsk, letnje vreme"
-    ],
-    [
-      [
-        "kyrg",
-        "Standard"
-      ],
-      "Kirgistan vreme"
-    ],
-    [
-      [
-        "lank",
-        "Standard"
-      ],
-      "Šri Lanka vreme"
-    ],
-    [
-      [
-        "liis",
-        "Standard"
-      ],
-      "Ostrva Lajn vreme"
-    ],
-    [
-      [
-        "loho",
-        "Standard"
-      ],
-      "Lord Hov, standardno vreme"
-    ],
-    [
-      [
-        "loho",
-        "Daylight"
-      ],
-      "Lord Hov, letnje vreme"
-    ],
-    [
-      [
-        "maca",
-        "Standard"
-      ],
-      "Makao standardno vreme"
-    ],
-    [
-      [
-        "maca",
-        "Daylight"
-      ],
-      "Makao letnje računanje vremena"
-    ],
-    [
-      [
-        "maga",
-        "Standard"
-      ],
-      "Magadan, standardno vreme"
-    ],
-    [
-      [
-        "maga",
-        "Daylight"
-      ],
-      "Magadan, letnje vreme"
-    ],
-    [
-      [
-        "mais",
-        "Standard"
-      ],
-      "Maršalska Ostrva vreme"
-    ],
-    [
-      [
-        "mala",
-        "Standard"
-      ],
-      "Malezija vreme"
-    ],
-    [
-      [
-        "mald",
-        "Standard"
-      ],
-      "Maldivi vreme"
-    ],
-    [
-      [
-        "marq",
-        "Standard"
-      ],
-      "Markiz vreme"
-    ],
-    [
-      [
-        "maur",
-        "Standard"
-      ],
-      "Mauricijus, standardno vreme"
-    ],
-    [
-      [
-        "maur",
-        "Daylight"
-      ],
-      "Mauricijus, letnje vreme"
-    ],
-    [
-      [
-        "maws",
-        "Standard"
-      ],
-      "Moson vreme"
-    ],
-    [
-      [
-        "mepa",
-        "Standard"
-      ],
-      "Meksički Pacifik, standardno vreme"
-    ],
-    [
-      [
-        "mepa",
-        "Daylight"
-      ],
-      "Meksički Pacifik, letnje vreme"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "Srednje vreme po Griniču"
-    ],
-    [
-      [
-        "mong",
-        "Standard"
-      ],
-      "Ulan Bator, standardno vreme"
-    ],
-    [
-      [
-        "mong",
-        "Daylight"
-      ],
-      "Ulan Bator, letnje vreme"
-    ],
-    [
-      [
-        "mosc",
-        "Standard"
-      ],
-      "Moskva, standardno vreme"
-    ],
-    [
-      [
-        "mosc",
-        "Daylight"
-      ],
-      "Moskva, letnje vreme"
-    ],
-    [
-      [
-        "myan",
-        "Standard"
-      ],
-      "Mijanmar vreme"
-    ],
-    [
-      [
-        "naur",
-        "Standard"
-      ],
-      "Nauru vreme"
-    ],
-    [
-      [
-        "neca",
-        "Standard"
-      ],
-      "Nova Kaledonija, standardno vreme"
-    ],
-    [
-      [
-        "neca",
-        "Daylight"
-      ],
-      "Nova Kaledonija, letnje vreme"
-    ],
-    [
-      [
-        "nepa",
-        "Standard"
-      ],
-      "Nepal vreme"
-    ],
-    [
-      [
-        "newf",
-        "Standard"
-      ],
-      "Njufaundlend, standardno vreme"
-    ],
-    [
-      [
-        "newf",
-        "Daylight"
-      ],
-      "Njufaundlend, letnje vreme"
-    ],
-    [
-      [
-        "neze",
-        "Standard"
-      ],
-      "Novi Zeland, standardno vreme"
-    ],
-    [
-      [
-        "neze",
-        "Daylight"
-      ],
-      "Novi Zeland, letnje vreme"
-    ],
-    [
-      [
-        "niue",
-        "Standard"
-      ],
-      "Niue vreme"
-    ],
-    [
-      [
-        "noma",
-        "Standard"
-      ],
-      "Severna Marijanska Ostrva vreme"
-    ],
-    [
-      [
-        "norf",
-        "Standard"
-      ],
-      "Norfolk Ostrvo, standardno vreme"
-    ],
-    [
-      [
-        "norf",
-        "Daylight"
-      ],
-      "Norfolk Ostrvo, letnje vreme"
-    ],
-    [
-      [
-        "noro",
-        "Standard"
-      ],
-      "Fernando de Noronja, standardno vreme"
-    ],
-    [
-      [
-        "noro",
-        "Daylight"
-      ],
-      "Fernando de Noronja, letnje vreme"
-    ],
-    [
-      [
-        "novo",
-        "Standard"
-      ],
-      "Novosibirsk, standardno vreme"
-    ],
-    [
-      [
-        "novo",
-        "Daylight"
-      ],
-      "Novosibirsk, letnje vreme"
-    ],
-    [
-      [
-        "omsk",
-        "Standard"
-      ],
-      "Omsk, standardno vreme"
-    ],
-    [
-      [
-        "omsk",
-        "Daylight"
-      ],
-      "Omsk, letnje vreme"
-    ],
-    [
-      [
-        "paki",
-        "Standard"
-      ],
-      "Pakistan, standardno vreme"
-    ],
-    [
-      [
-        "paki",
-        "Daylight"
-      ],
-      "Pakistan, letnje vreme"
-    ],
-    [
-      [
-        "pala",
-        "Standard"
-      ],
-      "Palau vreme"
-    ],
-    [
-      [
-        "pang",
-        "Standard"
-      ],
-      "Papua Nova Gvineja vreme"
-    ],
-    [
-      [
-        "para",
-        "Standard"
-      ],
-      "Paragvaj, standardno vreme"
-    ],
-    [
-      [
-        "para",
-        "Daylight"
-      ],
-      "Paragvaj, letnje vreme"
-    ],
-    [
-      [
-        "peru",
-        "Standard"
-      ],
-      "Peru, standardno vreme"
-    ],
-    [
-      [
-        "peru",
-        "Daylight"
-      ],
-      "Peru, letnje vreme"
-    ],
-    [
-      [
-        "phil",
-        "Standard"
-      ],
-      "Filipini, standardno vreme"
-    ],
-    [
-      [
-        "phil",
-        "Daylight"
-      ],
-      "Filipini, letnje vreme"
-    ],
-    [
-      [
-        "phis",
-        "Standard"
-      ],
-      "Feniks ostrva vreme"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "Sen Pjer i Mikelon, standardno vreme"
-    ],
-    [
-      [
-        "pimi",
-        "Daylight"
-      ],
-      "Sen Pjer i Mikelon, letnje vreme"
-    ],
-    [
-      [
-        "pitc",
-        "Standard"
-      ],
-      "Pitkern vreme"
-    ],
-    [
-      [
-        "pona",
-        "Standard"
-      ],
-      "Ponpej vreme"
-    ],
-    [
-      [
-        "pyon",
-        "Standard"
-      ],
-      "Pjongjanško vreme"
-    ],
-    [
-      [
-        "qyzy",
-        "Standard"
-      ],
-      "Kizilorda standardno vreme"
-    ],
-    [
-      [
-        "qyzy",
-        "Daylight"
-      ],
-      "Kizilorda letnje računanje vremena"
-    ],
-    [
-      [
-        "reun",
-        "Standard"
-      ],
-      "Reinion vreme"
-    ],
-    [
-      [
-        "roth",
-        "Standard"
-      ],
-      "Rotera vreme"
-    ],
-    [
-      [
-        "sakh",
-        "Standard"
-      ],
-      "Sahalin, standardno vreme"
-    ],
-    [
-      [
-        "sakh",
-        "Daylight"
-      ],
-      "Sahalin, letnje vreme"
-    ],
-    [
-      [
-        "sama",
-        "Standard"
-      ],
-      "Samara standardno vreme"
-    ],
-    [
-      [
-        "sama",
-        "Daylight"
-      ],
-      "Samara letnje računanje vremena"
-    ],
-    [
-      [
-        "samo",
-        "Standard"
-      ],
-      "Samoa, standardno vreme"
-    ],
-    [
-      [
-        "samo",
-        "Daylight"
-      ],
-      "Samoa, letnje vreme"
-    ],
-    [
-      [
-        "seyc",
-        "Standard"
-      ],
-      "Sejšeli vreme"
-    ],
-    [
-      [
-        "sing",
-        "Standard"
-      ],
-      "Singapur, standardno vreme"
-    ],
-    [
-      [
-        "soge",
-        "Standard"
-      ],
-      "Južna Džordžija vreme"
-    ],
-    [
-      [
-        "solo",
-        "Standard"
-      ],
-      "Solomonska Ostrva vreme"
-    ],
-    [
-      [
-        "suri",
-        "Standard"
-      ],
-      "Surinam vreme"
-    ],
-    [
-      [
-        "syow",
-        "Standard"
-      ],
-      "Šova vreme"
-    ],
-    [
-      [
-        "tahi",
-        "Standard"
-      ],
-      "Tahiti vreme"
-    ],
-    [
-      [
-        "taip",
-        "Standard"
-      ],
-      "Tajpej, standardno vreme"
-    ],
-    [
-      [
-        "taip",
-        "Daylight"
-      ],
-      "Tajpej, letnje vreme"
-    ],
-    [
-      [
-        "taji",
-        "Standard"
-      ],
-      "Tadžikistan vreme"
-    ],
-    [
-      [
-        "toke",
-        "Standard"
-      ],
-      "Tokelau vreme"
-    ],
-    [
-      [
-        "tong",
-        "Standard"
-      ],
-      "Tonga, standardno vreme"
-    ],
-    [
-      [
-        "tong",
-        "Daylight"
-      ],
-      "Tonga, letnje vreme"
-    ],
-    [
-      [
-        "truk",
-        "Standard"
-      ],
-      "Čuuk vreme"
-    ],
-    [
-      [
-        "turk",
-        "Standard"
-      ],
-      "Turkmenistan, standardno vreme"
-    ],
-    [
-      [
-        "turk",
-        "Daylight"
-      ],
-      "Turkmenistan, letnje vreme"
-    ],
-    [
-      [
-        "tuva",
-        "Standard"
-      ],
-      "Tuvalu vreme"
-    ],
-    [
-      [
-        "urug",
-        "Standard"
-      ],
-      "Urugvaj, standardno vreme"
-    ],
-    [
-      [
-        "urug",
-        "Daylight"
-      ],
-      "Urugvaj, letnje vreme"
-    ],
-    [
-      [
-        "uzbe",
-        "Standard"
-      ],
-      "Uzbekistan, standardno vreme"
-    ],
-    [
-      [
-        "uzbe",
-        "Daylight"
-      ],
-      "Uzbekistan, letnje vreme"
-    ],
-    [
-      [
-        "vanu",
-        "Standard"
-      ],
-      "Vanuatu, standardno vreme"
-    ],
-    [
-      [
-        "vanu",
-        "Daylight"
-      ],
-      "Vanuatu, letnje vreme"
-    ],
-    [
-      [
-        "vene",
-        "Standard"
-      ],
-      "Venecuela vreme"
-    ],
-    [
-      [
-        "vlad",
-        "Standard"
-      ],
-      "Vladivostok, standardno vreme"
-    ],
-    [
-      [
-        "vlad",
-        "Daylight"
-      ],
-      "Vladivostok, letnje vreme"
-    ],
-    [
-      [
-        "volg",
-        "Standard"
-      ],
-      "Volgograd, standardno vreme"
-    ],
-    [
-      [
-        "volg",
-        "Daylight"
-      ],
-      "Volgograd, letnje vreme"
-    ],
-    [
-      [
-        "vost",
-        "Standard"
-      ],
-      "Vostok vreme"
-    ],
-    [
-      [
-        "wake",
-        "Standard"
-      ],
-      "Vejk ostrvo vreme"
-    ],
-    [
-      [
-        "wall",
-        "Standard"
-      ],
-      "Valis i Futuna Ostrva vreme"
-    ],
-    [
-      [
-        "yaku",
-        "Standard"
-      ],
-      "Jakutsk, standardno vreme"
-    ],
-    [
-      [
-        "yaku",
-        "Daylight"
-      ],
-      "Jakutsk, letnje vreme"
-    ],
-    [
-      [
-        "yeka",
-        "Standard"
-      ],
-      "Jekaterinburg, standardno vreme"
-    ],
-    [
-      [
-        "yeka",
-        "Daylight"
-      ],
-      "Jekaterinburg, letnje vreme"
-    ],
-    [
-      [
-        "yuko",
-        "Standard"
-      ],
-      "Jukon"
-    ]
-  ],
-  "overrides": [
-    [
-      [
-        "gblon",
-        "Daylight"
-      ],
-      "Britanija, letnje vreme"
-    ],
-    [
-      [
-        "iedub",
-        "Daylight"
-      ],
-      "Irska, standardno vreme"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "Koordinisano univerzalno vreme"
-    ]
-  ]
+  "standard": {
+    "defaults": {
+      "acre": "Akre standardno vreme",
+      "afce": "Centralno-afričko vreme",
+      "afea": "Istočno-afričko vreme",
+      "afgh": "Avganistan vreme",
+      "afso": "Južno-afričko vreme",
+      "afwe": "Zapadno-afričko standardno vreme",
+      "alam": "Almati standardno vreme",
+      "alas": "Aljaska, standardno vreme",
+      "amaz": "Amazon, standardno vreme",
+      "amce": "Severnoameričko centralno standardno vreme",
+      "amea": "Severnoameričko istočno standardno vreme",
+      "ammo": "Severnoameričko planinsko standardno vreme",
+      "ampa": "Severnoameričko pacifičko standardno vreme",
+      "anad": "Anadir standardno vreme",
+      "apia": "Apija, standardno vreme",
+      "aqta": "Akvatau standardno vreme",
+      "aqto": "Akutobe standardno vreme",
+      "arab": "Arabijsko standardno vreme",
+      "arge": "Argentina, standardno vreme",
+      "arme": "Jermenija, standardno vreme",
+      "arwe": "Zapadna Argentina, standardno vreme",
+      "atla": "Atlantsko standardno vreme",
+      "auce": "Australijsko centralno standardno vreme",
+      "aucw": "Australijsko centralno zapadno standardno vreme",
+      "auea": "Australijsko istočno standardno vreme",
+      "auwe": "Australijsko zapadno standardno vreme",
+      "azer": "Azerbejdžan, standardno vreme",
+      "azor": "Azori, standardno vreme",
+      "bang": "Bangladeš, standardno vreme",
+      "bhut": "Butan vreme",
+      "boli": "Bolivija vreme",
+      "bras": "Brazilija, standardno vreme",
+      "brun": "Brunej Darusalum vreme",
+      "cave": "Zelenortska Ostrva, standardno vreme",
+      "cham": "Čamoro vreme",
+      "chat": "Čatam, standardno vreme",
+      "chil": "Čile, standardno vreme",
+      "chin": "Kinesko standardno vreme",
+      "chri": "Božićno ostrvo vreme",
+      "coco": "Kokos (Keling) Ostrva vreme",
+      "colo": "Kolumbija, standardno vreme",
+      "cook": "Kukova ostrva, standardno vreme",
+      "cuba": "Kuba, standardno vreme",
+      "davi": "Dejvis vreme",
+      "dumo": "Dimon d’Urvil vreme",
+      "east": "Uskršnja ostrva, standardno vreme",
+      "eati": "Istočni timor vreme",
+      "ecua": "Ekvador vreme",
+      "euce": "Srednjeevropsko standardno vreme",
+      "euea": "Istočnoevropsko standardno vreme",
+      "eufe": "Vreme daljeg istoka Evrope",
+      "euwe": "Zapadnoevropsko standardno vreme",
+      "falk": "Folklandska Ostrva, standardno vreme",
+      "fiji": "Fidži, standardno vreme",
+      "frgu": "Francuska Gvajana vreme",
+      "frso": "Francusko južno i antarktičko vreme",
+      "gala": "Galapagos vreme",
+      "gamb": "Gambije vreme",
+      "geor": "Gruzija, standardno vreme",
+      "giis": "Gilbert ostrva vreme",
+      "grea": "Istočni Grenland, standardno vreme",
+      "grwe": "Zapadni Grenland, standardno vreme",
+      "guam": "Guam standardno vreme",
+      "gulf": "Zalivsko vreme",
+      "guya": "Gvajana vreme",
+      "haal": "Havajsko-aleutsko standardno vreme",
+      "hoko": "Hong Kong, standardno vreme",
+      "hovd": "Hovd, standardno vreme",
+      "ince": "Centralno-indonezijsko vreme",
+      "indi": "Indijsko standardno vreme",
+      "indo": "Indokina vreme",
+      "inea": "Istočno-indonezijsko vreme",
+      "inoc": "Indijsko okeansko vreme",
+      "inwe": "Zapadno-indonezijsko vreme",
+      "iran": "Iran, standardno vreme",
+      "irku": "Irkuck, standardno vreme",
+      "isra": "Izraelsko standardno vreme",
+      "japa": "Japansko standardno vreme",
+      "kaea": "Istočno-kazahstansko vreme",
+      "kamc": "Petropavlovsko-kamčatsko standardno vreme",
+      "kawe": "Zapadno-kazahstansko vreme",
+      "kaza": "Kazahstansko vreme",
+      "kore": "Korejsko standardno vreme",
+      "kosr": "Košre vreme",
+      "kras": "Krasnojarsk, standardno vreme",
+      "kyrg": "Kirgistan vreme",
+      "lank": "Šri Lanka vreme",
+      "liis": "Ostrva Lajn vreme",
+      "loho": "Lord Hov, standardno vreme",
+      "maca": "Makao standardno vreme",
+      "maga": "Magadan, standardno vreme",
+      "mais": "Maršalska Ostrva vreme",
+      "mala": "Malezija vreme",
+      "mald": "Maldivi vreme",
+      "marq": "Markiz vreme",
+      "maur": "Mauricijus, standardno vreme",
+      "maws": "Moson vreme",
+      "mepa": "Meksički Pacifik, standardno vreme",
+      "mgmt": "Srednje vreme po Griniču",
+      "mong": "Ulan Bator, standardno vreme",
+      "mosc": "Moskva, standardno vreme",
+      "myan": "Mijanmar vreme",
+      "naur": "Nauru vreme",
+      "neca": "Nova Kaledonija, standardno vreme",
+      "nepa": "Nepal vreme",
+      "newf": "Njufaundlend, standardno vreme",
+      "neze": "Novi Zeland, standardno vreme",
+      "niue": "Niue vreme",
+      "noma": "Severna Marijanska Ostrva vreme",
+      "norf": "Norfolk Ostrvo, standardno vreme",
+      "noro": "Fernando de Noronja, standardno vreme",
+      "novo": "Novosibirsk, standardno vreme",
+      "omsk": "Omsk, standardno vreme",
+      "paki": "Pakistan, standardno vreme",
+      "pala": "Palau vreme",
+      "pang": "Papua Nova Gvineja vreme",
+      "para": "Paragvaj, standardno vreme",
+      "peru": "Peru, standardno vreme",
+      "phil": "Filipini, standardno vreme",
+      "phis": "Feniks ostrva vreme",
+      "pimi": "Sen Pjer i Mikelon, standardno vreme",
+      "pitc": "Pitkern vreme",
+      "pona": "Ponpej vreme",
+      "pyon": "Pjongjanško vreme",
+      "qyzy": "Kizilorda standardno vreme",
+      "reun": "Reinion vreme",
+      "roth": "Rotera vreme",
+      "sakh": "Sahalin, standardno vreme",
+      "sama": "Samara standardno vreme",
+      "samo": "Samoa, standardno vreme",
+      "seyc": "Sejšeli vreme",
+      "sing": "Singapur, standardno vreme",
+      "soge": "Južna Džordžija vreme",
+      "solo": "Solomonska Ostrva vreme",
+      "suri": "Surinam vreme",
+      "syow": "Šova vreme",
+      "tahi": "Tahiti vreme",
+      "taip": "Tajpej, standardno vreme",
+      "taji": "Tadžikistan vreme",
+      "toke": "Tokelau vreme",
+      "tong": "Tonga, standardno vreme",
+      "truk": "Čuuk vreme",
+      "turk": "Turkmenistan, standardno vreme",
+      "tuva": "Tuvalu vreme",
+      "urug": "Urugvaj, standardno vreme",
+      "uzbe": "Uzbekistan, standardno vreme",
+      "vanu": "Vanuatu, standardno vreme",
+      "vene": "Venecuela vreme",
+      "vlad": "Vladivostok, standardno vreme",
+      "volg": "Volgograd, standardno vreme",
+      "vost": "Vostok vreme",
+      "wake": "Vejk ostrvo vreme",
+      "wall": "Valis i Futuna Ostrva vreme",
+      "yaku": "Jakutsk, standardno vreme",
+      "yeka": "Jekaterinburg, standardno vreme",
+      "yuko": "Jukon"
+    },
+    "overrides": {
+      "utc": "Koordinisano univerzalno vreme"
+    }
+  },
+  "daylight": {
+    "defaults": {
+      "acre": "Akre letnje računanje vremena",
+      "afwe": "Zapadno-afričko letnje vreme",
+      "alam": "Almati letnje računanje vremena",
+      "alas": "Aljaska, letnje vreme",
+      "amaz": "Amazon, letnje vreme",
+      "amce": "Severnoameričko centralno letnje vreme",
+      "amea": "Severnoameričko istočno letnje vreme",
+      "ammo": "Severnoameričko planinsko letnje vreme",
+      "ampa": "Severnoameričko pacifičko letnje vreme",
+      "anad": "Anadir letnje računanje vremena",
+      "apia": "Apija, letnje vreme",
+      "aqta": "Akvatau letnje računanje vremena",
+      "aqto": "Akutobe letnje računanje vremena",
+      "arab": "Arabijsko letnje vreme",
+      "arge": "Argentina, letnje vreme",
+      "arme": "Jermenija, letnje vreme",
+      "arwe": "Zapadna Argentina, letnje vreme",
+      "atla": "Atlantsko letnje vreme",
+      "auce": "Australijsko centralno letnje vreme",
+      "aucw": "Australijsko centralno zapadno letnje vreme",
+      "auea": "Australijsko istočno letnje vreme",
+      "auwe": "Australijsko zapadno letnje vreme",
+      "azer": "Azerbejdžan, letnje vreme",
+      "azor": "Azori, letnje vreme",
+      "bang": "Bangladeš, letnje vreme",
+      "bras": "Brazilija, letnje vreme",
+      "cave": "Zelenortska Ostrva, letnje vreme",
+      "chat": "Čatam, letnje vreme",
+      "chil": "Čile, letnje vreme",
+      "chin": "Kina, letnje vreme",
+      "colo": "Kolumbija, letnje vreme",
+      "cook": "Kukova ostrva, polu-letnje vreme",
+      "cuba": "Kuba, letnje vreme",
+      "east": "Uskršnja ostrva, letnje vreme",
+      "euce": "Srednjeevropsko letnje vreme",
+      "euea": "Istočnoevropsko letnje vreme",
+      "euwe": "Zapadnoevropsko letnje vreme",
+      "falk": "Folklandska Ostrva, letnje vreme",
+      "fiji": "Fidži, letnje vreme",
+      "geor": "Gruzija, letnje vreme",
+      "grea": "Istočni Grenland, letnje vreme",
+      "grwe": "Zapadni Grenland, letnje vreme",
+      "haal": "Havajsko-aleutsko letnje vreme",
+      "hoko": "Hong Kong, letnje vreme",
+      "hovd": "Hovd, letnje vreme",
+      "iran": "Iran, letnje vreme",
+      "irku": "Irkuck, letnje vreme",
+      "isra": "Izraelsko letnje vreme",
+      "japa": "Japansko letnje vreme",
+      "kamc": "Petropavlovsko-kamčatsko letnje računanje vremena",
+      "kore": "Korejsko letnje vreme",
+      "kras": "Krasnojarsk, letnje vreme",
+      "loho": "Lord Hov, letnje vreme",
+      "maca": "Makao letnje računanje vremena",
+      "maga": "Magadan, letnje vreme",
+      "maur": "Mauricijus, letnje vreme",
+      "mepa": "Meksički Pacifik, letnje vreme",
+      "mong": "Ulan Bator, letnje vreme",
+      "mosc": "Moskva, letnje vreme",
+      "neca": "Nova Kaledonija, letnje vreme",
+      "newf": "Njufaundlend, letnje vreme",
+      "neze": "Novi Zeland, letnje vreme",
+      "norf": "Norfolk Ostrvo, letnje vreme",
+      "noro": "Fernando de Noronja, letnje vreme",
+      "novo": "Novosibirsk, letnje vreme",
+      "omsk": "Omsk, letnje vreme",
+      "paki": "Pakistan, letnje vreme",
+      "para": "Paragvaj, letnje vreme",
+      "peru": "Peru, letnje vreme",
+      "phil": "Filipini, letnje vreme",
+      "pimi": "Sen Pjer i Mikelon, letnje vreme",
+      "qyzy": "Kizilorda letnje računanje vremena",
+      "sakh": "Sahalin, letnje vreme",
+      "sama": "Samara letnje računanje vremena",
+      "samo": "Samoa, letnje vreme",
+      "taip": "Tajpej, letnje vreme",
+      "tong": "Tonga, letnje vreme",
+      "turk": "Turkmenistan, letnje vreme",
+      "urug": "Urugvaj, letnje vreme",
+      "uzbe": "Uzbekistan, letnje vreme",
+      "vanu": "Vanuatu, letnje vreme",
+      "vlad": "Vladivostok, letnje vreme",
+      "volg": "Volgograd, letnje vreme",
+      "yaku": "Jakutsk, letnje vreme",
+      "yeka": "Jekaterinburg, letnje vreme"
+    },
+    "overrides": {
+      "gblon": "Britanija, letnje vreme",
+      "iedub": "Irska, standardno vreme"
+    }
+  }
 }

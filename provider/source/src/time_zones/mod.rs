@@ -193,7 +193,6 @@ impl IterableDataProviderCached<ZoneOffsetPeriodV1Marker> for SourceDataProvider
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::ZoneVariant;
     use tinystr::tinystr;
 
     use super::*;
@@ -286,8 +285,9 @@ mod tests {
             specific_names_long
                 .payload
                 .get()
+                .standard
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::Standard))
+                .get(&MetazoneId(tinystr!(4, "aucw")))
                 .unwrap()
         );
         assert_eq!(
@@ -295,8 +295,9 @@ mod tests {
             specific_names_long
                 .payload
                 .get()
+                .standard
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
                 .unwrap()
         );
 
@@ -336,8 +337,9 @@ mod tests {
             specific_names_short
                 .payload
                 .get()
+                .daylight
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::Daylight))
+                .get(&MetazoneId(tinystr!(4, "ampa")))
                 .unwrap()
         );
         assert_eq!(
@@ -345,8 +347,9 @@ mod tests {
             specific_names_short
                 .payload
                 .get()
+                .standard
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
+                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
                 .unwrap()
         );
 

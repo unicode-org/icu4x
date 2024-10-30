@@ -1,20 +1,14 @@
 {
-  "defaults": [
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "GMT"
-    ]
-  ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "standard": {
+    "defaults": {
+      "mgmt": "GMT"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
+  },
+  "daylight": {
+    "defaults": {},
+    "overrides": {}
+  }
 }

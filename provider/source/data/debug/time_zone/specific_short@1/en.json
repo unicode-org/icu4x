@@ -1,132 +1,32 @@
 {
-  "defaults": [
-    [
-      [
-        "alas",
-        "Standard"
-      ],
-      "AKST"
-    ],
-    [
-      [
-        "alas",
-        "Daylight"
-      ],
-      "AKDT"
-    ],
-    [
-      [
-        "amce",
-        "Standard"
-      ],
-      "CST"
-    ],
-    [
-      [
-        "amce",
-        "Daylight"
-      ],
-      "CDT"
-    ],
-    [
-      [
-        "amea",
-        "Standard"
-      ],
-      "EST"
-    ],
-    [
-      [
-        "amea",
-        "Daylight"
-      ],
-      "EDT"
-    ],
-    [
-      [
-        "ammo",
-        "Standard"
-      ],
-      "MST"
-    ],
-    [
-      [
-        "ammo",
-        "Daylight"
-      ],
-      "MDT"
-    ],
-    [
-      [
-        "ampa",
-        "Standard"
-      ],
-      "PST"
-    ],
-    [
-      [
-        "ampa",
-        "Daylight"
-      ],
-      "PDT"
-    ],
-    [
-      [
-        "atla",
-        "Standard"
-      ],
-      "AST"
-    ],
-    [
-      [
-        "atla",
-        "Daylight"
-      ],
-      "ADT"
-    ],
-    [
-      [
-        "haal",
-        "Standard"
-      ],
-      "HAST"
-    ],
-    [
-      [
-        "haal",
-        "Daylight"
-      ],
-      "HADT"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "GMT"
-    ]
-  ],
-  "overrides": [
-    [
-      [
-        "ushnl",
-        "Standard"
-      ],
-      "HST"
-    ],
-    [
-      [
-        "ushnl",
-        "Daylight"
-      ],
-      "HDT"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "standard": {
+    "defaults": {
+      "alas": "AKST",
+      "amce": "CST",
+      "amea": "EST",
+      "ammo": "MST",
+      "ampa": "PST",
+      "atla": "AST",
+      "haal": "HAST",
+      "mgmt": "GMT"
+    },
+    "overrides": {
+      "ushnl": "HST",
+      "utc": "UTC"
+    }
+  },
+  "daylight": {
+    "defaults": {
+      "alas": "AKDT",
+      "amce": "CDT",
+      "amea": "EDT",
+      "ammo": "MDT",
+      "ampa": "PDT",
+      "atla": "ADT",
+      "haal": "HADT"
+    },
+    "overrides": {
+      "ushnl": "HDT"
+    }
+  }
 }

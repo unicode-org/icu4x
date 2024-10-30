@@ -574,7 +574,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneNamesV1 {
                 defaults,
                 overrides,
             }),
@@ -605,17 +605,35 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
-            .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
-            .collect();
+            .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| (mz, zv, v)))
+            .collect::<Vec<_>>();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
-            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
-            .collect();
+            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| (tz, zv, v)))
+            .collect::<Vec<_>>();
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
-                defaults,
-                overrides,
+                standard: MetazoneNamesV1 {
+                    defaults: defaults
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .collect(),
+                    overrides: overrides
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .collect(),
+                },
+                daylight: MetazoneNamesV1 {
+                    defaults: defaults
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
+                        .collect(),
+                    overrides: overrides
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
+                        .collect(),
+                },
             }),
         })
     }
@@ -651,7 +669,7 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneNamesV1 {
                 defaults,
                 overrides,
             }),
@@ -681,17 +699,35 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
-            .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
-            .collect();
+            .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| (mz, zv, v)))
+            .collect::<Vec<_>>();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
-            .collect();
+            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| (tz, zv, v)))
+            .collect::<Vec<_>>();
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
-                defaults,
-                overrides,
+                standard: MetazoneNamesV1 {
+                    defaults: defaults
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .collect(),
+                    overrides: overrides
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .collect(),
+                },
+                daylight: MetazoneNamesV1 {
+                    defaults: defaults
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
+                        .collect(),
+                    overrides: overrides
+                        .iter()
+                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
+                        .collect(),
+                },
             }),
         })
     }
