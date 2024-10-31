@@ -63,10 +63,11 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
-
+impl SourceDataProvider {
+    fn calculate_locations(
+        &self,
+        req: DataRequest,
+    ) -> Result<BTreeMap<TimeZoneBcp47Id, String>, DataError> {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
@@ -188,6 +189,33 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .collect::<BTreeMap<_, _>>();
 
         locations.remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
+
+        Ok(locations)
+    }
+}
+
+impl DataProvider<LocationsV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
+
+        let time_zone_names = &self
+            .cldr()?
+            .dates("gregorian")
+            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
+                req.id.locale,
+                "timeZoneNames.json",
+            )?
+            .main
+            .value
+            .dates
+            .time_zone_names;
+
+        let mut locations = self.calculate_locations(req)?;
+
+        if *req.id.locale != DataLocale::default() {
+            let und = self.calculate_locations(Default::default())?;
+            locations.retain(|k, v| und.get(k).unwrap() != v);
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -457,7 +485,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         let mz_periods =
             DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
-        let locations = DataProvider::<LocationsV1Marker>::load(self, req)?.payload;
+        let locations = self.calculate_locations(req)?;
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {
@@ -475,11 +503,13 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     return false;
                 };
                 tzs.iter().any(|tz| {
-                    let Some(location) = locations.get().locations.get(tz) else {
+                    let Some(location) = locations.get(tz) else {
                         return true;
                     };
                     let eq = writeable::cmp_bytes(
-                        &locations.get().pattern_generic.interpolate([location]),
+                        &time_zone_names_resource
+                            .region_format
+                            .interpolate([location]),
                         v.as_bytes(),
                     );
                     eq != Ordering::Equal
