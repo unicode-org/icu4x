@@ -57,9 +57,8 @@ impl ResolvedNeoTimeZoneSkeleton {
 
     pub(crate) fn units(self) -> impl Iterator<Item = TimeZoneFormatterUnit> {
         match self {
-            // `z..zzzz`
-            ResolvedNeoTimeZoneSkeleton::SpecificShort
-            | ResolvedNeoTimeZoneSkeleton::SpecificLong => [
+            // `z..zzz`
+            ResolvedNeoTimeZoneSkeleton::SpecificShort => [
                 Some(TimeZoneFormatterUnit::SpecificNonLocation(
                     self.to_field().length,
                 )),
@@ -68,9 +67,28 @@ impl ResolvedNeoTimeZoneSkeleton {
                 )),
                 None,
             ],
-            // 'v', 'vvvv'
-            ResolvedNeoTimeZoneSkeleton::GenericShort
-            | ResolvedNeoTimeZoneSkeleton::GenericLong => [
+            // `zzzz`
+            ResolvedNeoTimeZoneSkeleton::SpecificLong => [
+                Some(TimeZoneFormatterUnit::SpecificNonLocation(
+                    self.to_field().length,
+                )),
+                Some(TimeZoneFormatterUnit::SpecificLocation),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
+            ],
+            // 'v..vvv'
+            ResolvedNeoTimeZoneSkeleton::GenericShort => [
+                Some(TimeZoneFormatterUnit::GenericNonLocation(
+                    self.to_field().length,
+                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(
+                    self.to_field().length,
+                )),
+                None,
+            ],
+            // 'vvvv'
+            ResolvedNeoTimeZoneSkeleton::GenericLong => [
                 Some(TimeZoneFormatterUnit::GenericNonLocation(
                     self.to_field().length,
                 )),
@@ -298,7 +316,6 @@ pub(super) enum TimeZoneFormatterUnit {
     GenericNonLocation(FieldLength),
     SpecificNonLocation(FieldLength),
     GenericLocation,
-    #[allow(dead_code)]
     SpecificLocation,
     #[allow(dead_code)]
     GenericPartialLocation(FieldLength),

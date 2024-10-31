@@ -2116,8 +2116,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 mz_period_provider,
                                 locale,
                             )?;
+                            // For fallback:
+                            self.load_time_zone_location_names(locations_provider, locale)?;
                         }
-                        // 'v'
+                        // 'v..vvv'
                         ResolvedNeoTimeZoneSkeleton::GenericShort => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
