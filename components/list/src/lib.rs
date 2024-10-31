@@ -19,7 +19,7 @@
 //! let list_formatter = ListFormatter::try_new_and_with_length(
 //!     locale!("es").into(),
 //!     ListFormatterOptions::new()
-//!       .style(ListLength::Wide)
+//!       .with_length(ListLength::Wide)
 //! )
 //! .expect("locale should be present");
 //!
@@ -45,7 +45,7 @@
 //! let list_formatter = ListFormatter::try_new_or_with_length(
 //!     locale!("th").into(),
 //!     ListFormatterOptions::new()
-//!       .style(ListLength::Short)
+//!       .with_length(ListLength::Short)
 //! )
 //! .expect("locale should be present");
 //!
@@ -63,7 +63,7 @@
 //! let list_formatter = ListFormatter::try_new_unit_with_length(
 //!     locale!("en").into(),
 //!     ListFormatterOptions::new()
-//!       .style(ListLength::Wide)
+//!       .with_length(ListLength::Wide)
 //! )
 //! .expect("locale should be present");
 //!

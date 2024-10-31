@@ -12,7 +12,7 @@ use icu::locale::locale;
 fn main() {
     let list_formatter = ListFormatter::try_new_and_with_length(
         locale!("es").into(),
-        ListFormatterOptions::new().style(ListLength::Wide),
+        ListFormatterOptions::new().with_length(ListLength::Wide),
     )
     .unwrap();
 

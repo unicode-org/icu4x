@@ -36,7 +36,7 @@ pub mod ffi {
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
-            let options = ListFormatterOptions::new().style(length.into());
+            let options = ListFormatterOptions::new().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_and_with_length,
                 icu_list::ListFormatter::try_new_and_with_length_with_any_provider,
@@ -55,7 +55,7 @@ pub mod ffi {
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
-            let options = ListFormatterOptions::new().style(length.into());
+            let options = ListFormatterOptions::new().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_or_with_length,
                 icu_list::ListFormatter::try_new_or_with_length_with_any_provider,
@@ -74,7 +74,7 @@ pub mod ffi {
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
-            let options = ListFormatterOptions::new().style(length.into());
+            let options = ListFormatterOptions::new().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_unit_with_length,
                 icu_list::ListFormatter::try_new_unit_with_length_with_any_provider,

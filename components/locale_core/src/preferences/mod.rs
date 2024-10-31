@@ -15,10 +15,6 @@
 //! [`Locale`]: crate::Locale
 
 pub mod extensions;
-mod options;
-
-#[doc(inline)]
-pub use options::define_options;
 
 /// TODO
 pub trait PreferenceKey {
@@ -236,33 +232,3 @@ macro_rules! __define_preferences {
 }
 #[doc(inline)]
 pub use __define_preferences as define_preferences;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::preferences::extensions::unicode::enum_keyword;
-    use crate::Locale;
-
-    #[test]
-    fn test_preferences() {
-        #![allow(dead_code)]
-
-        enum_keyword!(DummyKeyword {
-            "default" => Default,
-        }, "ab");
-
-        define_preferences!(
-            /// Preferences for the dummy formatter
-            DummyPreferences,
-            {
-                /// Controls how dummyly the formatter behaves
-                dummy_keyword: DummyKeyword
-            }
-        );
-
-        let loc: Locale = "und-u-ab-default-cd-foo".parse().unwrap();
-
-        let prefs = DummyPreferences::from(&loc);
-        assert_eq!(prefs.dummy_keyword, Some(DummyKeyword::Default));
-    }
-}

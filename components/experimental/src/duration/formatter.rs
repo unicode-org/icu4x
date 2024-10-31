@@ -157,12 +157,12 @@ impl From<BaseStyle> for icu_list::ListFormatterOptions {
         //     a. Set listStyle to "short".
         // 5. Perform ! CreateDataPropertyOrThrow(lfOpts, "style", listStyle).
         // 6. Let lf be ! Construct(%ListFormat%, « durationFormat.[[Locale]], lfOpts »).
-        let style = match style {
+        let length = match style {
             BaseStyle::Long => ListLength::Wide,
             BaseStyle::Short | BaseStyle::Digital => ListLength::Short,
             BaseStyle::Narrow => ListLength::Narrow,
         };
-        Self::new().style(style)
+        Self::new().with_length(length)
     }
 }
 

@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-use crate::ListLength;
+use crate::{ListFormatterOptions, ListLength};
 use core::fmt::{self, Write};
-use icu_locale_core::preferences::{define_options, define_preferences};
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use writeable::*;
@@ -17,14 +17,6 @@ define_preferences!(
     /// The preferences for list formatting.
     ListFormatterPreferences,
     {}
-);
-define_options!(
-    /// The options for list formatting.
-    ListFormatterOptions,
-    {
-        /// Style
-        style: ListLength
-    }
 );
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
@@ -61,7 +53,7 @@ macro_rules! constructor {
             prefs: ListFormatterPreferences,
             options: ListFormatterOptions,
         ) -> Result<Self, DataError> {
-            let length = match options.style.unwrap_or_default() {
+            let length = match options.length.unwrap_or_default() {
                 ListLength::Narrow => ListFormatterPatternsV2::NARROW,
                 ListLength::Short => ListFormatterPatternsV2::SHORT,
                 ListLength::Wide => ListFormatterPatternsV2::WIDE,
@@ -132,7 +124,7 @@ impl ListFormatter {
     /// let formatteur = ListFormatter::try_new_and_with_length(
     ///     locale!("fr").into(),
     ///     ListFormatterOptions::new()
-    ///         .style(ListLength::Wide)
+    ///         .with_length(ListLength::Wide)
     /// )
     /// .unwrap();
     /// let pays = ["Italie", "France", "Espagne", "Allemagne"];

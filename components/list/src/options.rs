@@ -2,6 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+/// TODO
+#[derive(Default, Debug, Clone)]
+#[non_exhaustive]
+pub struct ListFormatterOptions {
+    /// Length
+    pub length: Option<ListLength>,
+}
+
+impl ListFormatterOptions {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn with_length(mut self, length: ListLength) -> Self {
+        self.length = Some(length);
+        self
+    }
+}
+
 /// Represents the style of a list. See the
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different styles.
