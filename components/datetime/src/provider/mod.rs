@@ -112,6 +112,7 @@ use icu_provider::prelude::*;
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::LocationsV1Marker::INFO,
+    time_zones::LocationNameV1Marker::INFO,
     time_zones::MetazoneGenericNamesLongV1Marker::INFO,
     time_zones::MetazoneGenericNamesShortV1Marker::INFO,
     time_zones::MetazonePeriodV1Marker::INFO,

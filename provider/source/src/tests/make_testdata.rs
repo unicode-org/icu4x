@@ -79,6 +79,7 @@ fn make_testdata() {
     .with_marker_attributes_filter("currency", |attrs| {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
     })
+    .with_marker_attributes_filter("tz", |attrs| attrs.as_str().starts_with("ca"))
     .export(&provider, exporter)
     .unwrap();
 }

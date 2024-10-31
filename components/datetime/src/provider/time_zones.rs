@@ -82,9 +82,6 @@ pub struct TimeZoneEssentialsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LocationsV1<'data> {
-    /// Per-zone location display name
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
     /// The format string for a region's generic time.
     #[cfg_attr(
         feature = "serde",
@@ -122,6 +119,17 @@ pub struct LocationsV1<'data> {
     )]
     pub pattern_partial_location: Cow<'data, DoublePlaceholderPattern>,
 }
+
+#[icu_provider::data_struct(marker(
+    LocationNameV1Marker,
+    "time_zone/location@1",
+    attributes_domain = "tz",
+))]
+#[derive(PartialEq, Debug, Clone, Default)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct LocationNameV1<'data>(#[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'data, str>);
 
 /// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.

@@ -316,7 +316,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .collect::<BTreeMap<_, _>>();
 
             let mut seen = HashMap::new();
-            for (id, ((baked_size, postcard_size), hash)) in sorted.into_iter() {
+            for (id, ((baked_size, postcard_size), hash)) in sorted.into_iter().take(100) {
                 if let Some(deduped_req) = seen.get(&hash) {
                     lines.push(format!("{marker:?}, {id}, -> {deduped_req}",));
                 } else {

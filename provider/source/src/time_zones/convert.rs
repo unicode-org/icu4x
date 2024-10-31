@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
@@ -79,6 +80,43 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(LocationsV1 {
+                pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
+                pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
+                pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
+                pattern_partial_location: Cow::Owned(time_zone_names.fallback_format.0.clone()),
+            }),
+        })
+    }
+}
+
+impl DataProvider<LocationNameV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationNameV1Marker>, DataError> {
+        self.check_req::<LocationNameV1Marker>(req)?;
+
+        let time_zone_names = &self
+            .cldr()?
+            .dates("gregorian")
+            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
+                req.id.locale,
+                "timeZoneNames.json",
+            )?
+            .main
+            .value
+            .dates
+            .time_zone_names;
+
+        let bcp47_tzids = &self
+            .cldr()?
+            .bcp47()
+            .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>("timezone.json")?
+            .keyword
+            .u
+            .time_zones
+            .values;
+
         let primary_zones = self.compute_primary_zones()?;
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
@@ -119,6 +157,61 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                 .collect()
         };
 
+        let bcp47 = TimeZoneBcp47Id(req.id.marker_attributes.parse().unwrap());
+
+        let name = if let Some(region) = primary_zones.get(&bcp47) {
+            region_display_names
+                .get(region)
+                .copied()
+                .unwrap_or(region.as_str())
+                .to_string()
+        } else {
+            let aliases = bcp47_tzids.get(&bcp47).unwrap().alias.as_ref().unwrap();
+            aliases
+                .split(' ')
+                .filter_map(|alias| {
+                    let mut alias_parts = alias.split('/');
+                    let continent = alias_parts.next().expect("split non-empty");
+                    let location_or_subregion = alias_parts.next()?;
+                    let location_in_subregion = alias_parts.next();
+                    time_zone_names
+                        .zone
+                        .0
+                        .get(continent)
+                        .and_then(|x| x.0.get(location_or_subregion))
+                        .and_then(|x| match x {
+                            LocationOrSubRegion::Location(place) => Some(place),
+                            LocationOrSubRegion::SubRegion(region) => {
+                                region.get(location_in_subregion?)
+                            }
+                        })
+                        .and_then(|p| p.exemplar_city.clone())
+                })
+                .next()
+                .or_else(|| {
+                    let canonical_alias = aliases.split(' ').next().expect("split non-empty");
+                    let mut alias_parts = canonical_alias.split('/');
+                    (alias_parts.next() != Some("Etc")).then(|| {
+                        alias_parts
+                            .next_back()
+                            .expect("split non-empty")
+                            .replace('_', " ")
+                    })
+                })
+                .unwrap_or(String::from("todo"))
+        };
+
+        Ok(DataResponse {
+            payload: DataPayload::from_owned(LocationNameV1(name.into())),
+            metadata: Default::default(),
+        })
+    }
+}
+
+impl IterableDataProviderCached<LocationNameV1Marker> for SourceDataProvider {
+    fn iter_ids_cached(
+        &self,
+    ) -> Result<std::collections::HashSet<DataIdentifierCow<'static>>, DataError> {
         let bcp47_tzids = &self
             .cldr()?
             .bcp47()
@@ -128,77 +221,26 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .time_zones
             .values;
 
-        let mut locations = bcp47_tzids
-            .iter()
-            .filter_map(|(bcp47, bcp47_tzid_data)| {
-                bcp47_tzid_data
-                    .alias
-                    .as_ref()
-                    .map(|aliases| (bcp47, aliases))
+        Ok(self
+            .cldr()?
+            .dates("gregorian")
+            .list_locales()?
+            .flat_map(|l| {
+                bcp47_tzids
+                    .iter()
+                    .filter(|(_, bcp47_tzid_data)| bcp47_tzid_data.alias.is_some())
+                    // Montreal is meant to be deprecated, but pre-43 the deprecation
+                    // fallback was not set, which is why it might show up here.
+                    .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                    .filter(|(bcp47, _)| bcp47.0 != "unk")
+                    .map(move |(bcp47, _)| {
+                        DataIdentifierCow::from_owned(
+                            DataMarkerAttributes::from_str_or_panic(&bcp47).to_owned(),
+                            l.clone(),
+                        )
+                    })
             })
-            // Montreal is meant to be deprecated, but pre-43 the deprecation
-            // fallback was not set, which is why it might show up here.
-            .filter(|(bcp47, _)| bcp47.0 != "camtr")
-            .filter_map(|(bcp47, aliases)| {
-                if let Some(region) = primary_zones.get(bcp47) {
-                    Some((
-                        *bcp47,
-                        region_display_names
-                            .get(region)
-                            .copied()
-                            .unwrap_or(region.as_str())
-                            .to_string(),
-                    ))
-                } else {
-                    aliases
-                        .split(' ')
-                        .filter_map(|alias| {
-                            let mut alias_parts = alias.split('/');
-                            let continent = alias_parts.next().expect("split non-empty");
-                            let location_or_subregion = alias_parts.next()?;
-                            let location_in_subregion = alias_parts.next();
-                            time_zone_names
-                                .zone
-                                .0
-                                .get(continent)
-                                .and_then(|x| x.0.get(location_or_subregion))
-                                .and_then(|x| match x {
-                                    LocationOrSubRegion::Location(place) => Some(place),
-                                    LocationOrSubRegion::SubRegion(region) => {
-                                        region.get(location_in_subregion?)
-                                    }
-                                })
-                                .and_then(|p| p.exemplar_city.clone())
-                        })
-                        .next()
-                        .or_else(|| {
-                            let canonical_alias =
-                                aliases.split(' ').next().expect("split non-empty");
-                            let mut alias_parts = canonical_alias.split('/');
-                            (alias_parts.next() != Some("Etc")).then(|| {
-                                alias_parts
-                                    .next_back()
-                                    .expect("split non-empty")
-                                    .replace('_', " ")
-                            })
-                        })
-                        .map(|name| (*bcp47, name))
-                }
-            })
-            .collect::<BTreeMap<_, _>>();
-
-        locations.remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
-                locations: locations.into_iter().collect(),
-                pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
-                pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
-                pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
-                pattern_partial_location: Cow::Owned(time_zone_names.fallback_format.0.clone()),
-            }),
-        })
+            .collect())
     }
 }
 
@@ -475,9 +517,21 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     return false;
                 };
                 tzs.iter().any(|tz| {
-                    let Some(location) = locations.get().locations.get(tz) else {
+                    let Some(location) = DataProvider::<LocationNameV1Marker>::load(
+                        &self,
+                        DataRequest {
+                            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                                DataMarkerAttributes::from_str_or_panic(tz),
+                                req.id.locale,
+                            ),
+                            ..Default::default()
+                        },
+                    )
+                    .allow_identifier_not_found()
+                    .unwrap() else {
                         return true;
                     };
+                    let location = &location.payload.get().0;
                     let eq = writeable::cmp_bytes(
                         &locations.get().pattern_generic.interpolate([location]),
                         v.as_bytes(),

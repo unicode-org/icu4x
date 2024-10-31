@@ -561,14 +561,14 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
+        // let Some(location) = locations.locations.get(&time_zone_id) else {
+        //     return Ok(Err(FormatTimeZoneError::Fallback));
+        // };
 
-        locations
-            .pattern_generic
-            .interpolate([location])
-            .write_to(sink)?;
+        // locations
+        //     .pattern_generic
+        //     .interpolate([location])
+        //     .write_to(sink)?;
 
         Ok(Ok(()))
     }
@@ -598,19 +598,19 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
+        // let Some(location) = locations.locations.get(&time_zone_id) else {
+        //     return Ok(Err(FormatTimeZoneError::Fallback));
+        // };
 
-        if zone_variant == ZoneVariant::daylight() {
-            &locations.pattern_daylight
-        } else if zone_variant == ZoneVariant::standard() {
-            &locations.pattern_standard
-        } else {
-            &locations.pattern_generic
-        }
-        .interpolate([location])
-        .write_to(sink)?;
+        // if zone_variant == ZoneVariant::daylight() {
+        //     &locations.pattern_daylight
+        // } else if zone_variant == ZoneVariant::standard() {
+        //     &locations.pattern_standard
+        // } else {
+        //     &locations.pattern_generic
+        // }
+        // .interpolate([location])
+        // .write_to(sink)?;
 
         Ok(Ok(()))
     }
@@ -648,24 +648,24 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(metazone_period) = data_payloads.mz_periods else {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
-        let Some(location) = locations.locations.get(&time_zone_id) else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-        let Some(non_location) =
-            metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-                non_locations
-                    .overrides
-                    .get(&time_zone_id)
-                    .or_else(|| non_locations.defaults.get(&mz))
-            })
-        else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
+        // let Some(location) = locations.locations.get(&time_zone_id) else {
+        //     return Ok(Err(FormatTimeZoneError::Fallback));
+        // };
+        // let Some(non_location) =
+        //     metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
+        //         non_locations
+        //             .overrides
+        //             .get(&time_zone_id)
+        //             .or_else(|| non_locations.defaults.get(&mz))
+        //     })
+        // else {
+        //     return Ok(Err(FormatTimeZoneError::Fallback));
+        // };
 
-        locations
-            .pattern_partial_location
-            .interpolate((location, non_location))
-            .write_to(sink)?;
+        // locations
+        //     .pattern_partial_location
+        //     .interpolate((location, non_location))
+        //     .write_to(sink)?;
 
         Ok(Ok(()))
     }

@@ -213,29 +213,39 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations: DataResponse<LocationsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
         assert_eq!(
             "Pohnpei",
-            locations
-                .payload
-                .get()
-                .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
-                .unwrap()
+            DataProvider::<LocationNameV1Marker>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic("fmpni"),
+                        &langid!("en").into()
+                    ),
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .payload
+            .get()
+            .0
         );
         assert_eq!(
             "Ireland",
-            locations
-                .payload
-                .get()
-                .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
-                .unwrap()
+            DataProvider::<LocationNameV1Marker>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic("iedub"),
+                        &langid!("en").into()
+                    ),
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .payload
+            .get()
+            .0
         );
 
         let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider
