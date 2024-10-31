@@ -141,6 +141,7 @@ impl IxdtfParser {
 
 struct Intermediate<'a> {
     offset: Option<UtcOffsetRecord>,
+    is_z: bool,
     iana_identifier: Option<&'a [u8]>,
     date: DateRecord,
     time: TimeRecord,
@@ -148,25 +149,25 @@ struct Intermediate<'a> {
 
 impl<'a> Intermediate<'a> {
     fn try_from_ixdtf_record(ixdtf_record: &'a IxdtfParseRecord) -> Result<Self, ParseError> {
-        let (offset, iana_identifier) = match ixdtf_record {
+        let (offset, is_z, iana_identifier) = match ixdtf_record {
             // empty
             IxdtfParseRecord {
                 offset: None,
                 tz: None,
                 ..
-            } => (None, None),
+            } => (None, false, None),
             // -0800
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
                 tz: None,
                 ..
-            } => (Some(*offset), None),
+            } => (Some(*offset), false, None),
             // Z
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Z),
                 tz: None,
                 ..
-            } => (Some(UtcOffsetRecord::zero()), Some(b"Etc/UTC".as_slice())),
+            } => (None, true, None),
             // [-0800]
             IxdtfParseRecord {
                 offset: None,
@@ -176,7 +177,7 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (Some(*offset), None),
+            } => (Some(*offset), false, None),
             // -0800[-0800]
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
@@ -190,7 +191,7 @@ impl<'a> Intermediate<'a> {
                 if offset != offset1 {
                     return Err(ParseError::InconsistentTimeZoneOffsets);
                 }
-                (Some(*offset), None)
+                (Some(*offset), false, None)
             }
             // -0800[America/Los_Angeles]
             IxdtfParseRecord {
@@ -201,35 +202,28 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (Some(*offset), Some(*iana_identifier)),
+            } => (Some(*offset), false, Some(*iana_identifier)),
+            // Z[-0800]
+            IxdtfParseRecord {
+                offset: Some(UtcOffsetRecordOrZ::Z),
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Offset(offset),
+                        ..
+                    }),
+                ..
+            } => (Some(*offset), true, None),
             // Z[-0800]
             // Z[America/Los_Angeles]
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Z),
-                tz: Some(tz),
+                tz:
+                    Some(TimeZoneAnnotation {
+                        tz: TimeZoneRecord::Name(iana_identifier),
+                        ..
+                    }),
                 ..
-            } => match tz.tz {
-                TimeZoneRecord::Name(tz) => {
-                    // Z[Etc/UTC]
-                    if tz.to_ascii_lowercase() == b"etc/utc" {
-                        (Some(UtcOffsetRecord::zero()), Some(tz))
-                    // Z[Etc/GMT]
-                    } else if tz.to_ascii_lowercase() == b"etc/gmt" {
-                        (Some(UtcOffsetRecord::zero()), Some(tz))
-                    } else {
-                        return Err(ParseError::RequiresCalculation);
-                    }
-                }
-                TimeZoneRecord::Offset(o) => {
-                    // Z[+0000]
-                    if o == UtcOffsetRecord::zero() {
-                        (Some(o), None)
-                    } else {
-                        return Err(ParseError::RequiresCalculation);
-                    }
-                }
-                _ => unreachable!(),
-            },
+            } => (None, true, Some(*iana_identifier)),
             // [America/Los_Angeles]
             IxdtfParseRecord {
                 offset: None,
@@ -239,14 +233,14 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (None, Some(*iana_identifier)),
+            } => (None, false, Some(*iana_identifier)),
             // non_exhaustive match: maybe something like [u-tz=uslax] in the future
             IxdtfParseRecord {
                 tz: Some(TimeZoneAnnotation { tz, .. }),
                 ..
             } => {
                 debug_assert!(false, "unexpected TimeZoneRecord: {tz:?}");
-                (None, None)
+                (None, false, None)
             }
         };
         let IxdtfParseRecord {
@@ -260,6 +254,7 @@ impl<'a> Intermediate<'a> {
         };
         Ok(Self {
             offset,
+            is_z,
             iana_identifier,
             date,
             time,
@@ -267,10 +262,18 @@ impl<'a> Intermediate<'a> {
     }
 
     fn offset_only(self) -> Result<UtcOffset, ParseError> {
-        let Some(offset) = self.offset else {
+        let None = self.iana_identifier else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let None = self.iana_identifier else {
+        if self.is_z {
+            if let Some(offset) = self.offset {
+                if offset != UtcOffsetRecord::zero() {
+                    return Err(ParseError::RequiresCalculation);
+                }
+            }
+            return Ok(UtcOffset::zero());
+        }
+        let Some(offset) = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         UtcOffset::try_from_utc_offset_record(offset)
@@ -309,13 +312,25 @@ impl<'a> Intermediate<'a> {
         mapper: TimeZoneIdMapperBorrowed<'_>,
     ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
         let time_zone_id = match self.iana_identifier {
-            Some(iana_identifier) => mapper.iana_bytes_to_bcp47(iana_identifier),
+            Some(iana_identifier) => {
+                if self.is_z {
+                    return Err(ParseError::RequiresCalculation);
+                }
+                mapper.iana_bytes_to_bcp47(iana_identifier)
+            }
+            None if self.is_z => TimeZoneBcp47Id(tinystr::tinystr!(8, "utc")),
             None => TimeZoneBcp47Id::unknown(),
         };
         let offset = match self.offset {
-            Some(offset) => Some(UtcOffset::try_from_utc_offset_record(offset)?),
+            Some(offset) => {
+                if self.is_z && offset != UtcOffsetRecord::zero() {
+                    return Err(ParseError::RequiresCalculation);
+                }
+                Some(UtcOffset::try_from_utc_offset_record(offset)?)
+            }
             None => match time_zone_id.as_str() {
                 "utc" | "gmt" => Some(UtcOffset::zero()),
+                _ if self.is_z => Some(UtcOffset::zero()),
                 _ => None,
             },
         };
@@ -799,7 +814,7 @@ mod test {
             IxdtfParser::new()
                 .try_offset_only_iso_from_str("2024-08-08T12:08:19Z[Europe/Zurich]")
                 .unwrap_err(),
-            ParseError::RequiresCalculation
+            ParseError::MismatchedTimeZoneFields
         );
     }
 
