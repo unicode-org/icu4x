@@ -298,52 +298,93 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = &self.compute_bcp47_tzids_btreemap()?;
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
+        let mut periods = metazones
+            .meta_zone_info
+            .time_zone
+            .0
+            .iter()
+            .flat_map(|(key, zone)| match zone {
+                ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
+                ZonePeriod::LocationOrSubRegion(place) => place
+                    .iter()
+                    .flat_map(
+                        move |(key2, location_or_subregion)| match location_or_subregion {
+                            MetaLocationOrSubRegion::Location(periods) => {
+                                vec![(format!("{key}/{key2}"), periods)]
+                            }
+                            MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                                .iter()
+                                .flat_map(move |(key3, periods)| {
+                                    vec![(format!("{key}/{key2}/{key3}"), periods)]
+                                })
+                                .collect::<Vec<_>>(),
+                        },
+                    )
+                    .collect::<Vec<_>>(),
+            })
+            .filter_map(|(iana, periods)| Some((*bcp47_tzid_data.get(&iana)?, periods)))
+            .map(|(tz, periods)| {
+                let periods = periods
+                    .iter()
+                    .map(move |period| {
+                        (
+                            period
+                                .uses_meta_zone
+                                .from
+                                .as_deref()
+                                .map(parse_mzone_from)
+                                .map(|(date, time)| {
+                                    (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                        + (time.hour.number() as i32 * 60
+                                            + time.minute.number() as i32)
+                                })
+                                .unwrap_or_default(),
+                            meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+
+                let periods = (0..periods.len())
+                    .filter(|&i| {
+                        let this = periods[i];
+                        let Some(prev) = i.checked_sub(1).map(|i| periods[i]) else {
+                            return true;
+                        };
+                        this.1 != prev.1
+                    })
+                    .map(|i| periods[i])
+                    .collect();
+
+                (tz, periods)
+            })
+            .collect::<BTreeMap<TimeZoneBcp47Id, Vec<(i32, Option<MetazoneId>)>>>();
+
+        let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
+            BTreeMap::new();
+        for (tz, mzs) in &periods {
+            for mz in mzs.iter().flat_map(|&(_, mz)| mz) {
+                reverse_meta_zone_id_data.entry(mz).or_default().insert(*tz);
+            }
+        }
+
+        for (mz, tzs) in reverse_meta_zone_id_data {
+            // There's only one TZ that has ever been in the MZ
+            if tzs.len() == 1 {
+                let tz = tzs.first().unwrap();
+                // The TZ has always been in the MZ
+                if periods.get(&tz).map(|v| v.as_slice()) == Some(&[(0, Some(mz))]) {
+                    // We don't need it
+                    periods.remove(&tz);
+                }
+            }
+        }
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazonePeriodV1(
-                metazones
-                    .meta_zone_info
-                    .time_zone
-                    .0
-                    .iter()
-                    .flat_map(|(key, zone)| match zone {
-                        ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
-                        ZonePeriod::LocationOrSubRegion(place) => place
-                            .iter()
-                            .flat_map(move |(key2, location_or_subregion)| {
-                                match location_or_subregion {
-                                    MetaLocationOrSubRegion::Location(periods) => {
-                                        vec![(format!("{key}/{key2}"), periods)]
-                                    }
-                                    MetaLocationOrSubRegion::SubRegion(subregion) => subregion
-                                        .iter()
-                                        .flat_map(move |(key3, periods)| {
-                                            vec![(format!("{key}/{key2}/{key3}"), periods)]
-                                        })
-                                        .collect::<Vec<_>>(),
-                                }
-                            })
-                            .collect::<Vec<_>>(),
-                    })
-                    .flat_map(|(iana, periods)| {
-                        periods.iter().flat_map(move |period| {
-                            Some((
-                                bcp47_tzid_data.get(&iana)?,
-                                period
-                                    .uses_meta_zone
-                                    .from
-                                    .as_deref()
-                                    .map(parse_mzone_from)
-                                    .map(|(date, time)| {
-                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                            + (time.hour.number() as i32 * 60
-                                                + time.minute.number() as i32)
-                                    })
-                                    .unwrap_or_default(),
-                                meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
-                            ))
-                        })
-                    })
+                periods
+                    .into_iter()
+                    .flat_map(|(tz, periods)| periods.into_iter().map(move |(s, mz)| (tz, s, mz)))
                     .collect(),
             )),
         })
@@ -532,22 +573,85 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             .value
             .dates
             .time_zone_names;
+
+        let metazones = &self
+            .cldr()?
+            .core()
+            .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
+                "supplemental/metaZones.json",
+            )?
+            .supplemental
+            .meta_zones;
+
         let bcp47_tzid_data = &self.compute_bcp47_tzids_btreemap()?;
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
-        let mz_periods =
-            DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
         let locations = self.calculate_locations(req)?;
+
+        let periods = metazones
+            .meta_zone_info
+            .time_zone
+            .0
+            .iter()
+            .flat_map(|(key, zone)| match zone {
+                ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
+                ZonePeriod::LocationOrSubRegion(place) => place
+                    .iter()
+                    .flat_map(
+                        move |(key2, location_or_subregion)| match location_or_subregion {
+                            MetaLocationOrSubRegion::Location(periods) => {
+                                vec![(format!("{key}/{key2}"), periods)]
+                            }
+                            MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                                .iter()
+                                .flat_map(move |(key3, periods)| {
+                                    vec![(format!("{key}/{key2}/{key3}"), periods)]
+                                })
+                                .collect::<Vec<_>>(),
+                        },
+                    )
+                    .collect::<Vec<_>>(),
+            })
+            .filter_map(|(iana, periods)| Some((*bcp47_tzid_data.get(&iana)?, periods)))
+            .map(|(tz, periods)| {
+                (
+                    tz,
+                    periods
+                        .iter()
+                        .map(move |period| {
+                            (
+                                period
+                                    .uses_meta_zone
+                                    .from
+                                    .as_deref()
+                                    .map(parse_mzone_from)
+                                    .map(|(date, time)| {
+                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                            + (time.hour.number() as i32 * 60
+                                                + time.minute.number() as i32)
+                                    })
+                                    .unwrap_or_default(),
+                                meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                            )
+                        })
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect::<BTreeMap<TimeZoneBcp47Id, Vec<(i32, Option<MetazoneId>)>>>();
+
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
-        for cursor in mz_periods.get().0.iter0() {
-            let tz = *cursor.key0();
-            for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
-                reverse_meta_zone_id_data.entry(mz).or_default().insert(tz);
+        for (tz, mzs) in &periods {
+            for mz in mzs.iter().flat_map(|&(_, mz)| mz) {
+                reverse_meta_zone_id_data.entry(mz).or_default().insert(*tz);
             }
         }
 
-        let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
+        let mut overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
+            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .collect::<BTreeMap<_, _>>();
+
+        let mut defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
             .filter(|&(mz, v)| {
                 let Some(tzs) = reverse_meta_zone_id_data.get(&mz) else {
@@ -558,25 +662,35 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     let Some(location) = locations.get(tz) else {
                         return true;
                     };
-                    let eq = writeable::cmp_bytes(
+                    writeable::cmp_bytes(
                         &time_zone_names_resource
                             .region_format
                             .interpolate([location]),
                         v.as_bytes(),
-                    );
-                    eq != Ordering::Equal
+                    ) != Ordering::Equal
                 })
             })
-            .collect();
-        let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
-            .collect();
+            .collect::<BTreeMap<_, _>>();
+
+        for (mz, tzs) in reverse_meta_zone_id_data {
+            // There's only one TZ that has ever been in the MZ
+            if tzs.len() == 1 {
+                let tz = *tzs.first().unwrap();
+                // The TZ has always been in the MZ
+                if periods.get(&tz).map(|v| v.as_slice()) == Some(&[(0, Some(mz))]) {
+                    // We don't need it
+                    if let Some(val) = defaults.remove(&mz) {
+                        overrides.insert(tz, val);
+                    }
+                }
+            }
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
-                defaults,
-                overrides,
+                defaults: defaults.into_iter().collect(),
+                overrides: overrides.into_iter().collect(),
             }),
         })
     }

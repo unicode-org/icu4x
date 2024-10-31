@@ -5,9 +5,6 @@
   "aedxb": {
     "0": "gulf"
   },
-  "afkbl": {
-    "0": "afgh"
-  },
   "aganu": {
     "0": "atla"
   },
@@ -46,15 +43,6 @@
     "27744001": "case",
     "27971520": "auwe"
   },
-  "aqdav": {
-    "0": "davi"
-  },
-  "aqddu": {
-    "0": "dumo"
-  },
-  "aqmaw": {
-    "0": "maws"
-  },
   "aqmcm": {
     "0": "neze"
   },
@@ -62,28 +50,17 @@
     "0": "arge",
     "6484500": "chil"
   },
-  "aqrot": {
-    "0": "roth"
-  },
-  "aqsyw": {
-    "0": "syow"
-  },
   "aqtrl": {
     "0": "mgmt"
-  },
-  "aqvos": {
-    "0": "vost"
   },
   "arbue": {
     "0": "arge"
   },
   "arcor": {
-    "0": "arge",
-    "11465520": "arge"
+    "0": "arge"
   },
   "arctc": {
     "0": "arge",
-    "11465520": "arge",
     "18100980": "arwe",
     "18128400": "arge"
   },
@@ -95,8 +72,7 @@
     "18128400": "arge"
   },
   "arjuj": {
-    "0": "arge",
-    "11445360": "arge"
+    "0": "arge"
   },
   "arluq": {
     "0": "arge",
@@ -110,9 +86,7 @@
     "20920560": "arge"
   },
   "armdz": {
-    "0": "arge",
-    "11989680": "arge",
-    "18269520": "arge"
+    "0": "arge"
   },
   "arrgl": {
     "0": "arge",
@@ -120,12 +94,10 @@
     "18128400": "arge"
   },
   "arsla": {
-    "0": "arge",
-    "11465520": "arge"
+    "0": "arge"
   },
   "artuc": {
     "0": "arge",
-    "11465520": "arge",
     "18100980": "arwe",
     "18118320": "arge"
   },
@@ -137,8 +109,7 @@
     "18178800": "arge"
   },
   "arush": {
-    "0": "arge",
-    "18128400": "arge"
+    "0": "arge"
   },
   "asppg": {
     "0": null,
@@ -158,9 +129,6 @@
   },
   "audrw": {
     "0": "auce"
-  },
-  "aueuc": {
-    "0": "aucw"
   },
   "auhba": {
     "0": "auea"
@@ -223,12 +191,6 @@
   "bmbda": {
     "0": "atla"
   },
-  "bnbwn": {
-    "0": "brun"
-  },
-  "bolpb": {
-    "0": "boli"
-  },
   "bqkra": {
     "0": "atla"
   },
@@ -251,9 +213,6 @@
     "0": "acre",
     "20238060": "amaz",
     "23067600": "acre"
-  },
-  "brfen": {
-    "0": "noro"
   },
   "brfor": {
     "0": "bras"
@@ -343,9 +302,6 @@
   "careg": {
     "0": "amce"
   },
-  "casjf": {
-    "0": "newf"
-  },
   "cator": {
     "0": "amea"
   },
@@ -393,9 +349,6 @@
   "cayzs": {
     "0": "amea"
   },
-  "cccck": {
-    "0": "coco"
-  },
   "cdfbm": {
     "0": "afce"
   },
@@ -414,12 +367,6 @@
   "ciabj": {
     "0": "mgmt"
   },
-  "ckrar": {
-    "0": "cook"
-  },
-  "clipc": {
-    "0": "east"
-  },
   "clpuq": {
     "0": "chil"
   },
@@ -435,20 +382,8 @@
   "cnurc": {
     "0": null
   },
-  "cobog": {
-    "0": "colo"
-  },
   "crsjo": {
     "0": "amce"
-  },
-  "cuhav": {
-    "0": "cuba"
-  },
-  "cvrai": {
-    "0": "cave"
-  },
-  "cxxch": {
-    "0": "chri"
   },
   "cyfmg": {
     "0": "euea"
@@ -526,21 +461,6 @@
   "fimhq": {
     "0": "euea"
   },
-  "fjsuv": {
-    "0": "fiji"
-  },
-  "fkpsy": {
-    "0": "falk"
-  },
-  "fmksa": {
-    "0": "kosr"
-  },
-  "fmpni": {
-    "0": "pona"
-  },
-  "fmtkk": {
-    "0": "truk"
-  },
   "fotho": {
     "0": "euwe"
   },
@@ -564,9 +484,6 @@
   "getbs": {
     "0": null,
     "11185680": "geor"
-  },
-  "gfcay": {
-    "0": "frgu"
   },
   "gggci": {
     "0": null,
@@ -618,9 +535,6 @@
   "grath": {
     "0": "euea"
   },
-  "gsgrv": {
-    "0": "soge"
-  },
   "gtgua": {
     "0": "amce"
   },
@@ -632,15 +546,9 @@
     "0": null,
     "2629500": "mgmt"
   },
-  "gygeo": {
-    "0": "guya"
-  },
   "hebron": {
     "0": "isra",
     "13674120": "euea"
-  },
-  "hkhkg": {
-    "0": "hoko"
   },
   "hntgu": {
     "0": "amce"
@@ -653,9 +561,6 @@
   },
   "hubud": {
     "0": "euce"
-  },
-  "iddjj": {
-    "0": "inea"
   },
   "idjkt": {
     "0": "inwe"
@@ -678,14 +583,8 @@
   "inccu": {
     "0": "indi"
   },
-  "iodga": {
-    "0": "inoc"
-  },
   "iqbgw": {
     "0": "arab"
-  },
-  "irthr": {
-    "0": "iran"
   },
   "isrey": {
     "0": "mgmt"
@@ -706,9 +605,6 @@
   "joamm": {
     "0": "euea"
   },
-  "jptyo": {
-    "0": "japa"
-  },
   "kenbo": {
     "0": "afea"
   },
@@ -718,15 +614,6 @@
   },
   "khpnh": {
     "0": "indo"
-  },
-  "kicxi": {
-    "0": "liis"
-  },
-  "kipho": {
-    "0": "phis"
-  },
-  "kitrw": {
-    "0": "giis"
   },
   "kmyva": {
     "0": "afea"
@@ -782,7 +669,6 @@
   },
   "kzura": {
     "0": null,
-    "11547120": null,
     "18319560": "kawe",
     "28487160": "kaza"
   },
@@ -863,15 +749,6 @@
   "mlbko": {
     "0": "mgmt"
   },
-  "mmrgn": {
-    "0": "myan"
-  },
-  "mnhvd": {
-    "0": "hovd"
-  },
-  "mnuln": {
-    "0": "mong"
-  },
   "momfm": {
     "0": "maca",
     "15760320": "chin"
@@ -891,12 +768,6 @@
   },
   "mtmla": {
     "0": "euce"
-  },
-  "muplu": {
-    "0": "maur"
-  },
-  "mvmle": {
-    "0": "mald"
   },
   "mwblz": {
     "0": "afce"
@@ -969,14 +840,8 @@
     "12736680": "afwe",
     "25146600": "afce"
   },
-  "ncnou": {
-    "0": "neca"
-  },
   "nenim": {
     "0": "afwe"
-  },
-  "nfnlk": {
-    "0": "norf"
   },
   "nglos": {
     "0": "afwe"
@@ -996,20 +861,8 @@
   "noosl": {
     "0": "euce"
   },
-  "npktm": {
-    "0": "nepa"
-  },
-  "nrinu": {
-    "0": "naur"
-  },
-  "nuiue": {
-    "0": "niue"
-  },
   "nzakl": {
     "0": "neze"
-  },
-  "nzcht": {
-    "0": "chat"
   },
   "ommct": {
     "0": "gulf"
@@ -1017,26 +870,11 @@
   "papty": {
     "0": "amea"
   },
-  "pelim": {
-    "0": "peru"
-  },
-  "pfgmr": {
-    "0": "gamb"
-  },
-  "pfnhv": {
-    "0": "marq"
-  },
-  "pfppt": {
-    "0": "tahi"
-  },
   "pgpom": {
     "0": "pang"
   },
   "pgraw": {
     "0": "pang"
-  },
-  "phmnl": {
-    "0": "phil"
   },
   "pkkhi": {
     "0": null,
@@ -1048,9 +886,6 @@
   "pmmqc": {
     "0": "atla",
     "5433360": "pimi"
-  },
-  "pnpcn": {
-    "0": "pitc"
   },
   "prsju": {
     "0": "atla"
@@ -1069,18 +904,9 @@
     "12090360": "euwe",
     "12337980": "azor"
   },
-  "pwror": {
-    "0": "pala"
-  },
-  "pyasu": {
-    "0": "para"
-  },
   "qadoh": {
     "0": "gulf",
     "1269840": "arab"
-  },
-  "rereu": {
-    "0": "reun"
   },
   "robuh": {
     "0": "euea"
@@ -1137,14 +963,8 @@
     "21161940": "novo",
     "23571060": "kras"
   },
-  "ruoms": {
-    "0": "omsk"
-  },
   "ruovb": {
     "0": "novo"
-  },
-  "rupkc": {
-    "0": "kamc"
   },
   "rurtw": {
     "11697000": "mosc"
@@ -1159,12 +979,6 @@
     "0": "yaku",
     "5914980": "maga",
     "21930480": "vlad"
-  },
-  "ruuus": {
-    "0": "sakh"
-  },
-  "ruvog": {
-    "0": "volg"
   },
   "ruvvo": {
     "0": "vlad"
@@ -1182,12 +996,6 @@
   "saruh": {
     "0": "arab"
   },
-  "sbhir": {
-    "0": "solo"
-  },
-  "scmaw": {
-    "0": "seyc"
-  },
   "sdkrt": {
     "0": "afce",
     "15798840": "afea",
@@ -1195,9 +1003,6 @@
   },
   "sesto": {
     "0": "euce"
-  },
-  "sgsin": {
-    "0": "sing"
   },
   "shshn": {
     "0": "mgmt"
@@ -1257,9 +1062,6 @@
   "tdndj": {
     "0": "afwe"
   },
-  "tfpfr": {
-    "0": "frso"
-  },
   "tglfw": {
     "0": "mgmt"
   },
@@ -1269,9 +1071,6 @@
   "tjdyu": {
     "0": null,
     "11406060": "taji"
-  },
-  "tkfko": {
-    "0": "toke"
   },
   "tldil": {
     "0": "eati",
@@ -1285,9 +1084,6 @@
   "tntun": {
     "0": "euce"
   },
-  "totbu": {
-    "0": "tong"
-  },
   "trist": {
     "0": "euea",
     "4465260": null,
@@ -1296,12 +1092,6 @@
   },
   "ttpos": {
     "0": "atla"
-  },
-  "tvfun": {
-    "0": "tuva"
-  },
-  "twtpe": {
-    "0": "taip"
   },
   "tzdar": {
     "0": "afea"
@@ -1319,9 +1109,6 @@
   },
   "ugkla": {
     "0": "afea"
-  },
-  "umawk": {
-    "0": "wake"
   },
   "ummdy": {
     "0": null,
@@ -1364,7 +1151,6 @@
   },
   "usjnu": {
     "0": "ampa",
-    "5690040": "ampa",
     "7317180": "alas"
   },
   "usknx": {
@@ -1443,13 +1229,8 @@
   "usyak": {
     "7317180": "alas"
   },
-  "uymvd": {
-    "0": "urug"
-  },
   "uzskd": {
     "0": null,
-    "6178680": null,
-    "6440760": null,
     "11394360": "uzbe"
   },
   "uztas": {
@@ -1462,9 +1243,6 @@
   "vcsvd": {
     "0": "atla"
   },
-  "veccs": {
-    "0": "vene"
-  },
   "vgtov": {
     "0": "atla"
   },
@@ -1473,15 +1251,6 @@
   },
   "vnsgn": {
     "2863680": "indo"
-  },
-  "vuvli": {
-    "0": "vanu"
-  },
-  "wfmau": {
-    "0": "wall"
-  },
-  "wsapw": {
-    "0": "apia"
   },
   "yeade": {
     "0": "arab"
