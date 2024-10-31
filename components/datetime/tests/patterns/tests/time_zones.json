@@ -204,5 +204,45 @@
       "Z": "+?",
       "ZZZZZ": "+?"
     }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000Z",
+    "expectations": {
+      "z": "UTC",
+      "zzzz": "Coordinated Universal Time",
+
+      "v": "UTC",
+      "vvvv": "Coordinated Universal Time",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT",
+
+      "O": "GMT",
+      "OOOO": "GMT",
+
+      "Z": "+0000",
+      "ZZZZZ": "Z"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000[Etc/GMT]",
+    "expectations": {
+      "z": "GMT",
+      "zzzz": "Greenwich Mean Time",
+
+      "v": "GMT",
+      "vvvv": "Greenwich Mean Time",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT",
+
+      "O": "GMT",
+      "OOOO": "GMT",
+
+      "Z": "+0000",
+      "ZZZZZ": "Z"
+    }
   }
 ]
