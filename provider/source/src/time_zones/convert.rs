@@ -12,7 +12,7 @@ use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::calendar::Time;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::LanguageIdentifier;
+use icu::locale::{langid, LanguageIdentifier};
 use icu::timezone::provider::*;
 use icu::timezone::UtcOffset;
 use icu::timezone::ZoneVariant;
@@ -121,7 +121,7 @@ impl SourceDataProvider {
                 .collect()
         };
 
-        let find_endonym = |region: icu::locale::subtags::Region| -> Option<&str> {
+        let find_endonym_or_en = |region: icu::locale::subtags::Region| -> Option<&str> {
             let expander = self.cldr().unwrap().extended_locale_expander().unwrap();
             let mut langid = LanguageIdentifier {
                 region: Some(region),
@@ -135,29 +135,35 @@ impl SourceDataProvider {
             let locale = langid.into();
 
             // Avoid logging file-not-found errors
-            if self
+            let regions = &if self
                 .cldr()
                 .unwrap()
                 .displaynames()
                 .file_exists(&locale, "territories.json")
                 != Ok(true)
             {
-                return None;
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        &langid!("en").into(),
+                        "territories.json",
+                    )
+                    .ok()?
+            } else {
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        &locale,
+                        "territories.json",
+                    )
+                    .ok()?
             }
-
-            let regions = &self
-                .cldr()
-                .unwrap()
-                .displaynames()
-                .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                    &locale,
-                    "territories.json",
-                )
-                .ok()?
-                .main
-                .value
-                .localedisplaynames
-                .regions;
+            .main
+            .value
+            .localedisplaynames
+            .regions;
 
             regions
                 .get(&format!("{region}-alt-short"))
@@ -192,7 +198,7 @@ impl SourceDataProvider {
                         region_display_names
                             .get(region)
                             .copied()
-                            .or_else(|| find_endonym(*region))
+                            .or_else(|| find_endonym_or_en(*region))
                             .unwrap_or(region.as_str())
                             .to_string(),
                     ))
