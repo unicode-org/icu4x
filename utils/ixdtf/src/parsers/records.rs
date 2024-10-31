@@ -114,8 +114,21 @@ pub struct UtcOffsetRecord {
     pub nanosecond: u32,
 }
 
-#[non_exhaustive]
+impl UtcOffsetRecord {
+    /// +0000
+    pub const fn zero() -> Self {
+        Self {
+            sign: Sign::Positive,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            nanosecond: 0,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // explicitly A or B
 pub enum UtcOffsetRecordOrZ {
     Offset(UtcOffsetRecord),
     Z,
