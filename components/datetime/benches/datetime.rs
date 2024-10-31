@@ -40,7 +40,7 @@ fn datetime_benches(c: &mut Criterion) {
                                             Date::try_new_iso(2024, 1, 1).unwrap(),
                                             Time::midnight(),
                                         ))
-                                        .with_zone_variant(ZoneVariant::standard()),
+                                        .with_zone_variant(ZoneVariant::Standard),
                                 }
                             }
                         })

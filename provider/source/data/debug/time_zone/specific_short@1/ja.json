@@ -3,23 +3,23 @@
     [
       [
         "japa",
-        "dt"
+        "Standard"
       ],
-      "JDT"
+      "JST"
     ],
     [
       [
         "japa",
-        "st"
+        "Daylight"
       ],
-      "JST"
+      "JDT"
     ]
   ],
   "overrides": [
     [
       [
         "utc",
-        "st"
+        "Standard"
       ],
       "UTC"
     ]

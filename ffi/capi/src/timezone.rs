@@ -55,9 +55,9 @@ pub mod ffi {
                     .unwrap_or(TimeZoneBcp47Id::unknown()),
                 offset: UtcOffset::try_from_seconds(offset_seconds).ok(),
                 zone_variant: Some(if dst {
-                    ZoneVariant::daylight()
+                    ZoneVariant::Daylight
                 } else {
-                    ZoneVariant::standard()
+                    ZoneVariant::Standard
                 }),
                 local_time: None,
             })
@@ -214,9 +214,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
-            self.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::try_from_utf8(id).ok()?,
-            ));
+            self.zone_variant = match id {
+                b"st" => Some(icu_timezone::ZoneVariant::Standard),
+                b"dt" => Some(icu_timezone::ZoneVariant::Daylight),
+                _ => return None,
+            };
             Some(())
         }
 
@@ -233,7 +235,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            let _infallible = write.write_str(self.zone_variant?.0.as_str());
+            let _infallible = write.write_str(match self.zone_variant {
+                Some(icu_timezone::ZoneVariant::Daylight) => "dt",
+                Some(icu_timezone::ZoneVariant::Standard) => "st",
+                _ => return None,
+            });
             Some(())
         }
 
@@ -241,14 +247,14 @@ pub mod ffi {
         /// not correspond to a display name with "Standard" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
         pub fn set_standard_time(&mut self) {
-            self.zone_variant = Some(icu_timezone::ZoneVariant::standard())
+            self.zone_variant = Some(icu_timezone::ZoneVariant::Standard)
         }
 
         /// Sets the `zone_variant` field to "daylight" time, which may or may
         /// not correspond to a display name with "Daylight" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
         pub fn set_daylight_time(&mut self) {
-            self.zone_variant = Some(icu_timezone::ZoneVariant::daylight())
+            self.zone_variant = Some(icu_timezone::ZoneVariant::Daylight)
         }
 
         /// Returns whether the `zone_variant` field is standard time.
@@ -258,7 +264,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn is_standard_time(&self) -> Option<bool> {
-            Some(self.zone_variant? == icu_timezone::ZoneVariant::standard())
+            Some(self.zone_variant? == icu_timezone::ZoneVariant::Standard)
         }
 
         /// Returns whether the `zone_variant` field is daylight time.
@@ -268,7 +274,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn is_daylight_time(&self) -> Option<bool> {
-            Some(self.zone_variant? == icu_timezone::ZoneVariant::daylight())
+            Some(self.zone_variant? == icu_timezone::ZoneVariant::Daylight)
         }
 
         /// Sets the `local_time` field.

@@ -310,9 +310,9 @@ impl<'a> Intermediate<'a> {
         {
             Some(ZoneOffsets { standard, daylight }) => {
                 if offset == standard {
-                    ZoneVariant::standard()
+                    ZoneVariant::Standard
                 } else if Some(offset) == daylight {
-                    ZoneVariant::daylight()
+                    ZoneVariant::Daylight
                 } else {
                     return Err(ParseError::InvalidOffsetError);
                 }
@@ -320,7 +320,7 @@ impl<'a> Intermediate<'a> {
             None => {
                 // time_zone_id not found; Etc/Unknown?
                 debug_assert_eq!(time_zone_id.0.as_str(), "unk");
-                ZoneVariant::standard()
+                ZoneVariant::Standard
             }
         };
         Ok(time_zone_id
@@ -431,7 +431,7 @@ impl IxdtfParser {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id(), TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant(), ZoneVariant::daylight());
+    /// assert_eq!(zoneddatetime.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = zoneddatetime.zone.local_time();
     /// ```
     ///
@@ -574,7 +574,7 @@ impl IxdtfParser {
     /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
     /// assert_eq!(zoneddatetime.zone.time_zone_id(), TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(zoneddatetime.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(zoneddatetime.zone.zone_variant(), ZoneVariant::daylight());
+    /// assert_eq!(zoneddatetime.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = zoneddatetime.zone.local_time();
     /// ```
     ///
@@ -631,7 +631,7 @@ impl IxdtfParser {
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id(), TimeZoneBcp47Id(tinystr!(8, "uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), ZoneVariant::daylight());
+    /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = consistent_tz_from_both.zone.local_time();
     ///
     /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
