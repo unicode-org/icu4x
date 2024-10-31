@@ -213,7 +213,6 @@ impl<'a> Intermediate<'a> {
                     }),
                 ..
             } => (Some(*offset), true, None),
-            // Z[-0800]
             // Z[America/Los_Angeles]
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Z),
