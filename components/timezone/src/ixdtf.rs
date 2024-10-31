@@ -286,6 +286,9 @@ impl<'a> Intermediate<'a> {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let Some(iana_identifier) = self.iana_identifier else {
+            if self.is_z {
+                return Err(ParseError::RequiresCalculation);
+            }
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
