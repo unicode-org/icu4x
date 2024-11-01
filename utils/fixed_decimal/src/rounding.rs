@@ -57,25 +57,22 @@ impl IncrementLike for NoIncrement {
 /// |  -1.8 |   "  |    "   |   "   |   "   |    -2    |      "     |     "     |     -2    |     "    |
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub enum RoundingMode {
-    /// Round up, or towards positive infinity.
-    Ceil,
-    /// Round away from zero, or towards infinity.
+pub enum UnsignedRoundingMode {
     Expand,
-    /// Round down, or towards negative infinity.
-    Floor,
-    /// Round towards zero, or away from infinity.
     Trunc,
-    /// Round to the nearest integer, resolving ties by rounding up.
-    HalfCeil,
-    /// Round to the nearest integer, resolving ties by rounding away from zero.
     HalfExpand,
-    /// Round to the nearest integer, resolving ties by rounding down.
-    HalfFloor,
-    /// Round to the nearest integer, resolving ties by rounding towards zero.
     HalfTrunc,
-    /// Round to the nearest integer, resolving ties by rounding towards the nearest even integer.
     HalfEven,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[non_exhaustive]
+pub enum SignedRoundingMode {
+    Unsigned(UnsignedRoundingMode),
+    Ceil,
+    Floor,
+    HalfCeil,
+    HalfFloor,
 }
 
 /// Increment used in a rounding operation.
