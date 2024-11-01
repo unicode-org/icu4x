@@ -10,7 +10,9 @@ use crate::{
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
+    raw::neo::RawNeoOptions,
     scaffold::*,
+    dynamic::*,
 };
 use icu_calendar::{
     types::{
@@ -34,6 +36,15 @@ macro_rules! yes_to {
     };
 }
 
+macro_rules! ternary {
+    ($present:expr, $missing:expr, yes) => {
+        $present
+    };
+    ($present:expr, $missing:expr,) => {
+        $missing
+    };
+}
+
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
     ($type:ty, $length:ident) => {
@@ -51,7 +62,7 @@ macro_rules! impl_marker_with_options {
         $(time_precision: $timeprecision_yes:ident,)?
     ) => {
         $(#[$attr])*
-        #[derive(Debug)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq)]
         #[non_exhaustive]
         pub struct $type {
             $(
@@ -106,6 +117,14 @@ macro_rules! impl_marker_with_options {
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
             pub const fn short() -> Self {
                 Self::with_length(NeoSkeletonLength::Short)
+            }
+            pub(crate) fn to_raw_options(self) -> RawNeoOptions {
+                RawNeoOptions {
+                    length: self.length,
+                    alignment: ternary!(self.alignment, None, $($alignment_yes)?),
+                    year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
+                    fractional_second_digits: ternary!(self.fractional_second_digits, None, $($fractionalsecondigits_yes)?),
+                }
             }
         }
         impl_get_field!($type, never);
@@ -338,6 +357,12 @@ macro_rules! impl_date_marker {
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
         }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::Date(DateFieldSet::$type(*self))
+            }
+        }
     };
 }
 
@@ -380,6 +405,12 @@ macro_rules! impl_calendar_period_marker {
         );
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::CalendarPeriod($components);
+        }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::$type(*self))
+            }
         }
     };
 }
@@ -507,6 +538,12 @@ macro_rules! impl_time_marker {
         }
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
+        }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::Time(TimeFieldSet::$type(*self))
+            }
         }
     };
 }

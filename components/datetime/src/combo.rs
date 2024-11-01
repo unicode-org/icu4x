@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
+use crate::{dynamic::*, format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 use icu_provider::marker::NeverMarker;
 
 /// Struct for combining date, time, and zone fields.
@@ -151,6 +151,15 @@ where
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
 }
 
+impl<D> GetField<CompositeFieldSet> for Combo<D, NeoNeverMarker, NeoNeverMarker>
+where
+    D: HasConstDateComponents,
+{
+    fn get_field(&self) -> CompositeFieldSet {
+        todo!()
+    }
+}
+
 impl<D> DateTimeMarkers for Combo<D, NeoNeverMarker, NeoNeverMarker>
 where
     D: DateTimeMarkers,
@@ -187,6 +196,15 @@ where
     T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
+}
+
+impl<T> GetField<CompositeFieldSet> for Combo<NeoNeverMarker, T, NeoNeverMarker>
+where
+    T: HasConstTimeComponents,
+{
+    fn get_field(&self) -> CompositeFieldSet {
+        todo!()
+    }
 }
 
 impl<T> DateTimeMarkers for Combo<NeoNeverMarker, T, NeoNeverMarker>
@@ -227,6 +245,15 @@ where
     const COMPONENTS: NeoComponents = NeoComponents::Zone(Z::COMPONENT);
 }
 
+impl<Z> GetField<CompositeFieldSet> for Combo<NeoNeverMarker, NeoNeverMarker, Z>
+where
+    Z: HasConstZoneComponent,
+{
+    fn get_field(&self) -> CompositeFieldSet {
+        todo!()
+    }
+}
+
 impl<Z> DateTimeMarkers for Combo<NeoNeverMarker, NeoNeverMarker, Z>
 where
     Z: DateTimeMarkers,
@@ -265,6 +292,16 @@ where
     T: HasConstTimeComponents,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
+}
+
+impl<D, T> GetField<CompositeFieldSet> for Combo<D, T, NeoNeverMarker>
+where
+    D: HasConstDateComponents,
+    T: HasConstTimeComponents,
+{
+    fn get_field(&self) -> CompositeFieldSet {
+        todo!()
+    }
 }
 
 impl<D, T> DateTimeMarkers for Combo<D, T, NeoNeverMarker>

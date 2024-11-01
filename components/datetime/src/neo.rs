@@ -4,6 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::dynamic::CompositeFieldSet;
 use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
@@ -35,7 +36,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $any_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            skeleton: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
@@ -44,8 +45,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.get_field(),
+                field_set.get_field(),
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -53,7 +53,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            skeleton: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -62,8 +62,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.get_field(),
+                field_set.get_field(),
             )
         }
     };
@@ -72,7 +71,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $any_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            options: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
@@ -81,8 +80,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&options, locale),
-                $fset::COMPONENTS,
+                field_set.get_field(),
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -90,7 +88,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            options: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -99,8 +97,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&options, locale),
-                $fset::COMPONENTS,
+                field_set.get_field(),
             )
         }
     };
@@ -152,12 +149,13 @@ pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMa
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents>
+impl<C: CldrCalendar, FSet: DateTimeMarkers>
     FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
@@ -203,8 +201,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field(),
         )
     }
 
@@ -232,18 +229,19 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field(),
         )
     }
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents>
+/*
+impl<C: CldrCalendar, FSet: DateTimeMarkers>
     FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
@@ -404,6 +402,7 @@ where
         )
     }
 }
+*/
 
 impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet>
 where
@@ -415,16 +414,15 @@ where
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        options: RawNeoOptions,
-        components: NeoComponents,
+        field_set: CompositeFieldSet,
     ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut options = options;
-        options.hour_cycle = locale
+        let mut prefs = RawPreferences::default();
+        prefs.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
@@ -435,8 +433,8 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
             locale,
-            components,
-            options,
+            field_set,
+            prefs,
         )
         .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
@@ -546,11 +544,12 @@ pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     calendar: AnyCalendar,
 }
 
-impl<FSet: DateTimeMarkers + HasConstComponents> DateTimeFormatter<FSet>
+impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
 where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
@@ -607,8 +606,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field()
         )
     }
 
@@ -634,12 +632,12 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field(),
         )
     }
 }
 
+/*
 impl<FSet: DateTimeMarkers + IsRuntimeComponents> DateTimeFormatter<FSet>
 where
     FSet::D: DateDataMarkers,
@@ -799,6 +797,7 @@ where
         )
     }
 }
+*/
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
 where
@@ -810,16 +809,15 @@ where
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        options: RawNeoOptions,
-        components: NeoComponents,
+        field_set: CompositeFieldSet,
     ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut options = options;
-        options.hour_cycle = locale
+        let mut prefs = RawPreferences::default();
+        prefs.hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
             .and_then(HourCycle::from_locale_value);
@@ -832,8 +830,8 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
             locale,
-            components,
-            options,
+            field_set,
+            prefs,
         )
         .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();

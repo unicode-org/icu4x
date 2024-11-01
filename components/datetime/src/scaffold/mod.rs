@@ -8,6 +8,7 @@
 //! these items in userland code.
 
 mod calendar;
+mod dynamic_impls;
 mod fieldset_traits;
 mod get_field;
 
