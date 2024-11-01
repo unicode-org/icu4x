@@ -385,11 +385,10 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
+        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
-                .overrides
-                .get(&time_zone_id)
-                .or_else(|| names.defaults.get(&mz))
+                .defaults
+                .get(&metazone(time_zone_id, local_time, metazone_period)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -433,12 +432,16 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-            names
-                .overrides
-                .get(&(time_zone_id, zone_variant))
-                .or_else(|| names.defaults.get(&(mz, zone_variant)))
-        }) else {
+        let Some(name) = names
+            .overrides
+            .get(&(time_zone_id, zone_variant))
+            .or_else(|| {
+                names.defaults.get(&(
+                    metazone(time_zone_id, local_time, metazone_period)?,
+                    zone_variant,
+                ))
+            })
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -649,14 +652,11 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(non_location) =
-            metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-                non_locations
-                    .overrides
-                    .get(&time_zone_id)
-                    .or_else(|| non_locations.defaults.get(&mz))
-            })
-        else {
+        let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
+            non_locations
+                .defaults
+                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
