@@ -30,7 +30,7 @@ export class TimeZoneInfo {
 
     get offsetSeconds(): number | null;
 
-    get isOffsetPositive(): boolean | null;
+    get isOffsetNonNegative(): boolean | null;
 
     get isOffsetZero(): boolean | null;
 

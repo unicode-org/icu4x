@@ -14,6 +14,7 @@ use core::fmt;
 use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::{Date, Iso, Time};
 use icu_decimal::FixedDecimalFormatter;
+use icu_timezone::provider::EPOCH;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
@@ -230,11 +231,10 @@ fn metazone(
 ) -> Option<MetazoneId> {
     let cursor = metazone_period.0.get0(&time_zone_id)?;
     let mut metazone_id = None;
-    let minutes_since_local_unix_epoch =
-        icu_calendar::DateTime { date, time }.minutes_since_local_unix_epoch();
+    let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
+        + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
     for (minutes, id) in cursor.iter1() {
-        if minutes_since_local_unix_epoch >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
-        {
+        if minutes_since_epoch_walltime >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes) {
             metazone_id = id.get()
         } else {
             break;
@@ -385,11 +385,10 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
+        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
-                .overrides
-                .get(&time_zone_id)
-                .or_else(|| names.defaults.get(&mz))
+                .defaults
+                .get(&metazone(time_zone_id, local_time, metazone_period)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -433,12 +432,16 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-            names
-                .overrides
-                .get_2d(&time_zone_id, &zone_variant)
-                .or_else(|| names.defaults.get_2d(&mz, &zone_variant))
-        }) else {
+        let Some(name) = names
+            .overrides
+            .get(&(time_zone_id, zone_variant))
+            .or_else(|| {
+                names.defaults.get(&(
+                    metazone(time_zone_id, local_time, metazone_period)?,
+                    zone_variant,
+                ))
+            })
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -651,14 +654,11 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(location) = locations.locations.get(&time_zone_id) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(non_location) =
-            metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-                non_locations
-                    .overrides
-                    .get(&time_zone_id)
-                    .or_else(|| non_locations.defaults.get(&mz))
-            })
-        else {
+        let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
+            non_locations
+                .defaults
+                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -727,7 +727,7 @@ impl Iso8601Format {
 
         let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
 
-        sink.write_char(if offset.is_positive() { '+' } else { '-' })?;
+        sink.write_char(if offset.is_non_negative() { '+' } else { '-' })?;
 
         format_time_segment(sink, offset.hours_part().unsigned_abs())?;
 

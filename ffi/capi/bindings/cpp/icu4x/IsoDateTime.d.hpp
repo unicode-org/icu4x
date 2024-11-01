@@ -45,17 +45,11 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError> from_string(std::string_view v);
 
-  inline static std::unique_ptr<icu4x::IsoDateTime> local_unix_epoch();
-
-  inline static std::unique_ptr<icu4x::IsoDateTime> from_minutes_since_local_unix_epoch(int32_t minutes);
-
   inline std::unique_ptr<icu4x::IsoDate> date() const;
 
   inline std::unique_ptr<icu4x::Time> time() const;
 
   inline std::unique_ptr<icu4x::DateTime> to_any() const;
-
-  inline int32_t minutes_since_local_unix_epoch() const;
 
   inline std::unique_ptr<icu4x::DateTime> to_calendar(const icu4x::Calendar& calendar) const;
 

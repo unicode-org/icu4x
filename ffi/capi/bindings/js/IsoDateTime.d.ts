@@ -26,17 +26,11 @@ export class IsoDateTime {
 
     static fromString(v: string): IsoDateTime;
 
-    static localUnixEpoch(): IsoDateTime;
-
-    static fromMinutesSinceLocalUnixEpoch(minutes: number): IsoDateTime;
-
     get date(): IsoDate;
 
     get time(): Time;
 
     toAny(): DateTime;
-
-    get minutesSinceLocalUnixEpoch(): number;
 
     toCalendar(calendar: Calendar): DateTime;
 

@@ -107,6 +107,8 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `offset` field is empty.
   ///
+  /// See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.offset) for more information.
+  ///
   /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.to_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
@@ -122,9 +124,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `offset` field is empty.
   ///
-  /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.is_positive) for more information.
-  bool? get isOffsetPositive {
-    final result = _icu4x_TimeZoneInfo_is_offset_positive_mv1(_ffi);
+  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.is_non_negative) for more information.
+  bool? get isOffsetNonNegative {
+    final result = _icu4x_TimeZoneInfo_is_offset_non_negative_mv1(_ffi);
     if (!result.isOk) {
       return null;
     }
@@ -187,7 +189,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Errors if the string is not a valid BCP-47 time zone ID.
   ///
-  /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.time_zone_id) for more information.
+  /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   void setTimeZoneId(String id) {
@@ -206,7 +208,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `time_zone_id` field is empty.
   ///
-  /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.time_zone_id) for more information.
+  /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   String get timeZoneId {
@@ -219,8 +221,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the string is not a valid zone variant.
   ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant) for more information.
-  ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   bool trySetZoneVariant(String id) {
     final temp = _FinalizedArena();
@@ -229,8 +229,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// Clears the `zone_variant` field.
-  ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   void clearZoneVariant() {
@@ -241,7 +239,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `zone_variant` field is empty.
   ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant) for more information.
+  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   String? get zoneVariant {
@@ -257,8 +255,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// not correspond to a display name with "Standard" in its name.
   ///
   /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant)
   void setStandardTime() {
     _icu4x_TimeZoneInfo_set_standard_time_mv1(_ffi);
   }
@@ -267,8 +263,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// not correspond to a display name with "Daylight" in its name.
   ///
   /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant)
   void setDaylightTime() {
     _icu4x_TimeZoneInfo_set_daylight_time_mv1(_ffi);
   }
@@ -279,7 +273,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant)
   bool? get isStandardTime {
     final result = _icu4x_TimeZoneInfo_is_standard_time_mv1(_ffi);
     if (!result.isOk) {
@@ -294,7 +288,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.zone_variant)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant)
   bool? get isDaylightTime {
     final result = _icu4x_TimeZoneInfo_is_daylight_time_mv1(_ffi);
     if (!result.isOk) {
@@ -304,22 +298,18 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// Sets the `local_time` field.
-  ///
-  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time) for more information.
   void setLocalTime(IsoDateTime datetime) {
     _icu4x_TimeZoneInfo_set_local_time_mv1(_ffi, datetime._ffi);
   }
 
   /// Clears the `local_time` field.
-  ///
-  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time) for more information.
   void clearLocalTime() {
     _icu4x_TimeZoneInfo_clear_local_time_mv1(_ffi);
   }
 
   /// Returns a copy of the `local_time` field.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#structfield.local_time)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.local_time)
   IsoDateTime? getLocalTime() {
     final result = _icu4x_TimeZoneInfo_get_local_time_mv1(_ffi);
     return result.address == 0 ? null : IsoDateTime._fromFfi(result, []);
@@ -377,9 +367,9 @@ external void _icu4x_TimeZoneInfo_clear_offset_mv1(ffi.Pointer<ffi.Opaque> self)
 external _ResultInt32Void _icu4x_TimeZoneInfo_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_positive_mv1')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_non_negative_mv1')
 // ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_positive_mv1(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_non_negative_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_zero_mv1')

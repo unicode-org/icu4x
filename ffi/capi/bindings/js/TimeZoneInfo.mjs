@@ -157,10 +157,10 @@ export class TimeZoneInfo {
         }
     }
 
-    get isOffsetPositive() {
+    get isOffsetNonNegative() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
         
-        const result = wasm.icu4x_TimeZoneInfo_is_offset_positive_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_is_offset_non_negative_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

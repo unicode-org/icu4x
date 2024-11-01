@@ -87,16 +87,6 @@ export class IsoDate {
         }
     }
 
-    static unixEpoch() {
-        const result = wasm.icu4x_IsoDate_unix_epoch_mv1();
-    
-        try {
-            return new IsoDate(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
     toCalendar(calendar) {
         const result = wasm.icu4x_IsoDate_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     

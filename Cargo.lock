@@ -1696,6 +1696,7 @@ dependencies = [
 name = "icu_timezone"
 version = "1.5.0"
 dependencies = [
+ "calendrical_calculations",
  "databake",
  "displaydoc",
  "icu",

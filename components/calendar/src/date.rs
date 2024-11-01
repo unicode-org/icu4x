@@ -320,9 +320,27 @@ impl<A: AsCalendar> Date<A> {
         &self.calendar
     }
 
-    #[cfg(test)]
-    pub(crate) fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
+    #[doc(hidden)]
+    pub fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
         Iso::fixed_from_iso(self.to_iso().inner)
+    }
+}
+
+impl Date<Iso> {
+    /// Calculates the number of days between two dates.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateDurationUnit;
+    ///
+    /// let a = Date::try_new_iso(1994, 12, 10).unwrap();
+    /// let b = Date::try_new_iso(2024, 10, 30).unwrap();
+    ///
+    /// assert_eq!(b.days_since(a), 10_917);
+    /// ```
+    #[doc(hidden)] // unstable
+    pub fn days_since(&self, other: Date<Iso>) -> i32 {
+        (Iso::fixed_from_iso(*self.inner()) - Iso::fixed_from_iso(other.inner)) as i32
     }
 }
 

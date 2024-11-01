@@ -1,12 +1,20 @@
 {
-  "defaults": {
-    "gulf": {
-      "st": "GST"
-    }
-  },
-  "overrides": {
-    "utc": {
-      "st": "UTC"
-    }
-  }
+  "defaults": [
+    [
+      [
+        "gulf",
+        "st"
+      ],
+      "GST"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "st"
+      ],
+      "UTC"
+    ]
+  ]
 }

@@ -51,14 +51,6 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`IsoDate`] representing January 1, 1970.
-  ///
-  /// See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
-  factory IsoDate.unixEpoch() {
-    final result = _icu4x_IsoDate_unix_epoch_mv1();
-    return IsoDate._fromFfi(result, []);
-  }
-
   /// Convert this date to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
@@ -183,11 +175,6 @@ external _ResultOpaqueInt32 _icu4x_IsoDate_create_mv1(int year, int month, int d
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_from_string_mv1(_SliceUtf8 v);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IsoDate_unix_epoch_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_unix_epoch_mv1();
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_calendar_mv1')

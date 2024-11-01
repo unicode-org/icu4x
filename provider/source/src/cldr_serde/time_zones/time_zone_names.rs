@@ -23,6 +23,16 @@ pub(crate) struct Metazone {
     pub(crate) short: Option<ZoneFormat>,
 }
 
+impl Metazone {
+    pub(crate) fn long_short(&self, long: bool) -> Option<&ZoneFormat> {
+        if long {
+            self.long.as_ref()
+        } else {
+            self.short.as_ref()
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct Metazones(pub(crate) BTreeMap<String, Metazone>);
 
@@ -43,6 +53,16 @@ pub(crate) struct Location {
     pub(crate) exemplar_city: Option<String>,
     #[serde(rename = "exemplarCity-alt-secondary")]
     pub(crate) exemplar_city_alt_secondary: Option<String>,
+}
+
+impl Location {
+    pub(crate) fn long_short(&self, long: bool) -> Option<&ZoneFormat> {
+        if long {
+            self.long.as_ref()
+        } else {
+            self.short.as_ref()
+        }
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]

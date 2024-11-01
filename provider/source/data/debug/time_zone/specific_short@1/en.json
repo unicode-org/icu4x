@@ -1,44 +1,132 @@
 {
-  "defaults": {
-    "alas": {
-      "dt": "AKDT",
-      "st": "AKST"
-    },
-    "amce": {
-      "dt": "CDT",
-      "st": "CST"
-    },
-    "amea": {
-      "dt": "EDT",
-      "st": "EST"
-    },
-    "ammo": {
-      "dt": "MDT",
-      "st": "MST"
-    },
-    "ampa": {
-      "dt": "PDT",
-      "st": "PST"
-    },
-    "atla": {
-      "dt": "ADT",
-      "st": "AST"
-    },
-    "haal": {
-      "dt": "HADT",
-      "st": "HAST"
-    },
-    "mgmt": {
-      "st": "GMT"
-    }
-  },
-  "overrides": {
-    "ushnl": {
-      "dt": "HDT",
-      "st": "HST"
-    },
-    "utc": {
-      "st": "UTC"
-    }
-  }
+  "defaults": [
+    [
+      [
+        "alas",
+        "dt"
+      ],
+      "AKDT"
+    ],
+    [
+      [
+        "alas",
+        "st"
+      ],
+      "AKST"
+    ],
+    [
+      [
+        "amce",
+        "dt"
+      ],
+      "CDT"
+    ],
+    [
+      [
+        "amce",
+        "st"
+      ],
+      "CST"
+    ],
+    [
+      [
+        "amea",
+        "dt"
+      ],
+      "EDT"
+    ],
+    [
+      [
+        "amea",
+        "st"
+      ],
+      "EST"
+    ],
+    [
+      [
+        "ammo",
+        "dt"
+      ],
+      "MDT"
+    ],
+    [
+      [
+        "ammo",
+        "st"
+      ],
+      "MST"
+    ],
+    [
+      [
+        "ampa",
+        "dt"
+      ],
+      "PDT"
+    ],
+    [
+      [
+        "ampa",
+        "st"
+      ],
+      "PST"
+    ],
+    [
+      [
+        "atla",
+        "dt"
+      ],
+      "ADT"
+    ],
+    [
+      [
+        "atla",
+        "st"
+      ],
+      "AST"
+    ],
+    [
+      [
+        "haal",
+        "dt"
+      ],
+      "HADT"
+    ],
+    [
+      [
+        "haal",
+        "st"
+      ],
+      "HAST"
+    ],
+    [
+      [
+        "mgmt",
+        "st"
+      ],
+      "GMT"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "ushnl",
+        "dt"
+      ],
+      "HDT"
+    ],
+    [
+      [
+        "ushnl",
+        "st"
+      ],
+      "HST"
+    ],
+    [
+      [
+        "utc",
+        "st"
+      ],
+      "UTC"
+    ]
+  ]
 }

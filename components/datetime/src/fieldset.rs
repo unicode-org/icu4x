@@ -565,12 +565,10 @@ macro_rules! impl_zone_marker {
             /// .unwrap();
             ///
             /// // Time zone info for America/Chicago in the summer
-            /// let zone = TimeZoneInfo::from_id_and_offset(
-            ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
-            ///     UtcOffset::from_eighths_of_hour(-5 * 8),
-            /// )
-            /// .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            /// .with_zone_variant(ZoneVariant::daylight());
+            /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
+            ///     .with_offset("-05".parse().ok())
+            ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
+            ///     .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -597,12 +595,10 @@ macro_rules! impl_zone_marker {
             /// .unwrap();
             ///
             /// // Time zone info for America/Chicago in the summer
-            /// let zone = TimeZoneInfo::from_id_and_offset(
-            ///     TimeZoneBcp47Id(tinystr!(8, "uschi")),
-            ///     UtcOffset::from_eighths_of_hour(-5 * 8),
-            /// )
-            /// .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            /// .with_zone_variant(ZoneVariant::daylight());
+            /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
+            ///     .with_offset("-05".parse().ok())
+            ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
+            ///     .with_zone_variant(ZoneVariant::daylight());
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -996,12 +992,10 @@ impl_zone_marker!(
     /// .unwrap();
     ///
     /// // Time zone info for America/Sao_Paulo in the winter
-    /// let zone = TimeZoneInfo::from_id_and_offset(
-    ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
-    ///     UtcOffset::from_eighths_of_hour(-3 * 8),
-    /// )
-    /// .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    /// .with_zone_variant(ZoneVariant::standard());
+    /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
+    ///     .with_offset("-03".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
+    ///     .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -1013,7 +1007,7 @@ impl_zone_marker!(
     /// only a full time zone info can be formatted with this style.
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Z;
@@ -1023,8 +1017,7 @@ impl_zone_marker!(
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -1034,7 +1027,6 @@ impl_zone_marker!(
     /// .unwrap();
     ///
     /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
-    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
     /// formatter.format(&time_zone_at_time);
     /// ```
     Z,
@@ -1108,7 +1100,7 @@ impl_zone_marker!(
     /// only a full time zone info can be formatted with this style.
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Zs;
@@ -1118,8 +1110,7 @@ impl_zone_marker!(
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -1157,9 +1148,8 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    ///
-    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let utc_offset = "-06".parse().unwrap();
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset(Some(utc_offset));
     ///
     /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
     /// let time = Time::midnight();
@@ -1221,12 +1211,10 @@ impl_zone_marker!(
     /// .unwrap();
     ///
     /// // Time zone info for America/Sao_Paulo in the winter
-    /// let zone = TimeZoneInfo::from_id_and_offset(
-    ///     TimeZoneBcp47Id(tinystr!(8, "brsao")),
-    ///     UtcOffset::from_eighths_of_hour(-3 * 8),
-    /// )
-    /// .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    /// .with_zone_variant(ZoneVariant::standard());
+    /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
+    ///     .with_offset("-03".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
+    ///     .with_zone_variant(ZoneVariant::standard());
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -1237,7 +1225,7 @@ impl_zone_marker!(
     /// Since non-location names might change over time,
     /// this time zone style requires a reference time.
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::V;
@@ -1246,8 +1234,7 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
@@ -1329,7 +1316,7 @@ impl_zone_marker!(
     /// Since non-location names might change over time,
     /// this time zone style requires a reference time.
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Vs;
@@ -1338,8 +1325,7 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
-    /// let time_zone_basic = utc_offset.with_id(TimeZoneBcp47Id(tinystr!(8, "uschi")));
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());1
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
@@ -1368,7 +1354,7 @@ impl_zone_marker!(
     /// A time zone ID is required to format with this style.
     /// For example, a raw [`UtcOffset`] cannot be used here.
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0277
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::L;
@@ -1377,7 +1363,7 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let utc_offset = UtcOffset::from_eighths_of_hour(-6 * 8);
+    /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
