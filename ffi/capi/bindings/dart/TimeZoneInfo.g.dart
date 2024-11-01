@@ -221,7 +221,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the string is not a valid zone variant.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
   bool trySetZoneVariant(String id) {
     final temp = _FinalizedArena();
     final result = _icu4x_TimeZoneInfo_try_set_zone_variant_mv1(_ffi, id._utf8AllocIn(temp.arena));
@@ -230,7 +230,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
 
   /// Clears the `zone_variant` field.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
   void clearZoneVariant() {
     _icu4x_TimeZoneInfo_clear_zone_variant_mv1(_ffi);
   }
@@ -241,7 +241,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
   String? get zoneVariant {
     final write = _Write();
     final result = _icu4x_TimeZoneInfo_zone_variant_mv1(_ffi, write._ffi);

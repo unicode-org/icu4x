@@ -374,7 +374,7 @@ icu::timezone::ZoneOffsetCalculator#Struct
 icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
 icu::timezone::ZoneOffsets#Struct
-icu::timezone::ZoneVariant::into_option#FnInStruct
+icu::timezone::ZoneVariant::into_option#FnInEnum
 icu::timezone::models::AtTime#Enum
 icu::timezone::models::Base#Enum
 icu::timezone::models::Full#Enum

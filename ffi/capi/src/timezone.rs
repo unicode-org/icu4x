@@ -211,7 +211,7 @@ pub mod ffi {
         /// Sets the `zone_variant` field from a string.
         ///
         /// Returns null if the string is not a valid zone variant.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Enum, compact)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
             self.zone_variant = match id {
@@ -223,7 +223,7 @@ pub mod ffi {
         }
 
         /// Clears the `zone_variant` field.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Enum, compact)]
         pub fn clear_zone_variant(&mut self) {
             self.zone_variant.take();
         }
@@ -232,7 +232,7 @@ pub mod ffi {
         ///
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::zone_variant, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Enum, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(match self.zone_variant {
