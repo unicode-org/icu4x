@@ -172,17 +172,13 @@ fn from_string_benches(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn rounding_benches(c: &mut Criterion) {
-    use fixed_decimal::{FloatPrecision, RoundingMode};
-    const ROUNDING_MODES: [(&str, RoundingMode); 9] = [
-        ("ceil", RoundingMode::Ceil),
-        ("floor", RoundingMode::Floor),
-        ("expand", RoundingMode::Expand),
-        ("trunc", RoundingMode::Trunc),
-        ("half_ceil", RoundingMode::HalfCeil),
-        ("half_floor", RoundingMode::HalfFloor),
-        ("half_expand", RoundingMode::HalfExpand),
-        ("half_trunc", RoundingMode::HalfTrunc),
-        ("half_even", RoundingMode::HalfEven),
+    use fixed_decimal::{FloatPrecision, UnsignedRoundingMode};
+    const ROUNDING_MODES: [(&str, UnsignedRoundingMode); 5] = [
+        ("expand", UnsignedRoundingMode::Expand),
+        ("trunc", UnsignedRoundingMode::Trunc),
+        ("half_expand", UnsignedRoundingMode::HalfExpand),
+        ("half_trunc", UnsignedRoundingMode::HalfTrunc),
+        ("half_even", UnsignedRoundingMode::HalfEven),
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)

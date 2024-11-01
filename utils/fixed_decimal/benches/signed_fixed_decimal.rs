@@ -108,7 +108,11 @@ fn to_string_benches(c: &mut Criterion) {
     use writeable::Writeable;
 
     let objects = [
-        SignedFixedDecimal::from(2250).multiplied_pow10(-2),
+        {
+            let mut fd = SignedFixedDecimal::from(2250);
+            fd.multiply_pow10(-2);
+            fd
+        },
         SignedFixedDecimal::from(908070605040302010u128),
     ];
 
@@ -172,17 +176,32 @@ fn from_string_benches(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn rounding_benches(c: &mut Criterion) {
-    use fixed_decimal::{FloatPrecision, RoundingMode};
-    const ROUNDING_MODES: [(&str, RoundingMode); 9] = [
-        ("ceil", RoundingMode::Ceil),
-        ("floor", RoundingMode::Floor),
-        ("expand", RoundingMode::Expand),
-        ("trunc", RoundingMode::Trunc),
-        ("half_ceil", RoundingMode::HalfCeil),
-        ("half_floor", RoundingMode::HalfFloor),
-        ("half_expand", RoundingMode::HalfExpand),
-        ("half_trunc", RoundingMode::HalfTrunc),
-        ("half_even", RoundingMode::HalfEven),
+    use fixed_decimal::{FloatPrecision, SignedRoundingMode, UnsignedRoundingMode};
+    const ROUNDING_MODES: [(&str, SignedRoundingMode); 9] = [
+        ("ceil", SignedRoundingMode::Ceil),
+        ("floor", SignedRoundingMode::Floor),
+        (
+            "expand",
+            SignedRoundingMode::Unsigned(UnsignedRoundingMode::Expand),
+        ),
+        (
+            "trunc",
+            SignedRoundingMode::Unsigned(UnsignedRoundingMode::Trunc),
+        ),
+        ("half_ceil", SignedRoundingMode::HalfCeil),
+        ("half_floor", SignedRoundingMode::HalfFloor),
+        (
+            "half_expand",
+            SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
+        ),
+        (
+            "half_trunc",
+            SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc),
+        ),
+        (
+            "half_even",
+            SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven),
+        ),
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
