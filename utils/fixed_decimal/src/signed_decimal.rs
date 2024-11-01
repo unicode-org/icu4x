@@ -172,48 +172,6 @@ impl SignedFixedDecimal {
         self.apply_sign_display(sign_display);
         self
     }
-
-    /// Shift the digits of this number by a power of 10.
-    ///
-    /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
-    /// before the decimal separator) visible.
-    ///
-    /// NOTE: if the operation causes overflow, the number will be set to zero.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
-    ///
-    /// let mut dec = SignedFixedDecimal::from(42);
-    /// assert_eq!("42", dec.to_string());
-    ///
-    /// dec.multiply_pow10(3);
-    /// assert_eq!("42000", dec.to_string());
-    /// ```
-    pub fn multiply_pow10(&mut self, delta: i16) {
-        self.absolute.multiply_pow10(delta);
-    }
-
-    /// Returns this number with its digits shifted by a power of 10.
-    ///
-    /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
-    /// before the decimal separator) visible.
-    ///
-    /// NOTE: if the operation causes overflow, the returned number will be zero.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
-    ///
-    /// let dec = SignedFixedDecimal::from(42).multiplied_pow10(3);
-    /// assert_eq!("42000", dec.to_string());
-    /// ```
-    pub fn multiplied_pow10(mut self, delta: i16) -> Self {
-        self.multiply_pow10(delta);
-        self
-    }
 }
 
 impl FromStr for SignedFixedDecimal {
@@ -1801,7 +1759,8 @@ fn test_rounding() {
     assert_eq!("-0.0", dec.to_string());
 
     // Test Truncate Right
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.trunc(-5);
@@ -1835,7 +1794,8 @@ fn test_rounding() {
     assert_eq!("0.0", dec.to_string());
 
     // Test trunced
-    let dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     assert_eq!("4235.97000", dec.clone().trunced(-5).to_string());
@@ -2099,7 +2059,8 @@ fn test_concatenate() {
 #[test]
 fn test_rounding_increment() {
     // Test Truncate Right
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::Trunc, RoundingIncrement::MultiplesOf2);
@@ -2145,74 +2106,95 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::Trunc, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(6u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(5u32).multiplied_pow10(i16::MIN),
-        dec
-    );
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(5u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+
+    assert_eq!(expected_min, dec);
+
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(50u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(50u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(6u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(5u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(5u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Trunc,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(0u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected = {
+        let mut expected = SignedFixedDecimal::from(0u32);
+        expected.multiply_pow10(i16::MAX);
+        expected
+    };
+    assert_eq!(expected, dec);
 
     // Test Expand
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::Expand, RoundingIncrement::MultiplesOf2);
@@ -2258,74 +2240,93 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::Expand, RoundingIncrement::MultiplesOf25);
     assert_eq!("25", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(8u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(8u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(0u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(0u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(0u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(0u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Half Truncate Right
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::HalfTrunc, RoundingIncrement::MultiplesOf2);
@@ -2383,74 +2384,93 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::HalfTrunc, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(6u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(6u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(5u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(5u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfTrunc,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(0u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(0u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Half Expand
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(
@@ -2536,52 +2556,65 @@ fn test_rounding_increment() {
     );
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfExpand,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(8u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfExpand,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfExpand,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfExpand,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(8u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Ceil
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::Ceil, RoundingIncrement::MultiplesOf2);
@@ -2627,52 +2660,65 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::Ceil, RoundingIncrement::MultiplesOf25);
     assert_eq!("25", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Ceil,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(8u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Ceil,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Ceil,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Ceil,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(8u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Half Ceil
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::HalfCeil, RoundingIncrement::MultiplesOf2);
@@ -2718,52 +2764,65 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::HalfCeil, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfCeil,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(8u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfCeil,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfCeil,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfCeil,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(8u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Floor
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::Floor, RoundingIncrement::MultiplesOf2);
@@ -2809,52 +2868,65 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::Floor, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Floor,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(6u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Floor,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(5u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(5u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::Floor,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(50u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(50u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Floor,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(6u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Half Floor
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::HalfFloor, RoundingIncrement::MultiplesOf2);
@@ -2912,52 +2984,65 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::HalfFloor, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfFloor,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(6u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfFloor,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfFloor,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfFloor,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(6u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(6u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test Half Even
-    let mut dec = SignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
+    let mut dec = SignedFixedDecimal::from(4235970u32);
+    dec.multiply_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.round_with_mode_and_increment(-2, RoundingMode::HalfEven, RoundingIncrement::MultiplesOf2);
@@ -3003,49 +3088,61 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(0, RoundingMode::HalfEven, RoundingIncrement::MultiplesOf25);
     assert_eq!("0", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfEven,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(8u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfEven,
         RoundingIncrement::MultiplesOf5,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(10u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(10u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(70u32).multiplied_pow10(i16::MIN);
+    let mut dec = SignedFixedDecimal::from(70u32);
+    dec.multiply_pow10(i16::MIN);
     dec.round_with_mode_and_increment(
         i16::MIN,
         RoundingMode::HalfEven,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(75u32).multiplied_pow10(i16::MIN),
-        dec
-    );
+    let expected_min = {
+        let mut expected_min = SignedFixedDecimal::from(75u32);
+        expected_min.multiply_pow10(i16::MIN);
+        expected_min
+    };
+    assert_eq!(expected_min, dec);
 
-    let mut dec = SignedFixedDecimal::from(7u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(7u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::HalfEven,
         RoundingIncrement::MultiplesOf2,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(8u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(8u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     // Test specific cases
     let mut dec = SignedFixedDecimal::from_str("1.108").unwrap();
@@ -3060,27 +3157,33 @@ fn test_rounding_increment() {
     dec.round_with_mode_and_increment(-2, RoundingMode::Expand, RoundingIncrement::MultiplesOf25);
     assert_eq!("1.25", dec.to_string());
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MAX - 1);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MAX - 1);
     dec.round_with_mode_and_increment(
         i16::MAX - 1,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(25u32).multiplied_pow10(i16::MAX - 1),
-        dec
-    );
+    let expected_max_minus_1 = {
+        let mut expected_max_minus_1 = SignedFixedDecimal::from(25u32);
+        expected_max_minus_1.multiply_pow10(i16::MAX - 1);
+        expected_max_minus_1
+    };
+    assert_eq!(expected_max_minus_1, dec);
 
-    let mut dec = SignedFixedDecimal::from(9u32).multiplied_pow10(i16::MAX);
+    let mut dec = SignedFixedDecimal::from(9u32);
+    dec.multiply_pow10(i16::MAX);
     dec.round_with_mode_and_increment(
         i16::MAX,
         RoundingMode::Expand,
         RoundingIncrement::MultiplesOf25,
     );
-    assert_eq!(
-        SignedFixedDecimal::from(0u32).multiplied_pow10(i16::MAX),
-        dec
-    );
+    let expected_max = {
+        let mut expected_max = SignedFixedDecimal::from(0u32);
+        expected_max.multiply_pow10(i16::MAX);
+        expected_max
+    };
+    assert_eq!(expected_max, dec);
 
     let mut dec = SignedFixedDecimal::from_str("0").unwrap();
     dec.round_with_mode_and_increment(0, RoundingMode::Expand, RoundingIncrement::MultiplesOf2);

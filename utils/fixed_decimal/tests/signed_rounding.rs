@@ -169,7 +169,8 @@ pub fn test_within_ranges() {
             let mut fd = SignedFixedDecimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "-2000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n - 1000000).multiplied_pow10(-5);
+            let mut fd = SignedFixedDecimal::from(n - 1000000);
+            fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
@@ -181,7 +182,8 @@ pub fn test_within_ranges() {
             let mut fd = SignedFixedDecimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "-1000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n - 1000000).multiplied_pow10(-5);
+            let mut fd = SignedFixedDecimal::from(n - 1000000);
+            fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
@@ -194,14 +196,23 @@ pub fn test_within_ranges() {
             fd.round_with_mode(3, rounding_mode);
             fd.set_sign(Sign::None); // get rid of -0
             assert_eq!(fd.write_to_string(), "000", "{rounding_mode_name}: {n}");
+
             let (mut fd, expected) = if n < 0 {
                 (
-                    SignedFixedDecimal::from(n - 1000000).multiplied_pow10(-5),
+                    {
+                        let mut fd = SignedFixedDecimal::from(n - 1000000);
+                        fd.multiply_pow10(-5);
+                        fd
+                    },
                     "-10.00",
                 )
             } else {
                 (
-                    SignedFixedDecimal::from(n + 1000000).multiplied_pow10(-5),
+                    {
+                        let mut fd = SignedFixedDecimal::from(n + 1000000);
+                        fd.multiply_pow10(-5);
+                        fd
+                    },
                     "10.00",
                 )
             };
@@ -216,7 +227,8 @@ pub fn test_within_ranges() {
             let mut fd = SignedFixedDecimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "1000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n + 1000000).multiplied_pow10(-5);
+            let mut fd = SignedFixedDecimal::from(n + 1000000);
+            fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
@@ -228,7 +240,8 @@ pub fn test_within_ranges() {
             let mut fd = SignedFixedDecimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "2000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n + 1000000).multiplied_pow10(-5);
+            let mut fd = SignedFixedDecimal::from(n + 1000000);
+            fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
