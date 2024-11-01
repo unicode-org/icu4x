@@ -58,6 +58,23 @@ ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as Date
 
 Runtime customizability of locale data can sometimes come at a performance or memory cost.
 
+## Locale data from multiple sources works seamlessly
+
+*What:* If data is available for a particular constructor and locale, the resulting behavior should not change based on where the data was sourced, with a narrow exception for data that primarily impacts performance characteristics.
+
+*Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs.
+
+Examples that violate this policy:
+
+- A datagen option to remove less-used time zones from a data payload that contains time zone display names for all time zones. Some data sources might make different decisions, resulting in different behavior for the end user depending on how the data loading pipeline was configured and which data was loaded first.\*
+
+Examples that are consistent with this policy:
+
+- A datagen option to tweak the bounds of pre-calculated Chinese year offsets exported into a payload, causing more or fewer years to fall back to expensive calculations at runtime. This impacts performance, but the resulting behavior is the same.
+- A datagen option to remove time zone names from a locale that equal the root time zone names, and a corresponding runtime code change to check both payloads. This does not normally impact behavior as observed by the user; hower, it could still impact behavior in edge cases involving different sources using different CLDR versions, so the ICU4X-WG should discuss and make an informed decision.
+
+\* If such an optimization is desired, consider using two data payloads, one for "core" and one for "extended", instead of a datagen option. Alternatively, restructure the data to use data marker attributes, which can be safely filtered by datagen.
+
 ## Modular Code and Data with static analysis
 
 *What:* Both the code and the data should be written so that you only bring what you need.  Code and data should be modular not only on a "class" level, but also within a class, such that you don't carry code and data for a feature of a class that you aren't using. Code and data slicing should be able to be determined using static code analysis. We should be able to look at the functions being called, and from that, build exactly the code and data bundle that the app needs.
