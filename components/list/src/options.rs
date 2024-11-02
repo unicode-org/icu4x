@@ -2,19 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// TODO
+/// A list of options set by the developer to adjust the behavior of the ListFormatter.
+///
+/// # Examples
+/// ```
+/// use icu::list::{ListFormatterOptions, ListLength};
+///
+/// let options = ListFormatterOptions::new()
+///     .with_length(ListLength::Wide);
+/// ```
 #[derive(Default, Debug, Clone)]
 #[non_exhaustive]
 pub struct ListFormatterOptions {
-    /// Length
+    /// The length variant should reflect available space for the list.
     pub length: Option<ListLength>,
 }
 
 impl ListFormatterOptions {
+    /// Constructs a new [`ListFormatterOptions`] struct.
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Auguments the struct with the set [`ListLength`].
     pub fn with_length(mut self, length: ListLength) -> Self {
         self.length = Some(length);
         self

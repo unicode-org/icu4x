@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! Errors related to parsing of Preferences.
 
+/// Error returned by parsers of unicode extensions as preferences.
 #[non_exhaustive]
 #[derive(Debug)]
-/// TODO
 pub enum PreferencesParseError {
-    /// TODO
-    UnknownKeyword,
-    /// TODO
+    /// The given keyword value is not a valid preference variant.
     InvalidKeywordValue,
 }

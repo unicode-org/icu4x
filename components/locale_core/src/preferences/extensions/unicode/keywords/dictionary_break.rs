@@ -10,7 +10,10 @@ use alloc::vec::Vec;
 use core::str::FromStr;
 
 struct_keyword!(
-    /// TODO
+    /// A Unicode Dictionary Break Exclusion Identifier specifies
+    /// scripts to be excluded from dictionary-based text break (for words and lines).
+    ///
+    /// The valid values are of one or more items of type [`Script`](crate::subtags::Script).
     DictionaryBreakScriptExclusions,
     "dx",
     Vec<Script>,

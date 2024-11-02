@@ -5,7 +5,10 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Variant Identifier defines a special variant used for locales.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeVariantIdentifier).
     CommonVariantType {
-        "posix" => Posix,
+        /// POSIX style locale variant
+        ("posix" => Posix),
 }, "va");

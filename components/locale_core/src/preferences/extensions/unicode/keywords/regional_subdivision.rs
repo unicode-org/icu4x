@@ -13,7 +13,9 @@ use crate::{
 use alloc::string::ToString;
 
 struct_keyword!(
-    /// TODO
+    /// A Unicode Subdivision Identifier defines a regional subdivision used for locales.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeSubdivisionIdentifier).
     RegionalSubdivision,
     "sd",
     SubdivisionId,

@@ -4,8 +4,10 @@
 
 use core::str::FromStr;
 
+use tinystr::TinyAsciiStr;
+
 use crate::parser::ParseError;
-use crate::subtags::Region;
+use crate::subtags::{Region, Subtag};
 
 impl_tinystr_subtag!(
     /// A subdivision suffix used in [`SubdivisionId`].
@@ -130,6 +132,19 @@ impl SubdivisionId {
             Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
+    }
+
+    /// Convert to [`Subtag`]
+    pub fn into_subtag(self) -> Subtag {
+        use writeable::Writeable;
+
+        // XXX: This can be optimized to concatenate two TinyAsciiStr.
+        let mut result = alloc::string::String::with_capacity(8);
+        let _ = self.write_to(&mut result);
+        #[allow(clippy::expect_used)]
+        let tinystr = TinyAsciiStr::try_from_str(&result)
+            .expect("Constructing 8 chars TinyAsciiStr from two 4 char ones");
+        Subtag::from_tinystr_unvalidated(tinystr)
     }
 }
 

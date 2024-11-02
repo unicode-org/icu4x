@@ -74,6 +74,7 @@ macro_rules! constructor {
 }
 
 fn get_data_locale_from_prefs(prefs: ListFormatterPreferences) -> DataLocale {
+    // XXX: This should utilize region source priority.
     DataLocale::from_subtags(
         prefs.language,
         prefs.script,

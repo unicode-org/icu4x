@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! A list of Preferences derived from Locale unicode extension keywords.
 
 mod calendar;
 mod collation;
@@ -23,7 +23,8 @@ mod sentence_supression;
 mod timezone;
 mod variant;
 
-pub use calendar::{CalendarAlgorithm, IslamicCalendarAlgorithm};
+pub use calendar::CalendarAlgorithm;
+pub use calendar::IslamicCalendarAlgorithm;
 pub use collation::CollationType;
 pub use currency::CurrencyType;
 pub use currency_format::CurrencyFormatStyle;

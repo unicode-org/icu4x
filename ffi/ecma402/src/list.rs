@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::{self, Display, Write};
+use core::ops::Deref;
 use ecma402_traits::listformat::{
     options::{Style, Type},
     Options,
@@ -21,16 +22,15 @@ impl ecma402_traits::listformat::Format for ListFormat {
         L: Locale,
         Self: Sized,
     {
-        // XXX: Optimize that
-        let locale: icu::locale::Locale = locale.to_string().parse().unwrap();
-        let prefs = icu::list::ListFormatterPreferences::from(locale);
+        let data_locale = crate::DataLocale::from_ecma_locale(locale);
+        let prefs = icu::list::ListFormatterPreferences::from(data_locale.deref());
 
-        let style = match opts.style {
+        let length = match opts.style {
             Style::Long => icu::list::ListLength::Wide,
             Style::Narrow => icu::list::ListLength::Narrow,
             Style::Short => icu::list::ListLength::Short,
         };
-        let options = icu::list::ListFormatterOptions::new().style(style);
+        let options = icu::list::ListFormatterOptions::new().with_length(length);
 
         Ok(Self(match opts.in_type {
             Type::Conjunction => icu::list::ListFormatter::try_new_and_with_length(prefs, options),

@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::extensions::unicode::{SubdivisionId, Value};
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
-use crate::{
-    extensions::unicode::{SubdivisionId, Value},
-    subtags::Subtag,
-};
-use alloc::string::ToString;
 
 struct_keyword!(
-    /// TODO
+    /// A Region Override specifies an alternate region to use for obtaining certain region-specific default values.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#RegionOverride).
     RegionOverride,
     "rg",
     SubdivisionId,
@@ -22,8 +20,7 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionOverride| {
-        #[allow(clippy::unwrap_used)] // TODO
-        Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
+        Value::from_subtag(Some(input.0.into_subtag()))
     }
 );
 
