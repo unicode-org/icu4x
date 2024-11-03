@@ -34,7 +34,7 @@ export class Locale {
 
     set script(s: string);
 
-    static canonicalize(s: string): string;
+    static normalize(s: string): string;
 
     toString(): string;
 

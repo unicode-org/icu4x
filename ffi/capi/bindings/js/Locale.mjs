@@ -229,7 +229,7 @@ export class Locale {
         }
     }
 
-    static canonicalize(s) {
+    static normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
@@ -238,7 +238,7 @@ export class Locale {
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomatReceive.buffer, ...sSlice.splat(), write.buffer);
+        const result = wasm.icu4x_Locale_normalize_mv1(diplomatReceive.buffer, ...sSlice.splat(), write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

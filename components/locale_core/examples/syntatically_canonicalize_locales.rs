@@ -23,7 +23,7 @@ fn main() {
         .split(',')
         .map(str::trim)
     {
-        let output = Locale::canonicalize(input).unwrap();
+        let output = Locale::normalize(input).unwrap();
         println!("{input} -> {output}");
     }
 }

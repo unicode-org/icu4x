@@ -1216,10 +1216,10 @@ let termini = Object.assign({
         ]
     },
 
-    "Locale.canonicalize": {
-        func: LocaleDemo.canonicalize,
+    "Locale.normalize": {
+        func: LocaleDemo.normalize,
         // For avoiding webpacking minifying issues:
-        funcName: "Locale.canonicalize",
+        funcName: "Locale.normalize",
         parameters: [
             
             {

@@ -46,8 +46,8 @@ namespace capi {
     typedef struct icu4x_Locale_set_script_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_script_mv1_result;
     icu4x_Locale_set_script_mv1_result icu4x_Locale_set_script_mv1(icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s);
     
-    typedef struct icu4x_Locale_canonicalize_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_canonicalize_mv1_result;
-    icu4x_Locale_canonicalize_mv1_result icu4x_Locale_canonicalize_mv1(diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_Locale_normalize_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_normalize_mv1_result;
+    icu4x_Locale_normalize_mv1_result icu4x_Locale_normalize_mv1(diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
     
     void icu4x_Locale_to_string_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
     
@@ -138,10 +138,10 @@ inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::Locale::
   return result.is_ok ? diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::LocaleParseError> icu4x::Locale::canonicalize(std::string_view s) {
+inline diplomat::result<std::string, icu4x::LocaleParseError> icu4x::Locale::normalize(std::string_view s) {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_Locale_canonicalize_mv1({s.data(), s.size()},
+  auto result = icu4x::capi::icu4x_Locale_normalize_mv1({s.data(), s.size()},
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }

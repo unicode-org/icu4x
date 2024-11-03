@@ -156,17 +156,15 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     
   }
 
-  /// Best effort locale canonicalizer that doesn't need any data
+  /// Normalizes a locale string.
   ///
-  /// Use LocaleCanonicalizer for better control and functionality
-  ///
-  /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.canonicalize) for more information.
+  /// See the [Rust documentation for `normalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalize) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
-  static String canonicalize(String s) {
+  static String normalize(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
-    final result = _icu4x_Locale_canonicalize_mv1(s._utf8AllocIn(temp.arena), write._ffi);
+    final result = _icu4x_Locale_normalize_mv1(s._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -270,9 +268,9 @@ external _ResultVoidVoid _icu4x_Locale_script_mv1(ffi.Pointer<ffi.Opaque> self, 
 external _ResultVoidInt32 _icu4x_Locale_set_script_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_canonicalize_mv1')
+@ffi.Native<_ResultVoidInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_normalize_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_Locale_canonicalize_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_Locale_normalize_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_to_string_mv1')
