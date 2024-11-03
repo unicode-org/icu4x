@@ -497,6 +497,7 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
             weekday_names: other.weekday_names,
             dayperiod_names: DateTimeNamesData2::none(),
             zone_essentials: (),
+            locations_root: (),
             locations: (),
             mz_generic_long: (),
             mz_generic_short: (),
@@ -517,6 +518,7 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
             weekday_names: DateTimeNamesData2::none(),
             dayperiod_names: other.dayperiod_names,
             zone_essentials: (),
+            locations_root: (),
             locations: (),
             mz_generic_long: (),
             mz_generic_short: (),
@@ -545,6 +547,8 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
         >,
     zone_essentials:
         <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
+    locations_root:
+        <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
     locations: <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
     mz_generic_long:
         <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container<()>,
@@ -589,6 +593,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     weekday_names: OptionalNames<(fields::Weekday, FieldLength), &'l LinearNamesV1<'l>>,
     dayperiod_names: OptionalNames<FieldLength, &'l LinearNamesV1<'l>>,
     zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
+    locations_root: OptionalNames<(), &'l tz::LocationsV1<'l>>,
     locations: OptionalNames<(), &'l tz::LocationsV1<'l>>,
     mz_generic_long: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
     mz_generic_short: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
@@ -1659,6 +1664,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             weekday_names: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
             dayperiod_names: <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
             zone_essentials: <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container::<_>::new_empty(),
+            locations_root: <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
             locations: <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
             mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container::<_>::new_empty(),
             mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>>::Container::<_>::new_empty(),
@@ -1677,6 +1683,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             weekday_names: self.weekday_names.get().inner,
             dayperiod_names: self.dayperiod_names.get().inner,
             zone_essentials: self.zone_essentials.get().inner,
+            locations_root: self.locations_root.get().inner,
             locations: self.locations.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
             mz_generic_short: self.mz_generic_short.get().inner,
@@ -1896,6 +1903,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
+        self.locations_root
+            .load_put(provider, Default::default(), variables)
+            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
+            .map_err(SingleLoadError::Data)?;
         self.locations
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
@@ -2626,6 +2637,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
     pub(crate) fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
         TimeZoneDataPayloadsBorrowed {
             essentials: self.zone_essentials.get_option(),
+            locations_root: self.locations_root.get_option(),
             locations: self.locations.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
