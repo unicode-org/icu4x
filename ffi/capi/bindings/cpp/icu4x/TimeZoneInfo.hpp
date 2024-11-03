@@ -62,13 +62,7 @@ namespace capi {
     
     void icu4x_TimeZoneInfo_time_zone_id_mv1(const icu4x::capi::TimeZoneInfo* self, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result;
-    icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result icu4x_TimeZoneInfo_try_set_zone_variant_mv1(icu4x::capi::TimeZoneInfo* self, diplomat::capi::DiplomatStringView id);
-    
     void icu4x_TimeZoneInfo_clear_zone_variant_mv1(icu4x::capi::TimeZoneInfo* self);
-    
-    typedef struct icu4x_TimeZoneInfo_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_zone_variant_mv1_result;
-    icu4x_TimeZoneInfo_zone_variant_mv1_result icu4x_TimeZoneInfo_zone_variant_mv1(const icu4x::capi::TimeZoneInfo* self, diplomat::capi::DiplomatWrite* write);
     
     void icu4x_TimeZoneInfo_set_standard_time_mv1(icu4x::capi::TimeZoneInfo* self);
     
@@ -185,22 +179,8 @@ inline std::string icu4x::TimeZoneInfo::time_zone_id() const {
   return output;
 }
 
-inline std::optional<std::monostate> icu4x::TimeZoneInfo::try_set_zone_variant(std::string_view id) {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_try_set_zone_variant_mv1(this->AsFFI(),
-    {id.data(), id.size()});
-  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
-}
-
 inline void icu4x::TimeZoneInfo::clear_zone_variant() {
   icu4x::capi::icu4x_TimeZoneInfo_clear_zone_variant_mv1(this->AsFFI());
-}
-
-inline std::optional<std::string> icu4x::TimeZoneInfo::zone_variant() const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_zone_variant_mv1(this->AsFFI(),
-    &write);
-  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
 
 inline void icu4x::TimeZoneInfo::set_standard_time() {

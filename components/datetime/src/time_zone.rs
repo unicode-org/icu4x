@@ -608,6 +608,7 @@ impl FormatTimeZone for SpecificLocationFormat {
         match zone_variant {
             ZoneVariant::Standard => &locations.pattern_standard,
             ZoneVariant::Daylight => &locations.pattern_daylight,
+            // Compiles out due to tilde dependency on `icu_timezone`
             _ => unreachable!(),
         }
         .interpolate([location])

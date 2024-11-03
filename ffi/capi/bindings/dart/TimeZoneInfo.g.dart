@@ -49,6 +49,8 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Errors if the offset seconds are out of range.
   ///
+  /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html#method.with_offset) for more information.
+  ///
   /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.try_from_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
@@ -64,14 +66,22 @@ final class TimeZoneInfo implements ffi.Finalizable {
 
   /// Sets the `offset` field from offset as eighths of an hour.
   ///
+  /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html#method.with_offset) for more information.
+  ///
   /// See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
   void setOffsetEighthsOfHour(int offsetEighthsOfHour) {
     _icu4x_TimeZoneInfo_set_offset_eighths_of_hour_mv1(_ffi, offsetEighthsOfHour);
   }
 
   /// Sets the `offset` field from a string.
   ///
+  /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html#method.with_offset) for more information.
+  ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.try_from_str) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   void trySetOffsetStr(String offset) {
@@ -189,8 +199,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Errors if the string is not a valid BCP-47 time zone ID.
   ///
-  /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
-  ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   void setTimeZoneId(String id) {
     final temp = _FinalizedArena();
@@ -217,17 +225,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Sets the `zone_variant` field from a string.
-  ///
-  /// Returns null if the string is not a valid zone variant.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
-  bool trySetZoneVariant(String id) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_TimeZoneInfo_try_set_zone_variant_mv1(_ffi, id._utf8AllocIn(temp.arena));
-    return result.isOk;
-  }
-
   /// Clears the `zone_variant` field.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
@@ -235,26 +232,12 @@ final class TimeZoneInfo implements ffi.Finalizable {
     _icu4x_TimeZoneInfo_clear_zone_variant_mv1(_ffi);
   }
 
-  /// Writes the value of the `zone_variant` field as a string.
+  /// Sets the `zone_variant` field to standard time, which may or may
+  /// not correspond to a display name with Standard in its name.
   ///
-  /// Returns null if the `zone_variant` field is empty.
+  /// See the [Rust documentation for `Standard`](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html#variant.Standard) for more information.
   ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html)
-  String? get zoneVariant {
-    final write = _Write();
-    final result = _icu4x_TimeZoneInfo_zone_variant_mv1(_ffi, write._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return write.finalize();
-  }
-
-  /// Sets the `zone_variant` field to "standard" time, which may or may
-  /// not correspond to a display name with "Standard" in its name.
-  ///
-  /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+  /// See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
   void setStandardTime() {
     _icu4x_TimeZoneInfo_set_standard_time_mv1(_ffi);
   }
@@ -262,7 +245,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// Sets the `zone_variant` field to "daylight" time, which may or may
   /// not correspond to a display name with "Daylight" in its name.
   ///
-  /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+  /// See the [Rust documentation for `Daylight`](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html#variant.Daylight) for more information.
+  ///
+  /// See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
   void setDaylightTime() {
     _icu4x_TimeZoneInfo_set_daylight_time_mv1(_ffi);
   }
@@ -271,7 +256,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `zone_variant` field is empty.
   ///
-  /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+  /// See the [Rust documentation for `Standard`](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html#variant.Standard) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant)
   bool? get isStandardTime {
@@ -286,7 +271,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// Returns null if the `zone_variant` field is empty.
   ///
-  /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+  /// See the [Rust documentation for `Daylight`](https://docs.rs/icu/latest/icu/timezone/enum.ZoneVariant.html#variant.Daylight) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.zone_variant)
   bool? get isDaylightTime {
@@ -298,7 +283,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// Sets the `local_time` field.
-  void setLocalTime(IsoDateTime datetime) {
+  ///
+  /// See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.at_time) for more information.
+  set localTime(IsoDateTime datetime) {
     _icu4x_TimeZoneInfo_set_local_time_mv1(_ffi, datetime._ffi);
   }
 
@@ -309,8 +296,8 @@ final class TimeZoneInfo implements ffi.Finalizable {
 
   /// Returns a copy of the `local_time` field.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.local_time)
-  IsoDateTime? getLocalTime() {
+  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html#method.local_time) for more information.
+  IsoDateTime? get getLocalTime {
     final result = _icu4x_TimeZoneInfo_get_local_time_mv1(_ffi);
     return result.address == 0 ? null : IsoDateTime._fromFfi(result, []);
   }
@@ -407,19 +394,9 @@ external void _icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Opaq
 external void _icu4x_TimeZoneInfo_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_try_set_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_TimeZoneInfo_try_set_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
-
-@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_clear_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_clear_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.RecordUse()
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_TimeZoneInfo_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_standard_time_mv1')

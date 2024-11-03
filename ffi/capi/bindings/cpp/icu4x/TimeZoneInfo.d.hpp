@@ -64,11 +64,7 @@ public:
 
   inline std::string time_zone_id() const;
 
-  inline std::optional<std::monostate> try_set_zone_variant(std::string_view id);
-
   inline void clear_zone_variant();
-
-  inline std::optional<std::string> zone_variant() const;
 
   inline void set_standard_time();
 

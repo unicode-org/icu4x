@@ -46,11 +46,7 @@ export class TimeZoneInfo {
 
     get timeZoneId(): string;
 
-    trySetZoneVariant(id: string): boolean;
-
     clearZoneVariant(): void;
-
-    get zoneVariant(): string | null;
 
     setStandardTime(): void;
 
@@ -60,9 +56,9 @@ export class TimeZoneInfo {
 
     get isDaylightTime(): boolean | null;
 
-    setLocalTime(datetime: IsoDateTime): void;
+    set localTime(datetime: IsoDateTime);
 
     clearLocalTime(): void;
 
-    getLocalTime(): IsoDateTime | null;
+    get getLocalTime(): IsoDateTime | null;
 }
