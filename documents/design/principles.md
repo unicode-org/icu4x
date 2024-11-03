@@ -60,7 +60,7 @@ Runtime customizability of locale data can sometimes come at a performance or me
 
 ## Locale data from multiple sources works seamlessly
 
-*What:* If data is available for a particular constructor and locale, the resulting behavior should not change based on where the data was sourced, with a narrow exception for data that primarily impacts performance characteristics.
+*What:* If data is available for a particular constructor and locale, the correctness of behavior should not change based on where the data was sourced, with a narrow exception for data that primarily impacts performance characteristics.
 
 *Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs.
 
