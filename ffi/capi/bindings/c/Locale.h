@@ -45,8 +45,8 @@ icu4x_Locale_script_mv1_result icu4x_Locale_script_mv1(const Locale* self, Diplo
 typedef struct icu4x_Locale_set_script_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_script_mv1_result;
 icu4x_Locale_set_script_mv1_result icu4x_Locale_set_script_mv1(Locale* self, DiplomatStringView s);
 
-typedef struct icu4x_Locale_canonicalize_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_canonicalize_mv1_result;
-icu4x_Locale_canonicalize_mv1_result icu4x_Locale_canonicalize_mv1(DiplomatStringView s, DiplomatWrite* write);
+typedef struct icu4x_Locale_normalize_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_normalize_mv1_result;
+icu4x_Locale_normalize_mv1_result icu4x_Locale_normalize_mv1(DiplomatStringView s, DiplomatWrite* write);
 
 void icu4x_Locale_to_string_mv1(const Locale* self, DiplomatWrite* write);
 

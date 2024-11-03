@@ -48,7 +48,7 @@ public:
 
   inline diplomat::result<std::monostate, icu4x::LocaleParseError> set_script(std::string_view s);
 
-  inline static diplomat::result<std::string, icu4x::LocaleParseError> canonicalize(std::string_view s);
+  inline static diplomat::result<std::string, icu4x::LocaleParseError> normalize(std::string_view s);
 
   inline std::string to_string() const;
 

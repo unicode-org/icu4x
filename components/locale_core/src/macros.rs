@@ -4,7 +4,7 @@
 
 /// A macro allowing for compile-time construction of valid [`LanguageIdentifier`]s.
 ///
-/// The macro will perform syntax canonicalization of the tag.
+/// The macro will perform syntax normalization of the tag.
 ///
 /// # Examples
 ///
@@ -57,7 +57,7 @@ macro_rules! langid {
 
 /// A macro allowing for compile-time construction of valid [`Locale`]s.
 ///
-/// The macro will perform syntax canonicalization of the tag.
+/// The macro will perform syntax normalization of the tag.
 ///
 /// # Examples
 ///
