@@ -136,15 +136,9 @@ datagen = [
 serde_human = [
     "icu_list/serde_human"
 ]
-icu_datetime_experimental = [
-    "icu_datetime/experimental",
-]
-icu_plurals_experimental = [
-    "icu_plurals/experimental"
-]
 experimental = [
-    "icu_datetime_experimental",
-    "icu_plurals_experimental",
+    "icu_datetime/experimental",
+    "icu_plurals/experimental",
     "dep:icu_experimental",
     "dep:icu_pattern",
 ]
