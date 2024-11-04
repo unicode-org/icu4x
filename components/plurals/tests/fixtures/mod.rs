@@ -42,7 +42,9 @@ pub struct FixedDecimalInput {
 
 impl From<&FixedDecimalInput> for SignedFixedDecimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        SignedFixedDecimal::from(f.from).multiplied_pow10(f.pow10)
+        let mut dec = SignedFixedDecimal::from(f.from);
+        dec.multiply_pow10(f.pow10);
+        dec
     }
 }
 
