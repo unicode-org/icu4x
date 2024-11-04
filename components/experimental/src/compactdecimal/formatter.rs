@@ -450,7 +450,8 @@ impl CompactDecimalFormatter {
     pub fn format_fixed_decimal(&self, value: SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
-        let mut significand = value.multiplied_pow10(-i16::from(exponent));
+        let mut significand = value.clone();
+        significand.multiply_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
         if significand.absolute.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
@@ -470,8 +471,8 @@ impl CompactDecimalFormatter {
             // to avoid iterating twice (we only need to look at the next key),
             // but this obscures the logic and the map is tiny.
             (plural_map, exponent) = self.plural_map_and_exponent_for_magnitude(rounded_magnitude);
-            significand =
-                significand.multiplied_pow10(i16::from(old_exponent) - i16::from(exponent));
+            significand = significand.clone();
+            significand.multiply_pow10(i16::from(old_exponent) - i16::from(exponent));
             // There is no need to perform any rounding: `significand`, being
             // a power of 10, is as round as it gets, and since `exponent` can
             // only have become larger, it is already the correct rounding of
