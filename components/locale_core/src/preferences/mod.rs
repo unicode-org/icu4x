@@ -587,19 +587,17 @@ macro_rules! __define_preferences {
                     },
                     extensions: {
                         let mut extensions = $crate::extensions::Extensions::default();
-                        if self.subdivision.is_some() || self.ue_region.is_some() {
-                            if let Some(sd) = self.subdivision {
-                                extensions.unicode.keywords.set(
-                                    $crate::extensions::unicode::key!("sd"),
-                                    $crate::extensions::unicode::Value::from_subtag(Some(sd))
-                                );
-                            }
-                            if let Some(rg) = self.ue_region {
-                                extensions.unicode.keywords.set(
-                                    $crate::extensions::unicode::key!("rg"),
-                                    $crate::extensions::unicode::Value::try_from_str(rg.as_str()).unwrap()
-                                );
-                            }
+                        if let Some(sd) = self.subdivision {
+                            extensions.unicode.keywords.set(
+                                $crate::extensions::unicode::key!("sd"),
+                                $crate::extensions::unicode::Value::from_subtag(Some(sd))
+                            );
+                        }
+                        if let Some(rg) = self.ue_region {
+                            extensions.unicode.keywords.set(
+                                $crate::extensions::unicode::key!("rg"),
+                                $crate::extensions::unicode::Value::try_from_str(rg.as_str()).unwrap()
+                            );
                         }
                         $(
                             if let Some(value) = &self.$key {
@@ -617,6 +615,24 @@ macro_rules! __define_preferences {
             /// Extends the preferences with the values from another set of preferences.
             pub fn extend(&mut self, other: $name) {
                 $(
+                    if !other.language.is_default() {
+                        self.language = other.language;
+                    }
+                    if let Some(script) = other.script {
+                        self.script = Some(script);
+                    }
+                    if let Some(region) = other.region {
+                        self.region = Some(region);
+                    }
+                    if let Some(variant) = other.variant {
+                        self.variant = Some(variant);
+                    }
+                    if let Some(sd) = other.subdivision {
+                        self.subdivision = Some(sd);
+                    }
+                    if let Some(ue_region) = other.ue_region {
+                        self.ue_region = Some(ue_region);
+                    }
                     if let Some(value) = other.$key {
                         self.$key = Some(value);
                     }

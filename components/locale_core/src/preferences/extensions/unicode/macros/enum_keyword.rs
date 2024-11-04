@@ -18,9 +18,6 @@ macro_rules! __enum_keyword_inner {
     }};
 }
 
-#[doc(inline)]
-pub use __enum_keyword_inner as enum_keyword_inner;
-
 /// Macro used to generate a preference keyword as an enum.
 ///
 /// The macro supports single and two subtag enums.
@@ -75,7 +72,6 @@ macro_rules! __enum_keyword {
         }
 
         impl $name {
-            #[doc(hidden)]
             pub(crate) fn extend_value(self, input: &mut $crate::extensions::unicode::Value) {
                 match self {
                     $(

@@ -7,7 +7,5 @@ mod struct_keyword;
 
 #[doc(inline)]
 pub use enum_keyword::enum_keyword;
-#[doc(hidden)]
-pub use enum_keyword::enum_keyword_inner;
 #[doc(inline)]
 pub use struct_keyword::struct_keyword;

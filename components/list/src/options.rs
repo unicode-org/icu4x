@@ -11,21 +11,27 @@
 /// let options = ListFormatterOptions::new()
 ///     .with_length(ListLength::Wide);
 /// ```
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 #[non_exhaustive]
 pub struct ListFormatterOptions {
     /// The length variant should reflect available space for the list.
     pub length: Option<ListLength>,
 }
 
+impl Default for ListFormatterOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ListFormatterOptions {
     /// Constructs a new [`ListFormatterOptions`] struct.
-    pub fn new() -> Self {
-        Self::default()
+    pub const fn new() -> Self {
+        Self { length: None }
     }
 
     /// Auguments the struct with the set [`ListLength`].
-    pub fn with_length(mut self, length: ListLength) -> Self {
+    pub const fn with_length(mut self, length: ListLength) -> Self {
         self.length = Some(length);
         self
     }

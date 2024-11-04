@@ -35,7 +35,7 @@ pub mod ffi {
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
+            let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::new().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
                 icu_list::ListFormatter::try_new_and_with_length,

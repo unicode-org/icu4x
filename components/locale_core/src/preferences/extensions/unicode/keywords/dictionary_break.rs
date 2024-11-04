@@ -27,6 +27,6 @@ struct_keyword!(
             .map(Self)
     },
     |input: DictionaryBreakScriptExclusions| {
-        crate::extensions::unicode::Value::from_iter(input.0.into_iter().map(Into::into))
+        input.0.into_iter().map(Into::into).collect()
     }
 );
