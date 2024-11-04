@@ -104,7 +104,6 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
     pub enum DateTimeFormatError {
         Unknown = 0x00,
         MissingInputField = 0x01,
@@ -183,6 +182,7 @@ impl From<icu_datetime::PatternLoadError> for PatternLoadError {
     }
 }
 
+#[cfg(feature = "datetime")]
 impl From<icu_provider::DataError> for PatternLoadError {
     fn from(e: icu_provider::DataError) -> Self {
         match e.kind {
@@ -203,6 +203,7 @@ impl From<icu_provider::DataError> for PatternLoadError {
     }
 }
 
+#[cfg(feature = "datetime")]
 impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
     fn from(value: icu_datetime::DateTimeWriteError) -> Self {
         match value {
