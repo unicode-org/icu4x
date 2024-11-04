@@ -3,37 +3,37 @@
     [
       [
         "arge",
-        "dt"
-      ],
-      "ARST"
-    ],
-    [
-      [
-        "arge",
-        "st"
+        "Standard"
       ],
       "ART"
     ],
     [
       [
-        "arwe",
-        "dt"
+        "arge",
+        "Daylight"
       ],
-      "WARST"
+      "ARST"
     ],
     [
       [
         "arwe",
-        "st"
+        "Standard"
       ],
       "WART"
+    ],
+    [
+      [
+        "arwe",
+        "Daylight"
+      ],
+      "WARST"
     ]
   ],
   "overrides": [
     [
       [
         "utc",
-        "st"
+        "Standard"
       ],
       "UTC"
     ]

@@ -70,7 +70,7 @@ pub mod ffi {
                     .time_zone_id
                     .with_offset(time_zone.offset)
                     .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::standard())),
+                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
             let _infallible = self.0.format(&zdt).try_write_to(write);
             Ok(())
@@ -145,7 +145,7 @@ pub mod ffi {
                     .time_zone_id
                     .with_offset(time_zone.offset)
                     .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::standard())),
+                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
             let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())

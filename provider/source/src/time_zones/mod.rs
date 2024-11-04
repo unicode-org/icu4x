@@ -287,7 +287,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::standard()))
+                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::Standard))
                 .unwrap()
         );
         assert_eq!(
@@ -296,7 +296,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::standard()))
+                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
                 .unwrap()
         );
 
@@ -337,7 +337,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::daylight()))
+                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::Daylight))
                 .unwrap()
         );
         assert_eq!(
@@ -346,7 +346,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::standard()))
+                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
                 .unwrap()
         );
 

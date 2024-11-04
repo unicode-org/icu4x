@@ -77,7 +77,7 @@ let time_zone = id.with_offset("-0600".parse().ok());
 let time_zone_at_time = time_zone.at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
 
 // Extend to a TimeZoneInfo<Full> by adding a zone variant
-let time_zone_with_variant = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
+let time_zone_with_variant = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
 ```
 
 <!-- cargo-rdme end -->

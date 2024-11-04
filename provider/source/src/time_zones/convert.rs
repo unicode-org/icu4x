@@ -776,8 +776,8 @@ fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneV
         .flat_map(move |(variant, value)| {
             Some((
                 match variant.as_str() {
-                    "standard" => ZoneVariant::standard(),
-                    "daylight" => ZoneVariant::daylight(),
+                    "standard" => ZoneVariant::Standard,
+                    "daylight" => ZoneVariant::Daylight,
                     _ => return None,
                 },
                 value.as_str(),

@@ -3,49 +3,49 @@
     [
       [
         "euce",
-        "dt"
-      ],
-      "CEST"
-    ],
-    [
-      [
-        "euce",
-        "st"
+        "Standard"
       ],
       "CET"
     ],
     [
       [
-        "euea",
-        "dt"
+        "euce",
+        "Daylight"
       ],
-      "EEST"
+      "CEST"
     ],
     [
       [
         "euea",
-        "st"
+        "Standard"
       ],
       "EET"
     ],
     [
       [
-        "euwe",
-        "dt"
+        "euea",
+        "Daylight"
       ],
-      "WEST"
+      "EEST"
     ],
     [
       [
         "euwe",
-        "st"
+        "Standard"
       ],
       "WET"
     ],
     [
       [
+        "euwe",
+        "Daylight"
+      ],
+      "WEST"
+    ],
+    [
+      [
         "mgmt",
-        "st"
+        "Standard"
       ],
       "GMT"
     ]
@@ -54,7 +54,7 @@
     [
       [
         "utc",
-        "st"
+        "Standard"
       ],
       "UTC"
     ]

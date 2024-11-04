@@ -99,7 +99,7 @@ int main() {
         return 1;
     }
     time_zone->set_local_time(*date.get());
-    time_zone->try_set_zone_variant("dt");
+    time_zone->set_daylight_time();
 
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get()).ok().value();

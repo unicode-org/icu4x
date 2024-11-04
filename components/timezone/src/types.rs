@@ -4,9 +4,6 @@
 
 use crate::error::InvalidOffsetError;
 use core::str::FromStr;
-use tinystr::{tinystr, TinyAsciiStr};
-use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroSlice, ZeroVec};
 
 /// An offset from Coordinated Universal Time (UTC)
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
@@ -182,48 +179,22 @@ impl FromStr for UtcOffset {
 ///
 /// The semantics vary from time zone to time zone and could represent concepts
 /// such as Standard time, Daylight time, Summer time, or Ramadan time.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
-#[repr(transparent)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[zerovec::make_ule(ZoneVariantULE)]
+#[repr(u8)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_structs)] // newtype
-pub struct ZoneVariant(pub TinyAsciiStr<2>);
-
-impl ZoneVariant {
-    /// Returns the variant corresponding to `"standard"` in CLDR.
+#[non_exhaustive]
+pub enum ZoneVariant {
+    /// The variant corresponding to `"standard"` in CLDR.
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Standard Time".
-    pub const fn standard() -> Self {
-        Self(tinystr!(2, "st"))
-    }
-    /// Returns the variant corresponding to `"daylight"` in CLDR.
+    Standard = 0,
+    /// The variant corresponding to `"daylight"` in CLDR.
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Daylight Time".
-    pub const fn daylight() -> Self {
-        Self(tinystr!(2, "dt"))
-    }
-}
-
-impl AsULE for ZoneVariant {
-    type ULE = Self;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for ZoneVariant {
-    type Container = ZeroVec<'a, ZoneVariant>;
-    type Slice = ZeroSlice<ZoneVariant>;
-    type GetType = ZoneVariant;
-    type OwnedType = ZoneVariant;
+    Daylight = 1,
 }

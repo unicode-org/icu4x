@@ -568,7 +568,7 @@ macro_rules! impl_zone_marker {
             /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
             ///     .with_offset("-05".parse().ok())
             ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            ///     .with_zone_variant(ZoneVariant::daylight());
+            ///     .with_zone_variant(ZoneVariant::Daylight);
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -598,7 +598,7 @@ macro_rules! impl_zone_marker {
             /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
             ///     .with_offset("-05".parse().ok())
             ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            ///     .with_zone_variant(ZoneVariant::daylight());
+            ///     .with_zone_variant(ZoneVariant::Daylight);
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -995,7 +995,7 @@ impl_zone_marker!(
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
     ///     .with_offset("-03".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::standard());
+    ///     .with_zone_variant(ZoneVariant::Standard);
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -1155,7 +1155,7 @@ impl_zone_marker!(
     /// let time = Time::midnight();
     /// let time_zone_at_time = time_zone_basic.at_time((date, time));
     ///
-    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
+    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
     ///     &locale!("en-US").into(),
@@ -1214,7 +1214,7 @@ impl_zone_marker!(
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
     ///     .with_offset("-03".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::standard());
+    ///     .with_zone_variant(ZoneVariant::Standard);
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),

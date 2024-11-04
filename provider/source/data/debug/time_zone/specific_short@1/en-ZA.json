@@ -3,42 +3,42 @@
     [
       [
         "afce",
-        "st"
+        "Standard"
       ],
       "CAT"
     ],
     [
       [
         "afea",
-        "st"
+        "Standard"
       ],
       "EAT"
     ],
     [
       [
         "afso",
-        "st"
+        "Standard"
       ],
       "SAST"
     ],
     [
       [
         "afwe",
-        "dt"
-      ],
-      "WAST"
-    ],
-    [
-      [
-        "afwe",
-        "st"
+        "Standard"
       ],
       "WAT"
     ],
     [
       [
+        "afwe",
+        "Daylight"
+      ],
+      "WAST"
+    ],
+    [
+      [
         "mgmt",
-        "st"
+        "Standard"
       ],
       "GMT"
     ]
@@ -47,7 +47,7 @@
     [
       [
         "utc",
-        "st"
+        "Standard"
       ],
       "UTC"
     ]

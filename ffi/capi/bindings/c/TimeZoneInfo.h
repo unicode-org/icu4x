@@ -60,13 +60,7 @@ void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(TimeZoneInfo* self, const Time
 
 void icu4x_TimeZoneInfo_time_zone_id_mv1(const TimeZoneInfo* self, DiplomatWrite* write);
 
-typedef struct icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result;
-icu4x_TimeZoneInfo_try_set_zone_variant_mv1_result icu4x_TimeZoneInfo_try_set_zone_variant_mv1(TimeZoneInfo* self, DiplomatStringView id);
-
 void icu4x_TimeZoneInfo_clear_zone_variant_mv1(TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_zone_variant_mv1_result;
-icu4x_TimeZoneInfo_zone_variant_mv1_result icu4x_TimeZoneInfo_zone_variant_mv1(const TimeZoneInfo* self, DiplomatWrite* write);
 
 void icu4x_TimeZoneInfo_set_standard_time_mv1(TimeZoneInfo* self);
 
