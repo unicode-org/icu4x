@@ -26,7 +26,7 @@ resolver = "2"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false, features = [] }
+icu_capi = { version = "2.0.0-dev", default-features = false, features = [] }
 ```
 
 Some of the keys are required by the parser, but won't be used by us. 
@@ -43,7 +43,7 @@ Some of the keys are required by the parser, but won't be used by us.
 You can now set features by updating the `features` key in `Cargo.toml`:
 
 ```toml
-icu_capi = { version = "1.4", default-features = false, features = ["default", "buffer_provider"] }
+icu_capi = { version = "2.0.0-dev", default-features = false, features = ["default", "buffer_provider"] }
 
 ```
 
@@ -120,7 +120,7 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `looping_panic_handler` and `libc_alloc` features, respectively.
 
 ```toml
-icu_capi = { version = "1.4", default-features = false, features = ["default_components", "buffer_provider", "looping_panic_handler", "libc_alloc"] }
+icu_capi = { version = "2.0.0-dev", default-features = false, features = ["default_components", "buffer_provider", "looping_panic_handler", "libc_alloc"] }
 
 ```
 

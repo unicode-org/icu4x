@@ -4,7 +4,9 @@
 
 [package]
 name = "env_preferences"
-version.workspace = true
+version = "0.0.0"
+publish = false
+
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
