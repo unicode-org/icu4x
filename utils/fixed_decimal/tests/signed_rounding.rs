@@ -3,24 +3,33 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::ops::RangeInclusive;
-use fixed_decimal::RoundingMode;
 use fixed_decimal::Sign;
 use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::SignedRoundingMode as SRM;
+use fixed_decimal::UnsignedRoundingMode as URM;
 use writeable::Writeable;
 
 #[test]
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
     let cases: [(_, _, _, _, _, _, _); 9] = [
-        ("ceil", RoundingMode::Ceil, -1, 1, 1, 1, 2),
-        ("floor", RoundingMode::Floor, -2, 0, 0, 0, 1),
-        ("expand", RoundingMode::Expand, -2, 1, 1, 1, 2),
-        ("trunc", RoundingMode::Trunc, -1, 0, 0, 0, 1),
-        ("half_ceil", RoundingMode::HalfCeil, -1, 0, 1, 1, 2),
-        ("half_floor", RoundingMode::HalfFloor, -2, 0, 0, 1, 1),
-        ("half_expand", RoundingMode::HalfExpand, -2, 0, 1, 1, 2),
-        ("half_trunc", RoundingMode::HalfTrunc, -1, 0, 0, 1, 1),
-        ("half_even", RoundingMode::HalfEven, -2, 0, 0, 1, 2),
+        ("ceil", SRM::Ceil, -1, 1, 1, 1, 2),
+        ("floor", SRM::Floor, -2, 0, 0, 0, 1),
+        ("expand", SRM::Unsigned(URM::Expand), -2, 1, 1, 1, 2),
+        ("trunc", SRM::Unsigned(URM::Trunc), -1, 0, 0, 0, 1),
+        ("half_ceil", SRM::HalfCeil, -1, 0, 1, 1, 2),
+        ("half_floor", SRM::HalfFloor, -2, 0, 0, 1, 1),
+        (
+            "half_expand",
+            SRM::Unsigned(URM::HalfExpand),
+            -2,
+            0,
+            1,
+            1,
+            2,
+        ),
+        ("half_trunc", SRM::Unsigned(URM::HalfTrunc), -1, 0, 0, 1, 1),
+        ("half_even", SRM::Unsigned(URM::HalfEven), -2, 0, 0, 1, 2),
     ];
     for (name, mode, e1, e2, e3, e4, e5) in cases {
         let mut fd1: SignedFixedDecimal = "-1.5".parse().unwrap();
@@ -65,7 +74,7 @@ pub fn test_ecma402_table() {
 pub fn test_within_ranges() {
     struct TestCase {
         rounding_mode_name: &'static str,
-        rounding_mode: RoundingMode,
+        rounding_mode: SRM,
         range_n2000: RangeInclusive<i32>,
         range_n1000: RangeInclusive<i32>,
         range_0: RangeInclusive<i32>,
@@ -75,7 +84,7 @@ pub fn test_within_ranges() {
     let cases: [TestCase; 9] = [
         TestCase {
             rounding_mode_name: "ceil",
-            rounding_mode: RoundingMode::Ceil,
+            rounding_mode: SRM::Ceil,
             range_n2000: -2999..=-2000,
             range_n1000: -1999..=-1000,
             range_0: -999..=0,
@@ -84,7 +93,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "floor",
-            rounding_mode: RoundingMode::Floor,
+            rounding_mode: SRM::Floor,
             range_n2000: -2000..=-1001,
             range_n1000: -1000..=-1,
             range_0: 0..=999,
@@ -93,7 +102,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "expand",
-            rounding_mode: RoundingMode::Expand,
+            rounding_mode: SRM::Unsigned(URM::Expand),
             range_n2000: -2000..=-1001,
             range_n1000: -1000..=-1,
             range_0: 0..=0,
@@ -102,7 +111,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "trunc",
-            rounding_mode: RoundingMode::Trunc,
+            rounding_mode: SRM::Unsigned(URM::Trunc),
             range_n2000: -2999..=-2000,
             range_n1000: -1999..=-1000,
             range_0: -999..=999,
@@ -111,7 +120,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "half_ceil",
-            rounding_mode: RoundingMode::HalfCeil,
+            rounding_mode: SRM::HalfCeil,
             range_n2000: -2500..=-1501,
             range_n1000: -1500..=-501,
             range_0: -500..=449,
@@ -120,7 +129,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "half_floor",
-            rounding_mode: RoundingMode::HalfFloor,
+            rounding_mode: SRM::HalfFloor,
             range_n2000: -2449..=-1500,
             range_n1000: -1449..=-500,
             range_0: -449..=500,
@@ -129,7 +138,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "half_expand",
-            rounding_mode: RoundingMode::HalfExpand,
+            rounding_mode: SRM::Unsigned(URM::HalfExpand),
             range_n2000: -2449..=-1500,
             range_n1000: -1449..=-500,
             range_0: -449..=449,
@@ -138,7 +147,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "half_trunc",
-            rounding_mode: RoundingMode::HalfTrunc,
+            rounding_mode: SRM::Unsigned(URM::HalfTrunc),
             range_n2000: -2500..=-1501,
             range_n1000: -1500..=-501,
             range_0: -500..=500,
@@ -147,7 +156,7 @@ pub fn test_within_ranges() {
         },
         TestCase {
             rounding_mode_name: "half_even",
-            rounding_mode: RoundingMode::HalfEven,
+            rounding_mode: SRM::Unsigned(URM::HalfEven),
             range_n2000: -2500..=-1500,
             range_n1000: -1449..=-501,
             range_0: -500..=500,
@@ -321,16 +330,16 @@ pub fn extra_rounding_mode_cases() {
         },
     ];
     #[allow(clippy::type_complexity)] // most compact representation in code
-    let rounding_modes: [(&'static str, RoundingMode); 9] = [
-        ("ceil", RoundingMode::Ceil),
-        ("floor", RoundingMode::Floor),
-        ("expand", RoundingMode::Expand),
-        ("trunc", RoundingMode::Trunc),
-        ("half_ceil", RoundingMode::HalfCeil),
-        ("half_floor", RoundingMode::HalfFloor),
-        ("half_expand", RoundingMode::HalfExpand),
-        ("half_trunc", RoundingMode::HalfTrunc),
-        ("half_even", RoundingMode::HalfEven),
+    let rounding_modes: [(&'static str, SRM); 9] = [
+        ("ceil", SRM::Ceil),
+        ("floor", SRM::Floor),
+        ("expand", SRM::Unsigned(URM::Expand)),
+        ("trunc", SRM::Unsigned(URM::Trunc)),
+        ("half_ceil", SRM::HalfCeil),
+        ("half_floor", SRM::HalfFloor),
+        ("half_expand", SRM::Unsigned(URM::HalfExpand)),
+        ("half_trunc", SRM::Unsigned(URM::HalfTrunc)),
+        ("half_even", SRM::Unsigned(URM::HalfEven)),
     ];
     for TestCase {
         input,
@@ -360,37 +369,37 @@ pub fn test_ecma402_table_with_increments() {
     #[allow(clippy::type_complexity)]
     let cases: [(_, _, [(_, _, _, _, _, _, _); 9]); 3] = [
         ("two", RoundingIncrement::MultiplesOf2, [
-            ("ceil", RoundingMode::Ceil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
-            ("floor", RoundingMode::Floor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
-            ("expand", RoundingMode::Expand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("trunc", RoundingMode::Trunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_ceil", RoundingMode::HalfCeil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
-            ("half_floor", RoundingMode::HalfFloor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
-            ("half_expand", RoundingMode::HalfExpand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("half_trunc", RoundingMode::HalfTrunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_even", RoundingMode::HalfEven, "-1.6", "0.4", "0.4", "0.6", "1.6"),
+            ("ceil", SRM::Ceil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("floor", SRM::Floor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("expand", SRM::Unsigned(URM::Expand), "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("trunc", SRM::Unsigned(URM::Trunc), "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_ceil", SRM::HalfCeil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("half_floor", SRM::HalfFloor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("half_expand", SRM::Unsigned(URM::HalfExpand), "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("half_trunc", SRM::Unsigned(URM::HalfTrunc), "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_even", SRM::Unsigned(URM::HalfEven), "-1.6", "0.4", "0.4", "0.6", "1.6"),
         ]),
         ("five", RoundingIncrement::MultiplesOf5, [
-            ("ceil", RoundingMode::Ceil, "-1.5", "0.5", "0.5", "1.0", "1.5"),
-            ("floor", RoundingMode::Floor, "-1.5", "0.0", "0.5", "0.5", "1.5"),
-            ("expand", RoundingMode::Expand, "-1.5", "0.5", "0.5", "1.0", "1.5"),
-            ("trunc", RoundingMode::Trunc, "-1.5", "0.0", "0.5", "0.5", "1.5"),
-            ("half_ceil", RoundingMode::HalfCeil, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_floor", RoundingMode::HalfFloor, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_expand", RoundingMode::HalfExpand, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_trunc", RoundingMode::HalfTrunc, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_even", RoundingMode::HalfEven, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("ceil", SRM::Ceil, "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("floor", SRM::Floor, "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("expand", SRM::Unsigned(URM::Expand), "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("trunc", SRM::Unsigned(URM::Trunc), "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("half_ceil", SRM::HalfCeil, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_floor", SRM::HalfFloor, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_expand", SRM::Unsigned(URM::HalfExpand), "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_trunc", SRM::Unsigned(URM::HalfTrunc), "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_even", SRM::Unsigned(URM::HalfEven), "-1.5", "0.5", "0.5", "0.5", "1.5"),
         ]),
         ("twenty-five", RoundingIncrement::MultiplesOf25, [
-            ("ceil", RoundingMode::Ceil, "-0.0", "2.5", "2.5", "2.5", "2.5"),
-            ("floor", RoundingMode::Floor, "-2.5", "0.0", "0.0", "0.0", "0.0"),
-            ("expand", RoundingMode::Expand, "-2.5", "2.5", "2.5", "2.5", "2.5"),
-            ("trunc", RoundingMode::Trunc, "-0.0", "0.0", "0.0", "0.0", "0.0"),
-            ("half_ceil", RoundingMode::HalfCeil, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_floor", RoundingMode::HalfFloor, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_expand", RoundingMode::HalfExpand, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_trunc", RoundingMode::HalfTrunc, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_even", RoundingMode::HalfEven, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("ceil", SRM::Ceil, "-0.0", "2.5", "2.5", "2.5", "2.5"),
+            ("floor", SRM::Floor, "-2.5", "0.0", "0.0", "0.0", "0.0"),
+            ("expand", SRM::Unsigned(URM::Expand), "-2.5", "2.5", "2.5", "2.5", "2.5"),
+            ("trunc", SRM::Unsigned(URM::Trunc), "-0.0", "0.0", "0.0", "0.0", "0.0"),
+            ("half_ceil", SRM::HalfCeil, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_floor", SRM::HalfFloor, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_expand", SRM::Unsigned(URM::HalfExpand), "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_trunc", SRM::Unsigned(URM::HalfTrunc), "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_even", SRM::Unsigned(URM::HalfEven), "-2.5", "0.0", "0.0", "0.0", "2.5"),
         ]),
     ];
 
