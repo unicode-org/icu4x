@@ -1779,14 +1779,6 @@ impl UnsignedFixedDecimal {
         self.check_invariants();
     }
 
-    pub(crate) fn half_ceil_to_increment_internal<R: IncrementLike>(
-        &mut self,
-        position: i16,
-        increment: R,
-    ) {
-        self.half_expand_to_increment_internal(position, increment);
-    }
-
     pub(crate) fn half_even_to_increment_internal<R: IncrementLike>(
         &mut self,
         position: i16,
