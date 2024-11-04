@@ -34,8 +34,14 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
     {
         let decimal_operands = self.decimal_value.into();
         // let compact_operands = self.compact_value.into();
-        let display_name = self.extended.display_names.get(decimal_operands, self.plural_rules);
-        let pattern = self.patterns.patterns.get(decimal_operands, self.plural_rules);
+        let display_name = self
+            .extended
+            .display_names
+            .get(decimal_operands, self.plural_rules);
+        let pattern = self
+            .patterns
+            .patterns
+            .get(decimal_operands, self.plural_rules);
         let formatted_value = self.fixed_decimal_formatter.format(self.decimal_value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
