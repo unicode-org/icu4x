@@ -4,7 +4,7 @@
 
 [package]
 name = "potential_utf"
-version = "0.0.0"
+version = "0.1.0-dev"
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
