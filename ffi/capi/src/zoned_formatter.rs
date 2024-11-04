@@ -13,7 +13,7 @@ pub mod ffi {
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
         datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::{PatternLoadError, DateTimeFormatError},
+        errors::ffi::{DateTimeFormatError, PatternLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZoneInfo,

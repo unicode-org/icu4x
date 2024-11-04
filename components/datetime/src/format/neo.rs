@@ -1608,7 +1608,7 @@ pub enum PatternLoadError {
     /// A field conflicts with a previous field.
     ///
     /// Fields conflict if they require the same type of data, for example the
-    /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M` 
+    /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
     /// and `L` (format vs standalone month) conflict.
     #[displaydoc("A field conflicts with a previous field.")]
     ConflictingField(Field),

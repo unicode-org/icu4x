@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
-        errors::ffi::{PatternLoadError, DateTimeFormatError},
+        errors::ffi::{DateTimeFormatError, PatternLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         time::ffi::Time,

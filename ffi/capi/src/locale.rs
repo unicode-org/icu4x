@@ -40,7 +40,9 @@ pub mod ffi {
         /// Create a new [`LocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended")]
-        pub fn create_extended(provider: &DataProvider) -> Result<Box<LocaleCanonicalizer>, DataError> {
+        pub fn create_extended(
+            provider: &DataProvider,
+        ) -> Result<Box<LocaleCanonicalizer>, DataError> {
             let expander = call_constructor!(
                 icu_locale::LocaleExpander::new_extended [r => Ok(r)],
                 icu_locale::LocaleExpander::try_new_with_any_provider,

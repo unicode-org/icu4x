@@ -113,7 +113,7 @@ pub mod ffi {
         InvalidCyclicYear = 0x05,
         NamesNotLoaded = 0x10,
         FixedDecimalFormatterNotLoaded = 0x11,
-        UnsupportedField = 0x12
+        UnsupportedField = 0x12,
     }
 }
 
@@ -212,7 +212,9 @@ impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
             icu_datetime::DateTimeWriteError::InvalidMonthCode(..) => Self::InvalidMonthCode,
             icu_datetime::DateTimeWriteError::InvalidCyclicYear { .. } => Self::InvalidCyclicYear,
             icu_datetime::DateTimeWriteError::NamesNotLoaded(..) => Self::NamesNotLoaded,
-            icu_datetime::DateTimeWriteError::FixedDecimalFormatterNotLoaded => Self::FixedDecimalFormatterNotLoaded,
+            icu_datetime::DateTimeWriteError::FixedDecimalFormatterNotLoaded => {
+                Self::FixedDecimalFormatterNotLoaded
+            }
             icu_datetime::DateTimeWriteError::UnsupportedField(..) => Self::UnsupportedField,
             _ => Self::Unknown,
         }
