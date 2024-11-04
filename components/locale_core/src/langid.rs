@@ -167,12 +167,9 @@ impl LanguageIdentifier {
             && self.variants.is_empty()
     }
 
-    /// Canonicalize the language identifier (operating on UTF-8 formatted byte slices)
+    /// Normalize the language identifier (operating on UTF-8 formatted byte slices)
     ///
-    /// This is a best-effort operation that performs all available levels of canonicalization.
-    ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -180,21 +177,18 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&lang_id, input))
     }
 
-    /// Canonicalize the language identifier (operating on strings)
+    /// Normalize the language identifier (operating on strings)
     ///
-    /// This is a best-effort operation that performs all available levels of canonicalization.
-    ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -202,12 +196,12 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        Self::canonicalize_utf8(input.as_bytes())
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -371,14 +365,14 @@ impl LanguageIdentifier {
     /// Executes `f` on each subtag string of this `LanguageIdentifier`, with every string in
     /// lowercase ascii form.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -406,14 +400,14 @@ impl LanguageIdentifier {
     /// Writes this `LanguageIdentifier` to a sink, replacing uppercase ascii chars with
     /// lowercase ascii chars.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
