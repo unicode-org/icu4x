@@ -7,6 +7,9 @@
 # by cargo for any invocation inside tutorials/.
 
 [patch.crates-io]
+# Workaround for broken semver in repo
+idna_adapter = { git = "https://github.com/hsivonen/idna_adapter", rev = "v1.1.0" }
+
 # KEEP IN SYNC WITH TOP-LEVEL Cargo.toml
 
 # ICU4X core
