@@ -49,19 +49,28 @@ pub mod ffi {
         MultiplesOf25,
     }
 
-    /// Mode used in a rounding operation.
-    #[diplomat::rust_link(fixed_decimal::RoundingMode, Enum)]
-    #[diplomat::enum_convert(fixed_decimal::RoundingMode, needs_wildcard)]
-    pub enum FixedDecimalRoundingMode {
-        Ceil,
+    /// Mode used in a rounding operation for unsigned numbers.
+    #[diplomat::rust_link(fixed_decimal::UnsignedRoundingMode, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::UnsignedRoundingMode, needs_wildcard)]
+    pub enum FixedDecimalUnsignedRoundingMode {
         Expand,
-        Floor,
         Trunc,
-        HalfCeil,
         HalfExpand,
-        HalfFloor,
         HalfTrunc,
         HalfEven,
+    }
+
+    /// Mode used in a rounding operation for signed numbers.
+    #[diplomat::rust_link(fixed_decimal::SignedRoundingMode, Enum)]
+    #[diplomat::enum_convert(fixed_decimal::SignedRoundingMode, needs_wildcard)]
+    pub enum FixedDecimalRoundingMode {
+        // TODO:Uncomment this once we have a way to convert from UnsignedRoundingMode to SignedRoundingMode.
+        // TODO: this must be done.
+        // Unsigned(FixedDecimalUnsignedRoundingMode),
+        Ceil,
+        Floor,
+        HalfCeil,
+        HalfFloor,
     }
 
     impl SignedFixedDecimal {
