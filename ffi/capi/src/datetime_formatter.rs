@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
-        errors::ffi::Error,
+        errors::ffi::{PatternLoadError, DateTimeFormatError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         time::ffi::Time,
@@ -44,7 +44,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<TimeFormatter>, Error> {
+        ) -> Result<Box<TimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = HM::with_length(NeoSkeletonLength::from(length));
 
@@ -60,7 +60,7 @@ pub mod ffi {
 
         /// Formats a [`Time`] to a string.
         pub fn format_time(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _infallible = self.0.format(&value.0).try_write_to(write);
+            let _lossy = self.0.format(&value.0).try_write_to(write);
         }
 
         /// Formats a [`DateTime`] to a string.
@@ -69,7 +69,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _infallible = self.0.format(&value.0.time).try_write_to(write);
+            let _lossy = self.0.format(&value.0.time).try_write_to(write);
         }
 
         /// Formats a [`IsoDateTime`] to a string.
@@ -78,7 +78,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _infallible = self.0.format(&value.0.time).try_write_to(write);
+            let _lossy = self.0.format(&value.0.time).try_write_to(write);
         }
     }
 
@@ -98,7 +98,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianDateFormatter>, Error> {
+        ) -> Result<Box<GregorianDateFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
@@ -119,7 +119,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg).try_write_to(write);
+            let _lossy = self.0.format(&greg).try_write_to(write);
         }
         /// Formats a [`IsoDateTime`] to a string.
         pub fn format_iso_datetime(
@@ -128,7 +128,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg).try_write_to(write);
+            let _lossy = self.0.format(&greg).try_write_to(write);
         }
     }
 
@@ -148,7 +148,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianDateTimeFormatter>, Error> {
+        ) -> Result<Box<GregorianDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDHM::with_length(NeoSkeletonLength::from(length));
 
@@ -169,7 +169,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg).try_write_to(write);
+            let _lossy = self.0.format(&greg).try_write_to(write);
         }
     }
 
@@ -187,7 +187,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<DateFormatter>, Error> {
+        ) -> Result<Box<DateFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
@@ -206,8 +206,8 @@ pub mod ffi {
             &self,
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
-            let _infallible = self.0.convert_and_format(&value.0).try_write_to(write);
+        ) -> Result<(), DateTimeFormatError> {
+            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -218,9 +218,9 @@ pub mod ffi {
             &self,
             value: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _infallible = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
             Ok(())
         }
 
@@ -229,8 +229,8 @@ pub mod ffi {
             &self,
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
-            let _infallible = self.0.convert_and_format(&value.0).try_write_to(write);
+        ) -> Result<(), DateTimeFormatError> {
+            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -241,9 +241,9 @@ pub mod ffi {
             &self,
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _infallible = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
             Ok(())
         }
     }
@@ -262,7 +262,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<DateTimeFormatter>, Error> {
+        ) -> Result<Box<DateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDHM::with_length(NeoSkeletonLength::from(length));
 
@@ -281,8 +281,8 @@ pub mod ffi {
             &self,
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
-            let _infallible = self.0.convert_and_format(&value.0).try_write_to(write);
+        ) -> Result<(), DateTimeFormatError> {
+            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -293,9 +293,9 @@ pub mod ffi {
             &self,
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _infallible = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
             Ok(())
         }
     }

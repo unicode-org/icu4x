@@ -36,7 +36,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             skeleton: $fset,
-        ) -> Result<Self, LoadError>
+        ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
         {
@@ -54,7 +54,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             skeleton: $fset,
-        ) -> Result<Self, LoadError>
+        ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
         {
@@ -73,7 +73,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             options: $fset,
-        ) -> Result<Self, LoadError>
+        ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
         {
@@ -91,7 +91,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             options: $fset,
-        ) -> Result<Self, LoadError>
+        ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
         {
@@ -197,7 +197,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, PatternLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
@@ -224,7 +224,7 @@ where
         provider: &P,
         locale: &DataLocale,
         field_set: FSet,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized
             + AllFixedCalendarFormattingDataMarkers<C, FSet>
@@ -355,7 +355,10 @@ where
     /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(
+        locale: &DataLocale,
+        skeleton: FSet,
+    ) -> Result<Self, PatternLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
@@ -382,7 +385,7 @@ where
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized
             + AllFixedCalendarFormattingDataMarkers<C, FSet>
@@ -410,7 +413,7 @@ where
         locale: &DataLocale,
         options: RawNeoOptions,
         components: NeoComponents,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
@@ -431,7 +434,7 @@ where
             components,
             options,
         )
-        .map_err(LoadError::Data)?;
+        .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
@@ -592,7 +595,7 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, PatternLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
@@ -619,7 +622,7 @@ where
         provider: &P,
         locale: &DataLocale,
         field_set: FSet,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet> + AllAnyCalendarExternalDataMarkers,
     {
@@ -744,7 +747,10 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_skeleton(locale: &DataLocale, skeleton: FSet) -> Result<Self, LoadError>
+    pub fn try_new_with_skeleton(
+        locale: &DataLocale,
+        skeleton: FSet,
+    ) -> Result<Self, PatternLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
@@ -771,7 +777,7 @@ where
         provider: &P,
         locale: &DataLocale,
         skeleton: FSet,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet> + AllAnyCalendarExternalDataMarkers,
     {
@@ -797,7 +803,7 @@ where
         locale: &DataLocale,
         options: RawNeoOptions,
         components: NeoComponents,
-    ) -> Result<Self, LoadError>
+    ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
@@ -810,7 +816,7 @@ where
             .and_then(HourCycle::from_locale_value);
         // END TODO
 
-        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(PatternLoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),
@@ -820,7 +826,7 @@ where
             components,
             options,
         )
-        .map_err(LoadError::Data)?;
+        .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
         names.load_for_pattern(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),

@@ -2,9 +2,9 @@
 import { DataProvider } from "./DataProvider.mjs"
 import { DateTime } from "./DateTime.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
-import { Error } from "./Error.mjs"
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
+import { PatternLoadError } from "./PatternLoadError.mjs"
 import { Time } from "./Time.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -52,8 +52,8 @@ export class TimeFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Error: ' + cause.value, { cause });
+                const cause = new PatternLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('PatternLoadError: ' + cause.value, { cause });
             }
             return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

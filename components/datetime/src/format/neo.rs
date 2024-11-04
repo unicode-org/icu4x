@@ -69,15 +69,15 @@ impl_holder_trait!(tz::MzPeriodV1Marker);
 
 #[non_exhaustive]
 pub enum MaybePayloadError2 {
-    TypeTooNarrow,
-    InsufficientStorage,
+    TypeTooSpecific,
+    ConflictingField,
 }
 
 impl MaybePayloadError2 {
-    fn into_single_load_error(self, field: Field) -> SingleLoadError {
+    fn into_load_error(self, field: Field) -> PatternLoadError {
         match self {
-            Self::TypeTooNarrow => SingleLoadError::TypeTooNarrow(field),
-            Self::InsufficientStorage => SingleLoadError::DuplicateField(field),
+            Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(field),
+            Self::ConflictingField => PatternLoadError::ConflictingField(field),
         }
     }
 }
@@ -150,7 +150,7 @@ where
                 return Ok(Ok(()));
             }
             OptionalNames::SingleLength { .. } => {
-                return Err(MaybePayloadError2::InsufficientStorage);
+                return Err(MaybePayloadError2::ConflictingField);
             }
             OptionalNames::None => (),
         };
@@ -187,7 +187,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for () {
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
-        Err(MaybePayloadError2::TypeTooNarrow)
+        Err(MaybePayloadError2::TypeTooSpecific)
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
@@ -346,7 +346,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
+///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (11, 14, Part::ERROR), // M11
@@ -670,7 +670,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern(&pattern).format(&date),
     ///     "It is: 2024-7-1",
-    ///     Err(DateTimeWriteError::MissingFixedDecimalFormatter),
+    ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
     ///         (12, 13, Part::ERROR), // 7
@@ -693,7 +693,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &mut self,
         provider: &P,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<C::YearNamesV1Marker> + ?Sized,
     {
@@ -714,7 +714,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::SingleLoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -731,14 +731,14 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_year_names(FieldLength::Abbreviated),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_year_names(
         &mut self,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
     {
@@ -753,7 +753,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         provider: &P,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<C::MonthNamesV1Marker> + ?Sized,
     {
@@ -775,7 +775,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::SingleLoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -798,11 +798,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_month_names(alt_field_symbol, FieldLength::Wide),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
     ///     names.include_month_names(field_symbol, FieldLength::Abbreviated),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -810,7 +810,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &mut self,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
     {
@@ -824,7 +824,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &mut self,
         provider: &P,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
@@ -843,7 +843,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::SingleLoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -860,14 +860,14 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_day_period_names(FieldLength::Abbreviated),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<DayPeriodNamesV1Marker>,
     {
@@ -882,7 +882,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         provider: &P,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
@@ -904,7 +904,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::SingleLoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -927,11 +927,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_weekday_names(alt_field_symbol, FieldLength::Wide),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
     ///     names.include_weekday_names(field_symbol, FieldLength::Abbreviated),
-    ///     Err(SingleLoadError::DuplicateField(_))
+    ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -939,7 +939,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &mut self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<WeekdayNamesV1Marker>,
     {
@@ -950,7 +950,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_essentials<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
@@ -1039,7 +1039,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::EssentialsV1Marker>,
     {
@@ -1050,7 +1050,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_location_names<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::LocationsV1Marker> + ?Sized,
     {
@@ -1103,7 +1103,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
     {
@@ -1114,7 +1114,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_generic_long_names<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::MzGenericLongV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
     {
@@ -1179,7 +1179,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericLongV1Marker>,
     {
@@ -1190,7 +1190,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_generic_short_names<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::MzGenericShortV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
     {
@@ -1255,7 +1255,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
     {
@@ -1266,7 +1266,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_specific_long_names<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::MzSpecificLongV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
     {
@@ -1331,7 +1331,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificLongV1Marker>,
     {
@@ -1342,7 +1342,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn load_time_zone_specific_short_names<P>(
         &mut self,
         provider: &P,
-    ) -> Result<&mut Self, SingleLoadError>
+    ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<tz::MzSpecificShortV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
     {
@@ -1407,7 +1407,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_short_names(&mut self) -> Result<&mut Self, SingleLoadError>
+    pub fn include_time_zone_specific_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificShortV1Marker>,
     {
@@ -1484,7 +1484,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &'l mut self,
         provider: &P,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C, R>, LoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, R>, PatternLoadError>
     where
         P: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -1565,7 +1565,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn include_for_pattern<'l>(
         &'l mut self,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C, R>, LoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, R>, PatternLoadError>
     where
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -1602,44 +1602,26 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
-#[non_exhaustive]
-/// Error returned from [`TypedDateTimeNames`]'s load methods.
-pub enum SingleLoadError {
-    /// Duplicate field in pattern
-    DuplicateField(Field),
-    /// ICU4X does not support this field
-    UnsupportedField(Field),
-    /// The specific type does not support this field
-    TypeTooNarrow(Field),
-    /// An error arising from the [`DataProvider`]
-    Data(DataError),
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 /// Error returned from [`TypedDateTimeNames`]'s pattern load methods.
 #[non_exhaustive]
-pub enum LoadError {
-    /// DuplicateField
-    DuplicateField(Field),
-    /// ICU4X does not support this field
+pub enum PatternLoadError {
+    /// A field conflicts with a previous field.
+    ///
+    /// Fields conflict if they require the same type of data, for example the
+    /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M` 
+    /// and `L` (format vs standalone month) conflict.
+    #[displaydoc("A field conflicts with a previous field.")]
+    ConflictingField(Field),
+    /// The field is not currently supported.
     UnsupportedField(Field),
-    /// The specific type does not support this field
-    TypeTooNarrow(Field),
-    /// An error arising from the [`DataProvider`]
+    /// The specific type does not support this field.
+    ///
+    /// This happens for example when trying to load a month field
+    /// on a [`TypedDateTimeNames<Gregorian, NeoTimeZoneSkeleton>`].
+    #[displaydoc("The specific type does not support this field.")]
+    TypeTooSpecific(Field),
+    /// An error arising from the [`DataProvider`].
     Data(DataError),
-    /// MissingNames
-    MissingNames(Field),
-}
-
-impl From<SingleLoadError> for LoadError {
-    fn from(value: SingleLoadError) -> Self {
-        match value {
-            SingleLoadError::Data(e) => LoadError::Data(e),
-            SingleLoadError::UnsupportedField(f) => LoadError::UnsupportedField(f),
-            SingleLoadError::TypeTooNarrow(f) => LoadError::TypeTooNarrow(f),
-            SingleLoadError::DuplicateField(f) => LoadError::DuplicateField(f),
-        }
-    }
 }
 
 pub(crate) enum FieldForDataLoading {
@@ -1699,7 +1681,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
@@ -1718,7 +1700,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1727,8 +1709,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.year_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1738,7 +1720,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
@@ -1758,7 +1740,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1767,8 +1749,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.month_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1777,7 +1759,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
@@ -1797,7 +1779,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1806,8 +1788,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.dayperiod_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1817,7 +1799,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
@@ -1848,7 +1830,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
                         FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(SingleLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1857,8 +1839,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.weekday_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1866,7 +1848,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         &mut self,
         provider: &P,
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
@@ -1881,8 +1863,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.zone_essentials
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1890,7 +1872,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         &mut self,
         provider: &P,
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError>
+    ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
@@ -1905,12 +1887,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.locations_root
             .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         self.locations
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1919,7 +1901,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError> {
+    ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
             length: FieldLength::Wide,
@@ -1931,12 +1913,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_generic_long
             .load_put(mz_generic_long_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1945,7 +1927,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError> {
+    ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
             length: FieldLength::One,
@@ -1957,12 +1939,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_generic_short
             .load_put(mz_generic_short_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1971,7 +1953,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError> {
+    ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
             length: FieldLength::Wide,
@@ -1983,12 +1965,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_specific_long
             .load_put(mz_specific_long_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -1997,7 +1979,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         locale: &DataLocale,
-    ) -> Result<(), SingleLoadError> {
+    ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
             length: FieldLength::One,
@@ -2009,12 +1991,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_specific_short
             .load_put(mz_specific_short_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
-            .map_err(SingleLoadError::Data)?;
+            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(PatternLoadError::Data)?;
         Ok(())
     }
 
@@ -2067,7 +2049,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = FieldForDataLoading>,
-    ) -> Result<(), LoadError> {
+    ) -> Result<(), PatternLoadError> {
         let mut numeric_field = None;
         for item in pattern_items {
             let item = match item {
@@ -2096,7 +2078,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                             self.load_time_zone_specific_short_names(
                                 mz_specific_short_provider,
                                 mz_period_provider,
@@ -2110,7 +2092,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                             self.load_time_zone_specific_long_names(
                                 mz_specific_long_provider,
                                 mz_period_provider,
@@ -2124,7 +2106,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                             self.load_time_zone_generic_short_names(
                                 mz_generic_short_provider,
                                 mz_period_provider,
@@ -2140,7 +2122,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                             self.load_time_zone_generic_long_names(
                                 mz_generic_long_provider,
                                 mz_period_provider,
@@ -2156,7 +2138,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
                         ResolvedNeoTimeZoneSkeleton::OffsetShort
@@ -2166,7 +2148,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
-                            .map_err(LoadError::Data)?;
+                            .map_err(PatternLoadError::Data)?;
                         }
                         ResolvedNeoTimeZoneSkeleton::Isox
                         | ResolvedNeoTimeZoneSkeleton::Isoxx
@@ -2229,7 +2211,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
 
         if numeric_field.is_some() {
             self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, locale)
-                .map_err(LoadError::Data)?;
+                .map_err(PatternLoadError::Data)?;
         }
 
         Ok(())
@@ -2567,7 +2549,8 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         weekday_names
             .names
             .get((day as usize) % 7)
-            .ok_or(GetNameForWeekdayError::Missing)
+            // TODO: make weekday_names length 7 in the type system
+            .ok_or(GetNameForWeekdayError::MissingNames(field))
     }
 
     /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.

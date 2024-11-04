@@ -222,11 +222,13 @@ export { CalendarParseError } from "./CalendarParseError.mjs"
 
 export { DataError } from "./DataError.mjs"
 
-export { Error } from "./Error.mjs"
+export { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
+
+export { PatternLoadError } from "./PatternLoadError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 

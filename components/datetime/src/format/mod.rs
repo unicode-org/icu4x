@@ -13,7 +13,6 @@ pub(crate) enum GetNameForMonthError {
     MissingNames(Field),
 }
 pub(crate) enum GetNameForWeekdayError {
-    Missing,
     MissingNames(Field),
 }
 
