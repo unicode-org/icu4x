@@ -9,8 +9,8 @@
 
 #include "DataProvider.d.h"
 #include "Date.d.h"
-#include "DateLength.d.h"
 #include "DateTime.d.h"
+#include "DateTimeLength.d.h"
 #include "Error.d.h"
 #include "IsoDate.d.h"
 #include "IsoDateTime.d.h"
@@ -24,7 +24,7 @@
 
 
 typedef struct icu4x_DateFormatter_create_with_length_mv1_result {union {DateFormatter* ok; Error err;}; bool is_ok;} icu4x_DateFormatter_create_with_length_mv1_result;
-icu4x_DateFormatter_create_with_length_mv1_result icu4x_DateFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length);
+icu4x_DateFormatter_create_with_length_mv1_result icu4x_DateFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 typedef struct icu4x_DateFormatter_format_date_mv1_result {union { Error err;}; bool is_ok;} icu4x_DateFormatter_format_date_mv1_result;
 icu4x_DateFormatter_format_date_mv1_result icu4x_DateFormatter_format_date_mv1(const DateFormatter* self, const Date* value, DiplomatWrite* write);

@@ -5,11 +5,32 @@
     "1": "next yr."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001y ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "y ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in y"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "y"
+        }
+      ]
+    ]
   }
 }

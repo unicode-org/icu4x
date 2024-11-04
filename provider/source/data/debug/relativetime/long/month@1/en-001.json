@@ -5,21 +5,57 @@
     "1": "next month"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 month ago"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " month ago"
+        }
       ]
     ],
-    "other": "\u0001 months ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " months ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004in  month"
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " month"
+        }
       ]
     ],
-    "other": "\u0004in  months"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " months"
+        }
+      ]
+    ]
   }
 }

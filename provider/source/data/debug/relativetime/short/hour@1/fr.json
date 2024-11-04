@@ -3,11 +3,35 @@
     "0": "cette heure-ci"
   },
   "past": {
-    "specials": [],
-    "other": "\bil y a  h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0006dans  h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
+      ]
+    ]
   }
 }

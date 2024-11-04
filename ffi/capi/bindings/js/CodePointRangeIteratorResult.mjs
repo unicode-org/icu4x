@@ -4,7 +4,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** Result of a single iteration of [`CodePointRangeIterator`].
-*Logically can be considered to be an `Option<RangeInclusive<u32>>`,
+*Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
 *
 *`start` and `end` represent an inclusive range of code points [start, end],
 *and `done` will be true if the iterator has already finished. The last contentful
@@ -45,7 +45,18 @@ export class CodePointRangeIteratorResult {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#start, this.#end, this.#done]
+        return [this.#start, this.#end, this.#done, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#start, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#end, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#done, Uint8Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

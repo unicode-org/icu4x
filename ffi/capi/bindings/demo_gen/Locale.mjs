@@ -70,9 +70,9 @@ export function script() {
         ]
     );
 }
-export function canonicalize() {
+export function normalize() {
     var terminusArgs = arguments;
-    return Locale.canonicalize.apply(
+    return Locale.normalize.apply(
         null,
         [
             terminusArgs[0]

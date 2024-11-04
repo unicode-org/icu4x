@@ -254,12 +254,6 @@ checksum = "46afbd2983a5d5a7bd740ccb198caf5b82f45c40c09c0eed36052d91cb92e719"
 
 [[package]]
 name = "bitflags"
-version = "1.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
-
-[[package]]
-name = "bitflags"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
@@ -619,7 +613,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -649,7 +643,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
 dependencies = [
  "log",
 ]
@@ -657,7 +651,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
 dependencies = [
  "askama",
  "clap",
@@ -677,7 +671,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
 dependencies = [
  "displaydoc",
  "either",
@@ -685,7 +679,7 @@ dependencies = [
  "quote",
  "serde",
  "smallvec",
- "strck_ident",
+ "strck",
  "syn 2.0.75",
 ]
 
@@ -961,6 +955,7 @@ dependencies = [
  "icu_list",
  "icu_locale",
  "icu_normalizer",
+ "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1140,8 +1135,10 @@ dependencies = [
  "icu_collections",
  "icu_locale_core",
  "icu_normalizer",
+ "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -1169,6 +1166,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_properties",
  "postcard",
+ "potential_utf",
  "serde",
  "serde_json",
  "toml",
@@ -1193,6 +1191,7 @@ dependencies = [
  "icu_datetime_data",
  "icu_decimal",
  "icu_locale_core",
+ "icu_pattern",
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
@@ -1348,6 +1347,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
+ "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
@@ -1448,6 +1448,7 @@ dependencies = [
  "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
+ "postcard",
  "serde",
  "serde_json",
  "zerovec",
@@ -1459,15 +1460,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_preferences"
-version = "0.0.0"
-dependencies = [
- "icu_datetime",
- "icu_locale_core",
- "tinystr",
 ]
 
 [[package]]
@@ -1484,6 +1476,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "unicode-bidi",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1491,7 +1484,6 @@ dependencies = [
 name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
- "icu_locale",
  "icu_provider_baked",
 ]
 
@@ -1653,6 +1645,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "parse-zoneinfo",
  "postcard",
  "potential_utf",
  "serde",
@@ -1703,6 +1696,7 @@ dependencies = [
 name = "icu_timezone"
 version = "1.5.0"
 dependencies = [
+ "calendrical_calculations",
  "databake",
  "displaydoc",
  "icu",
@@ -1899,6 +1893,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_export",
  "icu_provider_fs",
+ "icu_provider_source",
  "itertools",
  "litemap",
  "lru",
@@ -2108,6 +2103,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "parse-zoneinfo"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f2a05b18d44e2957b88f96ba460715e295bc1d7510468a2f3d3b44535d26c24"
+dependencies = [
+ "regex",
+]
+
+[[package]]
 name = "partial-min-max"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2223,15 +2227,22 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.8.0"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffade02495f22453cd593159ea2f59827aae7f53fa8323f756799b670881dcf8"
+checksum = "cb4e75767fbc9d92b90e4d0c011f61358cde9513b31ef07ea3631b15ffc3b4fd"
 dependencies = [
- "bitflags 1.3.2",
+ "bitflags",
  "getopts",
  "memchr",
+ "pulldown-cmark-escape",
  "unicase",
 ]
+
+[[package]]
+name = "pulldown-cmark-escape"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
 
 [[package]]
 name = "quote"
@@ -2329,7 +2340,7 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a908a6e00f1fdd0dfd9c0eb08ce85126f6d8bbda50017e74bc4a4b7d4a926a4"
 dependencies = [
- "bitflags 2.6.0",
+ "bitflags",
 ]
 
 [[package]]
@@ -2479,9 +2490,9 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.22.0"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c7a12c7506980eaac5c9851a04e90e0062eb4417aa188a512bf7a64a1ef290f"
+checksum = "0904b9147011800e63763fb9e49bbeaf76c1b6ab8982824c659dce5433712559"
 dependencies = [
  "serde",
 ]
@@ -2671,17 +2682,10 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "strck"
-version = "0.1.2"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be91090ded9d8f979d9fe921777342d37e769e0b6b7296843a7a38247240e917"
-
-[[package]]
-name = "strck_ident"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1c3802b169b3858a44667f221c9a0b3136e6019936ea926fc97fbad8af77202"
+checksum = "42316e70da376f3d113a68d138a60d8a9883c604fe97942721ec2068dab13a9f"
 dependencies = [
- "strck",
  "unicode-ident",
 ]
 

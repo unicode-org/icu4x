@@ -9,63 +9,73 @@ use core::str::FromStr;
 use writeable::{impl_display_with_writeable, Writeable};
 
 use crate::helpers::size_test;
-use crate::pattern::{runtime, PatternError, PatternItem};
+use crate::provider::pattern::{runtime, PatternError, PatternItem};
 
 size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
-/// Most clients should use [`DateTimeFormatter`] instead of directly
-/// formatting with patterns.
+/// [`DateTimePattern`] forgoes most internationalization functionality of the datetime crate.
+/// It assumes that the pattern is already localized for the customer's locale. Most clients
+/// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
 /// There are two ways to make one of these:
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
 ///
-/// There are two things you can do with one of these:
+/// Things you can do with one of these:
 ///
 /// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
 /// 2. Convert it to a string pattern via [`Writeable`]
+/// 3. Get the resolved components
 ///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
 ///
-/// Create a pattern from a custom string and compare it to one from data:
+/// Create a pattern from a custom string and compare it to one from data,
+/// then check the resolved components:
 ///
 /// ```
-/// use icu::calendar::DateTime;
+/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::neo::TypedNeoFormatter;
-/// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+/// use icu::datetime::fieldset::YMD;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::datetime::options::components;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
+/// // Create the pattern from a string:
 /// let pattern_str = "d MMM y";
 /// let custom_pattern =
 ///     DateTimePattern::try_from_pattern_str(pattern_str).unwrap();
 /// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
-/// let data_pattern =
-///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-///         &locale!("es-MX").into(),
-///         NeoSkeletonLength::Medium.into(),
-///     )
-///     .unwrap()
-///     // The pattern can depend on the datetime being formatted.
-///     // For this example, we'll choose the local Unix epoch.
-///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
-///     .pattern();
-///
+/// // Load data that resolves to the same pattern:
+/// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+///     &locale!("es-MX").into(),
+///     YMD::medium(),
+/// )
+/// .unwrap()
+/// // The pattern can depend on the datetime being formatted.
+/// .format(&Date::try_new_iso(2024, 1, 1).unwrap().to_calendar(Gregorian))
+/// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
+///
+/// // Check the resolved components:
+/// let mut expected_components_bag = components::Bag::default();
+/// expected_components_bag.year = Some(components::Year::Numeric);
+/// expected_components_bag.month = Some(components::Month::Short);
+/// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
+/// let actual_components_bag = components::Bag::from(&data_pattern);
+/// assert_eq!(actual_components_bag, expected_components_bag);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
-/// [`FormattedNeoDateTime::pattern`]: crate::neo::FormattedNeoDateTime::pattern
+/// [`FormattedNeoDateTime::pattern`]: crate::FormattedNeoDateTime::pattern
 /// [`TypedDateTimeNames`]: crate::TypedDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {

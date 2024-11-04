@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::convert::{compute_bcp47_tzids_btreemap, compute_canonical_tzids_btreemap};
-use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::timezone::provider::names::*;
 use icu::timezone::TimeZoneBcp47Id;
@@ -17,10 +15,7 @@ use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<IanaToBcp47MapV1Marker> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
-
-        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+        let iana2bcp = &self.compute_bcp47_tzids_btreemap()?;
 
         // Sort and deduplicate the BCP-47 IDs:
         let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
@@ -63,22 +58,19 @@ impl crate::IterableDataProviderCached<IanaToBcp47MapV1Marker> for SourceDataPro
     }
 }
 
-impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV2Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
-
-        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
+        let iana2bcp = &self.compute_bcp47_tzids_btreemap()?;
 
         // Sort and deduplicate the BCP-47 IDs:
         let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.into_iter().collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Get the canonical IANA names.
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+        let bcp2iana = self.compute_canonical_tzids_btreemap()?;
 
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
@@ -88,13 +80,24 @@ impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
                 let is_canonical = bcp2iana.get(bcp) == Some(iana);
                 let index = bcp47_ids.binary_search(bcp).unwrap();
                 (
-                    iana.as_bytes().to_vec(),
+                    if iana.contains('/') {
+                        iana.to_owned()
+                    } else {
+                        format!(
+                            "{}{iana}",
+                            char::from_u32(
+                                icu::timezone::provider::names::NON_REGION_CITY_PREFIX as u32
+                            )
+                            .unwrap()
+                        )
+                    }
+                    .into_bytes(),
                     (index << 1) | (is_canonical as usize),
                 )
             })
             .collect();
 
-        let data_struct = IanaToBcp47MapV2 {
+        let data_struct = IanaToBcp47MapV3 {
             map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
@@ -111,7 +114,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV2Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -119,17 +122,15 @@ impl crate::IterableDataProviderCached<IanaToBcp47MapV2Marker> for SourceDataPro
 
 impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+        let bcp2iana = &self.compute_canonical_tzids_btreemap()?;
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Make the VarZeroVec of canonical IANA names.
         // Note: we can't build VarZeroVec from an iterator yet.
-        let iana_vec: Vec<String> = bcp2iana.into_values().collect();
+        let iana_vec: Vec<&String> = bcp2iana.values().collect();
         let canonical_iana_ids = iana_vec.as_slice().into();
 
         let data_struct = Bcp47ToIanaMapV1 {
@@ -250,13 +251,7 @@ fn test_compute_bcp47_ids_hash() {
 fn test_normalize_canonicalize_iana_coverage() {
     let provider = crate::SourceDataProvider::new_testing();
 
-    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = provider
-        .cldr()
-        .unwrap()
-        .bcp47()
-        .read_and_parse("timezone.json")
-        .unwrap();
-    let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+    let iana2bcp = &provider.compute_bcp47_tzids_btreemap().unwrap();
 
     let mapper = icu::timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
     let mapper = mapper.as_borrowed();
@@ -266,7 +261,7 @@ fn test_normalize_canonicalize_iana_coverage() {
         assert_eq!(&normalized, iana_id);
     }
 
-    let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+    let bcp2iana = &provider.compute_canonical_tzids_btreemap().unwrap();
     for (iana_id, bcp47_id) in iana2bcp.iter() {
         let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
         assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());

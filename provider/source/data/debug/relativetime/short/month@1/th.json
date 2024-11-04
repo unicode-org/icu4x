@@ -5,11 +5,32 @@
     "1": "เดือนหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 เดือนที่แล้ว"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือนที่แล้ว"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  เดือน"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือน"
+        }
+      ]
+    ]
   }
 }

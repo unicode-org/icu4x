@@ -23,7 +23,6 @@ namespace capi {
       Error_DataCustomError = 266,
       Error_DataIoError = 267,
       Error_DataUnavailableBufferFormatError = 268,
-      Error_PropertyUnexpectedPropertyNameError = 1026,
       Error_DateTimePatternError = 2048,
       Error_DateTimeMissingInputFieldError = 2049,
       Error_DateTimeSkeletonError = 2050,
@@ -33,6 +32,10 @@ namespace capi {
       Error_DateTimeMissingMonthSymbolError = 2054,
       Error_DateTimeFixedDecimalError = 2055,
       Error_DateTimeMismatchedCalendarError = 2056,
+      Error_DateTimeDuplicateFieldError = 2057,
+      Error_DateTimeTooNarrowError = 2058,
+      Error_DateTimeMissingNamesError = 2059,
+      Error_DateTimeZoneInfoMissingFieldsError = 2176,
     };
     
     typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;
@@ -53,7 +56,6 @@ public:
     DataCustomError = 266,
     DataIoError = 267,
     DataUnavailableBufferFormatError = 268,
-    PropertyUnexpectedPropertyNameError = 1026,
     DateTimePatternError = 2048,
     DateTimeMissingInputFieldError = 2049,
     DateTimeSkeletonError = 2050,
@@ -63,6 +65,10 @@ public:
     DateTimeMissingMonthSymbolError = 2054,
     DateTimeFixedDecimalError = 2055,
     DateTimeMismatchedCalendarError = 2056,
+    DateTimeDuplicateFieldError = 2057,
+    DateTimeTooNarrowError = 2058,
+    DateTimeMissingNamesError = 2059,
+    DateTimeZoneInfoMissingFieldsError = 2176,
   };
 
   Error() = default;

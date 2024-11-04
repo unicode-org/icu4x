@@ -1,8 +1,12 @@
 {
   "defaults": {},
-  "overrides": {
-    "utc": {
-      "st": "UTC"
-    }
-  }
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ]
 }

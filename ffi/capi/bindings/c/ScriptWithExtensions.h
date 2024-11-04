@@ -22,9 +22,9 @@
 typedef struct icu4x_ScriptWithExtensions_create_mv1_result {union {ScriptWithExtensions* ok; DataError err;}; bool is_ok;} icu4x_ScriptWithExtensions_create_mv1_result;
 icu4x_ScriptWithExtensions_create_mv1_result icu4x_ScriptWithExtensions_create_mv1(const DataProvider* provider);
 
-uint16_t icu4x_ScriptWithExtensions_get_script_val_mv1(const ScriptWithExtensions* self, uint32_t code_point);
+uint16_t icu4x_ScriptWithExtensions_get_script_val_mv1(const ScriptWithExtensions* self, char32_t ch);
 
-bool icu4x_ScriptWithExtensions_has_script_mv1(const ScriptWithExtensions* self, uint32_t code_point, uint16_t script);
+bool icu4x_ScriptWithExtensions_has_script_mv1(const ScriptWithExtensions* self, char32_t ch, uint16_t script);
 
 ScriptWithExtensionsBorrowed* icu4x_ScriptWithExtensions_as_borrowed_mv1(const ScriptWithExtensions* self);
 

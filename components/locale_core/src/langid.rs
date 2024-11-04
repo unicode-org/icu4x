@@ -10,8 +10,7 @@ use crate::parser::{
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
-use alloc::string::String;
-use writeable::Writeable;
+use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
@@ -26,8 +25,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed language identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation is performed.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
+///
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
@@ -166,10 +167,9 @@ impl LanguageIdentifier {
             && self.variants.is_empty()
     }
 
-    /// This is a best-effort operation that performs all available levels of canonicalization.
+    /// Normalize the language identifier (operating on UTF-8 formatted byte slices)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -177,13 +177,31 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let lang_id = Self::try_from_utf8(input.as_ref())?;
-        Ok(lang_id.write_to_string().into_owned())
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let lang_id = Self::try_from_utf8(input)?;
+        Ok(writeable::to_string_or_borrow(&lang_id, input))
+    }
+
+    /// Normalize the language identifier (operating on strings)
+    ///
+    /// This operation will normalize casing and the separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    ///
+    /// assert_eq!(
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
+    /// );
+    /// ```
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -220,7 +238,7 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_bytes(self, other)
     }
 
     pub(crate) fn as_tuple(
@@ -347,14 +365,14 @@ impl LanguageIdentifier {
     /// Executes `f` on each subtag string of this `LanguageIdentifier`, with every string in
     /// lowercase ascii form.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -368,10 +386,10 @@ impl LanguageIdentifier {
     {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
-            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(script.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         if let Some(ref region) = self.region {
-            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(region.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         for variant in self.variants.iter() {
             f(variant.as_str())?;
@@ -382,14 +400,14 @@ impl LanguageIdentifier {
     /// Writes this `LanguageIdentifier` to a sink, replacing uppercase ascii chars with
     /// lowercase ascii chars.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -410,19 +428,6 @@ impl LanguageIdentifier {
             }
             sink.write_str(subtag)
         })
-    }
-}
-
-impl AsRef<LanguageIdentifier> for LanguageIdentifier {
-    #[inline(always)]
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-
-impl AsMut<LanguageIdentifier> for LanguageIdentifier {
-    fn as_mut(&mut self) -> &mut Self {
-        self
     }
 }
 

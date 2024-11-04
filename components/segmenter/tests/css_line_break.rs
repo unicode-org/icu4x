@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_locale_core::{langid, LanguageIdentifier};
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakStrictness;
 use icu_segmenter::LineBreakWordOption;
@@ -27,11 +28,13 @@ fn check_with_options(
     assert_eq!(expect_utf16, result, "{s}");
 }
 
+static JA: LanguageIdentifier = langid!("ja");
+
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Strict;
     options.word_option = LineBreakWordOption::Normal;
-    options.ja_zh = ja_zh;
+    options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
@@ -39,7 +42,7 @@ fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Normal;
     options.word_option = LineBreakWordOption::Normal;
-    options.ja_zh = ja_zh;
+    options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
@@ -47,7 +50,7 @@ fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Loose;
     options.word_option = LineBreakWordOption::Normal;
-    options.ja_zh = ja_zh;
+    options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
@@ -55,7 +58,7 @@ fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usi
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Anywhere;
     options.word_option = LineBreakWordOption::Normal;
-    options.ja_zh = ja_zh;
+    options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 

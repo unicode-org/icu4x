@@ -2,9 +2,6 @@
   "main": {
     "ru": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ru"
       },
       "units": {
@@ -718,11 +715,32 @@
             "prepositional-count-other": "{0} карата"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
+            "gender": "masculine",
             "displayName": "миллиграммы на децилитр",
             "unitPattern-count-one": "{0} миллиграмм на децилитр",
+            "accusative-count-one": "{0} миллиграмм на децилитр",
+            "dative-count-one": "{0} миллиграмму на децилитр",
+            "genitive-count-one": "{0} миллиграмма на децилитр",
+            "instrumental-count-one": "{0} миллиграммом на децилитр",
+            "prepositional-count-one": "{0} миллиграмме на децилитр",
             "unitPattern-count-few": "{0} миллиграмма на децилитр",
+            "accusative-count-few": "{0} миллиграмма на децилитр",
+            "dative-count-few": "{0} миллиграммам на децилитр",
+            "genitive-count-few": "{0} миллиграммов на децилитр",
+            "instrumental-count-few": "{0} миллиграммами на децилитр",
+            "prepositional-count-few": "{0} миллиграммах на децилитр",
             "unitPattern-count-many": "{0} миллиграммов на децилитр",
-            "unitPattern-count-other": "{0} миллиграмма на децилитр"
+            "accusative-count-many": "{0} миллиграммов на децилитр",
+            "dative-count-many": "{0} миллиграммам на децилитр",
+            "genitive-count-many": "{0} миллиграммов на децилитр",
+            "instrumental-count-many": "{0} миллиграммами на децилитр",
+            "prepositional-count-many": "{0} миллиграммах на децилитр",
+            "unitPattern-count-other": "{0} миллиграмма на децилитр",
+            "accusative-count-other": "{0} миллиграмма на децилитр",
+            "dative-count-other": "{0} миллиграмма на децилитр",
+            "genitive-count-other": "{0} миллиграмма на децилитр",
+            "instrumental-count-other": "{0} миллиграмма на децилитр",
+            "prepositional-count-other": "{0} миллиграмма на децилитр"
           },
           "concentr-millimole-per-liter": {
             "gender": "masculine",
@@ -840,7 +858,7 @@
             "prepositional-count-other": "{0} процента"
           },
           "concentr-permille": {
-            "gender": "feminine",
+            "gender": "neuter",
             "displayName": "промилле",
             "unitPattern-count-one": "{0} промилле",
             "accusative-count-one": "{0} промилле",
@@ -1907,7 +1925,8 @@
             "accusative-count-other": "{0} килокалории",
             "dative-count-other": "{0} килокалории",
             "genitive-count-other": "{0} килокалории",
-            "instrumental-count-other": "{0} килокалории"
+            "instrumental-count-other": "{0} килокалории",
+            "prepositional-count-other": "{0} килокалории"
           },
           "energy-calorie": {
             "gender": "feminine",
@@ -2832,11 +2851,32 @@
             "prepositional-count-other": "{0} скандинавской мили"
           },
           "length-point": {
+            "gender": "masculine",
             "displayName": "пункты",
             "unitPattern-count-one": "{0} пункт",
+            "accusative-count-one": "{0} пункт",
+            "dative-count-one": "{0} пункту",
+            "genitive-count-one": "{0} пункта",
+            "instrumental-count-one": "{0} пунктом",
+            "prepositional-count-one": "{0} пункте",
             "unitPattern-count-few": "{0} пункта",
+            "accusative-count-few": "{0} пункта",
+            "dative-count-few": "{0} пунктам",
+            "genitive-count-few": "{0} пунктов",
+            "instrumental-count-few": "{0} пунктами",
+            "prepositional-count-few": "{0} пунктах",
             "unitPattern-count-many": "{0} пунктов",
-            "unitPattern-count-other": "{0} пункта"
+            "accusative-count-many": "{0} пунктов",
+            "dative-count-many": "{0} пунктам",
+            "genitive-count-many": "{0} пунктов",
+            "instrumental-count-many": "{0} пунктами",
+            "prepositional-count-many": "{0} пунктах",
+            "unitPattern-count-other": "{0} пункта",
+            "accusative-count-other": "{0} пункта",
+            "dative-count-other": "{0} пункта",
+            "genitive-count-other": "{0} пункта",
+            "instrumental-count-other": "{0} пункта",
+            "prepositional-count-other": "{0} пункта"
           },
           "length-solar-radius": {
             "gender": "masculine",
@@ -3512,11 +3552,32 @@
             "unitPattern-count-other": "{0} лошадиной силы"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "masculine",
             "displayName": "миллиметры ртутного столба",
             "unitPattern-count-one": "{0} миллиметр ртутного столба",
+            "accusative-count-one": "{0} миллиметр ртутного столба",
+            "dative-count-one": "{0} миллиметру ртутного столба",
+            "genitive-count-one": "{0} миллиметра ртутного столба",
+            "instrumental-count-one": "{0} миллиметром ртутного столба",
+            "prepositional-count-one": "{0} миллиметре ртутного столба",
             "unitPattern-count-few": "{0} миллиметра ртутного столба",
+            "accusative-count-few": "{0} миллиметра ртутного столба",
+            "dative-count-few": "{0} миллиметрам ртутного столба",
+            "genitive-count-few": "{0} миллиметров ртутного столба",
+            "instrumental-count-few": "{0} миллиметрами ртутного столба",
+            "prepositional-count-few": "{0} миллиметрах ртутного столба",
             "unitPattern-count-many": "{0} миллиметров ртутного столба",
-            "unitPattern-count-other": "{0} миллиметра ртутного столба"
+            "accusative-count-many": "{0} миллиметров ртутного столба",
+            "dative-count-many": "{0} миллиметрам ртутного столба",
+            "genitive-count-many": "{0} миллиметров ртутного столба",
+            "instrumental-count-many": "{0} миллиметрами ртутного столба",
+            "prepositional-count-many": "{0} миллиметрах ртутного столба",
+            "unitPattern-count-other": "{0} миллиметра ртутного столба",
+            "accusative-count-other": "{0} миллиметра ртутного столба",
+            "dative-count-other": "{0} миллиметра ртутного столба",
+            "genitive-count-other": "{0} миллиметра ртутного столба",
+            "instrumental-count-other": "{0} миллиметра ртутного столба",
+            "prepositional-count-other": "{0} миллиметра ртутного столба"
           },
           "pressure-pound-force-per-square-inch": {
             "displayName": "фунты на квадратный дюйм",
@@ -4897,6 +4958,67 @@
             "dative-count-other": "{0} имп. кварты",
             "genitive-count-other": "{0} имп. кварты",
             "instrumental-count-other": "{0} имп. кварты"
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "feminine",
+            "displayName": "миллиардные доли",
+            "unitPattern-count-one": "{0} миллиардная доля",
+            "accusative-count-one": "{0} миллиардную долю",
+            "dative-count-one": "{0} миллиардной доле",
+            "genitive-count-one": "{0} миллиардной доли",
+            "instrumental-count-one": "{0} миллиардной долей",
+            "prepositional-count-one": "{0} миллиардной доле",
+            "unitPattern-count-few": "{0} миллиардные доли",
+            "accusative-count-few": "{0} миллиардные доли",
+            "dative-count-few": "{0} миллиардным долям",
+            "genitive-count-few": "{0} миллиардных долей",
+            "instrumental-count-few": "{0} миллиардными долями",
+            "prepositional-count-few": "{0} миллиардных долях",
+            "unitPattern-count-many": "{0} миллиардных долей",
+            "accusative-count-many": "{0} миллиардных долей",
+            "dative-count-many": "{0} миллиардным долям",
+            "genitive-count-many": "{0} миллиардных долей",
+            "instrumental-count-many": "{0} миллиардными долями",
+            "prepositional-count-many": "{0} миллиардных долях",
+            "unitPattern-count-other": "{0} миллиардной доли",
+            "accusative-count-other": "{0} миллиардной доли",
+            "dative-count-other": "{0} миллиардной доли",
+            "genitive-count-other": "{0} миллиардной доли",
+            "instrumental-count-other": "{0} миллиардной доли",
+            "prepositional-count-other": "{0} миллиардной доли"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "ночи",
+            "unitPattern-count-one": "{0} ночь",
+            "accusative-count-one": "{0} ночь",
+            "dative-count-one": "{0} ночи",
+            "genitive-count-one": "{0} ночи",
+            "instrumental-count-one": "{0} ночью",
+            "prepositional-count-one": "{0} ночи",
+            "unitPattern-count-few": "{0} ночи",
+            "accusative-count-few": "{0} ночи",
+            "dative-count-few": "{0} ночам",
+            "genitive-count-few": "{0} ночей",
+            "instrumental-count-few": "{0} ночами",
+            "prepositional-count-few": "{0} ночах",
+            "unitPattern-count-many": "{0} ночей",
+            "accusative-count-many": "{0} ночей",
+            "dative-count-many": "{0} ночам",
+            "genitive-count-many": "{0} ночей",
+            "instrumental-count-many": "{0} ночами",
+            "prepositional-count-many": "{0} ночах",
+            "unitPattern-count-other": "{0} ночи",
+            "accusative-count-other": "{0} ночи",
+            "dative-count-other": "{0} ночи",
+            "genitive-count-other": "{0} ночи",
+            "instrumental-count-other": "{0} ночи",
+            "prepositional-count-other": "{0} ночи",
+            "perUnitPattern": "{0}/ночь"
           },
           "coordinateUnit": {
             "displayName": "направление",
@@ -6292,6 +6414,22 @@
             "unitPattern-count-many": "{0} имп. кварт.",
             "unitPattern-count-other": "{0} имп. кварт."
           },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "ноч.",
+            "unitPattern-count-one": "{0} ноч.",
+            "unitPattern-count-few": "{0} ноч.",
+            "unitPattern-count-many": "{0} ноч.",
+            "unitPattern-count-other": "{0} ноч.",
+            "perUnitPattern": "{0}/ноч."
+          },
           "coordinateUnit": {
             "displayName": "направление",
             "east": "{0} в. д.",
@@ -7685,6 +7823,22 @@
             "unitPattern-count-few": "{0} имп. кварт.",
             "unitPattern-count-many": "{0} имп. кварт.",
             "unitPattern-count-other": "{0} имп. кварт."
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "ноч.",
+            "unitPattern-count-one": "{0} ноч.",
+            "unitPattern-count-few": "{0} ноч.",
+            "unitPattern-count-many": "{0} ноч.",
+            "unitPattern-count-other": "{0} ноч.",
+            "perUnitPattern": "{0}/ноч."
           },
           "coordinateUnit": {
             "displayName": "напр.",

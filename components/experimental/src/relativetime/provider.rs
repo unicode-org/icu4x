@@ -9,14 +9,12 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use core::marker::PhantomData;
 #[cfg(feature = "datagen")]
-use core::{fmt::Debug, str::FromStr};
-use icu_pattern::{Pattern, PatternBackend, SinglePlaceholderPattern};
-use icu_plurals::PluralCategory;
+use core::fmt::Debug;
+use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
+use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -69,183 +67,8 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: PluralElements<'data, SinglePlaceholderPattern<str>>,
+    pub past: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: PluralElements<'data, SinglePlaceholderPattern<str>>,
-}
-
-#[derive(Debug)]
-#[zerovec::make_varule(PluralCategoryStrULE)]
-#[zerovec::skip_derive(Ord)]
-#[zerovec::derive(Debug)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-/// A tuple of [`PluralCategory`] and [`str`].
-pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
-
-/// Display specification for relative times, split over potential plural patterns.
-#[derive(Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
-#[yoke(prove_covariance_manually)]
-pub struct PluralElements<'data, T: ?Sized> {
-    /// Optional entries for categories other than PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
-    /// The entry for PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: Cow<'data, str>,
-    /// Keeps track of T
-    #[cfg_attr(feature = "serde", serde(skip))]
-    pub _phantom: PhantomData<T>,
-}
-
-impl<'data, T: ?Sized> Clone for PluralElements<'data, T> {
-    fn clone(&self) -> Self {
-        Self {
-            specials: self.specials.clone(),
-            other: self.other.clone(),
-            _phantom: self._phantom,
-        }
-    }
-}
-
-impl<'data, B: PatternBackend<Store = str>> PluralElements<'data, Pattern<B, str>> {
-    /// Creates a [`PluralElements`] from the given patterns.
-    #[cfg(feature = "datagen")]
-    pub fn try_new_pattern(
-        other: &str,
-        zero: Option<&str>,
-        one: Option<&str>,
-        two: Option<&str>,
-        few: Option<&str>,
-        many: Option<&str>,
-    ) -> Result<Self, icu_pattern::PatternError>
-    where
-        B::PlaceholderKeyCow<'data>: FromStr,
-        <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
-    {
-        let optional_convert = |category, pattern: Option<&str>| {
-            pattern
-                .filter(|p| *p != other)
-                .map(|s| {
-                    Ok(PluralCategoryStr(
-                        category,
-                        // TODO: Make pattern support apostrophes
-                        Pattern::<B, String>::from_str(&s.replace('\'', "''"))
-                            .map(|p| Pattern::<B, _>::from_store_unchecked(p.take_store().into()))?
-                            .take_store(),
-                    ))
-                })
-                .transpose()
-        };
-
-        Ok(Self {
-            specials: (&[
-                (optional_convert(PluralCategory::Zero, zero)?),
-                (optional_convert(PluralCategory::One, one)?),
-                (optional_convert(PluralCategory::Two, two)?),
-                (optional_convert(PluralCategory::Few, few)?),
-                (optional_convert(PluralCategory::Many, many)?),
-            ]
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>())
-                .into(),
-            // TODO: Make pattern support apostrophes
-            other: Pattern::<B, String>::from_str(&other.replace('\'', "''"))?
-                .take_store()
-                .into(),
-            _phantom: PhantomData::<Pattern<B, str>>,
-        })
-    }
-
-    /// Returns the pattern for the given [`PluralCategory`].
-    pub fn get_pattern(&'data self, c: PluralCategory) -> &'data Pattern<B, str> {
-        Pattern::from_ref_store_unchecked(if c == PluralCategory::Other {
-            &*self.other
-        } else {
-            self.specials
-                .iter()
-                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
-                .next()
-                .unwrap_or(&*self.other)
-        })
-    }
-}
-
-impl<'data> PluralElements<'data, str> {
-    /// Creates a [`PluralElements`] from the given strings.
-    #[cfg(feature = "datagen")]
-    pub fn try_new(
-        other: &str,
-        zero: Option<&str>,
-        one: Option<&str>,
-        two: Option<&str>,
-        few: Option<&str>,
-        many: Option<&str>,
-    ) -> Self
-where {
-        Self {
-            specials: (&[
-                zero.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Zero, s.into())),
-                one.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::One, s.into())),
-                two.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Two, s.into())),
-                few.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Few, s.into())),
-                many.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Many, s.into())),
-            ]
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>())
-                .into(),
-            other: other.to_owned().into(),
-            _phantom: PhantomData::<str>,
-        }
-    }
-
-    /// Returns the string for the given [`PluralCategory`].
-    pub fn get_str(&'data self, c: PluralCategory) -> &'data str {
-        if c == PluralCategory::Other {
-            &self.other
-        } else {
-            self.specials
-                .iter()
-                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
-                .next()
-                .unwrap_or(&*self.other)
-        }
-    }
-}
-
-#[test]
-fn plural_patterns_niche() {
-    assert_eq!(
-        core::mem::size_of::<PluralElements<SinglePlaceholderPattern<str>>>(),
-        48
-    );
-    assert_eq!(
-        core::mem::size_of::<Option<PluralElements<SinglePlaceholderPattern<str>>>>(),
-        48
-    );
-}
-
-pub(crate) struct ErasedRelativeTimeFormatV1Marker;
-
-impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
-    type DataStruct = RelativeTimePatternDataV1<'static>;
+    pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }

@@ -2,9 +2,6 @@
   "main": {
     "ja": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ja"
       },
       "listPatterns": {

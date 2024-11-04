@@ -5,14 +5,16 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::time_zone::TimeZoneFormatterOptions;
-use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
+use icu::calendar::{Date, Gregorian, Time};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::CustomTimeZone;
+use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_datetime::fieldset::YMDHMSO;
+use icu_datetime::FixedCalendarDateTimeFormatter;
+use icu_timezone::CustomZonedDateTime;
 use std::env;
+use writeable::adapters::LossyWrap;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -37,18 +39,18 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, YMDHMSO>::try_new(
             &locale,
-            DateTimeFormatterOptions::default(),
-            TimeZoneFormatterOptions::default(),
+            YMDHMSO::medium(),
         )
-        .expect("Failed to create TypedDateTimeFormatter.");
-        let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
-        let today_tz = CustomTimeZone::try_from_str("Z").unwrap(); // Z refers to the utc timezone
+        .expect("Failed to create zoned datetime formatter.");
+        let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
+        let time = Time::try_new(18, 56, 0, 0).unwrap();
+        let zone = TimeZoneInfo::utc();
 
-        let formatted_dt = dtf.format(&today_date, &today_tz);
+        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
 
-        println!("Today is: {formatted_dt}");
+        println!("Today is: {}", LossyWrap(formatted_dt));
     }
 
     {

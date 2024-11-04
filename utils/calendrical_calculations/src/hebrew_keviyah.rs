@@ -314,7 +314,9 @@ impl YearInfo {
     }
 }
 
-/// The Keviyah (קביעה) of a year. A year may be one of fourteen types, categorized by the day of
+/// The Keviyah (קביעה) of a year.
+///
+/// A year may be one of fourteen types, categorized by the day of
 /// week of the new year (the first number, 1 = Sunday), the type of year (Deficient, Regular,
 /// Complete), and the day of week of the first day of Passover. The last segment disambiguates
 /// between cases that have the same first two but differ on whether they are leap years (since
@@ -722,10 +724,9 @@ impl Keviyah {
 
 // Four Gates Table
 // ======================
-///
+//
 // The Four Gates table is a table that takes the time of week of the molad
 // and produces a Keviyah for the year
-
 /// "Metonic cycle" in general refers to any 19-year repeating pattern used by lunisolar
 /// calendars. The Hebrew calendar uses one where years 3, 6, 8, 11, 14, 17, 19
 /// are leap years.

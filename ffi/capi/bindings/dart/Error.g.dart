@@ -28,8 +28,6 @@ enum Error {
 
   dataUnavailableBufferFormatError,
 
-  propertyUnexpectedPropertyNameError,
-
   dateTimePatternError,
 
   dateTimeMissingInputFieldError,
@@ -46,7 +44,15 @@ enum Error {
 
   dateTimeFixedDecimalError,
 
-  dateTimeMismatchedCalendarError;
+  dateTimeMismatchedCalendarError,
+
+  dateTimeDuplicateFieldError,
+
+  dateTimeTooNarrowError,
+
+  dateTimeMissingNamesError,
+
+  dateTimeZoneInfoMissingFieldsError;
 
   int get _ffi {
     switch (this) {
@@ -70,8 +76,6 @@ enum Error {
         return 267;
       case dataUnavailableBufferFormatError:
         return 268;
-      case propertyUnexpectedPropertyNameError:
-        return 1026;
       case dateTimePatternError:
         return 2048;
       case dateTimeMissingInputFieldError:
@@ -90,6 +94,14 @@ enum Error {
         return 2055;
       case dateTimeMismatchedCalendarError:
         return 2056;
+      case dateTimeDuplicateFieldError:
+        return 2057;
+      case dateTimeTooNarrowError:
+        return 2058;
+      case dateTimeMissingNamesError:
+        return 2059;
+      case dateTimeZoneInfoMissingFieldsError:
+        return 2176;
     }
   }
 }

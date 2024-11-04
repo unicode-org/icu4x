@@ -12,9 +12,8 @@
 
 
 typedef enum CollatorAlternateHandling {
-  CollatorAlternateHandling_Auto = 0,
-  CollatorAlternateHandling_NonIgnorable = 1,
-  CollatorAlternateHandling_Shifted = 2,
+  CollatorAlternateHandling_NonIgnorable = 0,
+  CollatorAlternateHandling_Shifted = 1,
 } CollatorAlternateHandling;
 
 typedef struct CollatorAlternateHandling_option {union { CollatorAlternateHandling ok; }; bool is_ok; } CollatorAlternateHandling_option;

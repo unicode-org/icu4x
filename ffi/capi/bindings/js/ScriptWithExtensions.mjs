@@ -49,7 +49,7 @@ export class ScriptWithExtensions {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ScriptWithExtensions(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -60,8 +60,8 @@ export class ScriptWithExtensions {
         }
     }
 
-    getScriptVal(codePoint) {
-        const result = wasm.icu4x_ScriptWithExtensions_get_script_val_mv1(this.ffiValue, codePoint);
+    getScriptVal(ch) {
+        const result = wasm.icu4x_ScriptWithExtensions_get_script_val_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -70,8 +70,8 @@ export class ScriptWithExtensions {
         finally {}
     }
 
-    hasScript(codePoint, script) {
-        const result = wasm.icu4x_ScriptWithExtensions_has_script_mv1(this.ffiValue, codePoint, script);
+    hasScript(ch, script) {
+        const result = wasm.icu4x_ScriptWithExtensions_has_script_mv1(this.ffiValue, ch, script);
     
         try {
             return result;

@@ -40,20 +40,21 @@ part 'CollatorOptions.g.dart';
 part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
-part 'CustomTimeZone.g.dart';
 part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
-part 'DateLength.g.dart';
 part 'DateTime.g.dart';
 part 'DateTimeFormatter.g.dart';
+part 'DateTimeLength.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
 part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
+part 'EmojiSetData.g.dart';
 part 'Error.g.dart';
+part 'ExemplarCharacters.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
@@ -73,10 +74,6 @@ part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
-part 'IsoTimeZoneFormat.g.dart';
-part 'IsoTimeZoneMinuteDisplay.g.dart';
-part 'IsoTimeZoneOptions.g.dart';
-part 'IsoTimeZoneSecondDisplay.g.dart';
 part 'IsoWeekday.g.dart';
 part 'LanguageDisplay.g.dart';
 part 'LeadingAdjustment.g.dart';
@@ -104,7 +101,6 @@ part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
 part 'MeasureUnitParser.g.dart';
-part 'MetazoneCalculator.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
@@ -122,18 +118,14 @@ part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
-part 'TimeLength.g.dart';
-part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
-part 'TimeZoneInvalidIdError.g.dart';
+part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
-part 'TimeZoneUnknownError.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
-part 'UnicodeSetData.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
 part 'WeekCalculator.g.dart';
@@ -181,12 +173,12 @@ final class _RustAlloc implements ffi.Allocator {
   }
 }
 
-@meta.ResourceIdentifier('diplomat_alloc')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(symbol: 'diplomat_alloc', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
-@meta.ResourceIdentifier('diplomat_free')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(symbol: 'diplomat_free', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_free(ffi.Pointer<ffi.Void> ptr, int len, int align);
@@ -263,6 +255,32 @@ final class _ResultInt32Void extends ffi.Struct {
   }
 }
 
+final class _ResultInt8VoidUnion extends ffi.Union {
+  @ffi.Int8()
+  external int ok;
+
+}
+
+final class _ResultInt8Void extends ffi.Struct {
+  external _ResultInt8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultInt8Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultInt8Void.err() {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultOpaqueFixedDecimalLimitErrorFfiUnion extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
@@ -316,31 +334,6 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
   }
 }
 
-final class _ResultOpaqueTimeZoneUnknownErrorFfiUnion extends ffi.Union {
-  external ffi.Pointer<ffi.Opaque> ok;
-
-}
-
-final class _ResultOpaqueTimeZoneUnknownErrorFfi extends ffi.Struct {
-  external _ResultOpaqueTimeZoneUnknownErrorFfiUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  
-  factory _ResultOpaqueTimeZoneUnknownErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
-    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneUnknownErrorFfi>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  factory _ResultOpaqueTimeZoneUnknownErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneUnknownErrorFfi>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
 final class _ResultUint16VoidUnion extends ffi.Union {
   @ffi.Uint16()
   external int ok;
@@ -362,6 +355,58 @@ final class _ResultUint16Void extends ffi.Struct {
   }
   factory _ResultUint16Void.err() {
     final struct = ffi.Struct.create<_ResultUint16Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultUint32VoidUnion extends ffi.Union {
+  @ffi.Uint32()
+  external int ok;
+
+}
+
+final class _ResultUint32Void extends ffi.Struct {
+  external _ResultUint32VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultUint32Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultUint32Void.err() {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultUint8VoidUnion extends ffi.Union {
+  @ffi.Uint8()
+  external int ok;
+
+}
+
+final class _ResultUint8Void extends ffi.Struct {
+  external _ResultUint8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultUint8Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultUint8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultUint8Void.err() {
+    final struct = ffi.Struct.create<_ResultUint8Void>();
     struct.isOk = false;
     return struct;
   }
@@ -389,25 +434,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultVoidInt32>();
     struct.isOk = false;
     struct.union.err = val;
-    return struct;
-  }
-}
-
-final class _ResultVoidTimeZoneInvalidIdErrorFfi extends ffi.Struct {
-  
-
-  @ffi.Bool()
-  external bool isOk;
-
-  
-  factory _ResultVoidTimeZoneInvalidIdErrorFfi.ok() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidIdErrorFfi>();
-    struct.isOk = true;
-    return struct;
-  }
-  factory _ResultVoidTimeZoneInvalidIdErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidIdErrorFfi>();
-    struct.isOk = false;
     return struct;
   }
 }
@@ -760,22 +786,22 @@ final class _Write {
   }
 }
 
-@meta.ResourceIdentifier('diplomat_buffer_write_create')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_write_create', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _diplomat_buffer_write_create(int len);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_len')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_len', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_buffer_write_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_get_bytes')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Uint8> _diplomat_buffer_write_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_destroy')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
 external void _diplomat_buffer_write_destroy(ffi.Pointer<ffi.Opaque> ptr);

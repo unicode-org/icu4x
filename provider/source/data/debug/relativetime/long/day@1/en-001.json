@@ -5,21 +5,57 @@
     "1": "tomorrow"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 day ago"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " day ago"
+        }
       ]
     ],
-    "other": "\u0001 days ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " days ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004in  day"
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " day"
+        }
       ]
     ],
-    "other": "\u0004in  days"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " days"
+        }
+      ]
+    ]
   }
 }

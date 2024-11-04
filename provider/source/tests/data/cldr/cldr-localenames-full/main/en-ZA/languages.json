@@ -2,9 +2,6 @@
   "main": {
     "en-ZA": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "en",
         "territory": "ZA"
       },
@@ -227,7 +224,6 @@
           "gmh": "Middle High German",
           "gn": "Guarani",
           "goh": "Old High German",
-          "gom": "Goan Konkani",
           "gon": "Gondi",
           "gor": "Gorontalo",
           "got": "Gothic",
@@ -415,6 +411,7 @@
           "mua": "Mundang",
           "mul": "Multiple languages",
           "mus": "Creek",
+          "mus-alt-official": "Mvskoke",
           "mwl": "Mirandese",
           "mwr": "Marwari",
           "mwv": "Mentawai",

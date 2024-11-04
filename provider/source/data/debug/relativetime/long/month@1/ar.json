@@ -5,45 +5,123 @@
     "1": "الشهر القادم"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000قبل شهر واحد"
-      ],
-      [
-        "Two",
-        "\u0000قبل شهرين"
-      ],
-      [
-        "Few",
-        "\bقبل  أشهر"
-      ],
-      [
-        "Many",
-        "\bقبل  شهرًا"
+        {
+          "Literal": "قبل شهر واحد"
+        }
       ]
     ],
-    "other": "\bقبل  شهر"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "قبل شهرين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أشهر"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهرًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهر"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000خلال شهر واحد"
-      ],
-      [
-        "Two",
-        "\u0000خلال شهرين"
-      ],
-      [
-        "Few",
-        "\nخلال  أشهر"
-      ],
-      [
-        "Many",
-        "\nخلال  شهرًا"
+        {
+          "Literal": "خلال شهر واحد"
+        }
       ]
     ],
-    "other": "\nخلال  شهر"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "خلال شهرين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أشهر"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهرًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهر"
+        }
+      ]
+    ]
   }
 }

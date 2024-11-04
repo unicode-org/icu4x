@@ -32,17 +32,11 @@ IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const IsoDate* date, const
 typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {IsoDateTime* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
 icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(DiplomatStringView v);
 
-IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
-
-IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
-
 IsoDate* icu4x_IsoDateTime_date_mv1(const IsoDateTime* self);
 
 Time* icu4x_IsoDateTime_time_mv1(const IsoDateTime* self);
 
 DateTime* icu4x_IsoDateTime_to_any_mv1(const IsoDateTime* self);
-
-int32_t icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(const IsoDateTime* self);
 
 DateTime* icu4x_IsoDateTime_to_calendar_mv1(const IsoDateTime* self, const Calendar* calendar);
 
@@ -56,15 +50,15 @@ uint32_t icu4x_IsoDateTime_nanosecond_mv1(const IsoDateTime* self);
 
 uint16_t icu4x_IsoDateTime_day_of_year_mv1(const IsoDateTime* self);
 
-uint32_t icu4x_IsoDateTime_day_of_month_mv1(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_day_of_month_mv1(const IsoDateTime* self);
 
 IsoWeekday icu4x_IsoDateTime_day_of_week_mv1(const IsoDateTime* self);
 
-uint32_t icu4x_IsoDateTime_week_of_month_mv1(const IsoDateTime* self, IsoWeekday first_weekday);
+uint8_t icu4x_IsoDateTime_week_of_month_mv1(const IsoDateTime* self, IsoWeekday first_weekday);
 
 WeekOf icu4x_IsoDateTime_week_of_year_mv1(const IsoDateTime* self, const WeekCalculator* calculator);
 
-uint32_t icu4x_IsoDateTime_month_mv1(const IsoDateTime* self);
+uint8_t icu4x_IsoDateTime_month_mv1(const IsoDateTime* self);
 
 int32_t icu4x_IsoDateTime_year_mv1(const IsoDateTime* self);
 

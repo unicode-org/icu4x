@@ -3,11 +3,32 @@
     "0": "ขณะนี้"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 วินาทีที่ผ่านมา"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " วินาทีที่ผ่านมา"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0011ในอีก  วินาที"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ในอีก "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " วินาที"
+        }
+      ]
+    ]
   }
 }

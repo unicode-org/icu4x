@@ -11,6 +11,7 @@
 use crate::elements::{CASE_MASK, TERTIARY_MASK};
 
 /// The collation strength that indicates how many levels to compare.
+///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.
@@ -29,7 +30,7 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
     /// let collator = Collator::try_new(&Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "é"), core::cmp::Ordering::Equal);
@@ -43,7 +44,7 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);
     /// let collator = Collator::try_new(&Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "e"), core::cmp::Ordering::Equal);
@@ -67,7 +68,7 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Tertiary);
     /// let collator =
     ///   Collator::try_new(&Default::default(),
@@ -112,7 +113,7 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Quaternary);
     ///
     /// let ja_locale = icu::locale::locale!("ja").into();
@@ -148,7 +149,7 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Identical);
     ///
     /// let ja_locale = icu::locale::locale!("ja").into();
@@ -374,7 +375,7 @@ pub struct CollatorOptions {
 
 impl CollatorOptions {
     /// Create a new `CollatorOptions` with the defaults.
-    pub const fn new() -> Self {
+    pub const fn default() -> Self {
         Self {
             strength: None,
             alternate_handling: None,
@@ -457,6 +458,12 @@ impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct CollatorOptionsBitField(u32);
 
+impl Default for CollatorOptionsBitField {
+    fn default() -> Self {
+        Self::default()
+    }
+}
+
 impl CollatorOptionsBitField {
     /// Bits 0..2 : Strength
     const STRENGTH_MASK: u32 = 0b111;
@@ -500,8 +507,8 @@ impl CollatorOptionsBitField {
     /// Whether numeric is explicitly set.
     const EXPLICIT_NUMERIC_MASK: u32 = 1 << 25;
 
-    /// Create a new `CollatorOptionsBitField` with the defaults.
-    pub const fn new() -> Self {
+    /// Create a new [`CollatorOptionsBitField`] with the defaults.
+    pub const fn default() -> Self {
         Self(Strength::Tertiary as u32)
     }
 
@@ -787,7 +794,7 @@ impl CollatorOptionsBitField {
 
 impl From<CollatorOptions> for CollatorOptionsBitField {
     fn from(options: CollatorOptions) -> CollatorOptionsBitField {
-        let mut result = Self::new();
+        let mut result = Self::default();
         result.set_strength(options.strength);
         result.set_max_variable(options.max_variable);
         result.set_alternate_handling(options.alternate_handling);

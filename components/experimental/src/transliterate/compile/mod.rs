@@ -11,7 +11,11 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
-use icu_properties::{provider::*, sets};
+use icu_properties::{
+    props::{PatternWhiteSpace, XidContinue, XidStart},
+    provider::*,
+    CodePointSetData,
+};
 use icu_provider::prelude::*;
 
 mod parse;
@@ -87,7 +91,7 @@ impl Direction {
 ///     true,
 /// );
 ///
-/// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
+/// let t = Transliterator::try_new_unstable(&collection.as_provider(), &collection.as_provider(), &"de-t-de-d0-ascii".parse().unwrap()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
@@ -113,10 +117,30 @@ impl RuleCollection {
             id.to_string().to_ascii_lowercase(),
             (source, reverse, visible),
         );
+        self.register_aliases(id, aliases)
+    }
 
-        for alias in aliases.into_iter() {
+    /// Add transliteration ID aliases without registering a source.
+    pub fn register_aliases<'a>(
+        &mut self,
+        id: &icu_locale_core::Locale,
+        aliases: impl IntoIterator<Item = &'a str>,
+    ) {
+        for alias in aliases {
             self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
+                .entry(alias.to_ascii_lowercase())
+                .and_modify(|prev| {
+                    if prev != id {
+                        icu_provider::log::warn!(
+                            "Duplicate entry for alias for {alias}: {prev}, {id}"
+                        );
+                        // stability
+                        if prev.to_string() > id.to_string() {
+                            *prev = id.clone();
+                        }
+                    }
+                })
+                .or_insert(id.clone());
         }
     }
 
@@ -132,9 +156,9 @@ impl RuleCollection {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
             normalizer_provider: &icu_normalizer::provider::Baked,
-            xid_start: sets::xid_start().static_to_owned(),
-            xid_continue: sets::xid_continue().static_to_owned(),
-            pat_ws: sets::pattern_white_space().static_to_owned(),
+            xid_start: CodePointSetData::new::<XidStart>().static_to_owned(),
+            xid_continue: CodePointSetData::new::<XidContinue>().static_to_owned(),
+            pat_ws: CodePointSetData::new::<PatternWhiteSpace>().static_to_owned(),
         }
     }
 
@@ -171,7 +195,7 @@ impl RuleCollection {
             + DataProvider<ExtenderV1Marker>
             + DataProvider<GraphemeBaseV1Marker>
             + DataProvider<GraphemeClusterBreakV1Marker>
-            + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+            + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
             + DataProvider<GraphemeExtendV1Marker>
             + DataProvider<HexDigitV1Marker>
             + DataProvider<IdsBinaryOperatorV1Marker>
@@ -190,7 +214,7 @@ impl RuleCollection {
             + DataProvider<RadicalV1Marker>
             + DataProvider<RegionalIndicatorV1Marker>
             + DataProvider<SentenceBreakV1Marker>
-            + DataProvider<SentenceBreakNameToValueV1Marker>
+            + DataProvider<SentenceBreakNameToValueV2Marker>
             + DataProvider<SentenceTerminalV1Marker>
             + DataProvider<SoftDottedV1Marker>
             + DataProvider<TerminalPunctuationV1Marker>
@@ -199,11 +223,11 @@ impl RuleCollection {
             + DataProvider<VariationSelectorV1Marker>
             + DataProvider<WhiteSpaceV1Marker>
             + DataProvider<WordBreakV1Marker>
-            + DataProvider<WordBreakNameToValueV1Marker>
+            + DataProvider<WordBreakNameToValueV2Marker>
             + DataProvider<XidContinueV1Marker>
-            + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+            + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
             + DataProvider<GeneralCategoryV1Marker>
-            + DataProvider<ScriptNameToValueV1Marker>
+            + DataProvider<ScriptNameToValueV2Marker>
             + DataProvider<ScriptV1Marker>
             + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<XidStartV1Marker>,
@@ -218,22 +242,22 @@ impl RuleCollection {
             collection: self,
             properties_provider,
             normalizer_provider,
-            xid_start: sets::load_xid_start(properties_provider)?,
-            xid_continue: sets::load_xid_continue(properties_provider)?,
-            pat_ws: sets::load_pattern_white_space(properties_provider)?,
+            xid_start: CodePointSetData::try_new_unstable::<XidStart>(properties_provider)?,
+            xid_continue: CodePointSetData::try_new_unstable::<XidContinue>(properties_provider)?,
+            pat_ws: CodePointSetData::try_new_unstable::<PatternWhiteSpace>(properties_provider)?,
         })
     }
 }
 
-/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
 #[derive(Debug)]
 pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
-    xid_start: sets::CodePointSetData,
-    xid_continue: sets::CodePointSetData,
-    pat_ws: sets::CodePointSetData,
+    xid_start: CodePointSetData,
+    xid_continue: CodePointSetData,
+    pat_ws: CodePointSetData,
 }
 
 impl<PP, NP> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, PP, NP>
@@ -243,6 +267,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -264,7 +290,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -283,7 +309,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -292,11 +318,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -404,6 +430,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -425,7 +453,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -444,7 +472,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -453,11 +481,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -591,7 +619,7 @@ mod tests {
     use crate::transliterate::provider as ds;
     use icu_locale_core::locale;
     use std::collections::HashSet;
-    use zerovec::VarZeroVec;
+    use zerovec::{vecs::Index32, VarZeroVec};
 
     fn parse_set(source: &str) -> super::parse::UnicodeSet {
         crate::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
@@ -667,7 +695,7 @@ mod tests {
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
-                id: Cow::Borrowed("x-any-remove"),
+                id: Cow::Borrowed("any-remove"),
             }];
             let expected_id_group3 = vec![
                 ds::SimpleId {
@@ -676,7 +704,7 @@ mod tests {
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfc"),
+                    id: Cow::Borrowed("any-nfc"),
                 },
             ];
 
@@ -713,7 +741,7 @@ mod tests {
                 replacer: Cow::Borrowed("splitsuprulegroups"),
             }];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> = vec![
                 VarZeroVec::from(&expected_rule_group1),
                 VarZeroVec::from(&expected_rule_group2),
                 VarZeroVec::new(), // empty rule group after the last transform rule
@@ -754,8 +782,8 @@ mod tests {
             assert_eq!(
                 forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
-                    Cow::Borrowed("x-any-nfc"),
-                    Cow::Borrowed("x-any-remove"),
+                    Cow::Borrowed("any-nfc"),
+                    Cow::Borrowed("any-remove"),
                     Cow::Borrowed("x-interindic-devanagari"),
                     Cow::Borrowed("x-latin-interindic"),
                 ])
@@ -767,7 +795,7 @@ mod tests {
             let expected_id_group1 = vec![
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-nfd"),
+                    id: Cow::Borrowed("any-nfd"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -803,7 +831,7 @@ mod tests {
                 },
             ];
 
-            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> =
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE, Index32>> =
                 vec![VarZeroVec::from(&expected_rule_group1), VarZeroVec::new()];
 
             let expected_compounds = vec![
@@ -860,7 +888,7 @@ mod tests {
                 reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
-                    Cow::Borrowed("x-any-nfd"),
+                    Cow::Borrowed("any-nfd"),
                     Cow::Borrowed("x-any-revfncall"),
                     Cow::Borrowed("x-devanagari-interindic"),
                     Cow::Borrowed("x-interindic-latin"),

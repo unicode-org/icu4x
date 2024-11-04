@@ -59,7 +59,8 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_collation_data_v1_marker!(Baked);
+    impl_collation_root_v1_marker!(Baked);
+    impl_collation_tailoring_v1_marker!(Baked);
     impl_collation_diacritics_v1_marker!(Baked);
     impl_collation_jamo_v1_marker!(Baked);
     impl_collation_metadata_v1_marker!(Baked);
@@ -70,7 +71,8 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CollationDataV1Marker::INFO,
+    CollationRootV1Marker::INFO,
+    CollationTailoringV1Marker::INFO,
     CollationDiacriticsV1Marker::INFO,
     CollationJamoV1Marker::INFO,
     CollationMetadataV1Marker::INFO,
@@ -114,13 +116,15 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationDataV1Marker,
-    "collator/data@1",
-    // TODO(#3867): Use script fallback
-    fallback_by = "language",
-    attributes_domain = "collator",
-))]
+#[icu_provider::data_struct(
+    marker(CollationRootV1Marker, "collator/root@1", singleton),
+    marker(
+        CollationTailoringV1Marker,
+        "collator/tailoring@1",
+        fallback_by = "script",
+        attributes_domain = "collator",
+    )
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
@@ -234,7 +238,7 @@ impl<'data> CollationDataV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
@@ -279,7 +283,7 @@ pub struct CollationJamoV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
@@ -325,7 +329,7 @@ pub struct CollationReorderingV1<'data> {
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
-impl<'data> CollationReorderingV1<'data> {
+impl CollationReorderingV1<'_> {
     pub(crate) fn reorder(&self, primary: u32) -> u32 {
         if let Some(b) = self.reorder_table.get((primary >> 24) as usize) {
             if b != 0 || primary <= NO_CE_PRIMARY {
@@ -369,7 +373,7 @@ impl<'data> CollationReorderingV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
-    fallback_by = "language",
+    fallback_by = "script",
     attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -482,7 +486,7 @@ pub struct CollationSpecialPrimariesV1<'data> {
     pub numeric_primary: u8,
 }
 
-impl<'data> CollationSpecialPrimariesV1<'data> {
+impl CollationSpecialPrimariesV1<'_> {
     #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.

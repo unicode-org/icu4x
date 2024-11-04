@@ -78,12 +78,10 @@ impl RegionDisplayNames {
     pub fn of(&self, region: Region) -> Option<&str> {
         let data = self.region_data.get();
         match self.options.style {
-            Some(Style::Short) => data
-                .short_names
-                .get(&region.into_tinystr().to_unvalidated()),
+            Some(Style::Short) => data.short_names.get(&region.to_tinystr().to_unvalidated()),
             _ => None,
         }
-        .or_else(|| data.names.get(&region.into_tinystr().to_unvalidated()))
+        .or_else(|| data.names.get(&region.to_tinystr().to_unvalidated()))
         // TODO: Respect options.fallback
     }
 }
@@ -151,12 +149,10 @@ impl ScriptDisplayNames {
     pub fn of(&self, script: Script) -> Option<&str> {
         let data = self.script_data.get();
         match self.options.style {
-            Some(Style::Short) => data
-                .short_names
-                .get(&script.into_tinystr().to_unvalidated()),
+            Some(Style::Short) => data.short_names.get(&script.to_tinystr().to_unvalidated()),
             _ => None,
         }
-        .or_else(|| data.names.get(&script.into_tinystr().to_unvalidated()))
+        .or_else(|| data.names.get(&script.to_tinystr().to_unvalidated()))
         // TODO: Respect options.fallback
     }
 }
@@ -224,7 +220,7 @@ impl VariantDisplayNames {
     /// Returns the display name of a variant.
     pub fn of(&self, variant: Variant) -> Option<&str> {
         let data = self.variant_data.get();
-        data.names.get(&variant.into_tinystr().to_unvalidated())
+        data.names.get(&variant.to_tinystr().to_unvalidated())
         // TODO: Respect options.fallback
     }
 }
@@ -294,16 +290,12 @@ impl LanguageDisplayNames {
         match self.options.style {
             Some(Style::Short) => data
                 .short_names
-                .get(&language.into_tinystr().to_unvalidated()),
-            Some(Style::Long) => data
-                .long_names
-                .get(&language.into_tinystr().to_unvalidated()),
-            Some(Style::Menu) => data
-                .menu_names
-                .get(&language.into_tinystr().to_unvalidated()),
+                .get(&language.to_tinystr().to_unvalidated()),
+            Some(Style::Long) => data.long_names.get(&language.to_tinystr().to_unvalidated()),
+            Some(Style::Menu) => data.menu_names.get(&language.to_tinystr().to_unvalidated()),
             _ => None,
         }
-        .or_else(|| data.names.get(&language.into_tinystr().to_unvalidated()))
+        .or_else(|| data.names.get(&language.to_tinystr().to_unvalidated()))
         // TODO: Respect options.fallback
     }
 }
@@ -448,7 +440,7 @@ impl LocaleDisplayNamesFormatter {
         let ldn = ldn
             .or_else(|| {
                 let data = self.language_data.get();
-                let key = locale.id.language.into_tinystr().to_unvalidated();
+                let key = locale.id.language.to_tinystr().to_unvalidated();
                 match self.options.style {
                     Some(Style::Short) => data.short_names.get(&key),
                     Some(Style::Long) => data.long_names.get(&key),
@@ -468,7 +460,7 @@ impl LocaleDisplayNamesFormatter {
 
         let script_qs = script_qs.map(|script| {
             let data = self.script_data.get();
-            let key = script.into_tinystr().to_unvalidated();
+            let key = script.to_tinystr().to_unvalidated();
             match self.options.style {
                 Some(Style::Short) => data.short_names.get(&key),
                 _ => None,
@@ -479,7 +471,7 @@ impl LocaleDisplayNamesFormatter {
 
         let region_qs = region_qs.map(|region| {
             let data = self.region_data.get();
-            let key = region.into_tinystr().to_unvalidated();
+            let key = region.to_tinystr().to_unvalidated();
             match self.options.style {
                 Some(Style::Short) => data.short_names.get(&key),
                 _ => None,
@@ -492,7 +484,7 @@ impl LocaleDisplayNamesFormatter {
             self.variant_data
                 .get()
                 .names
-                .get(&variant_key.into_tinystr().to_unvalidated())
+                .get(&variant_key.to_tinystr().to_unvalidated())
                 .unwrap_or(variant_key.as_str())
         });
 

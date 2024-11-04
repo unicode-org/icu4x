@@ -40,11 +40,11 @@
 //! let lc = LocaleExpander::new();
 //!
 //! let mut locale = locale!("zh-CN");
-//! assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+//! assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
 //! assert_eq!(locale, locale!("zh-Hans-CN"));
 //!
 //! let mut locale = locale!("zh-Hant-TW");
-//! assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+//! assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
 //! assert_eq!(locale, locale!("zh-Hant-TW"));
 //! ```
 //!
@@ -55,11 +55,11 @@
 //! let lc = LocaleExpander::new();
 //!
 //! let mut locale = locale!("zh-Hans-CN");
-//! assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+//! assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
 //! assert_eq!(locale, locale!("zh"));
 //!
 //! let mut locale = locale!("zh");
-//! assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
+//! assert_eq!(lc.minimize(&mut locale.id), TransformResult::Unmodified);
 //! assert_eq!(locale, locale!("zh"));
 //! ```
 //!
@@ -88,6 +88,7 @@ extern crate alloc;
 
 mod canonicalizer;
 mod directionality;
+pub mod exemplar_chars;
 mod expander;
 pub mod fallback;
 pub mod provider;

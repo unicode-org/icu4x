@@ -102,7 +102,7 @@ fn extract_percent_essentials<'data>(
 fn create_signed_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Pattern<DoublePlaceholder, Cow<'a, str>>, DataError> {
+) -> Result<Cow<'a, Pattern<DoublePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_pattern_index = pattern.find('%').unwrap();
@@ -167,15 +167,10 @@ fn create_signed_pattern<'a>(
         .collect();
 
     // Example: "#,##0%", "#,##0 %", "%#,##0", "% #,##0"
-    let pattern = pattern_vec
-        .concat()
-        .parse::<DoublePlaceholderPattern<_>>()
+    let pattern = DoublePlaceholderPattern::try_from_str(&pattern_vec.concat(), Default::default())
         .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    let pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Owned(pattern.take_store()));
-
-    Ok(pattern)
+    Ok(Cow::Owned(pattern))
 }
 
 /// Used only for positive percents.
@@ -183,7 +178,7 @@ fn create_signed_pattern<'a>(
 fn create_unsigned_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Pattern<SinglePlaceholder, Cow<'a, str>>, DataError> {
+) -> Result<Cow<'a, Pattern<SinglePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_sign_index = pattern.find('%').unwrap();
@@ -213,18 +208,17 @@ fn create_unsigned_pattern<'a>(
     let percent_symbol = String::new() + percent_prefix + localized_percent_sign + percent_suffix;
 
     // Example: "#,##0%", "#,##0 %", "%#,##0", "% #,##0"
-    let pattern = if percent_sign_index > first_num_index {
-        "{0}".to_owned() + &percent_symbol
-    } else {
-        percent_symbol + "{0}"
-    }
-    .parse::<SinglePlaceholderPattern<_>>()
+    let pattern = SinglePlaceholderPattern::try_from_str(
+        &if percent_sign_index > first_num_index {
+            "{0}".to_owned() + &percent_symbol
+        } else {
+            percent_symbol + "{0}"
+        },
+        Default::default(),
+    )
     .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    let pattern: Pattern<SinglePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Owned(pattern.take_store()));
-
-    Ok(pattern)
+    Ok(Cow::Owned(pattern))
 }
 
 #[test]

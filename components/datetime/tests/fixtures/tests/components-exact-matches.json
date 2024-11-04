@@ -8,8 +8,9 @@
                     "year": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear"],
-                    "length": "short"
+                    "fieldSet": ["year"],
+                    "length": "short",
+                    "yearStyle": "full"
                 }
             }
         },
@@ -29,8 +30,9 @@
                     "month": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month"],
-                    "length": "short"
+                    "fieldSet": ["year", "month"],
+                    "length": "short",
+                    "yearStyle": "full"
                 }
             }
         },
@@ -51,8 +53,9 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month", "day"],
-                    "length": "short"
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short",
+                    "yearStyle": "full"
                 }
             }
         },
@@ -74,8 +77,9 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["fullYear", "month", "day", "weekday"],
-                    "length": "short"
+                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "length": "short",
+                    "yearStyle": "full"
                 }
             }
         },

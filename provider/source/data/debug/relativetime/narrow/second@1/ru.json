@@ -3,11 +3,35 @@
     "0": "сейчас"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- с"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " с"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ с"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " с"
+        }
+      ]
+    ]
   }
 }

@@ -1,0 +1,88 @@
+{
+  "locations": {
+    "basjj": "Bosnia and Herzegovina",
+    "bjptn": "Benin",
+    "cayek": "Makipot na Look ng Rankin",
+    "cfbgf": "Central African Republic",
+    "cgbzv": "Congo - Brazzaville",
+    "cmdla": "Cameroon",
+    "dosdq": "Dominican Republic",
+    "dzalg": "Algeria",
+    "eheai": "Kanlurang Sahara",
+    "esmad": "Spain",
+    "gblon": "U.K.",
+    "gfcay": "French Guiana",
+    "gncky": "Guinea",
+    "gpmsb": "Saint Martin",
+    "gpsbh": "St. Barthélemy",
+    "gqssg": "Equatorial Guinea",
+    "kmyva": "Comoros",
+    "kpfnj": "Hilagang Korea",
+    "krsel": "Timog Korea",
+    "kzksn": "Kostanay",
+    "lccas": "Saint Lucia",
+    "macas": "Morocco",
+    "metgd": "Montenegro",
+    "mmrgn": "Myanmar (Burma)",
+    "momfm": "Macau",
+    "mrnkc": "Mauritania",
+    "mxcjs": "Lungsod ng Juárez",
+    "mxcun": "Cancun",
+    "mxmex": "Lungsod ng Mexico",
+    "mxmid": "Merida",
+    "mxpvr": "Bahia Banderas",
+    "ncnou": "New Caledonia",
+    "papty": "Panama",
+    "pelim": "Peru",
+    "pmmqc": "St. Pierre & Miquelon",
+    "rereu": "Réunion",
+    "rsbeg": "Serbia",
+    "sndkr": "Senegal",
+    "ssjub": "Timog Sudan",
+    "sydam": "Syria",
+    "szqmn": "Swaziland",
+    "tdndj": "Chad",
+    "tfpfr": "French Southern Territories",
+    "tntun": "Tunisia",
+    "uaiev": "Kiev",
+    "wfmau": "Wallis & Futuna"
+  },
+  "pattern_generic": [
+    {
+      "Literal": "Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "Standard na Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "Daylight Time ng "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

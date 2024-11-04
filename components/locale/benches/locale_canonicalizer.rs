@@ -81,7 +81,7 @@ fn maximize_bench(c: &mut Criterion) {
         b.iter(|| {
             for locale in &locales {
                 let mut locale = locale.clone();
-                lc.maximize(black_box(&mut locale));
+                lc.maximize(black_box(&mut locale.id));
             }
         })
     });
@@ -90,7 +90,7 @@ fn maximize_bench(c: &mut Criterion) {
         b.iter(|| {
             for locale in &locales {
                 let mut locale = locale.clone();
-                lc.minimize(black_box(&mut locale));
+                lc.minimize(black_box(&mut locale.id));
             }
         })
     });

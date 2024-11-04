@@ -5,6 +5,7 @@
         <script src="dist/rendering.bundle.js" defer></script>
         <title>Rendering Function</title>
         <link rel="stylesheet" href="dist/index.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <div id="main" class="container">
@@ -14,7 +15,7 @@
         <template id="terminus">
             <link rel="stylesheet" href="dist/index.css"/>
             <div class="vstack gap-2">
-                <h1><slot name="func-name"></slot></h1>
+                <h1 class="text-break"><slot name="func-name"></slot></h1>
                 <slot name="parameters"></slot>
                 <button type="submit" class="btn btn-primary" data-submit>Submit</button>
                 <div class="card">

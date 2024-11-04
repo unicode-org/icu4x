@@ -27,11 +27,11 @@ namespace icu4x {
 class ScriptWithExtensionsBorrowed {
 public:
 
-  inline uint16_t get_script_val(uint32_t code_point) const;
+  inline uint16_t get_script_val(char32_t ch) const;
 
-  inline std::unique_ptr<icu4x::ScriptExtensionsSet> get_script_extensions_val(uint32_t code_point) const;
+  inline std::unique_ptr<icu4x::ScriptExtensionsSet> get_script_extensions_val(char32_t ch) const;
 
-  inline bool has_script(uint32_t code_point, uint16_t script) const;
+  inline bool has_script(char32_t ch, uint16_t script) const;
 
   inline std::unique_ptr<icu4x::CodePointSetData> get_script_extensions_set(uint16_t script) const;
 

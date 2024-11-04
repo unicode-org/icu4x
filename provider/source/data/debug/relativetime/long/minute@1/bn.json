@@ -3,11 +3,29 @@
     "0": "এই মিনিট"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 মিনিট আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মিনিট আগে"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 মিনিটে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মিনিটে"
+        }
+      ]
+    ]
   }
 }

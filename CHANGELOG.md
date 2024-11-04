@@ -1,5 +1,64 @@
 # Changelog
 
+## icu4x 2.0
+
+- Components
+  - General
+    - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
+  - `icu_calendar`
+    - Consistently name calendar-specific `Date`/`DateTime` functions that have a calendar argument (https://github.com/unicode-org/icu4x/pull/5692)
+    - Move all calendar types to `cal` module (https://github.com/unicode-org/icu4x/pull/5701)
+    - Shorten integer types returned by `day_of_month()`, `week_of_month()`, and `week_of_year()` to `u8` (https://github.com/unicode-org/icu4x/pull/5702)
+  - `icu_collections`
+  - `icu_normalizer`
+  - `icu_datetime`
+  - `icu_experimental`
+  - `icu_locale`
+    - New crate
+    - Allow `LocaleDirectionality` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5704)
+    - Allow `LocaleCanonicalizer` to wrap a `LocaleExpander` with user-controlled storage (https://github.com/unicode-org/icu4x/pull/5718)
+    - Split `canonicalize()` on `Locale` and `LanguageIdentifier` into `canonicalize()` and `canonicalize_utf8()`, and have it return a `Cow` (https://github.com/unicode-org/icu4x/pull/5727)
+  - `icu_locale_core`
+    - New crate, renamed from `icu_locid`
+    - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (https://github.com/unicode-org/icu4x/pull/5617)
+  - `icu_locid_transform`
+  - `icu_plurals`
+  - `icu_properties`
+  - `icu_segmenter`
+  - `icu_timezone`
+- Data model and providers
+  - `icu_datagen`
+  - `icu_provider`
+  - `icu_provider_blob`
+  - `icu_provider_adapters`
+    - Replace `AnyPayloadProvider` with `FixedProvider<M>`
+- FFI:
+    - All languages
+    - JS
+    - C++
+    - `icu_harfbuzz`
+- Utilities
+    - `calendrical_calculations`:
+    - `databake`
+    - `fixed_decimal`
+      - `FloatPrecision::Floating` renamed to `FloatPrecision::RoundTrip` (https://github.com/unicode-org/icu4x/pull/5616)
+      - `FixedDecimal::concatenated_end()` now returns both `self` and `other` in the error case. (https://github.com/unicode-org/icu4x/pull/5623)
+    - `icu_pattern`
+    - `litemap`
+    - `yoke`
+    - `zerofrom`
+    - `zerotrie`
+    - `zerovec`
+      - This release has multiple changes that affect the bit representation of various types. Do not update to this release if you wish to retain stable data formats.
+        - Change the `VarZeroVecFormat` values shipped by default to use the same index and length width. This breaks data layout for all `VarZeroVec`s. (https://github.com/unicode-org/icu4x/pull/5594)
+        - Change the `VarZeroVec` format to not store a superfluous 0 index at the beginning of the index array. This breaks data layout for all `VarZeroVec`s (https://github.com/unicode-org/icu4x/pull/5601)
+        - Optimize `MultiFieldsULE` to not store a length anymore. This breaks data layout for any `#[make_varule]`-using struct with multiple variable-sized fields. (https://github.com/unicode-org/icu4x/pull/5593)
+      - Remove `FlexZeroVec` (https://github.com/unicode-org/icu4x/pull/5604)
+    - `writeable`
+      - Make `Writeable::writeable_cmp_bytes` a free function `writeable::cmp_bytes` (https://github.com/unicode-org/icu4x/pull/5737)
+      - Add `writeable::to_string_or_borrow` for writing with reference bytes (https://github.com/unicode-org/icu4x/pull/5738)
+
+
 ## icu4x 1.5.x
 
 

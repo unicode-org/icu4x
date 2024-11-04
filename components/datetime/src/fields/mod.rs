@@ -34,7 +34,9 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
-/// A field within a date pattern string, also referred to as a date field. A date field is the
+/// A field within a date pattern string, also referred to as a date field.
+///
+/// A date field is the
 /// repetition of a specific pattern character one or more times within the pattern string.
 /// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
@@ -52,7 +54,7 @@ pub struct Field {
 }
 
 impl Field {
-    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+    #[cfg(feature = "datagen")]
     pub(crate) fn get_length_type(&self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,

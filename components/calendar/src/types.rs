@@ -26,50 +26,162 @@ use zerovec::ule::AsULE;
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
-/// Representation of a formattable year.
-///
-/// More fields may be added in the future for things like extended year
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct FormattableYear {
-    /// The era containing the year.
-    ///
-    /// This may not always be the canonical era for the calendar and could be an alias,
-    /// for example all `islamic` calendars return `islamic` as the formattable era code
-    /// which allows them to share data.
-    pub era: Era,
-
-    /// The year number in the current era (usually 1-based).
-    pub number: i32,
-
-    /// The year in the current cycle for cyclic calendars (1-indexed)
-    /// can be set to `None` for non-cyclic calendars
-    ///
-    /// For chinese and dangi it will be
-    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
-    pub cyclic: Option<NonZeroU8>,
-
-    /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
-    /// overlap with the calendar year. It is used in certain date formatting patterns.
-    ///
-    /// Can be `None` if the calendar does not typically use `related_iso` (and CLDR does not contain patterns
-    /// using it)
-    pub related_iso: Option<i32>,
+impl From<TinyStr16> for Era {
+    fn from(o: TinyStr16) -> Self {
+        Self(o)
+    }
 }
 
-impl FormattableYear {
-    /// Construct a new Year given an era and number
+/// General information about a year
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct YearInfo {
+    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar
+    pub extended_year: i32,
+    /// The rest of the details about the year
+    pub kind: YearKind,
+}
+
+/// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum YearKind {
+    /// An era and a year in that era
+    Era(EraYear),
+    /// A cyclic year, and the related ISO year
     ///
-    /// Other fields can be set mutably after construction
-    /// as needed
-    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
+    /// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
+    /// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
+    Cyclic(CyclicYear),
+}
+
+impl YearInfo {
+    /// Construct a new Year given an era and number
+    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
         Self {
-            era,
-            number,
-            cyclic,
-            related_iso: None,
+            extended_year,
+            kind: YearKind::Era(era),
         }
     }
+    /// Construct a new cyclic Year given a cycle and a related_iso
+    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+        Self {
+            extended_year,
+            kind: YearKind::Cyclic(CyclicYear {
+                year: cycle,
+                related_iso,
+            }),
+        }
+    }
+    /// Get the year in the era if this is a non-cyclic calendar
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year(self) -> Option<i32> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.era_year),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Get *some* year number that can be displayed
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year_or_extended(self) -> i32 {
+        self.era_year().unwrap_or(self.extended_year)
+    }
+
+    /// Get the era, if available
+    pub fn formatting_era(self) -> Option<FormattingEra> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.formatting_era),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Get the era, if available
+    pub fn standard_era(self) -> Option<Era> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.standard_era),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Return the cyclic year, if any
+    pub fn cyclic(self) -> Option<NonZeroU8> {
+        match self.kind {
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.year),
+        }
+    }
+    /// Return the Related ISO year, if any
+    pub fn related_iso(self) -> Option<i32> {
+        match self.kind {
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.related_iso),
+        }
+    }
+}
+
+/// Information about the era as usable for formatting
+///
+/// This is optimized for storing datetime formatting data.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum FormattingEra {
+    /// An Era Index, for calendars with a small, fixed set of eras. The eras are indexed chronologically.
+    ///
+    /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
+    /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
+    /// bce < ce, and mundi < pre-incar < incar for Ethiopian.
+    ///
+    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
+    /// be something sensible (or empty).
+    Index(u8, TinyStr16),
+    /// An era code, for calendars with a large set of era codes (Japanese)
+    ///
+    /// This code may not be the canonical era code, but will typically be a valid era alias
+    Code(Era),
+}
+
+impl FormattingEra {
+    /// Get a fallback era name suitable for display to the user when the real era name is not availabe
+    pub fn fallback_era(self) -> TinyStr16 {
+        match self {
+            Self::Index(_idx, fallback) => fallback,
+            Self::Code(era) => era.0,
+        }
+    }
+}
+
+/// Year information for a year that is specified with an era
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct EraYear {
+    /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
+    /// is whatever ICU4X datetime datagen uses for this era.
+    ///
+    /// It will typically be a valid era alias.
+    ///
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub formatting_era: FormattingEra,
+    /// The era code as expected by Temporal/CLDR. This era code is unique for the calendar
+    /// and follows a particular scheme.
+    ///
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub standard_era: Era,
+    /// The numeric year in that era
+    pub era_year: i32,
+}
+
+/// Year information for a year that is specified as a cyclic year
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct CyclicYear {
+    /// The year in the cycle.
+    pub year: NonZeroU8,
+    /// The ISO year corresponding to this year
+    pub related_iso: i32,
 }
 
 /// Representation of a month in a year
@@ -178,22 +290,44 @@ impl fmt::Display for MonthCode {
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct FormattableMonth {
+pub struct MonthInfo {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///
     /// In general, prefer using the month code in generic code.
-    pub ordinal: u32,
+    pub ordinal: u8,
 
     /// The month code, used to distinguish months during leap years.
     ///
+    /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
+    /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
+    /// are considered the same month and have the code M05
+    pub standard_code: MonthCode,
+    /// A month code, useable for formatting
+    ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
-    /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
+    /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
-    pub code: MonthCode,
+    pub formatting_code: MonthCode,
 }
 
+impl MonthInfo {
+    /// Gets the month number. A month number N is not necessarily the Nth month in the year
+    /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year
+    pub fn month_number(self) -> u8 {
+        self.standard_code
+            .parsed()
+            .map(|(i, _)| i)
+            .unwrap_or(self.ordinal)
+    }
+
+    /// Get whether the month is a leap month
+    pub fn is_leap(self) -> bool {
+        self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
+    }
+}
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
@@ -205,32 +339,32 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u16,
     /// The previous year.
-    pub prev_year: FormattableYear,
+    pub prev_year: YearInfo,
     /// The number of days in the previous year.
     pub days_in_prev_year: u16,
     /// The next year.
-    pub next_year: FormattableYear,
+    pub next_year: YearInfo,
 }
 
 /// A day number in a month. Usually 1-based.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct DayOfMonth(pub u32);
+pub struct DayOfMonth(pub u8);
 
 /// A week number in a month. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfMonth(pub u32);
+pub struct WeekOfMonth(pub u8);
 
 /// A week number in a year. Usually 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfYear(pub u32);
+pub struct WeekOfYear(pub u8);
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct DayOfWeekInMonth(pub u32);
+pub struct DayOfWeekInMonth(pub u8);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
     fn from(day_of_month: DayOfMonth) -> Self {
@@ -544,153 +678,6 @@ impl Time {
             second: second.try_into()?,
             nanosecond: nanosecond.try_into()?,
         })
-    }
-
-    /// Takes a number of minutes, which could be positive or negative, and returns the Time
-    /// and the day number, which could be positive or negative.
-    pub(crate) fn from_minute_with_remainder_days(minute: i32) -> (Time, i32) {
-        let (extra_days, minute_in_day) = (minute.div_euclid(1440), minute.rem_euclid(1440));
-        let (hours, minutes) = (minute_in_day / 60, minute_in_day % 60);
-        #[allow(clippy::unwrap_used)] // values are moduloed to be in range
-        (
-            Self {
-                hour: (hours as u8).try_into().unwrap(),
-                minute: (minutes as u8).try_into().unwrap(),
-                second: IsoSecond::zero(),
-                nanosecond: NanoSecond::zero(),
-            },
-            extra_days,
-        )
-    }
-}
-
-#[test]
-fn test_from_minute_with_remainder_days() {
-    #[derive(Debug)]
-    struct TestCase {
-        minute: i32,
-        expected_time: Time,
-        expected_remainder: i32,
-    }
-    let zero_time = Time::new(
-        IsoHour::zero(),
-        IsoMinute::zero(),
-        IsoSecond::zero(),
-        NanoSecond::zero(),
-    );
-    let first_minute_in_day = Time::new(
-        IsoHour::zero(),
-        IsoMinute::try_from(1u8).unwrap(),
-        IsoSecond::zero(),
-        NanoSecond::zero(),
-    );
-    let last_minute_in_day = Time::new(
-        IsoHour::try_from(23u8).unwrap(),
-        IsoMinute::try_from(59u8).unwrap(),
-        IsoSecond::zero(),
-        NanoSecond::zero(),
-    );
-    let cases = [
-        TestCase {
-            minute: 0,
-            expected_time: zero_time,
-            expected_remainder: 0,
-        },
-        TestCase {
-            minute: 30,
-            expected_time: Time::new(
-                IsoHour::zero(),
-                IsoMinute::try_from(30u8).unwrap(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: 0,
-        },
-        TestCase {
-            minute: 60,
-            expected_time: Time::new(
-                IsoHour::try_from(1u8).unwrap(),
-                IsoMinute::zero(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: 0,
-        },
-        TestCase {
-            minute: 90,
-            expected_time: Time::new(
-                IsoHour::try_from(1u8).unwrap(),
-                IsoMinute::try_from(30u8).unwrap(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: 0,
-        },
-        TestCase {
-            minute: 1439,
-            expected_time: last_minute_in_day,
-            expected_remainder: 0,
-        },
-        TestCase {
-            minute: 1440,
-            expected_time: Time::new(
-                IsoHour::zero(),
-                IsoMinute::zero(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: 1,
-        },
-        TestCase {
-            minute: 1441,
-            expected_time: first_minute_in_day,
-            expected_remainder: 1,
-        },
-        TestCase {
-            minute: i32::MAX,
-            expected_time: Time::new(
-                IsoHour::try_from(2u8).unwrap(),
-                IsoMinute::try_from(7u8).unwrap(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: 1491308,
-        },
-        TestCase {
-            minute: -1,
-            expected_time: last_minute_in_day,
-            expected_remainder: -1,
-        },
-        TestCase {
-            minute: -1439,
-            expected_time: first_minute_in_day,
-            expected_remainder: -1,
-        },
-        TestCase {
-            minute: -1440,
-            expected_time: zero_time,
-            expected_remainder: -1,
-        },
-        TestCase {
-            minute: -1441,
-            expected_time: last_minute_in_day,
-            expected_remainder: -2,
-        },
-        TestCase {
-            minute: i32::MIN,
-            expected_time: Time::new(
-                IsoHour::try_from(21u8).unwrap(),
-                IsoMinute::try_from(52u8).unwrap(),
-                IsoSecond::zero(),
-                NanoSecond::zero(),
-            ),
-            expected_remainder: -1491309,
-        },
-    ];
-    for cas in cases {
-        let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
-        assert_eq!(actual_time, cas.expected_time, "{cas:?}");
-        assert_eq!(actual_remainder, cas.expected_remainder, "{cas:?}");
     }
 }
 

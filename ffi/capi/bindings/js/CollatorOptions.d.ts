@@ -13,25 +13,25 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 */
 export class CollatorOptions {
 
-    get strength() : CollatorStrength;
-    set strength(value: CollatorStrength); 
+    get strength() : CollatorStrength | null;
+    set strength(value: CollatorStrength | null); 
 
-    get alternateHandling() : CollatorAlternateHandling;
-    set alternateHandling(value: CollatorAlternateHandling); 
+    get alternateHandling() : CollatorAlternateHandling | null;
+    set alternateHandling(value: CollatorAlternateHandling | null); 
 
-    get caseFirst() : CollatorCaseFirst;
-    set caseFirst(value: CollatorCaseFirst); 
+    get caseFirst() : CollatorCaseFirst | null;
+    set caseFirst(value: CollatorCaseFirst | null); 
 
-    get maxVariable() : CollatorMaxVariable;
-    set maxVariable(value: CollatorMaxVariable); 
+    get maxVariable() : CollatorMaxVariable | null;
+    set maxVariable(value: CollatorMaxVariable | null); 
 
-    get caseLevel() : CollatorCaseLevel;
-    set caseLevel(value: CollatorCaseLevel); 
+    get caseLevel() : CollatorCaseLevel | null;
+    set caseLevel(value: CollatorCaseLevel | null); 
 
-    get numeric() : CollatorNumeric;
-    set numeric(value: CollatorNumeric); 
+    get numeric() : CollatorNumeric | null;
+    set numeric(value: CollatorNumeric | null); 
 
-    get backwardSecondLevel() : CollatorBackwardSecondLevel;
-    set backwardSecondLevel(value: CollatorBackwardSecondLevel); 
-    constructor(strength: CollatorStrength, alternateHandling: CollatorAlternateHandling, caseFirst: CollatorCaseFirst, maxVariable: CollatorMaxVariable, caseLevel: CollatorCaseLevel, numeric: CollatorNumeric, backwardSecondLevel: CollatorBackwardSecondLevel);
+    get backwardSecondLevel() : CollatorBackwardSecondLevel | null;
+    set backwardSecondLevel(value: CollatorBackwardSecondLevel | null); 
+    constructor(strength: CollatorStrength | null, alternateHandling: CollatorAlternateHandling | null, caseFirst: CollatorCaseFirst | null, maxVariable: CollatorMaxVariable | null, caseLevel: CollatorCaseLevel | null, numeric: CollatorNumeric | null, backwardSecondLevel: CollatorBackwardSecondLevel | null);
 }

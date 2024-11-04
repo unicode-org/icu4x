@@ -126,10 +126,46 @@ void test_word(const std::string_view& str) {
     }
 }
 
+void test_word_with_options(const std::string_view& str) {
+    const auto provider = DataProvider::compiled();
+    std::unique_ptr<Locale> locale = Locale::from_string("sv").ok().value();
+    const auto segmenter_auto =
+        WordSegmenter::create_auto_with_content_locale(*provider.get(), *locale.get()).ok().value();
+    const auto segmenter_lstm =
+        WordSegmenter::create_lstm_with_content_locale(*provider.get(), *locale.get()).ok().value();
+    const auto segmenter_dictionary =
+        WordSegmenter::create_dictionary_with_content_locale(*provider.get(), *locale.get()).ok().value();
+
+    const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
+                                              segmenter_dictionary.get()};
+    for (const auto* segmenter : segmenters) {
+        cout << "Finding word breakpoints for sv in string:" << endl << str << endl;
+        print_ruler(str.size());
+
+        cout << "Word breakpoints:";
+        auto iterator = segmenter->segment(str);
+        iterate_word_breakpoints(*iterator.get());
+    }
+}
+
 void test_sentence(const std::string_view& str) {
     const auto provider = DataProvider::compiled();
     const auto segmenter = SentenceSegmenter::create(*provider.get()).ok().value();
     cout << "Finding sentence breakpoints in string:" << endl
+         << str << endl;
+    print_ruler(str.size());
+
+    cout << "Sentence breakpoints:";
+    auto iterator = segmenter->segment(str);
+    iterate_breakpoints(*iterator.get());
+}
+
+void test_sentence_with_options(const std::string_view& str) {
+    const auto provider = DataProvider::compiled();
+    std::unique_ptr<Locale> locale = Locale::from_string("el").ok().value();
+    const auto segmenter =
+        SentenceSegmenter::create_with_content_locale(*provider.get(), *locale.get()).ok().value();
+    cout << "Finding sentence breakpoints for el in string:" << endl
          << str << endl;
     print_ruler(str.size());
 
@@ -156,7 +192,13 @@ int main(int argc, char* argv[]) {
     test_word(str);
     cout << endl;
 
+    test_word_with_options(str);
+    cout << endl;
+
     test_sentence(str);
+    cout << endl;
+
+    test_sentence_with_options(str);
     cout << endl;
     return 0;
 }

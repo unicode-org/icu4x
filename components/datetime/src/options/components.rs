@@ -56,7 +56,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -74,24 +74,23 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
+//! *Note*: The exact formatted result is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    pattern::{
-        runtime::{Pattern, PatternPlurals},
-        PatternItem,
-    },
+    provider::pattern::{runtime::Pattern, PatternItem},
+    provider::skeleton::PatternPlurals,
 };
 
 use super::preferences;
+use crate::neo_pattern::DateTimePattern;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -163,7 +162,7 @@ impl Bag {
     }
 
     #[allow(clippy::wrong_self_convention)]
-    /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
+    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///
@@ -171,8 +170,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
-    pub(crate) fn to_vec_fields(
+    #[cfg(feature = "datagen")]
+    pub fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,
     ) -> alloc::vec::Vec<Field> {
@@ -573,29 +572,29 @@ pub enum TimeZoneName {
     ShortSpecific,
 
     // UTS-35 fields: zzzz
-    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    // Per UTS-35: [long form] specific non-location (falling back to long localized offset)
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
-    // UTS-35 fields: O, OOOO
-    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
-    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
-    // This enum variant is combining the two types of fields, as the CLDR specifies the preferred
-    // hour-format for the locale, and ICU4X uses the preferred one.
-    //   e.g.
-    //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
-    GmtOffset,
+    // UTS-35 fields: OOOO
+    // Per UTS-35: The long localized offset format. This is equivalent to the "OOOO" specifier
+    /// Long localized offset form, e.g. GMT-08:00
+    LongOffset,
+
+    // UTS-35 fields: O
+    // Per UTS-35: Short localized offset format
+    /// Short localized offset form, e.g. GMT-8
+    ShortOffset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
-    //   * falling back to short localized GMT
+    //   * falling back to short localized offset
     /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
     ShortGeneric,
 
     // UTS-35 fields: vvvv
     //  * falling back to generic location (See UTS 35 for more specific rules)
-    //  * falling back to long localized GMT
+    //  * falling back to long localized offset
     /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
     LongGeneric,
 }
@@ -611,9 +610,13 @@ impl From<TimeZoneName> for Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
                 length: FieldLength::Wide,
             },
-            TimeZoneName::GmtOffset => Field {
+            TimeZoneName::LongOffset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
                 length: FieldLength::Wide,
+            },
+            TimeZoneName::ShortOffset => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                length: FieldLength::One,
             },
             TimeZoneName::ShortGeneric => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
@@ -627,9 +630,9 @@ impl From<TimeZoneName> for Field {
     }
 }
 
-/// Get the resolved components for a TypedDateTimeFormatter, via the PatternPlurals. In the case of
+/// Get the resolved components for a FixedCalendarDateTimeFormatter, via the PatternPlurals. In the case of
 /// plurals resolve off of the required `other` pattern.
-impl<'data> From<&PatternPlurals<'data>> for Bag {
+impl From<&PatternPlurals<'_>> for Bag {
     fn from(other: &PatternPlurals) -> Self {
         let pattern = match other {
             PatternPlurals::SinglePattern(pattern) => pattern,
@@ -639,7 +642,13 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
     }
 }
 
-impl<'data> From<&Pattern<'data>> for Bag {
+impl From<&DateTimePattern> for Bag {
+    fn from(value: &DateTimePattern) -> Self {
+        Self::from(value.as_borrowed().0)
+    }
+}
+
+impl From<&Pattern<'_>> for Bag {
     fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 
@@ -816,7 +825,10 @@ impl<'data> From<&Pattern<'data>> for Bag {
                             FieldLength::One => TimeZoneName::ShortGeneric,
                             _ => TimeZoneName::LongGeneric,
                         },
-                        fields::TimeZone::UpperO => TimeZoneName::GmtOffset,
+                        fields::TimeZone::UpperO => match field.length {
+                            FieldLength::One => TimeZoneName::ShortOffset,
+                            _ => TimeZoneName::LongOffset,
+                        },
                         fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
                         fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
                         fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),

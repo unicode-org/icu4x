@@ -41,15 +41,15 @@ export class PluralOperands {
     static fromString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomatReceive.buffer, ...sSlice);
+        const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
             return new PluralOperands(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);

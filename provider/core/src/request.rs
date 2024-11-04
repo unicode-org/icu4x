@@ -18,7 +18,6 @@ use icu_locale_core::subtags::Subtag;
 use icu_locale_core::subtags::Variant;
 use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
-use writeable::Writeable;
 use zerovec::ule::VarULE;
 
 /// The request type passed into all data provider implementations.
@@ -293,16 +292,23 @@ impl Hash for DataLocale {
     }
 }
 
-impl<'a> Default for &'a DataLocale {
-    fn default() -> Self {
-        static DEFAULT: DataLocale = DataLocale {
+impl DataLocale {
+    /// `const` version of `Default::default`
+    pub const fn default() -> Self {
+        DataLocale {
             language: Language::UND,
             script: None,
             region: None,
             variant: None,
             subdivision: None,
             keywords: unicode_ext::Keywords::new(),
-        };
+        }
+    }
+}
+
+impl Default for &DataLocale {
+    fn default() -> Self {
+        static DEFAULT: DataLocale = DataLocale::default();
         &DEFAULT
     }
 }
@@ -520,7 +526,7 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_bytes(self, other)
     }
 
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
@@ -598,7 +604,7 @@ pub struct DataMarkerAttributes {
     value: str,
 }
 
-impl<'a> Default for &'a DataMarkerAttributes {
+impl Default for &DataMarkerAttributes {
     fn default() -> Self {
         DataMarkerAttributes::empty()
     }

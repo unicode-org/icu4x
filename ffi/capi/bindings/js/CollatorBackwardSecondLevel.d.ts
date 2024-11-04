@@ -11,7 +11,6 @@ export class CollatorBackwardSecondLevel {
 
     get ffiValue() : number;
 
-    static Auto : CollatorBackwardSecondLevel;
     static Off : CollatorBackwardSecondLevel;
     static On : CollatorBackwardSecondLevel;
 }

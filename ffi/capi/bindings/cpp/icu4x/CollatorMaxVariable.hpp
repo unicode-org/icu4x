@@ -27,7 +27,6 @@ inline icu4x::capi::CollatorMaxVariable icu4x::CollatorMaxVariable::AsFFI() cons
 
 inline icu4x::CollatorMaxVariable icu4x::CollatorMaxVariable::FromFFI(icu4x::capi::CollatorMaxVariable c_enum) {
   switch (c_enum) {
-    case icu4x::capi::CollatorMaxVariable_Auto:
     case icu4x::capi::CollatorMaxVariable_Space:
     case icu4x::capi::CollatorMaxVariable_Punctuation:
     case icu4x::capi::CollatorMaxVariable_Symbol:

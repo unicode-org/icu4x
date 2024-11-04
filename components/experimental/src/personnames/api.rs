@@ -345,7 +345,7 @@ impl PersonNamesFormatterOptions {
     ) -> Self {
         let lc = icu_locale::LocaleExpander::new();
         let mut final_locale = target_locale.clone();
-        lc.maximize(&mut final_locale);
+        lc.maximize(&mut final_locale.id);
         Self {
             target_locale: final_locale,
             order,

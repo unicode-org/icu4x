@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 oras"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras"
+        }
       ]
     ],
-    "other": "\u0001 na oras"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " na oras"
+        }
+      ]
+    ]
   }
 }

@@ -292,7 +292,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         ArithmeticDate {
             year,
             month,
-            day: day.try_into().unwrap_or(0),
+            day: day.try_into().unwrap_or(1),
             year_info: (),
             marker: PhantomData,
         }
@@ -300,10 +300,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
-        types::DayOfMonth(self.day.into())
+        types::DayOfMonth(self.day)
     }
 
-    /// The [`types::FormattableMonth`] for the current month (with month code) for a solar calendar
+    /// The [`types::MonthInfo`] for the current month (with month code) for a solar calendar
     /// Lunar calendars should not use this method and instead manually implement a month code
     /// resolver.
     /// Originally "solar_month" but renamed because it can be used for some lunar calendars
@@ -311,7 +311,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Returns "und" if run with months that are out of bounds for the current
     /// calendar.
     #[inline]
-    pub fn month(&self) -> types::FormattableMonth {
+    pub fn month(&self) -> types::MonthInfo {
         let code = match self.month {
             a if a > C::months_for_every_year(self.year, self.year_info) => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
@@ -329,9 +329,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             13 => tinystr!(4, "M13"),
             _ => tinystr!(4, "und"),
         };
-        types::FormattableMonth {
-            ordinal: self.month as u32,
-            code: types::MonthCode(code),
+        types::MonthInfo {
+            ordinal: self.month,
+            standard_code: types::MonthCode(code),
+            formatting_code: types::MonthCode(code),
         }
     }
 
@@ -360,7 +361,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         let max_day = C::month_days(year, month, ());
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,
@@ -391,7 +392,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         info: C::YearInfo,
     ) -> Result<Self, RangeError> {
         let max_month = C::months_for_every_year(year, info);
-        if month > max_month {
+        if month == 0 || month > max_month {
             return Err(RangeError {
                 field: "month",
                 value: month as i32,
@@ -400,7 +401,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             });
         }
         let max_day = C::month_days(year, month, info);
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(RangeError {
                 field: "day",
                 value: day as i32,
@@ -445,5 +446,13 @@ mod tests {
                 assert_eq!(i.cmp(&j), i_date.cmp(j_date));
             }
         }
+    }
+
+    #[test]
+    pub fn zero() {
+        use crate::Date;
+        Date::try_new_iso(2024, 0, 1).unwrap_err();
+        Date::try_new_iso(2024, 1, 0).unwrap_err();
+        Date::try_new_iso(2024, 0, 0).unwrap_err();
     }
 }

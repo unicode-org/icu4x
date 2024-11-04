@@ -23,9 +23,9 @@ namespace capi {
     typedef struct icu4x_ScriptWithExtensions_create_mv1_result {union {icu4x::capi::ScriptWithExtensions* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ScriptWithExtensions_create_mv1_result;
     icu4x_ScriptWithExtensions_create_mv1_result icu4x_ScriptWithExtensions_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    uint16_t icu4x_ScriptWithExtensions_get_script_val_mv1(const icu4x::capi::ScriptWithExtensions* self, uint32_t code_point);
+    uint16_t icu4x_ScriptWithExtensions_get_script_val_mv1(const icu4x::capi::ScriptWithExtensions* self, char32_t ch);
     
-    bool icu4x_ScriptWithExtensions_has_script_mv1(const icu4x::capi::ScriptWithExtensions* self, uint32_t code_point, uint16_t script);
+    bool icu4x_ScriptWithExtensions_has_script_mv1(const icu4x::capi::ScriptWithExtensions* self, char32_t ch, uint16_t script);
     
     icu4x::capi::ScriptWithExtensionsBorrowed* icu4x_ScriptWithExtensions_as_borrowed_mv1(const icu4x::capi::ScriptWithExtensions* self);
     
@@ -43,15 +43,15 @@ inline diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::Dat
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::ScriptWithExtensions>>(std::unique_ptr<icu4x::ScriptWithExtensions>(icu4x::ScriptWithExtensions::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline uint16_t icu4x::ScriptWithExtensions::get_script_val(uint32_t code_point) const {
+inline uint16_t icu4x::ScriptWithExtensions::get_script_val(char32_t ch) const {
   auto result = icu4x::capi::icu4x_ScriptWithExtensions_get_script_val_mv1(this->AsFFI(),
-    code_point);
+    ch);
   return result;
 }
 
-inline bool icu4x::ScriptWithExtensions::has_script(uint32_t code_point, uint16_t script) const {
+inline bool icu4x::ScriptWithExtensions::has_script(char32_t ch, uint16_t script) const {
   auto result = icu4x::capi::icu4x_ScriptWithExtensions_has_script_mv1(this->AsFFI(),
-    code_point,
+    ch,
     script);
   return result;
 }

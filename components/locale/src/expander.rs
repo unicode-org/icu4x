@@ -24,11 +24,11 @@ use crate::TransformResult;
 /// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-CN");
-/// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+/// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
 /// assert_eq!(locale, locale!("zh-Hans-CN"));
 ///
 /// let mut locale = locale!("zh-Hant-TW");
-/// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+/// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
 /// assert_eq!(locale, locale!("zh-Hant-TW"));
 /// ```
 ///
@@ -40,11 +40,11 @@ use crate::TransformResult;
 /// let lc = LocaleExpander::new();
 ///
 /// let mut locale = locale!("zh-Hans-CN");
-/// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+/// assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
 /// assert_eq!(locale, locale!("zh"));
 ///
 /// let mut locale = locale!("zh");
-/// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
+/// assert_eq!(lc.minimize(&mut locale.id), TransformResult::Unmodified);
 /// assert_eq!(locale, locale!("zh"));
 /// ```
 ///
@@ -57,7 +57,7 @@ use crate::TransformResult;
 /// let lc = LocaleExpander::new_extended();
 ///
 /// let mut locale = locale!("atj");
-/// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+/// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
 /// assert_eq!(locale, locale!("atj-Latn-CA"));
 /// ```
 ///
@@ -77,7 +77,7 @@ struct LocaleExpanderBorrowed<'a> {
 
 impl LocaleExpanderBorrowed<'_> {
     fn get_l(&self, l: Language) -> Option<(Script, Region)> {
-        let key = &l.into_tinystr().to_unvalidated();
+        let key = &l.to_tinystr().to_unvalidated();
         self.likely_subtags_l.language.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.language.get_copied(key))
@@ -86,8 +86,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
         let key = &(
-            l.into_tinystr().to_unvalidated(),
-            s.into_tinystr().to_unvalidated(),
+            l.to_tinystr().to_unvalidated(),
+            s.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_l
             .language_script
@@ -100,8 +100,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
         let key = &(
-            l.into_tinystr().to_unvalidated(),
-            r.into_tinystr().to_unvalidated(),
+            l.to_tinystr().to_unvalidated(),
+            r.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_l
             .language_region
@@ -113,7 +113,7 @@ impl LocaleExpanderBorrowed<'_> {
     }
 
     fn get_s(&self, s: Script) -> Option<(Language, Region)> {
-        let key = &s.into_tinystr().to_unvalidated();
+        let key = &s.to_tinystr().to_unvalidated();
         self.likely_subtags_sr.script.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.script.get_copied(key))
@@ -122,8 +122,8 @@ impl LocaleExpanderBorrowed<'_> {
 
     fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
         let key = &(
-            s.into_tinystr().to_unvalidated(),
-            r.into_tinystr().to_unvalidated(),
+            s.to_tinystr().to_unvalidated(),
+            r.to_tinystr().to_unvalidated(),
         );
         self.likely_subtags_sr
             .script_region
@@ -135,7 +135,7 @@ impl LocaleExpanderBorrowed<'_> {
     }
 
     fn get_r(&self, r: Region) -> Option<(Language, Script)> {
-        let key = &r.into_tinystr().to_unvalidated();
+        let key = &r.to_tinystr().to_unvalidated();
         self.likely_subtags_sr.region.get_copied(key).or_else(|| {
             self.likely_subtags_ext
                 .and_then(|ext| ext.region.get_copied(key))
@@ -348,11 +348,11 @@ impl LocaleExpander {
     /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-CN");
-    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+    /// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
     /// assert_eq!(locale, locale!("zh-Hans-CN"));
     ///
     /// let mut locale = locale!("zh-Hant-TW");
-    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh-Hant-TW"));
     /// ```
     ///
@@ -367,22 +367,21 @@ impl LocaleExpander {
     ///
     /// // No subtags data for ccp in the default set:
     /// let mut locale = locale!("ccp");
-    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("ccp"));
     ///
     /// // The extended set supports it:
     /// let lc = LocaleExpander::new_extended();
     /// let mut locale = locale!("ccp");
-    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+    /// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
     /// assert_eq!(locale, locale!("ccp-Cakm-BD"));
     ///
     /// // But even the extended set does not support all language subtags:
     /// let mut locale = locale!("mul");
-    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("mul"));
     /// ```
-    pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
-        let langid = langid.as_mut();
+    pub fn maximize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         let data = self.as_borrowed();
 
         if !langid.language.is_default() && langid.script.is_some() && langid.region.is_some() {
@@ -451,14 +450,14 @@ impl LocaleExpander {
     /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh-Hans-CN");
-    /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+    /// assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
     /// assert_eq!(locale, locale!("zh"));
     ///
     /// let mut locale = locale!("zh");
-    /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(lc.minimize(&mut locale.id), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh"));
     /// ```
-    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, langid: T) -> TransformResult {
+    pub fn minimize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         self.minimize_impl(langid, true)
     }
 
@@ -481,25 +480,20 @@ impl LocaleExpander {
     ///
     /// let mut locale = locale!("zh_TW");
     /// assert_eq!(
-    ///     lc.minimize_favor_script(&mut locale),
+    ///     lc.minimize_favor_script(&mut locale.id),
     ///     TransformResult::Modified
     /// );
     /// assert_eq!(locale, locale!("zh_Hant"));
     /// ```
-    pub fn minimize_favor_script<T: AsMut<LanguageIdentifier>>(
-        &self,
-        langid: T,
-    ) -> TransformResult {
+    pub fn minimize_favor_script(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         self.minimize_impl(langid, false)
     }
 
-    fn minimize_impl<T: AsMut<LanguageIdentifier>>(
+    fn minimize_impl(
         &self,
-        mut langid: T,
+        langid: &mut LanguageIdentifier,
         favor_region: bool,
     ) -> TransformResult {
-        let langid = langid.as_mut();
-
         let mut max = langid.clone();
         self.maximize(&mut max);
 
@@ -549,11 +543,7 @@ impl LocaleExpander {
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
     #[inline]
-    pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
-        &self,
-        langid: T,
-    ) -> Option<Script> {
-        let langid = langid.as_ref();
+    pub(crate) fn get_likely_script(&self, langid: &LanguageIdentifier) -> Option<Script> {
         langid
             .script
             .or_else(|| self.infer_likely_script(langid.language, langid.region))
@@ -592,6 +582,12 @@ impl LocaleExpander {
     }
 }
 
+impl AsRef<LocaleExpander> for LocaleExpander {
+    fn as_ref(&self) -> &LocaleExpander {
+        self
+    }
+}
+
 #[cfg(feature = "serde")]
 #[cfg(test)]
 mod tests {
@@ -603,7 +599,7 @@ mod tests {
         let lc = LocaleExpander::new();
         let mut locale = locale!("yue-Hans");
         assert_eq!(
-            lc.minimize_favor_script(&mut locale),
+            lc.minimize_favor_script(&mut locale.id),
             TransformResult::Unmodified
         );
         assert_eq!(locale, locale!("yue-Hans"));
@@ -613,7 +609,7 @@ mod tests {
     fn test_minimize_favor_region() {
         let lc = LocaleExpander::new();
         let mut locale = locale!("yue-Hans");
-        assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+        assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
         assert_eq!(locale, locale!("yue-CN"));
     }
 }

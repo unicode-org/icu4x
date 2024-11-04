@@ -7,6 +7,7 @@ use icu_decimal::{
     options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV1Marker, FixedDecimalFormatter,
 };
 use icu_plurals::{provider::CardinalV1Marker, PluralRules};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
 use crate::relativetime::format::FormattedRelativeTime;
@@ -104,7 +105,7 @@ use crate::relativetime::provider::*;
 /// ```
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) rt: DataPayload<ErasedRelativeTimeFormatV1Marker>,
+    pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternDataV1<'static>>>,
     pub(crate) options: RelativeTimeFormatterOptions,
     pub(crate) fixed_decimal_format: FixedDecimalFormatter,
 }

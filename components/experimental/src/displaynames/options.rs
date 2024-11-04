@@ -36,7 +36,7 @@ pub struct DisplayNamesOptions {
 }
 
 /// An enum for formatting style.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Style {

@@ -22,7 +22,7 @@ fn test_maximize() {
         }
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let result = lc.maximize(&mut locale);
+        let result = lc.maximize(&mut locale.id);
         assert_writeable_eq!(locale, case.output, "{:?}", case);
         if result == TransformResult::Modified {
             assert_ne!(locale, unmodified, "{:?}", case);
@@ -46,7 +46,7 @@ fn test_minimize() {
         }
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let result = lc.minimize(&mut locale);
+        let result = lc.minimize(&mut locale.id);
         assert_writeable_eq!(locale, case.output, "{:?}", case);
         if result == TransformResult::Modified {
             assert_ne!(locale, unmodified, "{:?}", case);

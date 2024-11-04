@@ -12,11 +12,10 @@
 
 
 typedef enum CollatorMaxVariable {
-  CollatorMaxVariable_Auto = 0,
-  CollatorMaxVariable_Space = 1,
-  CollatorMaxVariable_Punctuation = 2,
-  CollatorMaxVariable_Symbol = 3,
-  CollatorMaxVariable_Currency = 4,
+  CollatorMaxVariable_Space = 0,
+  CollatorMaxVariable_Punctuation = 1,
+  CollatorMaxVariable_Symbol = 2,
+  CollatorMaxVariable_Currency = 3,
 } CollatorMaxVariable;
 
 typedef struct CollatorMaxVariable_option {union { CollatorMaxVariable ok; }; bool is_ok; } CollatorMaxVariable_option;

@@ -4,7 +4,7 @@
 
 #![cfg(all(test, feature = "datagen"))]
 
-use icu_datetime::skeleton::reference::Skeleton;
+use icu_datetime::provider::skeleton::reference::Skeleton;
 use std::{fs::File, io::BufReader};
 
 /// Note that this file tests only valid skeleton cases for the stability of the serialization

@@ -124,11 +124,11 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
         let dashes_in_front_of_non_hebrew = SpecialCasePattern {
             condition: SerdeDFA::new(Cow::Owned(format!(
                 "^[^{}]",
-                icu::properties::maps::load_script(selff)
+                icu::properties::CodePointMapData::<icu::properties::props::Script>::try_new_unstable(selff)
                     .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                         .with_display_context(&e))?
                     .as_borrowed()
-                    .get_set_for_value(icu::properties::Script::Hebrew)
+                    .get_set_for_value(icu::properties::props::Script::Hebrew)
                     .as_borrowed()
                     .iter_ranges()
                     .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))

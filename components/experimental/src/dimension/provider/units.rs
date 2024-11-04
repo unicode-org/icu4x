@@ -9,8 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::relativetime::provider::PluralElements;
 use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(marker(
@@ -19,14 +19,53 @@ use icu_provider::prelude::*;
     attributes_domain = "units"
 ))]
 #[derive(Clone, PartialEq, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsDisplayNameV1<'data> {
-    // TODO: store the pattern in a SinglePattern.
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralElements<'data, SinglePlaceholderPattern<str>>,
+    pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
+}
+
+impl<'data> UnitsDisplayNameV1<'data> {
+    /// Construct an instance directly from a byte slice.
+    ///
+    /// # Safety
+    ///
+    /// The bytes must represent a valid [`icu_plurals::provider::PluralElementsPackedULE`]
+    pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
+        Self {
+            patterns: icu_plurals::provider::PluralElementsPackedCow {
+                elements: alloc::borrow::Cow::Borrowed(
+                    // Safety: this function's safety invariant guarantees that the bytes
+                    // represent a valid `PluralElementsPackedULE`
+                    icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(
+                        bytes,
+                    ),
+                ),
+            },
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for UnitsDisplayNameV1<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        use zerovec::ule::VarULE;
+        ctx.insert("icu_experimental::dimension::provider::units");
+        let bytes = self.patterns.elements.as_byte_slice().bake(ctx);
+        // Safety: The bytes are returned by `PluralElementsPackedULE::as_byte_slice`.
+        databake::quote! { unsafe {
+            icu_experimental::dimension::provider::units::UnitsDisplayNameV1::from_byte_slice_unchecked(#bytes)
+        }}
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for UnitsDisplayNameV1<'_> {
+    fn borrows_size(&self) -> usize {
+        self.patterns.borrows_size()
+    }
 }

@@ -1,0 +1,72 @@
+{
+  "locations": {
+    "bjptn": "Benin",
+    "cfbgf": "Central African Republic",
+    "cgbzv": "Congo - Brazzaville",
+    "cmdla": "Cameroon",
+    "dosdq": "Dominican Republic",
+    "dzalg": "Algeria",
+    "esmad": "Spain",
+    "gfcay": "French Guiana",
+    "gncky": "Guinea",
+    "gpmsb": "St. Martin",
+    "gpsbh": "St. Barthélemy",
+    "gqssg": "Equatorial Guinea",
+    "kmyva": "Comoros",
+    "kzksn": "Kostanay",
+    "macas": "Morocco",
+    "metgd": "Montenegro",
+    "mrnkc": "Mauritania",
+    "ncnou": "New Caledonia",
+    "papty": "Panama",
+    "pelim": "Peru",
+    "phmnl": "Philippines",
+    "pmmqc": "St. Pierre & Miquelon",
+    "rereu": "Réunion",
+    "rsbeg": "Serbia",
+    "sndkr": "Senegal",
+    "sydam": "Syria",
+    "tdndj": "Chad",
+    "tfpfr": "French Southern Territories",
+    "tntun": "Tunisia",
+    "wfmau": "Wallis & Futuna"
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Time"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Standard Time"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Daylight Time"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

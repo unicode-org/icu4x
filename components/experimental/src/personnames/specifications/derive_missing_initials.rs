@@ -18,9 +18,11 @@ pub fn derive_missing_initials(
     initial_pattern_str: &str,
     initial_sequence_pattern_str: &str,
 ) -> String {
-    let initial_pattern: SinglePlaceholderPattern<_> = initial_pattern_str.parse().unwrap();
-    let initial_sequence_pattern: DoublePlaceholderPattern<_> =
-        initial_sequence_pattern_str.parse().unwrap();
+    let initial_pattern =
+        SinglePlaceholderPattern::try_from_str(initial_pattern_str, Default::default()).unwrap();
+    let initial_sequence_pattern =
+        DoublePlaceholderPattern::try_from_str(initial_sequence_pattern_str, Default::default())
+            .unwrap();
 
     if person_name.has_name_field(requested_field) {
         return String::from(person_name.get(requested_field));

@@ -24,14 +24,6 @@ export class LineBreakOptions {
     set wordOption(value) {
         this.#wordOption = value;
     }
-
-    #jaZh;
-    get jaZh()  {
-        return this.#jaZh;
-    }
-    set jaZh(value) {
-        this.#jaZh = value;
-    }
     constructor() {
         if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
             this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
@@ -39,7 +31,6 @@ export class LineBreakOptions {
             
             this.#strictness = arguments[0];
             this.#wordOption = arguments[1];
-            this.#jaZh = arguments[2];
         }
     }
 
@@ -50,7 +41,17 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -59,11 +60,9 @@ export class LineBreakOptions {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
-        const strictnessDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strictness = LineBreakStrictness[Array.from(LineBreakStrictness.values.keys())[strictnessDeref]];
-        const wordOptionDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#wordOption = LineBreakWordOption[Array.from(LineBreakWordOption.values.keys())[wordOptionDeref]];
-        const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
-        this.#jaZh = jaZhDeref;
+        const strictnessDeref = ptr;
+        this.#strictness = diplomatRuntime.readOption(wasm, strictnessDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakStrictness(diplomatRuntime.internalConstructor, deref) });
+        const wordOptionDeref = ptr + 8;
+        this.#wordOption = diplomatRuntime.readOption(wasm, wordOptionDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakWordOption(diplomatRuntime.internalConstructor, deref) });
     }
 }

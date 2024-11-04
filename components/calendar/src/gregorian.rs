@@ -5,25 +5,25 @@
 //! This module contains types and implementations for the Gregorian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
+//! use icu::calendar::{cal::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
 //! // `Date` checks
-//! assert_eq!(date_gregorian.year().number, 1970);
+//! assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
 //! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //!
 //! // `DateTime` checks
-//! assert_eq!(datetime_gregorian.date.year().number, 1970);
+//! assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
 //! assert_eq!(datetime_gregorian.date.month().ordinal, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
 //! assert_eq!(datetime_gregorian.time.hour.number(), 13);
@@ -60,33 +60,37 @@ impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ce") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bce") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -130,9 +134,8 @@ impl Calendar for Gregorian {
         Iso.until(&date1.0, &date2.0, &Iso, largest_unit, smallest_unit)
             .cast_unit()
     }
-
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_gregorian(date.0 .0.year)
     }
 
@@ -141,7 +144,7 @@ impl Calendar for Gregorian {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         Iso.month(&date.0)
     }
 
@@ -181,19 +184,15 @@ impl Date<Gregorian> {
     /// use icu::calendar::Date;
     ///
     /// // Conversion from ISO to Gregorian
-    /// let date_gregorian = Date::try_new_gregorian_date(1970, 1, 2)
+    /// let date_gregorian = Date::try_new_gregorian(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
-    /// assert_eq!(date_gregorian.year().number, 1970);
+    /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
-    pub fn try_new_gregorian_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Gregorian>, RangeError> {
-        Date::try_new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
+    pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
+        Date::try_new_iso(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }
 
@@ -206,17 +205,17 @@ impl DateTime<Gregorian> {
     /// use icu::calendar::DateTime;
     ///
     /// let datetime_gregorian =
-    ///     DateTime::try_new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
+    ///     DateTime::try_new_gregorian(1970, 1, 2, 13, 1, 0)
     ///         .expect("Failed to initialize Gregorian DateTime instance.");
     ///
-    /// assert_eq!(datetime_gregorian.date.year().number, 1970);
+    /// assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_gregorian.date.month().ordinal, 1);
     /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
     /// assert_eq!(datetime_gregorian.time.hour.number(), 13);
     /// assert_eq!(datetime_gregorian.time.minute.number(), 1);
     /// assert_eq!(datetime_gregorian.time.second.number(), 0);
     /// ```
-    pub fn try_new_gregorian_datetime(
+    pub fn try_new_gregorian(
         year: i32,
         month: u8,
         day: u8,
@@ -225,27 +224,31 @@ impl DateTime<Gregorian> {
         second: u8,
     ) -> Result<DateTime<Gregorian>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_gregorian_date(year, month, day)?,
+            date: Date::try_new_gregorian(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
 
-pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
+fn year_as_gregorian(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "ce")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "gregory").into(),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
+                era_year: year,
+            },
+        )
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "bce")),
-            number: 1_i32.saturating_sub(year),
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "gregory-inverse").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
+                era_year: 1_i32.saturating_sub(year),
+            },
+        )
     }
 }
 
@@ -272,87 +275,89 @@ mod test {
                 month: 7,
                 day: 11,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX,
                 month: 7,
                 day: 12,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX,
                 month: 8,
                 day: 10,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX - 1,
                 month: 7,
                 day: 11,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: -2,
                 month: 1,
                 day: 1,
                 next_era_year: 2,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MaxCase {
                 year: -1,
                 month: 1,
                 day: 1,
                 next_era_year: 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MaxCase {
                 year: 0,
                 month: 1,
                 day: 1,
                 next_era_year: 1,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 1,
                 month: 1,
                 day: 1,
                 next_era_year: 2,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 2000,
                 month: 6,
                 day: 15,
                 next_era_year: 2001,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 2020,
                 month: 12,
                 day: 31,
                 next_era_year: 2021,
-                era: "ce",
+                era: "gregory",
             },
         ];
 
         for case in cases {
-            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_gregorian(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .number,
+                    .era_year()
+                    .unwrap(),
                 case.next_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .era
+                    .standard_era()
+                    .unwrap()
                     .0,
                 case.era,
                 "{case:?}",
@@ -368,16 +373,16 @@ mod test {
         iso_day: u8,
         expected_year: i32,
         expected_era: Era,
-        expected_month: u32,
-        expected_day: u32,
+        expected_month: u8,
+        expected_day: u8,
     }
 
     fn check_test_case(case: TestCase) {
         let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
         let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
-        assert_eq!(greg_date_from_fixed.year().number, case.expected_year,
+        assert_eq!(greg_date_from_fixed.year().era_year_or_extended(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
-        assert_eq!(greg_date_from_fixed.year().era, case.expected_era,
+        assert_eq!(greg_date_from_fixed.year().standard_era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
         assert_eq!(greg_date_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
@@ -385,7 +390,7 @@ mod test {
             "Failed day check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
 
         let iso_date_man: Date<Iso> =
-            Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+            Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
                 .expect("Failed to initialize ISO date for {case:?}");
         let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
         assert_eq!(iso_from_fixed, iso_date_man,
@@ -406,7 +411,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -416,7 +421,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -426,7 +431,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -436,7 +441,7 @@ mod test {
                 iso_month: 9,
                 iso_day: 5,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 9,
                 expected_day: 5,
             },
@@ -446,7 +451,7 @@ mod test {
                 iso_month: 3,
                 iso_day: 1,
                 expected_year: 100,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 3,
                 expected_day: 1,
             },
@@ -473,94 +478,96 @@ mod test {
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX - 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 3,
                 month: 12,
                 day: 31,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 2,
                 month: 2,
                 day: 2,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 1,
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN,
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 3,
                 month: 1,
                 day: 1,
                 prev_era_year: 2,
-                era: "ce",
+                era: "gregory",
             },
             MinCase {
                 year: 2,
                 month: 1,
                 day: 1,
                 prev_era_year: 1,
-                era: "ce",
+                era: "gregory",
             },
             MinCase {
                 year: 1,
                 month: 1,
                 day: 1,
                 prev_era_year: 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 0,
                 month: 1,
                 day: 1,
                 prev_era_year: 2,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: -2000,
                 month: 6,
                 day: 15,
                 prev_era_year: 2002,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 2020,
                 month: 12,
                 day: 31,
                 prev_era_year: 2019,
-                era: "ce",
+                era: "gregory",
             },
         ];
 
         for case in cases {
-            let date = Date::try_new_gregorian_date(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_gregorian(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .number,
+                    .era_year()
+                    .unwrap(),
                 case.prev_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .era
+                    .standard_era()
+                    .unwrap()
                     .0,
                 case.era,
                 "{case:?}",
@@ -580,7 +587,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -590,7 +597,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -600,7 +607,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -610,7 +617,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -620,7 +627,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },

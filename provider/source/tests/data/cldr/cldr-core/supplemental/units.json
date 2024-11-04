@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "unitPrefixes": {
       "atto": {
@@ -310,6 +310,10 @@
       },
       "meter-per-square-second": {
         "_quantity": "acceleration"
+      },
+      "night": {
+        "_quantity": "night-duration",
+        "_status": "simple"
       },
       "per-second": {
         "_quantity": "radioactivity"
@@ -824,7 +828,6 @@
       "gasoline-energy-density": {
         "_baseUnit": "kilogram-per-meter-square-second",
         "_systems": [
-          "metric_adjacent",
           "ussystem",
           "uksystem"
         ],
@@ -1007,6 +1010,15 @@
         ],
         "_factor": "1*5*0.000001"
       },
+      "light-speed": {
+        "_baseUnit": "meter-per-second",
+        "_systems": [
+          "ussystem",
+          "uksystem",
+          "si_acceptable"
+        ],
+        "_factor": "speed_of_light_meters_per_second"
+      },
       "light-year": {
         "_baseUnit": "meter",
         "_systems": [
@@ -1115,6 +1127,14 @@
           "si",
           "metric",
           "prefixable"
+        ]
+      },
+      "night": {
+        "_baseUnit": "night",
+        "_systems": [
+          "metric_adjacent",
+          "uksystem",
+          "ussystem"
         ]
       },
       "ofglucose": {

@@ -9,6 +9,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /** An ICU4X Bidi object, containing loaded bidi data
 *
 *See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
+*
+*See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 */
 export class Bidi {
     
@@ -17,7 +19,7 @@ export class Bidi {
 
     static create(provider: DataProvider): Bidi;
 
-    forText(text: string, defaultLevel: number): BidiInfo;
+    forText(text: string, defaultLevel: number | null): BidiInfo;
 
     reorderVisual(levels: Array<number>): ReorderedIndexMap;
 

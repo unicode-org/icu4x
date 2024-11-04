@@ -44,8 +44,8 @@ export class ScriptWithExtensionsBorrowed {
         return this.#ptr;
     }
 
-    getScriptVal(codePoint) {
-        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this.ffiValue, codePoint);
+    getScriptVal(ch) {
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -54,11 +54,11 @@ export class ScriptWithExtensionsBorrowed {
         finally {}
     }
 
-    getScriptExtensionsVal(codePoint) {
+    getScriptExtensionsVal(ch) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         
-        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, codePoint);
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, ch);
     
         try {
             return new ScriptExtensionsSet(diplomatRuntime.internalConstructor, result, [], aEdges);
@@ -67,8 +67,8 @@ export class ScriptWithExtensionsBorrowed {
         finally {}
     }
 
-    hasScript(codePoint, script) {
-        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this.ffiValue, codePoint, script);
+    hasScript(ch, script) {
+        const result = wasm.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this.ffiValue, ch, script);
     
         try {
             return result;

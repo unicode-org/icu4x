@@ -3,11 +3,29 @@
     "0": "এখন"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 সেকেন্ড আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " সেকেন্ড আগে"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 সেকেন্ডে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " সেকেন্ডে"
+        }
+      ]
+    ]
   }
 }

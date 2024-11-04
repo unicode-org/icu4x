@@ -19,9 +19,10 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{VarZeroSlice, VarZeroVec};
 
-/// A data structure providing a concrete implementation of a `UnicodeSet`
-/// (which represents a set of code points and strings) using an inversion list for the code points and a simple
-/// list-like structure to store and iterate over the strings.
+/// A data structure providing a concrete implementation of a set of code points and strings,
+/// using an inversion list for the code points.
+///
+/// This is what ICU4C calls a `UnicodeSet`.
 #[zerovec::make_varule(CodePointInversionListAndStringListULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
@@ -136,23 +137,23 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///    CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
     /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains("bmp_max"));
-    /// assert!(cpilsl.contains(""));
-    /// assert!(cpilsl.contains("A"));
-    /// assert!(cpilsl.contains("ቔ"));  // U+1254 ETHIOPIC SYLLABLE QHEE
-    /// assert!(!cpilsl.contains("bazinga!"));
+    /// assert!(cpilsl.contains_str("bmp_max"));
+    /// assert!(cpilsl.contains_str(""));
+    /// assert!(cpilsl.contains_str("A"));
+    /// assert!(cpilsl.contains_str("ቔ"));  // U+1254 ETHIOPIC SYLLABLE QHEE
+    /// assert!(!cpilsl.contains_str("bazinga!"));
     /// ```
-    pub fn contains(&self, s: &str) -> bool {
+    pub fn contains_str(&self, s: &str) -> bool {
         let mut chars = s.chars();
         if let Some(first_char) = chars.next() {
             if chars.next().is_none() {
-                return self.contains_char(first_char);
+                return self.contains(first_char);
             }
         }
         self.str_list.binary_search(s).is_ok()
@@ -167,7 +168,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///     CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///     CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
@@ -190,17 +191,17 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    ///    CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
     /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains_char('A'));
-    /// assert!(cpilsl.contains_char('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
-    /// assert!(!cpilsl.contains_char('\u{1_0000}'));
-    /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
-    pub fn contains_char(&self, ch: char) -> bool {
+    /// assert!(cpilsl.contains('A'));
+    /// assert!(cpilsl.contains('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
+    /// assert!(!cpilsl.contains('\u{1_0000}'));
+    /// assert!(!cpilsl.contains('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
+    pub fn contains(&self, ch: char) -> bool {
         self.contains32(ch as u32)
     }
 
@@ -234,7 +235,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
         }
 
         // Ensure that the string list is sorted. If not, the binary search that
-        // is used for `.contains(&str)` will return garbase otuput.
+        // is used for `.contains(&str)` will return garbage output.
         strings.sort_unstable();
         strings.dedup();
 
@@ -269,8 +270,7 @@ mod tests {
     #[test]
     fn test_size_has_strings() {
         let cp_slice = &[0, 1, 0x7F, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -283,8 +283,7 @@ mod tests {
     #[test]
     fn test_empty_string_allowed() {
         let cp_slice = &[0, 1, 0x7F, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -297,8 +296,7 @@ mod tests {
     #[test]
     fn test_invalid_string() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["a"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -313,8 +311,7 @@ mod tests {
     #[test]
     fn test_invalid_string_list_has_duplicate() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["abc", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -329,8 +326,7 @@ mod tests {
     #[test]
     fn test_invalid_string_list_not_sorted() {
         let cp_slice = &[0, 1];
-        let cp_list =
-            CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+        let cp_list = CodePointInversionList::try_from_u32_inversion_list_slice(cp_slice).unwrap();
         let str_slice = &["xyz", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
@@ -353,14 +349,14 @@ mod tests {
         assert_eq!(cpilsl_1, cpilsl_2);
 
         assert!(cpilsl_1.has_strings());
-        assert!(cpilsl_1.contains("abc"));
-        assert!(cpilsl_1.contains("xyz"));
-        assert!(!cpilsl_1.contains("def"));
+        assert!(cpilsl_1.contains_str("abc"));
+        assert!(cpilsl_1.contains_str("xyz"));
+        assert!(!cpilsl_1.contains_str("def"));
 
         assert_eq!(1, cpilsl_1.cp_inv_list.size());
-        assert!(cpilsl_1.contains_char('a'));
-        assert!(!cpilsl_1.contains_char('0'));
-        assert!(!cpilsl_1.contains_char('q'));
+        assert!(cpilsl_1.contains('a'));
+        assert!(!cpilsl_1.contains('0'));
+        assert!(!cpilsl_1.contains('q'));
 
         assert_eq!(3, cpilsl_1.size());
     }

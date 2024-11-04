@@ -198,9 +198,9 @@ use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
-use icu::locale::{subtags_region as region};
+use icu::locale::subtags::region;
 use std::borrow::Cow;
 use tinystr::tinystr;
 
@@ -214,10 +214,8 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
-        // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
-        let mut any_payload = (&mut res.payload) as &mut dyn Any;
-        if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-            if req.id.locale.region == Some(region!("CH")) {
+        if req.id.locale.region == Some(region!("CH")) {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV1Marker>() {
                 decimal_payload.with_mut(|data| {
                     // Change the grouping separator for all Swiss locales to '🐮'
                     data.grouping_separator = Cow::Borrowed("🐮");
@@ -229,7 +227,7 @@ where
 }
 
 let provider = CustomDecimalSymbolsProvider(
-    AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
+    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
@@ -254,6 +252,83 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ## Forking Data Providers
 
 Forking providers can be implemented using `DataPayload::dynamic_cast`. For an example, see that function's documentation.
+
+## Exporting Custom Data Markers
+
+To add custom data markers to your baked data or postcard file, create a forking exportable provider:
+
+```rust
+use icu::locale::locale;
+use icu::plurals::provider::CardinalV1Marker;
+use icu_provider::prelude::*;
+use icu_provider::DataMarker;
+use icu_provider_adapters::fork::ForkByMarkerProvider;
+use icu_provider_blob::BlobDataProvider;
+use icu_provider_export::blob_exporter::BlobExporter;
+use icu_provider_export::prelude::*;
+use icu_provider_source::SourceDataProvider;
+use std::borrow::Cow;
+use std::collections::BTreeSet;
+
+#[icu_provider::data_struct(marker(CustomMarker, "x/custom@1"))]
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake)]
+#[databake(path = crate)]
+pub struct Custom<'data> {
+    message: Cow<'data, str>,
+};
+
+struct CustomProvider;
+impl DataProvider<CustomMarker> for CustomProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomMarker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(Custom {
+                message: format!("Custom data for locale {}!", req.id.locale).into(),
+            }),
+        })
+    }
+}
+
+impl IterableDataProvider<CustomMarker> for CustomProvider {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        Ok([locale!("es"), locale!("ja")]
+            .into_iter()
+            .map(DataLocale::from)
+            .map(DataIdentifierCow::from_locale)
+            .collect())
+    }
+}
+
+icu_provider::export::make_exportable_provider!(CustomProvider, [CustomMarker,]);
+
+let icu4x_source_provider = SourceDataProvider::new_latest_tested();
+let custom_source_provider = CustomProvider;
+
+let mut buffer = Vec::<u8>::new();
+
+ExportDriver::new(
+    [DataLocaleFamily::FULL],
+    DeduplicationStrategy::None.into(),
+    LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap(),
+)
+.with_markers([CardinalV1Marker::INFO, CustomMarker::INFO])
+.export(
+    &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
+    BlobExporter::new_with_sink(Box::new(&mut buffer)),
+)
+.unwrap();
+
+let blob_provider = BlobDataProvider::try_new_from_blob(buffer.into()).unwrap();
+
+let locale = DataLocale::from(&locale!("ja"));
+let req = DataRequest {
+    id: DataIdentifierBorrowed::for_locale(&locale),
+    metadata: Default::default(),
+};
+
+assert!(blob_provider.load_data(CardinalV1Marker::INFO, req).is_ok());
+assert!(blob_provider.load_data(CustomMarker::INFO, req).is_ok());
+```
 
 ## Accessing the Resolved Locale
 

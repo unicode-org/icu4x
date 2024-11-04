@@ -5,11 +5,32 @@
     "1": "next mo."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001mo ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "mo ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in mo"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "mo"
+        }
+      ]
+    ]
   }
 }

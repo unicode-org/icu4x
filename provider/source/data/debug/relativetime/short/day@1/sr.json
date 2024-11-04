@@ -7,11 +7,35 @@
     "2": "прекосутра"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  д."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " д."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  д."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " д."
+        }
+      ]
+    ]
   }
 }

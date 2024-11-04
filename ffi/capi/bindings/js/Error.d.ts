@@ -23,7 +23,6 @@ export class Error {
     static DataCustomError : Error;
     static DataIoError : Error;
     static DataUnavailableBufferFormatError : Error;
-    static PropertyUnexpectedPropertyNameError : Error;
     static DateTimePatternError : Error;
     static DateTimeMissingInputFieldError : Error;
     static DateTimeSkeletonError : Error;
@@ -33,4 +32,8 @@ export class Error {
     static DateTimeMissingMonthSymbolError : Error;
     static DateTimeFixedDecimalError : Error;
     static DateTimeMismatchedCalendarError : Error;
+    static DateTimeDuplicateFieldError : Error;
+    static DateTimeTooNarrowError : Error;
+    static DateTimeMissingNamesError : Error;
+    static DateTimeZoneInfoMissingFieldsError : Error;
 }

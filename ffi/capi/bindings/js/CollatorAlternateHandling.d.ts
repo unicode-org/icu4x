@@ -11,7 +11,6 @@ export class CollatorAlternateHandling {
 
     get ffiValue() : number;
 
-    static Auto : CollatorAlternateHandling;
     static NonIgnorable : CollatorAlternateHandling;
     static Shifted : CollatorAlternateHandling;
 }

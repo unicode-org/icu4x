@@ -45,6 +45,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) data: &'l RuleBreakDataV2<'l>,
     pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
+    pub(crate) locale_override: Option<&'l RuleBreakDataOverrideV1<'l>>,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
@@ -210,6 +211,14 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
         // Note: Default value is 0 == UNKNOWN
+        if let Some(locale_override) = &self.locale_override {
+            let property = locale_override
+                .property_table_override
+                .get32(codepoint.into());
+            if property != 0 {
+                return property;
+            }
+        }
         self.data.property_table.get32(codepoint.into())
     }
 
@@ -225,7 +234,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     /// Return the status value of break boundary.
     /// If segmenter isn't word, always return WordType::None
     pub fn word_type(&self) -> WordType {
-        if self.result_cache.first().is_some() {
+        if !self.result_cache.is_empty() {
             // Dictionary type (CJ and East Asian) is letter.
             return WordType::Letter;
         }
@@ -249,7 +258,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -268,7 +277,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
 #[derive(Debug)]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -287,7 +296,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
 #[derive(Debug)]
 pub struct RuleBreakTypeLatin1;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -306,7 +315,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf16;
 
-impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf16 {
+impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

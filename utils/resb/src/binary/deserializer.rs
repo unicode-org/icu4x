@@ -181,7 +181,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
     }
 }
 
-impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
+impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
     type Error = BinaryDeserializerError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -685,7 +685,7 @@ struct ArraySeqAccess<'a, 'de: 'a> {
     remaining: usize,
 }
 
-impl<'de, 'a> de::SeqAccess<'de> for ArraySeqAccess<'a, 'de> {
+impl<'de> de::SeqAccess<'de> for ArraySeqAccess<'_, 'de> {
     type Error = BinaryDeserializerError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
@@ -810,7 +810,7 @@ struct TableMapAccess<'de, 'a> {
     remaining: usize,
 }
 
-impl<'de, 'a> de::MapAccess<'de> for TableMapAccess<'de, 'a> {
+impl<'de> de::MapAccess<'de> for TableMapAccess<'de, '_> {
     type Error = BinaryDeserializerError;
 
     fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>, Self::Error>

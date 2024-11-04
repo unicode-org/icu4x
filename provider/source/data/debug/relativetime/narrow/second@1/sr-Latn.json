@@ -3,11 +3,35 @@
     "0": "sada"
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  s."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  s."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s."
+        }
+      ]
+    ]
   }
 }

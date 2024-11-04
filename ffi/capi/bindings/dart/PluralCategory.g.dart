@@ -32,7 +32,7 @@ enum PluralCategory {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_PluralCategory_get_for_cldr_string_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PluralCategory_get_for_cldr_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_PluralCategory_get_for_cldr_string_mv1(_SliceUtf8 s);

@@ -1,15 +1,37 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 килограмм"
-      ],
-      [
-        "Many",
-        "\u0001 килограмм"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмм"
+        }
       ]
     ],
-    "other": "\u0001 килограмма"
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмм"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " килограмма"
+        }
+      ]
+    ]
   }
 }

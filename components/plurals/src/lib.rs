@@ -81,11 +81,12 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
-use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
+use provider::PluralRulesV1;
 use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
@@ -280,7 +281,7 @@ impl PluralCategory {
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
 #[derive(Debug)]
-pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
+pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesV1<'static>>>);
 
 impl AsRef<PluralRules> for PluralRules {
     fn as_ref(&self) -> &PluralRules {
@@ -873,5 +874,202 @@ where
             ))
             .map(PluralCategory::from)
             .unwrap_or(end)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+/// A bag of values for different plural cases.
+pub struct PluralElements<T>(PluralElementsInner<T>);
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+pub(crate) struct PluralElementsInner<T> {
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    zero: Option<T>,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    one: Option<T>,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    two: Option<T>,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    few: Option<T>,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    many: Option<T>,
+    other: T,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    explicit_zero: Option<T>,
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    explicit_one: Option<T>,
+}
+
+impl<T> PluralElements<T> {
+    /// Creates a new [`PluralElements`] with the given default value.
+    pub fn new(other: T) -> Self {
+        Self(PluralElementsInner {
+            other,
+            zero: None,
+            one: None,
+            two: None,
+            few: None,
+            many: None,
+            explicit_zero: None,
+            explicit_one: None,
+        })
+    }
+
+    /// The value for [`PluralCategory::Zero`]
+    pub fn zero(&self) -> &T {
+        self.0.zero.as_ref().unwrap_or(&self.0.other)
+    }
+
+    /// The value for [`PluralCategory::One`]
+    pub fn one(&self) -> &T {
+        self.0.one.as_ref().unwrap_or(&self.0.other)
+    }
+
+    /// The value for [`PluralCategory::Two`]
+    pub fn two(&self) -> &T {
+        self.0.two.as_ref().unwrap_or(&self.0.other)
+    }
+
+    /// The value for [`PluralCategory::Few`]
+    pub fn few(&self) -> &T {
+        self.0.few.as_ref().unwrap_or(&self.0.other)
+    }
+
+    /// The value for [`PluralCategory::Many`]
+    pub fn many(&self) -> &T {
+        self.0.many.as_ref().unwrap_or(&self.0.other)
+    }
+
+    /// The value for [`PluralCategory::Other`]
+    pub fn other(&self) -> &T {
+        &self.0.other
+    }
+
+    /// If the only variant is `other`, returns `Some(other)`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_plurals::PluralElements;
+    ///
+    /// let mut only_other = PluralElements::new("abc").with_one_value(Some("abc"));
+    /// assert_eq!(only_other.try_into_other(), Some("abc"));
+    ///
+    /// let mut multi = PluralElements::new("abc").with_one_value(Some("def"));
+    /// assert_eq!(multi.try_into_other(), None);
+    /// ```
+    pub fn try_into_other(self) -> Option<T> {
+        match self.0 {
+            PluralElementsInner {
+                zero: None,
+                one: None,
+                two: None,
+                few: None,
+                many: None,
+                other,
+                explicit_zero: None,
+                explicit_one: None,
+            } => Some(other),
+            _ => None,
+        }
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 0.
+    pub fn explicit_zero(&self) -> Option<&T> {
+        self.0.explicit_zero.as_ref()
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 1.
+    pub fn explicit_one(&self) -> Option<&T> {
+        self.0.explicit_one.as_ref()
+    }
+
+    /// Applies a function `f` to map all values to another type.
+    pub fn map<B, F: Fn(T) -> B>(self, f: F) -> PluralElements<B> {
+        let f = &f;
+        PluralElements(PluralElementsInner {
+            other: f(self.0.other),
+            zero: self.0.zero.map(f),
+            one: self.0.one.map(f),
+            two: self.0.two.map(f),
+            few: self.0.few.map(f),
+            many: self.0.many.map(f),
+            explicit_zero: self.0.explicit_zero.map(f),
+            explicit_one: self.0.explicit_one.map(f),
+        })
+    }
+
+    /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
+    pub fn as_ref(&self) -> PluralElements<&T> {
+        PluralElements(PluralElementsInner {
+            other: &self.0.other,
+            zero: self.0.zero.as_ref(),
+            one: self.0.one.as_ref(),
+            two: self.0.two.as_ref(),
+            few: self.0.few.as_ref(),
+            many: self.0.many.as_ref(),
+            explicit_zero: self.0.explicit_zero.as_ref(),
+            explicit_one: self.0.explicit_one.as_ref(),
+        })
+    }
+}
+
+impl<T: PartialEq> PluralElements<T> {
+    /// Sets the value for [`PluralCategory::Zero`].
+    pub fn with_zero_value(self, zero: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            zero: zero.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for [`PluralCategory::One`].
+    pub fn with_one_value(self, one: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            one: one.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for [`PluralCategory::Two`].
+    pub fn with_two_value(self, two: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            two: two.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for [`PluralCategory::Few`].
+    pub fn with_few_value(self, few: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            few: few.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for [`PluralCategory::Many`].
+    pub fn with_many_value(self, many: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            many: many.filter(|t| *t != self.0.other),
+            ..self.0
+        })
+    }
+
+    /// Sets the value for explicit 0.
+    pub fn with_explicit_zero_value(self, explicit_zero: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_zero,
+            ..self.0
+        })
+    }
+
+    /// Sets the value for explicit 1.
+    pub fn with_explicit_one_value(self, explicit_one: Option<T>) -> Self {
+        Self(PluralElementsInner {
+            explicit_one,
+            ..self.0
+        })
     }
 }

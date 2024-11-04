@@ -12,8 +12,8 @@
 
 
 typedef struct CodePointRangeIteratorResult {
-  uint32_t start;
-  uint32_t end;
+  char32_t start;
+  char32_t end;
   bool done;
 } CodePointRangeIteratorResult;
 

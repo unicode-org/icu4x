@@ -6,19 +6,12 @@ Types for resolving and manipulating time zones.
 
 ## Fields
 
-In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
+In ICU4X, a [formattable time zone](TimeZoneInfo) consists of up to four different fields:
 
-1. The offset from GMT
-2. The time zone ID
-3. The metazone ID
+1. The time zone ID
+2. The offset from UTC
+3. A timestamp, as time zone names can change over time
 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
-
-### GMT Offset
-
-The GMT offset precisely states the time difference between the time zone in question and
-Greenwich Mean Time (GMT) or Coordinated Universal Time (UTC).
-
-In localized strings, it is often rendered as "GMT-6", meaning 6 hours less than GMT.
 
 ### Time Zone
 
@@ -33,81 +26,58 @@ There are two mostly-interchangeable standards for time zone IDs:
 ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
 IANA time zone, use [`TimeZoneIdMapper`].
 
-### Metazone
+### UTC Offset
 
-A metazone is a collection of multiple time zones that share the same localized formatting
-at a particular date and time.
+The UTC offset precisely states the time difference between the time zone in question and
+Coordinated Universal Time (UTC).
 
-For example, "America/Chicago" and "America/Indiana/Knox" both map to US Central Time, or
-`"America_Central"`.
+In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
+use the term "GMT" instead of "UTC").
 
-The mapping from time zone to metazone depends on the date. For example, from 1991 to 2006,
-"America/Indiana/Knox" mapped to US Eastern Time instead of US Central Time.
+### Timestamp
 
-As with time zone IDs, there are two interchangeable forms:
+Some time zones change names over time, such as when changing "metazone". For example, Portugal changed from
+"Western European Time" to "Central European Time" and back in the 1990s, without changing time zone id
+(`Europe/Lisbon`/`ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
 
-1. Long form, like `"America_Central"`
-2. Short form compatible with BCP-47, like `"amce"`
-
-ICU4X uses the short form.
-
-Note: in ICU4X, "metazone" is one word and "time zone" is two words, except for this crate
-and module name, where "timezone" is used with no separators. See
-<https://github.com/unicode-org/icu4x/issues/2507>.
+It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
+formats may be unsupported.
 
 ### Zone Variant
 
-Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
+Many zones use different names and offsets in the summer than in the winter. In ICU4X,
 this is called the _zone variant_.
 
 CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
 variants to specific observed offsets varies from time zone to time zone, and they may not
 consistently represent winter versus summer time.
 
-Note: It is optional (not required) to set the zone variant when constructing a
-[`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
-to represent the lack of a preference.
-
-## Calculations
-
-In date/time processing, normally only a subset of information is available, and the other
-fields must be computed from it.
-
-The following calculations are currently supported or will be supported:
-
-1. Time Zone + Local DateTime → Meta Zone ([`MetazoneCalculator`])
-2. Time Zone + Absolute Time → Offset + Zone Variant (not yet supported)
+Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
+formats may be unsupported.
 
 ## Examples
 
-Create a time zone for which the offset and time zone ID are already known, and calculate
-the metazone based on a certain local datetime:
-
 ```rust
-use icu::calendar::DateTime;
-use icu::timezone::CustomTimeZone;
-use icu::timezone::GmtOffset;
-use icu::timezone::MetazoneCalculator;
+use icu::calendar::{Date, Time};
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
-use tinystr::{tinystr, TinyAsciiStr};
+use icu::timezone::ZoneVariant;
+use tinystr::tinystr;
 
-// Create a time zone for America/Chicago at GMT-6:
-let mut time_zone = CustomTimeZone::new_empty();
-time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-let mapper = TimeZoneIdMapper::new();
-time_zone.time_zone_id =
-    mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+// Parse the IANA ID
+let id = TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago");
 
-// Alternatively, set it directly from the BCP-47 ID
-assert_eq!(time_zone.time_zone_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+// Alternatively, use the BCP47 ID directly
+let id = TimeZoneBcp47Id(tinystr!(8, "uschi"));
 
-// Compute the metazone at January 1, 2022:
-let mzc = MetazoneCalculator::new();
-let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
-time_zone.maybe_calculate_metazone(&mzc, &datetime);
+// Create a TimeZoneInfo<Base> by associating the ID with an offset
+let time_zone = id.with_offset("-0600".parse().ok());
 
-assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
+// Extend to a TimeZoneInfo<AtTime> by adding a local time
+let time_zone_at_time = time_zone.at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
+
+// Extend to a TimeZoneInfo<Full> by adding a zone variant
+let time_zone_with_variant = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
 ```
 
 <!-- cargo-rdme end -->

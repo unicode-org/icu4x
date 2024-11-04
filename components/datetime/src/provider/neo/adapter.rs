@@ -115,34 +115,6 @@ where
     })
 }
 
-fn era_symbols_map_project_cloned<M, P>(
-    payload: &DataPayload<M>,
-    req: DataRequest,
-) -> Result<DataResponse<P>, DataError>
-where
-    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
-    P: DataMarker<DataStruct = YearNamesV1<'static>>,
-{
-    let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use key_attr_consts::*;
-        let result = match req.id.marker_attributes.as_str() {
-            FORMAT_ABBR_STR => &payload.eras.abbr,
-            FORMAT_WIDE_STR => &payload.eras.names,
-            FORMAT_NARW_STR => &payload.eras.narrow,
-            _ => {
-                return Err(DataError::custom("Unknown marker attribute")
-                    .with_marker(M::INFO)
-                    .with_display_context(req.id.marker_attributes.as_str()))
-            }
-        };
-        Ok(YearNamesV1::Eras(result.clone()))
-    })?;
-    Ok(DataResponse {
-        payload: new_payload,
-        metadata: Default::default(),
-    })
-}
-
 fn dayperiod_symbols_map_project_cloned<M, P>(
     payload: &DataPayload<M>,
     req: DataRequest,
@@ -217,7 +189,7 @@ impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearNamesV1<'a> {
         // Input is a cow array of length 7. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
         LinearNamesV1 {
-            symbols: (&vec).into(),
+            names: (&vec).into(),
         }
     }
 }
@@ -232,7 +204,7 @@ impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearNamesV1<'a> {
             (None, None) => vec![&other.am, &other.pm],
         };
         LinearNamesV1 {
-            symbols: (&vec).into(),
+            names: (&vec).into(),
         }
     }
 }
@@ -378,238 +350,8 @@ impl_data_provider_adapter!(
     WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
-
-impl_data_provider_adapter!(
-    BuddhistDateSymbolsV1Marker,
-    BuddhistYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    ChineseDateSymbolsV1Marker,
-    ChineseYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    CopticDateSymbolsV1Marker,
-    CopticYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    DangiDateSymbolsV1Marker,
-    DangiYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    EthiopianDateSymbolsV1Marker,
-    EthiopianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    GregorianDateSymbolsV1Marker,
-    GregorianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    HebrewDateSymbolsV1Marker,
-    HebrewYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    IndianDateSymbolsV1Marker,
-    IndianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    IslamicDateSymbolsV1Marker,
-    IslamicYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    JapaneseDateSymbolsV1Marker,
-    JapaneseYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    JapaneseExtendedDateSymbolsV1Marker,
-    JapaneseExtendedYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    PersianDateSymbolsV1Marker,
-    PersianYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-impl_data_provider_adapter!(
-    RocDateSymbolsV1Marker,
-    RocYearNamesV1Marker,
-    era_symbols_map_project_cloned
-);
-
 impl_data_provider_adapter!(
     TimeSymbolsV1Marker,
     DayPeriodNamesV1Marker,
     dayperiod_symbols_map_project_cloned
 );
-
-#[cfg(test)]
-#[cfg(feature = "compiled_data")]
-mod tests {
-    use super::*;
-    use icu_locale_core::langid;
-
-    #[test]
-    fn test_adapter_months_numeric() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_month_abbreviated:?}"),
-            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
-        );
-    }
-
-    #[test]
-    fn test_adapter_months_map() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_month_abbreviated:?}"),
-            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
-        );
-    }
-
-    #[test]
-    fn test_adapter_weekdays_abbreviated() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_weekdays_abbreviated:?}"),
-            "LinearNamesV1 { symbols: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
-        );
-    }
-
-    #[test]
-    fn test_adapter_weekdays_short() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("6s"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_weekdays_short:?}"),
-            "LinearNamesV1 { symbols: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
-        );
-    }
-
-    #[test]
-    fn test_adapter_eras() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("4"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_eras_wide:?}"),
-            "Eras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
-        );
-    }
-
-    #[test]
-    fn test_adapter_dayperiods() {
-        let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3s"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_dayperiods_abbreviated:?}"),
-            "LinearNamesV1 { symbols: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
-        );
-    }
-}

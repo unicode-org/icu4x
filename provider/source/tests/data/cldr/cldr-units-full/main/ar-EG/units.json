@@ -2,9 +2,6 @@
   "main": {
     "ar-EG": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar",
         "territory": "EG"
       },
@@ -322,13 +319,14 @@
             "unitPattern-count-other": "{0} قيراط"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
-            "displayName": "مغم/ديسيبل",
-            "unitPattern-count-zero": "{0} مغم/ديسيبل",
-            "unitPattern-count-one": "{0} مغم/ديسيبل",
-            "unitPattern-count-two": "{0} مغم/ديسيبل",
-            "unitPattern-count-few": "{0} مغم/ديسيبل",
-            "unitPattern-count-many": "{0} مغم/ديسيبل",
-            "unitPattern-count-other": "{0} مغم/ديسيبل"
+            "gender": "masculine",
+            "displayName": "مغم/ديسيلتر",
+            "unitPattern-count-zero": "{0} مغم/ديسيل",
+            "unitPattern-count-one": "مغم/ديسيلتر",
+            "unitPattern-count-two": "مغم/ديسيلتر",
+            "unitPattern-count-few": "{0} مغم/ديسيلتر",
+            "unitPattern-count-many": "{0} مغم/ديسيلتر",
+            "unitPattern-count-other": "{0} مغم/ديسيلتر"
           },
           "concentr-millimole-per-liter": {
             "gender": "masculine",
@@ -725,6 +723,7 @@
             "unitPattern-count-other": "{0} فولت"
           },
           "energy-kilocalorie": {
+            "gender": "masculine",
             "displayName": "كيلو سعرة",
             "unitPattern-count-zero": "{0} كيلو سعرة",
             "unitPattern-count-one": "{0} كيلو سعرة",
@@ -937,7 +936,7 @@
             "unitPattern-count-other": "{0} نقطة لكل سنتيمتر"
           },
           "graphics-dot-per-inch": {
-            "displayName": "نقطة لكل بوصة",
+            "displayName": "نقطة/بوصة",
             "unitPattern-count-zero": "{0} نقطة لكل بوصة",
             "unitPattern-count-one": "{0} نقطة لكل بوصة",
             "unitPattern-count-two": "نقطتان لكل بوصة",
@@ -1140,6 +1139,7 @@
             "unitPattern-count-other": "{0} ميل اسكندنافي"
           },
           "length-point": {
+            "gender": "feminine",
             "displayName": "نقطة",
             "unitPattern-count-zero": "{0} نقطة",
             "unitPattern-count-one": "نقطة",
@@ -1401,6 +1401,7 @@
             "unitPattern-count-other": "{0} قوة حصان"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "masculine",
             "displayName": "مليمتر زئبقي",
             "unitPattern-count-zero": "{0} مليمتر زئبقي",
             "unitPattern-count-one": "{0} مليمتر زئبقي",
@@ -1919,6 +1920,31 @@
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "masculine",
+            "displayName": "جزء بالمليار",
+            "unitPattern-count-zero": "{0} جزء بالمليار",
+            "unitPattern-count-one": "{0} جزء بالمليار",
+            "unitPattern-count-two": "جزآن بالمليار",
+            "unitPattern-count-few": "{0} أجزاء بالمليار",
+            "unitPattern-count-many": "{0} جزءًا بالمليار",
+            "unitPattern-count-other": "{0} جزء بالمليار"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "ليالي",
+            "unitPattern-count-zero": "{0} ليلة",
+            "unitPattern-count-one": "ليلة",
+            "unitPattern-count-two": "ليلتان",
+            "unitPattern-count-few": "{0} ليالٍ",
+            "unitPattern-count-many": "{0} ليلةً",
+            "unitPattern-count-other": "{0} ليلة",
+            "perUnitPattern": "{0} في الليلة"
+          },
           "coordinateUnit": {
             "displayName": "اتجاه أساسي",
             "east": "{0} شرقًا",
@@ -2206,13 +2232,13 @@
             "unitPattern-count-other": "{0} قيراط"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
-            "displayName": "مغم/ديسبل",
-            "unitPattern-count-zero": "{0} مغم/ديسبل",
-            "unitPattern-count-one": "{0} مغم/ديسبل",
-            "unitPattern-count-two": "{0} مغم/ديسبل",
-            "unitPattern-count-few": "{0} مغم/ديسبل",
-            "unitPattern-count-many": "{0} مغم/ديسبل",
-            "unitPattern-count-other": "{0} مغم/ديسبل"
+            "displayName": "مغم/ديسيل",
+            "unitPattern-count-zero": "{0} مغم/ديسيل",
+            "unitPattern-count-one": "{0} مغم/ديسيل",
+            "unitPattern-count-two": "{0} مغم/ديسيل",
+            "unitPattern-count-few": "{0} مغم/ديسيل",
+            "unitPattern-count-many": "{0} مغم/ديسيل",
+            "unitPattern-count-other": "{0} مغم/ديسيل"
           },
           "concentr-millimole-per-liter": {
             "displayName": "م.مول/ل",
@@ -2761,16 +2787,16 @@
             "displayName": "نقطة/سم",
             "unitPattern-count-zero": "{0} نقطة/سم",
             "unitPattern-count-one": "{0} نقطة/سم",
-            "unitPattern-count-two": "{0} نقطتان/سم",
+            "unitPattern-count-two": "{0} نقطة/سم",
             "unitPattern-count-few": "{0} نقاط/سم",
             "unitPattern-count-many": "{0} نقطة/سم",
             "unitPattern-count-other": "{0} نقطة/سم"
           },
           "graphics-dot-per-inch": {
-            "displayName": "نقطة لكل بوصة",
+            "displayName": "نقطة/بوصة",
             "unitPattern-count-zero": "{0} نقطة/بوصة",
             "unitPattern-count-one": "{0} نقطة/بوصة",
-            "unitPattern-count-two": "نقطة/بوصة",
+            "unitPattern-count-two": "{0} نقطة/بوصة",
             "unitPattern-count-few": "{0} نقاط/بوصة",
             "unitPattern-count-many": "{0} نقطة/بوصة",
             "unitPattern-count-other": "{0} نقطة/بوصة"
@@ -3702,6 +3728,29 @@
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "جزء/مليار",
+            "unitPattern-count-zero": "{0} جزء/مليار",
+            "unitPattern-count-one": "{0} جزء/مليار",
+            "unitPattern-count-two": "جزآن/مليار",
+            "unitPattern-count-few": "{0} أجزاء/مليار",
+            "unitPattern-count-many": "{0} جزءًا/مليار",
+            "unitPattern-count-other": "{0} جزء/مليار"
+          },
+          "duration-night": {
+            "displayName": "ليلة",
+            "unitPattern-count-zero": "{0} ليلة",
+            "unitPattern-count-one": "ليلة",
+            "unitPattern-count-two": "ليلتان",
+            "unitPattern-count-few": "{0} ليالٍ",
+            "unitPattern-count-many": "{0} ليلةً",
+            "unitPattern-count-other": "{0} ليلة",
+            "perUnitPattern": "{0}/ل"
+          },
           "coordinateUnit": {
             "displayName": "اتجاه",
             "east": "{0} شرق",
@@ -3989,13 +4038,13 @@
             "unitPattern-count-other": "{0} قيراط"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
-            "displayName": "مغ/ديسبل",
-            "unitPattern-count-zero": "{0} مغ/ديسبل",
-            "unitPattern-count-one": "{0} مغ/ديسبل",
-            "unitPattern-count-two": "{0} مغ/ديسبل",
-            "unitPattern-count-few": "{0} مغ/ديسبل",
-            "unitPattern-count-many": "{0} مغ/ديسبل",
-            "unitPattern-count-other": "{0} مغ/ديسبل"
+            "displayName": "مغ/ديسيل",
+            "unitPattern-count-zero": "{0} مغ/ديسيل",
+            "unitPattern-count-one": "{0} مغ/ديسيل",
+            "unitPattern-count-two": "{0} مغ/ديسيل",
+            "unitPattern-count-few": "{0} مغ/ديسيل",
+            "unitPattern-count-many": "{0} مغ/ديسيل",
+            "unitPattern-count-other": "{0} مغ/ديسيل"
           },
           "concentr-millimole-per-liter": {
             "displayName": "م.مول/ل",
@@ -4555,7 +4604,7 @@
             "unitPattern-count-other": "{0} ن/سم"
           },
           "graphics-dot-per-inch": {
-            "displayName": "نقطة لكل بوصة",
+            "displayName": "ن/بوصة",
             "unitPattern-count-zero": "{0} ن/بوصة",
             "unitPattern-count-one": "{0} ن/بوصة",
             "unitPattern-count-two": "{0} ن/بوصة",
@@ -5489,6 +5538,29 @@
             "unitPattern-count-few": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "جزء/مليار",
+            "unitPattern-count-zero": "{0} جزء/مليار",
+            "unitPattern-count-one": "{0} جزء/مليار",
+            "unitPattern-count-two": "جزآن/مليار",
+            "unitPattern-count-few": "{0} أجزاء/مليار",
+            "unitPattern-count-many": "{0} جزءًا/مليار",
+            "unitPattern-count-other": "{0} جزء/مليار"
+          },
+          "duration-night": {
+            "displayName": "ليلة",
+            "unitPattern-count-zero": "{0} ل",
+            "unitPattern-count-one": "{0} ل",
+            "unitPattern-count-two": "{0} ل",
+            "unitPattern-count-few": "{0} ل",
+            "unitPattern-count-many": "{0} ل",
+            "unitPattern-count-other": "{0} ل",
+            "perUnitPattern": "{0}/ل"
           },
           "coordinateUnit": {
             "displayName": "اتجاه",

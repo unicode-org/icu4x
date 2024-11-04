@@ -1,3 +1,0 @@
-# TODO(#3909): remove this and use the BCP47 id directly
-
-:: Hex/Unicode ;

@@ -7,7 +7,6 @@ use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::str::FromStr;
 use litemap::LiteMap;
-use writeable::Writeable;
 
 use super::Key;
 use super::Value;
@@ -312,7 +311,7 @@ impl Keywords {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_bytes(self, other)
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {

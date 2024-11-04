@@ -3,11 +3,29 @@
     "0": "bu dakika"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 dk. önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " dk. önce"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 dk. sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " dk. sonra"
+        }
+      ]
+    ]
   }
 }

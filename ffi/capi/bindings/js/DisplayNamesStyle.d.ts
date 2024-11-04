@@ -11,7 +11,6 @@ export class DisplayNamesStyle {
 
     get ffiValue() : number;
 
-    static Auto : DisplayNamesStyle;
     static Narrow : DisplayNamesStyle;
     static Short : DisplayNamesStyle;
     static Long : DisplayNamesStyle;

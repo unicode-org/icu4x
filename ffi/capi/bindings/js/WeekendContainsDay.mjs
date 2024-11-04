@@ -89,6 +89,21 @@ export class WeekendContainsDay {
         return [this.#monday, this.#tuesday, this.#wednesday, this.#thursday, this.#friday, this.#saturday, this.#sunday]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#monday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 1, this.#tuesday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 2, this.#wednesday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 3, this.#thursday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#friday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 5, this.#saturday, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 6, this.#sunday, Uint8Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.

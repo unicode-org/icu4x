@@ -47,7 +47,7 @@ export class RegionDisplayNames {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new RegionDisplayNames(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -61,17 +61,17 @@ export class RegionDisplayNames {
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const regionSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, region)).splat()];
+        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, region));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice, write.buffer);
+        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice.splat(), write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return write.readString8();

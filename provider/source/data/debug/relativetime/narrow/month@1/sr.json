@@ -5,11 +5,35 @@
     "1": "следећег мес."
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  м."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " м."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  м."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " м."
+        }
+      ]
+    ]
   }
 }

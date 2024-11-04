@@ -25,7 +25,9 @@ use crate::ParseError;
 compile_error!("The fixed_decimal crate only works if usizes are at least the size of a u16");
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
-/// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
+/// (power of 10).
+///
+/// Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, as well as an optional sign; used for formatting and plural selection.
 ///
 /// # Data Types
@@ -2221,7 +2223,7 @@ impl FixedDecimal {
     ///
     /// All nonzero digits in `other` must have lower magnitude than nonzero digits in `self`.
     /// If the two decimals represent overlapping ranges of magnitudes, an `Err` is returned,
-    /// passing ownership of `other` back to the caller.
+    /// containing (self, other).
     ///
     /// The magnitude range of `self` will be increased if `other` covers a larger range.
     ///
@@ -2237,10 +2239,13 @@ impl FixedDecimal {
     ///
     /// assert_eq!("123.456", result.to_string());
     /// ```
-    pub fn concatenated_end(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
+    pub fn concatenated_end(
+        mut self,
+        other: FixedDecimal,
+    ) -> Result<Self, (FixedDecimal, FixedDecimal)> {
         match self.concatenate_end(other) {
             Ok(()) => Ok(self),
-            Err(err) => Err(err),
+            Err(err) => Err((self, err)),
         }
     }
 
@@ -2619,7 +2624,7 @@ pub enum FloatPrecision {
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
     /// value, with no trailing zeros.
-    Floating,
+    RoundTrip,
 }
 
 #[cfg(feature = "ryu")]
@@ -2646,7 +2651,7 @@ impl FixedDecimal {
     /// assert_writeable_eq!(decimal, "-5.10");
     ///
     /// let decimal =
-    ///     FixedDecimal::try_from_f64(0.012345678, FloatPrecision::Floating)
+    ///     FixedDecimal::try_from_f64(0.012345678, FloatPrecision::RoundTrip)
     ///         .expect("Finite quantity");
     /// assert_writeable_eq!(decimal, "0.012345678");
     ///
@@ -2680,7 +2685,7 @@ impl FixedDecimal {
             decimal.lower_magnitude = 0;
         }
         match precision {
-            FloatPrecision::Floating => (),
+            FloatPrecision::RoundTrip => (),
             FloatPrecision::Integer => {
                 if lowest_magnitude < 0 {
                     return Err(LimitError);
@@ -2736,12 +2741,12 @@ fn test_float() {
     let cases = [
         TestCase {
             input: 1.234567,
-            precision: FloatPrecision::Floating,
+            precision: FloatPrecision::RoundTrip,
             expected: "1.234567",
         },
         TestCase {
             input: 888999.,
-            precision: FloatPrecision::Floating,
+            precision: FloatPrecision::RoundTrip,
             expected: "888999",
         },
         // HalfExpand tests

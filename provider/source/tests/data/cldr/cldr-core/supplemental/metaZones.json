@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -829,14 +829,7 @@
             "Bahia_Banderas": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Pacific",
-                  "_to": "1970-01-01 08:00"
-                }
-              },
-              {
-                "usesMetazone": {
                   "_mzone": "America_Mountain",
-                  "_from": "1970-01-01 08:00",
                   "_to": "2010-04-04 09:00"
                 }
               },
@@ -949,13 +942,27 @@
               {
                 "usesMetazone": {
                   "_mzone": "America_Central",
-                  "_to": "1981-12-23 06:00"
+                  "_to": "1981-12-26 08:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "America_Eastern",
-                  "_from": "1981-12-23 06:00",
+                  "_from": "1981-12-26 08:00",
+                  "_to": "1983-01-04 05:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_from": "1983-01-04 05:00",
+                  "_to": "1997-10-26 07:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Eastern",
+                  "_from": "1997-10-26 07:00",
                   "_to": "1998-08-02 06:00"
                 }
               },
@@ -1362,14 +1369,7 @@
             "Hermosillo": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Pacific",
-                  "_to": "1970-01-01 08:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Mexico_Pacific",
-                  "_from": "1970-01-01 08:00"
+                  "_mzone": "Mexico_Pacific"
                 }
               }
             ],
@@ -1751,14 +1751,7 @@
             "Mazatlan": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Pacific",
-                  "_to": "1970-01-01 08:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Mexico_Pacific",
-                  "_from": "1970-01-01 08:00"
+                  "_mzone": "Mexico_Pacific"
                 }
               }
             ],
@@ -1801,20 +1794,20 @@
               {
                 "usesMetazone": {
                   "_mzone": "America_Central",
-                  "_to": "1981-12-23 06:00"
+                  "_to": "1981-12-26 08:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "America_Eastern",
-                  "_from": "1981-12-23 06:00",
-                  "_to": "1982-12-02 05:00"
+                  "_from": "1981-12-26 08:00",
+                  "_to": "1982-11-02 07:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "America_Central",
-                  "_from": "1982-12-02 05:00"
+                  "_from": "1982-11-02 07:00"
                 }
               }
             ],
@@ -2601,7 +2594,7 @@
               },
               {
                 "usesMetazone": {
-                  "_mzone": "Kazakhstan_Western",
+                  "_mzone": "Kazakhstan",
                   "_from": "2024-02-29 18:00"
                 }
               }
@@ -2652,7 +2645,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -2673,7 +2673,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 21:00"
+                  "_from": "2004-10-30 21:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -2695,7 +2702,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -2794,27 +2808,6 @@
                 "usesMetazone": {
                   "_mzone": "Yakutsk",
                   "_from": "2016-03-26 18:00"
-                }
-              }
-            ],
-            "Choibalsan": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Mongolia",
-                  "_to": "1983-03-31 16:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Choibalsan",
-                  "_from": "1983-03-31 16:00",
-                  "_to": "2008-03-30 15:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Mongolia",
-                  "_from": "2008-03-30 15:00"
                 }
               }
             ],
@@ -3048,13 +3041,13 @@
               {
                 "usesMetazone": {
                   "_mzone": "Malaya",
-                  "_to": "1981-12-31 16:30"
+                  "_to": "1981-12-31 16:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Malaysia",
-                  "_from": "1981-12-31 16:30"
+                  "_from": "1981-12-31 16:00"
                 }
               }
             ],
@@ -3180,7 +3173,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3250,7 +3250,7 @@
               },
               {
                 "usesMetazone": {
-                  "_mzone": "Kazakhstan_Western",
+                  "_mzone": "Kazakhstan",
                   "_from": "2024-02-29 18:00"
                 }
               }
@@ -3279,7 +3279,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2018-12-20 18:00"
+                  "_from": "2018-12-20 18:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3522,20 +3529,20 @@
               {
                 "usesMetazone": {
                   "_mzone": "Azores",
-                  "_to": "1992-09-27 02:00"
+                  "_to": "1992-12-27 02:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Europe_Western",
-                  "_from": "1992-09-27 02:00",
-                  "_to": "1993-03-28 01:00"
+                  "_from": "1992-12-27 02:00",
+                  "_to": "1993-06-17 01:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Azores",
-                  "_from": "1993-03-28 01:00"
+                  "_from": "1993-06-17 01:00"
                 }
               }
             ],
@@ -3689,20 +3696,6 @@
               }
             ]
           },
-          "CST6CDT": [
-            {
-              "usesMetazone": {
-                "_mzone": "America_Central"
-              }
-            }
-          ],
-          "EST5EDT": [
-            {
-              "usesMetazone": {
-                "_mzone": "America_Eastern"
-              }
-            }
-          ],
           "Etc": {
             "GMT": [
               {
@@ -4429,13 +4422,6 @@
               }
             ]
           },
-          "MST7MDT": [
-            {
-              "usesMetazone": {
-                "_mzone": "America_Mountain"
-              }
-            }
-          ],
           "Pacific": {
             "Apia": [
               {
@@ -4753,14 +4739,7 @@
                 }
               }
             ]
-          },
-          "PST8PDT": [
-            {
-              "usesMetazone": {
-                "_mzone": "America_Pacific"
-              }
-            }
-          ]
+          }
         }
       },
       "metazones": [
@@ -5599,13 +5578,6 @@
         },
         {
           "mapZone": {
-            "_other": "Choibalsan",
-            "_type": "Asia/Choibalsan",
-            "_territory": "001"
-          }
-        },
-        {
-          "mapZone": {
             "_other": "Christmas",
             "_type": "Indian/Christmas",
             "_territory": "001"
@@ -6371,6 +6343,13 @@
           "mapZone": {
             "_other": "Karachi",
             "_type": "Asia/Karachi",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "Kazakhstan",
+            "_type": "Asia/Almaty",
             "_territory": "001"
           }
         },
@@ -7169,10 +7148,6 @@
           "_longId": "China",
           "_since": "40"
         },
-        "choi": {
-          "_longId": "Choibalsan",
-          "_since": "40"
-        },
         "chri": {
           "_longId": "Christmas",
           "_since": "40"
@@ -7347,6 +7322,10 @@
         },
         "kawe": {
           "_longId": "Kazakhstan_Western",
+          "_since": "40"
+        },
+        "kaza": {
+          "_longId": "Kazakhstan",
           "_since": "40"
         },
         "kore": {

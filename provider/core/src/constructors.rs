@@ -52,7 +52,7 @@
 //! Use this constructor if you need to use a provider that implements [`AnyProvider`] but not
 //! [`DataProvider`]. Examples:
 //!
-//! 1. [`AnyPayloadProvider`]
+//! 1. [`FixedProvider`]
 //! 2. [`ForkByMarkerProvider`] between two providers implementing [`AnyProvider`]
 //! 3. Providers that cache or override certain markers but not others and therefore
 //!    can't implement [`DataProvider`]
@@ -104,7 +104,7 @@
 //! [`DataProvider`]: crate::DataProvider
 //! [`BufferProvider`]: crate::buf::BufferProvider
 //! [`AnyProvider`]: crate::any::AnyProvider
-//! [`AnyPayloadProvider`]: ../../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
+//! [`FixedProvider`]: ../../icu_provider_adapters/fixed/struct.FixedProvider.html
 //! [`ForkByMarkerProvider`]: ../../icu_provider_adapters/fork/struct.ForkByMarkerProvider.html
 //! [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 //! [`StaticDataProvider`]: ../../icu_provider_blob/struct.StaticDataProvider.html

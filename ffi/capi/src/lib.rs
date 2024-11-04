@@ -87,6 +87,8 @@ pub mod decimal;
 #[cfg(feature = "experimental")]
 pub mod displaynames;
 #[cfg(feature = "locale")]
+pub mod exemplar_chars;
+#[cfg(feature = "locale")]
 pub mod fallbacker;
 #[cfg(feature = "decimal")]
 pub mod fixed_decimal;
@@ -96,8 +98,6 @@ pub mod list;
 pub mod locale;
 #[cfg(feature = "locale")]
 pub mod locale_directionality;
-#[cfg(feature = "timezone")]
-pub mod metazone_calculator;
 #[cfg(feature = "normalizer")]
 pub mod normalizer;
 #[cfg(feature = "normalizer")]
@@ -128,8 +128,6 @@ pub mod segmenter_word;
 pub mod time;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
-#[cfg(feature = "datetime")]
-pub mod timezone_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone_mapper;
 #[cfg(feature = "experimental")]

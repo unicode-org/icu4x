@@ -47,7 +47,7 @@ export class ListFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -65,7 +65,7 @@ export class ListFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -83,7 +83,7 @@ export class ListFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -97,10 +97,10 @@ export class ListFormatter {
     format(list) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const listSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16")).splat()];
+        const listSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16"));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, ...listSlice, write.buffer);
+        wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, ...listSlice.splat(), write.buffer);
     
         try {
             return write.readString8();

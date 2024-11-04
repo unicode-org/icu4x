@@ -5,11 +5,29 @@
     "1": "gelecek ay"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ay önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ay önce"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 ay sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ay sonra"
+        }
+      ]
+    ]
   }
 }

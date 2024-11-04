@@ -14,16 +14,19 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::maps::{
-    load_grapheme_cluster_break, load_script, load_sentence_break, load_word_break,
+use icu_properties::script::ScriptWithExtensions;
+use icu_properties::{
+    props::{
+        CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
+        GraphemeClusterBreak, Script, SentenceBreak, WordBreak,
+    },
+    CodePointMapData,
 };
-use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::{
-    load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space,
-    load_xid_continue, load_xid_start,
+use icu_properties::{
+    props::{PatternWhiteSpace, XidContinue, XidStart},
+    CodePointSetData,
 };
-use icu_properties::{provider::*, GeneralCategoryGroup};
-use icu_properties::{GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
+use icu_properties::{provider::*, PropertyParser};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -427,6 +430,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -448,7 +453,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -467,7 +472,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -476,11 +481,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -1121,6 +1126,10 @@ where
         let mut try_wb = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
+        // contains a supposed canonical combining class property name that needs to be tried
+        let mut try_ccc: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
+        // contains a supposed block property name that needs to be tried
+        let mut try_block: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
 
         if !value.is_empty() {
             // key is gc, sc, scx, grapheme cluster break, sentence break, word break
@@ -1128,13 +1137,19 @@ where
             // OR
             // key is a binary property and value is a truthy/falsy value
 
-            match key {
-                "General_Category" | "gc" => try_gc = Ok(value),
-                "Grapheme_Cluster_Break" => try_gcb = Ok(value),
-                "Script" | "sc" => try_sc = Ok(value),
-                "Script_Extensions" | "scx" => try_scx = Ok(value),
-                "Sentence_Break" => try_sb = Ok(value),
-                "Word_Break" => try_wb = Ok(value),
+            match key.as_bytes() {
+                GeneralCategory::NAME | GeneralCategory::SHORT_NAME => try_gc = Ok(value),
+                GraphemeClusterBreak::NAME | GraphemeClusterBreak::SHORT_NAME => {
+                    try_gcb = Ok(value)
+                }
+                Script::NAME | Script::SHORT_NAME => try_sc = Ok(value),
+                SentenceBreak::NAME | SentenceBreak::SHORT_NAME => try_sb = Ok(value),
+                WordBreak::NAME | WordBreak::SHORT_NAME => try_wb = Ok(value),
+                CanonicalCombiningClass::NAME | CanonicalCombiningClass::SHORT_NAME => {
+                    try_ccc = Ok(value)
+                }
+                b"Script_Extensions" | b"scx" => try_scx = Ok(value),
+                b"Block" | b"blk" => try_block = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -1165,7 +1180,9 @@ where
             .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))
             .or_else(|_| try_gcb.and_then(|value| self.try_load_grapheme_cluster_break_set(value)))
             .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
-            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))?;
+            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))
+            .or_else(|_| try_ccc.and_then(|value| self.try_load_ccc_set(value)))
+            .or_else(|_| try_block.and_then(|value| self.try_load_block_set(value)))?;
         Ok(inverted)
     }
 
@@ -1322,23 +1339,26 @@ where
 
     fn try_load_general_category_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map = GeneralCategoryGroup::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| PEK::Internal)?;
+        let name_map =
+            PropertyParser::<GeneralCategoryGroup>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let set = load_for_general_category_group(self.property_provider, gc_value)
-            .map_err(|_| PEK::Internal)?;
+        let set = CodePointMapData::<GeneralCategory>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?
+            .as_borrowed()
+            .get_set_for_value_group(gc_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 
     fn try_get_script(&self, name: &str) -> Result<Script> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map =
-            Script::get_name_to_enum_mapper(self.property_provider).map_err(|_| PEK::Internal)?;
+        let name_map = PropertyParser::<Script>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         name_map
             .as_borrowed()
             .get_loose(name)
@@ -1348,7 +1368,8 @@ where
     fn try_load_script_set(&mut self, name: &str) -> Result<()> {
         let sc_value = self.try_get_script(name)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
+        let property_map = CodePointMapData::<Script>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sc_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1356,7 +1377,7 @@ where
 
     fn try_load_script_extensions_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let scx = load_script_with_extensions_unstable(self.property_provider)
+        let scx = ScriptWithExtensions::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let sc_value = self.try_get_script(name)?;
         let set = scx.as_borrowed().get_script_extensions_set(sc_value);
@@ -1365,53 +1386,95 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let set = load_for_ecma262_unstable(self.property_provider, name)
-            .map_err(|_| PEK::UnknownProperty)?;
+        let set =
+            CodePointSetData::try_new_for_ecma262_unstable(self.property_provider, name.as_bytes())
+                .ok_or(PEK::UnknownProperty)?
+                .map_err(|_data_error| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 
     fn try_load_grapheme_cluster_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = GraphemeClusterBreak::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| PEK::Internal)?;
-        let gcb_value = name_map
+        let parser =
+            PropertyParser::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let gcb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(GraphemeClusterBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
-            load_grapheme_cluster_break(self.property_provider).map_err(|_| PEK::Internal)?;
+            CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gcb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 
     fn try_load_sentence_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = SentenceBreak::get_name_to_enum_mapper(self.property_provider)
+        let parser = PropertyParser::<SentenceBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let sb_value = name_map
+        let sb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(SentenceBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
-            load_sentence_break(self.property_provider).map_err(|_| PEK::Internal)?;
+            CodePointMapData::<SentenceBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 
     fn try_load_word_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = WordBreak::get_name_to_enum_mapper(self.property_provider)
+        let parser = PropertyParser::<WordBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let wb_value = name_map
+        let wb_value = parser
             .as_borrowed()
             .get_loose(name)
+            .or_else(|| name.parse().ok().map(WordBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map = load_word_break(self.property_provider).map_err(|_| PEK::Internal)?;
+        let property_map = CodePointMapData::<WordBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(wb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_ccc_set(&mut self, name: &str) -> Result<()> {
+        let parser =
+            PropertyParser::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .or_else(|| name.parse().ok().map(CanonicalCombiningClass))
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_block_set(&mut self, name: &str) -> Result<()> {
+        // TODO: source these from properties
+        self.single_set
+            .add_range(match name.to_ascii_lowercase().as_str() {
+                "arabic" => '\u{0600}'..'\u{06FF}',
+                "thaana" => '\u{0780}'..'\u{07BF}',
+                _ => {
+                    #[cfg(feature = "log")]
+                    log::warn!("Skipping :block={name}:");
+                    return Err(PEK::Unimplemented.into());
+                }
+            });
         Ok(())
     }
 }
@@ -1471,7 +1534,7 @@ where
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
-/// assert!(set.contains_char('z'));
+/// assert!(set.contains('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
 /// ```
@@ -1526,7 +1589,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// let (set, consumed) = parse_with_variables(source, &variable_map).unwrap();
 /// assert_eq!(consumed, source.len());
 /// assert!(set.code_points().contains_range('d'..='z'));
-/// assert!(set.contains("Hello World"));
+/// assert!(set.contains_str("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
 #[cfg(feature = "compiled_data")]
 pub fn parse_with_variables(
@@ -1548,6 +1611,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -1569,7 +1634,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -1588,7 +1653,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -1597,11 +1662,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -1611,12 +1676,15 @@ where
 
     let mut iter = source.char_indices().peekable();
 
-    let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
+    let xid_start =
+        CodePointSetData::try_new_unstable::<XidStart>(provider).map_err(|_| PEK::Internal)?;
     let xid_start_list = xid_start.to_code_point_inversion_list();
-    let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
+    let xid_continue =
+        CodePointSetData::try_new_unstable::<XidContinue>(provider).map_err(|_| PEK::Internal)?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
-    let pat_ws = load_pattern_white_space(provider).map_err(|_| PEK::Internal)?;
+    let pat_ws = CodePointSetData::try_new_unstable::<PatternWhiteSpace>(provider)
+        .map_err(|_| PEK::Internal)?;
     let pat_ws_list = pat_ws.to_code_point_inversion_list();
 
     let mut builder = UnicodeSetBuilder::new_internal(
@@ -1659,6 +1727,8 @@ where
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
         + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CanonicalCombiningClassV1Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
         + DataProvider<CaseIgnorableV1Marker>
         + DataProvider<CasedV1Marker>
         + DataProvider<ChangesWhenCasefoldedV1Marker>
@@ -1680,7 +1750,7 @@ where
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
         + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -1699,7 +1769,7 @@ where
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
         + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
+        + DataProvider<SentenceBreakNameToValueV2Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -1708,11 +1778,11 @@ where
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
         + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
+        + DataProvider<WordBreakNameToValueV2Marker>
         + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
         + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptNameToValueV2Marker>
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
@@ -1772,7 +1842,7 @@ mod tests {
         for s in strings {
             expected_size += 1;
             assert!(
-                cpinvlistandstrlist.contains(s),
+                cpinvlistandstrlist.contains_str(s),
                 "missing string \"{}\" from parsed set \"{}\"",
                 s.escape_debug(),
                 source.escape_debug()
@@ -2097,6 +2167,11 @@ mod tests {
                 &map_char_set,
                 "[$set-$a]",
                 r"[$set-$a← error: unexpected variable",
+            ),
+            (
+                &map_char_set,
+                "[$=]",
+                "[$=← error: unexpected character '='",
             ),
         ];
         for (variable_map, source, expected_err) in cases {

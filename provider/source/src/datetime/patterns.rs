@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use icu::datetime::pattern;
-use icu::datetime::pattern::CoarseHourCycle;
 use icu::datetime::provider::calendar::*;
+use icu::datetime::provider::pattern;
+use icu::datetime::provider::pattern::CoarseHourCycle;
 
 impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {

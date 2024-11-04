@@ -2,19 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::hebrew::Hebrew;
+use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::NeoYearMonthDayMarker;
+use icu_datetime::fieldset::YMD;
 use icu_datetime::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDayComponents,
+    NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
     NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
-use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
+use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_locale_core::{locale, Locale};
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
-use writeable::{assert_try_writeable_eq, assert_writeable_eq};
+use writeable::assert_try_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023, 9:22:53 PM",
@@ -72,7 +70,7 @@ const EXPECTED_DATE: &[&str] = &[
 
 #[test]
 fn neo_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATETIME.iter();
     for date_length in [
         length::Date::Full,
@@ -80,7 +78,7 @@ fn neo_datetime_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
         for time_length in [length::Time::Medium, length::Time::Short] {
             let time_components = NeoTimeComponents::from_time_length(time_length);
             for locale in [
@@ -89,10 +87,12 @@ fn neo_datetime_lengths() {
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = TypedNeoFormatter::try_new_with_components(
+                let formatter = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
                     &locale,
-                    NeoDateTimeComponents::DateTime(day_components, time_components),
-                    length.into(),
+                    NeoDateTimeSkeleton::for_length_and_components(
+                        date_skeleton.length,
+                        NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
+                    ),
                 )
                 .unwrap();
                 let formatted = formatter.format(&datetime);
@@ -101,7 +101,7 @@ fn neo_datetime_lengths() {
                     formatted,
                     *expected,
                     Ok(()),
-                    "{day_components:?} {time_components:?} {length:?} {locale:?}"
+                    "{date_skeleton:?} {time_components:?} {locale:?}"
                 );
             }
         }
@@ -110,7 +110,7 @@ fn neo_datetime_lengths() {
 
 #[test]
 fn neo_date_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATE.iter();
     for date_length in [
         length::Date::Full,
@@ -118,106 +118,32 @@ fn neo_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        let (day_components, length) = NeoDateSkeleton::day_from_date_length(date_length);
+        let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
         for locale in [
             locale!("en").into(),
             locale!("fr").into(),
             locale!("zh").into(),
             locale!("hi").into(),
         ] {
-            let formatter = TypedNeoFormatter::try_new_with_components(
-                &locale,
-                NeoDateComponents::Day(day_components),
-                length.into(),
-            )
-            .unwrap();
+            let formatter =
+                FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale, date_skeleton)
+                    .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(
-                formatted,
-                *expected,
-                Ok(()),
-                "{day_components:?} {length:?} {locale:?}"
-            );
-        }
-    }
-}
-
-#[test]
-fn old_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED_DATETIME.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
-    ] {
-        for time_length in [length::Time::Medium, length::Time::Short] {
-            for locale in [
-                locale!("en").into(),
-                locale!("fr").into(),
-                locale!("zh").into(),
-                locale!("hi").into(),
-            ] {
-                let formatter = TypedDateTimeFormatter::try_new(
-                    &locale,
-                    DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
-                        date_length,
-                        time_length,
-                    )),
-                )
-                .unwrap();
-                let formatted = formatter.format(&datetime);
-                let expected = expected_iter.next().unwrap();
-                assert_writeable_eq!(
-                    formatted,
-                    *expected,
-                    "{date_length:?} {time_length:?} {locale:?}"
-                );
-            }
-        }
-    }
-}
-
-#[test]
-fn old_date_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED_DATE.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
-    ] {
-        for locale in [
-            locale!("en").into(),
-            locale!("fr").into(),
-            locale!("zh").into(),
-            locale!("hi").into(),
-        ] {
-            let formatter = TypedDateTimeFormatter::try_new(
-                &locale,
-                DateTimeFormatterOptions::Length(length::Bag::from_date_style(date_length)),
-            )
-            .unwrap();
-            let formatted = formatter.format(&datetime);
-            let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(formatted, *expected, "{date_length:?} {locale:?}");
+            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
         }
     }
 }
 
 #[test]
 fn overlap_patterns() {
-    let datetime = CustomZonedDateTime {
-        date: Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 8, 9).unwrap(),
         time: Time::try_new(20, 40, 7, 250).unwrap(),
-        zone: CustomTimeZone::utc(),
     };
     struct TestCase {
         locale: Locale,
-        components: NeoComponents,
+        components: NeoDateTimeComponents,
         length: NeoSkeletonLength,
         expected: &'static str,
     }
@@ -225,8 +151,8 @@ fn overlap_patterns() {
         // Note: in en-US, there is no comma in the overlap pattern
         TestCase {
             locale: locale!("en-US"),
-            components: NeoComponents::DateTime(
-                NeoDayComponents::Weekday,
+            components: NeoDateTimeComponents::DateTime(
+                NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -234,8 +160,8 @@ fn overlap_patterns() {
         },
         TestCase {
             locale: locale!("en-US"),
-            components: NeoComponents::DateTime(
-                NeoDayComponents::MonthDayWeekday,
+            components: NeoDateTimeComponents::DateTime(
+                NeoDateComponents::MonthDayWeekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -245,8 +171,8 @@ fn overlap_patterns() {
         // (but the strings are the same in data)
         TestCase {
             locale: locale!("ru"),
-            components: NeoComponents::DateTime(
-                NeoDayComponents::Weekday,
+            components: NeoDateTimeComponents::DateTime(
+                NeoDateComponents::Weekday,
                 NeoTimeComponents::HourMinute,
             ),
             length: NeoSkeletonLength::Medium,
@@ -254,7 +180,7 @@ fn overlap_patterns() {
         },
         TestCase {
             locale: locale!("ru"),
-            components: NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Weekday)),
+            components: NeoDateTimeComponents::Date(NeoDateComponents::Weekday),
             length: NeoSkeletonLength::Medium,
             expected: "пт",
         },
@@ -266,12 +192,10 @@ fn overlap_patterns() {
         expected,
     } in cases
     {
-        let formatter = TypedNeoFormatter::try_new_with_components(
-            &(&locale).into(),
-            components,
-            length.into(),
-        )
-        .unwrap();
+        let skeleton = NeoDateTimeSkeleton::for_length_and_components(length, components);
+        let formatter =
+            FixedCalendarDateTimeFormatter::try_new_with_skeleton(&(&locale).into(), skeleton)
+                .unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(
             formatted,
@@ -284,13 +208,10 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime::try_new_iso_datetime(2011, 4, 3, 14, 15, 7).unwrap();
+    let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
-    let formatter = TypedNeoFormatter::<_, NeoYearMonthDayMarker>::try_new(
-        &locale!("en").into(),
-        NeoSkeletonLength::Long.into(),
-    )
-    .unwrap();
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMD::medium()).unwrap();
 
     let formatted_datetime = formatter.format(&datetime);
 
@@ -299,23 +220,38 @@ fn hebrew_months() {
 
 #[test]
 fn test_5387() {
-    let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
-    let formatter_auto = TypedNeoFormatter::try_new_with_components(
+    let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
+    let formatter_auto = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
-        NeoSkeletonLength::Medium.into(),
+        NeoDateTimeSkeleton::for_length_and_components(
+            NeoSkeletonLength::Medium,
+            NeoDateTimeComponents::DateTime(
+                NeoDateComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            ),
+        ),
     )
     .unwrap();
-    let formatter_h12 = TypedNeoFormatter::try_new_with_components(
+    let formatter_h12 = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h12").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
-        NeoSkeletonLength::Medium.into(),
+        NeoDateTimeSkeleton::for_length_and_components(
+            NeoSkeletonLength::Medium,
+            NeoDateTimeComponents::DateTime(
+                NeoDateComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            ),
+        ),
     )
     .unwrap();
-    let formatter_h24 = TypedNeoFormatter::try_new_with_components(
+    let formatter_h24 = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
         &locale!("en-u-hc-h23").into(),
-        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
-        NeoSkeletonLength::Medium.into(),
+        NeoDateTimeSkeleton::for_length_and_components(
+            NeoSkeletonLength::Medium,
+            NeoDateTimeComponents::DateTime(
+                NeoDateComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            ),
+        ),
     )
     .unwrap();
 

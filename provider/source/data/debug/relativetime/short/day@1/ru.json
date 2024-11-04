@@ -7,11 +7,32 @@
     "2": "послезавтра"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 дн. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн. назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  дн."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн."
+        }
+      ]
+    ]
   }
 }

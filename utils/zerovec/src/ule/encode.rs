@@ -108,6 +108,12 @@ unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ T {
     }
 }
 
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ &'_ T {
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[T::as_byte_slice(self)])
+    }
+}
+
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Cow<'_, T>
 where
     T: ToOwned,
@@ -123,7 +129,19 @@ unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     }
 }
 
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ Box<T> {
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[T::as_byte_slice(self)])
+    }
+}
+
 unsafe impl EncodeAsVarULE<str> for String {
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[self.as_bytes()])
+    }
+}
+
+unsafe impl EncodeAsVarULE<str> for &'_ String {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[self.as_bytes()])
     }

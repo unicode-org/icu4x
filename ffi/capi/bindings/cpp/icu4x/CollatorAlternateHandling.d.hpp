@@ -13,9 +13,8 @@
 namespace icu4x {
 namespace capi {
     enum CollatorAlternateHandling {
-      CollatorAlternateHandling_Auto = 0,
-      CollatorAlternateHandling_NonIgnorable = 1,
-      CollatorAlternateHandling_Shifted = 2,
+      CollatorAlternateHandling_NonIgnorable = 0,
+      CollatorAlternateHandling_Shifted = 1,
     };
     
     typedef struct CollatorAlternateHandling_option {union { CollatorAlternateHandling ok; }; bool is_ok; } CollatorAlternateHandling_option;
@@ -26,9 +25,8 @@ namespace icu4x {
 class CollatorAlternateHandling {
 public:
   enum Value {
-    Auto = 0,
-    NonIgnorable = 1,
-    Shifted = 2,
+    NonIgnorable = 0,
+    Shifted = 1,
   };
 
   CollatorAlternateHandling() = default;

@@ -45,7 +45,7 @@ export class ComposingNormalizer {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ComposingNormalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -63,7 +63,7 @@ export class ComposingNormalizer {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new ComposingNormalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -77,10 +77,10 @@ export class ComposingNormalizer {
     normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice, write.buffer);
+        wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
     
         try {
             return write.readString8();
@@ -96,9 +96,9 @@ export class ComposingNormalizer {
     isNormalized(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
         
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice);
+        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice.splat());
     
         try {
             return result;
@@ -112,9 +112,9 @@ export class ComposingNormalizer {
     isNormalizedUpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
         
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice);
+        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice.splat());
     
         try {
             return result;

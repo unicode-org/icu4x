@@ -19,7 +19,7 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
@@ -33,20 +33,18 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
+//! *Note*: The exact formatted result is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// A structure to represent the set of lengths in which the [`DateTimeInput`] implementer should be formatted to.
-///
-/// [`DateTimeInput`]: crate::input::DateTimeInput
+/// A structure to represent the set of lengths for datetime formatting.
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
@@ -54,7 +52,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
+/// use icu::datetime::options::DateTimeFormatterOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -68,7 +66,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
+/// use icu::datetime::options::DateTimeFormatterOptions;
 /// let options: DateTimeFormatterOptions = length::Bag::default().into();
 /// ```
 ///
@@ -129,10 +127,8 @@ impl Bag {
         }
     }
 }
-/// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
+/// Represents different lengths for datetime formatting.
 /// Each length has associated best pattern for it for a given locale.
-///
-/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///
@@ -144,13 +140,12 @@ impl Bag {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
-/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from using these lengths is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -201,10 +196,8 @@ pub enum Date {
     Short,
 }
 
-/// Represents different length lengths a [`DateTimeInput`] implementer can be formatted into.
+/// Represents different length lengths a for datetime formatting.
 /// Each length has associated best pattern for it for a given locale.
-///
-/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///
@@ -216,13 +209,12 @@ pub enum Date {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
 ///
-/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from using these lengths is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
-/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]

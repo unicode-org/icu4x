@@ -5,11 +5,32 @@
     "1": "в следующем мес."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 мес. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мес. назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  мес."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мес."
+        }
+      ]
+    ]
   }
 }

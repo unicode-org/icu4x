@@ -2,9 +2,6 @@
   "main": {
     "tr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "tr"
       },
       "dates": {
@@ -419,7 +416,7 @@
                   "d": "d–d"
                 },
                 "Gy": {
-                  "G": "G y – G y",
+                  "G": "G y – G y",
                   "y": "G y–y"
                 },
                 "GyM": {

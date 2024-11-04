@@ -3,11 +3,35 @@
     "0": "овог минута"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  мин."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  мин."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин."
+        }
+      ]
+    ]
   }
 }

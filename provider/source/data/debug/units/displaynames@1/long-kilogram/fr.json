@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 kilogramme"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kilogramme"
+        }
       ]
     ],
-    "other": "\u0001 kilogrammes"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kilogrammes"
+        }
+      ]
+    ]
   }
 }

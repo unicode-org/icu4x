@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -109,8 +109,7 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice: &[T::ULE] = self.vector.as_slice();
-        ZeroSlice::from_ule_slice(slice)
+        self.as_slice()
     }
 }
 
@@ -193,7 +192,7 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
 
 impl<'a, T: AsULE> AsRef<ZeroSlice<T>> for ZeroVec<'a, T> {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        self.deref()
+        self.as_slice()
     }
 }
 
@@ -310,16 +309,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         let capacity = vec.capacity();
         let len = vec.len();
         let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
-        // Note: starting in 1.70 we can use NonNull::slice_from_raw_parts
-        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
+        // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
+        // "Returns an unsafe mutable pointer to the vector’s buffer,
+        // or a dangling raw pointer valid for zero sized reads"
+        let ptr = unsafe { NonNull::new_unchecked(ptr) };
+        let buf = NonNull::slice_from_raw_parts(ptr, len);
         Self {
-            vector: EyepatchHackVector {
-                // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
-                // "Returns an unsafe mutable pointer to the vector’s buffer,
-                // or a dangling raw pointer valid for zero sized reads"
-                buf: unsafe { NonNull::new_unchecked(slice) },
-                capacity,
-            },
+            vector: EyepatchHackVector { buf, capacity },
             marker: PhantomData,
         }
     }
@@ -430,6 +426,16 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
                 ZeroVec::new_owned(bytes)
             }
         }
+    }
+
+    /// Returns this [`ZeroVec`] as a [`ZeroSlice`].
+    ///
+    /// To get a reference with a longer lifetime from a borrowed [`ZeroVec`],
+    /// use [`ZeroVec::as_maybe_borrowed`].
+    #[inline]
+    pub const fn as_slice(&self) -> &ZeroSlice<T> {
+        let slice: &[T::ULE] = self.vector.as_slice();
+        ZeroSlice::from_ule_slice(slice)
     }
 
     /// Casts a `ZeroVec<T>` to a compatible `ZeroVec<P>`.
@@ -570,8 +576,11 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         self.vector.capacity != 0
     }
 
-    /// If this is a borrowed ZeroVec, return it as a slice that covers
-    /// its lifetime parameter
+    /// If this is a borrowed [`ZeroVec`], return it as a slice that covers
+    /// its lifetime parameter.
+    ///
+    /// To infallibly get a [`ZeroSlice`] with a shorter lifetime, use
+    /// [`ZeroVec::as_slice`].
     #[inline]
     pub fn as_maybe_borrowed(&self) -> Option<&'a ZeroSlice<T>> {
         if self.is_owned() {

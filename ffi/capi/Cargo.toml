@@ -81,7 +81,7 @@ calendar = ["dep:icu_calendar"]
 casemap = ["dep:icu_casemap"]
 collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties
-datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
+datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals", "icu_datetime?/experimental"]
 decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
 experimental = ["dep:icu_experimental"]
 list = ["dep:icu_list"]
@@ -140,7 +140,7 @@ icu_list = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 icu_normalizer = { workspace = true, optional = true }
 icu_plurals = { workspace = true, optional = true }
-icu_properties = { workspace = true, features = ["bidi"], optional = true }
+icu_properties = { workspace = true, features = ["unicode_bidi"], optional = true }
 icu_segmenter = { workspace = true, features = ["auto"], optional = true }
 icu_timezone = { workspace = true, optional = true }
 icu_experimental = { workspace = true, optional = true }

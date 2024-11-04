@@ -3,37 +3,95 @@
     "0": "الآن"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000قبل ثانية واحدة"
-      ],
-      [
-        "Two",
-        "\u0000قبل ثانيتين"
-      ],
-      [
-        "Few",
-        "\bقبل  ثوانٍ"
+        {
+          "Literal": "قبل ثانية واحدة"
+        }
       ]
     ],
-    "other": "\bقبل  ثانية"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "قبل ثانيتين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثوانٍ"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثانية"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000خلال ثانية واحدة"
-      ],
-      [
-        "Two",
-        "\u0000خلال ثانيتين"
-      ],
-      [
-        "Few",
-        "\nخلال  ثوانٍ"
+        {
+          "Literal": "خلال ثانية واحدة"
+        }
       ]
     ],
-    "other": "\nخلال  ثانية"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "خلال ثانيتين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثوانٍ"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثانية"
+        }
+      ]
+    ]
   }
 }

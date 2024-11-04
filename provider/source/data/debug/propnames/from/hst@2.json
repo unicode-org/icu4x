@@ -1,0 +1,16 @@
+{
+  "map": {
+    "L": 1,
+    "LV": 4,
+    "LVT": 5,
+    "LVT_Syllable": 5,
+    "LV_Syllable": 4,
+    "Leading_Jamo": 1,
+    "NA": 0,
+    "Not_Applicable": 0,
+    "T": 3,
+    "Trailing_Jamo": 3,
+    "V": 2,
+    "Vowel_Jamo": 2
+  }
+}

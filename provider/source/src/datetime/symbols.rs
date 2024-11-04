@@ -96,6 +96,15 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     }
 }
 
+/// Produces a map from the CLDR era index, to the era code and the ICU4X era index.
+///
+/// Eras are returned in chronological order; which is what ICU4X uses for indexing eras.
+/// Therefore the first era returned by this function is FormattableEra::Index(0), etc, for
+/// calendars which use FormattableEra.
+///
+/// See FormattableEra for a definition of what chronological order is in this context.
+///
+/// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
 pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
@@ -117,13 +126,13 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
         ],
         "dangi" | "chinese" => &[],
         "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "islamic"))],
+        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
         "persian" => &[("0", tinystr!(16, "ah"))],
         "hebrew" => &[("0", tinystr!(16, "hebrew"))],
         "ethiopic" => &[
-            ("0", tinystr!(16, "incar")),
-            ("1", tinystr!(16, "pre-incar")),
             ("2", tinystr!(16, "mundi")),
+            ("1", tinystr!(16, "pre-incar")),
+            ("0", tinystr!(16, "incar")),
         ],
         "roc" => &[
             ("0", tinystr!(16, "roc-inverse")),
@@ -301,3 +310,142 @@ symbols_from!(
         midnight,
     },
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::SourceDataProvider;
+    use icu::datetime::provider::calendar::*;
+    use icu::datetime::provider::neo::*;
+    use icu::locale::langid;
+    use icu_provider::prelude::*;
+
+    #[test]
+    fn test_adapter_months_numeric() {
+        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_month_abbreviated:?}"),
+            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
+        );
+    }
+
+    #[test]
+    fn test_adapter_months_map() {
+        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_month_abbreviated:?}"),
+            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
+        );
+    }
+
+    #[test]
+    fn test_adapter_weekdays_abbreviated() {
+        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_weekdays_abbreviated:?}"),
+            "LinearNamesV1 { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
+        );
+    }
+
+    #[test]
+    fn test_adapter_weekdays_short() {
+        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("6s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_weekdays_short:?}"),
+            "LinearNamesV1 { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+        );
+    }
+
+    #[test]
+    fn test_adapter_dayperiods() {
+        let symbols: DataPayload<TimeSymbolsV1Marker> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_dayperiods_abbreviated:?}"),
+            "LinearNamesV1 { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
+        );
+    }
+}

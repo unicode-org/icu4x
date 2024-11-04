@@ -73,6 +73,21 @@ export class CollatorResolvedOptions {
         return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#strength.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#alternateHandling.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#caseFirst.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, this.#maxVariable.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 16, this.#caseLevel.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 20, this.#numeric.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 24, this.#backwardSecondLevel.ffiValue, Int32Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.
@@ -80,18 +95,18 @@ export class CollatorResolvedOptions {
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strength = CollatorStrength[Array.from(CollatorStrength.values.keys())[strengthDeref]];
+        this.#strength = new CollatorStrength(diplomatRuntime.internalConstructor, strengthDeref);
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#alternateHandling = CollatorAlternateHandling[Array.from(CollatorAlternateHandling.values.keys())[alternateHandlingDeref]];
+        this.#alternateHandling = new CollatorAlternateHandling(diplomatRuntime.internalConstructor, alternateHandlingDeref);
         const caseFirstDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#caseFirst = CollatorCaseFirst[Array.from(CollatorCaseFirst.values.keys())[caseFirstDeref]];
+        this.#caseFirst = new CollatorCaseFirst(diplomatRuntime.internalConstructor, caseFirstDeref);
         const maxVariableDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 12);
-        this.#maxVariable = CollatorMaxVariable[Array.from(CollatorMaxVariable.values.keys())[maxVariableDeref]];
+        this.#maxVariable = new CollatorMaxVariable(diplomatRuntime.internalConstructor, maxVariableDeref);
         const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
-        this.#caseLevel = CollatorCaseLevel[Array.from(CollatorCaseLevel.values.keys())[caseLevelDeref]];
+        this.#caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
         const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        this.#numeric = CollatorNumeric[Array.from(CollatorNumeric.values.keys())[numericDeref]];
+        this.#numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
-        this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
+        this.#backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
     }
 }

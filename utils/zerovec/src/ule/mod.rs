@@ -22,6 +22,7 @@ mod plain;
 mod slices;
 
 pub mod tuple;
+pub mod vartuple;
 pub use chars::CharULE;
 pub use encode::{encode_varule_to_box, EncodeAsVarULE};
 pub use multi::MultiFieldsULE;
@@ -185,8 +186,10 @@ pub trait AsULE: Copy {
     fn from_unaligned(unaligned: Self::ULE) -> Self;
 }
 
-/// An [`EqULE`] type is one whose byte sequence equals the byte sequence of its ULE type on
-/// little-endian platforms. This enables certain performance optimizations, such as
+/// A type whose byte sequence equals the byte sequence of its ULE type on
+/// little-endian platforms.
+///
+/// This enables certain performance optimizations, such as
 /// [`ZeroVec::try_from_slice`](crate::ZeroVec::try_from_slice).
 ///
 /// # Implementation safety

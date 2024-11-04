@@ -7,7 +7,6 @@ use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
 use alloc::vec::Vec;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
 ///
@@ -75,7 +74,7 @@ impl Value {
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// let value1 = Value::from_str("foo")
     ///     .expect("failed to parse a Value");
@@ -96,7 +95,7 @@ impl Value {
     ///
     /// ```
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// let value1 = Value::from_str("foo")
     ///     .expect("failed to parse a Value");
@@ -306,7 +305,7 @@ impl FromStr for Value {
 
 impl PartialEq<&str> for Value {
     fn eq(&self, other: &&str) -> bool {
-        self.writeable_cmp_bytes(other.as_bytes()).is_eq()
+        writeable::cmp_bytes(self, other.as_bytes()).is_eq()
     }
 }
 

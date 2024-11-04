@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 mètre"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mètre"
+        }
       ]
     ],
-    "other": "\u0001 mètres"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mètres"
+        }
+      ]
+    ]
   }
 }

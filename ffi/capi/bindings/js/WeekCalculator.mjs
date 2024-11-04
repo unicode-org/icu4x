@@ -50,7 +50,7 @@ export class WeekCalculator {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new WeekCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -75,7 +75,7 @@ export class WeekCalculator {
         const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
     
         try {
-            return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
+            return new IsoWeekday(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

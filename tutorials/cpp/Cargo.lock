@@ -42,13 +42,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.6"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,7 +53,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4#2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -71,7 +64,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4#2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4"
 dependencies = [
  "log",
 ]
@@ -79,7 +72,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4#2ae496b119d98d595bb61b4c50ea1e05f4f5aeb4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -234,6 +227,7 @@ name = "icu_collections"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
+ "potential_utf",
  "serde",
  "yoke",
  "zerofrom",
@@ -251,6 +245,7 @@ dependencies = [
  "icu_datetime_data",
  "icu_decimal",
  "icu_locale_core",
+ "icu_pattern",
  "icu_plurals",
  "icu_provider",
  "icu_timezone",
@@ -296,6 +291,7 @@ name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
  "displaydoc",
+ "either",
  "fixed_decimal",
  "icu_collections",
  "icu_decimal",
@@ -334,7 +330,6 @@ dependencies = [
 name = "icu_list"
 version = "1.5.0"
 dependencies = [
- "deduplicating_array",
  "displaydoc",
  "icu_list_data",
  "icu_provider",
@@ -356,6 +351,7 @@ name = "icu_locale"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
+ "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
@@ -417,7 +413,7 @@ dependencies = [
  "serde",
  "writeable",
  "yoke",
- "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
@@ -446,12 +442,13 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
  "potential_utf",
  "serde",
- "tinystr",
  "unicode-bidi",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -459,7 +456,6 @@ dependencies = [
 name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
- "icu_locale",
  "icu_provider_baked",
 ]
 
@@ -1075,6 +1071,10 @@ version = "0.1.8"
 [[patch.unused]]
 name = "databake-derive"
 version = "0.1.8"
+
+[[patch.unused]]
+name = "deduplicating_array"
+version = "0.1.6"
 
 [[patch.unused]]
 name = "icu"

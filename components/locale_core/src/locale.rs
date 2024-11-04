@@ -8,10 +8,9 @@ use crate::parser::{
 };
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
-use alloc::string::String;
+use alloc::borrow::Cow;
 use core::cmp::Ordering;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -33,9 +32,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed locale identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// No subtag validation or alias resolution is performed.
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
@@ -151,10 +151,9 @@ impl Locale {
         }
     }
 
-    /// This is a best-effort operation that performs all available levels of canonicalization.
+    /// Normalize the locale (operating on UTF-8 formatted byte slices)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -162,13 +161,31 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let locale = Self::try_from_utf8(input.as_ref())?;
-        Ok(locale.write_to_string().into_owned())
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let locale = Self::try_from_utf8(input)?;
+        Ok(writeable::to_string_or_borrow(&locale, input))
+    }
+
+    /// Normalize the locale (operating on strings)
+    ///
+    /// This operation will normalize casing and the separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::Locale;
+    ///
+    /// assert_eq!(
+    ///     Locale::normalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Ok("pl-Latn-PL-u-hc-h12")
+    /// );
+    /// ```
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.
@@ -205,7 +222,7 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_bytes(self, other)
     }
 
     #[allow(clippy::type_complexity)]
@@ -394,19 +411,6 @@ impl From<LanguageIdentifier> for Locale {
 impl From<Locale> for LanguageIdentifier {
     fn from(loc: Locale) -> Self {
         loc.id
-    }
-}
-
-impl AsRef<LanguageIdentifier> for Locale {
-    #[inline(always)]
-    fn as_ref(&self) -> &LanguageIdentifier {
-        &self.id
-    }
-}
-
-impl AsMut<LanguageIdentifier> for Locale {
-    fn as_mut(&mut self) -> &mut LanguageIdentifier {
-        &mut self.id
     }
 }
 

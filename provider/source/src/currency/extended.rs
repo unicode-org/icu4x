@@ -5,7 +5,7 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::extended_currency::*;
-use icu::experimental::relativetime::provider::PluralElements;
+use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -32,17 +32,20 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
-                display_names: PluralElements::try_new(
+                display_names: PluralElements::new(
                     currency
                         .other
                         .as_deref()
                         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-                    currency.zero.as_deref(),
-                    currency.one.as_deref(),
-                    currency.two.as_deref(),
-                    currency.few.as_deref(),
-                    currency.many.as_deref(),
-                ),
+                )
+                .with_zero_value(currency.zero.as_deref())
+                .with_one_value(currency.one.as_deref())
+                .with_two_value(currency.two.as_deref())
+                .with_few_value(currency.few.as_deref())
+                .with_many_value(currency.many.as_deref())
+                .with_explicit_one_value(currency.explicit_one.as_deref())
+                .with_explicit_zero_value(currency.explicit_zero.as_deref())
+                .into(),
             }),
         })
     }
@@ -84,7 +87,7 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-    use icu::plurals::PluralCategory;
+    use icu::plurals::PluralRules;
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -96,28 +99,11 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
+    let en_rules =
+        PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+    assert_eq!(en.get().display_names.get(1.into(), &en_rules), "US dollar");
     assert_eq!(
-        en.get().display_names.get_str(PluralCategory::Zero),
-        "US dollars"
-    );
-    assert_eq!(
-        en.get().display_names.get_str(PluralCategory::One),
-        "US dollar"
-    );
-    assert_eq!(
-        en.get().display_names.get_str(PluralCategory::Two),
-        "US dollars"
-    );
-    assert_eq!(
-        en.get().display_names.get_str(PluralCategory::Few),
-        "US dollars"
-    );
-    assert_eq!(
-        en.get().display_names.get_str(PluralCategory::Many),
-        "US dollars"
-    );
-    assert_eq!(
-        en.get().display_names.get_str(PluralCategory::Other),
+        en.get().display_names.get(10.into(), &en_rules),
         "US dollars"
     );
 
@@ -131,29 +117,19 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
+    let fr_rules =
+        PluralRules::try_new_cardinal_unstable(&provider, &langid!("fr").into()).unwrap();
 
     assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::Zero),
-        "dollars des États-Unis"
-    );
-    assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::One),
+        fr.get().display_names.get(0.into(), &fr_rules),
         "dollar des États-Unis"
     );
     assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::Two),
-        "dollars des États-Unis"
+        fr.get().display_names.get(1.into(), &fr_rules),
+        "dollar des États-Unis"
     );
     assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::Few),
-        "dollars des États-Unis"
-    );
-    assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::Many),
-        "dollars des États-Unis"
-    );
-    assert_eq!(
-        fr.get().display_names.get_str(PluralCategory::Other),
+        fr.get().display_names.get(10.into(), &fr_rules),
         "dollars des États-Unis"
     );
 }

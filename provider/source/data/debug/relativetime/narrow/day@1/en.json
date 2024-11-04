@@ -5,11 +5,32 @@
     "1": "tomorrow"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001d ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "d ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in d"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "d"
+        }
+      ]
+    ]
   }
 }

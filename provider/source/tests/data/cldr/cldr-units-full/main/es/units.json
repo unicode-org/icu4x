@@ -2,9 +2,6 @@
   "main": {
     "es": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es"
       },
       "units": {
@@ -236,6 +233,7 @@
             "unitPattern-count-other": "{0} quilates"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
+            "gender": "masculine",
             "displayName": "miligramos por decilitro",
             "unitPattern-count-one": "{0} miligramo por decilitro",
             "unitPattern-count-other": "{0} miligramos por decilitro"
@@ -741,6 +739,7 @@
             "unitPattern-count-other": "{0} millas escandinavas"
           },
           "length-point": {
+            "gender": "masculine",
             "displayName": "puntos",
             "unitPattern-count-one": "{0} punto",
             "unitPattern-count-other": "{0} puntos"
@@ -902,6 +901,7 @@
             "unitPattern-count-other": "{0} caballos de vapor"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "masculine",
             "displayName": "milímetros de mercurio",
             "unitPattern-count-one": "{0} milímetro de mercurio",
             "unitPattern-count-other": "{0} milímetros de mercurio"
@@ -982,6 +982,7 @@
             "unitPattern-count-other": "{0} nudos"
           },
           "speed-beaufort": {
+            "gender": "feminine",
             "displayName": "Beaufort",
             "unitPattern-count-one": "Beaufort {0}",
             "unitPattern-count-other": "Beaufort {0}"
@@ -1225,6 +1226,25 @@
             "displayName": "cuartos imperiales",
             "unitPattern-count-one": "{0} cuarto imperial",
             "unitPattern-count-other": "{0} cuartos imperiales"
+          },
+          "speed-light-speed": {
+            "gender": "feminine",
+            "displayName": "luz",
+            "unitPattern-count-one": "{0} luz",
+            "unitPattern-count-other": "{0} luz"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "feminine",
+            "displayName": "partes por millardo",
+            "unitPattern-count-one": "{0} parte por millardo",
+            "unitPattern-count-other": "{0} partes por millardo"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "noches",
+            "unitPattern-count-one": "{0} noche",
+            "unitPattern-count-other": "{0} noches",
+            "perUnitPattern": "{0} por noche"
           },
           "coordinateUnit": {
             "displayName": "punto cardinal",
@@ -2168,6 +2188,21 @@
             "displayName": "qt imp.",
             "unitPattern-count-one": "{0} qt imp.",
             "unitPattern-count-other": "{0} qt imp."
+          },
+          "speed-light-speed": {
+            "displayName": "luz",
+            "unitPattern-count-one": "{0} luz",
+            "unitPattern-count-other": "{0} luz"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "partes/millardo",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "noches",
+            "unitPattern-count-one": "{0} noche",
+            "unitPattern-count-other": "{0} noches",
+            "perUnitPattern": "{0}/noche"
           },
           "coordinateUnit": {
             "displayName": "punto",
@@ -3230,6 +3265,22 @@
             "displayName": "qt imp",
             "unitPattern-count-one": "{0}qt imp",
             "unitPattern-count-other": "{0}qt imp"
+          },
+          "speed-light-speed": {
+            "displayName": "luz",
+            "unitPattern-count-one": "{0}luz",
+            "unitPattern-count-other": "{0}luz"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "partes/millardo",
+            "unitPattern-count-one": "{0}ppb",
+            "unitPattern-count-other": "{0}ppb"
+          },
+          "duration-night": {
+            "displayName": "noches",
+            "unitPattern-count-one": "{0}noche",
+            "unitPattern-count-other": "{0}noches",
+            "perUnitPattern": "{0}/noche"
           },
           "coordinateUnit": {
             "displayName": "punto",

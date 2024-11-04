@@ -76,7 +76,7 @@ impl<'de> Deserialize<'de> for Territory {
     {
         struct TerritoryVisitor;
 
-        impl<'de> serde::de::Visitor<'de> for TerritoryVisitor {
+        impl serde::de::Visitor<'_> for TerritoryVisitor {
             type Value = Territory;
 
             fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {

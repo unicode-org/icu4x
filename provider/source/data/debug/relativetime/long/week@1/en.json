@@ -5,21 +5,57 @@
     "1": "next week"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 week ago"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week ago"
+        }
       ]
     ],
-    "other": "\u0001 weeks ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004in  week"
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week"
+        }
       ]
     ],
-    "other": "\u0004in  weeks"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks"
+        }
+      ]
+    ]
   }
 }

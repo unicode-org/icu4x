@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 talampakan"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " talampakan"
+        }
       ]
     ],
-    "other": "\u0001 na talampakan"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " na talampakan"
+        }
+      ]
+    ]
   }
 }

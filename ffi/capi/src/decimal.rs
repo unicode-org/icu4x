@@ -22,6 +22,7 @@ pub mod ffi {
     pub struct FixedDecimalFormatter(pub icu_decimal::FixedDecimalFormatter);
 
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
+    #[diplomat::enum_convert(icu_decimal::options::GroupingStrategy, needs_wildcard)]
     pub enum FixedDecimalGroupingStrategy {
         Auto,
         Never,
@@ -37,22 +38,14 @@ pub mod ffi {
         pub fn create_with_grouping_strategy(
             provider: &DataProvider,
             locale: &Locale,
-            grouping_strategy: FixedDecimalGroupingStrategy,
+            grouping_strategy: Option<FixedDecimalGroupingStrategy>,
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
             let locale = locale.to_datalocale();
 
-            let grouping_strategy = match grouping_strategy {
-                FixedDecimalGroupingStrategy::Auto => icu_decimal::options::GroupingStrategy::Auto,
-                FixedDecimalGroupingStrategy::Never => {
-                    icu_decimal::options::GroupingStrategy::Never
-                }
-                FixedDecimalGroupingStrategy::Always => {
-                    icu_decimal::options::GroupingStrategy::Always
-                }
-                FixedDecimalGroupingStrategy::Min2 => icu_decimal::options::GroupingStrategy::Min2,
-            };
             let mut options = icu_decimal::options::FixedDecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy;
+            options.grouping_strategy = grouping_strategy
+                .map(Into::into)
+                .unwrap_or(options.grouping_strategy);
             Ok(Box::new(FixedDecimalFormatter(call_constructor!(
                 icu_decimal::FixedDecimalFormatter::try_new,
                 icu_decimal::FixedDecimalFormatter::try_new_with_any_provider,
@@ -77,7 +70,7 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[DiplomatChar],
-            grouping_strategy: FixedDecimalGroupingStrategy,
+            grouping_strategy: Option<FixedDecimalGroupingStrategy>,
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
             use alloc::borrow::Cow;
             fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
@@ -88,9 +81,7 @@ pub mod ffi {
                 }
             }
 
-            use icu_decimal::provider::{
-                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
-            };
+            use icu_decimal::provider::{AffixesV1, DecimalSymbolsV1, GroupingSizesV1};
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
                 .iter()
@@ -115,35 +106,20 @@ pub mod ffi {
                 min_grouping: min_group_size,
             };
 
-            let grouping_strategy = match grouping_strategy {
-                FixedDecimalGroupingStrategy::Auto => icu_decimal::options::GroupingStrategy::Auto,
-                FixedDecimalGroupingStrategy::Never => {
-                    icu_decimal::options::GroupingStrategy::Never
-                }
-                FixedDecimalGroupingStrategy::Always => {
-                    icu_decimal::options::GroupingStrategy::Always
-                }
-                FixedDecimalGroupingStrategy::Min2 => icu_decimal::options::GroupingStrategy::Min2,
-            };
             let mut options = icu_decimal::options::FixedDecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy;
+            options.grouping_strategy = grouping_strategy
+                .map(Into::into)
+                .unwrap_or(options.grouping_strategy);
             Ok(Box::new(FixedDecimalFormatter(
-                icu_decimal::FixedDecimalFormatter::try_new_with_any_provider(
-                    &icu_provider_adapters::any_payload::AnyPayloadProvider::from_any_payload::<
-                        icu_decimal::provider::DecimalSymbolsV1Marker,
-                    >(
-                        icu_provider::DataPayload::<DecimalSymbolsV1Marker>::from_owned(
-                            DecimalSymbolsV1 {
-                                plus_sign_affixes,
-                                minus_sign_affixes,
-                                decimal_separator: str_to_cow(decimal_separator),
-                                grouping_separator: str_to_cow(grouping_separator),
-                                grouping_sizes,
-                                digits,
-                            },
-                        )
-                        .wrap_into_any_payload(),
-                    ),
+                icu_decimal::FixedDecimalFormatter::try_new_unstable(
+                    &icu_provider_adapters::fixed::FixedProvider::from_owned(DecimalSymbolsV1 {
+                        plus_sign_affixes,
+                        minus_sign_affixes,
+                        decimal_separator: str_to_cow(decimal_separator),
+                        grouping_separator: str_to_cow(grouping_separator),
+                        grouping_sizes,
+                        digits,
+                    }),
                     &Default::default(),
                     options,
                 )?,

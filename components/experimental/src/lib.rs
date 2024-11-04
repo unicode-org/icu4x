@@ -39,7 +39,9 @@ pub mod provider {
         use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
+            pub use icu_collections as collections;
             pub use icu_experimental_data::icu_locale as locale;
+            pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 
@@ -84,6 +86,7 @@ pub mod provider {
         impl_short_second_relative_time_format_data_v1_marker!(Baked);
         impl_short_week_relative_time_format_data_v1_marker!(Baked);
         impl_short_year_relative_time_format_data_v1_marker!(Baked);
+        impl_transliterator_rules_v1_marker!(Baked);
         impl_units_info_v1_marker!(Baked);
         impl_units_trie_v1_marker!(Baked);
     };
@@ -138,6 +141,7 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::INFO,
+        super::transliterate::provider::TransliteratorRulesV1Marker::INFO,
         super::units::provider::UnitsInfoV1Marker::INFO,
     ];
 }

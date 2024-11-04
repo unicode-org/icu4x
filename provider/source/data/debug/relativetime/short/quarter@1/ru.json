@@ -5,11 +5,32 @@
     "1": "следующий кв."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 кв. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв. назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  кв."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв."
+        }
+      ]
+    ]
   }
 }

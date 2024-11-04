@@ -7,11 +7,35 @@
     "2": "après-demain"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
+      ]
+    ]
   }
 }

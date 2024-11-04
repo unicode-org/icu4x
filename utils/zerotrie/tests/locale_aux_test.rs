@@ -25,12 +25,12 @@ fn test_combined() {
     let vzv: VarZeroVec<str> = STRINGS.into();
 
     // Lookup table size:
-    assert_eq!(vzv.as_bytes().len(), 10223);
+    assert_eq!(vzv.as_bytes().len(), 10219);
 
     // Size including pointer array:
     assert_eq!(
         vzv.as_bytes().len() + STRINGS.len() * core::mem::size_of::<usize>(),
-        18639
+        18635
     );
 
     let trie = ZeroTrieSimpleAscii::try_from(&litemap).unwrap();
@@ -133,7 +133,7 @@ fn test_aux_split() {
 
     assert_eq!(total_simpleascii_len, 5098);
     assert_eq!(total_perfecthash_len, 5302);
-    assert_eq!(total_vzv_len, 5510);
+    assert_eq!(total_vzv_len, 5486);
 
     let total_unique_locale_str_len = unique_locales.iter().map(|v| v.len()).sum::<usize>();
     assert_eq!(total_unique_locale_str_len, 945);
@@ -149,7 +149,7 @@ fn test_aux_split() {
     );
     assert_eq!(
         total_vzv_len + STRINGS.len() * core::mem::size_of::<usize>(),
-        13926
+        13902
     );
     // 2x for the lookup arrays and value arrays
     assert_eq!(

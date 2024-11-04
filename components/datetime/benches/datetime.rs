@@ -5,13 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-#[cfg(feature = "experimental")]
-use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
-use icu_calendar::{DateTime, Gregorian};
+use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
-#[cfg(feature = "experimental")]
+use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -20,13 +18,12 @@ mod mock;
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
-    #[cfg(feature = "experimental")]
     let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
         let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
-        group.bench_function(&format!("semantic/{name}"), |b| {
+        group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -38,7 +35,12 @@ fn datetime_benches(c: &mut Criterion) {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
-                                    zone: CustomTimeZone::utc(),
+                                    zone: TimeZoneInfo::utc()
+                                        .at_time((
+                                            Date::try_new_iso(2024, 1, 1).unwrap(),
+                                            Time::midnight(),
+                                        ))
+                                        .with_zone_variant(ZoneVariant::Standard),
                                 }
                             }
                         })
@@ -48,21 +50,18 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
+                            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
                                 &locale.into(),
-                                skeleton.components,
-                                skeleton.length.into(),
+                                skeleton,
                             )
-                            .expect("Failed to create TypedNeoFormatter.")
+                            .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };
 
                         let mut result = String::new();
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            fdt.try_write_to(&mut result)
-                                .unwrap()
-                                .expect("Failed to write to date time format.");
+                            let _ = fdt.try_write_to(&mut result).unwrap();
                             result.clear();
                         }
                     }
@@ -71,21 +70,18 @@ fn datetime_benches(c: &mut Criterion) {
         });
     };
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "lengths",
         include_str!("fixtures/tests/lengths.json"),
         false,
     );
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "components",
         include_str!("fixtures/tests/components.json"),
         false,
     );
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "lengths_with_zones",
         include_str!("fixtures/tests/lengths_with_zones.json"),

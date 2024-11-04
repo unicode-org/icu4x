@@ -7,45 +7,123 @@
     "2": "بعد الغد"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000قبل يوم واحد"
-      ],
-      [
-        "Two",
-        "\u0000قبل يومين"
-      ],
-      [
-        "Few",
-        "\bقبل  أيام"
-      ],
-      [
-        "Many",
-        "\bقبل  يومًا"
+        {
+          "Literal": "قبل يوم واحد"
+        }
       ]
     ],
-    "other": "\bقبل  يوم"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "قبل يومين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أيام"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " يومًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " يوم"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000خلال يوم واحد"
-      ],
-      [
-        "Two",
-        "\u0000خلال يومين"
-      ],
-      [
-        "Few",
-        "\nخلال  أيام"
-      ],
-      [
-        "Many",
-        "\nخلال  يومًا"
+        {
+          "Literal": "خلال يوم واحد"
+        }
       ]
     ],
-    "other": "\nخلال  يوم"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "خلال يومين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أيام"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " يومًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " يوم"
+        }
+      ]
+    ]
   }
 }

@@ -39,8 +39,8 @@ namespace capi {
     typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {icu4x::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
     icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, uint8_t digits);
     
-    typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {icu4x::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
-    icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
+    typedef struct icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1_result {union {icu4x::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1_result;
+    icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1_result icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1(double f);
     
     typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {icu4x::capi::FixedDecimal* ok; icu4x::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;
     icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(diplomat::capi::DiplomatStringView v);
@@ -138,8 +138,8 @@ inline diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecima
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::FixedDecimal>>(std::unique_ptr<icu4x::FixedDecimal>(icu4x::FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError>(diplomat::Err<icu4x::FixedDecimalLimitError>(icu4x::FixedDecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError> icu4x::FixedDecimal::from_double_with_floating_precision(double f) {
-  auto result = icu4x::capi::icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
+inline diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError> icu4x::FixedDecimal::from_double_with_round_trip_precision(double f) {
+  auto result = icu4x::capi::icu4x_FixedDecimal_from_double_with_round_trip_precision_mv1(f);
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::FixedDecimal>>(std::unique_ptr<icu4x::FixedDecimal>(icu4x::FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalLimitError>(diplomat::Err<icu4x::FixedDecimalLimitError>(icu4x::FixedDecimalLimitError {}));
 }
 

@@ -79,14 +79,6 @@ pub mod ffi {
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
-    pub struct TimeZoneInvalidIdError;
-
-    #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
-    pub struct TimeZoneUnknownError;
-
-    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// Legacy error
     // TODO(2.0): remove
@@ -111,9 +103,6 @@ pub mod ffi {
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
 
-        // property errors
-        PropertyUnexpectedPropertyNameError = 0x4_02,
-
         // datetime format errors
         DateTimePatternError = 0x8_00,
         DateTimeMissingInputFieldError = 0x8_01,
@@ -124,6 +113,10 @@ pub mod ffi {
         DateTimeMissingMonthSymbolError = 0x8_06,
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
+        DateTimeDuplicateFieldError = 0x8_09,
+        DateTimeTooNarrowError = 0x8_0A,
+        DateTimeMissingNamesError = 0x8_0B,
+        DateTimeZoneInfoMissingFieldsError = 0x8_80, // FFI-only error
     }
 }
 
@@ -165,18 +158,6 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(feature = "properties")]
-impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
-    fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
-        match e {
-            icu_properties::UnexpectedPropertyNameOrDataError::Data(e) => e.into(),
-            icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName => {
-                Error::PropertyUnexpectedPropertyNameError
-            }
-        }
-    }
-}
-
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
@@ -210,32 +191,14 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeError> for Error {
-    fn from(e: icu_datetime::DateTimeError) -> Self {
+impl From<icu_datetime::LoadError> for Error {
+    fn from(e: icu_datetime::LoadError) -> Self {
         match e {
-            icu_datetime::DateTimeError::Pattern(_) => Error::DateTimePatternError,
-            icu_datetime::DateTimeError::Data(err) => err.into(),
-            icu_datetime::DateTimeError::MissingInputField(_) => {
-                Error::DateTimeMissingInputFieldError
-            }
-            // TODO(#1324): Add back skeleton errors
-            // DateTimeFormatterError::Skeleton(_) => Error::DateTimeFormatSkeletonError,
-            icu_datetime::DateTimeError::UnsupportedField(_) => {
-                Error::DateTimeUnsupportedFieldError
-            }
-            icu_datetime::DateTimeError::UnsupportedOptions => {
-                Error::DateTimeUnsupportedOptionsError
-            }
-            icu_datetime::DateTimeError::MissingWeekdaySymbol(_) => {
-                Error::DateTimeMissingWeekdaySymbolError
-            }
-            icu_datetime::DateTimeError::MissingMonthSymbol(_) => {
-                Error::DateTimeMissingMonthSymbolError
-            }
-            icu_datetime::DateTimeError::FixedDecimal => Error::DateTimeFixedDecimalError,
-            icu_datetime::DateTimeError::MismatchedAnyCalendar(_, _) => {
-                Error::DateTimeMismatchedCalendarError
-            }
+            icu_datetime::LoadError::DuplicateField(_) => Error::DateTimeDuplicateFieldError,
+            icu_datetime::LoadError::UnsupportedField(_) => Error::DateTimeUnsupportedFieldError,
+            icu_datetime::LoadError::TypeTooNarrow(_) => Error::DateTimeTooNarrowError,
+            icu_datetime::LoadError::Data(data_error) => data_error.into(),
+            icu_datetime::LoadError::MissingNames(_) => Error::DateTimeMissingNamesError,
             _ => Error::UnknownError,
         }
     }
@@ -274,13 +237,6 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 #[cfg(any(feature = "timezone", feature = "datetime"))]
 impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_timezone::InvalidOffsetError) -> Self {
-        Self
-    }
-}
-
-#[cfg(any(feature = "timezone", feature = "datetime"))]
-impl From<icu_timezone::UnknownTimeZoneError> for TimeZoneUnknownError {
-    fn from(_: icu_timezone::UnknownTimeZoneError) -> Self {
         Self
     }
 }

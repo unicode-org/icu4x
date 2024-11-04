@@ -67,6 +67,21 @@
 
 extern crate alloc;
 
+// We don't depend on icu_properties to minimize deps, but we want to be able
+// to ensure we're using the right CCC values
+macro_rules! ccc {
+    ($name:ident, $num:expr) => {{
+        const X: CanonicalCombiningClass = {
+            #[cfg(feature = "icu_properties")]
+            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
+                panic!("icu_normalizer has incorrect ccc values")
+            }
+            CanonicalCombiningClass($num)
+        };
+        X
+    }};
+}
+
 pub mod properties;
 pub mod provider;
 pub mod uts46;
@@ -84,7 +99,8 @@ use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::CanonicalCombiningClass;
+#[cfg(feature = "icu_properties")]
+use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -96,6 +112,15 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
 use zerovec::{zeroslice, ZeroSlice};
+
+/// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
+/// It should not be exposed to users.
+#[cfg(not(feature = "icu_properties"))]
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
+struct CanonicalCombiningClass(pub(crate) u8);
+
+const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
+const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
 
 #[derive(Debug)]
 enum SupplementPayloadHolder {
@@ -154,7 +179,19 @@ const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
 
 /// Marker that a complex decomposition isn't round-trippable
 /// under re-composition.
-const NON_ROUND_TRIP_MARKER: u16 = 1;
+///
+/// TODO: When taking a data format break, swap this and
+/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
+/// to make backward-combiningness use the same bit in all
+/// cases.
+const NON_ROUND_TRIP_MARKER: u16 = 0b1;
+
+/// Marker that a complex decomposition starts with a starter
+/// that can combine backwards.
+const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
+
+/// Values above this are treated as a BMP character.
+const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
@@ -185,7 +222,7 @@ fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
         CanonicalCombiningClass(trie_value as u8)
     } else {
         debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
-        CanonicalCombiningClass::NotReordered
+        CCC_NOT_REORDERED
     }
 }
 
@@ -373,6 +410,7 @@ impl CharacterAndTrieValue {
     pub fn can_combine_backwards(&self) -> bool {
         decomposition_starts_with_non_starter(self.trie_val)
             || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
+            || (((self.trie_val as u16) & !1) == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
             || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
     }
     #[inline(always)]
@@ -401,7 +439,7 @@ impl CharacterAndTrieValue {
         if lead == 0 {
             return true;
         }
-        if lead == NON_ROUND_TRIP_MARKER {
+        if lead <= HIGHEST_MARKER {
             return false;
         }
         if (trail_or_complex & 0x7F) == 0x3C
@@ -468,14 +506,18 @@ impl CharacterAndClass {
     pub fn new_starter(c: char) -> Self {
         CharacterAndClass(u32::from(c))
     }
+    /// This method must exist for Pernosco to apply its special rendering.
+    /// Also, this must not be dead code!
     pub fn character(&self) -> char {
         // Safe, because the low 24 bits came from a `char`
         // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
+    /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
+
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
@@ -727,7 +769,7 @@ where
                 } else {
                     '\u{309A}'
                 },
-                0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
+                0xD800 | ccc!(KanaVoicing, 8).0 as u32,
             ));
         }
         let trie_value = supplementary.get32(u32::from(c));
@@ -801,14 +843,14 @@ where
                 } else {
                     let trail_or_complex = (decomposition >> 16) as u16;
                     let lead = decomposition as u16;
-                    if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
+                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         let starter = char_from_u16(lead);
                         let combining = char_from_u16(trail_or_complex);
                         self.buffer
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
-                    } else if lead > NON_ROUND_TRIP_MARKER {
+                    } else if trail_or_complex == 0 {
                         if lead != FDFA_MARKER {
                             debug_assert_ne!(
                                 lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
@@ -920,47 +962,39 @@ where
                 let mapped = match ch_and_trie_val.character {
                     '\u{0340}' => {
                         // COMBINING GRAVE TONE MARK
-                        CharacterAndClass::new('\u{0300}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0300}', CCC_ABOVE)
                     }
                     '\u{0341}' => {
                         // COMBINING ACUTE TONE MARK
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
                     }
                     '\u{0343}' => {
                         // COMBINING GREEK KORONIS
-                        CharacterAndClass::new('\u{0313}', CanonicalCombiningClass::Above)
+                        CharacterAndClass::new('\u{0313}', CCC_ABOVE)
                     }
                     '\u{0344}' => {
                         // COMBINING GREEK DIALYTIKA TONOS
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0308}',
-                            CanonicalCombiningClass::Above,
-                        ));
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
                     }
                     '\u{0F73}' => {
                         // TIBETAN VOWEL SIGN II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F72}', CanonicalCombiningClass::CCC130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
                     }
                     '\u{0F75}' => {
                         // TIBETAN VOWEL SIGN UU
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F74}', CanonicalCombiningClass::CCC132)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
                     }
                     '\u{0F81}' => {
                         // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass::CCC129,
-                        ));
-                        CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass::CCC130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
                     }
                     _ => {
                         // GIGO case
@@ -981,7 +1015,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Decomposition<'data, I>
+impl<I> Iterator for Decomposition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1061,7 +1095,7 @@ where
     }
 }
 
-impl<'data, I> Iterator for Composition<'data, I>
+impl<I> Iterator for Composition<'_, I>
 where
     I: Iterator<Item = char>,
 {
@@ -1085,7 +1119,7 @@ where
                         self.decomposition.buffer.clear();
                         self.decomposition.buffer_pos = 0;
                     }
-                    if ccc == CanonicalCombiningClass::NotReordered {
+                    if ccc == CCC_NOT_REORDERED {
                         // Previous decomposition contains a starter. This must
                         // now become the `unprocessed_starter` for it to have
                         // a chance to compose with the upcoming characters.
@@ -1177,7 +1211,7 @@ where
                         .drain(0..self.decomposition.buffer_pos);
                 }
                 self.decomposition.buffer_pos = 0;
-                if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
+                if most_recent_skipped_ccc == CCC_NOT_REORDERED {
                     // We failed to compose a starter. Discontiguous match not allowed.
                     // We leave the starter in `buffer` for `next()` to find.
                     return Some(starter);
@@ -1189,7 +1223,7 @@ where
                     .get(i)
                     .map(|c| c.character_and_ccc())
                 {
-                    if ccc == CanonicalCombiningClass::NotReordered {
+                    if ccc == CCC_NOT_REORDERED {
                         // Discontiguous match not allowed.
                         return Some(starter);
                     }
@@ -1333,7 +1367,7 @@ macro_rules! composing_normalize_to {
                             continue;
                         }
                         let mut most_recent_skipped_ccc = ccc;
-                        if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
+                        if most_recent_skipped_ccc == CCC_NOT_REORDERED {
                             // We failed to compose a starter. Discontiguous match not allowed.
                             // Write the current `starter` we've been composing, make the unmatched
                             // starter in the buffer the new `starter` (we know it's been decomposed)
@@ -1358,7 +1392,7 @@ macro_rules! composing_normalize_to {
                             .get(i)
                             .map(|c| c.character_and_ccc())
                         {
-                            if ccc == CanonicalCombiningClass::NotReordered {
+                            if ccc == CCC_NOT_REORDERED {
                                 // Discontiguous match not allowed.
                                 $sink.write_char(starter)?;
                                 for cc in $composition.decomposition.buffer.drain(..i) {
@@ -1590,7 +1624,35 @@ pub struct DecomposingNormalizerBorrowed<'a> {
     composition_passthrough_bound: u16,  // never above 0x0300
 }
 
-impl<'a> DecomposingNormalizerBorrowed<'a> {
+impl DecomposingNormalizerBorrowed<'static> {
+    /// Cheaply converts a [`DecomposingNormalizerBorrowed<'static>`] into a [`DecomposingNormalizer`].
+    ///
+    /// Note: Due to branching and indirection, using [`DecomposingNormalizer`] might inhibit some
+    /// compile-time optimizations that are possible with [`DecomposingNormalizerBorrowed`].
+    pub const fn static_to_owned(self) -> DecomposingNormalizer {
+        DecomposingNormalizer {
+            decompositions: DataPayload::from_static_ref(self.decompositions),
+            supplementary_decompositions: if let Some(s) = self.supplementary_decompositions {
+                // `map` not available in const context
+                // TODO: Perhaps get rid of the holder enum, since we're just faking it here anyway.
+                Some(SupplementPayloadHolder::Compatibility(
+                    DataPayload::from_static_ref(s),
+                ))
+            } else {
+                None
+            },
+            tables: DataPayload::from_static_ref(self.tables),
+            supplementary_tables: if let Some(s) = self.supplementary_tables {
+                // `map` not available in const context
+                Some(DataPayload::from_static_ref(s))
+            } else {
+                None
+            },
+            decomposition_passthrough_bound: self.decomposition_passthrough_bound,
+            composition_passthrough_bound: self.composition_passthrough_bound,
+        }
+    }
+
     /// NFD constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1748,7 +1810,9 @@ impl<'a> DecomposingNormalizerBorrowed<'a> {
             composition_passthrough_bound: composition_capped,
         }
     }
+}
 
+impl DecomposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
@@ -2052,37 +2116,12 @@ impl DecomposingNormalizer {
 
     /// NFD constructor using compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `DecomposingNormalizerBorrowed::new_nfd()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_nfd() -> Self {
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                .scalars16
-                .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                <= 0xFFF,
-            "future extension"
-        );
-
-        DecomposingNormalizer {
-            decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-            supplementary_decompositions: None,
-            tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            ),
-            supplementary_tables: None,
-            decomposition_passthrough_bound: 0xC0,
-            composition_passthrough_bound: 0x0300,
-        }
+    pub const fn new_nfd() -> DecomposingNormalizerBorrowed<'static> {
+        DecomposingNormalizerBorrowed::new_nfd()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
@@ -2142,75 +2181,12 @@ impl DecomposingNormalizer {
 
     /// NFKD constructor using compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `DecomposingNormalizerBorrowed::new_nfkd()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_nfkd() -> Self {
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                .scalars16
-                .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars16
-                    .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                <= 0xFFF,
-            "future extension"
-        );
-
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                <= 0x0300,
-            "invalid"
-        );
-
-        let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0xC0
-            {
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
-            } else {
-                0xC0
-            };
-        let composition_capped =
-            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0x0300
-            {
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
-            } else {
-                0x0300
-            };
-
-        DecomposingNormalizer {
-            decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
-                DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER),
-            )),
-            tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            ),
-            supplementary_tables: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
-            )),
-            decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped,
-        }
+    pub const fn new_nfkd() -> DecomposingNormalizerBorrowed<'static> {
+        DecomposingNormalizerBorrowed::new_nfkd()
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
@@ -2266,73 +2242,6 @@ impl DecomposingNormalizer {
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
         })
-    }
-
-    #[cfg(feature = "compiled_data")]
-    pub(crate) const fn new_uts46_decomposed() -> Self {
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                .scalars16
-                .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars16
-                    .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
-                    .scalars24
-                    .const_len()
-                <= 0xFFF,
-            "future extension"
-        );
-
-        const _: () = assert!(
-            crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                <= 0x0300,
-            "invalid"
-        );
-
-        let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0xC0
-            {
-                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
-            } else {
-                0xC0
-            };
-        let composition_capped =
-            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0x0300
-            {
-                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
-            } else {
-                0x0300
-            };
-
-        DecomposingNormalizer {
-            decompositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
-                DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
-                ),
-            )),
-            tables: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            ),
-            supplementary_tables: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
-            )),
-            decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped,
-        }
     }
 
     /// UTS 46 decomposed constructor (testing only)
@@ -2414,7 +2323,18 @@ pub struct ComposingNormalizerBorrowed<'a> {
     canonical_compositions: &'a CanonicalCompositionsV1<'a>,
 }
 
-impl<'a> ComposingNormalizerBorrowed<'a> {
+impl ComposingNormalizerBorrowed<'static> {
+    /// Cheaply converts a [`ComposingNormalizerBorrowed<'static>`] into a [`ComposingNormalizer`].
+    ///
+    /// Note: Due to branching and indirection, using [`ComposingNormalizer`] might inhibit some
+    /// compile-time optimizations that are possible with [`ComposingNormalizerBorrowed`].
+    pub const fn static_to_owned(self) -> ComposingNormalizer {
+        ComposingNormalizer {
+            decomposing_normalizer: self.decomposing_normalizer.static_to_owned(),
+            canonical_compositions: DataPayload::from_static_ref(self.canonical_compositions),
+        }
+    }
+
     /// NFC constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -2460,7 +2380,9 @@ impl<'a> ComposingNormalizerBorrowed<'a> {
                 crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
         }
     }
+}
 
+impl ComposingNormalizerBorrowed<'_> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<I> {
@@ -2799,20 +2721,12 @@ impl ComposingNormalizer {
 
     /// NFC constructor using compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `ComposingNormalizerBorrowed::new_nfc()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_nfc() -> Self {
-        ComposingNormalizer {
-            decomposing_normalizer: DecomposingNormalizer::new_nfd(),
-            canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
-            ),
-        }
+    pub const fn new_nfc() -> ComposingNormalizerBorrowed<'static> {
+        ComposingNormalizerBorrowed::new_nfc()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
@@ -2847,20 +2761,12 @@ impl ComposingNormalizer {
 
     /// NFKC constructor using compiled data.
     ///
-    /// Unless you know you need this constructor, using
-    /// `ComposingNormalizerBorrowed::new_nfkc()` is likely a better idea.
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_nfkc() -> Self {
-        ComposingNormalizer {
-            decomposing_normalizer: DecomposingNormalizer::new_nfkd(),
-            canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
-            ),
-        }
+    pub const fn new_nfkc() -> ComposingNormalizerBorrowed<'static> {
+        ComposingNormalizerBorrowed::new_nfkc()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
@@ -2893,28 +2799,6 @@ impl ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
         })
-    }
-
-    /// This is a special building block normalization for IDNA that implements parts of the Map
-    /// step and the following Normalize step.
-    ///
-    /// Unless you know you need this constructor, using
-    /// `ComposingNormalizerBorrowed::new_uts46()` is likely a better idea.
-    ///
-    /// Warning: In this normalization, U+0345 COMBINING GREEK YPOGEGRAMMENI exhibits a behavior
-    /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
-    /// U+0345 from a reordered character into a non-reordered character before reordering happens.
-    /// Therefore, the output of this normalization may differ for different inputs that are
-    /// canonically equivalents with each other if they differ by how U+0345 is ordered relative
-    /// to other reorderable characters.
-    #[cfg(feature = "compiled_data")]
-    pub(crate) const fn new_uts46() -> Self {
-        ComposingNormalizer {
-            decomposing_normalizer: DecomposingNormalizer::new_uts46_decomposed(),
-            canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
-            ),
-        }
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
@@ -2957,7 +2841,7 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     }
 }
 
-impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
+impl Write16 for IsNormalizedSinkUtf16<'_> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2999,7 +2883,7 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
+impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -3041,7 +2925,7 @@ impl<'a> IsNormalizedSinkStr<'a> {
     }
 }
 
-impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
+impl core::fmt::Write for IsNormalizedSinkStr<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because

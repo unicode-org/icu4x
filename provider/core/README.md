@@ -46,7 +46,7 @@ the trait objects.
 
 Examples of AnyProviders:
 
-- [`AnyPayloadProvider`] wraps a specific data struct and returns it.
+- [`FixedProvider`] wraps a specific data struct and returns it.
 
 #### BufferProvider
 
@@ -78,7 +78,7 @@ associated with a marker type implementing [`DynamicDataMarker`].
 Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 structs to borrow zero-copy data.
 
-[`AnyPayloadProvider`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
+[`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/fixed/any_payload/struct.FixedProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable

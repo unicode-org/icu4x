@@ -24,17 +24,17 @@ use icu::collator::*;
 use icu::locale::locale;
 
 let locale_es = locale!("es-u-co-trad").into();
-let mut options = CollatorOptions::new();
+let mut options = CollatorOptions::default();
 options.strength = Some(Strength::Primary);
-let collator_es: Collator = Collator::try_new(&locale_es, options).unwrap();
+let collator_es = Collator::try_new(&locale_es, options).unwrap();
 
 // "pollo" > "polvo" in traditional Spanish
 assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 
 let locale_en = locale!("en").into();
-let mut options = CollatorOptions::new();
+let mut options = CollatorOptions::default();
 options.strength = Some(Strength::Primary);
-let collator_en: Collator = Collator::try_new(&locale_en, options).unwrap();
+let collator_en = Collator::try_new(&locale_en, options).unwrap();
 
 // "pollo" < "polvo" according to English rules
 assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
@@ -55,9 +55,9 @@ use icu::collator::*;
 
 // Primary Level
 
-let mut options_l1 = CollatorOptions::new();
+let mut options_l1 = CollatorOptions::default();
 options_l1.strength = Some(Strength::Primary);
-let collator_l1: Collator =
+let collator_l1 =
     Collator::try_new(&Default::default(), options_l1).unwrap();
 
 assert_eq!(collator_l1.compare("a", "b"), Ordering::Less); // primary
@@ -69,9 +69,9 @@ assert_eq!(collator_l1.compare("A", "Ⓐ"), Ordering::Equal);
 
 // Secondary Level
 
-let mut options_l2 = CollatorOptions::new();
+let mut options_l2 = CollatorOptions::default();
 options_l2.strength = Some(Strength::Secondary);
-let collator_l2: Collator =
+let collator_l2 =
     Collator::try_new(&Default::default(), options_l2).unwrap();
 
 assert_eq!(collator_l2.compare("a", "b"), Ordering::Less); // primary
@@ -83,9 +83,9 @@ assert_eq!(collator_l2.compare("A", "Ⓐ"), Ordering::Equal);
 
 // Tertiary Level
 
-let mut options_l3 = CollatorOptions::new();
+let mut options_l3 = CollatorOptions::default();
 options_l3.strength = Some(Strength::Tertiary);
-let collator_l3: Collator =
+let collator_l3 =
     Collator::try_new(&Default::default(), options_l3).unwrap();
 
 assert_eq!(collator_l3.compare("a", "b"), Ordering::Less); // primary
@@ -114,10 +114,10 @@ use icu::collator::*;
 // If alternate handling is set to `NonIgnorable`, then differences among
 // these characters are of the same importance as differences among letters.
 
-let mut options_3n = CollatorOptions::new();
+let mut options_3n = CollatorOptions::default();
 options_3n.strength = Some(Strength::Tertiary);
 options_3n.alternate_handling = Some(AlternateHandling::NonIgnorable);
-let collator_3n: Collator =
+let collator_3n =
     Collator::try_new(&Default::default(), options_3n).unwrap();
 
 assert_eq!(collator_3n.compare("di Silva", "Di Silva"), Ordering::Less);
@@ -129,10 +129,10 @@ assert_eq!(collator_3n.compare("U.S.A.", "USA"), Ordering::Less);
 // importance. The Shifted value is often used in combination with Strength
 // set to Quaternary.
 
-let mut options_3s = CollatorOptions::new();
+let mut options_3s = CollatorOptions::default();
 options_3s.strength = Some(Strength::Tertiary);
 options_3s.alternate_handling = Some(AlternateHandling::Shifted);
-let collator_3s: Collator =
+let collator_3s =
     Collator::try_new(&Default::default(), options_3s).unwrap();
 
 assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Equal);
@@ -140,10 +140,10 @@ assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
 assert_eq!(collator_3s.compare("Di Silva", "U.S.A."), Ordering::Less);
 assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Equal);
 
-let mut options_4s = CollatorOptions::new();
+let mut options_4s = CollatorOptions::default();
 options_4s.strength = Some(Strength::Quaternary);
 options_4s.alternate_handling = Some(AlternateHandling::Shifted);
-let collator_4s: Collator =
+let collator_4s =
     Collator::try_new(&Default::default(), options_4s).unwrap();
 
 assert_eq!(collator_4s.compare("di Silva", "diSilva"), Ordering::Less);
@@ -163,7 +163,7 @@ use icu::collator::*;
 
 // Primary
 
-let mut options = CollatorOptions::new();
+let mut options = CollatorOptions::default();
 options.strength = Some(Strength::Primary);
 options.case_level = Some(CaseLevel::Off);
 let primary =
@@ -232,17 +232,17 @@ use icu::collator::*;
 
 // Numerical sorting off
 
-let mut options_num_off = CollatorOptions::new();
+let mut options_num_off = CollatorOptions::default();
 options_num_off.numeric = Some(Numeric::Off);
-let collator_num_off: Collator =
+let collator_num_off =
     Collator::try_new(&Default::default(), options_num_off).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
 // Numerical sorting on
 
-let mut options_num_on = CollatorOptions::new();
+let mut options_num_on = CollatorOptions::default();
 options_num_on.numeric = Some(Numeric::On);
-let collator_num_on: Collator =
+let collator_num_on =
     Collator::try_new(&Default::default(), options_num_on).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```

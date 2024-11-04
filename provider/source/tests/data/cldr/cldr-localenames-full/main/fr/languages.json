@@ -2,9 +2,6 @@
   "main": {
     "fr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fr"
       },
       "localeDisplayNames": {
@@ -79,6 +76,7 @@
           "bjn": "banjar",
           "bkm": "kom",
           "bla": "siksika",
+          "blo": "anii",
           "bm": "bambara",
           "bn": "bengali",
           "bo": "tibétain",
@@ -221,7 +219,6 @@
           "gmh": "moyen haut-allemand",
           "gn": "guarani",
           "goh": "ancien haut allemand",
-          "gom": "konkani de Goa",
           "gon": "gondi",
           "gor": "gorontalo",
           "got": "gotique",
@@ -332,6 +329,7 @@
           "kv": "komi",
           "kw": "cornique",
           "kwk": "kwak’wala",
+          "kxv": "kuvi",
           "ky": "kirghize",
           "la": "latin",
           "lad": "ladino",
@@ -361,7 +359,6 @@
           "lua": "luba-kasaï (ciluba)",
           "lui": "luiseño",
           "lun": "lunda",
-          "luo": "luo",
           "lus": "lushaï",
           "luy": "luyia",
           "lv": "letton",
@@ -630,6 +627,7 @@
           "vi": "vietnamien",
           "vls": "flamand occidental",
           "vmf": "franconien du Main",
+          "vmw": "macua",
           "vo": "volapük",
           "vot": "vote",
           "vro": "võro",
@@ -645,6 +643,7 @@
           "xal": "kalmouk",
           "xh": "xhosa",
           "xmf": "mingrélien",
+          "xnr": "kangri",
           "xog": "soga",
           "yao": "yao",
           "yap": "yapois",

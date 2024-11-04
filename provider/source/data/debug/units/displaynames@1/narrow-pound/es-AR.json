@@ -1,11 +1,15 @@
 {
   "patterns": {
-    "specials": [
+    "other": [
+      0,
       [
-        "One",
-        "\u0001 lb"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "lb"
+        }
       ]
-    ],
-    "other": "\u0001lb"
+    ]
   }
 }

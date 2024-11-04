@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "dates": {
@@ -883,9 +880,6 @@
               "Chita": {
                 "exemplarCity": "চিতা"
               },
-              "Choibalsan": {
-                "exemplarCity": "চোইবাল্‌স্যান"
-              },
               "Colombo": {
                 "exemplarCity": "কলম্বো"
               },
@@ -1552,13 +1546,6 @@
                 "daylight": "চীন দিবালোক সময়"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "চয়বালসন সময়",
-                "standard": "চয়বালসন মানক সময়",
-                "daylight": "চয়বালসন গ্রীষ্মকালীন সময়"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "ক্রিসমাস দ্বীপ সময়"
@@ -1805,6 +1792,11 @@
                 "generic": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি সময়",
                 "standard": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি মান সময়",
                 "daylight": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি গৃষ্মকালীন সময়"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "কাজাখাস্তান সময়"
               }
             },
             "Kazakhstan_Eastern": {

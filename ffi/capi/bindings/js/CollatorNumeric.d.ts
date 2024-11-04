@@ -11,7 +11,6 @@ export class CollatorNumeric {
 
     get ffiValue() : number;
 
-    static Auto : CollatorNumeric;
     static Off : CollatorNumeric;
     static On : CollatorNumeric;
 }

@@ -5,6 +5,8 @@ part of 'lib.g.dart';
 /// An ICU4X Bidi object, containing loaded bidi data
 ///
 /// See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
+///
+/// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 final class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -42,11 +44,11 @@ final class Bidi implements ffi.Finalizable {
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
-  BidiInfo forText(String text, int defaultLevel) {
+  BidiInfo forText(String text, int? defaultLevel) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];
-    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel);
+    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel != null ? _ResultUint8Void.ok(defaultLevel) : _ResultUint8Void.err());
     return BidiInfo._fromFfi(result, [], textEdges);
   }
 
@@ -103,42 +105,42 @@ final class Bidi implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_Bidi_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Bidi_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Bidi_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_Bidi_create_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Bidi_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Bidi_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_Bidi_for_text_valid_utf8_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, _ResultUint8Void)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 text, int defaultLevel);
+external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 text, _ResultUint8Void defaultLevel);
 
-@meta.ResourceIdentifier('icu4x_Bidi_reorder_visual_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUint8)>(isLeaf: true, symbol: 'icu4x_Bidi_reorder_visual_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_reorder_visual_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUint8 levels);
 
-@meta.ResourceIdentifier('icu4x_Bidi_level_is_rtl_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_level_is_rtl_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Bidi_level_is_rtl_mv1(int level);
 
-@meta.ResourceIdentifier('icu4x_Bidi_level_is_ltr_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_level_is_ltr_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Bidi_level_is_ltr_mv1(int level);
 
-@meta.ResourceIdentifier('icu4x_Bidi_level_rtl_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'icu4x_Bidi_level_rtl_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Bidi_level_rtl_mv1();
 
-@meta.ResourceIdentifier('icu4x_Bidi_level_ltr_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'icu4x_Bidi_level_ltr_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Bidi_level_ltr_mv1();

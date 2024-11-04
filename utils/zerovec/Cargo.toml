@@ -51,7 +51,7 @@ rmp-serde = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 potential_utf = { workspace = true, features = ["zerovec"] }
-yoke = { path = "../../utils/yoke", features = ["derive"] }
+yoke = { version = ">=0.6.0, <0.8.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

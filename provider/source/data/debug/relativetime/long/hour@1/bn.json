@@ -3,11 +3,29 @@
     "0": "এই ঘণ্টায়"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ঘন্টা আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ঘন্টা আগে"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 ঘন্টায়"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ঘন্টায়"
+        }
+      ]
+    ]
   }
 }

@@ -454,6 +454,18 @@ where
         }
     }
 
+    /// Borrows the underlying data statically if possible.
+    ///
+    /// This will succeed if [`DataPayload`] is constructed with [`DataPayload::from_static_ref`], which is used by
+    /// baked providers.
+    #[inline]
+    pub fn get_static(&self) -> Option<&'static <M::DataStruct as Yokeable<'static>>::Output> {
+        match &self.0 {
+            DataPayloadInner::Yoke(_) => None,
+            DataPayloadInner::StaticRef(r) => Some(Yokeable::transform(*r)),
+        }
+    }
+
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
@@ -716,6 +728,22 @@ where
             DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke),
             DataPayloadInner::StaticRef(r) => DataPayloadInner::StaticRef(r),
         })
+    }
+
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
+    ///
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
+    /// to the same data struct.
+    #[inline]
+    pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
+        unsafe { core::mem::transmute(self) }
     }
 
     /// Convert a [`DataPayload`] to one of the same type with runtime type checking.

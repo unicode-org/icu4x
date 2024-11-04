@@ -5,37 +5,95 @@
     "1": "السنة القادمة"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000قبل سنة واحدة"
-      ],
-      [
-        "Two",
-        "\u0000قبل سنتين"
-      ],
-      [
-        "Few",
-        "\bقبل  سنوات"
+        {
+          "Literal": "قبل سنة واحدة"
+        }
       ]
     ],
-    "other": "\bقبل  سنة"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "قبل سنتين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " سنوات"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " سنة"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000خلال سنة واحدة"
-      ],
-      [
-        "Two",
-        "\u0000خلال سنتين"
-      ],
-      [
-        "Few",
-        "\nخلال  سنوات"
+        {
+          "Literal": "خلال سنة واحدة"
+        }
       ]
     ],
-    "other": "\nخلال  سنة"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "خلال سنتين"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " سنوات"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " سنة"
+        }
+      ]
+    ]
   }
 }

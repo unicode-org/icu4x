@@ -13,10 +13,9 @@
 namespace icu4x {
 namespace capi {
     enum CollatorCaseFirst {
-      CollatorCaseFirst_Auto = 0,
-      CollatorCaseFirst_Off = 1,
-      CollatorCaseFirst_LowerFirst = 2,
-      CollatorCaseFirst_UpperFirst = 3,
+      CollatorCaseFirst_Off = 0,
+      CollatorCaseFirst_LowerFirst = 1,
+      CollatorCaseFirst_UpperFirst = 2,
     };
     
     typedef struct CollatorCaseFirst_option {union { CollatorCaseFirst ok; }; bool is_ok; } CollatorCaseFirst_option;
@@ -27,10 +26,9 @@ namespace icu4x {
 class CollatorCaseFirst {
 public:
   enum Value {
-    Auto = 0,
-    Off = 1,
-    LowerFirst = 2,
-    UpperFirst = 3,
+    Off = 0,
+    LowerFirst = 1,
+    UpperFirst = 2,
   };
 
   CollatorCaseFirst() = default;

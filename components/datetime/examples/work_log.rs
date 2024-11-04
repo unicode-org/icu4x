@@ -9,8 +9,8 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::{DateTime, Gregorian};
-use icu_datetime::{options::length, TypedDateTimeFormatter};
+use icu_calendar::DateTime;
+use icu_datetime::{fieldset::YMDHM, FixedCalendarDateTimeFormatter};
 use icu_locale_core::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
@@ -27,19 +27,15 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 ];
 
 fn main() {
-    let mut options = length::Bag::default();
-    options.date = Some(length::Date::Medium);
-    options.time = Some(length::Time::Short);
-
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
-        .expect("Failed to create TypedDateTimeFormatter instance.");
+    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMDHM::medium())
+        .expect("Failed to create FixedCalendarDateTimeFormatter instance.");
 
     println!("\n====== Work Log (en) example ============");
 
     for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
-        let date = DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)
+        let date = DateTime::try_new_gregorian(year, month, day, hour, minute, second)
             .expect("datetime should parse");
         let fdt = dtf.format(&date);
-        println!("{idx}) {}", fdt);
+        println!("{idx}) {}", writeable::adapters::LossyWrap(fdt));
     }
 }

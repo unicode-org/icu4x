@@ -5,6 +5,7 @@
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
+///
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
 ///
 /// See [full operands description](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).
@@ -258,6 +259,30 @@ impl PluralOperands {
             f,
             t,
             c: usize::from(exp),
+        }
+    }
+
+    /// Whether these [`PluralOperands`] are exactly the number 0, which might be a special case.
+    pub fn is_exactly_zero(self) -> bool {
+        self == Self {
+            i: 0,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
+        }
+    }
+
+    /// Whether these [`PluralOperands`] are exactly the number 1, which might be a special case.
+    pub fn is_exactly_one(self) -> bool {
+        self == Self {
+            i: 1,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
         }
     }
 }
