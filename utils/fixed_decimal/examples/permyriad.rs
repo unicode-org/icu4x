@@ -14,7 +14,11 @@ use writeable::Writeable;
 
 fn main() {
     let monetary_int = 19_9500;
-    let fixed_decimal = SignedFixedDecimal::from(monetary_int).multiplied_pow10(-4);
+    let fixed_decimal = {
+        let mut fixed_decimal = SignedFixedDecimal::from(monetary_int);
+        fixed_decimal.multiply_pow10(-4);
+        fixed_decimal
+    };
 
     assert_eq!(fixed_decimal.write_to_string(), "19.9500");
 }
