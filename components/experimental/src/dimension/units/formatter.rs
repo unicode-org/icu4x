@@ -151,7 +151,7 @@ impl UnitsFormatter {
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given unit.
+    /// Formats a [`SignedFixedDecimal`] value for the given unit.
     pub fn format_fixed_decimal<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,

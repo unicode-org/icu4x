@@ -349,7 +349,7 @@ impl CompactDecimalFormatter {
         Ok(self.format_fixed_decimal(partly_rounded))
     }
 
-    /// Formats a [`FixedDecimal`] by automatically scaling and rounding it.
+    /// Formats a [`SignedFixedDecimal`] by automatically scaling and rounding it.
     ///
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.

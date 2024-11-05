@@ -137,7 +137,7 @@ impl LongCurrencyFormatter {
         })
     }
 
-    /// Formats in the long format a [`FixedDecimal`] value for the given currency code.
+    /// Formats in the long format a [`SignedFixedDecimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```

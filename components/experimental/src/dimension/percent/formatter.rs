@@ -89,7 +89,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
         )
     }
 
-    /// Formats a [`FixedDecimal`] value for the given percent code.
+    /// Formats a [`SignedFixedDecimal`] value for the given percent code.
     ///
     /// # Examples
     /// ```

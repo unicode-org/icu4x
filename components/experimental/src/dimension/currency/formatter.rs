@@ -102,7 +102,7 @@ impl CurrencyFormatter {
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given currency code.
+    /// Formats a [`SignedFixedDecimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
