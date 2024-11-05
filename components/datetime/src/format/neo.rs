@@ -2124,7 +2124,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
                         (TimeZone::Location, FieldLength::TwoDigit | FieldLength::Abbreviated) => {
-                            // VV, VVV 
+                            // VV, VVV
                             return Err(LoadError::UnsupportedField(field));
                         }
                         (TimeZone::Location, _) => {
