@@ -9,7 +9,7 @@ use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[non_exhaustive]
 pub struct CompactDecimalFormatterOptions {
-    /// Options to configure the inner [`FixedDecimalFormatter`].
+    /// Options to configure the inner [`icu_decimal::FixedDecimalFormatter`].
     pub fixed_decimal_formatter_options: FixedDecimalFormatterOptions,
 }
 
