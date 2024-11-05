@@ -360,13 +360,21 @@ impl OverlapPatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
             OverlapPatternSelectionData::SkeletonDateTime { options, payload } => {
-                let year_style = options.year_style.unwrap_or(YearStyle::Auto);
-                let variant = input.resolve_year_style(year_style);
+                // Currently, none of the overlap patterns have a year field,
+                // so we can use the variant to select the time precision.
+                //
+                // We do not currently support overlap patterns with both a
+                // year and a time because that would involve 3*3 = 9 variants
+                // instead of 3 variants.
+                debug_assert!(matches!(options.year_style, None));
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::Second);
+                let (variant, fractional_second_digits) =
+                    input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
                     options.hour_cycle,
-                    todo!("need to resolve time variant"),
+                    fractional_second_digits,
                 )
             }
         }
