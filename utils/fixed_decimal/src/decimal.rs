@@ -1595,10 +1595,6 @@ impl UnsignedFixedDecimal {
         self.check_invariants();
     }
 
-    fn floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.trunc_to_increment_internal(position, increment);
-    }
-
     pub(crate) fn trunc_to_increment_internal<R: IncrementLike>(
         &mut self,
         position: i16,
