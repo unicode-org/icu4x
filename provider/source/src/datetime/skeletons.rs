@@ -446,11 +446,12 @@ mod test {
         assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
         assert_pattern_to_skeleton("z", "z", "Time zones get passed through");
-        assert_pattern_to_skeleton("Z", "Z", "Time zones get passed through");
         assert_pattern_to_skeleton("O", "O", "Time zones get passed through");
         assert_pattern_to_skeleton("v", "v", "Time zones get passed through");
         assert_pattern_to_skeleton("V", "V", "Time zones get passed through");
         assert_pattern_to_skeleton("X", "X", "Time zones get passed through");
         assert_pattern_to_skeleton("x", "x", "Time zones get passed through");
+
+        assert_pattern_to_skeleton("Z", "xxxx", "Z gets resolved");
     }
 }
