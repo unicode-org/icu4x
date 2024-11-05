@@ -82,11 +82,11 @@ pub enum SignedRoundingMode {
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::{FixedDecimal, RoundingIncrement, RoundingMode};
+/// use fixed_decimal::{SignedFixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode};
 /// use writeable::assert_writeable_eq;
 /// # use std::str::FromStr;
-/// let dec = FixedDecimal::from_str("-7.266").unwrap();
-/// let mode = RoundingMode::Expand;
+/// let dec = SignedFixedDecimal::from_str("-7.266").unwrap();
+/// let mode = SignedRoundingMode::Unsigned(UnsignedRoundingMode::Expand);
 /// let increments = [
 ///     // .266 normally expands to .27 when rounding on position -2...
 ///     (RoundingIncrement::MultiplesOf1, "-7.27"),
