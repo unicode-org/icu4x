@@ -921,12 +921,32 @@ fn test_vi_owned() {
 }
 
 #[test]
-// See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 fn test_zh() {
     // Note: ㄅ is Bopomofo.
 
-    {
-        let collator = Collator::try_new(&Default::default(), Default::default()).unwrap();
+    assert_root(Default::default());
+
+    assert_pinyin("zh".parse().unwrap());
+    assert_pinyin("zh-Hans".parse().unwrap());
+    assert_pinyin("zh-Hans-HK".parse().unwrap());
+    assert_pinyin("zh-Hant-u-co-pinyin".parse().unwrap());
+    assert_pinyin("zh-TW-u-co-pinyin".parse().unwrap());
+    assert_pinyin("yue-CN".parse().unwrap());
+
+    assert_stroke("zh-Hant".parse().unwrap());
+    assert_stroke("zh-HK".parse().unwrap());
+    assert_stroke("zh-MO".parse().unwrap());
+    assert_stroke("zh-TW".parse().unwrap());
+    assert_stroke("zh-CN-u-co-stroke".parse().unwrap());
+    assert_stroke("zh-Hans-u-co-stroke".parse().unwrap());
+    assert_stroke("yue".parse().unwrap());
+
+    assert_zhuyin("zh-u-co-zhuyin".parse().unwrap());
+    assert_unihan("zh-u-co-unihan".parse().unwrap());
+    // See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
+
+    fn assert_root(locale: Locale) {
+        let collator = Collator::try_new(&locale.into(), Default::default()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -936,20 +956,8 @@ fn test_zh() {
         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Greater);
         assert_eq!(collator.compare("不", "把"), Ordering::Less);
     }
-    {
-        let locale = locale!("zh").into(); // Defaults to -u-co-pinyin
-        let collator = Collator::try_new(&locale, Default::default()).unwrap();
-        assert_eq!(collator.compare("艾", "a"), Ordering::Less);
-        assert_eq!(collator.compare("佰", "a"), Ordering::Less);
-        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-        assert_eq!(collator.compare("艾", "佰"), Ordering::Less);
-        assert_eq!(collator.compare("艾", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
-        assert_eq!(collator.compare("不", "把"), Ordering::Greater);
-    }
-    {
-        let locale: Locale = "zh-u-co-pinyin".parse().unwrap();
+
+    fn assert_pinyin(locale: Locale) {
         let collator = Collator::try_new(&locale.into(), Default::default()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
@@ -960,8 +968,8 @@ fn test_zh() {
         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
     }
-    {
-        let locale: Locale = "zh-u-co-stroke".parse().unwrap();
+
+    fn assert_stroke(locale: Locale) {
         let collator = Collator::try_new(&locale.into(), Default::default()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
@@ -972,8 +980,8 @@ fn test_zh() {
         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
         assert_eq!(collator.compare("不", "把"), Ordering::Less);
     }
-    {
-        let locale: Locale = "zh-u-co-zhuyin".parse().unwrap();
+
+    fn assert_zhuyin(locale: Locale) {
         let collator = Collator::try_new(&locale.into(), Default::default()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
@@ -984,8 +992,8 @@ fn test_zh() {
         assert_eq!(collator.compare("佰", "ㄅ"), Ordering::Less);
         assert_eq!(collator.compare("不", "把"), Ordering::Greater);
     }
-    {
-        let locale: Locale = "zh-u-co-unihan".parse().unwrap();
+
+    fn assert_unihan(locale: Locale) {
         let collator = Collator::try_new(&locale.into(), Default::default()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);

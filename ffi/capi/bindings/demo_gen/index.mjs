@@ -1303,33 +1303,6 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneInfo.zoneVariant": {
-        func: TimeZoneInfoDemo.zoneVariant,
-        // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneInfo.zoneVariant",
-        parameters: [
-            
-            {
-                name: "Self:Bcp47Id",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "Self:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Self:Dst",
-                type: "boolean",
-                typeUse: "boolean"
-            }
-            
-        ]
-    },
-
     "TimeZoneIdMapper.ianaToBcp47": {
         func: TimeZoneIdMapperDemo.ianaToBcp47,
         // For avoiding webpacking minifying issues:

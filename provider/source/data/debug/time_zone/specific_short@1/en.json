@@ -3,105 +3,105 @@
     [
       [
         "alas",
-        "dt"
-      ],
-      "AKDT"
-    ],
-    [
-      [
-        "alas",
-        "st"
+        "Standard"
       ],
       "AKST"
     ],
     [
       [
-        "amce",
-        "dt"
+        "alas",
+        "Daylight"
       ],
-      "CDT"
+      "AKDT"
     ],
     [
       [
         "amce",
-        "st"
+        "Standard"
       ],
       "CST"
     ],
     [
       [
-        "amea",
-        "dt"
+        "amce",
+        "Daylight"
       ],
-      "EDT"
+      "CDT"
     ],
     [
       [
         "amea",
-        "st"
+        "Standard"
       ],
       "EST"
     ],
     [
       [
-        "ammo",
-        "dt"
+        "amea",
+        "Daylight"
       ],
-      "MDT"
+      "EDT"
     ],
     [
       [
         "ammo",
-        "st"
+        "Standard"
       ],
       "MST"
     ],
     [
       [
-        "ampa",
-        "dt"
+        "ammo",
+        "Daylight"
       ],
-      "PDT"
+      "MDT"
     ],
     [
       [
         "ampa",
-        "st"
+        "Standard"
       ],
       "PST"
     ],
     [
       [
-        "atla",
-        "dt"
+        "ampa",
+        "Daylight"
       ],
-      "ADT"
+      "PDT"
     ],
     [
       [
         "atla",
-        "st"
+        "Standard"
       ],
       "AST"
     ],
     [
       [
-        "haal",
-        "dt"
+        "atla",
+        "Daylight"
       ],
-      "HADT"
+      "ADT"
     ],
     [
       [
         "haal",
-        "st"
+        "Standard"
       ],
       "HAST"
     ],
     [
       [
+        "haal",
+        "Daylight"
+      ],
+      "HADT"
+    ],
+    [
+      [
         "mgmt",
-        "st"
+        "Standard"
       ],
       "GMT"
     ]
@@ -110,21 +110,21 @@
     [
       [
         "ushnl",
-        "dt"
-      ],
-      "HDT"
-    ],
-    [
-      [
-        "ushnl",
-        "st"
+        "Standard"
       ],
       "HST"
     ],
     [
       [
+        "ushnl",
+        "Daylight"
+      ],
+      "HDT"
+    ],
+    [
+      [
         "utc",
-        "st"
+        "Standard"
       ],
       "UTC"
     ]

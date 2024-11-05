@@ -440,6 +440,13 @@ mod tests {
             expected_region_chain: &["yue-HK", "und-HK"],
         },
         TestCase {
+            input: "yue-CN",
+            requires_data: true,
+            expected_language_chain: &["yue-CN", "yue-Hans"],
+            expected_script_chain: &["yue-CN", "yue-Hans", "und-Hans", "und-Hani"],
+            expected_region_chain: &["yue-CN", "und-CN"],
+        },
+        TestCase {
             input: "az-Arab-IR",
             requires_data: true,
             expected_language_chain: &["az-IR", "az-Arab"],

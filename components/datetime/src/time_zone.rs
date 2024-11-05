@@ -622,12 +622,11 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if zone_variant == ZoneVariant::daylight() {
-            &locations.pattern_daylight
-        } else if zone_variant == ZoneVariant::standard() {
-            &locations.pattern_standard
-        } else {
-            &locations.pattern_generic
+        match zone_variant {
+            ZoneVariant::Standard => &locations.pattern_standard,
+            ZoneVariant::Daylight => &locations.pattern_daylight,
+            // Compiles out due to tilde dependency on `icu_timezone`
+            _ => unreachable!(),
         }
         .interpolate([location])
         .write_to(sink)?;

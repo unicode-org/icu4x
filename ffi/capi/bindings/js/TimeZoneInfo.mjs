@@ -281,41 +281,11 @@ export class TimeZoneInfo {
         }
     }
 
-    trySetZoneVariant(id) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        
-        const result = wasm.icu4x_TimeZoneInfo_try_set_zone_variant_mv1(this.ffiValue, ...idSlice.splat());
-    
-        try {
-            return result === 1;
-        }
-        
-        finally {
-            functionCleanupArena.free();
-        }
-    }
-
     clearZoneVariant() {wasm.icu4x_TimeZoneInfo_clear_zone_variant_mv1(this.ffiValue);
     
         try {}
         
         finally {}
-    }
-
-    get zoneVariant() {
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_TimeZoneInfo_zone_variant_mv1(this.ffiValue, write.buffer);
-    
-        try {
-            return result === 0 ? null : write.readString8();
-        }
-        
-        finally {
-            write.free();
-        }
     }
 
     setStandardTime() {wasm.icu4x_TimeZoneInfo_set_standard_time_mv1(this.ffiValue);
@@ -366,7 +336,7 @@ export class TimeZoneInfo {
         }
     }
 
-    setLocalTime(datetime) {wasm.icu4x_TimeZoneInfo_set_local_time_mv1(this.ffiValue, datetime.ffiValue);
+    set localTime(datetime) {wasm.icu4x_TimeZoneInfo_set_local_time_mv1(this.ffiValue, datetime.ffiValue);
     
         try {}
         
@@ -380,7 +350,7 @@ export class TimeZoneInfo {
         finally {}
     }
 
-    getLocalTime() {
+    get getLocalTime() {
         const result = wasm.icu4x_TimeZoneInfo_get_local_time_mv1(this.ffiValue);
     
         try {
