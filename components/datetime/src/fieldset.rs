@@ -14,7 +14,7 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+        DayOfMonth, IsoHour, IsoWeekday, MonthInfo, YearInfo,
     },
     AnyCalendarKind, Date, Iso, Time,
 };
@@ -921,55 +921,22 @@ impl_calendar_period_marker!(
 );
 
 impl_time_marker!(
-    H,
-    NeoTimeComponents::Hour,
-    description = "hour (locale-dependent hour cycle)",
-    sample_length = medium,
-    sample = "3 PM",
-    dayperiods = yes,
-    input_hour = yes,
-);
-
-impl_time_marker!(
-    HM,
-    NeoTimeComponents::HourMinute,
-    description = "hour and minute (locale-dependent hour cycle)",
+    T,
+    NeoTimeComponents::Time,
+    description = "time (locale-dependent hour cycle)",
     sample_length = medium,
     sample = "3:47 PM",
     dayperiods = yes,
     input_hour = yes,
-    input_minute = yes,
-);
-
-impl_time_marker!(
-    HMS,
-    NeoTimeComponents::HourMinuteSecond,
-    description = "hour, minute, and second (locale-dependent hour cycle)",
-    sample_length = medium,
-    sample = "3:47:50 PM",
-    dayperiods = yes,
-    input_hour = yes,
-    input_minute = yes,
-    input_second = yes,
-    input_nanosecond = yes,
 );
 
 impl_datetime_marker!(
-    YMDHM,
-    description = "year, month, day, hour, and minute",
+    YMDT,
+    description = "year, month, day, and time",
     sample_length = medium,
     sample = "May 17, 2024, 3:47 PM",
     date = YMD,
-    time = HM,
-);
-
-impl_datetime_marker!(
-    YMDHMS,
-    description = "year, month, day, hour, minute, and second",
-    sample_length = medium,
-    sample = "May 17, 2024, 3:47:50 PM",
-    date = YMD,
-    time = HMS,
+    time = T,
 );
 
 impl_zone_marker!(
@@ -1386,31 +1353,31 @@ impl_zone_marker!(
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSV,
+    YMDTV,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = V,
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSZ,
+    YMDTZ,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 BST",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = Z,
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSO,
+    YMDTO,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT+1",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = O,
 );

@@ -198,20 +198,6 @@ impl SourceDataProvider {
             .flat_map(|locale| {
                 NeoTimeComponents::VALUES
                     .iter()
-                    .filter(|neo_components| {
-                        !matches!(
-                            neo_components,
-                            NeoTimeComponents::DayPeriodHour12
-                                | NeoTimeComponents::DayPeriodHour12Minute
-                                | NeoTimeComponents::DayPeriodHour12MinuteSecond
-                                | NeoTimeComponents::HourMinute
-                                | NeoTimeComponents::HourMinuteSecond
-                                | NeoTimeComponents::Hour12Minute
-                                | NeoTimeComponents::Hour12MinuteSecond
-                                | NeoTimeComponents::Hour24Minute
-                                | NeoTimeComponents::Hour24MinuteSecond
-                        )
-                    })
                     .copied()
                     .map(NeoTimeComponents::id_str)
                     .map(move |attrs| {
@@ -273,25 +259,15 @@ fn gen_time_components(
         ));
     }
     let mut filtered_components = components::Bag::empty();
-    if neo_components.has_hour() {
+    if neo_components.has_time() {
         filtered_components.hour = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_minute() {
-        filtered_components.minute = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_second() {
-        filtered_components.second = Some(components::Numeric::Numeric);
     }
     // Select the correct hour cycle
     filtered_components.preferences = match neo_components {
-        NeoTimeComponents::Hour12
-        | NeoTimeComponents::Hour12Minute
-        | NeoTimeComponents::Hour12MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+        NeoTimeComponents::Time12 => Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H12,
         )),
-        NeoTimeComponents::Hour24
-        | NeoTimeComponents::Hour24Minute
-        | NeoTimeComponents::Hour24MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+        NeoTimeComponents::Time24 => Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H23,
         )),
         _ => None,
@@ -369,14 +345,8 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if neo_components.has_hour() {
+    if neo_components.has_time() {
         filtered_components.hour = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_minute() {
-        filtered_components.minute = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_second() {
-        filtered_components.second = Some(components::Numeric::Numeric);
     }
     DateTimeFormatterOptions::Components(filtered_components)
 }
@@ -497,7 +467,7 @@ fn test_en_hour_patterns() {
     let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoTimeComponents::Hour.id_str(),
+                NeoTimeComponents::Time.id_str(),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),
@@ -535,7 +505,7 @@ fn test_en_overlap_patterns() {
     let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Hour).id_str().unwrap(),
+                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time).id_str().unwrap(),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),

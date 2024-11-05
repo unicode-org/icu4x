@@ -211,6 +211,20 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
+impl TimePrecision {
+    /// Converts a [`length::Time`] to its nearest [`TimePrecision`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
+    pub fn from_time_length(time_length: length::Time) -> Self {
+        match time_length {
+            length::Time::Full => todo!(),
+            length::Time::Long => todo!(),
+            length::Time::Medium => Self::SecondPlus,
+            length::Time::Short => Self::MinuteExact,
+        }
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -628,42 +642,16 @@ impl NeoCalendarPeriodComponents {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
-    /// An hour (12-hour or 24-hour chosen by locale), as in
-    /// "4 pm" or "16h"
-    Hour,
-    /// An hour and minute (12-hour or 24-hour chosen by locale), as in
-    /// "4:03 pm" or "16:03"
-    HourMinute,
-    /// An hour, minute, and second (12-hour or 24-hour chosen by locale), as in
-    /// "4:03:51 pm" or "16:03:51"
-    HourMinuteSecond,
-    /// An hour with a 12-hour clock and day period, as in
-    /// "4 in the afternoon"
-    DayPeriodHour12,
-    /// An hour with a 12-hour clock, as in
-    /// "4 pm"
-    Hour12,
-    /// An hour and minute with a 12-hour clock and a day period, as in
-    /// "4:03 in the afternoon"
-    DayPeriodHour12Minute,
-    /// An hour and minute with a 12-hour clock, as in
-    /// "4:03 pm"
-    Hour12Minute,
-    /// An hour, minute, and second with a 12-hour clock and day period, as in
-    /// "4:03:51 in the afternoon"
-    DayPeriodHour12MinuteSecond,
-    /// An hour, minute, and second with a 12-hour clock, as in
-    /// "4:03:51 pm"
-    Hour12MinuteSecond,
-    /// An hour with a 24-hour clock, as in
-    /// "16h"
-    Hour24,
-    /// An hour and minute with a 24-hour clock, as in
-    /// "16:03"
-    Hour24Minute,
-    /// An hour, minute, and second with a 24-hour clock, as in
-    /// "16:03:51"
-    Hour24MinuteSecond,
+    /// A time of day (12-hour or 24-hour chosen by locale),
+    /// with the precision chosen by [`TimePrecision`]
+    Time,
+    // TODO: Remove these other variants. Collapse this enum to TimePrecision
+    /// A time of day with a 12-hour clock,
+    /// with the precision chosen by [`TimePrecision`]
+    Time12,
+    /// A time of day with a 24-hour clock,
+    /// with the precision chosen by [`TimePrecision`]
+    Time24,
     /// Fields to represent the time chosen by the locale.
     ///
     /// These are the _standard time patterns_ for types "medium" and
@@ -677,58 +665,21 @@ pub enum NeoTimeComponents {
 impl NeoTimeComponents {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[
-        Self::Hour,
-        Self::HourMinute,
-        Self::HourMinuteSecond,
-        Self::DayPeriodHour12,
-        Self::Hour12,
-        Self::DayPeriodHour12Minute,
-        Self::Hour12Minute,
-        Self::DayPeriodHour12MinuteSecond,
-        Self::Hour12MinuteSecond,
-        Self::Hour24,
-        Self::Hour24Minute,
-        Self::Hour24MinuteSecond,
+        Self::Time,
+        Self::Time12,
+        Self::Time24,
         Self::Auto,
     ];
 
     const HOUR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("j");
-    const HOUR_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("jm");
-    const HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("jms");
-    const DAY_PERIOD_HOUR12: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bh");
     const HOUR12: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h");
-    const DAY_PERIOD_HOUR12_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bhm");
-    const HOUR12_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("hm");
-    const DAY_PERIOD_HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bhms");
-    const HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("hms");
     const HOUR24: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h0");
-    const HOUR24_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("h0m");
-    const HOUR24_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("h0ms");
     const AUTO: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("a1");
 
     // For matching
     const HOUR_STR: &'static str = Self::HOUR.as_str();
-    const HOUR_MINUTE_STR: &'static str = Self::HOUR_MINUTE.as_str();
-    const HOUR_MINUTE_SECOND_STR: &'static str = Self::HOUR_MINUTE_SECOND.as_str();
-    const DAY_PERIOD_HOUR12_STR: &'static str = Self::DAY_PERIOD_HOUR12.as_str();
     const HOUR12_STR: &'static str = Self::HOUR12.as_str();
-    const DAY_PERIOD_HOUR12_MINUTE_STR: &'static str = Self::DAY_PERIOD_HOUR12_MINUTE.as_str();
-    const HOUR12_MINUTE_STR: &'static str = Self::HOUR12_MINUTE.as_str();
-    const DAY_PERIOD_HOUR12_MINUTE_SECOND_STR: &'static str =
-        Self::DAY_PERIOD_HOUR12_MINUTE_SECOND.as_str();
-    const HOUR12_MINUTE_SECOND_STR: &'static str = Self::HOUR12_MINUTE_SECOND.as_str();
     const HOUR24_STR: &'static str = Self::HOUR24.as_str();
-    const HOUR24_MINUTE_STR: &'static str = Self::HOUR24_MINUTE.as_str();
-    const HOUR24_MINUTE_SECOND_STR: &'static str = Self::HOUR24_MINUTE_SECOND.as_str();
     const AUTO_STR: &'static str = Self::AUTO.as_str();
 
     /// Returns a stable string identifying this set of components.
@@ -736,18 +687,9 @@ impl NeoTimeComponents {
     /// For details, see [`NeoDateComponents::id_str()`].
     pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
-            Self::Hour => Self::HOUR,
-            Self::HourMinute => Self::HOUR_MINUTE,
-            Self::HourMinuteSecond => Self::HOUR_MINUTE_SECOND,
-            Self::DayPeriodHour12 => Self::DAY_PERIOD_HOUR12,
-            Self::Hour12 => Self::HOUR12,
-            Self::DayPeriodHour12Minute => Self::DAY_PERIOD_HOUR12_MINUTE,
-            Self::Hour12Minute => Self::HOUR12_MINUTE,
-            Self::DayPeriodHour12MinuteSecond => Self::DAY_PERIOD_HOUR12_MINUTE_SECOND,
-            Self::Hour12MinuteSecond => Self::HOUR12_MINUTE_SECOND,
-            Self::Hour24 => Self::HOUR24,
-            Self::Hour24Minute => Self::HOUR24_MINUTE,
-            Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND,
+            Self::Time => Self::HOUR,
+            Self::Time12 => Self::HOUR12,
+            Self::Time24 => Self::HOUR24,
             Self::Auto => Self::AUTO,
         }
     }
@@ -757,18 +699,9 @@ impl NeoTimeComponents {
     /// For details, see [`NeoDateComponents::from_id_str()`].
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
-            Self::HOUR_STR => Some(Self::Hour),
-            Self::HOUR_MINUTE_STR => Some(Self::HourMinute),
-            Self::HOUR_MINUTE_SECOND_STR => Some(Self::HourMinuteSecond),
-            Self::DAY_PERIOD_HOUR12_STR => Some(Self::DayPeriodHour12),
-            Self::HOUR12_STR => Some(Self::Hour12),
-            Self::DAY_PERIOD_HOUR12_MINUTE_STR => Some(Self::DayPeriodHour12Minute),
-            Self::HOUR12_MINUTE_STR => Some(Self::Hour12Minute),
-            Self::DAY_PERIOD_HOUR12_MINUTE_SECOND_STR => Some(Self::DayPeriodHour12MinuteSecond),
-            Self::HOUR12_MINUTE_SECOND_STR => Some(Self::Hour12MinuteSecond),
-            Self::HOUR24_STR => Some(Self::Hour24),
-            Self::HOUR24_MINUTE_STR => Some(Self::Hour24Minute),
-            Self::HOUR24_MINUTE_SECOND_STR => Some(Self::Hour24MinuteSecond),
+            Self::HOUR_STR => Some(Self::Time),
+            Self::HOUR12_STR => Some(Self::Time12),
+            Self::HOUR24_STR => Some(Self::Time24),
             Self::AUTO_STR => Some(Self::Auto),
             _ => None,
         }
@@ -777,54 +710,15 @@ impl NeoTimeComponents {
     pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
         use CoarseHourCycle::*;
         match (self, hour_cycle) {
-            (Self::Hour, H11H12) => Self::Hour12,
-            (Self::HourMinute, H11H12) => Self::Hour12Minute,
-            (Self::HourMinuteSecond, H11H12) => Self::Hour12MinuteSecond,
-            (Self::Hour, H23H24) => Self::Hour24,
-            (Self::HourMinute, H23H24) => Self::Hour24Minute,
-            (Self::HourMinuteSecond, H23H24) => Self::Hour24MinuteSecond,
+            (Self::Time, H11H12) => Self::Time12,
+            (Self::Time, H23H24) => Self::Time24,
             _ => self,
         }
     }
 
-    /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
-    #[doc(hidden)] // the types involved in this mapping may change
-    #[cfg(feature = "datagen")]
-    pub fn from_time_length(time_length: length::Time) -> Self {
-        match time_length {
-            length::Time::Full => todo!(),
-            length::Time::Long => todo!(),
-            length::Time::Medium => NeoTimeComponents::HourMinuteSecond,
-            length::Time::Short => NeoTimeComponents::HourMinute,
-        }
-    }
-
-    /// Whether this field set contains the hour.
-    pub fn has_hour(self) -> bool {
+    /// Whether this field set contains the time of day.
+    pub fn has_time(self) -> bool {
         true
-    }
-
-    /// Whether this field set contains the minute.
-    pub fn has_minute(self) -> bool {
-        matches!(
-            self,
-            NeoTimeComponents::HourMinute
-                | NeoTimeComponents::Hour12Minute
-                | NeoTimeComponents::Hour24Minute
-                | NeoTimeComponents::HourMinuteSecond
-                | NeoTimeComponents::Hour12MinuteSecond
-                | NeoTimeComponents::Hour24MinuteSecond
-        )
-    }
-
-    /// Whether this field set contains the second.
-    pub fn has_second(self) -> bool {
-        matches!(
-            self,
-            NeoTimeComponents::HourMinuteSecond
-                | NeoTimeComponents::Hour12MinuteSecond
-                | NeoTimeComponents::Hour24MinuteSecond
-        )
     }
 
     /// Creates a skeleton for this field set with a long length.
@@ -990,7 +884,7 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::id_str()`].
     pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
-            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Hour | NeoTimeComponents::HourMinute | NeoTimeComponents::HourMinuteSecond) => {
+            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time) => {
                 Some(Self::WEEKDAY_HOUR)
             }
             _ => None,
@@ -1005,7 +899,7 @@ impl NeoComponents {
         match &**id_str {
             Self::WEEKDAY_HOUR_STR => Some(Self::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::Hour,
+                NeoTimeComponents::Time,
             )),
             _ => None,
         }
@@ -1071,45 +965,17 @@ impl NeoComponents {
         }
     }
 
-    /// Whether this field set contains the hour.
-    pub fn has_hour(self) -> bool {
+    /// Whether this field set contains the time of day.
+    pub fn has_time(self) -> bool {
         match self {
             NeoComponents::Date(_) => false,
             NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_hour(),
+            NeoComponents::Time(_) => true,
             NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_hour(),
+            NeoComponents::DateTime(_, _) => true,
             NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_hour(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_hour(),
-        }
-    }
-
-    /// Whether this field set contains the minute.
-    pub fn has_minute(self) -> bool {
-        match self {
-            NeoComponents::Date(_) => false,
-            NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_minute(),
-            NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_minute(),
-            NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_minute(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_minute(),
-        }
-    }
-
-    /// Whether this field set contains the second.
-    pub fn has_second(self) -> bool {
-        match self {
-            NeoComponents::Date(_) => false,
-            NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_second(),
-            NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_second(),
-            NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_second(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_second(),
+            NeoComponents::TimeZone(_, _) => true,
+            NeoComponents::DateTimeZone(_, _, _) => true,
         }
     }
 
@@ -1415,13 +1281,13 @@ impl NeoDateTimeSkeleton {
         time_length: crate::options::length::Time,
     ) -> Self {
         let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
-        let time_components = NeoTimeComponents::from_time_length(time_length);
+        let time_precision = TimePrecision::from_time_length(time_length);
         NeoDateTimeSkeleton {
             length: date_skeleton.length,
-            components: NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
+            components: NeoDateTimeComponents::DateTime(date_skeleton.components, NeoTimeComponents::Time),
             alignment: None,
             year_style: None,
-            time_precision: None,
+            time_precision: Some(time_precision),
         }
     }
 }

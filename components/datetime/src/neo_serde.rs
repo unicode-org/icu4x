@@ -359,9 +359,7 @@ impl TryFrom<FieldSetSerde> for NeoCalendarPeriodComponents {
 impl From<NeoTimeComponents> for FieldSetSerde {
     fn from(value: NeoTimeComponents) -> Self {
         match value {
-            NeoTimeComponents::Hour => Self::TIME,
-            NeoTimeComponents::HourMinute => Self::TIME,
-            NeoTimeComponents::HourMinuteSecond => Self::TIME,
+            NeoTimeComponents::Time => Self::TIME,
             // TODO: support auto?
             NeoTimeComponents::Auto => Self::TIME,
             _ => todo!(),
@@ -373,7 +371,7 @@ impl TryFrom<FieldSetSerde> for NeoTimeComponents {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
-            FieldSetSerde::TIME => Ok(Self::Hour),
+            FieldSetSerde::TIME => Ok(Self::Time),
             _ => Err(Error::InvalidFields),
         }
     }
@@ -457,7 +455,7 @@ fn test_basic() {
     let skeleton = NeoSkeleton {
         components: NeoComponents::DateTimeZone(
             NeoDateComponents::YearMonthDayWeekday,
-            NeoTimeComponents::Hour,
+            NeoTimeComponents::Time,
             NeoTimeZoneStyle::Generic,
         ),
         length: NeoSkeletonLength::Medium,

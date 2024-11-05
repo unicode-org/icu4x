@@ -7,7 +7,7 @@ use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::fieldset::YMD;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
-    NeoSkeletonLength, NeoTimeComponents,
+    NeoSkeletonLength, NeoTimeComponents, TimePrecision,
 };
 use icu_datetime::options::length;
 use icu_datetime::FixedCalendarDateTimeFormatter;
@@ -80,7 +80,7 @@ fn neo_datetime_lengths() {
     ] {
         let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
         for time_length in [length::Time::Medium, length::Time::Short] {
-            let time_components = NeoTimeComponents::from_time_length(time_length);
+            let time_precision = TimePrecision::from_time_length(time_length);
             for locale in [
                 locale!("en").into(),
                 locale!("fr").into(),
@@ -89,10 +89,14 @@ fn neo_datetime_lengths() {
             ] {
                 let formatter = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
                     &locale,
-                    NeoDateTimeSkeleton::for_length_and_components(
-                        date_skeleton.length,
-                        NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
-                    ),
+                    {
+                        let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
+                            date_skeleton.length,
+                            NeoDateTimeComponents::DateTime(date_skeleton.components, NeoTimeComponents::Time),
+                        );
+                        skeleton.time_precision = Some(time_precision);
+                        skeleton
+                    }
                 )
                 .unwrap();
                 let formatted = formatter.format(&datetime);
@@ -101,7 +105,7 @@ fn neo_datetime_lengths() {
                     formatted,
                     *expected,
                     Ok(()),
-                    "{date_skeleton:?} {time_components:?} {locale:?}"
+                    "{date_skeleton:?} {time_precision:?} {locale:?}"
                 );
             }
         }
@@ -153,7 +157,7 @@ fn overlap_patterns() {
             locale: locale!("en-US"),
             components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
             expected: "Fri 8:40\u{202f}PM",
@@ -162,7 +166,7 @@ fn overlap_patterns() {
             locale: locale!("en-US"),
             components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::MonthDayWeekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
             expected: "Fri, Aug 9, 8:40\u{202f}PM",
@@ -173,7 +177,7 @@ fn overlap_patterns() {
             locale: locale!("ru"),
             components: NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
             expected: "пт 20:40",
@@ -227,7 +231,7 @@ fn test_5387() {
             NeoSkeletonLength::Medium,
             NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
         ),
     )
@@ -238,7 +242,7 @@ fn test_5387() {
             NeoSkeletonLength::Medium,
             NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
         ),
     )
@@ -249,7 +253,7 @@ fn test_5387() {
             NeoSkeletonLength::Medium,
             NeoDateTimeComponents::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
+                NeoTimeComponents::Time,
             ),
         ),
     )
