@@ -1288,10 +1288,6 @@ impl UnsignedFixedDecimal {
         self
     }
 
-    fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
-        self.expand_to_increment_internal(position, increment);
-    }
-
     pub(crate) fn expand_to_increment_internal<R: IncrementLike>(
         &mut self,
         position: i16,
