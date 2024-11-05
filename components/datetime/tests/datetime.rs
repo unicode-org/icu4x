@@ -67,7 +67,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                     NeoDateTimeComponents::try_from_components(semantic.components).unwrap(),
                 );
                 skeleton.alignment = semantic.alignment;
-                skeleton.fractional_second_digits = semantic.fractional_second_digits;
+                skeleton.time_precision = semantic.time_precision;
                 skeleton.year_style = semantic.year_style;
                 skeleton
             }

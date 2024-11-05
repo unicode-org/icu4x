@@ -277,6 +277,36 @@ impl ExtractedInput {
             (YearStyle::Auto, YearDistance::Near) => PackedSkeletonVariant::Standard,
         }
     }
+
+    fn resolve_time_precision(
+        &self,
+        time_precision: TimePrecision,
+    ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
+        enum HourMinute {
+            Hour,
+            Minute,
+        }
+        let smallest_required_field = match time_precision {
+            TimePrecision::HourExact => return (PackedSkeletonVariant::Standard, None),
+            TimePrecision::MinuteExact => return (PackedSkeletonVariant::Variant0, None),
+            TimePrecision::SecondExact(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::Hour => HourMinute::Hour,
+            TimePrecision::Minute => HourMinute::Minute,
+            TimePrecision::Second => return (PackedSkeletonVariant::Variant1, None),
+        };
+        let minute = self.minute.unwrap_or_default();
+        let second = self.second.unwrap_or_default();
+        let nanosecond = self.nanosecond.unwrap_or_default();
+        if !nanosecond.is_zero() || !second.is_zero() {
+            (PackedSkeletonVariant::Variant1, None)
+        } else if !minute.is_zero() {
+            (PackedSkeletonVariant::Variant0, None)
+        } else if matches!(smallest_required_field, HourMinute::Minute) {
+            (PackedSkeletonVariant::Variant0, None)
+        } else {
+            (PackedSkeletonVariant::Standard, None)
+        }
+    }
 }
 
 impl<'a> DatePatternDataBorrowed<'a> {
@@ -336,7 +366,7 @@ impl OverlapPatternSelectionData {
                     payload.get().get(options.length, variant),
                     options.alignment,
                     options.hour_cycle,
-                    options.fractional_second_digits,
+                    todo!("need to resolve time variant"),
                 )
             }
         }
@@ -403,16 +433,17 @@ impl TimePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _input: &ExtractedInput) -> TimePatternDataBorrowed {
+    pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime { options, payload } => {
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::Second);
+                let (variant, fractional_second_digits) =
+                    input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get(options.length, PackedSkeletonVariant::Standard),
+                    payload.get().get(options.length, variant),
                     options.alignment,
                     options.hour_cycle,
-                    options.fractional_second_digits,
+                    fractional_second_digits,
                 )
             }
         }
