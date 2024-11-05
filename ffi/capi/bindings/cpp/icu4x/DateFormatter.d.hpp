@@ -24,8 +24,9 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
+class DateTimeFormatError;
 class DateTimeLength;
-class Error;
+class PatternLoadError;
 }
 
 
@@ -39,15 +40,15 @@ namespace icu4x {
 class DateFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::PatternLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline diplomat::result<std::string, icu4x::Error> format_date(const icu4x::Date& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_date(const icu4x::Date& value) const;
 
-  inline diplomat::result<std::string, icu4x::Error> format_iso_date(const icu4x::IsoDate& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_date(const icu4x::IsoDate& value) const;
 
-  inline diplomat::result<std::string, icu4x::Error> format_datetime(const icu4x::DateTime& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime(const icu4x::DateTime& value) const;
 
-  inline diplomat::result<std::string, icu4x::Error> format_iso_datetime(const icu4x::IsoDateTime& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
 
   inline const icu4x::capi::DateFormatter* AsFFI() const;
   inline icu4x::capi::DateFormatter* AsFFI();

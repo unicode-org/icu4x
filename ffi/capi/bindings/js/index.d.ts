@@ -224,11 +224,13 @@ export { CalendarParseError } from "./CalendarParseError"
 
 export { DataError } from "./DataError"
 
-export { Error } from "./Error"
+export { DateTimeFormatError } from "./DateTimeFormatError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
+
+export { PatternLoadError } from "./PatternLoadError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
