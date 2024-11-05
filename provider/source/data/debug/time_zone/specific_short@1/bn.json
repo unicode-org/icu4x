@@ -1,14 +1,7 @@
 {
   "standard": {
-    "defaults": {
-      "indi": "IST"
-    },
-    "overrides": {
-      "utc": "UTC"
-    }
+    "indi": "IST",
+    "utc": "UTC"
   },
-  "daylight": {
-    "defaults": {},
-    "overrides": {}
-  }
+  "daylight": {}
 }

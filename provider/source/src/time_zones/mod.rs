@@ -260,8 +260,8 @@ mod tests {
             generic_names_long
                 .payload
                 .get()
-                .defaults
-                .get(&MetazoneId(tinystr!(4, "aucw")))
+                .0
+                .get(&tinystr!(8, "aucw").into())
                 .unwrap()
         );
         assert_eq!(
@@ -269,8 +269,8 @@ mod tests {
             generic_names_long
                 .payload
                 .get()
-                .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .0
+                .get(&tinystr!(8, "utc").into())
                 .unwrap()
         );
 
@@ -286,8 +286,8 @@ mod tests {
                 .payload
                 .get()
                 .standard
-                .defaults
-                .get(&MetazoneId(tinystr!(4, "aucw")))
+                .0
+                .get(&tinystr!(8, "aucw").into())
                 .unwrap()
         );
         assert_eq!(
@@ -296,8 +296,8 @@ mod tests {
                 .payload
                 .get()
                 .standard
-                .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .0
+                .get(&tinystr!(8, "utc").into())
                 .unwrap()
         );
 
@@ -312,8 +312,8 @@ mod tests {
             generic_names_short
                 .payload
                 .get()
-                .defaults
-                .get(&MetazoneId(tinystr!(4, "ampa")))
+                .0
+                .get(&tinystr!(8, "ampa").into())
                 .unwrap()
         );
         assert_eq!(
@@ -321,8 +321,8 @@ mod tests {
             generic_names_short
                 .payload
                 .get()
-                .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .0
+                .get(&tinystr!(8, "utc").into())
                 .unwrap()
         );
 
@@ -338,8 +338,8 @@ mod tests {
                 .payload
                 .get()
                 .daylight
-                .defaults
-                .get(&MetazoneId(tinystr!(4, "ampa")))
+                .0
+                .get(&tinystr!(8, "ampa").into())
                 .unwrap()
         );
         assert_eq!(
@@ -348,8 +348,8 @@ mod tests {
                 .payload
                 .get()
                 .standard
-                .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .0
+                .get(&tinystr!(8, "utc").into())
                 .unwrap()
         );
 

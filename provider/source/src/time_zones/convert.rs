@@ -22,6 +22,7 @@ use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use tinystr::UnvalidatedTinyAsciiStr;
 use writeable::Writeable;
 
 impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
@@ -566,18 +567,18 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     );
                     eq != Ordering::Equal
                 })
-            })
-            .collect();
+            });
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)));
+
+        let data = defaults
+            .map(|(mz, v)| (UnvalidatedTinyAsciiStr::from(mz.0.resize::<8>()), v))
+            .chain(overrides.map(|(tz, v)| (UnvalidatedTinyAsciiStr::from(tz.0), v)))
             .collect();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneNamesV1 {
-                defaults,
-                overrides,
-            }),
+            payload: DataPayload::from_owned(MetazoneNamesV1(data)),
         })
     }
 }
@@ -614,26 +615,30 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
-                standard: MetazoneNamesV1 {
-                    defaults: defaults
+                standard: MetazoneNamesV1(
+                    defaults
                         .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Standard)
+                                .then_some((UnvalidatedTinyAsciiStr::from(z.0.resize()), *v))
+                        })
+                        .chain(overrides.iter().filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Standard).then_some((z.0.into(), *v))
+                        }))
                         .collect(),
-                    overrides: overrides
+                ),
+                daylight: MetazoneNamesV1(
+                    defaults
                         .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Daylight)
+                                .then_some((UnvalidatedTinyAsciiStr::from(z.0.resize()), *v))
+                        })
+                        .chain(overrides.iter().filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Daylight).then_some((z.0.into(), *v))
+                        }))
                         .collect(),
-                },
-                daylight: MetazoneNamesV1 {
-                    defaults: defaults
-                        .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
-                        .collect(),
-                    overrides: overrides
-                        .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
-                        .collect(),
-                },
+                ),
             }),
         })
     }
@@ -661,18 +666,18 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
         let meta_zone_id_data = &self.compute_meta_zone_ids_btreemap()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
-            .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
-            .collect();
+            .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)));
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)));
+
+        let data = defaults
+            .map(|(mz, v)| (UnvalidatedTinyAsciiStr::from(mz.0.resize::<8>()), v))
+            .chain(overrides.map(|(tz, v)| (UnvalidatedTinyAsciiStr::from(tz.0), v)))
             .collect();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneNamesV1 {
-                defaults,
-                overrides,
-            }),
+            payload: DataPayload::from_owned(MetazoneNamesV1(data)),
         })
     }
 }
@@ -708,26 +713,30 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
-                standard: MetazoneNamesV1 {
-                    defaults: defaults
+                standard: MetazoneNamesV1(
+                    defaults
                         .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Standard)
+                                .then_some((UnvalidatedTinyAsciiStr::from(z.0.resize()), *v))
+                        })
+                        .chain(overrides.iter().filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Standard).then_some((z.0.into(), *v))
+                        }))
                         .collect(),
-                    overrides: overrides
+                ),
+                daylight: MetazoneNamesV1(
+                    defaults
                         .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Standard).then_some((*z, *v)))
+                        .filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Daylight)
+                                .then_some((UnvalidatedTinyAsciiStr::from(z.0.resize()), *v))
+                        })
+                        .chain(overrides.iter().filter_map(|(z, zv, v)| {
+                            (*zv == ZoneVariant::Daylight).then_some((z.0.into(), *v))
+                        }))
                         .collect(),
-                },
-                daylight: MetazoneNamesV1 {
-                    defaults: defaults
-                        .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
-                        .collect(),
-                    overrides: overrides
-                        .iter()
-                        .filter_map(|(z, zv, v)| (*zv == ZoneVariant::Daylight).then_some((*z, *v)))
-                        .collect(),
-                },
+                ),
             }),
         })
     }

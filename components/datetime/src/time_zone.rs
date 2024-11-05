@@ -387,10 +387,13 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
-            names
-                .defaults
-                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        let Some(name) = names.0.get(&time_zone_id.0.into()).or_else(|| {
+            names.0.get(
+                &metazone(time_zone_id, local_time, metazone_period)?
+                    .0
+                    .resize()
+                    .into(),
+            )
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -440,10 +443,13 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
         };
 
-        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
-            names
-                .defaults
-                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        let Some(name) = names.0.get(&time_zone_id.0.into()).or_else(|| {
+            names.0.get(
+                &metazone(time_zone_id, local_time, metazone_period)?
+                    .0
+                    .resize()
+                    .into(),
+            )
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -678,10 +684,13 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
-            non_locations
-                .defaults
-                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+        let Some(non_location) = non_locations.0.get(&time_zone_id.0.into()).or_else(|| {
+            non_locations.0.get(
+                &metazone(time_zone_id, local_time, metazone_period)?
+                    .0
+                    .resize()
+                    .into(),
+            )
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };

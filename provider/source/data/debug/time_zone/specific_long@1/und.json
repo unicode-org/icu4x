@@ -1,10 +1,4 @@
 {
-  "standard": {
-    "defaults": {},
-    "overrides": {}
-  },
-  "daylight": {
-    "defaults": {},
-    "overrides": {}
-  }
+  "standard": {},
+  "daylight": {}
 }

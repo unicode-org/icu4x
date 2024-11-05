@@ -1,12 +1,6 @@
 {
   "standard": {
-    "defaults": {},
-    "overrides": {
-      "utc": "UTC"
-    }
+    "utc": "UTC"
   },
-  "daylight": {
-    "defaults": {},
-    "overrides": {}
-  }
+  "daylight": {}
 }

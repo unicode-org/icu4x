@@ -7,7 +7,7 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
+use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
 use zerovec::{
     ule::{AsULE, ULE},
     ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec,
@@ -140,14 +140,11 @@ pub struct LocationsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneNamesV1<'data> {
-    /// The default mapping between metazone id and localized metazone name.
+pub struct MetazoneNamesV1<'data>(
+    /// The mapping between timezone id (overrides) or metazone id, and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, MetazoneId, str>,
-    /// The override mapping between timezone id and localized metazone name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
-}
+    pub ZeroMap<'data, UnvalidatedTinyAsciiStr<8>, str>,
+);
 
 /// An ICU4X mapping to specific metazone names.
 /// Specific names include time variants such as "daylight."
