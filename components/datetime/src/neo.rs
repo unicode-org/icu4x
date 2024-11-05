@@ -130,10 +130,8 @@ impl RawNeoOptions {
             },
             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(
-                field_set,
-            )
-            .into_option(),
+            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
+                .into_option(),
             hour_cycle,
         }
     }
