@@ -15,7 +15,7 @@
 //! ## Format a number with Bangla digits
 //!
 //! ```
-//! use fixed_decimal::FixedDecimal;
+//! use fixed_decimal::SignedFixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -26,7 +26,7 @@
 //! )
 //! .expect("locale should be present");
 //!
-//! let fixed_decimal = FixedDecimal::from(1000007);
+//! let fixed_decimal = SignedFixedDecimal::from(1000007);
 //!
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 //! ```
@@ -34,7 +34,7 @@
 //! ## Format a number with digits after the decimal separator
 //!
 //! ```
-//! use fixed_decimal::FixedDecimal;
+//! use fixed_decimal::SignedFixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
@@ -43,7 +43,11 @@
 //!     FixedDecimalFormatter::try_new(&Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
-//! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
+//! let fixed_decimal = {
+//!     let mut decimal = SignedFixedDecimal::from(200050);
+//!     decimal.multiply_pow10(-2);
+//!     decimal
+//! };
 //!
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 //! ```
@@ -54,7 +58,7 @@
 //! symbols for that numbering system.
 //!
 //! ```
-//! use fixed_decimal::FixedDecimal;
+//! use fixed_decimal::SignedFixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -65,7 +69,7 @@
 //! )
 //! .expect("locale should be present");
 //!
-//! let fixed_decimal = FixedDecimal::from(1000007);
+//! let fixed_decimal = SignedFixedDecimal::from(1000007);
 //!
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 //! ```
@@ -102,7 +106,7 @@ use fixed_decimal::SignedFixedDecimal;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-/// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
+/// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
 /// [`FixedDecimalFormatter`] supports:
 ///
@@ -156,7 +160,7 @@ impl FixedDecimalFormatter {
         Ok(Self { options, symbols })
     }
 
-    /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
+    /// Formats a [`SignedFixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedFixedDecimal<'l> {
         FormattedFixedDecimal {
             value,
@@ -165,7 +169,7 @@ impl FixedDecimalFormatter {
         }
     }
 
-    /// Formats a [`FixedDecimal`], returning a [`String`].
+    /// Formats a [`SignedFixedDecimal`], returning a [`String`].
     pub fn format_to_string(&self, value: &SignedFixedDecimal) -> String {
         self.format(value).write_to_string().into_owned()
     }

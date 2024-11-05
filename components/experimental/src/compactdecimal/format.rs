@@ -25,7 +25,7 @@ impl FormattedCompactDecimal<'_> {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;

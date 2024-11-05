@@ -16,12 +16,12 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 ///
 /// - Integers, signed and unsigned
 /// - Strings representing an arbitrary-precision decimal
-/// - [`FixedDecimal`]
+/// - [`SignedFixedDecimal`]
 ///
 /// This crate does not support selection from a floating-point number, because floats are not
 /// capable of carrying trailing zeros, which are required for proper plural rule selection. For
 /// example, in English, "1 star" has a different plural form than "1.0 stars", but this
-/// distinction cannot be represented using a float. Clients should use [`FixedDecimal`] instead.
+/// distinction cannot be represented using a float. Clients should use [`SignedFixedDecimal`] instead.
 ///
 /// # Examples
 ///
@@ -63,10 +63,10 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 /// );
 /// ```
 ///
-/// From [`FixedDecimal`]
+/// From [`SignedFixedDecimal`]
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::plurals::rules::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
 ///
@@ -79,7 +79,11 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 ///         t: 45,
 ///         c: 0,
 ///     }),
-///     (&FixedDecimal::from(12345).multiplied_pow10(-2)).into()
+///     (&{
+///         let mut decimal = SignedFixedDecimal::from(12345);
+///         decimal.multiply_pow10(-2);
+///         decimal
+///     }).into()
 /// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -288,7 +292,7 @@ impl PluralOperands {
 }
 
 impl From<&SignedFixedDecimal> for PluralOperands {
-    /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
+    /// Converts a [`fixed_decimal::SignedFixedDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
     fn from(dec: &SignedFixedDecimal) -> Self {
         Self::from_significand_and_exponent(dec, 0)
@@ -303,14 +307,14 @@ impl From<&CompactDecimal> for PluralOperands {
     ///
     /// ```
     /// use fixed_decimal::CompactDecimal;
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::locale::locale;
     /// use icu::plurals::rules::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;
     /// use icu::plurals::PluralRules;
     ///
-    /// let fixed_decimal = "1000000.20".parse::<FixedDecimal>().unwrap();
+    /// let fixed_decimal = "1000000.20".parse::<SignedFixedDecimal>().unwrap();
     /// let compact_decimal = "1.00000020c6".parse::<CompactDecimal>().unwrap();
     ///
     /// assert_eq!(

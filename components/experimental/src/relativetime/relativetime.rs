@@ -19,7 +19,7 @@ use crate::relativetime::provider::*;
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -33,11 +33,11 @@ use crate::relativetime::provider::*;
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(5i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(5i8)),
 ///     "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-10i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-10i8)),
 ///     "10 seconds ago"
 /// );
 /// ```
@@ -45,7 +45,7 @@ use crate::relativetime::provider::*;
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -62,26 +62,26 @@ use crate::relativetime::provider::*;
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(0u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(0u8)),
 ///     "hoy"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-2i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-2i8)),
 ///     "anteayer"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(2u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(2u8)),
 ///     "pasado mañana"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(15i8)),
 ///     "dentro de 15 d"
 /// );
 /// ```
 ///
 /// # Example
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -95,11 +95,11 @@ use crate::relativetime::provider::*;
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(3u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(3u8)),
 ///     "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-15i8)),
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```

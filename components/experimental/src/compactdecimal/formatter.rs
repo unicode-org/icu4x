@@ -360,7 +360,7 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -372,38 +372,38 @@ impl CompactDecimalFormatter {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(0)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(843)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2207)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(15127)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(3010349)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(-13132)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
     /// // The sign display on the FixedDecimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
-    ///         FixedDecimal::from(2500)
+    ///         SignedFixedDecimal::from(2500)
     ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
