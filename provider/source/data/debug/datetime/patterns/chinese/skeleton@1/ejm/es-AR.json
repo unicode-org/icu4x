@@ -4,12 +4,14 @@
     0,
     0,
     0,
-    0,
-    0,
-    0
+    3,
+    4,
+    4
   ],
   "elements": [
     "cccc hh:mm a",
-    "ccc hh:mm a"
+    "ccc hh:mm a",
+    "cccc hh:mm:ss a",
+    "ccc hh:mm:ss a"
   ]
 }

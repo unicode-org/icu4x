@@ -4,12 +4,14 @@
     0,
     0,
     0,
-    0,
-    0,
-    0
+    3,
+    4,
+    4
   ],
   "elements": [
     "EEEE H:m น.",
-    "E HH:mm น."
+    "E HH:mm น.",
+    "EEEE H:m:s",
+    "E HH:mm:ss"
   ]
 }
