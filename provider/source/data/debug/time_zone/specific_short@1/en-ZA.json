@@ -1,13 +1,20 @@
 {
   "standard": {
-    "afce": "CAT",
-    "afea": "EAT",
-    "afso": "SAST",
-    "afwe": "WAT",
-    "mgmt": "GMT",
-    "utc": "UTC"
+    "defaults": {
+      "afce": "CAT",
+      "afea": "EAT",
+      "afso": "SAST",
+      "afwe": "WAT",
+      "mgmt": "GMT"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
   },
   "daylight": {
-    "afwe": "WAST"
+    "defaults": {
+      "afwe": "WAST"
+    },
+    "overrides": {}
   }
 }

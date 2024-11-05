@@ -1,4 +1,8 @@
 {
-  "japa": "JST",
-  "utc": "UTC"
+  "defaults": {
+    "japa": "JST"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
 }

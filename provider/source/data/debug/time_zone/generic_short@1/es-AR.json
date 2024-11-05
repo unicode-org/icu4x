@@ -1,5 +1,9 @@
 {
-  "arge": "ART",
-  "arwe": "WART",
-  "utc": "UTC"
+  "defaults": {
+    "arge": "ART",
+    "arwe": "WART"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
 }

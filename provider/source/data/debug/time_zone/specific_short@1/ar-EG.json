@@ -1,7 +1,14 @@
 {
   "standard": {
-    "gulf": "GST",
-    "utc": "UTC"
+    "defaults": {
+      "gulf": "GST"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
   },
-  "daylight": {}
+  "daylight": {
+    "defaults": {},
+    "overrides": {}
+  }
 }

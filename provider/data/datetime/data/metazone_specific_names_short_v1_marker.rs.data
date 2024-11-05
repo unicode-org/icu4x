@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 648B for the lookup data structure (134 data identifiers)
-/// * 12840B[^1] for the actual data (59 unique structs)
+/// * 16756B[^1] for the actual data (59 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -20,594 +20,1302 @@ macro_rules! __impl_metazone_specific_names_short_v1_marker {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnopqrstuvyz\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x0B\x19&0\x170>LSVjl|\x8F\x97\xCA\xD8\xDA\xF7\x08\x0C\x0E\x12\xC3frs\x01\x02\x80\x81\x82t\x83\xC4lnrs\x02\x03\x05o\x84\x85x\x85\x86\xC4ahsy\x01\x03\x04\x86r\x87\x88\x86\xC3aes\x01\x02\x89\x8Ab\x8A\xC5elnsu\x01\x02\xA7\xDB\x80\x89\x83-\xD201ABCEGHIKLMNRSTUZ\x03\x06\x0C\x0E\x14\x16(+79?V`brtv01\x8B50\x86\xC2EU\x01\x8C\x8DW\x8E\xC2AM\x01\x8F\x8ER\x8E\xC5BHMUY\x02\x03\x04\x06\x90\0\x8E\x8E\x90\x01\x90\x02K\x90\x03\xC3DEN\x02\x04\x90\x04\x90\x05\x90\x06E\x8E\xC2RS\x01\x8E\x8E\xC7GHOPUWY\x01\x02\x04\x05\x06\x07\x8E\x8B\x90\x07\x8B\x8E\x8E\x90\x08\xC3AGZ\x01\x02\x8E\x8E\x90\tW\x8E\xC5DGLSZ\x01\x03\x04\x05\x8E\x90\n\x8E\x8E\x8EZ\x8EG\x8E\xC3AMW\x01\x02\x8E\x8E\x8E\x86-\xC84ABCEPUV\x04\x07\n\x12\x15\x18\x1F19\x90\x0BR\x90\x0CO\x90\r\xC2LO\x02\x90\x0E\x90\x0FC\x90\x10E\x90\x11\xC2SY\x01\x87\x90\x12E\x90\x13\x90\x14\xC3fry\x07\x12-Adlm\x90\x15-\xC2CG\x03A\x90\x16F\x90\x17\x89\xC4adlu\x02\x04\x05\x90\x18\x90\x19\x86\x85\xC4irsu\x02\x03\x05\x90\x1A\x86b\x8A\x86\xC2dt\x02\x90\x1B\x89a\x90\x1C\xC5gknou\x03\x05\x06\x08p\x90\x1D\x90\x1E\x85k\x85\x90\x1Fv\x89\xC5klrst\x01\x02\x03\x05\x89\x85\x85\x90\n\x86\xC3elo\x04\x0B-IN\x85\x90\x14-SR\x90 \x90\x14\xC2mr\x02\x90!\x90\"\xC3alt\x01\x02\x85\x89\x90\x1D-\xC7ACGMPST\x03\x06\t\x11\x14\x17O\x90\x0BV\x90\x0BW\x90\x0B\xC2OZ\x02\x90\x0B\x90\x0BT\x90#T\x90\x0BL\x90\x0Bu\x90\x11-\xC2BE\x03O\x90\rC\x90\x10o\x86\xC6cdkorv\x02\x04\x06\x08\x0F\x90$\x90%\x90&\x90'\x86-Latn\x86\x90(\xC2ae\x0C\x85-\xC2MS\x03Y\x90)G\x90)\x85nd\x90\x0Bi\x87rl\x90\x1Dh-\xC2HS\x05ant\x90*G\x90)" },
                 values: &[
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afce\0\0\0\0afea\0\0\0\0afso\0\0\0\0afwe\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\n\0\r\0CATEATSASTWATUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0WAST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afceafeaafsoafwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\n\0CATEATSASTWAT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0WAST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulf\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulf") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0GST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0C\0\xE0\xA6\xAD\xE0\xA6\xBE. \xE0\xA6\xB8.UTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA6\xAD\xE0\xA6\xBE. \xE0\xA6\xB8.") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\n\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1A\0\x1D\0AKSTCSTESTMSTPSTASTHASTGMTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0AKDTCDTEDTMDTPDTADTHADTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaalmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0AKSTCSTESTMSTPSTASTHASTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0Gk\xC6\x89AK") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Gk") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xC6\x89AK") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0ISTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0IST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0CETEETWETGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwemgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0CETEETWETGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1A\0AKSTCSTESTMSTPSTASTHASTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0AKDTCDTEDTMDTPDTADTHADTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKSTCSTESTMSTPSTASTHAST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1A\0AKSTCSTESTMSTPSTASTSE\xC4\x8CHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x18\0AKDTCDTEDTMDTPDTADTSEL\xC4\x8CHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuce") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKSTCSTESTMSTPSTASTSE\xC4\x8C") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuce") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTSEL\xC4\x8C") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0CETEETWETUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0CETEETWET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0MEZOEZWEZUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0MESZOESZWESZ") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0MEZOEZWEZ") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0MESZOESZWESZ") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0GMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulf\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0GSTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulfmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GSTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auce\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0gulf\0\0\0\0loho\0\0\0\0mgmt\0\0\0\0neze\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\t\0\r\0\x11\0\x18\0\x1C\0\x1F\0#\0ACSTACWSTAESTAWSTGulf STLHSTGMTNZSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auce\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0loho\0\0\0\0neze\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x04\0\t\0\r\0\x11\0\x15\0ACDTACWDTAEDTAWDTLHDTNZDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwegulflohomgmtneze") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\t\0\r\0\x11\0\x18\0\x1C\0\x1F\0ACSTACWSTAESTAWSTGulf STLHSTGMTNZST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwelohoneze") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x04\0\t\0\r\0\x11\0\x15\0ACDTACWDTAEDTAWDTLHDTNZDT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afce\0\0\0\0afea\0\0\0\0afso\0\0\0\0afwe\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\n\0\r\0\x10\0CATEATSASTWATGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0WAST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afceafeaafsoafwemgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\n\0\r\0CATEATSASTWATGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0WAST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afgh\0\0\0\0alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0bang\0\0\0\0bhut\0\0\0\0brun\0\0\0\0chat\0\0\0\0chri\0\0\0\0coco\0\0\0\0east\0\0\0\0eati\0\0\0\0ecua\0\0\0\0gala\0\0\0\0gulf\0\0\0\0guya\0\0\0\0haal\0\0\0\0ince\0\0\0\0indi\0\0\0\0indo\0\0\0\0inea\0\0\0\0inwe\0\0\0\0iran\0\0\0\0mala\0\0\0\0mald\0\0\0\0mgmt\0\0\0\0nepa\0\0\0\0newf\0\0\0\0paki\0\0\0\0pimi\0\0\0\0urug\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0vene\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"(\0\x03\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x1B\0\x1F\0#\0&\0)\0,\x001\x004\x007\0;\0>\0A\0E\0N\0Q\0U\0Y\0\\\0_\0b\0e\0i\0l\0o\0r\0u\0x\0{\0\x7F\0\x82\0\x85\0\x88\0AFTAKSTCSTESTMSTPSTASTACWSTAESTAWSTBSTBTTBNTCHASTCXTCCTEASTTLTECTGALTGulf TimeGYTHASTWITAISTICTWITWIBIRSTMYTMVTGMTNPTNSTPKTPMSTUYTHSTUTCVET") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0bras\0\0\0\0chat\0\0\0\0colo\0\0\0\0east\0\0\0\0falk\0\0\0\0haal\0\0\0\0iran\0\0\0\0newf\0\0\0\0para\0\0\0\0pimi\0\0\0\0urug\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x15\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x18\0\x1C\0 \0$\0)\0-\x002\x006\0:\0>\0A\0E\0I\0M\0AKDTCDTEDTMDTPDTADTACWDTAEDTAWDTBRSTCHADTCOSTEASSTFKSTHADTIRDTNDTPYSTPMDTUYSTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"afghalasamceameaammoampaatlaaucwaueaauwebangbhutbrunchatchricocoeasteatiecuagalagulfguyahaalinceindiindoineainweiranmalamaldmgmtnepanewfpakipimiurugvene") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"&\0\x03\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x1B\0\x1F\0#\0&\0)\0,\x001\x004\x007\0;\0>\0A\0E\0N\0Q\0U\0Y\0\\\0_\0b\0e\0i\0l\0o\0r\0u\0x\0{\0\x7F\0\x82\0AFTAKSTCSTESTMSTPSTASTACWSTAESTAWSTBSTBTTBNTCHASTCXTCCTEASTTLTECTGALTGulf TimeGYTHASTWITAISTICTWITWIBIRSTMYTMVTGMTNPTNSTPKTPMSTUYTVET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaaucwaueaauwebraschatcoloeastfalkhaalirannewfparapimiurug") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x14\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x18\0\x1C\0 \0$\0)\0-\x002\x006\0:\0>\0A\0E\0I\0AKDTCDTEDTMDTPDTADTACWDTAEDTAWDTBRSTCHADTCOSTEASSTFKSTHADTIRDTNDTPYSTPMDTUYST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0gulf\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\t\0\x0C\0\x0F\0CETEETWETGSTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0gblon\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x08\0\x0C\0CESTEESTWESTBST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwegulfmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0CETEETWETGSTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0BST") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0cham\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1E\0!\0AKSTCSTESTMSTPSTASTChSTHASTGMTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0AKDTCDTEDTMDTPDTADTHADTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlachamhaalmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0AKSTCSTESTMSTPSTASTChSTHASTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"guya\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0GYTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"guyamgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GYTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hoko\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0HKTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hoko\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HKST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hokomgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HKTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hoko") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HKST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ince\0\0\0\0inea\0\0\0\0inwe\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x04\0\x07\0\n\0\r\0WITAWITWIBGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"inceineainwemgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x07\0\n\0WITAWITWIBGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"iedub\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0IST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0GMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"iedub\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0IST") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulf\0\0\0\0indi\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0GSTISTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gulfindimgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0GSTISTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hoko\0\0\0\0maca\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0HKTMSTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hoko\0\0\0\0maca\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x04\0HKSTMDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hokomacamgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0HKTMSTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hokomaca") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x04\0HKSTMDT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mala\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0MYTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malamgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0MYTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auce\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0chat\0\0\0\0loho\0\0\0\0mgmt\0\0\0\0neze\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\t\0\r\0\x11\0\x16\0\x1A\0\x1D\0!\0ACSTACWSTAESTAWSTCHASTLHSTGMTNZSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auce\0\0\0\0aucw\0\0\0\0auea\0\0\0\0auwe\0\0\0\0chat\0\0\0\0loho\0\0\0\0neze\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\t\0\r\0\x11\0\x16\0\x1A\0ACDTACWDTAEDTAWDTCHADTLHDTNZDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwechatlohomgmtneze") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\t\0\r\0\x11\0\x16\0\x1A\0\x1D\0ACSTACWSTAESTAWSTCHASTLHSTGMTNZST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"auceaucwaueaauwechatlohoneze") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\t\0\r\0\x11\0\x16\0\x1A\0ACDTACWDTAEDTAWDTCHADTLHDTNZDT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mala\0\0\0\0mgmt\0\0\0\0sing\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0MYTGMTSGTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malamgmtsing") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0MYTGMTSGT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"arge\0\0\0\0arwe\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x07\0ARTWARTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"arge\0\0\0\0arwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x04\0ARSTWARST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"argearwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0ARTWART") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"argearwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x04\0ARSTWARST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"boli\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0BOTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"boli") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0BOT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"chil\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0CLTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"chil\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0CLST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"chil") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0CLT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"chil") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0CLST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"colo\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0COTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"colo\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0COST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"colo") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0COT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"colo") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0COST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ecua\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0ECTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ecua") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0ECT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"peru\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0PETUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"peru\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0PEST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"peru") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0PET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"peru") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0PEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"urug\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0UYTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"urug\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UYST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"urug") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UYT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"urug") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UYST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0vene\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0UTCVET") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"vene") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0VET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0#\0&\0AKSTCSTESTMSTPSTASTCETEETWETHASTGMTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0haal\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0#\0AKDTCDTEDTMDTPDTADTCESTEESTWESTHADTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaalmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0AKSTCSTESTMSTPSTASTCETEETWETHASTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\n\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0AKDTCDTEDTMDTPDTADTCESTEESTWESTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0C\0\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x96\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x8A") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xF0\x9E\xA4\x91\xF0\x9E\xA4\x95\xF0\x9E\xA4\x96") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0C\0\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x96\xF0\x9E\xA4\x91\xF0\x9E\xA4\x96\xF0\x9E\xA4\x8A") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xF0\x9E\xA4\x91\xF0\x9E\xA4\x95\xF0\x9E\xA4\x96") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0newf\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\t\0\x0C\0\x0F\0HNCHNEHNRHNPHNTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0newf\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0HACHAEHARHAPHAT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"amceameaammoampanewf") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0HNCHNEHNRHNPHNT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"amceameaammoampanewf") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0HACHAEHARHAPHAT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"frgu\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0GFTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"frgu") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0GFT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ampa\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x04\0\x07\0\n\0\r\0\x10\0ACACCETEETWETMAGUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ampa\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0gblon\0\0\0iedub\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x04\0\x08\0\x0C\0\x10\0\x13\0ASACCESTEESTWESTASBAC\xC3\x89") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ampaeuceeueaeuwemgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x04\0\x07\0\n\0\r\0ACACCETEETWETMAG") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ampaeuceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x08\0\x0C\0ASACCESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0iedub\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0ASBAC\xC3\x89") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0#\0&\0AKSTCSTESTMSTPSTASTCETEETWETHASTGMTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0gblon\0\0\0haal\0\0\0\0iedub\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0\"\0&\x004\0AKDTCDTEDTMDTPDTADTCESTEESTWESTTSBHADTTS\xC3\x88 (\xC3\x88irinn)HDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaalmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0AKSTCSTESTMSTPSTASTCETEETWETHASTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\n\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0AKDTCDTEDTMDTPDTADTCESTEESTWESTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0iedub\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x11\0TSBTS\xC3\x88 (\xC3\x88irinn)HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x15\0IST\xE0\xA4\x8F\xE0\xA4\x9A\xE0\xA4\x8F\xE0\xA4\xB8\xE0\xA4\x9F\xE0\xA5\x80UTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0IST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x12\0\xE0\xA4\x8F\xE0\xA4\x9A\xE0\xA4\x8F\xE0\xA4\xB8\xE0\xA4\x9F\xE0\xA5\x80UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HST") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0cuba\0\0\0\0grea\0\0\0\0haal\0\0\0\0ince\0\0\0\0inea\0\0\0\0inwe\0\0\0\0newf\0\0\0\0pimi\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0F\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x1D\0!\0%\0)\0,\0/\x002\x006\0AKSTCSTESTMSTPSTASTCST (Kuba)EGSTHASTWITAWITWIBNSTPMSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0cuba\0\0\0\0grea\0\0\0\0haal\0\0\0\0newf\0\0\0\0pimi\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x1D\0!\0%\0(\0AKDTCDTEDTMDTPDTADTCDT (Kuba)EGDTHADTNDTPMDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreahaalinceineainwenewfpimi") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0E\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x1D\0!\0%\0)\0,\0/\x002\0AKSTCSTESTMSTPSTASTCST (Kuba)EGSTHASTWITAWITWIBNSTPMST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreahaalnewfpimi") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x1D\0!\0%\0(\0AKDTCDTEDTMDTPDTADTCDT (Kuba)EGDTHADTNDTPMDT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"japa\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0JSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"japa\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0JDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"japa") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0JST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"japa") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0JDT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"acre\0\0\0\0amaz\0\0\0\0bras\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0ACTAMTBRTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"acre\0\0\0\0amaz\0\0\0\0bras\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0ACSTAMSTBRST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"acreamazbras") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0ACTAMTBRT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"acreamazbras") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0ACSTAMSTBRST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euea\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0EETUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euea\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0EEST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euea") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0EET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euea") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0EEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0cuba\0\0\0\0grea\0\0\0\0grwe\0\0\0\0haal\0\0\0\0newf\0\0\0\0utc\0\0\0\0\0yuko\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0\x17\0\x1B\0 \0$\0(\0+\0SSAKSSNSSRSS\xC3\x87SSPSSASSKSSGRSSGROSSHASSNFSGHSY") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0cuba\0\0\0\0grea\0\0\0\0grwe\0\0\0\0haal\0\0\0\0newf\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0\x17\0\x1B\0 \0$\0SHAKSHNSHRSH\xC3\x87SHPSHASHKSHGRSHGROSHHASHNF") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreagrwehaalnewfyuko") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0C\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0\x17\0\x1B\0 \0$\0(\0SSAKSSNSSRSS\xC3\x87SSPSSASSKSSGRSSGROSSHASSNFSY") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0SGH") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlacubagreagrwehaalnewf") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0\x17\0\x1B\0 \0$\0SHAKSHNSHRSH\xC3\x87SHPSHASHKSHGRSHGROSHHASHNF") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0suri\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0E\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0#\0&\0)\0AKSTCSTESTMSTPSTASTCETEETWETHASTGMTSRTHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0haal\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0B\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0#\0AKDTCDTEDTMDTPDTADTCESTEESTWESTHADTHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaalmgmtsuri") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0C\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0\x19\0\x1C\0 \0#\0AKSTCSTESTMSTPSTASTCETEETWETHASTGMTSRT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlaeuceeueaeuwehaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\n\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1B\0\x1F\0AKDTCDTEDTMDTPDTADTCESTEESTWESTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x16\0AKSTCSTESTMSTPSTASTHASUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKSTCSTESTMSTPSTASTHAS") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indi\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0ISTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"indimgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0ISTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azor\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x04\0\x07\0\n\0\r\0AZOTCETEETWETUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azor\0\0\0\0euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x05\0\t\0\r\0AZOSTCESTEESTWEST") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azoreuceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x07\0\n\0AZOTCETEETWET") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"azoreuceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x05\0\t\0\r\0AZOSTCESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0\x17\0\x1A\0OIAKOITOIOOIMPOIPOIAOMGOIHTCU") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0OLAKOLTOLOOLMPOLPOLAOLH") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlamgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\x0E\0\x11\0\x14\0OIAKOITOIOOIMPOIPOIAOMG") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0OIHTCU") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatla") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x04\0\x07\0\n\0\x0E\0\x11\0OLAKOLTOLOOLMPOLPOLA") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0OLH") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD9\x85 \xD8\xB9 \xD9\x88") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD9\x85 \xD8\xB9 \xD9\x88") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x07\0SE\xC4\x8CHSTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0SEL\xC4\x8CHDT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0SE\xC4\x8C") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0HSTUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0SEL\xC4\x8C") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HDT") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"haal\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x04\0HASTWaqtiga UTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"haal\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HADT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"haal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HAST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Waqtiga UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"haal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0HADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0mgmt\0\0\0\0ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\t\0\x0C\0\x1D\0CETEETWETGMTHonolulunormaltidUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euce\0\0\0\0euea\0\0\0\0euwe\0\0\0\0ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x08\0\x0C\0CESTEESTWESTHonolulusommartid") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwemgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0CETEETWETGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x11\0HonolulunormaltidUTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"euceeueaeuwe") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x04\0\x08\0CESTEESTWEST") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ushnl\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Honolulusommartid") })
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"mala\0\0\0\0sing\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0MYTSGTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"malasing") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0MYTSGT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
-                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0mgmt\0\0\0\0utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0\x1A\0AKSTCSTESTMSTPSTASTHASTGMTUTC") })
-                        }),
-                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1(unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alas\0\0\0\0amce\0\0\0\0amea\0\0\0\0ammo\0\0\0\0ampa\0\0\0\0atla\0\0\0\0haal\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
-                        }),
+                        standard: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaalmgmt") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0\x17\0AKSTCSTESTMSTPSTASTHASTGMT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0UTC") })
+                            },
+                        },
+                        daylight: icu::datetime::provider::time_zones::MetazoneNamesV1 {
+                            defaults: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"alasamceameaammoampaatlahaal") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x04\0\x07\0\n\0\r\0\x10\0\x13\0AKDTCDTEDTMDTPDTADTHADT") })
+                            },
+                            overrides: unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::vecs::VarZeroVec16::new())
+                            },
+                        },
                     },
                 ],
             };

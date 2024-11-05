@@ -1,7 +1,11 @@
 {
-  "euce": "CET",
-  "euea": "EET",
-  "euwe": "WET",
-  "mgmt": "GMT",
-  "utc": "UTC"
+  "defaults": {
+    "euce": "CET",
+    "euea": "EET",
+    "euwe": "WET",
+    "mgmt": "GMT"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
 }

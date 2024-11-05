@@ -1,24 +1,32 @@
 {
   "standard": {
-    "alas": "AKST",
-    "amce": "CST",
-    "amea": "EST",
-    "ammo": "MST",
-    "ampa": "PST",
-    "atla": "AST",
-    "haal": "HAST",
-    "mgmt": "GMT",
-    "ushnl": "HST",
-    "utc": "UTC"
+    "defaults": {
+      "alas": "AKST",
+      "amce": "CST",
+      "amea": "EST",
+      "ammo": "MST",
+      "ampa": "PST",
+      "atla": "AST",
+      "haal": "HAST",
+      "mgmt": "GMT"
+    },
+    "overrides": {
+      "ushnl": "HST",
+      "utc": "UTC"
+    }
   },
   "daylight": {
-    "alas": "AKDT",
-    "amce": "CDT",
-    "amea": "EDT",
-    "ammo": "MDT",
-    "ampa": "PDT",
-    "atla": "ADT",
-    "haal": "HADT",
-    "ushnl": "HDT"
+    "defaults": {
+      "alas": "AKDT",
+      "amce": "CDT",
+      "amea": "EDT",
+      "ammo": "MDT",
+      "ampa": "PDT",
+      "atla": "ADT",
+      "haal": "HADT"
+    },
+    "overrides": {
+      "ushnl": "HDT"
+    }
   }
 }

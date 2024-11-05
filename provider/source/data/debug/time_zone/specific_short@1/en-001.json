@@ -1,7 +1,14 @@
 {
   "standard": {
-    "mgmt": "GMT",
-    "utc": "UTC"
+    "defaults": {
+      "mgmt": "GMT"
+    },
+    "overrides": {
+      "utc": "UTC"
+    }
   },
-  "daylight": {}
+  "daylight": {
+    "defaults": {},
+    "overrides": {}
+  }
 }
