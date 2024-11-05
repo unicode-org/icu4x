@@ -1075,15 +1075,9 @@ impl UnsignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingMode};
+    /// use fixed_decimal::{UnsignedFixedDecimal, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.5").unwrap();
-    /// dec.round_with_mode(0, UnsignedRoundingMode::Floor);
-    /// assert_eq!("-4", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.5").unwrap();
-    /// dec.round_with_mode(0, UnsignedRoundingMode::Ceil);
-    /// assert_eq!("-3", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("5.455").unwrap();
     /// dec.round_with_mode(-2, UnsignedRoundingMode::HalfExpand);
     /// assert_eq!("5.46", dec.to_string());
@@ -1117,19 +1111,9 @@ impl UnsignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingMode};
+    /// use fixed_decimal::{UnsignedFixedDecimal, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-4",
-    ///     dec.rounded_with_mode(0, UnsignedRoundingMode::Floor).to_string()
-    /// );
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!(
-    ///     "-3",
-    ///     dec.rounded_with_mode(0, UnsignedRoundingMode::Ceil).to_string()
-    /// );
     /// let mut dec = UnsignedFixedDecimal::from_str("5.455").unwrap();
     /// assert_eq!(
     ///     "5.46",
@@ -1162,20 +1146,6 @@ impl UnsignedFixedDecimal {
     /// use fixed_decimal::{UnsignedFixedDecimal, RoundingIncrement, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.5").unwrap();
-    /// dec.round_with_mode_and_increment(
-    ///     0,
-    ///     UnsignedRoundingMode::Floor,
-    ///     RoundingIncrement::MultiplesOf1,
-    /// );
-    /// assert_eq!("-4", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("-3.59").unwrap();
-    /// dec.round_with_mode_and_increment(
-    ///     -1,
-    ///     UnsignedRoundingMode::Ceil,
-    ///     RoundingIncrement::MultiplesOf2,
-    /// );
-    /// assert_eq!("-3.4", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("5.455").unwrap();
     /// dec.round_with_mode_and_increment(
     ///     -2,
@@ -1183,13 +1153,7 @@ impl UnsignedFixedDecimal {
     ///     RoundingIncrement::MultiplesOf5,
     /// );
     /// assert_eq!("5.45", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("-7.235").unwrap();
-    /// dec.round_with_mode_and_increment(
-    ///     -2,
-    ///     UnsignedRoundingMode::HalfTrunc,
-    ///     RoundingIncrement::MultiplesOf25,
-    /// );
-    /// assert_eq!("-7.25", dec.to_string());
+    ///
     /// let mut dec = UnsignedFixedDecimal::from_str("9.75").unwrap();
     /// dec.round_with_mode_and_increment(
     ///     -1,
