@@ -103,13 +103,6 @@ where
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
 /// Error for `TryWriteable` implementations
 pub enum DateTimeWriteError {
-    /// An input field (such as "hour" or "month" is missing).
-    ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
-    ///
-    /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
-    #[displaydoc("Incomplete input, missing value for {0:?}")]
-    MissingInputField(&'static str),
     /// The [`MonthCode`] of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
@@ -156,6 +149,15 @@ pub enum DateTimeWriteError {
     /// `M02` for month 2, etc.).
     #[displaydoc("Names for {0:?} not loaded")]
     NamesNotLoaded(Field),
+    /// An input field (such as "hour" or "month") is missing.
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires fields
+    /// that are not returned by the input type.
+    ///
+    /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
+    #[displaydoc("Incomplete input, missing value for {0:?}")]
+    MissingInputField(&'static str),
     /// Unsupported field
     ///
     /// This *only* happens if the formatter has been created using

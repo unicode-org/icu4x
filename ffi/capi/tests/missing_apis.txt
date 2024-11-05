@@ -29,6 +29,7 @@ icu::datetime::FormattedNeoDateTime#Struct
 icu::datetime::FormattedNeoDateTime::pattern#FnInStruct
 icu::datetime::FormattedNeoDateTime::to_string_lossy#FnInStruct
 icu::datetime::FormattedNeoDateTime::try_write_to_parts#FnInStruct
+icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::NeoSkeletonLength#Enum
 icu::datetime::NeoSkeletonLength::into_option#FnInEnum
 icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
