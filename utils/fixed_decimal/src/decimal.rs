@@ -827,7 +827,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(4235970).multiplied_pow10(-3);
+    /// let mut dec = UnsignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
     /// assert_eq!("4235.970", dec.to_string());
     ///
     /// assert_eq!("04235.970", dec.clone().with_max_position(5).to_string());
@@ -918,9 +918,6 @@ impl UnsignedFixedDecimal {
     /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// dec.round(0);
-    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// dec.round(0);
     /// assert_eq!("0", dec.to_string());
@@ -949,8 +946,6 @@ impl UnsignedFixedDecimal {
     /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.rounded(0).to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// assert_eq!("0", dec.rounded(0).to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("0.5").unwrap();
@@ -1015,17 +1010,14 @@ impl UnsignedFixedDecimal {
 
     /// Rounds this number towards zero at a particular digit position.
     ///
-    /// Also see [`FixedDecimal::pad_end()`].
+    /// Also see [`UnsignedFixedDecimal::pad_end()`].
     ///
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("-1", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// dec.trunc(0);
     /// assert_eq!("0", dec.to_string());
@@ -1046,16 +1038,14 @@ impl UnsignedFixedDecimal {
 
     /// Returns this number rounded towards zero at a particular digit position.
     ///
-    /// Also see [`FixedDecimal::padded_end()`].
+    /// Also see [`UnsignedFixedDecimal::padded_end()`].
     ///
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.trunced(0).to_string());
     /// let dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = UnsignedFixedDecimal::from_str("0.5").unwrap();
@@ -1081,9 +1071,6 @@ impl UnsignedFixedDecimal {
     /// let mut dec = UnsignedFixedDecimal::from_str("5.455").unwrap();
     /// dec.round_with_mode(-2, UnsignedRoundingMode::HalfExpand);
     /// assert_eq!("5.46", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("-7.235").unwrap();
-    /// dec.round_with_mode(-2, UnsignedRoundingMode::HalfTrunc);
-    /// assert_eq!("-7.23", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("9.75").unwrap();
     /// dec.round_with_mode(-1, UnsignedRoundingMode::HalfEven);
     /// assert_eq!("9.8", dec.to_string());
@@ -1118,12 +1105,6 @@ impl UnsignedFixedDecimal {
     /// assert_eq!(
     ///     "5.46",
     ///     dec.rounded_with_mode(-2, UnsignedRoundingMode::HalfExpand)
-    ///         .to_string()
-    /// );
-    /// let mut dec = UnsignedFixedDecimal::from_str("-7.235").unwrap();
-    /// assert_eq!(
-    ///     "-7.23",
-    ///     dec.rounded_with_mode(-2, UnsignedRoundingMode::HalfTrunc)
     ///         .to_string()
     /// );
     /// let mut dec = UnsignedFixedDecimal::from_str("9.75").unwrap();
@@ -1852,6 +1833,21 @@ impl UnsignedFixedDecimal {
         Self::try_from_utf8(s.as_bytes())
     }
 
+    /// This function is used to parse a [`UnsignedFixedDecimal`] from a string without a sign.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::UnsignedFixedDecimal;
+    /// use fixed_decimal::ParseError;
+    ///
+    /// let decimal = UnsignedFixedDecimal::try_from_utf8(b"1234567890");
+    /// assert_eq!(decimal, Ok(UnsignedFixedDecimal::from(1234567890u32)));
+    ///
+    /// // In case of adding sign, the function will return an error.
+    /// let decimal = UnsignedFixedDecimal::try_from_utf8(b"-1234567890");
+    /// assert_eq!(decimal, Err(ParseError::Syntax));
+    /// ```
     pub fn try_from_utf8(input_str: &[u8]) -> Result<Self, ParseError> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
@@ -1878,16 +1874,6 @@ impl UnsignedFixedDecimal {
         Self::try_from_no_sign_utf8(no_sign_str)
     }
 
-    /// This function is used to parse a [`UnsignedFixedDecimal`] from a string without a sign.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::UnsignedFixedDecimal;
-    ///
-    /// let decimal = UnsignedFixedDecimal::try_from_no_sign_utf8(b"1234567890");
-    /// assert_eq!(decimal, Ok(UnsignedFixedDecimal::from(1234567890)));
-    /// ```
     pub(crate) fn try_from_no_sign_utf8(no_sign_str: &[u8]) -> Result<Self, ParseError> {
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
