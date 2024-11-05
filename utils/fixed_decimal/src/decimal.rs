@@ -78,12 +78,12 @@ compile_error!("The fixed_decimal crate only works if usizes are at least the si
 /// ```
 /// use fixed_decimal::UnsignedFixedDecimal;
 ///
-/// let mut dec = UnsignedFixedDecimal::from(250);
+/// let mut dec = UnsignedFixedDecimal::from(250u32);
 /// assert_eq!("250", dec.to_string());
 ///
 /// dec.multiply_pow10(-2);
 /// assert_eq!("2.50", dec.to_string());
-/// ```
+/// ```````
 #[derive(Debug, Clone, PartialEq)]
 pub struct UnsignedFixedDecimal {
     /// List of digits; digits\[0\] is the most significant.
@@ -207,7 +207,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let dec = UnsignedFixedDecimal::from(945);
+    /// let dec = UnsignedFixedDecimal::from(945u32);
     /// assert_eq!(0, dec.digit_at(-1));
     /// assert_eq!(5, dec.digit_at(0));
     /// assert_eq!(4, dec.digit_at(1));
@@ -447,7 +447,7 @@ impl UnsignedFixedDecimal {
     /// let dec: UnsignedFixedDecimal = "012.340".parse().expect("valid syntax");
     /// assert_eq!(1, dec.nonzero_magnitude_start());
     ///
-    /// assert_eq!(0, UnsignedFixedDecimal::from(0).nonzero_magnitude_start());
+    /// assert_eq!(0, UnsignedFixedDecimal::from(0u32).nonzero_magnitude_start());
     /// ```
     pub fn nonzero_magnitude_start(&self) -> i16 {
         self.magnitude
@@ -463,7 +463,7 @@ impl UnsignedFixedDecimal {
     /// let dec: UnsignedFixedDecimal = "012.340".parse().expect("valid syntax");
     /// assert_eq!(-2, dec.nonzero_magnitude_end());
     ///
-    /// assert_eq!(0, UnsignedFixedDecimal::from(0).nonzero_magnitude_end());
+    /// assert_eq!(0, UnsignedFixedDecimal::from(0u32).nonzero_magnitude_end());
     /// ```
     pub fn nonzero_magnitude_end(&self) -> i16 {
         if self.is_zero() {
@@ -509,9 +509,9 @@ impl UnsignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(42);
+    /// let mut dec = UnsignedFixedDecimal::from(42u32);
     /// assert_eq!("42", dec.to_string());
     ///
     /// dec.multiply_pow10(3);
@@ -570,7 +570,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let dec = UnsignedFixedDecimal::from(42).multiplied_pow10(3);
+    /// let dec = UnsignedFixedDecimal::from(42u32).multiplied_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiplied_pow10(mut self, delta: i16) -> Self {
@@ -585,7 +585,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let dec = UnsignedFixedDecimal::from(123400)
+    /// let dec = UnsignedFixedDecimal::from(123400u32)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
@@ -604,7 +604,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(123400)
+    /// let mut dec = UnsignedFixedDecimal::from(123400u32)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
@@ -613,11 +613,11 @@ impl UnsignedFixedDecimal {
     /// assert_eq!("12.3400", dec.to_string());
     /// ```
     ///
-    /// There is no effect if the most significant digit has magnitude less than zero:
+    /// There is no effect if the most significant digit has magnitude less than zero
     ///
     /// ```
     /// # use fixed_decimal::UnsignedFixedDecimal;
-    /// let mut dec = UnsignedFixedDecimal::from(22).multiplied_pow10(-4);
+    /// let mut dec = UnsignedFixedDecimal::from(22u32).multiplied_pow10(-4);
     /// assert_eq!("0.0022", dec.to_string());
     ///
     /// dec.trim_start();
@@ -636,7 +636,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let dec = UnsignedFixedDecimal::from(123400)
+    /// let dec = UnsignedFixedDecimal::from(123400u32)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
@@ -655,7 +655,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(123400)
+    /// let mut dec = UnsignedFixedDecimal::from(123400u32)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
@@ -668,7 +668,7 @@ impl UnsignedFixedDecimal {
     ///
     /// ```
     /// # use fixed_decimal::UnsignedFixedDecimal;
-    /// let mut dec = UnsignedFixedDecimal::from(2200);
+    /// let mut dec = UnsignedFixedDecimal::from(2200u32);
     /// assert_eq!("2200", dec.to_string());
     ///
     /// dec.trim_end();
@@ -691,7 +691,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(42);
+    /// let mut dec = UnsignedFixedDecimal::from(42u32);
     /// assert_eq!("42", dec.to_string());
     /// assert_eq!("0042", dec.clone().padded_start(4).to_string());
     ///
@@ -717,7 +717,7 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from(42);
+    /// let mut dec = UnsignedFixedDecimal::from(42u32);
     /// assert_eq!("42", dec.to_string());
     ///
     /// dec.pad_start(4);
@@ -1105,7 +1105,7 @@ impl UnsignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
     /// let dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
@@ -1882,8 +1882,8 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let integer = UnsignedFixedDecimal::from(123);
-    /// let fraction = UnsignedFixedDecimal::from(456).multiplied_pow10(-3);
+    /// let integer = UnsignedFixedDecimal::from(123u32);
+    /// let fraction = UnsignedFixedDecimal::from(456u32).multiplied_pow10(-3);
     ///
     /// let result = integer.concatenated_end(fraction).expect("nonoverlapping");
     ///
@@ -1912,8 +1912,8 @@ impl UnsignedFixedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedFixedDecimal;
     ///
-    /// let mut integer = UnsignedFixedDecimal::from(123);
-    /// let fraction = UnsignedFixedDecimal::from(456).multiplied_pow10(-3);
+    /// let mut integer = UnsignedFixedDecimal::from(123u32);
+    /// let fraction = UnsignedFixedDecimal::from(456u32).multiplied_pow10(-3);
     ///
     /// integer.concatenate_end(fraction);
     ///
@@ -2003,10 +2003,10 @@ impl UnsignedFixedDecimal {
 /// # Examples
 ///
 /// ```
-/// # use fixed_decimal::FixedDecimal;
+/// # use fixed_decimal::UnsignedFixedDecimal;
 /// # use writeable::assert_writeable_eq;
 /// #
-/// assert_writeable_eq!(FixedDecimal::from(42), "42");
+/// assert_writeable_eq!(UnsignedFixedDecimal::from(42u32), "42");
 /// ```
 impl writeable::Writeable for UnsignedFixedDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
