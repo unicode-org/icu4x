@@ -1071,59 +1071,6 @@ impl UnsignedFixedDecimal {
         self
     }
 
-    /// Rounds this number towards negative infinity at a particular digit position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::UnsignedFixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("0.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("0.6").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = UnsignedFixedDecimal::from_str("1.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("1", dec.to_string());
-    /// ```
-    #[inline(never)]
-    pub fn floor(&mut self, position: i16) {
-        self.floor_to_increment_internal(position, NoIncrement);
-    }
-
-    /// Returns this number rounded towards negative infinity at a particular digit position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::UnsignedFixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.floored(0).to_string());
-    /// let dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = UnsignedFixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = UnsignedFixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("0", dec.floored(0).to_string());
-    /// let dec = UnsignedFixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.floored(0).to_string());
-    /// ```
-    pub fn floored(mut self, position: i16) -> Self {
-        self.floor(position);
-        self
-    }
-
     /// Rounds this number towards zero at a particular digit position.
     ///
     /// Also see [`FixedDecimal::pad_end()`].
@@ -3141,35 +3088,6 @@ fn test_rounding() {
     let mut dec = UnsignedFixedDecimal::from_str("-0.009").unwrap();
     dec.ceil(-1);
     assert_eq!("-0.0", dec.to_string());
-
-    // Test Floor
-    let mut dec = UnsignedFixedDecimal::from_str("3.234").unwrap();
-    dec.floor(0);
-    assert_eq!("3", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("2.222").unwrap();
-    dec.floor(-1);
-    assert_eq!("2.2", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("99.999").unwrap();
-    dec.floor(-2);
-    assert_eq!("99.99", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("99.999").unwrap();
-    dec.floor(-10);
-    assert_eq!("99.9990000000", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.floor(-10);
-    assert_eq!("-99.9990000000", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("99.999").unwrap();
-    dec.floor(10);
-    assert_eq!("0000000000", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.floor(10);
-    assert_eq!("-10000000000", dec.to_string());
 
     // Test Truncate Right
     let mut dec = UnsignedFixedDecimal::from(4235970u32).multiplied_pow10(-3);
