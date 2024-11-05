@@ -65,9 +65,9 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use fixed_decimal::UnsignedFixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 ///
-/// let mut dec = UnsignedFixedDecimal::from(250);
+/// let mut dec = SignedFixedDecimal::from(250);
 /// assert_eq!("250", dec.to_string());
 ///
 /// dec.multiply_pow10(-2);
@@ -586,7 +586,7 @@ impl SignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, SignedRoundingMode};
+    /// use fixed_decimal::{SignedFixedDecimal, SignedRoundingMode, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
     /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
@@ -596,13 +596,13 @@ impl SignedFixedDecimal {
     /// dec.round_with_mode(0, SignedRoundingMode::Ceil);
     /// assert_eq!("-3", dec.to_string());
     /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
-    /// dec.round_with_mode(-2, SignedRoundingMode::HalfExpand);
+    /// dec.round_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand));
     /// assert_eq!("5.46", dec.to_string());
     /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
-    /// dec.round_with_mode(-2, SignedRoundingMode::HalfTrunc);
+    /// dec.round_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc));
     /// assert_eq!("-7.23", dec.to_string());
     /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
-    /// dec.round_with_mode(-1, SignedRoundingMode::HalfEven);
+    /// dec.round_with_mode(-1, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven));
     /// assert_eq!("9.8", dec.to_string());
     /// ```
     pub fn round_with_mode(&mut self, position: i16, mode: SignedRoundingMode) {
@@ -638,7 +638,7 @@ impl SignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, SignedRoundingMode};
+    /// use fixed_decimal::{SignedFixedDecimal, SignedRoundingMode, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
     /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
@@ -654,19 +654,19 @@ impl SignedFixedDecimal {
     /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
     /// assert_eq!(
     ///     "5.46",
-    ///     dec.rounded_with_mode(-2, SignedRoundingMode::HalfExpand)
+    ///     dec.rounded_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand))
     ///         .to_string()
     /// );
     /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
     /// assert_eq!(
     ///     "-7.23",
-    ///     dec.rounded_with_mode(-2, SignedRoundingMode::HalfTrunc)
+    ///     dec.rounded_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc))
     ///         .to_string()
     /// );
     /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
     /// assert_eq!(
     ///     "9.8",
-    ///     dec.rounded_with_mode(-1, SignedRoundingMode::HalfEven)
+    ///     dec.rounded_with_mode(-1, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven))
     ///         .to_string()
     /// );
     /// ```
@@ -680,7 +680,7 @@ impl SignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement, SignedRoundingMode};
+    /// use fixed_decimal::{SignedFixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
     /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
@@ -700,21 +700,21 @@ impl SignedFixedDecimal {
     /// let mut dec = SignedFixedDecimal::from_str("5.455").unwrap();
     /// dec.round_with_mode_and_increment(
     ///     -2,
-    ///     SignedRoundingMode::HalfExpand,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
     ///     RoundingIncrement::MultiplesOf5,
     /// );
     /// assert_eq!("5.45", dec.to_string());
     /// let mut dec = SignedFixedDecimal::from_str("-7.235").unwrap();
     /// dec.round_with_mode_and_increment(
     ///     -2,
-    ///     SignedRoundingMode::HalfTrunc,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc),
     ///     RoundingIncrement::MultiplesOf25,
     /// );
     /// assert_eq!("-7.25", dec.to_string());
     /// let mut dec = SignedFixedDecimal::from_str("9.75").unwrap();
     /// dec.round_with_mode_and_increment(
     ///     -1,
-    ///     SignedRoundingMode::HalfEven,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven),
     ///     RoundingIncrement::MultiplesOf5,
     /// );
     /// assert_eq!("10.0", dec.to_string());
@@ -757,7 +757,7 @@ impl SignedFixedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement, SignedRoundingMode};
+    /// use fixed_decimal::{SignedFixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode};
     /// # use std::str::FromStr;
     ///
     /// let mut dec = SignedFixedDecimal::from_str("-3.5").unwrap();
@@ -785,7 +785,7 @@ impl SignedFixedDecimal {
     ///     "5.45",
     ///     dec.rounded_with_mode_and_increment(
     ///         -2,
-    ///         SignedRoundingMode::HalfExpand,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
     ///         RoundingIncrement::MultiplesOf5
     ///     )
     ///     .to_string()
@@ -795,7 +795,7 @@ impl SignedFixedDecimal {
     ///     "-7.25",
     ///     dec.rounded_with_mode_and_increment(
     ///         -2,
-    ///         SignedRoundingMode::HalfTrunc,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc),
     ///         RoundingIncrement::MultiplesOf25
     ///     )
     ///     .to_string()
@@ -805,7 +805,7 @@ impl SignedFixedDecimal {
     ///     "10.0",
     ///     dec.rounded_with_mode_and_increment(
     ///         -1,
-    ///         SignedRoundingMode::HalfEven,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven),
     ///         RoundingIncrement::MultiplesOf5
     ///     )
     ///     .to_string()
@@ -858,15 +858,15 @@ impl SignedFixedDecimal {
     }
 }
 
-/// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
+/// Render the [`SignedFixedDecimal`] as a string of ASCII digits with a possible decimal point.
 ///
 /// # Examples
 ///
 /// ```
-/// # use fixed_decimal::FixedDecimal;
+/// # use fixed_decimal::SignedFixedDecimal;
 /// # use writeable::assert_writeable_eq;
 /// #
-/// assert_writeable_eq!(FixedDecimal::from(42), "42");
+/// assert_writeable_eq!(SignedFixedDecimal::from(42), "42");
 /// ```
 impl writeable::Writeable for SignedFixedDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
