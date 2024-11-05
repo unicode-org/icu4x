@@ -970,18 +970,15 @@ impl From<NeoTimeZoneStyle> for NeoComponents {
 impl NeoComponents {
     // Attributes for skeleta that span date/time/zone
     // TODO: Add variants for H, h, and B hours
-    const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("ejm");
-    const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("ejms");
+    const WEEKDAY_HOUR: &'static DataMarkerAttributes =
+    DataMarkerAttributes::from_str_or_panic("ej");
 
     // For matching
-    const WEEKDAY_HOUR_MINUTE_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE.as_str();
-    const WEEKDAY_HOUR_MINUTE_SECOND_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE_SECOND.as_str();
+    const WEEKDAY_HOUR_STR: &'static str = Self::WEEKDAY_HOUR.as_str();
 
     #[doc(hidden)] // for datagen
     pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
-        &[Self::WEEKDAY_HOUR_MINUTE, Self::WEEKDAY_HOUR_MINUTE_SECOND]
+        &[Self::WEEKDAY_HOUR]
     }
 
     /// Returns a stable string identifying this field set,
@@ -990,11 +987,8 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::id_str()`].
     pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
-            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinute) => {
-                Some(Self::WEEKDAY_HOUR_MINUTE)
-            }
-            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinuteSecond) => {
-                Some(Self::WEEKDAY_HOUR_MINUTE_SECOND)
+            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Hour | NeoTimeComponents::HourMinute | NeoTimeComponents::HourMinuteSecond) => {
+                Some(Self::WEEKDAY_HOUR)
             }
             _ => None,
         }
@@ -1006,13 +1000,9 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::from_id_str()`].
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
-            Self::WEEKDAY_HOUR_MINUTE_STR => Some(Self::DateTime(
+            Self::WEEKDAY_HOUR_STR => Some(Self::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
-            )),
-            Self::WEEKDAY_HOUR_MINUTE_SECOND_STR => Some(Self::DateTime(
-                NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinuteSecond,
+                NeoTimeComponents::Hour,
             )),
             _ => None,
         }

@@ -7,8 +7,7 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::neo_skeleton::{
-    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength,
-    NeoTimeComponents,
+    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength, NeoTimeComponents
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
@@ -523,6 +522,48 @@ fn test_en_hour_patterns() {
     "h a",
     "h:mm a",
     "h:mm:ss a"
+  ]
+}"#
+    );
+}
+
+#[test]
+fn test_en_overlap_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Hour).id_str().unwrap(),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "cccc, h a",
+    "ccc, h a",
+    "EEEE h:m a",
+    "E h:mm a",
+    "EEEE h:m:s a",
+    "E h:mm:ss a"
   ]
 }"#
     );
