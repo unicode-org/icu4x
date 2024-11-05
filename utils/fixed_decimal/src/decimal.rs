@@ -973,9 +973,6 @@ impl UnsignedFixedDecimal {
     /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// dec.expand(0);
     /// assert_eq!("1", dec.to_string());
@@ -1002,8 +999,6 @@ impl UnsignedFixedDecimal {
     /// use fixed_decimal::UnsignedFixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let dec = UnsignedFixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-2", dec.expanded(0).to_string());
     /// let dec = UnsignedFixedDecimal::from_str("0.4").unwrap();
     /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = UnsignedFixedDecimal::from_str("0.5").unwrap();
