@@ -99,7 +99,7 @@ mod reference {
 
         #[test]
         fn reference_pattern_serde_human_readable_test() {
-            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let pattern: Pattern = "y-M-d HH:mm".parse().expect("Failed to parse pattern");
             let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
             let result: Pattern =
                 serde_json::from_str(&json).expect("Failed to deserialize pattern");
@@ -108,7 +108,7 @@ mod reference {
 
         #[test]
         fn reference_pattern_serde_bincode_test() {
-            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let pattern: Pattern = "y-M-d HH:mm".parse().expect("Failed to parse pattern");
             let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
             let result: Pattern =
                 bincode::deserialize(&bytes).expect("Failed to deserialize pattern");
@@ -201,7 +201,7 @@ mod runtime {
 
         #[test]
         fn runtime_pattern_serde_human_readable_test() {
-            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let pattern: Pattern = "y-M-d HH:mm".parse().expect("Failed to parse pattern");
             let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
             let result: Pattern =
                 serde_json::from_str(&json).expect("Failed to deserialize pattern");
@@ -210,7 +210,7 @@ mod runtime {
 
         #[test]
         fn runtime_pattern_serde_bincode_test() {
-            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let pattern: Pattern = "y-M-d HH:mm".parse().expect("Failed to parse pattern");
             let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
             let result: Pattern =
                 bincode::deserialize(&bytes).expect("Failed to deserialize pattern");

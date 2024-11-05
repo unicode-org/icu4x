@@ -38,6 +38,7 @@ Once the release checklist is complete, the assigned release driver will perform
 
 * Land the changelog (see below)
   * Note: Do this _before_ tagging the release so that it is included in the tag
+* Remove all `-dev` prelease tags from `Cargo.toml`s
 * Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
 * Release utils (see section below). Get the version bumps reviewed and checked in before releasing.
 * Update ICU4X package versions as needed. Most of this can be done by updating `workspace.package` in the root `Cargo.toml` and the `workspace.dependencies` entries there. Some `icu_*` crates do not follow the ICU4X versioning scheme like `icu_codepointtrie_builder` or experimental crates.
