@@ -15,7 +15,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ### Format a number with Bangla digits
 
 ```rust
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locale::locale;
 use writeable::assert_writeable_eq;
@@ -26,7 +26,7 @@ let fdf = FixedDecimalFormatter::try_new(
 )
 .expect("locale should be present");
 
-let fixed_decimal = FixedDecimal::from(1000007);
+let fixed_decimal = SignedFixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ```
@@ -34,7 +34,7 @@ assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ### Format a number with digits after the decimal separator
 
 ```rust
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locale::Locale;
 use writeable::assert_writeable_eq;
@@ -43,7 +43,11 @@ let fdf =
     FixedDecimalFormatter::try_new(&Default::default(), Default::default())
         .expect("locale should be present");
 
-let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
+let fixed_decimal = {
+    let mut decimal = SignedFixedDecimal::from(200050);
+    decimal.multiply_pow10(-2);
+    decimal
+};
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 ```
@@ -54,7 +58,7 @@ Numbering systems specified in the `-u-nu` subtag will be followed as long as th
 symbols for that numbering system.
 
 ```rust
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locale::locale;
 use writeable::assert_writeable_eq;
@@ -65,7 +69,7 @@ let fdf = FixedDecimalFormatter::try_new(
 )
 .expect("locale should be present");
 
-let fixed_decimal = FixedDecimal::from(1000007);
+let fixed_decimal = SignedFixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
