@@ -2080,8 +2080,7 @@ impl UnsignedFixedDecimal {
     ///
     /// let decimal =
     ///     UnsignedFixedDecimal::try_from_f64(-5.1, FloatPrecision::Magnitude(-2))
-    ///         .expect("Finite quantity with limited precision");
-    /// assert_writeable_eq!(decimal, "-5.10");
+    ///         .expect_err("Negative numbers are not supported");
     ///
     /// let decimal =
     ///     UnsignedFixedDecimal::try_from_f64(0.012345678, FloatPrecision::RoundTrip)
