@@ -16,7 +16,7 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// An ICU4X Fixed Decimal Format object, capable of formatting a [`FixedDecimal`] as a string.
+    /// An ICU4X Fixed Decimal Format object, capable of formatting a [`SignedFixedDecimal`] as a string.
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedFixedDecimal, Struct, hidden)]
     pub struct FixedDecimalFormatter(pub icu_decimal::FixedDecimalFormatter);
@@ -126,7 +126,7 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`FixedDecimal`] to a string.
+        /// Formats a [`SignedFixedDecimal`] to a string.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::decimal::FixedDecimalFormatter::format_to_string,

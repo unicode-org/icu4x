@@ -74,7 +74,7 @@ pub mod ffi {
     }
 
     impl SignedFixedDecimal {
-        /// Construct an [`FixedDecimal`] from an integer.
+        /// Construct an [`SignedFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, rename = "from_number")]
@@ -86,7 +86,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an integer.
+        /// Construct an [`SignedFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, disable)]
@@ -98,7 +98,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an integer.
+        /// Construct an [`SignedFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, rename = "from_int")]
         #[diplomat::attr(js, rename = "from_big_int")]
@@ -110,7 +110,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an integer.
+        /// Construct an [`SignedFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
@@ -121,7 +121,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an integer-valued float
+        /// Construct an [`SignedFixedDecimal`] from an integer-valued float
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
@@ -136,7 +136,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an float, with a given power of 10 for the lower magnitude
+        /// Construct an [`SignedFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
@@ -153,7 +153,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an float, for a given number of significant digits
+        /// Construct an [`SignedFixedDecimal`] from an float, for a given number of significant digits
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
@@ -169,7 +169,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from an float, with enough digits to recover
+        /// Construct an [`SignedFixedDecimal`] from an float, with enough digits to recover
         /// the original floating point in IEEE 754 without needing trailing zeros
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
@@ -185,7 +185,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`FixedDecimal`] from a string.
+        /// Construct an [`SignedFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_str, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::from_str, FnInStruct, hidden)]
@@ -239,7 +239,7 @@ pub mod ffi {
             self.0.absolute.is_zero()
         }
 
-        /// Multiply the [`FixedDecimal`] by a given power of ten.
+        /// Multiply the [`SignedFixedDecimal`] by a given power of ten.
         #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::multiply_pow10, FnInStruct)]
         #[diplomat::rust_link(
             fixed_decimal::UnsignedFixedDecimal::multiplied_pow10,
@@ -286,21 +286,21 @@ pub mod ffi {
             self.0.absolute.trim_end()
         }
 
-        /// Zero-pad the [`FixedDecimal`] on the left to a particular position
+        /// Zero-pad the [`SignedFixedDecimal`] on the left to a particular position
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::pad_start, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::padded_start, FnInStruct, hidden)]
         pub fn pad_start(&mut self, position: i16) {
             self.0.absolute.pad_start(position)
         }
 
-        /// Zero-pad the [`FixedDecimal`] on the right to a particular position
+        /// Zero-pad the [`SignedFixedDecimal`] on the right to a particular position
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::pad_end, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::padded_end, FnInStruct, hidden)]
         pub fn pad_end(&mut self, position: i16) {
             self.0.absolute.pad_end(position)
         }
 
-        /// Truncate the [`FixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
+        /// Truncate the [`SignedFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
         /// ("2022" -> "22")
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::set_max_position, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::with_max_position, FnInStruct, hidden)]
@@ -385,7 +385,7 @@ pub mod ffi {
             })
         }
 
-        /// Format the [`FixedDecimal`] as a string.
+        /// Format the [`SignedFixedDecimal`] as a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::write_to, FnInStruct)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
