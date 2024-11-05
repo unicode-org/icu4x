@@ -123,6 +123,37 @@ impl SourceDataProvider {
                         )),
                     )
                 }
+                DateTimeFormatterOptions::Components(
+                    components @ components::Bag {
+                        hour: Some(_),
+                        ..
+                    },
+                ) => {
+                    let mut components_with_minute = components;
+                    components_with_minute.minute = Some(components::Numeric::Numeric);
+                    let mut components_with_second = components;
+                    components_with_second.minute = Some(components::Numeric::Numeric);
+                    components_with_second.second = Some(components::Numeric::Numeric);
+                    (
+                        pattern,
+                        Some(expand_pp_to_pe(
+                            DateTimeFormatterOptions::Components(components_with_minute)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )),
+                        Some(expand_pp_to_pe(
+                            DateTimeFormatterOptions::Components(components_with_second)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )),
+                    )
+                }
                 _ => (pattern, None, None),
             }
         });
@@ -174,6 +205,12 @@ impl SourceDataProvider {
                             NeoTimeComponents::DayPeriodHour12
                                 | NeoTimeComponents::DayPeriodHour12Minute
                                 | NeoTimeComponents::DayPeriodHour12MinuteSecond
+                                | NeoTimeComponents::HourMinute
+                                | NeoTimeComponents::HourMinuteSecond
+                                | NeoTimeComponents::Hour12Minute
+                                | NeoTimeComponents::Hour12MinuteSecond
+                                | NeoTimeComponents::Hour24Minute
+                                | NeoTimeComponents::Hour24MinuteSecond
                         )
                     })
                     .copied()
@@ -448,6 +485,44 @@ fn test_en_year_patterns() {
     "MMMM d, y GGG",
     "MMM d, y GGG",
     "M/d/y GGG"
+  ]
+}"#
+    );
+}
+
+#[test]
+fn test_en_hour_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                NeoTimeComponents::Hour.id_str(),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "h a",
+    "h:mm a",
+    "h:mm:ss a"
   ]
 }"#
     );
