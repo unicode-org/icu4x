@@ -2426,11 +2426,6 @@ fn test_from_str() {
     }
     let cases = [
         TestCase {
-            input_str: "-00123400",
-            output_str: None,
-            magnitudes: [7, 5, 2, 0],
-        },
-        TestCase {
             input_str: "+00123400",
             output_str: None,
             magnitudes: [7, 5, 2, 0],
@@ -2441,34 +2436,14 @@ fn test_from_str() {
             magnitudes: [0, -2, -5, -7],
         },
         TestCase {
-            input_str: "-00.123400",
-            output_str: None,
-            magnitudes: [1, -1, -4, -6],
-        },
-        TestCase {
             input_str: "0012.3400",
             output_str: None,
             magnitudes: [3, 1, -2, -4],
         },
         TestCase {
-            input_str: "-0012340.0",
-            output_str: None,
-            magnitudes: [6, 4, 1, -1],
-        },
-        TestCase {
             input_str: "1234",
             output_str: None,
             magnitudes: [3, 3, 0, 0],
-        },
-        TestCase {
-            input_str: "0.000000001",
-            output_str: None,
-            magnitudes: [0, -9, -9, -9],
-        },
-        TestCase {
-            input_str: "0.0000000010",
-            output_str: None,
-            magnitudes: [0, -9, -9, -10],
         },
         TestCase {
             input_str: "1000000",
@@ -2496,17 +2471,7 @@ fn test_from_str() {
             magnitudes: [11, 9, -33, -36],
         },
         TestCase {
-            input_str: "-009223372000.003685477580898230948203840239384000",
-            output_str: None,
-            magnitudes: [11, 9, -33, -36],
-        },
-        TestCase {
             input_str: "0",
-            output_str: None,
-            magnitudes: [0, 0, 0, 0],
-        },
-        TestCase {
-            input_str: "-0",
             output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
@@ -2520,11 +2485,6 @@ fn test_from_str() {
             output_str: None,
             magnitudes: [2, 0, 0, 0],
         },
-        TestCase {
-            input_str: "-00.0",
-            output_str: None,
-            magnitudes: [1, 0, 0, -1],
-        },
         // no leading 0 parsing
         TestCase {
             input_str: ".0123400",
@@ -2535,11 +2495,6 @@ fn test_from_str() {
             input_str: ".000000001",
             output_str: Some("0.000000001"),
             magnitudes: [0, -9, -9, -9],
-        },
-        TestCase {
-            input_str: "-.123400",
-            output_str: Some("-0.123400"),
-            magnitudes: [0, -1, -4, -6],
         },
     ];
     for cas in &cases {
@@ -2553,6 +2508,13 @@ fn test_from_str() {
         assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{cas:?}");
         let input_str_roundtrip = fd.to_string();
         let output_str = cas.output_str.unwrap_or(cas.input_str);
+
+        // Check if the output string starts with a plus sign and remove it,
+        // because we do not show sign for unsigned fixed decimal
+        let output_str = match output_str.strip_prefix('+') {
+            Some(stripped) => stripped,
+            None => output_str,
+        };
         assert_eq!(output_str, input_str_roundtrip, "{cas:?}");
     }
 }
@@ -2566,10 +2528,6 @@ fn test_from_str_scientific() {
     }
     let cases = [
         TestCase {
-            input_str: "-5.4e10",
-            output: "-54000000000",
-        },
-        TestCase {
             input_str: "5.4e-2",
             output: "0.054",
         },
@@ -2578,16 +2536,8 @@ fn test_from_str_scientific() {
             output: "0.541",
         },
         TestCase {
-            input_str: "-541e-2",
-            output: "-5.41",
-        },
-        TestCase {
             input_str: "0.009E10",
             output: "90000000",
-        },
-        TestCase {
-            input_str: "-9000E-10",
-            output: "-0.0000009",
         },
     ];
     for cas in &cases {
@@ -2762,7 +2712,7 @@ fn test_syntax_error() {
         },
         TestCase {
             input_str: "-0.00123400",
-            expected_err: None,
+            expected_err: Some(ParseError::Syntax),
         },
         TestCase {
             input_str: "00123400.",
@@ -2790,7 +2740,7 @@ fn test_syntax_error() {
         },
         TestCase {
             input_str: "-1",
-            expected_err: None,
+            expected_err: Some(ParseError::Syntax),
         },
     ];
     for cas in &cases {
@@ -2808,17 +2758,17 @@ fn test_syntax_error() {
 
 #[test]
 fn test_pad() {
-    let mut dec = UnsignedFixedDecimal::from_str("-0.42").unwrap();
-    assert_eq!("-0.42", dec.to_string());
+    let mut dec = UnsignedFixedDecimal::from_str("0.42").unwrap();
+    assert_eq!("0.42", dec.to_string());
 
     dec.pad_start(1);
-    assert_eq!("-0.42", dec.to_string());
+    assert_eq!("0.42", dec.to_string());
 
     dec.pad_start(4);
-    assert_eq!("-0000.42", dec.to_string());
+    assert_eq!("0000.42", dec.to_string());
 
     dec.pad_start(2);
-    assert_eq!("-00.42", dec.to_string());
+    assert_eq!("00.42", dec.to_string());
 }
 
 #[test]
@@ -2920,10 +2870,6 @@ fn test_rounding() {
     dec.trunc(2);
     assert_eq!("00000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.trunc(-2);
-    assert_eq!("-99.99", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.trunc(-1);
     assert_eq!("1234.5", dec.to_string());
@@ -2965,29 +2911,13 @@ fn test_rounding() {
     dec.expand(-5);
     assert_eq!("99.99900", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.expand(-5);
-    assert_eq!("-99.99900", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.expand(-2);
-    assert_eq!("-100.00", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("99.999").unwrap();
     dec.expand(4);
     assert_eq!("10000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.expand(4);
-    assert_eq!("-10000", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("0.009").unwrap();
     dec.expand(-1);
     assert_eq!("0.1", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-0.009").unwrap();
-    dec.expand(-1);
-    assert_eq!("-0.1", dec.to_string());
 
     let mut dec = UnsignedFixedDecimal::from_str("3.954").unwrap();
     dec.expand(0);
@@ -3018,14 +2948,6 @@ fn test_rounding() {
     dec.round_with_mode(-1, UnsignedRoundingMode::HalfExpand);
     assert_eq!("2.5", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-2.44").unwrap();
-    dec.round_with_mode(-1, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-2.4", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-2.45").unwrap();
-    dec.round_with_mode(-1, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-2.5", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("22.222").unwrap();
     dec.round_with_mode(-2, UnsignedRoundingMode::HalfExpand);
     assert_eq!("22.22", dec.to_string());
@@ -3038,29 +2960,13 @@ fn test_rounding() {
     dec.round_with_mode(-5, UnsignedRoundingMode::HalfExpand);
     assert_eq!("99.99900", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode(-5, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-99.99900", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode(-2, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-100.00", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("99.999").unwrap();
     dec.round_with_mode(4, UnsignedRoundingMode::HalfExpand);
     assert_eq!("0000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode(4, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-0000", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("0.009").unwrap();
     dec.round_with_mode(-1, UnsignedRoundingMode::HalfExpand);
     assert_eq!("0.0", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-0.009").unwrap();
-    dec.round_with_mode(-1, UnsignedRoundingMode::HalfExpand);
-    assert_eq!("-0.0", dec.to_string());
 
     // Test specific cases
     let mut dec = UnsignedFixedDecimal::from_str("1.108").unwrap();
@@ -3235,14 +3141,6 @@ fn test_rounding_increment() {
     );
     assert_eq!("00000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode_and_increment(
-        -2,
-        UnsignedRoundingMode::Trunc,
-        RoundingIncrement::MultiplesOf25,
-    );
-    assert_eq!("-99.75", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.round_with_mode_and_increment(
         -1,
@@ -3395,14 +3293,6 @@ fn test_rounding_increment() {
         RoundingIncrement::MultiplesOf2,
     );
     assert_eq!("500000", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode_and_increment(
-        -2,
-        UnsignedRoundingMode::Expand,
-        RoundingIncrement::MultiplesOf25,
-    );
-    assert_eq!("-100.00", dec.to_string());
 
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.round_with_mode_and_increment(
@@ -3557,14 +3447,6 @@ fn test_rounding_increment() {
     );
     assert_eq!("00000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode_and_increment(
-        -2,
-        UnsignedRoundingMode::HalfTrunc,
-        RoundingIncrement::MultiplesOf25,
-    );
-    assert_eq!("-100.00", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.round_with_mode_and_increment(
         -1,
@@ -3718,14 +3600,6 @@ fn test_rounding_increment() {
     );
     assert_eq!("00000", dec.to_string());
 
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode_and_increment(
-        -2,
-        UnsignedRoundingMode::HalfExpand,
-        RoundingIncrement::MultiplesOf25,
-    );
-    assert_eq!("-100.00", dec.to_string());
-
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.round_with_mode_and_increment(
         -1,
@@ -3856,14 +3730,6 @@ fn test_rounding_increment() {
         RoundingIncrement::MultiplesOf2,
     );
     assert_eq!("00000", dec.to_string());
-
-    let mut dec = UnsignedFixedDecimal::from_str("-99.999").unwrap();
-    dec.round_with_mode_and_increment(
-        -2,
-        UnsignedRoundingMode::HalfEven,
-        RoundingIncrement::MultiplesOf25,
-    );
-    assert_eq!("-100.00", dec.to_string());
 
     let mut dec = UnsignedFixedDecimal::from_str("1234.56").unwrap();
     dec.round_with_mode_and_increment(
