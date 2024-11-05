@@ -7,7 +7,7 @@ use core::str::FromStr;
 
 use crate::FixedInteger;
 use crate::ParseError;
-use crate::UnsignedFixedDecimal;
+use crate::SignedFixedDecimal;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in scientific notation, such as 1.729×10³.
@@ -16,12 +16,12 @@ use crate::UnsignedFixedDecimal;
 /// and an optional sign for both the significand and the exponent.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ScientificDecimal {
-    significand: UnsignedFixedDecimal,
+    significand: SignedFixedDecimal,
     exponent: FixedInteger,
 }
 
 impl ScientificDecimal {
-    pub fn from(significand: UnsignedFixedDecimal, exponent: FixedInteger) -> Self {
+    pub fn from(significand: SignedFixedDecimal, exponent: FixedInteger) -> Self {
         ScientificDecimal {
             significand,
             exponent,
@@ -35,7 +35,7 @@ impl ScientificDecimal {
 /// # Examples
 ///
 /// ```
-/// # use fixed_decimal::FixedDecimal;
+/// # use fixed_decimal::SignedFixedDecimal;
 /// # use fixed_decimal::FixedInteger;
 /// # use fixed_decimal::ScientificDecimal;
 /// # use std::str::FromStr;
@@ -43,14 +43,18 @@ impl ScientificDecimal {
 /// #
 /// assert_writeable_eq!(
 ///     ScientificDecimal::from(
-///         FixedDecimal::from(1729).multiplied_pow10(-3),
+///         {
+///         let mut dec = SignedFixedDecimal::from(1729u32);
+///         dec.multiply_pow10(-3);
+///         dec
+///     },
 ///         FixedInteger::from(3)
 ///     ),
 ///     "1.729e3"
 /// );
 /// assert_writeable_eq!(
 ///     ScientificDecimal::from(
-///         FixedDecimal::from_str("+1.729").unwrap(),
+///         SignedFixedDecimal::from_str("+1.729").unwrap(),
 ///         FixedInteger::from_str("+03").unwrap()
 ///     ),
 ///     "+1.729e+03"
@@ -90,7 +94,7 @@ impl ScientificDecimal {
             return Err(ParseError::Syntax);
         }
         Ok(ScientificDecimal::from(
-            UnsignedFixedDecimal::try_from_utf8(significand)?,
+            SignedFixedDecimal::try_from_utf8(significand)?,
             FixedInteger::try_from_utf8(exponent)?,
         ))
     }
