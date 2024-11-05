@@ -18,89 +18,31 @@ use icu_timezone::provider::EPOCH;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
-/// All time zone styles that this crate can format
-#[derive(Debug, Copy, Clone)]
-pub(crate) enum ResolvedNeoTimeZoneSkeleton {
-    Location,
-    GenericShort,
-    GenericLong,
-    SpecificShort,
-    SpecificLong,
-    OffsetShort,
-    OffsetLong,
-    Bcp47Id,
-    // UTS 35 defines 10 variants of ISO-8601-style time zone formats.
-    // They don't have their own names, so they are identified here by
-    // their datetime pattern strings.
-    Isox,
-    Isoxx,
-    Isoxxx,
-    Isoxxxx,
-    Isoxxxxx,
-    IsoX,
-    IsoXX,
-    IsoXXX,
-    IsoXXXX,
-    IsoXXXXX,
-    // TODO:
-    // `VV` "America/Los_Angeles"
-    // `VVV` "Los Angeles"
-}
-
-impl ResolvedNeoTimeZoneSkeleton {
-    pub(crate) fn from_field(field_symbol: TimeZone, field_length: FieldLength) -> Option<Self> {
-        crate::tz_registry::field_to_resolved(field_symbol, field_length)
-    }
-    pub(crate) fn to_field(self) -> crate::fields::Field {
-        crate::tz_registry::resolved_to_field(self)
-    }
-
-    pub(crate) fn units(self) -> impl Iterator<Item = TimeZoneFormatterUnit> {
-        match self {
-            // `z..zzzz`
-            ResolvedNeoTimeZoneSkeleton::SpecificShort
-            | ResolvedNeoTimeZoneSkeleton::SpecificLong => [
-                Some(TimeZoneFormatterUnit::SpecificNonLocation(
-                    self.to_field().length,
-                )),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+impl TimeZone {
+    pub(crate) fn units(self, length: FieldLength) -> impl Iterator<Item = TimeZoneFormatterUnit> {
+        match (self, length) {
+            (Self::SpecificNonLocation, _) => [
+                Some(TimeZoneFormatterUnit::SpecificNonLocation(length)),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
             ],
-            // 'v', 'vvvv'
-            ResolvedNeoTimeZoneSkeleton::GenericShort
-            | ResolvedNeoTimeZoneSkeleton::GenericLong => [
-                Some(TimeZoneFormatterUnit::GenericNonLocation(
-                    self.to_field().length,
-                )),
+            (Self::GenericNonLocation, _) => [
+                Some(TimeZoneFormatterUnit::GenericNonLocation(length)),
                 Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
             ],
-            // 'VVVV'
-            ResolvedNeoTimeZoneSkeleton::Location => [
+            (Self::Location, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
             ],
-            // `O`, `OOOO`, `ZZZZ`
-            ResolvedNeoTimeZoneSkeleton::OffsetShort | ResolvedNeoTimeZoneSkeleton::OffsetLong => [
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+            (Self::LocalizedOffset, _) | (Self::UpperZ, FieldLength::Wide) => [
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
                 None,
             ],
-            // 'V'
-            ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-                [Some(TimeZoneFormatterUnit::Bcp47Id), None, None]
-            }
-            // 'X'
-            ResolvedNeoTimeZoneSkeleton::IsoX => [
+            (Self::Location, _) => [Some(TimeZoneFormatterUnit::Bcp47Id), None, None],
+            (Self::IsoWithZ, FieldLength::One) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Optional,
@@ -109,8 +51,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XX'
-            ResolvedNeoTimeZoneSkeleton::IsoXX => [
+            (Self::IsoWithZ, FieldLength::TwoDigit) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Required,
@@ -119,8 +60,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXX'
-            ResolvedNeoTimeZoneSkeleton::IsoXXX => [
+            (Self::IsoWithZ, FieldLength::Abbreviated) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcExtended,
                     minutes: IsoMinutes::Required,
@@ -129,8 +69,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXXX'
-            ResolvedNeoTimeZoneSkeleton::IsoXXXX => [
+            (Self::IsoWithZ, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Required,
@@ -139,8 +78,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXXXX', 'ZZZZZ'
-            ResolvedNeoTimeZoneSkeleton::IsoXXXXX => [
+            (Self::IsoWithZ, _) | (Self::UpperZ, FieldLength::Narrow) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcExtended,
                     minutes: IsoMinutes::Required,
@@ -149,8 +87,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'x'
-            ResolvedNeoTimeZoneSkeleton::Isox => [
+            (Self::Iso, FieldLength::One) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Optional,
@@ -159,8 +96,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xx'
-            ResolvedNeoTimeZoneSkeleton::Isoxx => [
+            (Self::Iso, FieldLength::TwoDigit) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,
@@ -169,8 +105,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxx'
-            ResolvedNeoTimeZoneSkeleton::Isoxxx => [
+            (Self::Iso, FieldLength::Abbreviated) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Extended,
                     minutes: IsoMinutes::Required,
@@ -179,8 +114,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxxx', 'Z', 'ZZ', 'ZZZ'
-            ResolvedNeoTimeZoneSkeleton::Isoxxxx => [
+            (Self::Iso, FieldLength::Wide) | (Self::UpperZ, _) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,
@@ -189,8 +123,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxxxx', 'ZZZZZ'
-            ResolvedNeoTimeZoneSkeleton::Isoxxxxx => [
+            (Self::Iso, _) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Extended,
                     minutes: IsoMinutes::Required,

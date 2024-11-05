@@ -8,7 +8,7 @@ use super::{
     MonthPlaceholderValue,
 };
 use crate::external_loaders::*;
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::helpers::size_test;
 use crate::input;
 use crate::input::ExtractedInput;
@@ -22,7 +22,6 @@ use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
@@ -1516,9 +1515,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzPeriodV1Marker::bind(provider),
             &ExternalLoaderUnstable(provider),
             locale,
-            pattern
-                .iter_items()
-                .filter_map(FieldForDataLoading::try_from_pattern_item),
+            pattern.iter_items(),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1589,9 +1586,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzPeriodV1Marker::bind(&crate::provider::Baked),
             &ExternalLoaderCompiledData,
             locale,
-            pattern
-                .iter_items()
-                .filter_map(FieldForDataLoading::try_from_pattern_item),
+            pattern.iter_items(),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1638,20 +1633,6 @@ impl From<SingleLoadError> for LoadError {
             SingleLoadError::UnsupportedField(f) => LoadError::UnsupportedField(f),
             SingleLoadError::TypeTooNarrow(f) => LoadError::TypeTooNarrow(f),
             SingleLoadError::DuplicateField(f) => LoadError::DuplicateField(f),
-        }
-    }
-}
-
-pub(crate) enum FieldForDataLoading {
-    Field(Field),
-    TimeZone(ResolvedNeoTimeZoneSkeleton),
-}
-
-impl FieldForDataLoading {
-    pub(crate) fn try_from_pattern_item(pattern_item: PatternItem) -> Option<Self> {
-        match pattern_item {
-            PatternItem::Field(field) => Some(Self::Field(field)),
-            PatternItem::Literal(_) => None,
         }
     }
 }
@@ -1895,7 +1876,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1921,7 +1902,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1947,7 +1928,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
         };
         let variables = ();
@@ -1973,7 +1954,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1999,7 +1980,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), SingleLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
         };
         let variables = ();
@@ -2066,45 +2047,18 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
         locale: &DataLocale,
-        pattern_items: impl Iterator<Item = FieldForDataLoading>,
+        pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), LoadError> {
         let mut numeric_field = None;
         for item in pattern_items {
-            let item = match item {
-                FieldForDataLoading::Field(Field {
-                    symbol: FieldSymbol::TimeZone(field_symbol),
-                    length,
-                }) => {
-                    match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, length) {
-                        Some(time_zone) => FieldForDataLoading::TimeZone(time_zone),
-                        None => {
-                            // Unknown time zone field: ignore for data loading
-                            continue;
-                        }
-                    }
-                }
-                _ => item,
+            let PatternItem::Field(field) = item else {
+                continue;
             };
-            let field = match item {
-                FieldForDataLoading::Field(field) => field,
-                FieldForDataLoading::TimeZone(time_zone) => {
-                    match time_zone {
-                        // `z..zzz`
-                        ResolvedNeoTimeZoneSkeleton::SpecificShort => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(LoadError::Data)?;
-                            self.load_time_zone_specific_short_names(
-                                mz_specific_short_provider,
-                                mz_period_provider,
-                                locale,
-                            )?;
-                        }
-                        // `zzzz`
-                        ResolvedNeoTimeZoneSkeleton::SpecificLong => {
+
+            match field.symbol {
+                FieldSymbol::TimeZone(time_zone) => {
+                    match (time_zone, field.length) {
+                        (TimeZone::SpecificNonLocation, FieldLength::Wide) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
@@ -2117,24 +2071,20 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 locale,
                             )?;
                         }
-                        // 'v'
-                        ResolvedNeoTimeZoneSkeleton::GenericShort => {
+                        (TimeZone::SpecificNonLocation, _) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
                                 locale,
                             )
                             .map_err(LoadError::Data)?;
-                            self.load_time_zone_generic_short_names(
-                                mz_generic_short_provider,
+                            self.load_time_zone_specific_short_names(
+                                mz_specific_short_provider,
                                 mz_period_provider,
                                 locale,
                             )?;
-                            // For fallback:
-                            self.load_time_zone_location_names(locations_provider, locale)?;
                         }
-                        // 'vvvv'
-                        ResolvedNeoTimeZoneSkeleton::GenericLong => {
+                        (TimeZone::GenericNonLocation, FieldLength::Wide) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
@@ -2149,8 +2099,22 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             // For fallback:
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
-                        // 'VVVV' (note: `V..VV` are for identifiers only)
-                        ResolvedNeoTimeZoneSkeleton::Location => {
+                        (TimeZone::GenericNonLocation, _) => {
+                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                            self.load_fixed_decimal_formatter(
+                                fixed_decimal_formatter_loader,
+                                locale,
+                            )
+                            .map_err(LoadError::Data)?;
+                            self.load_time_zone_generic_short_names(
+                                mz_generic_short_provider,
+                                mz_period_provider,
+                                locale,
+                            )?;
+                            // For fallback:
+                            self.load_time_zone_location_names(locations_provider, locale)?;
+                        }
+                        (TimeZone::Location, FieldLength::Wide) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
@@ -2159,8 +2123,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             .map_err(LoadError::Data)?;
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
-                        ResolvedNeoTimeZoneSkeleton::OffsetShort
-                        | ResolvedNeoTimeZoneSkeleton::OffsetLong => {
+                        (TimeZone::LocalizedOffset, _) | (TimeZone::UpperZ, FieldLength::Wide) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
@@ -2168,24 +2131,17 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )
                             .map_err(LoadError::Data)?;
                         }
-                        ResolvedNeoTimeZoneSkeleton::Isox
-                        | ResolvedNeoTimeZoneSkeleton::Isoxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxxxx
-                        | ResolvedNeoTimeZoneSkeleton::IsoX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
-                        | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
+                        (
+                            TimeZone::IsoWithZ
+                            | TimeZone::Iso
+                            | TimeZone::Location
+                            | TimeZone::UpperZ,
+                            _,
+                        ) => {
                             // no data required
                         }
-                    };
-                    continue;
+                    }
                 }
-            };
-            match field.symbol {
                 ///// Textual symbols /////
                 FieldSymbol::Era => {
                     self.load_year_names(year_provider, locale, field.length)?;
@@ -2212,9 +2168,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
-                FieldSymbol::TimeZone(_) => {
-                    debug_assert!(false, "handled above");
-                }
 
                 ///// Numeric symbols /////
                 FieldSymbol::Year(_) => numeric_field = Some(field),
@@ -2224,7 +2177,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::Minute => numeric_field = Some(field),
                 FieldSymbol::Second(_) => numeric_field = Some(field),
                 FieldSymbol::DecimalSecond(_) => numeric_field = Some(field),
-            };
+            }
         }
 
         if numeric_field.is_some() {

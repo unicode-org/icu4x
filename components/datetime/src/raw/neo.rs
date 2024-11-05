@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::format::neo::FieldForDataLoading;
+use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
@@ -16,7 +15,6 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
@@ -77,7 +75,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug)]
 pub(crate) enum ZonePatternSelectionData {
-    SinglePatternItem(ResolvedNeoTimeZoneSkeleton, <PatternItem as AsULE>::ULE),
+    SinglePatternItem(TimeZone, FieldLength, <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -182,9 +180,7 @@ impl DatePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SkeletonDate { options, payload } => {
                 payload
@@ -193,9 +189,7 @@ impl DatePatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -311,9 +305,7 @@ impl OverlapPatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             OverlapPatternSelectionData::SkeletonDateTime {
                 options, payload, ..
@@ -324,9 +316,7 @@ impl OverlapPatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -387,9 +377,7 @@ impl TimePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SkeletonTime {
                 options, payload, ..
@@ -400,9 +388,7 @@ impl TimePatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -445,23 +431,28 @@ impl ZonePatternSelectionData {
         } else {
             NeoSkeletonLength::Short
         };
-        let time_zone = components.resolve(length);
-        let pattern_item = PatternItem::Field(time_zone.to_field());
-        Self::SinglePatternItem(time_zone, pattern_item.to_unaligned())
+        let (symbol, length) = components.resolve(length);
+        let pattern_item = PatternItem::Field(Field {
+            symbol: FieldSymbol::TimeZone(symbol),
+            length,
+        });
+        Self::SinglePatternItem(symbol, length, pattern_item.to_unaligned())
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
-        let Self::SinglePatternItem(time_zone, _) = self;
-        [FieldForDataLoading::TimeZone(*time_zone)].into_iter()
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let Self::SinglePatternItem(symbol, length, _) = self;
+        [PatternItem::Field(Field {
+            symbol: FieldSymbol::TimeZone(*symbol),
+            length: *length,
+        })]
+        .into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _input: &ExtractedInput) -> ZonePatternDataBorrowed {
-        let Self::SinglePatternItem(_, pattern_item) = self;
+        let Self::SinglePatternItem(_, _, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
 }
@@ -628,9 +619,7 @@ impl DateTimeZonePatternSelectionData {
 
     /// Returns an iterator over the pattern items that may need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let (date, time, zone, overlap) = match self {
             DateTimeZonePatternSelectionData::Date(date) => (Some(date), None, None, None),
             DateTimeZonePatternSelectionData::Time(time) => (None, Some(time), None, None),

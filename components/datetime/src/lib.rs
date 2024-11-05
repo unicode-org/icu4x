@@ -107,7 +107,6 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 mod time_zone;
-mod tz_registry;
 
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;

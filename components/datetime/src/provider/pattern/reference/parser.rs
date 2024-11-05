@@ -614,21 +614,33 @@ mod tests {
                     '.'.into(),
                     '.'.into(),
                     ' '.into(),
-                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                    (
+                        fields::TimeZone::SpecificNonLocation.into(),
+                        FieldLength::One,
+                    )
+                        .into(),
                 ],
             ),
             (
                 "s.SSz",
                 vec![
                     (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
-                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                    (
+                        fields::TimeZone::SpecificNonLocation.into(),
+                        FieldLength::One,
+                    )
+                        .into(),
                 ],
             ),
             (
                 "sSSz",
                 vec![
                     (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
-                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                    (
+                        fields::TimeZone::SpecificNonLocation.into(),
+                        FieldLength::One,
+                    )
+                        .into(),
                 ],
             ),
             (
@@ -650,7 +662,11 @@ mod tests {
                 vec![
                     (fields::Second::Second.into(), FieldLength::One).into(),
                     '.'.into(),
-                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                    (
+                        fields::TimeZone::SpecificNonLocation.into(),
+                        FieldLength::One,
+                    )
+                        .into(),
                 ],
             ),
             (
@@ -663,7 +679,11 @@ mod tests {
             ),
             (
                 "z",
-                vec![(fields::TimeZone::LowerZ.into(), FieldLength::One).into()],
+                vec![(
+                    fields::TimeZone::SpecificNonLocation.into(),
+                    FieldLength::One,
+                )
+                    .into()],
             ),
             (
                 "Z",
@@ -671,23 +691,27 @@ mod tests {
             ),
             (
                 "O",
-                vec![(fields::TimeZone::UpperO.into(), FieldLength::One).into()],
+                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::One).into()],
             ),
             (
                 "v",
-                vec![(fields::TimeZone::LowerV.into(), FieldLength::One).into()],
+                vec![(
+                    fields::TimeZone::GenericNonLocation.into(),
+                    FieldLength::One,
+                )
+                    .into()],
             ),
             (
                 "V",
-                vec![(fields::TimeZone::UpperV.into(), FieldLength::One).into()],
+                vec![(fields::TimeZone::Location.into(), FieldLength::One).into()],
             ),
             (
                 "x",
-                vec![(fields::TimeZone::LowerX.into(), FieldLength::One).into()],
+                vec![(fields::TimeZone::Iso.into(), FieldLength::One).into()],
             ),
             (
                 "X",
-                vec![(fields::TimeZone::UpperX.into(), FieldLength::One).into()],
+                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::One).into()],
             ),
         ];
 
