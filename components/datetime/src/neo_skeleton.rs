@@ -147,7 +147,10 @@ impl IntoOption<YearStyle> for YearStyle {
 /// A specification for how precisely to display the time of day.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(untagged, rename_all = "lowercase"))]
+#[cfg_attr(
+    feature = "serde",
+    serde(from = "TimePrecisionSerde", into = "TimePrecisionSerde")
+)]
 #[non_exhaustive]
 pub enum TimePrecision {
     /// Always display the hour. Display smaller fields if they are nonzero.

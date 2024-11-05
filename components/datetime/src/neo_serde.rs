@@ -27,7 +27,7 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) alignment: Option<Alignment>,
     #[serde(rename = "yearStyle")]
     pub(crate) year_style: Option<YearStyle>,
-    #[serde(rename = "fractionalSecondDigits")]
+    #[serde(rename = "timePrecision")]
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
@@ -53,6 +53,70 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
             year_style: value.year_style,
             time_precision: value.time_precision,
         })
+    }
+}
+
+#[derive(Copy, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) enum TimePrecisionSerde {
+    Hour,
+    HourExact,
+    Minute,
+    MinuteExact,
+    Second,
+    SecondExact,
+    SecondF1,
+    SecondF2,
+    SecondF3,
+    SecondF4,
+    SecondF5,
+    SecondF6,
+    SecondF7,
+    SecondF8,
+    SecondF9,
+}
+
+impl From<TimePrecision> for TimePrecisionSerde {
+    fn from(value: TimePrecision) -> Self {
+        match value {
+            TimePrecision::Hour => TimePrecisionSerde::Hour,
+            TimePrecision::HourExact => TimePrecisionSerde::HourExact,
+            TimePrecision::Minute => TimePrecisionSerde::Minute,
+            TimePrecision::MinuteExact => TimePrecisionSerde::MinuteExact,
+            TimePrecision::Second => TimePrecisionSerde::Second,
+            TimePrecision::SecondExact(FractionalSecondDigits::F0) => TimePrecisionSerde::SecondExact,
+            TimePrecision::SecondExact(FractionalSecondDigits::F1) => TimePrecisionSerde::SecondF1,
+            TimePrecision::SecondExact(FractionalSecondDigits::F2) => TimePrecisionSerde::SecondF2,
+            TimePrecision::SecondExact(FractionalSecondDigits::F3) => TimePrecisionSerde::SecondF3,
+            TimePrecision::SecondExact(FractionalSecondDigits::F4) => TimePrecisionSerde::SecondF4,
+            TimePrecision::SecondExact(FractionalSecondDigits::F5) => TimePrecisionSerde::SecondF5,
+            TimePrecision::SecondExact(FractionalSecondDigits::F6) => TimePrecisionSerde::SecondF6,
+            TimePrecision::SecondExact(FractionalSecondDigits::F7) => TimePrecisionSerde::SecondF7,
+            TimePrecision::SecondExact(FractionalSecondDigits::F8) => TimePrecisionSerde::SecondF8,
+            TimePrecision::SecondExact(FractionalSecondDigits::F9) => TimePrecisionSerde::SecondF9,
+        }
+    }
+}
+
+impl From<TimePrecisionSerde> for TimePrecision {
+    fn from(value: TimePrecisionSerde) -> Self {
+        match value {
+            TimePrecisionSerde::Hour => TimePrecision::Hour,
+            TimePrecisionSerde::HourExact => TimePrecision::HourExact,
+            TimePrecisionSerde::Minute => TimePrecision::Minute,
+            TimePrecisionSerde::MinuteExact => TimePrecision::MinuteExact,
+            TimePrecisionSerde::Second => TimePrecision::Second,
+            TimePrecisionSerde::SecondExact => TimePrecision::SecondExact(FractionalSecondDigits::F0),
+            TimePrecisionSerde::SecondF1 => TimePrecision::SecondExact(FractionalSecondDigits::F1),
+            TimePrecisionSerde::SecondF2 => TimePrecision::SecondExact(FractionalSecondDigits::F2),
+            TimePrecisionSerde::SecondF3 => TimePrecision::SecondExact(FractionalSecondDigits::F3),
+            TimePrecisionSerde::SecondF4 => TimePrecision::SecondExact(FractionalSecondDigits::F4),
+            TimePrecisionSerde::SecondF5 => TimePrecision::SecondExact(FractionalSecondDigits::F5),
+            TimePrecisionSerde::SecondF6 => TimePrecision::SecondExact(FractionalSecondDigits::F6),
+            TimePrecisionSerde::SecondF7 => TimePrecision::SecondExact(FractionalSecondDigits::F7),
+            TimePrecisionSerde::SecondF8 => TimePrecision::SecondExact(FractionalSecondDigits::F8),
+            TimePrecisionSerde::SecondF9 => TimePrecision::SecondExact(FractionalSecondDigits::F9),
+        }
     }
 }
 
@@ -413,7 +477,7 @@ fn test_basic() {
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","fractionalSecondDigits":3}"#
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
