@@ -160,7 +160,7 @@ fn dtf_prefs_non_ue_preference() {
     assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
     assert_eq!(
         dtf.resolved_preferences().date_pattern,
-        DatePattern(tinystr!(8, "m/d/Y"))
+        DatePattern(tinystr!(8, "M/d/y"))
     );
 }
 
