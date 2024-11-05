@@ -35,12 +35,12 @@ impl CompactDecimal {
     /// Returns a reference to the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
-    /// # use fixed_decimal::FixedDecimal;
+    /// # use fixed_decimal::SignedFixedDecimal;
     /// # use std::str::FromStr;
     /// #
     /// assert_eq!(
     ///     CompactDecimal::from_str("+1.20c6").unwrap().significand(),
-    ///     &FixedDecimal::from_str("+1.20").unwrap()
+    ///     &SignedFixedDecimal::from_str("+1.20").unwrap()
     /// );
     /// ```
     pub fn significand(&self) -> &SignedFixedDecimal {
@@ -50,14 +50,14 @@ impl CompactDecimal {
     /// Returns the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
-    /// # use fixed_decimal::FixedDecimal;
+    /// # use fixed_decimal::SignedFixedDecimal;
     /// # use std::str::FromStr;
     /// #
     /// assert_eq!(
     ///     CompactDecimal::from_str("+1.20c6")
     ///         .unwrap()
     ///         .into_significand(),
-    ///     FixedDecimal::from_str("+1.20").unwrap()
+    ///     SignedFixedDecimal::from_str("+1.20").unwrap()
     /// );
     /// ```
     pub fn into_significand(self) -> SignedFixedDecimal {
