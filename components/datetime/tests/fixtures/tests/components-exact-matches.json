@@ -626,28 +626,6 @@
         }
     },
     {
-        "description": "Exact match for: yw => 'week' w 'of' Y",
-        "input": {
-            "locale": "en",
-            "value": "2016-04-17T08:25:07.000",
-            "options": {
-                "components": {
-                    "year": "numeric-week-of",
-                    "week": "numeric-week-of-year"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en":  "week 17 of 2016",
-                "en-AU":  "week 16 of 2016",
-                "en-GB": "week 15 of 2016",
-                "fil": "linggo 17 ng 2016",
-                "en-ZA":  "week 17 of 2016"
-            }
-        }
-    },
-    {
         "description": "Exact match for: MMMMW -> 'week' W 'of' MMMM",
         "input": {
             "locale": "en",

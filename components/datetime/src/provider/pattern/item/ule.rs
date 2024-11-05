@@ -304,7 +304,7 @@ impl AsULE for GenericPatternItem {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fields::{FieldLength, FieldSymbol, Second, Year};
+    use crate::fields::{FieldLength, FieldSymbol, Year};
     use zerovec::ule::{AsULE, ULE};
 
     #[test]
@@ -320,22 +320,6 @@ mod test {
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
                     FieldLength::Wide.idx(),
-                ],
-            ),
-            (
-                PatternItem::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
-                [
-                    0x80,
-                    FieldSymbol::Year(Year::WeekOf).idx(),
-                    FieldLength::Wide.idx(),
-                ],
-            ),
-            (
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
-                [
-                    0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
-                    FieldLength::One.idx(),
                 ],
             ),
             (PatternItem::from('z'), [0x00, 0x00, 0x7a]),
@@ -355,7 +339,6 @@ mod test {
             [
                 PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
                 PatternItem::from('z'),
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
             ],
             [
                 [
@@ -364,11 +347,6 @@ mod test {
                     FieldLength::Wide.idx(),
                 ],
                 [0x00, 0x00, 0x7a],
-                [
-                    0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
-                    FieldLength::One.idx(),
-                ],
             ],
         )];
 

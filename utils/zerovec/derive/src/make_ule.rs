@@ -208,6 +208,7 @@ fn make_ule_enum_impl(
             #[inline]
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 for byte in bytes {
+                    #[allow(clippy::double_comparisons)] // min == max case
                     if *byte < #min || *byte > #max {
                         return Err(zerovec::ule::UleError::parse::<Self>())
                     }

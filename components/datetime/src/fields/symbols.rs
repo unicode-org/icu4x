@@ -39,7 +39,7 @@ impl std::error::Error for SymbolError {}
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_enums)] // part of data struct
+#[non_exhaustive]
 pub enum FieldSymbol {
     /// Era name.
     Era,
@@ -47,8 +47,6 @@ pub enum FieldSymbol {
     Year(Year),
     /// Month number or month name.
     Month(Month),
-    /// Week number or week name.
-    Week(Week),
     /// Day number relative to a time period longer than a week (ex: month, year).
     Day(Day),
     /// Day number or day name relative to a week.
@@ -108,7 +106,7 @@ impl FieldSymbol {
             FieldSymbol::Era => (0, 0),
             FieldSymbol::Year(year) => (1, year.idx()),
             FieldSymbol::Month(month) => (2, month.idx()),
-            FieldSymbol::Week(w) => (3, w.idx()),
+            // Week => 3
             FieldSymbol::Day(day) => (4, day.idx()),
             FieldSymbol::Weekday(wd) => (5, wd.idx()),
             FieldSymbol::DayPeriod(dp) => (6, dp.idx()),
@@ -133,7 +131,7 @@ impl FieldSymbol {
             0 if low == 0 => Self::Era,
             1 => Self::Year(Year::from_idx(low)?),
             2 => Self::Month(Month::from_idx(low)?),
-            3 => Self::Week(Week::from_idx(low)?),
+            // 3 => Week
             4 => Self::Day(Day::from_idx(low)?),
             5 => Self::Weekday(Weekday::from_idx(low)?),
             6 => Self::DayPeriod(DayPeriod::from_idx(low)?),
@@ -153,7 +151,7 @@ impl FieldSymbol {
             FieldSymbol::Era => 0,
             FieldSymbol::Year(_) => 1,
             FieldSymbol::Month(_) => 2,
-            FieldSymbol::Week(_) => 3,
+            // Week => 3
             FieldSymbol::Day(_) => 4,
             FieldSymbol::Weekday(_) => 5,
             FieldSymbol::DayPeriod(_) => 6,
@@ -279,17 +277,17 @@ impl FieldSymbol {
         match self {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
-            Self::Year(Year::WeekOf) => 2,
+            // WeekOf => 2
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
             Self::Month(Month::StandAlone) => 6,
-            Self::Week(Week::WeekOfYear) => 7,
-            Self::Week(Week::WeekOfMonth) => 8,
+            // WeekOfYear => 7
+            // WeekOfMonth => 8
             Self::Day(Day::DayOfMonth) => 9,
-            Self::Day(Day::DayOfYear) => 10,
+            // DayOfYear => 10
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            Self::Day(Day::ModifiedJulianDay) => 12,
+            // ModifiedJulianDay => 12
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -301,7 +299,7 @@ impl FieldSymbol {
             Self::Hour(Hour::H24) => 21,
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
-            Self::Second(Second::Millisecond) => 24,
+            // Millisecond => 24
             Self::DecimalSecond(DecimalSecond::SecondF1) => 31,
             Self::DecimalSecond(DecimalSecond::SecondF2) => 32,
             Self::DecimalSecond(DecimalSecond::SecondF3) => 33,
@@ -335,7 +333,6 @@ impl TryFrom<char> for FieldSymbol {
         })
         .or_else(|_| Year::try_from(ch).map(Self::Year))
         .or_else(|_| Month::try_from(ch).map(Self::Month))
-        .or_else(|_| Week::try_from(ch).map(Self::Week))
         .or_else(|_| Day::try_from(ch).map(Self::Day))
         .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
         .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
@@ -359,7 +356,6 @@ impl From<FieldSymbol> for char {
             FieldSymbol::Era => 'G',
             FieldSymbol::Year(year) => year.into(),
             FieldSymbol::Month(month) => month.into(),
-            FieldSymbol::Week(week) => week.into(),
             FieldSymbol::Day(day) => day.into(),
             FieldSymbol::Weekday(weekday) => weekday.into(),
             FieldSymbol::DayPeriod(dayperiod) => dayperiod.into(),
@@ -497,16 +493,12 @@ field_type! (
     Year; {
         /// Field symbol for calendar year (numeric).
         ///
-        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
+        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] should be adequate.
         'y' => Calendar = 0,
-        /// Field symbol for year in "week of year".
-        ///
-        /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        'Y' => WeekOf = 1,
         /// Field symbol for cyclic year; used in calendars where years are tracked in cycles, such as the Chinese or Dangi calendars.
-        'U' => Cyclic = 2,
+        'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
-        'r' => RelatedIso = 3,
+        'r' => RelatedIso = 2,
     };
     YearULE
 );
@@ -553,16 +545,10 @@ field_type!(
     Day; {
         /// Field symbol for day of month (numeric).
         'd' => DayOfMonth = 0,
-        /// Field symbol for day of year (numeric).
-        'D' => DayOfYear = 1,
         /// Field symbol for the day of week occurrence relative to the month (numeric).
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
-        'F' => DayOfWeekInMonth = 2,
-        /// Field symbol for the modified Julian day (numeric).
-        ///
-        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        'g' => ModifiedJulianDay = 3,
+        'F' => DayOfWeekInMonth = 1,
     };
     Numeric;
     DayULE
@@ -592,27 +578,9 @@ field_type!(
     Second; {
         /// Field symbol for second (numeric).
         's' => Second = 0,
-        /// Field symbol for milliseconds in day (numeric).
-        ///
-        /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
-        'A' => Millisecond = 1,
     };
     Numeric;
     SecondULE
-);
-
-field_type!(
-    /// An enum for the possible symbols of a week field in a date pattern.
-    Week; {
-        /// Field symbol for week of year (numeric).
-        ///
-        /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
-        'w' => WeekOfYear = 0,
-        /// Field symbol for week of month (numeric).
-        'W' => WeekOfMonth = 1,
-    };
-    Numeric;
-    WeekULE
 );
 
 field_type!(

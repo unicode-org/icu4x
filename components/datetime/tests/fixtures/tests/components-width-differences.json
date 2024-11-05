@@ -51,42 +51,6 @@
         }
     },
     {
-        "description": "Width difference: Y vs YY",
-        "input": {
-            "value": "2002-12-31T08:25:07.000",
-            "options": {
-                "components": {
-                    "year": "two-digit-week-of",
-                    "week": "numeric-week-of-year"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "week 53 of 02",
-                "fil": "linggo 53 ng 02"
-            }
-        }
-    },
-    {
-        "description": "Width and symbol difference: yyw + 'week w of Y' -> 'week w of yy'",
-        "input": {
-            "value": "2002-12-31T08:25:07.000",
-            "options": {
-                "components": {
-                    "year": "two-digit",
-                    "week": "numeric-week-of-year"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "week 53 of 02",
-                "fil": "linggo 53 ng 02"
-            }
-        }
-    },
-    {
         "description": "Enumerate month lengths which may need expansion: yMd => M/d/y",
         "input": {
             "value": "2020-01-07T08:25:07.000",

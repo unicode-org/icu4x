@@ -67,42 +67,6 @@
         }
     },
     {
-        "description": "Partial match for YEEEE -> yMEd -> E, M/d/y",
-        "input": {
-            "value": "2002-12-31T08:25:07.000",
-            "options": {
-                "components": {
-                    "year": "numeric-week-of",
-                    "weekday": "long"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "Tuesday, 12/31/2002",
-                "fr": "mardi 31/12/2002"
-            }
-        }
-    },
-    {
-        "description": "Partial match for YwEEEE -> yw -> 'week w of Y'",
-        "input": {
-            "value": "2002-12-31T08:25:07.000",
-            "options": {
-                "components": {
-                    "year": "numeric-week-of",
-                    "week": "two-digit-week-of-year",
-                    "weekday": "long"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "week 53 of 2002"
-            }
-        }
-    },
-    {
         "description": "Partial match for: MMMMWEEEE -> MMMMW -> 'week' W 'of' MMMM",
         "input": {
             "value": "2002-12-31T08:25:07.000",

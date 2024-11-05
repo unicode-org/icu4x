@@ -109,7 +109,6 @@ impl From<&Pattern> for Skeleton {
                     | FieldSymbol::DecimalSecond(_)
                     | FieldSymbol::Era
                     | FieldSymbol::Year(_)
-                    | FieldSymbol::Week(_)
                     | FieldSymbol::Day(_) => field.symbol,
                 };
 

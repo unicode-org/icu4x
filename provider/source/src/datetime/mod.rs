@@ -399,8 +399,6 @@ mod test {
     #[test]
     fn test_datetime_skeletons() {
         use icu::datetime::provider::pattern::runtime::Pattern;
-        use icu::datetime::provider::skeleton::PluralPattern;
-        use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 
         let data = SourceDataProvider::new_testing()
@@ -418,22 +416,22 @@ mod test {
             skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
         );
 
-        let mut expected = PluralPattern::new(
-            "'linggo' w 'ng' Y"
-                .parse()
-                .expect("Failed to create pattern"),
-        )
-        .expect("Failed to create PatternPlurals");
-        expected.maybe_set_variant(
-            PluralCategory::One,
-            "'ika'-w 'linggo' 'ng' Y"
-                .parse()
-                .expect("Failed to create pattern"),
-        );
-        assert_eq!(
-            Some(&expected.into()),
-            skeletons.get(&SkeletonV1::try_from("yw").expect("Failed to create Skeleton"))
-        );
+        // let mut expected = PluralPattern::new(
+        //     "'linggo' w 'ng' Y"
+        //         .parse()
+        //         .expect("Failed to create pattern"),
+        // )
+        // .expect("Failed to create PatternPlurals");
+        // expected.maybe_set_variant(
+        //     PluralCategory::One,
+        //     "'ika'-w 'linggo' 'ng' Y"
+        //         .parse()
+        //         .expect("Failed to create pattern"),
+        // );
+        // assert_eq!(
+        //     Some(&expected.into()),
+        //     skeletons.get(&SkeletonV1::try_from("yw").expect("Failed to create Skeleton"))
+        // );
     }
 
     #[test]

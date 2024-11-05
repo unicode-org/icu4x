@@ -1607,8 +1607,6 @@ pub enum PatternLoadError {
     /// and `L` (format vs standalone month) conflict.
     #[displaydoc("A field conflicts with a previous field.")]
     ConflictingField(Field),
-    /// The field is not currently supported.
-    UnsupportedField(Field),
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
@@ -1670,7 +1668,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             symbol: FieldSymbol::Era,
             length: field_length,
         };
-        // UTS 35 says that "G..GGG" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
@@ -1678,10 +1675,13 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 marker_attrs::name_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
-                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        // UTS 35 says that "G..GGG" are all Abbreviated
+                        FieldLength::One
+                        | FieldLength::NumericOverride(_)
+                        | FieldLength::TwoDigit
+                        | FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow | FieldLength::Six => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1718,10 +1718,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         fields::Month::StandAlone => marker_attrs::Context::Standalone,
                     },
                     match field_length {
+                        FieldLength::One
+                        | FieldLength::TwoDigit
+                        | FieldLength::NumericOverride(_) => return Ok(()), // numeric
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        FieldLength::Narrow | FieldLength::Six => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1749,7 +1751,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
             length: field_length,
         };
-        // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         let variables = field_length;
         let req = DataRequest {
@@ -1757,10 +1758,13 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 marker_attrs::name_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
-                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
-                        FieldLength::Narrow => marker_attrs::Length::Narrow,
+                        // UTS 35 says that "a..aaa" are all Abbreviated
+                        FieldLength::One
+                        | FieldLength::NumericOverride(_)
+                        | FieldLength::TwoDigit
+                        | FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        FieldLength::Narrow | FieldLength::Six => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -1788,7 +1792,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
-        // UTS 35 says that "E..EEE" are all Abbreviated
         // However, this doesn't apply to "e" and "c".
         let field_length = if matches!(field_symbol, fields::Weekday::Format) {
             field_length.numeric_to_abbr()
@@ -1807,11 +1810,14 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
                     },
                     match field_length {
-                        FieldLength::Abbreviated => marker_attrs::Length::Abbr,
+                        // UTS 35 says that "E..EEE" are all Abbreviated
+                        FieldLength::One
+                        | FieldLength::NumericOverride(_)
+                        | FieldLength::TwoDigit
+                        | FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
                         FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
                     },
                 ),
                 locale,
@@ -2107,7 +2113,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         (TimeZone::Location, FieldLength::TwoDigit | FieldLength::Abbreviated) => {
                             // VV, VVV
-                            return Err(PatternLoadError::UnsupportedField(field));
                         }
                         (TimeZone::Location, _) => {
                             // no data required
@@ -2154,7 +2159,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
 
                 ///// Numeric symbols /////
                 FieldSymbol::Year(_) => numeric_field = Some(field),
-                FieldSymbol::Week(_) => numeric_field = Some(field),
                 FieldSymbol::Day(_) => numeric_field = Some(field),
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),

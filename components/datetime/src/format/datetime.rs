@@ -7,7 +7,7 @@ use super::GetNameForDayPeriodError;
 use super::{
     GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Year};
 use crate::input::ExtractedInput;
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
@@ -157,14 +157,6 @@ pub enum DateTimeWriteError {
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
     #[displaydoc("Incomplete input, missing value for {0:?}")]
     MissingInputField(&'static str),
-    /// Unsupported field
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern contains unsupported fields.
-    ///
-    /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
-    #[displaydoc("Unsupported field {0:?}")]
-    UnsupportedField(Field),
 }
 
 // This function assumes that the correct decision has been
@@ -535,30 +527,10 @@ where
                 }
                 Err(FormatTimeZoneError::Fallback) => {
                     // unreachable because our current fallback chains don't fall through
-                    w.with_part(Part::ERROR, |w| {
-                        w.write_str("{unsupported:")?;
-                        w.write_char(char::from(field.symbol))?;
-                        w.write_str("}")
-                    })?;
-                    Err(DateTimeWriteError::UnsupportedField(field))
+                    debug_assert!(false, "timezone fell through");
+                    Ok(())
                 }
             }
-        }
-        (
-            FieldSymbol::Year(Year::WeekOf)
-            | FieldSymbol::Week(Week::WeekOfYear)
-            | FieldSymbol::Week(Week::WeekOfMonth)
-            | FieldSymbol::Day(Day::DayOfYear)
-            | FieldSymbol::Day(Day::ModifiedJulianDay)
-            | FieldSymbol::Second(Second::Millisecond),
-            _,
-        ) => {
-            w.with_part(Part::ERROR, |w| {
-                w.write_str("{unsupported:")?;
-                w.write_char(char::from(field.symbol))?;
-                w.write_str("}")
-            })?;
-            Err(DateTimeWriteError::UnsupportedField(field))
         }
     })
 }

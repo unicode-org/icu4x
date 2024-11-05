@@ -139,7 +139,6 @@ mod test {
     #[test]
     fn test_skeleton_matching_missing_fields() {
         let mut components = components::Bag::empty();
-        components.week = Some(components::Week::TwoDigitWeekOfYear);
         components.weekday = Some(components::Text::Short);
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
@@ -235,11 +234,11 @@ mod test {
     #[rustfmt::skip]
     const SUPPORTED_STRING_SKELETONS: &[&str] = &[
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
-        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMW",
+        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM",
         "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
-        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
+        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd",
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // Time zones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
@@ -254,6 +253,8 @@ mod test {
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#501) - Quarters
         "yQ", "yQQQ", "yQQQQ",
+        // Weeks
+        "MMMMW", "yw"
     ];
 
     #[test]
@@ -314,8 +315,8 @@ mod test {
     #[test]
     fn test_skeleton_tuple_ordering() {
         let skeletons_strings = Vec::from([
-            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "yw", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h",
-            "hm", "hms", "Hm", "Hms", "ms", "mmss",
+            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h", "hm",
+            "hms", "Hm", "Hms", "ms", "mmss",
         ]);
 
         let skeleton_fields: Vec<Skeleton> = skeletons_strings
@@ -438,12 +439,10 @@ mod test {
         assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");
 
         assert_pattern_to_skeleton("y", "y", "The year is passed through");
-        assert_pattern_to_skeleton("Y", "Y", "The year is passed through");
 
         assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
 
         assert_pattern_to_skeleton("s", "s", "Seconds pass through");
-        assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
         assert_pattern_to_skeleton("z", "z", "Time zones get passed through");
         assert_pattern_to_skeleton("O", "O", "Time zones get passed through");

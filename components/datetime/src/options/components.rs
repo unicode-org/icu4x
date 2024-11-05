@@ -112,8 +112,6 @@ pub struct Bag {
     pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
-    /// Include the week number, such as "51st" or "51" for week 51.
-    pub week: Option<Week>,
     /// Include the day of the month/year, such as "07" or "7".
     pub day: Option<Day>,
     /// Include the weekday, such as "Wednesday" or "Wed".
@@ -149,7 +147,6 @@ impl Bag {
             era: other.era.or(self.era),
             year: other.year.or(self.year),
             month: other.month.or(self.month),
-            week: other.week.or(self.week),
             day: other.day.or(self.day),
             weekday: other.weekday.or(self.weekday),
             hour: other.hour.or(self.hour),
@@ -200,7 +197,6 @@ impl Bag {
             fields.push(Field {
                 symbol: FieldSymbol::Year(match year {
                     Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
-                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
                 }),
                 length: match year {
                     // Calendar year (numeric).
@@ -209,8 +205,8 @@ impl Bag {
                     // yyy     002, 020, 201, 2017, 20173    (not implemented)
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
-                    Year::Numeric | Year::NumericWeekOf => FieldLength::One,
-                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
+                    Year::Numeric => FieldLength::One,
+                    Year::TwoDigit => FieldLength::TwoDigit,
                 },
             });
         }
@@ -235,19 +231,6 @@ impl Bag {
                     Month::Long => FieldLength::Wide,
                     Month::Short => FieldLength::Abbreviated,
                     Month::Narrow => FieldLength::Narrow,
-                },
-            });
-        }
-
-        if let Some(week) = self.week {
-            fields.push(Field {
-                symbol: FieldSymbol::Week(match week {
-                    Week::WeekOfMonth => fields::Week::WeekOfMonth,
-                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => fields::Week::WeekOfYear,
-                }),
-                length: match week {
-                    Week::WeekOfMonth | Week::NumericWeekOfYear => FieldLength::One,
-                    Week::TwoDigitWeekOfYear => FieldLength::TwoDigit,
                 },
             });
         }
@@ -459,12 +442,6 @@ pub enum Year {
     Numeric,
     /// The two-digit value of the year, such as "18" for 2018-12-31.
     TwoDigit,
-    /// The numeric value of the year in "week-of-year", such as "2019" in
-    /// "week 01 of 2019" for the week of 2018-12-31 according to the ISO calendar.
-    NumericWeekOf,
-    /// The numeric value of the year in "week-of-year", such as "19" in
-    /// "week 01 '19" for the week of 2018-12-31 according to the ISO calendar.
-    TwoDigitWeekOf,
 }
 
 /// Options for displaying a Month for the `components::`[`Bag`].
@@ -516,12 +493,8 @@ pub enum Month {
 )]
 #[non_exhaustive]
 pub enum Week {
-    /// The week of the month, such as the "3" in "week 3 of January".
-    WeekOfMonth,
     /// The numeric value of the week of the year, such as the "8" in "week 8 of 2000".
     NumericWeekOfYear,
-    /// The two-digit value of the week of the year, such as the "08" in "2000-W08".
-    TwoDigitWeekOfYear,
 }
 
 /// Options for displaying the current day of the month or year.
@@ -676,10 +649,6 @@ impl From<&Pattern<'_>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigit,
                             _ => Year::Numeric,
                         },
-                        fields::Year::WeekOf => match field.length {
-                            FieldLength::TwoDigit => Year::TwoDigitWeekOf,
-                            _ => Year::NumericWeekOf,
-                        },
                         // TODO(#3762): Add support for U and r
                         _ => Year::Numeric,
                     });
@@ -696,26 +665,13 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::Narrow | FieldLength::Six => Month::Narrow,
                     });
                 }
-                FieldSymbol::Week(week) => {
-                    bag.week = Some(match week {
-                        fields::Week::WeekOfYear => match field.length {
-                            FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
-                            _ => Week::NumericWeekOfYear,
-                        },
-                        fields::Week::WeekOfMonth => Week::WeekOfMonth,
-                    });
-                }
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
                         fields::Day::DayOfMonth => match field.length {
                             FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
                             _ => Day::NumericDayOfMonth,
                         },
-                        fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
-                        fields::Day::ModifiedJulianDay => {
-                            unimplemented!("fields::Day::ModifiedJulianDay")
-                        }
                     });
                 }
                 FieldSymbol::Weekday(weekday) => {
@@ -784,19 +740,14 @@ impl From<&Pattern<'_>> for Bag {
                         _ => Numeric::Numeric,
                     });
                 }
-                FieldSymbol::Second(second) => {
-                    match second {
-                        fields::Second::Second => {
-                            bag.second = Some(match field.length {
-                                FieldLength::TwoDigit => Numeric::TwoDigit,
-                                _ => Numeric::Numeric,
-                            });
-                        }
-                        fields::Second::Millisecond => {
-                            // fields::Second::Millisecond is not implemented (#1834)
-                        }
+                FieldSymbol::Second(second) => match second {
+                    fields::Second::Second => {
+                        bag.second = Some(match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        });
                     }
-                }
+                },
                 FieldSymbol::DecimalSecond(decimal_second) => {
                     use FractionalSecondDigits::*;
                     bag.second = Some(match field.length {
@@ -854,7 +805,6 @@ mod test {
         let bag = Bag {
             year: Some(Year::Numeric),
             month: Some(Month::Long),
-            week: Some(Week::WeekOfMonth),
             day: Some(Day::NumericDayOfMonth),
 
             hour: Some(Numeric::Numeric),
@@ -869,7 +819,6 @@ mod test {
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
-                (Symbol::Week(fields::Week::WeekOfMonth), Length::One).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),

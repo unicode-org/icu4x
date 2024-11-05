@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{Field, FieldSymbol, Week};
-use crate::provider::pattern::{runtime::Pattern, PatternError, PatternItem};
+use crate::provider::pattern::{runtime::Pattern, PatternError};
 use either::Either;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
+
+/// PluralPattern pivot
+#[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct Week;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -27,17 +30,8 @@ pub struct PluralPattern<'data> {
 impl<'data> PluralPattern<'data> {
     /// Creates a [`PluralPattern`] from a pattern containing a pivot field.
     pub fn new(pattern: Pattern<'data>) -> Result<Self, PatternError> {
-        let pivot_field = pattern
-            .items
-            .iter()
-            .find_map(|pattern_item| match pattern_item {
-                PatternItem::Field(Field {
-                    symbol: FieldSymbol::Week(w),
-                    ..
-                }) => Some(w),
-                _ => None,
-            })
-            .ok_or(PatternError::UnsupportedPluralPivot)?;
+        // TODO
+        let pivot_field = Week;
 
         Ok(Self {
             pivot_field,
@@ -205,7 +199,6 @@ mod test {
         patterns.maybe_set_variant(PluralCategory::Few, red_pattern.clone());
         patterns.maybe_set_variant(PluralCategory::Many, blue_pattern.clone());
 
-        assert_eq!(patterns.pivot_field, Week::WeekOfYear);
         assert_eq!(patterns.zero, Some(red_pattern.clone()));
         assert_eq!(patterns.one, None); // duplicate `other
         assert_eq!(patterns.two, Some(red_pattern));

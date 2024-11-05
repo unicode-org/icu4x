@@ -174,7 +174,6 @@ impl From<icu_datetime::PatternLoadError> for PatternLoadError {
     fn from(e: icu_datetime::PatternLoadError) -> Self {
         match e {
             icu_datetime::PatternLoadError::ConflictingField(_) => Self::DuplicateField,
-            icu_datetime::PatternLoadError::UnsupportedField(_) => Self::UnsupportedField,
             icu_datetime::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
             icu_datetime::PatternLoadError::Data(data_error) => data_error.into(),
             _ => Self::Unknown,
@@ -215,7 +214,6 @@ impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
             icu_datetime::DateTimeWriteError::FixedDecimalFormatterNotLoaded => {
                 Self::FixedDecimalFormatterNotLoaded
             }
-            icu_datetime::DateTimeWriteError::UnsupportedField(..) => Self::UnsupportedField,
             _ => Self::Unknown,
         }
     }

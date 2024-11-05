@@ -60,7 +60,6 @@ impl Field {
             FieldSymbol::Era => TextOrNumeric::Text,
             FieldSymbol::Year(year) => year.get_length_type(self.length),
             FieldSymbol::Month(month) => month.get_length_type(self.length),
-            FieldSymbol::Week(week) => week.get_length_type(self.length),
             FieldSymbol::Day(day) => day.get_length_type(self.length),
             FieldSymbol::Weekday(weekday) => weekday.get_length_type(self.length),
             FieldSymbol::DayPeriod(day_period) => day_period.get_length_type(self.length),
@@ -106,7 +105,7 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fields::{Field, FieldLength, FieldSymbol, Second, Year};
+    use crate::fields::{Field, FieldLength, FieldSymbol, Year};
     use zerovec::ule::{AsULE, ULE};
 
     #[test]
@@ -123,20 +122,6 @@ mod test {
                     FieldLength::Wide.idx(),
                 ],
             ),
-            (
-                Field::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
-                [
-                    FieldSymbol::Year(Year::WeekOf).idx(),
-                    FieldLength::Wide.idx(),
-                ],
-            ),
-            (
-                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
-                [
-                    FieldSymbol::Second(Second::Millisecond).idx(),
-                    FieldLength::One.idx(),
-                ],
-            ),
         ];
 
         for (ref_field, ref_bytes) in samples {
@@ -150,20 +135,14 @@ mod test {
     #[test]
     fn test_field_ule() {
         let samples = [(
-            [
-                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
-                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
-            ],
-            [
-                [
-                    FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
-                ],
-                [
-                    FieldSymbol::Second(Second::Millisecond).idx(),
-                    FieldLength::One.idx(),
-                ],
-            ],
+            [Field::from((
+                FieldSymbol::Year(Year::Calendar),
+                FieldLength::Wide,
+            ))],
+            [[
+                FieldSymbol::Year(Year::Calendar).idx(),
+                FieldLength::Wide.idx(),
+            ]],
         )];
 
         for (ref_field, ref_bytes) in samples {

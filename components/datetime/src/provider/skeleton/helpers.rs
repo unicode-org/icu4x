@@ -284,7 +284,6 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             FieldSymbol::Era
             | FieldSymbol::Year(_)
             | FieldSymbol::Month(_)
-            | FieldSymbol::Week(_)
             | FieldSymbol::Day(_)
             | FieldSymbol::Weekday(_) => date.push(*field),
 
@@ -295,10 +294,6 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             | FieldSymbol::Second(_)
             | FieldSymbol::TimeZone(_)
             | FieldSymbol::DecimalSecond(_) => time.push(*field),
-            // Other components
-            // TODO(#486)
-            // FieldSymbol::Era(_) => other.push(*field),
-            // Plus others...
         };
     }
 

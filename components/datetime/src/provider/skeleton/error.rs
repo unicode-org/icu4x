@@ -59,10 +59,14 @@ impl From<fields::SymbolError> for SkeletonError {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate data: cargo make bakeddata components/datetime.
                 match ch {
-                    // TODO(#487) - Flexible day periods
-                    'B'
-                    // TODO(#501) - Quarters
-                    | 'Q'
+                    'B' // TODO(#487) - Flexible day periods
+                    | 'Q' // TODO(#501) - Quarters
+                    | 'Y' // Year::WeekOf
+                    | 'D' // Day::DayOfYear
+                    | 'g' // Day::ModifiedJulianDay
+                    | 'A' // Second::Millisecond
+                    | 'w' // Week::WeekOfYear
+                    | 'W' // Week::WeekOfMonth
                     => Self::SymbolUnimplemented(ch),
                     _ => Self::SymbolUnknown(ch),
                 }
