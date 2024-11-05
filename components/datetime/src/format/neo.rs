@@ -2123,6 +2123,13 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             .map_err(LoadError::Data)?;
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
+                        (TimeZone::Location, FieldLength::TwoDigit | FieldLength::Abbreviated) => {
+                            // VV, VVV 
+                            return Err(LoadError::UnsupportedField(field));
+                        }
+                        (TimeZone::Location, _) => {
+                            // no data required
+                        }
                         (TimeZone::LocalizedOffset, _) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
@@ -2131,7 +2138,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )
                             .map_err(LoadError::Data)?;
                         }
-                        (TimeZone::IsoWithZ | TimeZone::Iso | TimeZone::Location, _) => {
+                        (TimeZone::IsoWithZ | TimeZone::Iso, _) => {
                             // no data required
                         }
                     }
