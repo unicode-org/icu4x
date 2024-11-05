@@ -131,9 +131,7 @@ enum FieldSetField {
     WeekOfYear = 5,
     WeekOfMonth = 6,
     // Time Fields
-    Hour = 16,
-    Minute = 17,
-    Second = 18,
+    Time = 16,
     // Zone Fields
     ZoneGeneric = 32,
     ZoneGenericShort = 33,
@@ -151,9 +149,7 @@ impl FieldSetField {
         Month,
         Day,
         Weekday,
-        Hour,
-        Minute,
-        Second,
+        Time,
         WeekOfYear,
         WeekOfMonth,
         ZoneGeneric,
@@ -218,9 +214,7 @@ impl FieldSetSerde {
     const YEAR_WEEK: Self = Self::from_fields(&[Year, WeekOfYear]);
 
     // Time Components
-    const HOUR: Self = Self::from_fields(&[Hour]);
-    const HOUR_MINUTE: Self = Self::from_fields(&[Hour, Minute]);
-    const HOUR_MINUTE_SECOND: Self = Self::from_fields(&[Hour, Minute, Second]);
+    const TIME: Self = Self::from_fields(&[Time]);
 
     // Zone Components
     const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
@@ -365,11 +359,11 @@ impl TryFrom<FieldSetSerde> for NeoCalendarPeriodComponents {
 impl From<NeoTimeComponents> for FieldSetSerde {
     fn from(value: NeoTimeComponents) -> Self {
         match value {
-            NeoTimeComponents::Hour => Self::HOUR,
-            NeoTimeComponents::HourMinute => Self::HOUR_MINUTE,
-            NeoTimeComponents::HourMinuteSecond => Self::HOUR_MINUTE_SECOND,
+            NeoTimeComponents::Hour => Self::TIME,
+            NeoTimeComponents::HourMinute => Self::TIME,
+            NeoTimeComponents::HourMinuteSecond => Self::TIME,
             // TODO: support auto?
-            NeoTimeComponents::Auto => Self::HOUR_MINUTE,
+            NeoTimeComponents::Auto => Self::TIME,
             _ => todo!(),
         }
     }
@@ -379,9 +373,7 @@ impl TryFrom<FieldSetSerde> for NeoTimeComponents {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
-            FieldSetSerde::HOUR => Ok(Self::Hour),
-            FieldSetSerde::HOUR_MINUTE => Ok(Self::HourMinute),
-            FieldSetSerde::HOUR_MINUTE_SECOND => Ok(Self::HourMinuteSecond),
+            FieldSetSerde::TIME => Ok(Self::Hour),
             _ => Err(Error::InvalidFields),
         }
     }
@@ -465,7 +457,7 @@ fn test_basic() {
     let skeleton = NeoSkeleton {
         components: NeoComponents::DateTimeZone(
             NeoDateComponents::YearMonthDayWeekday,
-            NeoTimeComponents::HourMinute,
+            NeoTimeComponents::Hour,
             NeoTimeZoneStyle::Generic,
         ),
         length: NeoSkeletonLength::Medium,
@@ -477,7 +469,7 @@ fn test_basic() {
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
+        r#"{"fieldSet":["year","month","day","weekday","time","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
