@@ -6,10 +6,7 @@ use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::format::neo::FieldForDataLoading;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{
-    Alignment, FractionalSecondDigits, NeoComponents, NeoSkeletonLength, NeoTimeComponents,
-    NeoTimeZoneStyle, YearStyle,
-};
+use crate::neo_skeleton::*;
 use crate::options::preferences::HourCycle;
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
@@ -27,7 +24,7 @@ pub(crate) struct RawNeoOptions {
     pub(crate) length: NeoSkeletonLength,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
-    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    pub(crate) time_precision: Option<TimePrecision>,
     pub(crate) hour_cycle: Option<HourCycle>,
 }
 

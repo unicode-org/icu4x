@@ -374,7 +374,7 @@ impl DateTimeMarkers for NeoDateSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -436,7 +436,7 @@ impl DateTimeMarkers for NeoCalendarPeriodSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -485,14 +485,14 @@ impl DateTimeMarkers for NeoTimeSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
 impl_get_field!(NeoTimeSkeleton, never);
 impl_get_field!(NeoTimeSkeleton, length, yes);
 impl_get_field!(NeoTimeSkeleton, alignment, yes);
-impl_get_field!(NeoTimeSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoTimeSkeleton, time_precision, yes);
 
 impl UnstableSealed for NeoTimeZoneSkeleton {}
 
@@ -539,7 +539,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment,);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -577,7 +577,7 @@ impl DateTimeMarkers for NeoDateTimeSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -585,7 +585,7 @@ impl_get_field!(NeoDateTimeSkeleton, never);
 impl_get_field!(NeoDateTimeSkeleton, length, yes);
 impl_get_field!(NeoDateTimeSkeleton, alignment, yes);
 impl_get_field!(NeoDateTimeSkeleton, year_style, yes);
-impl_get_field!(NeoDateTimeSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoDateTimeSkeleton, time_precision, yes);
 
 impl UnstableSealed for NeoSkeleton {}
 
@@ -618,7 +618,7 @@ impl DateTimeMarkers for NeoSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -626,4 +626,4 @@ impl_get_field!(NeoSkeleton, never);
 impl_get_field!(NeoSkeleton, length, yes);
 impl_get_field!(NeoSkeleton, alignment, yes);
 impl_get_field!(NeoSkeleton, year_style, yes);
-impl_get_field!(NeoSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoSkeleton, time_precision, yes);

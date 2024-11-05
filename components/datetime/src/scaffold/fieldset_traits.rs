@@ -158,8 +158,8 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     type AlignmentOption: IntoOption<Alignment>;
     /// Type of the year style option in the constructor.
     type YearStyleOption: IntoOption<YearStyle>;
-    /// Type of the fractional seconds display option in the constructor.
-    type FractionalSecondDigitsOption: IntoOption<FractionalSecondDigits>;
+    /// Type of the time precision option in the constructor.
+    type TimePrecisionOption: IntoOption<TimePrecision>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
@@ -554,8 +554,8 @@ macro_rules! datetime_marker_helper {
     (@option/alignment, yes) => {
         Option<Alignment>
     };
-    (@option/fractionalsecondigits, yes) => {
-        Option<FractionalSecondDigits>
+    (@option/timeprecision, yes) => {
+        Option<TimePrecision>
     };
     (@option/$any:ident,) => {
         ()

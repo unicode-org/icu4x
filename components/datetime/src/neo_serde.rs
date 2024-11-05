@@ -4,11 +4,7 @@
 
 //! Serde definitions for semantic skeleta
 
-use crate::neo_skeleton::{
-    Alignment, FractionalSecondDigits, NeoCalendarPeriodComponents, NeoComponents,
-    NeoDateComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneStyle,
-    YearStyle,
-};
+use crate::neo_skeleton::*;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -32,7 +28,7 @@ pub(crate) struct SemanticSkeletonSerde {
     #[serde(rename = "yearStyle")]
     pub(crate) year_style: Option<YearStyle>,
     #[serde(rename = "fractionalSecondDigits")]
-    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    pub(crate) time_precision: Option<TimePrecision>,
 }
 
 impl From<NeoSkeleton> for SemanticSkeletonSerde {
@@ -42,7 +38,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
             length: value.length,
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -55,7 +51,7 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
             components: value.field_set,
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         })
     }
 }
@@ -411,7 +407,7 @@ fn test_basic() {
         length: NeoSkeletonLength::Medium,
         alignment: Some(Alignment::Column),
         year_style: Some(YearStyle::Always),
-        fractional_second_digits: Some(FractionalSecondDigits::F3),
+        time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();

@@ -48,7 +48,7 @@ macro_rules! impl_marker_with_options {
         $(sample_length: $sample_length:ident,)?
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
-        $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
+        $(time_precision: $timeprecision_yes:ident,)?
     ) => {
         $(#[$attr])*
         #[derive(Debug)]
@@ -73,10 +73,10 @@ macro_rules! impl_marker_with_options {
                 pub year_style: datetime_marker_helper!(@option/yearstyle, $yearstyle_yes),
             )?
             $(
-                /// How many fractional seconds to display.
+                /// How precise to display the time of day
                 ///
-                /// See: [`FractionalSecondDigits`]
-                pub fractional_second_digits: datetime_marker_helper!(@option/fractionalsecondigits, $fractionalsecondigits_yes),
+                /// See: [`TimePrecision`]
+                pub time_precision: datetime_marker_helper!(@option/timeprecision, $timeprecision_yes),
             )?
         }
         impl $type {
@@ -91,7 +91,7 @@ macro_rules! impl_marker_with_options {
                         year_style: yes_to!(None, $yearstyle_yes),
                     )?
                     $(
-                        fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
+                        time_precision: yes_to!(None, $timeprecision_yes),
                     )?
                 }
             }
@@ -131,11 +131,11 @@ macro_rules! impl_marker_with_options {
             }
         )?
         $(
-            impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
+            impl_get_field!($type, time_precision, $timeprecision_yes);
             impl $type {
-                /// Sets the fractional second digits option.
-                pub const fn with_fractional_second_digits(mut self, digits: FractionalSecondDigits) -> Self {
-                    self.fractional_second_digits = Some(digits);
+                /// Sets the time precision option.
+                pub const fn with_time_precision(mut self, time_precision: TimePrecision) -> Self {
+                    self.time_precision = Some(time_precision);
                     self
                 }
             }
@@ -271,7 +271,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
     };
@@ -458,7 +458,7 @@ macro_rules! impl_time_marker {
             $type,
             sample_length: $sample_length,
             alignment: yes,
-            $(fractional_second_digits: $nanosecond_yes,)?
+            time_precision: yes,
         );
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -492,7 +492,7 @@ macro_rules! impl_time_marker {
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $($nanosecond_yes)?);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
@@ -646,7 +646,7 @@ macro_rules! impl_zone_marker {
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type AlignmentOption = datetime_marker_helper!(@option/alignment,);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {

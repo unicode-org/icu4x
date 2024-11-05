@@ -144,6 +144,70 @@ impl IntoOption<YearStyle> for YearStyle {
     }
 }
 
+/// A specification for how precisely to display the time of day.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged, rename_all = "lowercase"))]
+#[non_exhaustive]
+pub enum TimePrecision {
+    /// Always display the hour. Display smaller fields if they are nonzero.
+    ///
+    /// Examples:
+    ///
+    /// - `11 am`
+    /// - `16:20`
+    /// - `07:15:01.85`
+    Hour,
+    /// Always display the hour. Hide all other time fields.
+    ///
+    /// Examples:
+    ///
+    /// - `11 am`
+    /// - `16h`
+    /// - `07h`
+    HourExact,
+    /// Always display the hour and minute. Display the second if nonzero.
+    ///
+    /// Examples:
+    ///
+    /// - `11:00 am`
+    /// - `16:20`
+    /// - `07:15:01.85`
+    Minute,
+    /// Always display the hour and minute. Hide the second.
+    ///
+    /// Examples:
+    ///
+    /// - `11:00 am`
+    /// - `16:20`
+    /// - `07:15`
+    MinuteExact,
+    /// Display the hour, minute, and second. This is the default.
+    ///
+    /// Examples:
+    ///
+    /// - `11:00:00 am`
+    /// - `16:20:00`
+    /// - `07:15:01.85`
+    Second,
+    /// Display the hour, minute, and second with the given number of
+    /// fractional second digits.
+    ///
+    /// Examples with [`FractionalSecondDigits::F1`]:
+    ///
+    /// - `11:00:00.0 am`
+    /// - `16:20:00.0`
+    /// - `07:15:01.8`
+    SecondExact(FractionalSecondDigits),
+}
+
+impl IntoOption<TimePrecision> for TimePrecision {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -175,13 +239,6 @@ pub enum FractionalSecondDigits {
     F8,
     /// Nine fractional digits.
     F9,
-}
-
-impl IntoOption<FractionalSecondDigits> for FractionalSecondDigits {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
@@ -1236,8 +1293,8 @@ pub struct NeoTimeSkeleton {
     pub components: NeoTimeComponents,
     /// Alignment option.
     pub alignment: Option<Alignment>,
-    /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    /// Time precision option.
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl NeoTimeSkeleton {
@@ -1250,7 +1307,7 @@ impl NeoTimeSkeleton {
             length,
             components,
             alignment: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1267,8 +1324,8 @@ pub struct NeoDateTimeSkeleton {
     pub alignment: Option<Alignment>,
     /// Era display option.
     pub year_style: Option<YearStyle>,
-    /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    /// Time precision option.
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl NeoDateTimeSkeleton {
@@ -1282,7 +1339,7 @@ impl NeoDateTimeSkeleton {
             components,
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1305,7 +1362,7 @@ pub struct NeoSkeleton {
     /// Era display option.
     pub year_style: Option<YearStyle>,
     /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl From<NeoDateSkeleton> for NeoSkeleton {
@@ -1315,7 +1372,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1327,7 +1384,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: None,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -1339,7 +1396,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -1352,7 +1409,7 @@ impl NeoSkeleton {
             components,
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1371,7 +1428,7 @@ impl NeoDateTimeSkeleton {
             components: NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }

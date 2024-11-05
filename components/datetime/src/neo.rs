@@ -113,7 +113,7 @@ impl RawNeoOptions {
         FSet: GetField<FSet::LengthOption>,
         FSet: GetField<FSet::AlignmentOption>,
         FSet: GetField<FSet::YearStyleOption>,
-        FSet: GetField<FSet::FractionalSecondDigitsOption>,
+        FSet: GetField<FSet::TimePrecisionOption>,
     {
         // TODO: Return an error if there are more options than field set
         let hour_cycle = locale
@@ -130,7 +130,7 @@ impl RawNeoOptions {
             },
             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-            fractional_second_digits: GetField::<FSet::FractionalSecondDigitsOption>::get_field(
+            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(
                 field_set,
             )
             .into_option(),
@@ -163,7 +163,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -249,7 +249,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at runtime.
@@ -547,7 +547,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -641,7 +641,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at runtime.
