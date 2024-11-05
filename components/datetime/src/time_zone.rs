@@ -309,8 +309,8 @@ pub(super) enum TimeZoneFormatterUnit {
 
 #[derive(Debug)]
 pub(super) enum FormatTimeZoneError {
-    MissingZoneSymbols,
-    MissingFixedDecimalFormatter,
+    NamesNotLoaded,
+    FixedDecimalFormatterNotLoaded,
     Fallback,
     MissingInputField(&'static str),
 }
@@ -381,10 +381,10 @@ impl FormatTimeZone for GenericNonLocationFormat {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
         let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
@@ -428,10 +428,10 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             FieldLength::Wide => data_payloads.mz_specific_long.as_ref(),
             _ => data_payloads.mz_specific_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
         let Some(name) = names
@@ -471,10 +471,10 @@ impl FormatTimeZone for LocalizedOffsetFormat {
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(fdf) = fdf else {
-            return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
+            return Ok(Err(FormatTimeZoneError::FixedDecimalFormatterNotLoaded));
         };
         let Some(offset) = input.offset else {
             sink.write_str(&essentials.offset_unknown)?;
@@ -563,11 +563,11 @@ impl FormatTimeZone for GenericLocationFormat {
         };
 
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
         let Some(locations_root) = data_payloads.locations_root else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
         let Some(location) = locations
@@ -608,10 +608,10 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("zone_variant")));
         };
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(locations_root) = data_payloads.locations_root else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
         let Some(location) = locations
@@ -656,19 +656,19 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         };
 
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(locations_root) = data_payloads.locations_root else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(non_locations) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(location) = locations
             .locations

@@ -52,7 +52,7 @@ impl<'data> GenericPattern<'data> {
     /// ```
     /// use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
     ///
-    /// let date: Pattern = "Y-m-d".parse().expect("Failed to parse pattern");
+    /// let date: Pattern = "y-M-d".parse().expect("Failed to parse pattern");
     /// let time: Pattern = "HH:mm".parse().expect("Failed to parse pattern");
     ///
     /// let glue: GenericPattern = "{1} 'at' {0}"
@@ -62,7 +62,7 @@ impl<'data> GenericPattern<'data> {
     ///     glue.combined(date, time)
     ///         .expect("Failed to combine patterns")
     ///         .to_string(),
-    ///     "Y-m-d 'at' HH:mm"
+    ///     "y-M-d 'at' HH:mm"
     /// );
     /// ```
     pub fn combined(
@@ -139,7 +139,7 @@ mod test {
             .parse()
             .expect("Failed to parse a generic pattern.");
 
-        let date = "Y/m/d".parse().expect("Failed to parse a date pattern.");
+        let date = "y/M/d".parse().expect("Failed to parse a date pattern.");
 
         let time = "HH:mm".parse().expect("Failed to parse a time pattern.");
 
@@ -147,6 +147,6 @@ mod test {
             .combined(date, time)
             .expect("Failed to combine date and time.");
 
-        assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
+        assert_eq!(pattern.to_string(), "y/M/d 'at' HH:mm");
     }
 }

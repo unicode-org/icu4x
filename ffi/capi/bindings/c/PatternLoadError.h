@@ -1,5 +1,5 @@
-#ifndef Error_H
-#define Error_H
+#ifndef PatternLoadError_H
+#define PatternLoadError_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "Error.d.h"
+#include "PatternLoadError.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // Error_H
+#endif // PatternLoadError_H

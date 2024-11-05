@@ -27,11 +27,11 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
 
   /// Creates a new [`GregorianDateFormatter`] from locale data.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [PatternLoadError] on failure.
   factory GregorianDateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_GregorianDateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw PatternLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return GregorianDateTimeFormatter._fromFfi(result.union.ok, []);
   }

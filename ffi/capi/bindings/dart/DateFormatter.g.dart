@@ -27,23 +27,23 @@ final class DateFormatter implements ffi.Finalizable {
 
   /// Creates a new [`DateFormatter`] from locale data.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [PatternLoadError] on failure.
   factory DateFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_DateFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw PatternLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
   /// Formats a [`Date`] to a string.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DateTimeFormatError] on failure.
   String formatDate(Date value) {
     final write = _Write();
     final result = _icu4x_DateFormatter_format_date_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }
@@ -52,24 +52,24 @@ final class DateFormatter implements ffi.Finalizable {
   ///
   /// Will convert to this formatter's calendar first
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DateTimeFormatError] on failure.
   String formatIsoDate(IsoDate value) {
     final write = _Write();
     final result = _icu4x_DateFormatter_format_iso_date_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }
 
   /// Formats a [`DateTime`] to a string.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DateTimeFormatError] on failure.
   String formatDatetime(DateTime value) {
     final write = _Write();
     final result = _icu4x_DateFormatter_format_datetime_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }
@@ -78,12 +78,12 @@ final class DateFormatter implements ffi.Finalizable {
   ///
   /// Will convert to this formatter's calendar first
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DateTimeFormatError] on failure.
   String formatIsoDatetime(IsoDateTime value) {
     final write = _Write();
     final result = _icu4x_DateFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }
