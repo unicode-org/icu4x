@@ -1852,7 +1852,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -2123,7 +2123,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             .map_err(LoadError::Data)?;
                             self.load_time_zone_location_names(locations_provider, locale)?;
                         }
-                        (TimeZone::LocalizedOffset, _) | (TimeZone::UpperZ, FieldLength::Wide) => {
+                        (TimeZone::LocalizedOffset, _) => {
                             self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                             self.load_fixed_decimal_formatter(
                                 fixed_decimal_formatter_loader,
@@ -2131,13 +2131,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                             )
                             .map_err(LoadError::Data)?;
                         }
-                        (
-                            TimeZone::IsoWithZ
-                            | TimeZone::Iso
-                            | TimeZone::Location
-                            | TimeZone::UpperZ,
-                            _,
-                        ) => {
+                        (TimeZone::IsoWithZ | TimeZone::Iso | TimeZone::Location, _) => {
                             // no data required
                         }
                     }

@@ -36,7 +36,7 @@ impl TimeZone {
                 Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
             ],
-            (Self::LocalizedOffset, _) | (Self::UpperZ, FieldLength::Wide) => [
+            (Self::LocalizedOffset, _) => [
                 Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
                 None,
@@ -78,7 +78,7 @@ impl TimeZone {
                 None,
                 None,
             ],
-            (Self::IsoWithZ, _) | (Self::UpperZ, FieldLength::Narrow) => [
+            (Self::IsoWithZ, _) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcExtended,
                     minutes: IsoMinutes::Required,
@@ -114,7 +114,7 @@ impl TimeZone {
                 None,
                 None,
             ],
-            (Self::Iso, FieldLength::Wide) | (Self::UpperZ, _) => [
+            (Self::Iso, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,

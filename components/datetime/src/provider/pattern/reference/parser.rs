@@ -8,14 +8,11 @@ use super::{
 };
 #[cfg(test)]
 use super::{GenericPattern, Pattern};
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::{
-    convert::{TryFrom, TryInto},
-    mem,
-};
+use core::mem;
 
 #[derive(Debug, PartialEq)]
 struct SegmentSymbol {
@@ -25,9 +22,10 @@ struct SegmentSymbol {
 
 impl SegmentSymbol {
     fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        (self.symbol, self.length)
-            .try_into()
-            .map(|item| result.push(item))
+        let length = FieldLength::from_idx(self.length)
+            .map_err(|_| PatternError::FieldLengthInvalid(self.symbol))?;
+        result.push(PatternItem::from((self.symbol, length)));
+        Ok(())
     }
 }
 
@@ -81,10 +79,45 @@ impl SegmentLiteral {
 }
 
 #[derive(Debug, PartialEq)]
+struct SymbolAlias {
+    ch: char,
+    length: u8,
+}
+
+impl SymbolAlias {
+    fn try_new(ch: char) -> Option<Self> {
+        matches!(ch, 'Z').then_some(Self { ch, length: 1 })
+    }
+
+    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+        match (self.ch, self.length) {
+            // Z..ZZZ => xxxx
+            ('Z', 1..=3) => SegmentSymbol {
+                symbol: FieldSymbol::TimeZone(TimeZone::Iso),
+                length: 4,
+            },
+            // ZZZZ => OOOO
+            ('Z', 4) => SegmentSymbol {
+                symbol: FieldSymbol::TimeZone(TimeZone::LocalizedOffset),
+                length: 4,
+            },
+            // ZZZZZ => XXXXX
+            ('Z', 5) => SegmentSymbol {
+                symbol: FieldSymbol::TimeZone(TimeZone::IsoWithZ),
+                length: 5,
+            },
+            _ => return Err(PatternError::UnknownSubstitution(self.ch)),
+        }
+        .finish(result)
+    }
+}
+
+#[derive(Debug, PartialEq)]
 enum Segment {
     Symbol(SegmentSymbol),
     SecondSymbol(SegmentSecondSymbol),
     Literal(SegmentLiteral),
+    SymbolAlias(SymbolAlias),
 }
 
 impl Segment {
@@ -93,6 +126,7 @@ impl Segment {
             Self::Symbol(v) => v.finish(result),
             Self::SecondSymbol(v) => v.finish(result),
             Self::Literal(v) => v.finish(result),
+            Self::SymbolAlias(v) => v.finish(result),
         }
     }
 
@@ -101,6 +135,7 @@ impl Segment {
             Self::Symbol(_) => unreachable!("no symbols in generic pattern"),
             Self::SecondSymbol(_) => unreachable!("no symbols in generic pattern"),
             Self::Literal(v) => v.finish_generic(result),
+            Self::SymbolAlias(_) => unreachable!("no symbols in generic pattern"),
         }
     }
 }
@@ -240,6 +275,15 @@ impl<'p> Parser<'p> {
                                 },
                             )
                             .finish(&mut result)?;
+                        }
+                    }
+                } else if let Some(alias) = SymbolAlias::try_new(ch) {
+                    match &mut self.state {
+                        Segment::SymbolAlias(SymbolAlias { ch: ch2, length }) if *ch2 == ch => {
+                            *length += 1;
+                        }
+                        state => {
+                            mem::replace(state, Segment::SymbolAlias(alias)).finish(&mut result)?;
                         }
                     }
                 } else {
@@ -687,7 +731,23 @@ mod tests {
             ),
             (
                 "Z",
-                vec![(fields::TimeZone::UpperZ.into(), FieldLength::One).into()],
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+            ),
+            (
+                "ZZ",
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+            ),
+            (
+                "ZZZ",
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+            ),
+            (
+                "ZZZZ",
+                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::Wide).into()],
+            ),
+            (
+                "ZZZZZ",
+                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::Narrow).into()],
             ),
             (
                 "O",
@@ -721,6 +781,7 @@ mod tests {
                     .parse()
                     .expect("Parsing pattern failed."),
                 pattern,
+                "{string}",
             );
         }
 

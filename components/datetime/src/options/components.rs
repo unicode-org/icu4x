@@ -829,7 +829,6 @@ impl From<&Pattern<'_>> for Bag {
                             FieldLength::One => TimeZoneName::ShortOffset,
                             _ => TimeZoneName::LongOffset,
                         },
-                        fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
                         fields::TimeZone::Location => unimplemented!("fields::TimeZone::Location"),
                         fields::TimeZone::Iso => unimplemented!("fields::TimeZone::IsoZ"),
                         fields::TimeZone::IsoWithZ => unimplemented!("fields::TimeZone::Iso"),
