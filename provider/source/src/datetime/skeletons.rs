@@ -140,6 +140,7 @@ mod test {
     fn test_skeleton_matching_missing_fields() {
         let mut components = components::Bag::empty();
         components.weekday = Some(components::Text::Short);
+        components.time_zone_name = Some(components::TimeZoneName::LongGeneric);
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
