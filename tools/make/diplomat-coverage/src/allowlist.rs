@@ -193,8 +193,6 @@ lazy_static::lazy_static! {
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeWriteError",
-        "icu::datetime::LoadError",
-        "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
 

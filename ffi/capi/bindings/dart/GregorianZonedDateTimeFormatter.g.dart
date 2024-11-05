@@ -29,23 +29,23 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// This function has `date_length` and `time_length` arguments and uses default options
   /// for the time zone.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [PatternLoadError] on failure.
   factory GregorianZonedDateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw PatternLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return GregorianZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
   /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DateTimeFormatError] on failure.
   String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
     final write = _Write();
     final result = _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }

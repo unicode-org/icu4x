@@ -505,11 +505,6 @@ impl Date<JapaneseExtended> {
             .new_japanese_date_inner(era, year, month, day)?;
         Ok(Date::from_raw(inner, japanext_calendar))
     }
-
-    #[doc(hidden)] // for testing
-    pub fn into_japanese_date(self) -> Date<Japanese> {
-        Date::from_raw(self.inner, self.calendar.0)
-    }
 }
 
 impl DateTime<Japanese> {

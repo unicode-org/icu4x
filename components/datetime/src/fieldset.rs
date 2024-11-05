@@ -1085,7 +1085,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::LoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
@@ -1093,7 +1093,7 @@ impl_zone_marker!(
     ///     Zs::long(),
     /// );
     ///
-    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
     /// ```
     ///
     /// This style requires a [`ZoneVariant`], so
@@ -1302,7 +1302,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::LoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
@@ -1310,7 +1310,7 @@ impl_zone_marker!(
     ///     Vs::long(),
     /// );
     ///
-    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
     /// ```
     ///
     /// Since non-location names might change over time,

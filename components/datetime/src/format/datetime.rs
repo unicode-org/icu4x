@@ -14,6 +14,10 @@ use crate::provider::pattern::PatternItem;
 use crate::time_zone::{
     FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
 };
+#[cfg(doc)]
+use crate::TypedDateTimeNames;
+#[cfg(doc)]
+use icu_calendar::types::YearInfo;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
@@ -59,7 +63,7 @@ where
         Ok(Ok(()))
     } else {
         result.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
-        Ok(Err(DateTimeWriteError::MissingFixedDecimalFormatter))
+        Ok(Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded))
     }
 }
 
@@ -98,45 +102,67 @@ where
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
 /// Error for `TryWriteable` implementations
 pub enum DateTimeWriteError {
-    // Data not loaded
-    /// Missing FixedDecimalFormatter
-    #[displaydoc("FixedDecimalFormatter not loaded")]
-    MissingFixedDecimalFormatter,
-    /// Missing OrdinalRules
-    #[displaydoc("OrdinalRules not loaded")]
-    MissingOrdinalRules,
-    /// Missing WeekCalculator
-    #[displaydoc("WeekCalculator not loaded")]
-    MissingWeekCalculator,
-    /// TODO
-    #[displaydoc("Names for {0:?} not loaded")]
-    MissingNames(Field),
-
-    // Something not found in data
-    // TODO: Are these actionable? Can clients even invent their own months and days?
-    /// Missing month symbol
-    #[displaydoc("Cannot find symbol for month {0:?}")]
-    MissingMonthSymbol(MonthCode),
-    /// Missing era symbol
-    #[displaydoc("Cannot find symbol for era {0:?}")]
-    MissingEraSymbol(FormattingEra),
-    /// Missing weekday symbol
-    #[displaydoc("Cannot find symbol for weekday {0:?}")]
-    MissingWeekdaySymbol(IsoWeekday),
-
-    // Invalid input
-    /// Incomplete input
-    #[displaydoc("Incomplete input, missing value for {0:?}")]
-    MissingInputField(&'static str),
-    /// Cyclic year overflow
-    #[displaydoc("Cyclic year overflow, found {value}, maximum {max}")]
-    CyclicYearOverflow {
+    /// The [`MonthCode`] of the input is not valid for this calendar.
+    ///
+    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    ///
+    /// The output will contain the raw [`MonthCode`] as a fallback value.
+    #[displaydoc("Invalid month {0:?}")]
+    InvalidMonthCode(MonthCode),
+    /// The [`FormattingEra`] of the input is not valid for this calendar.
+    ///
+    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    ///
+    /// The output will contain [`FormattingEra::fallback_name`] as the fallback.
+    #[displaydoc("Invalid era {0:?}")]
+    InvalidEra(FormattingEra),
+    /// The [`YearInfo::cyclic`] of the input is not valid for this calendar.
+    ///
+    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    ///
+    /// The output will contain [`YearInfo::extended_year`] as a fallback value.
+    #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
+    InvalidCyclicYear {
         /// Value
         value: usize,
         /// Max
         max: usize,
     },
+
+    /// The [`FixedDecimalFormatter`] has not been loaded.
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern`], the pattern requires decimal
+    /// formatting, and the decimal formatter was not loaded.
+    ///
+    /// The output will contain fallback values using Latin numerals.
+    #[displaydoc("FixedDecimalFormatter not loaded")]
+    FixedDecimalFormatterNotLoaded,
+    /// The localized names for a field have not been loaded.
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires names
+    /// that were not loaded.
+    ///
+    /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
+    /// `M02` for month 2, etc.).
+    #[displaydoc("Names for {0:?} not loaded")]
+    NamesNotLoaded(Field),
+    /// An input field (such as "hour" or "month") is missing.
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires fields
+    /// that are not returned by the input type.
+    ///
+    /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
+    #[displaydoc("Incomplete input, missing value for {0:?}")]
+    MissingInputField(&'static str),
     /// Unsupported field
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern`], and the pattern contains unsupported fields.
+    ///
+    /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
     #[displaydoc("Unsupported field {0:?}")]
     UnsupportedField(Field),
 }
@@ -184,16 +210,14 @@ where
                     let era_symbol = datetime_names
                         .get_name_for_era(l, era)
                         .map_err(|e| match e {
-                            GetSymbolForEraError::Missing => {
-                                DateTimeWriteError::MissingEraSymbol(era)
-                            }
+                            GetSymbolForEraError::Missing => DateTimeWriteError::InvalidEra(era),
                             GetSymbolForEraError::MissingNames(f) => {
-                                DateTimeWriteError::MissingNames(f)
+                                DateTimeWriteError::NamesNotLoaded(f)
                             }
                         });
                     match era_symbol {
                         Err(e) => {
-                            w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_era()))?;
+                            w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_name()))?;
                             Err(e)
                         }
                         Ok(era) => Ok(w.write_str(era)?),
@@ -245,7 +269,7 @@ where
                         let value: usize = cyclic.get() as usize;
                         cyclics
                             .get(value - 1)
-                            .ok_or(DateTimeWriteError::CyclicYearOverflow {
+                            .ok_or(DateTimeWriteError::InvalidCyclicYear {
                                 value,
                                 max: cyclics.len() + 1,
                             })
@@ -295,9 +319,9 @@ where
                 .get_name_for_month(month, l, month_info.formatting_code)
                 .map_err(|e| match e {
                     GetNameForMonthError::Missing => {
-                        DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
+                        DateTimeWriteError::InvalidMonthCode(month_info.formatting_code)
                     }
-                    GetNameForMonthError::MissingNames(f) => DateTimeWriteError::MissingNames(f),
+                    GetNameForMonthError::MissingNames(f) => DateTimeWriteError::NamesNotLoaded(f),
                 }) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| w.write_str(&month_info.formatting_code.0))?;
@@ -326,8 +350,9 @@ where
             Some(wd) => match datetime_names
                 .get_name_for_weekday(weekday, l, wd)
                 .map_err(|e| match e {
-                    GetNameForWeekdayError::Missing => DateTimeWriteError::MissingWeekdaySymbol(wd),
-                    GetNameForWeekdayError::MissingNames(f) => DateTimeWriteError::MissingNames(f),
+                    GetNameForWeekdayError::MissingNames(f) => {
+                        DateTimeWriteError::NamesNotLoaded(f)
+                    }
                 }) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| {
@@ -446,7 +471,7 @@ where
                     )
                     .map_err(|e| match e {
                         GetNameForDayPeriodError::MissingNames(f) => {
-                            DateTimeWriteError::MissingNames(f)
+                            DateTimeWriteError::NamesNotLoaded(f)
                         }
                     }) {
                     Err(e) => {
@@ -483,8 +508,8 @@ where
                     Err(DateTimeWriteError::MissingInputField(f))
                 }
                 Err(
-                    e @ (FormatTimeZoneError::MissingFixedDecimalFormatter
-                    | FormatTimeZoneError::MissingZoneSymbols),
+                    e @ (FormatTimeZoneError::FixedDecimalFormatterNotLoaded
+                    | FormatTimeZoneError::NamesNotLoaded),
                 ) => {
                     if let Some(offset) = input.offset {
                         w.with_part(Part::ERROR, |w| {
@@ -499,11 +524,11 @@ where
                         write_value_missing(w, field)?;
                     }
                     Err(match e {
-                        FormatTimeZoneError::MissingFixedDecimalFormatter => {
-                            DateTimeWriteError::MissingFixedDecimalFormatter
+                        FormatTimeZoneError::FixedDecimalFormatterNotLoaded => {
+                            DateTimeWriteError::FixedDecimalFormatterNotLoaded
                         }
-                        FormatTimeZoneError::MissingZoneSymbols => {
-                            DateTimeWriteError::MissingNames(field)
+                        FormatTimeZoneError::NamesNotLoaded => {
+                            DateTimeWriteError::NamesNotLoaded(field)
                         }
                         _ => unreachable!(),
                     })
@@ -543,36 +568,7 @@ where
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{fieldset::YMD, neo_skeleton::NeoSkeletonLength, provider::pattern::runtime};
-    use icu_calendar::types::FormattingEra;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
-    use tinystr::tinystr;
-
-    #[test]
-    fn test_mixed_calendar_eras() {
-        use crate::neo::DateTimeFormatter;
-        use crate::options::length;
-        use icu_calendar::cal::JapaneseExtended;
-        use icu_calendar::Date;
-
-        let locale = icu::locale::locale!("en-u-ca-japanese");
-        let dtf = DateTimeFormatter::try_new(&locale.into(), YMD::medium())
-            .expect("DateTimeFormat construction succeeds");
-
-        let date = Date::try_new_gregorian(1800, 9, 1).expect("Failed to construct Date.");
-        let date = date
-            .to_calendar(JapaneseExtended::new())
-            .into_japanese_date()
-            .to_any();
-
-        writeable::assert_try_writeable_eq!(
-            dtf.strict_format(&date).unwrap(),
-            "Sep 1, 12 kansei-1789",
-            Err(DateTimeWriteError::MissingEraSymbol(FormattingEra::Code(
-                tinystr!(16, "kansei-1789").into()
-            )))
-        );
-    }
 
     #[test]
     fn test_format_number() {

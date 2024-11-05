@@ -110,7 +110,7 @@ mod time_zone;
 
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
-pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
+pub use format::neo::{FormattedDateTimePattern, PatternLoadError, TypedDateTimeNames};
 
 pub use neo::DateTimeFormatter;
 pub use neo::FixedCalendarDateTimeFormatter;
