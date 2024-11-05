@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Cow;
+use std::fmt::Debug;
 
 use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, *};
@@ -105,6 +106,8 @@ where
     U: ule::EncodeAsVarULE<T> + serde::Serialize,
     F: Fn(&U, &T),
     for<'a> Box<T>: serde::Deserialize<'a>,
+    for<'a> &'a T: serde::Deserialize<'a>,
+    T: PartialEq + Debug,
 {
     let varzerovec: VarZeroVec<T> = slice.into();
 
@@ -141,6 +144,22 @@ where
 
     for (stack, zero) in slice.iter().zip(deserialized.iter()) {
         assert(stack, zero)
+    }
+
+    if let Some(first) = varzerovec.get(0) {
+        let bincode = bincode::serialize(first).unwrap();
+        let deserialized: &T = bincode::deserialize(&bincode).unwrap();
+        assert_eq!(
+            first, deserialized,
+            "Single element roundtrips with bincode"
+        );
+
+        let json = serde_json::to_string(first).unwrap();
+        let deserialized: Box<T> = serde_json::from_str(&json).unwrap();
+        assert_eq!(
+            first, &*deserialized,
+            "Single element roundtrips with serde"
+        );
     }
 }
 
