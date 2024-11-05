@@ -290,9 +290,9 @@ impl ExtractedInput {
             TimePrecision::HourExact => return (PackedSkeletonVariant::Standard, None),
             TimePrecision::MinuteExact => return (PackedSkeletonVariant::Variant0, None),
             TimePrecision::SecondExact(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
-            TimePrecision::Hour => HourMinute::Hour,
-            TimePrecision::Minute => HourMinute::Minute,
-            TimePrecision::Second => return (PackedSkeletonVariant::Variant1, None),
+            TimePrecision::HourPlus => HourMinute::Hour,
+            TimePrecision::MinutePlus => HourMinute::Minute,
+            TimePrecision::SecondPlus => return (PackedSkeletonVariant::Variant1, None),
         };
         let minute = self.minute.unwrap_or_default();
         let second = self.second.unwrap_or_default();
@@ -367,7 +367,7 @@ impl OverlapPatternSelectionData {
                 // year and a time because that would involve 3*3 = 9 variants
                 // instead of 3 variants.
                 debug_assert!(matches!(options.year_style, None));
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::Second);
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
@@ -444,7 +444,7 @@ impl TimePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime { options, payload } => {
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::Second);
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(

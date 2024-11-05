@@ -160,7 +160,7 @@ pub enum TimePrecision {
     /// - `11 am`
     /// - `16:20`
     /// - `07:15:01.85`
-    Hour,
+    HourPlus,
     /// Always display the hour. Hide all other time fields.
     ///
     /// Examples:
@@ -176,7 +176,7 @@ pub enum TimePrecision {
     /// - `11:00 am`
     /// - `16:20`
     /// - `07:15:01.85`
-    Minute,
+    MinutePlus,
     /// Always display the hour and minute. Hide the second.
     ///
     /// Examples:
@@ -192,7 +192,7 @@ pub enum TimePrecision {
     /// - `11:00:00 am`
     /// - `16:20:00`
     /// - `07:15:01.85`
-    Second,
+    SecondPlus,
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
     ///
