@@ -4,16 +4,16 @@
 
 //! `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
-//! appropriate for formatting and plural rule selection. It is optimized for operations involving
-//! the individual digits of a number.
+//! This crate provides [`SignedFixedDecimal`] and [`UnsignedFixedDecimal`], essential APIs for representing numbers in a human-readable format.
+//! These types are particularly useful for formatting and plural rule selection, and are optimized for operations on individual digits.
 //!
 //! # Examples
 //!
 //! ```
-//! use fixed_decimal::FixedDecimal;
+//! use fixed_decimal::SignedFixedDecimal;
 //!
-//! let dec = FixedDecimal::from(250).multiplied_pow10(-2);
+//! let mut dec = SignedFixedDecimal::from(250);
+//! dec.multiply_pow10(-2);
 //! assert_eq!("2.50", format!("{}", dec));
 //!
 //! #[derive(Debug, PartialEq)]
@@ -98,10 +98,10 @@ pub(crate) use rounding::NoIncrement;
 /// # Examples
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use fixed_decimal::LimitError;
 ///
-/// let mut dec1 = FixedDecimal::from(123);
+/// let mut dec1 = SignedFixedDecimal::from(123);
 /// dec1.multiply_pow10(i16::MAX);
 /// assert!(dec1.is_zero());
 /// ```
