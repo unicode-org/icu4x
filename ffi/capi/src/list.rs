@@ -27,7 +27,7 @@ pub mod ffi {
 
     impl ListFormatter {
         /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "and_with_length")]
         #[diplomat::demo(default_constructor)]
         pub fn create_and_with_length(
@@ -36,49 +36,49 @@ pub mod ffi {
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
-            let options = ListFormatterOptions::new().with_length(length.into());
+            let options = ListFormatterOptions::default().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_and_with_length,
-                icu_list::ListFormatter::try_new_and_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_and_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_and,
+                icu_list::ListFormatter::try_new_and_with_any_provider,
+                icu_list::ListFormatter::try_new_and_with_buffer_provider,
                 provider,
                 prefs,
                 options,
             )?)))
         }
         /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "or_with_length")]
         pub fn create_or_with_length(
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
-            let options = ListFormatterOptions::new().with_length(length.into());
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_or_with_length,
-                icu_list::ListFormatter::try_new_or_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_or_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_or,
+                icu_list::ListFormatter::try_new_or_with_any_provider,
+                icu_list::ListFormatter::try_new_or_with_buffer_provider,
                 provider,
                 prefs,
                 options
             )?)))
         }
         /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let prefs = ListFormatterPreferences::from(&locale.to_datalocale());
-            let options = ListFormatterOptions::new().with_length(length.into());
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
             Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_unit_with_length,
-                icu_list::ListFormatter::try_new_unit_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_unit_with_length_with_buffer_provider,
+                icu_list::ListFormatter::try_new_unit,
+                icu_list::ListFormatter::try_new_unit_with_any_provider,
+                icu_list::ListFormatter::try_new_unit_with_buffer_provider,
                 provider,
                 prefs,
                 options

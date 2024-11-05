@@ -16,9 +16,9 @@
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_and_with_length(
+//! let list_formatter = ListFormatter::try_new_and(
 //!     locale!("es").into(),
-//!     ListFormatterOptions::new()
+//!     ListFormatterOptions::default()
 //!       .with_length(ListLength::Wide)
 //! )
 //! .expect("locale should be present");
@@ -42,9 +42,9 @@
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_or_with_length(
+//! let list_formatter = ListFormatter::try_new_or(
 //!     locale!("th").into(),
-//!     ListFormatterOptions::new()
+//!     ListFormatterOptions::default()
 //!       .with_length(ListLength::Short)
 //! )
 //! .expect("locale should be present");
@@ -60,9 +60,9 @@
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_unit_with_length(
+//! let list_formatter = ListFormatter::try_new_unit(
 //!     locale!("en").into(),
-//!     ListFormatterOptions::new()
+//!     ListFormatterOptions::default()
 //!       .with_length(ListLength::Wide)
 //! )
 //! .expect("locale should be present");

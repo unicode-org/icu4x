@@ -74,38 +74,38 @@ macro_rules! constructor {
 }
 
 fn get_data_locale_from_prefs(prefs: ListFormatterPreferences) -> DataLocale {
-    // XXX: This should utilize region source priority.
+    // TODO(#5764): This should utilize region source priority.
     DataLocale::from_subtags(
-        prefs.language,
-        prefs.script,
-        prefs.region,
-        prefs.variant,
-        prefs.subdivision,
+        prefs.locale_prefs.language,
+        prefs.locale_prefs.script,
+        prefs.locale_prefs.region,
+        prefs.locale_prefs.variant,
+        prefs.locale_prefs.subdivision,
     )
 }
 
 impl ListFormatter {
     constructor!(
-        try_new_and_with_length,
-        try_new_and_with_length_with_any_provider,
-        try_new_and_with_length_with_buffer_provider,
-        try_new_and_with_length_unstable,
+        try_new_and,
+        try_new_and_with_any_provider,
+        try_new_and_with_buffer_provider,
+        try_new_and_unstable,
         AndListV2Marker,
         "and"
     );
     constructor!(
-        try_new_or_with_length,
-        try_new_or_with_length_with_any_provider,
-        try_new_or_with_length_with_buffer_provider,
-        try_new_or_with_length_unstable,
+        try_new_or,
+        try_new_or_with_any_provider,
+        try_new_or_with_buffer_provider,
+        try_new_or_unstable,
         OrListV2Marker,
         "or"
     );
     constructor!(
-        try_new_unit_with_length,
-        try_new_unit_with_length_with_any_provider,
-        try_new_unit_with_length_with_buffer_provider,
-        try_new_unit_with_length_unstable,
+        try_new_unit,
+        try_new_unit_with_any_provider,
+        try_new_unit_with_buffer_provider,
+        try_new_unit_unstable,
         UnitListV2Marker,
         "unit"
     );
@@ -122,9 +122,9 @@ impl ListFormatter {
     /// use icu::list::*;
     /// # use icu::locale::locale;
     /// # use writeable::*;
-    /// let formatteur = ListFormatter::try_new_and_with_length(
+    /// let formatteur = ListFormatter::try_new_and(
     ///     locale!("fr").into(),
-    ///     ListFormatterOptions::new()
+    ///     ListFormatterOptions::default()
     ///         .with_length(ListLength::Wide)
     /// )
     /// .unwrap();
@@ -388,14 +388,14 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        test!("fr", try_new_or_with_length, (["A", "B"], "A ou B"),);
+        test!("fr", try_new_or, (["A", "B"], "A ou B"),);
     }
 
     #[test]
     fn test_spanish() {
         test!(
             "es",
-            try_new_and_with_length,
+            try_new_and,
             (["x", "Mallorca"], "x y Mallorca"),
             (["x", "Ibiza"], "x e Ibiza"),
             (["x", "Hidalgo"], "x e Hidalgo"),
@@ -404,7 +404,7 @@ mod tests {
 
         test!(
             "es",
-            try_new_or_with_length,
+            try_new_or,
             (["x", "Ibiza"], "x o Ibiza"),
             (["x", "Okinawa"], "x u Okinawa"),
             (["x", "8 más"], "x u 8 más"),
@@ -421,18 +421,14 @@ mod tests {
             (["x", "11.000,92"], "x u 11.000,92"),
         );
 
-        test!(
-            "es-AR",
-            try_new_and_with_length,
-            (["x", "Ibiza"], "x e Ibiza"),
-        );
+        test!("es-AR", try_new_and, (["x", "Ibiza"], "x e Ibiza"),);
     }
 
     #[test]
     fn test_hebrew() {
         test!(
             "he",
-            try_new_and_with_length,
+            try_new_and,
             (["x", "יפו"], "x ויפו"),
             (["x", "Ibiza"], "x ו‑Ibiza"),
         );

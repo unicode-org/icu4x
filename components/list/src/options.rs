@@ -8,10 +8,10 @@
 /// ```
 /// use icu::list::{ListFormatterOptions, ListLength};
 ///
-/// let options = ListFormatterOptions::new()
+/// let options = ListFormatterOptions::default()
 ///     .with_length(ListLength::Wide);
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct ListFormatterOptions {
     /// The length variant should reflect available space for the list.
@@ -20,13 +20,13 @@ pub struct ListFormatterOptions {
 
 impl Default for ListFormatterOptions {
     fn default() -> Self {
-        Self::new()
+        Self::default()
     }
 }
 
 impl ListFormatterOptions {
     /// Constructs a new [`ListFormatterOptions`] struct.
-    pub const fn new() -> Self {
+    pub const fn default() -> Self {
         Self { length: None }
     }
 

@@ -10,9 +10,9 @@ use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
 use icu::locale::locale;
 
 fn main() {
-    let list_formatter = ListFormatter::try_new_and_with_length(
+    let list_formatter = ListFormatter::try_new_and(
         locale!("es").into(),
-        ListFormatterOptions::new().with_length(ListLength::Wide),
+        ListFormatterOptions::default().with_length(ListLength::Wide),
     )
     .unwrap();
 

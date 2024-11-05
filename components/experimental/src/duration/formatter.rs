@@ -162,7 +162,7 @@ impl From<BaseStyle> for icu_list::ListFormatterOptions {
             BaseStyle::Short | BaseStyle::Digital => ListLength::Short,
             BaseStyle::Narrow => ListLength::Narrow,
         };
-        Self::new().with_length(length)
+        Self::default().with_length(length)
     }
 }
 
@@ -195,11 +195,12 @@ impl DurationFormatter {
             })?
             .payload;
 
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
             unit: DurationUnitFormatter::try_new(locale, options)?,
-            list: ListFormatter::try_new_unit_with_length(locale.into(), options.base.into())?,
+            list: ListFormatter::try_new_unit(temp_loc.into(), options.base.into())?,
             fdf: FixedDecimalFormatter::try_new(locale, Default::default())?,
         })
     }
@@ -224,13 +225,14 @@ impl DurationFormatter {
             })?
             .payload;
 
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
             unit: DurationUnitFormatter::try_new_unstable(provider, locale, options)?,
-            list: ListFormatter::try_new_unit_with_length_unstable(
+            list: ListFormatter::try_new_unit_unstable(
                 provider,
-                locale.into(),
+                temp_loc.into(),
                 options.base.into(),
             )?,
             fdf: FixedDecimalFormatter::try_new_unstable(provider, locale, Default::default())?,

@@ -4,8 +4,6 @@
 
 use core::str::FromStr;
 
-use tinystr::TinyAsciiStr;
-
 use crate::parser::ParseError;
 use crate::subtags::{Region, Subtag};
 
@@ -136,15 +134,8 @@ impl SubdivisionId {
 
     /// Convert to [`Subtag`]
     pub fn into_subtag(self) -> Subtag {
-        use writeable::Writeable;
-
-        // XXX: This can be optimized to concatenate two TinyAsciiStr.
-        let mut result = alloc::string::String::with_capacity(8);
-        let _ = self.write_to(&mut result);
-        #[allow(clippy::expect_used)]
-        let tinystr = TinyAsciiStr::try_from_str(&result)
-            .expect("Constructing 8 chars TinyAsciiStr from two 4 char ones");
-        Subtag::from_tinystr_unvalidated(tinystr)
+        let result = self.region.to_tinystr().concat(self.suffix.to_tinystr());
+        Subtag::from_tinystr_unvalidated(result)
     }
 }
 

@@ -302,6 +302,8 @@
 //! [`Locale`]: crate::Locale
 
 pub mod extensions;
+mod locale;
+pub use locale::*;
 
 /// A low-level trait implemented on each preference exposed in component preferences.
 ///
@@ -467,12 +469,8 @@ macro_rules! __define_preferences {
         #[derive(Default, Debug, Clone)]
         #[non_exhaustive]
         pub struct $name {
-            pub(crate) language: $crate::subtags::Language,
-            pub(crate) script: Option<$crate::subtags::Script>,
-            pub(crate) region: Option<$crate::subtags::Region>,
-            pub(crate) variant: Option<$crate::subtags::Variant>,
-            pub(crate) subdivision: Option<$crate::subtags::Subtag>,
-            pub(crate) ue_region: Option<$crate::subtags::Region>,
+            /// Locale Preferences for the Preferences structure.
+            pub locale_prefs: $crate::preferences::LocalePreferences,
 
             $(
                 $(#[$key_doc])*
@@ -503,26 +501,8 @@ macro_rules! __define_preferences {
                     )*
                 }
 
-                let sd = loc
-                    .extensions
-                    .unicode
-                    .keywords
-                    .get(&$crate::extensions::unicode::key!("sd"))
-                    .and_then(|v| v.as_single_subtag().copied());
-                let ue_region = loc
-                        .extensions
-                        .unicode
-                        .keywords
-                        .get(&$crate::extensions::unicode::key!("rg"))
-                        .and_then(|v| v.as_single_subtag()
-                            .and_then(|s| $crate::subtags::Region::try_from_str(s.as_str()).ok()));
                 Self {
-                    language: loc.id.language,
-                    script: loc.id.script,
-                    region: loc.id.region,
-                    variant: loc.id.variants.iter().copied().next(),
-                    subdivision: sd,
-                    ue_region,
+                    locale_prefs: loc.into(),
 
                     $(
                         $key,
@@ -540,29 +520,7 @@ macro_rules! __define_preferences {
         impl From<&$crate::LanguageIdentifier> for $name {
             fn from(lid: &$crate::LanguageIdentifier) -> Self {
                 Self {
-                    language: lid.language,
-                    script: lid.script,
-                    region: lid.region,
-                    variant: lid.variants.iter().copied().next(),
-                    subdivision: None,
-                    ue_region: None,
-
-                    $(
-                        $key: None,
-                    )*
-                }
-            }
-        }
-
-        impl From<&icu_provider::DataLocale> for $name {
-            fn from(loc: &icu_provider::DataLocale) -> Self {
-                Self {
-                    language: loc.language,
-                    script: loc.script,
-                    region: loc.region,
-                    variant: loc.variant,
-                    subdivision: loc.subdivision,
-                    ue_region: None,
+                    locale_prefs: lid.into(),
 
                     $(
                         $key: None,
@@ -575,64 +533,22 @@ macro_rules! __define_preferences {
             /// Constructs a `Locale` corresponding to these preferences.
             pub fn into_locale(self) -> $crate::Locale {
                 use $crate::preferences::PreferenceKey;
-                $crate::Locale {
-                    id: $crate::LanguageIdentifier {
-                        language: self.language,
-                        script: self.script,
-                        region: self.region,
-                        variants: self
-                            .variant
-                            .map($crate::subtags::Variants::from_variant)
-                            .unwrap_or_default(),
-                    },
-                    extensions: {
-                        let mut extensions = $crate::extensions::Extensions::default();
-                        if let Some(sd) = self.subdivision {
-                            extensions.unicode.keywords.set(
-                                $crate::extensions::unicode::key!("sd"),
-                                $crate::extensions::unicode::Value::from_subtag(Some(sd))
-                            );
+                let mut result = $crate::Locale::from(&self.locale_prefs);
+                $(
+                    if let Some(value) = &self.$key {
+                        if let Some(ue) = <$pref>::unicode_extension_key() {
+                            let val = value.unicode_extension_value().unwrap();
+                            result.extensions.unicode.keywords.set(ue, val);
                         }
-                        if let Some(rg) = self.ue_region {
-                            extensions.unicode.keywords.set(
-                                $crate::extensions::unicode::key!("rg"),
-                                $crate::extensions::unicode::Value::try_from_str(rg.as_str()).unwrap()
-                            );
-                        }
-                        $(
-                            if let Some(value) = &self.$key {
-                                if let Some(ue) = <$pref>::unicode_extension_key() {
-                                    let val = value.unicode_extension_value().unwrap();
-                                    extensions.unicode.keywords.set(ue, val);
-                                }
-                            }
-                        )*
-                        extensions
-                    },
-                }
+                    }
+                )*
+                result
             }
 
             /// Extends the preferences with the values from another set of preferences.
             pub fn extend(&mut self, other: $name) {
+                self.locale_prefs.extend(other.locale_prefs);
                 $(
-                    if !other.language.is_default() {
-                        self.language = other.language;
-                    }
-                    if let Some(script) = other.script {
-                        self.script = Some(script);
-                    }
-                    if let Some(region) = other.region {
-                        self.region = Some(region);
-                    }
-                    if let Some(variant) = other.variant {
-                        self.variant = Some(variant);
-                    }
-                    if let Some(sd) = other.subdivision {
-                        self.subdivision = Some(sd);
-                    }
-                    if let Some(ue_region) = other.ue_region {
-                        self.ue_region = Some(ue_region);
-                    }
                     if let Some(value) = other.$key {
                         self.$key = Some(value);
                     }
