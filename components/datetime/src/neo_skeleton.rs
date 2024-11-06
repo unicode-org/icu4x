@@ -870,15 +870,15 @@ impl From<NeoTimeZoneStyle> for NeoComponents {
 impl NeoComponents {
     // Attributes for skeleta that span date/time/zone
     // TODO: Add variants for H, h, and B hours
-    const WEEKDAY_HOUR: &'static DataMarkerAttributes =
+    const WEEKDAY_TIME: &'static DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("ej");
 
     // For matching
-    const WEEKDAY_HOUR_STR: &'static str = Self::WEEKDAY_HOUR.as_str();
+    const WEEKDAY_TIME_STR: &'static str = Self::WEEKDAY_TIME.as_str();
 
     #[doc(hidden)] // for datagen
     pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
-        &[Self::WEEKDAY_HOUR]
+        &[Self::WEEKDAY_TIME]
     }
 
     /// Returns a stable string identifying this field set,
@@ -888,7 +888,7 @@ impl NeoComponents {
     pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
             Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time) => {
-                Some(Self::WEEKDAY_HOUR)
+                Some(Self::WEEKDAY_TIME)
             }
             _ => None,
         }
@@ -900,7 +900,7 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::from_id_str()`].
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
-            Self::WEEKDAY_HOUR_STR => Some(Self::DateTime(
+            Self::WEEKDAY_TIME_STR => Some(Self::DateTime(
                 NeoDateComponents::Weekday,
                 NeoTimeComponents::Time,
             )),
