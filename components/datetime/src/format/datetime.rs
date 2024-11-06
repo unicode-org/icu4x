@@ -295,6 +295,18 @@ where
             input!(second = input.second);
             try_write_number(w, fdf, second.number().into(), l)?
         }
+        (FieldSymbol::Second(Second::MillisInDay), l) => {
+            input!(hour = input.hour);
+            input!(minute = input.minute);
+            input!(second = input.second);
+            input!(nanosecond = input.nanosecond);
+
+            let milliseconds = (((hour.number() as u32 * 60) + minute.number() as u32) * 60
+                + second.number() as u32)
+                * 1000
+                + nanosecond.number() / 1_000_000;
+            try_write_number(w, fdf, milliseconds.into(), l)?
+        }
         (FieldSymbol::DecimalSecond(decimal_second), l) => {
             input!(second = input.second);
             input!(nanosecond = input.nanosecond);
@@ -402,8 +414,7 @@ where
             | FieldSymbol::Week(Week::WeekOfYear)
             | FieldSymbol::Week(Week::WeekOfMonth)
             | FieldSymbol::Day(Day::DayOfYear)
-            | FieldSymbol::Day(Day::ModifiedJulianDay)
-            | FieldSymbol::Second(Second::Millisecond),
+            | FieldSymbol::Day(Day::ModifiedJulianDay),
             _,
         ) => {
             w.with_part(Part::ERROR, |w| {

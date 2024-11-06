@@ -2190,7 +2190,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 (FS::Second(Second::Second), One | TwoDigit) => load_fdf = true,
 
                 // A
-                (FS::Second(Second::Millisecond), _) => load_fdf = true,
+                (FS::Second(Second::MillisInDay), _) => load_fdf = true,
 
                 // ???
                 (FS::DecimalSecond(_), _) => load_fdf = true,

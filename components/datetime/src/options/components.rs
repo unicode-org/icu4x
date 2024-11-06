@@ -784,19 +784,15 @@ impl From<&Pattern<'_>> for Bag {
                         _ => Numeric::Numeric,
                     });
                 }
-                FieldSymbol::Second(second) => {
-                    match second {
-                        fields::Second::Second => {
-                            bag.second = Some(match field.length {
-                                FieldLength::TwoDigit => Numeric::TwoDigit,
-                                _ => Numeric::Numeric,
-                            });
-                        }
-                        fields::Second::Millisecond => {
-                            // fields::Second::Millisecond is not implemented (#1834)
-                        }
+                FieldSymbol::Second(second) => match second {
+                    fields::Second::Second => {
+                        bag.second = Some(match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        });
                     }
-                }
+                    fields::Second::MillisInDay => unimplemented!("fields::Second::MillisInDay"),
+                },
                 FieldSymbol::DecimalSecond(decimal_second) => {
                     use FractionalSecondDigits::*;
                     bag.second = Some(match field.length {
