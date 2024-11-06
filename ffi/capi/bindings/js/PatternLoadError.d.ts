@@ -12,7 +12,7 @@ export class PatternLoadError {
     get ffiValue() : number;
 
     static Unknown : PatternLoadError;
-    static UnsupportedField : PatternLoadError;
+    static UnsupportedLength : PatternLoadError;
     static DuplicateField : PatternLoadError;
     static TypeTooSpecific : PatternLoadError;
     static DataMarkerNotFound : PatternLoadError;
