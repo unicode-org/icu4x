@@ -2292,6 +2292,7 @@ where
             + GetField<<R::D as DateInputMarkers>::MonthInput>
             + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
             + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
             + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
             + GetField<()>,
     {

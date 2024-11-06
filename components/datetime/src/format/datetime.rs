@@ -263,6 +263,10 @@ where
             input!(day_of_month = input.day_of_month);
             try_write_number(w, fdf, DayOfWeekInMonth::from(day_of_month).0.into(), l)?
         }
+        (FieldSymbol::Day(fields::Day::DayOfYear), l) => {
+            input!(day_of_year = input.day_of_year);
+            try_write_number(w, fdf, day_of_year.day_of_year.into(), l)?
+        }
         (FieldSymbol::Hour(symbol), l) => {
             input!(hour = input.hour);
             let h = hour.number();
@@ -413,7 +417,6 @@ where
             FieldSymbol::Year(Year::WeekOf)
             | FieldSymbol::Week(Week::WeekOfYear)
             | FieldSymbol::Week(Week::WeekOfMonth)
-            | FieldSymbol::Day(Day::DayOfYear)
             | FieldSymbol::Day(Day::ModifiedJulianDay),
             _,
         ) => {

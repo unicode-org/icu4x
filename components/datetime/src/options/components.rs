@@ -254,18 +254,21 @@ impl Bag {
 
         if let Some(day) = self.day {
             // TODO(#591) Unimplemented day fields:
-            // D - Day of year
             // g - Modified Julian day.
             fields.push(Field {
                 symbol: FieldSymbol::Day(match day {
                     Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
                     Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
+                    Day::DayOfYear => fields::Day::DayOfYear,
                 }),
                 length: match day {
                     // d    1 	  Numeric day of month: minimum digits
                     // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
                     // F    1  	  Numeric day of week in month: minimum digits
-                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth => FieldLength::One,
+                    // D    1     Numeric day of year: minimum digits
+                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth | Day::DayOfYear => {
+                        FieldLength::One
+                    }
                     Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
                 },
             });
@@ -546,6 +549,8 @@ pub enum Day {
     TwoDigitDayOfMonth,
     /// The day of week in this month, such as the "2" in 2nd Wednesday of July.
     DayOfWeekInMonth,
+    /// The day of year (numeric).
+    DayOfYear,
 }
 
 /// Options for displaying a time zone for the `components::`[`Bag`].
@@ -711,7 +716,7 @@ impl From<&Pattern<'_>> for Bag {
                             FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
                             _ => Day::NumericDayOfMonth,
                         },
-                        fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
+                        fields::Day::DayOfYear => Day::DayOfYear,
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
                         fields::Day::ModifiedJulianDay => {
                             unimplemented!("fields::Day::ModifiedJulianDay")

@@ -314,7 +314,8 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        NanoSecond, YearInfo,
     },
     AnyCalendarKind, Date, Iso, Time,
 };
@@ -349,6 +350,7 @@ impl DateInputMarkers for NeoDateSkeleton {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
+    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
@@ -412,6 +414,7 @@ impl DateInputMarkers for NeoCalendarPeriodSkeleton {
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
+    type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
     type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
