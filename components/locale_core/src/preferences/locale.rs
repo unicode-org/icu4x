@@ -6,7 +6,7 @@ use crate::subtags::{Language, Region, Script, Subtag, Variant, Variants};
 
 /// The structure storing locale subtags used in preferences.
 #[allow(clippy::exhaustive_structs)] // this type is stable
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct LocalePreferences {
     /// Preference of Language
     pub language: Language,
@@ -69,8 +69,8 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
     }
 }
 
-impl From<&LocalePreferences> for crate::Locale {
-    fn from(prefs: &LocalePreferences) -> Self {
+impl From<LocalePreferences> for crate::Locale {
+    fn from(prefs: LocalePreferences) -> Self {
         Self {
             id: crate::LanguageIdentifier {
                 language: prefs.language,

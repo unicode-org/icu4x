@@ -533,7 +533,7 @@ macro_rules! __define_preferences {
             /// Constructs a `Locale` corresponding to these preferences.
             pub fn into_locale(self) -> $crate::Locale {
                 use $crate::preferences::PreferenceKey;
-                let mut result = $crate::Locale::from(&self.locale_prefs);
+                let mut result = $crate::Locale::from(self.locale_prefs);
                 $(
                     if let Some(value) = &self.$key {
                         if let Some(ue) = <$pref>::unicode_extension_key() {
