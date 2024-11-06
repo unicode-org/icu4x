@@ -331,10 +331,10 @@ mod test {
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
                 [
                     0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ),
@@ -355,7 +355,7 @@ mod test {
             [
                 PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
                 PatternItem::from('z'),
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
             [
                 [
@@ -366,7 +366,7 @@ mod test {
                 [0x00, 0x00, 0x7a],
                 [
                     0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ],

@@ -301,7 +301,7 @@ impl FieldSymbol {
             Self::Hour(Hour::H24) => 21,
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
-            Self::Second(Second::Millisecond) => 24,
+            Self::Second(Second::MillisInDay) => 24,
             Self::DecimalSecond(DecimalSecond::SecondF1) => 31,
             Self::DecimalSecond(DecimalSecond::SecondF2) => 32,
             Self::DecimalSecond(DecimalSecond::SecondF3) => 33,
@@ -595,7 +595,7 @@ field_type!(
         /// Field symbol for milliseconds in day (numeric).
         ///
         /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
-        'A' => Millisecond = 1,
+        'A' => MillisInDay = 1,
     };
     Numeric;
     SecondULE
