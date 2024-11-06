@@ -6,7 +6,6 @@
 
 use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
-use crate::format::datetime::DateTimeWriteError;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
@@ -19,6 +18,7 @@ use crate::scaffold::{
     HasConstComponents, IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
+use crate::DateTimeWriteError;
 use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;

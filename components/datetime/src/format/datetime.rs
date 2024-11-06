@@ -3,27 +3,22 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::neo::RawDateTimeNamesBorrowed;
+use super::time_zone::{
+    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
+};
 use super::GetNameForDayPeriodError;
 use super::{
     GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::fields::{self, Day, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::error::DateTimeWriteError;
+use crate::fields::{self, Day, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
-use crate::time_zone::{
-    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
-};
-#[cfg(doc)]
-use crate::TypedDateTimeNames;
-#[cfg(doc)]
-use icu_calendar::types::YearInfo;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
-use icu_calendar::types::{
-    FormattingEra, {DayOfWeekInMonth, IsoWeekday, MonthCode},
-};
+use icu_calendar::types::{DayOfWeekInMonth, IsoWeekday};
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::{Part, Writeable};
@@ -96,75 +91,6 @@ where
         }
     }
     Ok(r)
-}
-
-#[non_exhaustive]
-#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
-/// Error for `TryWriteable` implementations
-pub enum DateTimeWriteError {
-    /// The [`MonthCode`] of the input is not valid for this calendar.
-    ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
-    ///
-    /// The output will contain the raw [`MonthCode`] as a fallback value.
-    #[displaydoc("Invalid month {0:?}")]
-    InvalidMonthCode(MonthCode),
-    /// The [`FormattingEra`] of the input is not valid for this calendar.
-    ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
-    ///
-    /// The output will contain [`FormattingEra::fallback_name`] as the fallback.
-    #[displaydoc("Invalid era {0:?}")]
-    InvalidEra(FormattingEra),
-    /// The [`YearInfo::cyclic`] of the input is not valid for this calendar.
-    ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
-    ///
-    /// The output will contain [`YearInfo::extended_year`] as a fallback value.
-    #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
-    InvalidCyclicYear {
-        /// Value
-        value: usize,
-        /// Max
-        max: usize,
-    },
-
-    /// The [`FixedDecimalFormatter`] has not been loaded.
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], the pattern requires decimal
-    /// formatting, and the decimal formatter was not loaded.
-    ///
-    /// The output will contain fallback values using Latin numerals.
-    #[displaydoc("FixedDecimalFormatter not loaded")]
-    FixedDecimalFormatterNotLoaded,
-    /// The localized names for a field have not been loaded.
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires names
-    /// that were not loaded.
-    ///
-    /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
-    /// `M02` for month 2, etc.).
-    #[displaydoc("Names for {0:?} not loaded")]
-    NamesNotLoaded(Field),
-    /// An input field (such as "hour" or "month") is missing.
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires fields
-    /// that are not returned by the input type.
-    ///
-    /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
-    #[displaydoc("Incomplete input, missing value for {0:?}")]
-    MissingInputField(&'static str),
-    /// Unsupported field
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern contains unsupported fields.
-    ///
-    /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
-    #[displaydoc("Unsupported field {0:?}")]
-    UnsupportedField(Field),
 }
 
 // This function assumes that the correct decision has been

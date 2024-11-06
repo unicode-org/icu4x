@@ -4,11 +4,11 @@
 
 //! A formatter specifically for the time zone.
 
+use super::neo::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
 use crate::{
     fields::{FieldLength, TimeZone},
     input::ExtractedInput,
-    provider,
 };
 use core::fmt;
 use fixed_decimal::FixedDecimal;
@@ -19,7 +19,7 @@ use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
 impl TimeZone {
-    pub(crate) fn units(self, length: FieldLength) -> impl Iterator<Item = TimeZoneFormatterUnit> {
+    pub(super) fn units(self, length: FieldLength) -> impl Iterator<Item = TimeZoneFormatterUnit> {
         match (self, length) {
             (Self::SpecificNonLocation, _) => [
                 Some(TimeZoneFormatterUnit::SpecificNonLocation(length)),
@@ -138,44 +138,27 @@ impl TimeZone {
     }
 }
 
-/// A container contains all data payloads for time zone formatting (borrowed version).
-#[derive(Debug, Copy, Clone, Default)]
-pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
-    /// The data that contains meta information about how to display content.
-    pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
-    /// The root location names, e.g. Toronto
-    pub(crate) locations_root: Option<&'a provider::time_zones::LocationsV1<'a>>,
-    /// The language specific location names, e.g. Italy
-    pub(crate) locations: Option<&'a provider::time_zones::LocationsV1<'a>>,
-    /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
-    /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
-    /// The specific long metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
-    /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
-    /// The metazone lookup
-    pub(crate) mz_periods: Option<&'a provider::time_zones::MetazonePeriodV1<'a>>,
-}
-
-fn metazone(
-    time_zone_id: TimeZoneBcp47Id,
-    (date, time): (Date<Iso>, Time),
-    metazone_period: &crate::provider::time_zones::MetazonePeriodV1,
-) -> Option<MetazoneId> {
-    let cursor = metazone_period.0.get0(&time_zone_id)?;
-    let mut metazone_id = None;
-    let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
-        + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
-    for (minutes, id) in cursor.iter1() {
-        if minutes_since_epoch_walltime >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes) {
-            metazone_id = id.get()
-        } else {
-            break;
+impl crate::provider::time_zones::MetazonePeriodV1<'_> {
+    fn resolve(
+        &self,
+        time_zone_id: TimeZoneBcp47Id,
+        (date, time): (Date<Iso>, Time),
+    ) -> Option<MetazoneId> {
+        let cursor = self.0.get0(&time_zone_id)?;
+        let mut metazone_id = None;
+        let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
+            + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
+        for (minutes, id) in cursor.iter1() {
+            if minutes_since_epoch_walltime
+                >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
+            {
+                metazone_id = id.get()
+            } else {
+                break;
+            }
         }
+        metazone_id
     }
-    metazone_id
 }
 
 /// Determines which ISO-8601 format should be used to format the timezone offset.
@@ -323,7 +306,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
                 .defaults
-                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -372,7 +355,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             .get(&(time_zone_id, zone_variant))
             .or_else(|| {
                 names.defaults.get(&(
-                    metazone(time_zone_id, local_time, metazone_period)?,
+                    metazone_period.resolve(time_zone_id, local_time)?,
                     zone_variant,
                 ))
             })
@@ -613,7 +596,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone(time_zone_id, local_time, metazone_period)?)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
