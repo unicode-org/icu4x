@@ -73,7 +73,7 @@ macro_rules! impl_marker_with_options {
                 pub year_style: datetime_marker_helper!(@option/yearstyle, $yearstyle_yes),
             )?
             $(
-                /// How precise to display the time of day
+                /// How precisely to display the time of day
                 ///
                 /// See: [`TimePrecision`]
                 pub time_precision: datetime_marker_helper!(@option/timeprecision, $timeprecision_yes),

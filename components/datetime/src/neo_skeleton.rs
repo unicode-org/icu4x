@@ -185,7 +185,9 @@ pub enum TimePrecision {
     /// - `16:20`
     /// - `07:15`
     MinuteExact,
-    /// Display the hour, minute, and second. This is the default.
+    /// Display the hour, minute, and second. Display fractional seconds if nonzero.
+    ///
+    /// This is the default.
     ///
     /// Examples:
     ///
