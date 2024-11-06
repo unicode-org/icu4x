@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::{try_write_pattern_items, DateTimeWriteError};
+use super::datetime::try_write_pattern_items;
 use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue,
@@ -22,7 +22,7 @@ use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::time_zone::TimeZoneDataPayloadsBorrowed;
+use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::types::FormattingEra;
@@ -2609,8 +2609,29 @@ impl RawDateTimeNamesBorrowed<'_> {
     }
 }
 
+/// A container contains all data payloads for time zone formatting (borrowed version).
+#[derive(Debug, Copy, Clone, Default)]
+pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
+    /// The data that contains meta information about how to display content.
+    pub(crate) essentials: Option<&'a tz::EssentialsV1<'a>>,
+    /// The root location names, e.g. Toronto
+    pub(crate) locations_root: Option<&'a tz::LocationsV1<'a>>,
+    /// The language specific location names, e.g. Italy
+    pub(crate) locations: Option<&'a tz::LocationsV1<'a>>,
+    /// The generic long metazone names, e.g. Pacific Time
+    pub(crate) mz_generic_long: Option<&'a tz::MzGenericV1<'a>>,
+    /// The generic short metazone names, e.g. PT
+    pub(crate) mz_generic_short: Option<&'a tz::MzGenericV1<'a>>,
+    /// The specific long metazone names, e.g. Pacific Daylight Time
+    pub(crate) mz_specific_long: Option<&'a tz::MzSpecificV1<'a>>,
+    /// The specific short metazone names, e.g. Pacific Daylight Time
+    pub(crate) mz_specific_short: Option<&'a tz::MzSpecificV1<'a>>,
+    /// The metazone lookup
+    pub(crate) mz_periods: Option<&'a tz::MzPeriodV1<'a>>,
+}
+
 impl<'data> RawDateTimeNamesBorrowed<'data> {
-    pub(crate) fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
+    pub(crate) fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data> {
         TimeZoneDataPayloadsBorrowed {
             essentials: self.zone_essentials.get_option(),
             locations_root: self.locations_root.get_option(),
