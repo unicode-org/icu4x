@@ -77,7 +77,7 @@ pub struct Combo<D, T, Z> {
     pub alignment: Option<Alignment>,
     /// Era display option.
     pub year_style: Option<YearStyle>,
-    /// Fractional second digits option.
+    /// Time precision option.
     pub time_precision: Option<TimePrecision>,
 }
 

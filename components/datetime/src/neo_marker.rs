@@ -227,7 +227,61 @@
 //!
 //! ## Time Precision
 //!
-//! // TODO: Add time precision docs tests.
+//! The time can be displayed with hour, minute, or second precision, and
+//! zero-valued fields can be automatically hidden.
+//!
+//! ```
+//! use icu::calendar::Time;
+//! use icu::datetime::fieldset::T;
+//! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::neo_skeleton::TimePrecision;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatters = [
+//!     TimePrecision::HourPlus,
+//!     TimePrecision::HourExact,
+//!     TimePrecision::MinutePlus,
+//!     TimePrecision::MinuteExact,
+//!     TimePrecision::SecondPlus,
+//!     TimePrecision::SecondExact(FractionalSecondDigits::F0),
+//! ].map(|time_precision| {
+//!     FixedCalendarDateTimeFormatter::<(), _>::try_new(
+//!         &locale!("en-US").into(),
+//!         T::short().with_time_precision(time_precision),
+//!     )
+//!     .unwrap()
+//! });
+//!
+//! let times = [
+//!     Time::try_new(7, 0, 0, 0).unwrap(),
+//!     Time::try_new(7, 0, 10, 0).unwrap(),
+//!     Time::try_new(7, 12, 20, 5).unwrap(),
+//! ];
+//!
+//! // TODO(#5782): the Plus variants should render fractional digits
+//! let expected_value_table = [
+//!     // 7:00:00, 7:00:10, 7:12:20.5432
+//!     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
+//!     ["7 AM", "7 AM", "7 AM"], // HourExact
+//!     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
+//!     ["7:00 AM", "7:00 AM", "7:12 AM"], // MinuteExact
+//!     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
+//!     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
+//! ];
+//!
+//! for (expected_value_row, formatter) in expected_value_table.iter().zip(formatters.iter()) {
+//!     for (expected_value, time) in expected_value_row.iter().zip(times.iter()) {
+//!         assert_try_writeable_eq!(
+//!             formatter.format(time),
+//!             *expected_value,
+//!             Ok(()),
+//!             "{formatter:?} @ {time:?}"
+//!         );
+//!     }
+//! }
+//! ```
 //!
 //! ## Fractional Second Digits
 //!

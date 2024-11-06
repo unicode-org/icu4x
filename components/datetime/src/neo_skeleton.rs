@@ -145,6 +145,12 @@ impl IntoOption<YearStyle> for YearStyle {
 }
 
 /// A specification for how precisely to display the time of day.
+/// 
+/// The examples below are based on the following inputs and hour cycles:
+/// 
+/// 1. 11 o'clock with 12-hour time
+/// 2. 16:20 (4:20 pm) with 24-hour time
+/// 3. 7:15:01.85 with 24-hour time
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(
@@ -157,33 +163,33 @@ pub enum TimePrecision {
     ///
     /// Examples:
     ///
-    /// - `11 am`
-    /// - `16:20`
-    /// - `07:15:01.85`
+    /// 1. `11 am`
+    /// 2. `16:20`
+    /// 3. `07:15:01.85`
     HourPlus,
     /// Always display the hour. Hide all other time fields.
     ///
     /// Examples:
     ///
-    /// - `11 am`
-    /// - `16h`
-    /// - `07h`
+    /// 1. `11 am`
+    /// 2. `16h`
+    /// 3. `07h`
     HourExact,
     /// Always display the hour and minute. Display the second if nonzero.
     ///
     /// Examples:
     ///
-    /// - `11:00 am`
-    /// - `16:20`
-    /// - `07:15:01.85`
+    /// 1. `11:00 am`
+    /// 2. `16:20`
+    /// 3. `07:15:01.85`
     MinutePlus,
     /// Always display the hour and minute. Hide the second.
     ///
     /// Examples:
     ///
-    /// - `11:00 am`
-    /// - `16:20`
-    /// - `07:15`
+    /// 1. `11:00 am`
+    /// 2. `16:20`
+    /// 3. `07:15`
     MinuteExact,
     /// Display the hour, minute, and second. Display fractional seconds if nonzero.
     ///
@@ -191,18 +197,18 @@ pub enum TimePrecision {
     ///
     /// Examples:
     ///
-    /// - `11:00:00 am`
-    /// - `16:20:00`
-    /// - `07:15:01.85`
+    /// 1. `11:00:00 am`
+    /// 2. `16:20:00`
+    /// 3. `07:15:01.85`
     SecondPlus,
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
     ///
     /// Examples with [`FractionalSecondDigits::F1`]:
     ///
-    /// - `11:00:00.0 am`
-    /// - `16:20:00.0`
-    /// - `07:15:01.8`
+    /// 1. `11:00:00.0 am`
+    /// 2. `16:20:00.0`
+    /// 3. `07:15:01.8`
     SecondExact(FractionalSecondDigits),
 }
 
