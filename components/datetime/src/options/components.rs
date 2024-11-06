@@ -242,10 +242,13 @@ impl Bag {
         }
 
         if let Some(week) = self.week {
+            #[allow(unreachable_code)]
             fields.push(Field {
                 symbol: FieldSymbol::Week(match week {
-                    Week::WeekOfMonth => fields::Week::WeekOfMonth,
-                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => fields::Week::WeekOfYear,
+                    Week::WeekOfMonth => unimplemented!("#5643 fields::Week::WeekOfMonth"),
+                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => {
+                        unimplemented!("#5643 fields::Week::WeekOfYear")
+                    }
                 }),
                 length: match week {
                     Week::WeekOfMonth | Week::NumericWeekOfYear => FieldLength::One,
@@ -703,14 +706,15 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::Narrow | FieldLength::Six => Month::Narrow,
                     });
                 }
-                FieldSymbol::Week(week) => {
-                    bag.week = Some(match week {
-                        fields::Week::WeekOfYear => match field.length {
-                            FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
-                            _ => Week::NumericWeekOfYear,
-                        },
-                        fields::Week::WeekOfMonth => Week::WeekOfMonth,
-                    });
+                FieldSymbol::Week(_week) => {
+                    // TODO(#5643): Add week fields back
+                    // bag.week = Some(match week {
+                    //     fields::Week::WeekOfYear => match field.length {
+                    //         FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
+                    //         _ => Week::NumericWeekOfYear,
+                    //     },
+                    //     fields::Week::WeekOfMonth => Week::WeekOfMonth,
+                    // });
                 }
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
@@ -854,7 +858,8 @@ mod test {
         let bag = Bag {
             year: Some(Year::Numeric),
             month: Some(Month::Long),
-            week: Some(Week::WeekOfMonth),
+            // TODO(#5643): Add week fields back
+            week: None,
             day: Some(Day::NumericDayOfMonth),
 
             hour: Some(Numeric::Numeric),
@@ -869,7 +874,6 @@ mod test {
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
-                (Symbol::Week(fields::Week::WeekOfMonth), Length::One).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),

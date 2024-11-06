@@ -284,8 +284,10 @@ impl FieldSymbol {
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
             Self::Month(Month::StandAlone) => 6,
-            Self::Week(Week::WeekOfYear) => 7,
-            Self::Week(Week::WeekOfMonth) => 8,
+            // TODO(#5643): Add week fields back
+            // Self::Week(Week::WeekOfYear) => 7,
+            // Self::Week(Week::WeekOfMonth) => 8,
+            Self::Week(_) => unreachable!(), // ZST references aren't uninhabited
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
@@ -386,8 +388,8 @@ impl Ord for FieldSymbol {
 }
 
 macro_rules! field_type {
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
-        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $ule_name);
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $($ule_name:ident)?) => (
+        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $($ule_name)?);
 
         #[cfg(feature = "datagen")]
         impl LengthType for $i {
@@ -396,7 +398,7 @@ macro_rules! field_type {
             }
         }
     );
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $($ule_name:ident)?) => (
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
@@ -404,9 +406,11 @@ macro_rules! field_type {
         #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
         #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
         #[allow(clippy::enum_variant_names)]
-        #[repr(u8)]
-        #[zerovec::make_ule($ule_name)]
-        #[zerovec::derive(Debug)]
+        $(
+            #[repr(u8)]
+            #[zerovec::make_ule($ule_name)]
+            #[zerovec::derive(Debug)]
+        )?
         #[allow(clippy::exhaustive_enums)] // used in data struct
         $(#[$enum_attr])*
         pub enum $i {
@@ -417,6 +421,10 @@ macro_rules! field_type {
                 $val = $idx,
             )*
         }
+
+        $(
+            #[allow(path_statements)] // #5643 impl conditional on $ule_name
+            const _: () = { $ule_name; };
 
         impl $i {
             /// Retrieves an index of the field variant.
@@ -460,6 +468,7 @@ macro_rules! field_type {
                     .ok_or(SymbolError::InvalidIndex(idx))
             }
         }
+        )?
 
         impl TryFrom<char> for $i {
             type Error = SymbolError;
@@ -604,16 +613,59 @@ field_type!(
 field_type!(
     /// An enum for the possible symbols of a week field in a date pattern.
     Week; {
-        /// Field symbol for week of year (numeric).
-        ///
-        /// When used in a pattern with year, use `Year::WeekOf` for the year field instead of [`Year::Calendar`].
-        'w' => WeekOfYear = 0,
-        /// Field symbol for week of month (numeric).
-        'W' => WeekOfMonth = 1,
+        // /// Field symbol for week of year (numeric).
+        // ///
+        // /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
+        // 'w' => WeekOfYear = 0,
+        // /// Field symbol for week of month (numeric).
+        // 'W' => WeekOfMonth = 1,
     };
     Numeric;
-    WeekULE
+    // TODO(#5643): Recover ULE once the type is inhabited
+    // WeekULE
 );
+
+impl Week {
+    /// Retrieves an index of the field variant.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use icu::datetime::fields::Month;
+    ///
+    /// assert_eq!(Month::StandAlone::idx(), 1);
+    /// ```
+    ///
+    /// # Stability
+    ///
+    /// This is mostly useful for serialization,
+    /// and does not guarantee index stability between ICU4X
+    /// versions.
+    #[inline]
+    pub(crate) fn idx(self) -> u8 {
+        0
+    }
+
+    /// Retrieves a field variant from an index.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use icu::datetime::fields::Month;
+    ///
+    /// assert_eq!(Month::from_idx(0), Month::Format);
+    /// ```
+    ///
+    /// # Stability
+    ///
+    /// This is mostly useful for serialization,
+    /// and does not guarantee index stability between ICU4X
+    /// versions.
+    #[inline]
+    pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+        Err(SymbolError::InvalidIndex(idx))
+    }
+}
 
 field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
