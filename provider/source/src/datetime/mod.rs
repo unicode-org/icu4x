@@ -397,6 +397,8 @@ mod test {
     }
 
     #[test]
+    #[ignore] // TODO(#5643)
+    #[allow(unreachable_code, unused_variables, unused_mut)]
     fn test_datetime_skeletons() {
         use icu::datetime::provider::pattern::runtime::Pattern;
         use icu::datetime::provider::skeleton::PluralPattern;

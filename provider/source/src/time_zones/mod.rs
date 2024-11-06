@@ -213,15 +213,11 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations: DataResponse<LocationsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let locations_root: DataResponse<LocationsV1Marker> =
+            provider.load(Default::default()).unwrap();
         assert_eq!(
             "Pohnpei",
-            locations
+            locations_root
                 .payload
                 .get()
                 .locations
@@ -230,11 +226,27 @@ mod tests {
         );
         assert_eq!(
             "Ireland",
-            locations
+            locations_root
                 .payload
                 .get()
                 .locations
                 .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
+                .unwrap()
+        );
+
+        let locations: DataResponse<LocationsV1Marker> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("fr").into()),
+                ..Default::default()
+            })
+            .unwrap();
+        assert_eq!(
+            "Italie",
+            locations
+                .payload
+                .get()
+                .locations
+                .get(&TimeZoneBcp47Id(tinystr!(8, "itrom")))
                 .unwrap()
         );
 
@@ -275,7 +287,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::standard()))
+                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::Standard))
                 .unwrap()
         );
         assert_eq!(
@@ -284,7 +296,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::standard()))
+                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
                 .unwrap()
         );
 
@@ -325,7 +337,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::daylight()))
+                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::Daylight))
                 .unwrap()
         );
         assert_eq!(
@@ -334,7 +346,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::standard()))
+                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
                 .unwrap()
         );
 

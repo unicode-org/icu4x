@@ -281,6 +281,67 @@ impl<const N: usize> TinyAsciiStr<N> {
         unsafe { TinyAsciiStr::from_utf8_unchecked(bytes) }
     }
 
+    #[inline]
+    #[must_use]
+    /// Returns a `TinyAsciiStr<Q>` with the concatenation of this string,
+    /// `TinyAsciiStr<N>`, and another string, `TinyAsciiStr<M>`.
+    ///
+    /// If `Q < N + M`, the string gets truncated.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
+    ///
+    /// let abc = tinystr!(6, "abc");
+    /// let defg = tinystr!(6, "defg");
+    ///
+    /// // The concatenation is successful if Q is large enough...
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(16, "abcdefg")
+    /// );
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(12, "abcdefg")
+    /// );
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(8, "abcdefg")
+    /// );
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(7, "abcdefg")
+    /// );
+    ///
+    /// /// ...but it truncates of Q is too small.
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(6, "abcdef")
+    /// );
+    /// assert_eq!(
+    ///     abc.concat(defg),
+    ///     tinystr!(2, "ab")
+    /// );
+    /// ```
+    pub const fn concat<const M: usize, const Q: usize>(
+        self,
+        other: TinyAsciiStr<M>,
+    ) -> TinyAsciiStr<Q> {
+        let mut result = self.resize::<Q>();
+        let mut i = self.len();
+        let mut j = 0;
+        // Indexing is protected by the loop guard
+        #[allow(clippy::indexing_slicing)]
+        while i < Q && j < M {
+            result.bytes[i] = other.bytes[j];
+            i += 1;
+            j += 1;
+        }
+        result
+    }
+
     /// # Safety
     /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
     /// between ASCII characters

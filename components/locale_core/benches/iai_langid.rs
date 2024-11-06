@@ -108,7 +108,7 @@ fn bench_langid_canonicalize() {
 
     let _: Vec<Cow<str>> = LIDS_STR
         .iter()
-        .map(|l| LanguageIdentifier::canonicalize(l).expect("Canonicalization failed"))
+        .map(|l| LanguageIdentifier::normalize(l).expect("Normalization failed"))
         .collect();
 }
 

@@ -124,16 +124,16 @@ mod test {
                 ],
             ),
             (
-                Field::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
+                Field::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
                 [
-                    FieldSymbol::Year(Year::WeekOf).idx(),
+                    FieldSymbol::Year(Year::Cyclic).idx(),
                     FieldLength::Wide.idx(),
                 ],
             ),
             (
-                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                Field::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
                 [
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ),
@@ -152,7 +152,7 @@ mod test {
         let samples = [(
             [
                 Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
-                Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                Field::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
             [
                 [
@@ -160,7 +160,7 @@ mod test {
                     FieldLength::Wide.idx(),
                 ],
                 [
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ],

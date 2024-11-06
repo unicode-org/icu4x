@@ -40,6 +40,11 @@ fn get_skeleton_bincode_from_file() -> Vec<Vec<u8>> {
 #[test]
 fn test_skeleton_json_serialization_roundtrip() {
     for skeleton_string in &get_skeleton_fixtures() {
+        if skeleton_string == "yw" {
+            // TODO(#5643)
+            continue;
+        }
+
         // Wrap the string in quotes so it's a JSON string.
         let json_in: String = serde_json::to_string(skeleton_string).unwrap();
 
@@ -76,6 +81,12 @@ fn test_skeleton_bincode_serialization_roundtrip() {
     } else {
         Some(get_skeleton_bincode_from_file())
     };
+
+    // TODO(#5643)
+    let skeletons = skeletons
+        .into_iter()
+        .filter(|s| s != "yw")
+        .collect::<Vec<_>>();
 
     if let Some(ref expect_vec) = expect_vec {
         if expect_vec.len() != skeletons.len() {

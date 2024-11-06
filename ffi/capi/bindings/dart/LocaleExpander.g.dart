@@ -28,11 +28,11 @@ final class LocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleExpander(DataProvider provider) {
     final result = _icu4x_LocaleExpander_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
@@ -41,11 +41,11 @@ final class LocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory LocaleExpander.extended(DataProvider provider) {
     final result = _icu4x_LocaleExpander_create_extended_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return LocaleExpander._fromFfi(result.union.ok, []);
   }

@@ -151,12 +151,9 @@ impl Locale {
         }
     }
 
-    /// Canonicalize the locale (operating on UTF-8 formatted byte slices)
+    /// Normalize the locale (operating on UTF-8 formatted byte slices)
     ///
-    /// This is a best-effort operation that performs all available levels of canonicalization.
-    ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -164,19 +161,18 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::canonicalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&locale, input))
     }
 
-    /// Canonicalize the locale (operating on strings)
+    /// Normalize the locale (operating on strings)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -184,12 +180,12 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize("pL_latn_pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize(input: &str) -> Result<Cow<str>, ParseError> {
-        Self::canonicalize_utf8(input.as_bytes())
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.

@@ -13,7 +13,7 @@ pub mod ffi {
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
         datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::Error,
+        errors::ffi::{DateTimeFormatError, PatternLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZoneInfo,
@@ -39,7 +39,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
+        ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
 
@@ -61,7 +61,7 @@ pub mod ffi {
             datetime: &IsoDateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
@@ -70,9 +70,9 @@ pub mod ffi {
                     .time_zone_id
                     .with_offset(time_zone.offset)
                     .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::standard())),
+                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _infallible = self.0.format(&zdt).try_write_to(write);
+            let _lossy = self.0.format(&zdt).try_write_to(write);
             Ok(())
         }
     }
@@ -93,7 +93,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
 
@@ -113,7 +113,7 @@ pub mod ffi {
             datetime: &DateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
@@ -124,10 +124,10 @@ pub mod ffi {
                     .with_zone_variant(
                         time_zone
                             .zone_variant
-                            .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
 
@@ -137,7 +137,7 @@ pub mod ffi {
             datetime: &IsoDateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
@@ -145,9 +145,9 @@ pub mod ffi {
                     .time_zone_id
                     .with_offset(time_zone.offset)
                     .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::standard())),
+                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
     }

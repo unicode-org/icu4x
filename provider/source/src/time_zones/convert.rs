@@ -12,6 +12,7 @@ use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::calendar::Time;
 use icu::datetime::provider::time_zones::*;
+use icu::locale::{langid, LanguageIdentifier};
 use icu::timezone::provider::*;
 use icu::timezone::UtcOffset;
 use icu::timezone::ZoneVariant;
@@ -63,10 +64,11 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
-
+impl SourceDataProvider {
+    fn calculate_locations(
+        &self,
+        req: DataRequest,
+    ) -> Result<BTreeMap<TimeZoneBcp47Id, String>, DataError> {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
@@ -119,6 +121,56 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                 .collect()
         };
 
+        let find_endonym_or_en = |region: icu::locale::subtags::Region| -> Option<&str> {
+            let expander = self.cldr().unwrap().extended_locale_expander().unwrap();
+            let mut langid = LanguageIdentifier {
+                region: Some(region),
+                // `und` is `Latn`
+                script: Some(icu::locale::subtags::script!("Latn")),
+                ..Default::default()
+            };
+            expander.maximize(&mut langid);
+            langid.region = None;
+            expander.minimize(&mut langid);
+            let locale = langid.into();
+
+            // Avoid logging file-not-found errors
+            let regions = &if self
+                .cldr()
+                .unwrap()
+                .displaynames()
+                .file_exists(&locale, "territories.json")
+                != Ok(true)
+            {
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        &langid!("en").into(),
+                        "territories.json",
+                    )
+                    .ok()?
+            } else {
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        &locale,
+                        "territories.json",
+                    )
+                    .ok()?
+            }
+            .main
+            .value
+            .localedisplaynames
+            .regions;
+
+            regions
+                .get(&format!("{region}-alt-short"))
+                .or_else(|| regions.get(region.as_str()))
+                .map(|x| x.as_str())
+        };
+
         let bcp47_tzids = &self
             .cldr()?
             .bcp47()
@@ -146,6 +198,7 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                         region_display_names
                             .get(region)
                             .copied()
+                            .or_else(|| find_endonym_or_en(*region))
                             .unwrap_or(region.as_str())
                             .to_string(),
                     ))
@@ -188,6 +241,33 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .collect::<BTreeMap<_, _>>();
 
         locations.remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
+
+        Ok(locations)
+    }
+}
+
+impl DataProvider<LocationsV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
+
+        let time_zone_names = &self
+            .cldr()?
+            .dates("gregorian")
+            .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
+                req.id.locale,
+                "timeZoneNames.json",
+            )?
+            .main
+            .value
+            .dates
+            .time_zone_names;
+
+        let mut locations = self.calculate_locations(req)?;
+
+        if *req.id.locale != DataLocale::default() {
+            let und = self.calculate_locations(Default::default())?;
+            locations.retain(|k, v| und.get(k).unwrap() != v);
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -457,7 +537,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         let mz_periods =
             DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
-        let locations = DataProvider::<LocationsV1Marker>::load(self, req)?.payload;
+        let locations = self.calculate_locations(req)?;
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {
@@ -475,11 +555,13 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     return false;
                 };
                 tzs.iter().any(|tz| {
-                    let Some(location) = locations.get().locations.get(tz) else {
+                    let Some(location) = locations.get(tz) else {
                         return true;
                     };
                     let eq = writeable::cmp_bytes(
-                        &locations.get().pattern_generic.interpolate([location]),
+                        &time_zone_names_resource
+                            .region_format
+                            .interpolate([location]),
                         v.as_bytes(),
                     );
                     eq != Ordering::Equal
@@ -694,8 +776,8 @@ fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneV
         .flat_map(move |(variant, value)| {
             Some((
                 match variant.as_str() {
-                    "standard" => ZoneVariant::standard(),
-                    "daylight" => ZoneVariant::daylight(),
+                    "standard" => ZoneVariant::Standard,
+                    "daylight" => ZoneVariant::Daylight,
                     _ => return None,
                 },
                 value.as_str(),

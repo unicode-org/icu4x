@@ -1216,10 +1216,10 @@ let termini = Object.assign({
         ]
     },
 
-    "Locale.canonicalize": {
-        func: LocaleDemo.canonicalize,
+    "Locale.normalize": {
+        func: LocaleDemo.normalize,
         // For avoiding webpacking minifying issues:
-        funcName: "Locale.canonicalize",
+        funcName: "Locale.normalize",
         parameters: [
             
             {
@@ -1280,33 +1280,6 @@ let termini = Object.assign({
         func: TimeZoneInfoDemo.timeZoneId,
         // For avoiding webpacking minifying issues:
         funcName: "TimeZoneInfo.timeZoneId",
-        parameters: [
-            
-            {
-                name: "Self:Bcp47Id",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "Self:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Self:Dst",
-                type: "boolean",
-                typeUse: "boolean"
-            }
-            
-        ]
-    },
-
-    "TimeZoneInfo.zoneVariant": {
-        func: TimeZoneInfoDemo.zoneVariant,
-        // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneInfo.zoneVariant",
         parameters: [
             
             {

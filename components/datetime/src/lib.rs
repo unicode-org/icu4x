@@ -106,12 +106,9 @@ pub mod options;
 pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
-mod time_zone;
-mod tz_registry;
 
-pub use error::MismatchedCalendarError;
-pub use format::datetime::DateTimeWriteError;
-pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
+pub use error::{DateTimeWriteError, MismatchedCalendarError};
+pub use format::neo::{FormattedDateTimePattern, PatternLoadError, TypedDateTimeNames};
 
 pub use neo::DateTimeFormatter;
 pub use neo::FixedCalendarDateTimeFormatter;

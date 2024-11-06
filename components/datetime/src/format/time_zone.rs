@@ -4,11 +4,11 @@
 
 //! A formatter specifically for the time zone.
 
+use super::neo::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
 use crate::{
     fields::{FieldLength, TimeZone},
     input::ExtractedInput,
-    provider,
 };
 use core::fmt;
 use fixed_decimal::FixedDecimal;
@@ -18,89 +18,31 @@ use icu_timezone::provider::EPOCH;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
-/// All time zone styles that this crate can format
-#[derive(Debug, Copy, Clone)]
-pub(crate) enum ResolvedNeoTimeZoneSkeleton {
-    Location,
-    GenericShort,
-    GenericLong,
-    SpecificShort,
-    SpecificLong,
-    OffsetShort,
-    OffsetLong,
-    Bcp47Id,
-    // UTS 35 defines 10 variants of ISO-8601-style time zone formats.
-    // They don't have their own names, so they are identified here by
-    // their datetime pattern strings.
-    Isox,
-    Isoxx,
-    Isoxxx,
-    Isoxxxx,
-    Isoxxxxx,
-    IsoX,
-    IsoXX,
-    IsoXXX,
-    IsoXXXX,
-    IsoXXXXX,
-    // TODO:
-    // `VV` "America/Los_Angeles"
-    // `VVV` "Los Angeles"
-}
-
-impl ResolvedNeoTimeZoneSkeleton {
-    pub(crate) fn from_field(field_symbol: TimeZone, field_length: FieldLength) -> Option<Self> {
-        crate::tz_registry::field_to_resolved(field_symbol, field_length)
-    }
-    pub(crate) fn to_field(self) -> crate::fields::Field {
-        crate::tz_registry::resolved_to_field(self)
-    }
-
-    pub(crate) fn units(self) -> impl Iterator<Item = TimeZoneFormatterUnit> {
-        match self {
-            // `z..zzzz`
-            ResolvedNeoTimeZoneSkeleton::SpecificShort
-            | ResolvedNeoTimeZoneSkeleton::SpecificLong => [
-                Some(TimeZoneFormatterUnit::SpecificNonLocation(
-                    self.to_field().length,
-                )),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+impl TimeZone {
+    pub(super) fn units(self, length: FieldLength) -> impl Iterator<Item = TimeZoneFormatterUnit> {
+        match (self, length) {
+            (Self::SpecificNonLocation, _) => [
+                Some(TimeZoneFormatterUnit::SpecificNonLocation(length)),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
             ],
-            // 'v', 'vvvv'
-            ResolvedNeoTimeZoneSkeleton::GenericShort
-            | ResolvedNeoTimeZoneSkeleton::GenericLong => [
-                Some(TimeZoneFormatterUnit::GenericNonLocation(
-                    self.to_field().length,
-                )),
+            (Self::GenericNonLocation, _) => [
+                Some(TimeZoneFormatterUnit::GenericNonLocation(length)),
                 Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
             ],
-            // 'VVVV'
-            ResolvedNeoTimeZoneSkeleton::Location => [
+            (Self::Location, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
             ],
-            // `O`, `OOOO`, `ZZZZ`
-            ResolvedNeoTimeZoneSkeleton::OffsetShort | ResolvedNeoTimeZoneSkeleton::OffsetLong => [
-                Some(TimeZoneFormatterUnit::LocalizedOffset(
-                    self.to_field().length,
-                )),
+            (Self::LocalizedOffset, _) => [
+                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
                 None,
                 None,
             ],
-            // 'V'
-            ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-                [Some(TimeZoneFormatterUnit::Bcp47Id), None, None]
-            }
-            // 'X'
-            ResolvedNeoTimeZoneSkeleton::IsoX => [
+            (Self::Location, _) => [Some(TimeZoneFormatterUnit::Bcp47Id), None, None],
+            (Self::IsoWithZ, FieldLength::One) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Optional,
@@ -109,8 +51,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XX'
-            ResolvedNeoTimeZoneSkeleton::IsoXX => [
+            (Self::IsoWithZ, FieldLength::TwoDigit) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Required,
@@ -119,8 +60,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXX'
-            ResolvedNeoTimeZoneSkeleton::IsoXXX => [
+            (Self::IsoWithZ, FieldLength::Abbreviated) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcExtended,
                     minutes: IsoMinutes::Required,
@@ -129,8 +69,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXXX'
-            ResolvedNeoTimeZoneSkeleton::IsoXXXX => [
+            (Self::IsoWithZ, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Required,
@@ -139,8 +78,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'XXXXX', 'ZZZZZ'
-            ResolvedNeoTimeZoneSkeleton::IsoXXXXX => [
+            (Self::IsoWithZ, _) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcExtended,
                     minutes: IsoMinutes::Required,
@@ -149,8 +87,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'x'
-            ResolvedNeoTimeZoneSkeleton::Isox => [
+            (Self::Iso, FieldLength::One) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Optional,
@@ -159,8 +96,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xx'
-            ResolvedNeoTimeZoneSkeleton::Isoxx => [
+            (Self::Iso, FieldLength::TwoDigit) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,
@@ -169,8 +105,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxx'
-            ResolvedNeoTimeZoneSkeleton::Isoxxx => [
+            (Self::Iso, FieldLength::Abbreviated) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Extended,
                     minutes: IsoMinutes::Required,
@@ -179,8 +114,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxxx', 'Z', 'ZZ', 'ZZZ'
-            ResolvedNeoTimeZoneSkeleton::Isoxxxx => [
+            (Self::Iso, FieldLength::Wide) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,
@@ -189,8 +123,7 @@ impl ResolvedNeoTimeZoneSkeleton {
                 None,
                 None,
             ],
-            // 'xxxxx', 'ZZZZZ'
-            ResolvedNeoTimeZoneSkeleton::Isoxxxxx => [
+            (Self::Iso, _) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Extended,
                     minutes: IsoMinutes::Required,
@@ -205,42 +138,27 @@ impl ResolvedNeoTimeZoneSkeleton {
     }
 }
 
-/// A container contains all data payloads for time zone formatting (borrowed version).
-#[derive(Debug, Copy, Clone, Default)]
-pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
-    /// The data that contains meta information about how to display content.
-    pub(crate) essentials: Option<&'a provider::time_zones::TimeZoneEssentialsV1<'a>>,
-    /// The location names, e.g. Germany Time
-    pub(crate) locations: Option<&'a provider::time_zones::LocationsV1<'a>>,
-    /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
-    /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
-    /// The specific long metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
-    /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
-    /// The metazone lookup
-    pub(crate) mz_periods: Option<&'a provider::time_zones::MetazonePeriodV1<'a>>,
-}
-
-fn metazone(
-    time_zone_id: TimeZoneBcp47Id,
-    (date, time): (Date<Iso>, Time),
-    metazone_period: &crate::provider::time_zones::MetazonePeriodV1,
-) -> Option<MetazoneId> {
-    let cursor = metazone_period.0.get0(&time_zone_id)?;
-    let mut metazone_id = None;
-    let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
-        + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
-    for (minutes, id) in cursor.iter1() {
-        if minutes_since_epoch_walltime >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes) {
-            metazone_id = id.get()
-        } else {
-            break;
+impl crate::provider::time_zones::MetazonePeriodV1<'_> {
+    fn resolve(
+        &self,
+        time_zone_id: TimeZoneBcp47Id,
+        (date, time): (Date<Iso>, Time),
+    ) -> Option<MetazoneId> {
+        let cursor = self.0.get0(&time_zone_id)?;
+        let mut metazone_id = None;
+        let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
+            + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
+        for (minutes, id) in cursor.iter1() {
+            if minutes_since_epoch_walltime
+                >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
+            {
+                metazone_id = id.get()
+            } else {
+                break;
+            }
         }
+        metazone_id
     }
-    metazone_id
 }
 
 /// Determines which ISO-8601 format should be used to format the timezone offset.
@@ -307,8 +225,8 @@ pub(super) enum TimeZoneFormatterUnit {
 
 #[derive(Debug)]
 pub(super) enum FormatTimeZoneError {
-    MissingZoneSymbols,
-    MissingFixedDecimalFormatter,
+    NamesNotLoaded,
+    FixedDecimalFormatterNotLoaded,
     Fallback,
     MissingInputField(&'static str),
 }
@@ -379,17 +297,16 @@ impl FormatTimeZone for GenericNonLocationFormat {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
+        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
-                .overrides
-                .get(&time_zone_id)
-                .or_else(|| names.defaults.get(&mz))
+                .defaults
+                .get(&metazone_period.resolve(time_zone_id, local_time)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -427,18 +344,22 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             FieldLength::Wide => data_payloads.mz_specific_long.as_ref(),
             _ => data_payloads.mz_specific_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(name) = metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-            names
-                .overrides
-                .get(&(time_zone_id, zone_variant))
-                .or_else(|| names.defaults.get(&(mz, zone_variant)))
-        }) else {
+        let Some(name) = names
+            .overrides
+            .get(&(time_zone_id, zone_variant))
+            .or_else(|| {
+                names.defaults.get(&(
+                    metazone_period.resolve(time_zone_id, local_time)?,
+                    zone_variant,
+                ))
+            })
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -466,10 +387,10 @@ impl FormatTimeZone for LocalizedOffsetFormat {
         fdf: Option<&FixedDecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         let Some(essentials) = data_payloads.essentials else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(fdf) = fdf else {
-            return Ok(Err(FormatTimeZoneError::MissingFixedDecimalFormatter));
+            return Ok(Err(FormatTimeZoneError::FixedDecimalFormatterNotLoaded));
         };
         let Some(offset) = input.offset else {
             sink.write_str(&essentials.offset_unknown)?;
@@ -558,10 +479,18 @@ impl FormatTimeZone for GenericLocationFormat {
         };
 
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(location) = locations.locations.get(&time_zone_id) else {
+        let Some(locations_root) = data_payloads.locations_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+
+        let Some(location) = locations
+            .locations
+            .get(&time_zone_id)
+            .or_else(|| locations_root.locations.get(&time_zone_id))
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -595,19 +524,25 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("zone_variant")));
         };
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(locations_root) = data_payloads.locations_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(location) = locations.locations.get(&time_zone_id) else {
+        let Some(location) = locations
+            .locations
+            .get(&time_zone_id)
+            .or_else(|| locations_root.locations.get(&time_zone_id))
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if zone_variant == ZoneVariant::daylight() {
-            &locations.pattern_daylight
-        } else if zone_variant == ZoneVariant::standard() {
-            &locations.pattern_standard
-        } else {
-            &locations.pattern_generic
+        match zone_variant {
+            ZoneVariant::Standard => &locations.pattern_standard,
+            ZoneVariant::Daylight => &locations.pattern_daylight,
+            // Compiles out due to tilde dependency on `icu_timezone`
+            _ => unreachable!(),
         }
         .interpolate([location])
         .write_to(sink)?;
@@ -637,28 +572,32 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         };
 
         let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(locations_root) = data_payloads.locations_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(non_locations) = (match self.0 {
             FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::MissingZoneSymbols));
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
-        let Some(location) = locations.locations.get(&time_zone_id) else {
+        let Some(location) = locations
+            .locations
+            .get(&time_zone_id)
+            .or_else(|| locations_root.locations.get(&time_zone_id))
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(non_location) =
-            metazone(time_zone_id, local_time, metazone_period).and_then(|mz| {
-                non_locations
-                    .overrides
-                    .get(&time_zone_id)
-                    .or_else(|| non_locations.defaults.get(&mz))
-            })
-        else {
+        let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
+            non_locations
+                .defaults
+                .get(&metazone_period.resolve(time_zone_id, local_time)?)
+        }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 

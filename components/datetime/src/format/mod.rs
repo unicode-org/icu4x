@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod datetime;
-pub mod neo;
+pub(crate) mod datetime;
+pub(crate) mod neo;
+pub(crate) mod time_zone;
 
 use crate::fields::Field;
 use crate::provider::neo::SimpleSubstitutionPattern;
@@ -13,7 +14,6 @@ pub(crate) enum GetNameForMonthError {
     MissingNames(Field),
 }
 pub(crate) enum GetNameForWeekdayError {
-    Missing,
     MissingNames(Field),
 }
 

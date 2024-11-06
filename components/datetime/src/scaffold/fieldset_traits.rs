@@ -14,7 +14,8 @@ use icu_calendar::{
         IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     },
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        NanoSecond, YearInfo,
     },
     AnyCalendarKind, Date, Iso, Time,
 };
@@ -61,6 +62,8 @@ pub trait DateInputMarkers: UnstableSealed {
     type MonthInput: IntoOption<MonthInfo>;
     /// Marker for resolving the day-of-month input field.
     type DayOfMonthInput: IntoOption<DayOfMonth>;
+    /// Marker for resolving the day-of-year input field.
+    type DayOfYearInput: IntoOption<DayOfYearInfo>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<IsoWeekday>;
     /// Marker for resolving the any-calendar-kind input field.
@@ -170,6 +173,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::MonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+    + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
     + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
@@ -196,6 +200,7 @@ where
         + GetField<<R::D as DateInputMarkers>::MonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+        + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
         + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
@@ -446,6 +451,7 @@ impl DateInputMarkers for NeoNeverMarker {
     type YearInput = ();
     type MonthInput = ();
     type DayOfMonthInput = ();
+    type DayOfYearInput = ();
     type DayOfWeekInput = ();
     type AnyCalendarKindInput = ();
 }

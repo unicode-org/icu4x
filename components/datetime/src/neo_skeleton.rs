@@ -8,8 +8,10 @@
 use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
-use crate::provider::pattern::CoarseHourCycle;
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use crate::{
+    fields::{FieldLength, TimeZone},
+    provider::pattern::CoarseHourCycle,
+};
 use icu_provider::DataMarkerAttributes;
 use icu_timezone::scaffold::IntoOption;
 
@@ -1047,8 +1049,34 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneStyle {
-    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
-        crate::tz_registry::skeleton_to_resolved(self, length)
+    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> (TimeZone, FieldLength) {
+        match (self, length) {
+            (
+                NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific,
+                NeoSkeletonLength::Short | NeoSkeletonLength::Medium,
+            ) => (TimeZone::SpecificNonLocation, FieldLength::One),
+            (NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific, NeoSkeletonLength::Long) => {
+                (TimeZone::SpecificNonLocation, FieldLength::Wide)
+            }
+            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::LocalizedOffset, FieldLength::One)
+            }
+            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Long) => {
+                (TimeZone::LocalizedOffset, FieldLength::Wide)
+            }
+            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::GenericNonLocation, FieldLength::One)
+            }
+            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Long) => {
+                (TimeZone::GenericNonLocation, FieldLength::Wide)
+            }
+            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::Location, FieldLength::Wide)
+            }
+            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Long) => {
+                (TimeZone::Location, FieldLength::Wide)
+            }
+        }
     }
 
     /// Creates a skeleton for this time zone style with a long length.

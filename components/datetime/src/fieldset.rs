@@ -259,6 +259,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
+            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
@@ -578,7 +579,7 @@ macro_rules! impl_zone_marker {
             /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
             ///     .with_offset("-05".parse().ok())
             ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            ///     .with_zone_variant(ZoneVariant::daylight());
+            ///     .with_zone_variant(ZoneVariant::Daylight);
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&zone),
@@ -608,7 +609,7 @@ macro_rules! impl_zone_marker {
             /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
             ///     .with_offset("-05".parse().ok())
             ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            ///     .with_zone_variant(ZoneVariant::daylight());
+            ///     .with_zone_variant(ZoneVariant::Daylight);
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&zone),
@@ -975,7 +976,7 @@ impl_zone_marker!(
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
     ///     .with_offset("-03".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::standard());
+    ///     .with_zone_variant(ZoneVariant::Standard);
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -1065,7 +1066,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::LoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
@@ -1073,7 +1074,7 @@ impl_zone_marker!(
     ///     Zs::long(),
     /// );
     ///
-    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
     /// ```
     ///
     /// This style requires a [`ZoneVariant`], so
@@ -1135,7 +1136,7 @@ impl_zone_marker!(
     /// let time = Time::midnight();
     /// let time_zone_at_time = time_zone_basic.at_time((date, time));
     ///
-    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::standard());
+    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
     ///     &locale!("en-US").into(),
@@ -1194,7 +1195,7 @@ impl_zone_marker!(
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
     ///     .with_offset("-03".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::standard());
+    ///     .with_zone_variant(ZoneVariant::Standard);
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
@@ -1282,7 +1283,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::LoadError;
+    /// use icu::datetime::PatternLoadError;
     /// use icu::locale::locale;
     ///
     /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
@@ -1290,7 +1291,7 @@ impl_zone_marker!(
     ///     Vs::long(),
     /// );
     ///
-    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
     /// ```
     ///
     /// Since non-location names might change over time,

@@ -146,7 +146,7 @@ pub enum FormattingEra {
 
 impl FormattingEra {
     /// Get a fallback era name suitable for display to the user when the real era name is not availabe
-    pub fn fallback_era(self) -> TinyStr16 {
+    pub fn fallback_name(self) -> TinyStr16 {
         match self {
             Self::Index(_idx, fallback) => fallback,
             Self::Code(era) => era.0,
