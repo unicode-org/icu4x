@@ -9,8 +9,9 @@
                         "time": "full"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute", "second", "zoneSpecific"],
-                        "length": "long"
+                        "fieldSet": ["time", "zoneSpecific"],
+                        "length": "long",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -22,8 +23,9 @@
                         "time": "long"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute", "second", "zoneSpecific"],
-                        "length": "medium"
+                        "fieldSet": ["time", "zoneSpecific"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -35,8 +37,9 @@
                         "time": "full"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecific"],
-                        "length": "long"
+                        "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                        "length": "long",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -48,8 +51,9 @@
                         "time": "long"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "hour", "minute", "second", "zoneSpecific"],
-                        "length": "medium"
+                        "fieldSet": ["year", "month", "day", "time", "zoneSpecific"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     }
                 }
             }

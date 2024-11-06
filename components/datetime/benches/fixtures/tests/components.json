@@ -249,8 +249,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["weekday", "hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["weekday", "time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -265,8 +266,9 @@
                         "second": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["weekday", "hour", "minute", "second"],
-                        "length": "medium"
+                        "fieldSet": ["weekday", "time"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -280,8 +282,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["weekday", "hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["weekday", "time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -296,8 +299,9 @@
                         "second": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["weekday", "hour", "minute", "second"],
-                        "length": "medium"
+                        "fieldSet": ["weekday", "time"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -309,8 +313,9 @@
                         "hour": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "hourExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -323,8 +328,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -338,8 +344,9 @@
                         "second": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute", "second"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -351,8 +358,9 @@
                         "hour": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "hourExact"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -365,8 +373,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -380,8 +389,9 @@
                         "second": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute", "second"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -394,8 +404,9 @@
                         "second": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     }
                 }
             },
@@ -439,8 +450,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                        "length": "medium"
+                        "fieldSet": ["year", "month", "day", "weekday", "time"],
+                        "length": "medium",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -458,8 +470,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                        "length": "long"
+                        "fieldSet": ["year", "month", "day", "weekday", "time"],
+                        "length": "long",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -472,8 +485,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h11" }
                 }
@@ -486,8 +500,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h24" }
                 }
@@ -500,8 +515,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h11" }
                 }
@@ -514,8 +530,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h12" }
                 }
@@ -528,8 +545,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h23" }
                 }
@@ -542,8 +560,9 @@
                         "minute": "numeric"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     },
                     "preferences": { "hourCycle": "h24" }
                 }

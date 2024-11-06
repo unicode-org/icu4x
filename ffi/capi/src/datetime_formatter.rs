@@ -46,7 +46,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = T::with_length(NeoSkeletonLength::from(length));
+            let options = T::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(TimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -150,7 +150,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length));
+            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -264,7 +264,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length));
+            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,

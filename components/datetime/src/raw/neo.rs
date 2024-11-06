@@ -299,9 +299,7 @@ impl ExtractedInput {
         let nanosecond = self.nanosecond.unwrap_or_default();
         if !nanosecond.is_zero() || !second.is_zero() {
             (PackedSkeletonVariant::Variant1, None)
-        } else if !minute.is_zero() {
-            (PackedSkeletonVariant::Variant0, None)
-        } else if matches!(smallest_required_field, HourMinute::Minute) {
+        } else if !minute.is_zero() || matches!(smallest_required_field, HourMinute::Minute) {
             (PackedSkeletonVariant::Variant0, None)
         } else {
             (PackedSkeletonVariant::Standard, None)
