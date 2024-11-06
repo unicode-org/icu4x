@@ -145,9 +145,9 @@ impl IntoOption<YearStyle> for YearStyle {
 }
 
 /// A specification for how precisely to display the time of day.
-/// 
+///
 /// The examples below are based on the following inputs and hour cycles:
-/// 
+///
 /// 1. 11 o'clock with 12-hour time
 /// 2. 16:20 (4:20 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
