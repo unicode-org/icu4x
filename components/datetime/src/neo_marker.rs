@@ -146,7 +146,7 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HM;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -156,7 +156,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h12").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -166,7 +166,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h23").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -176,7 +176,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h12").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -186,7 +186,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h23").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -199,14 +199,14 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HM;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h11").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -216,13 +216,71 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h24").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
 //!     "24:00"
 //! );
+//! ```
+//!
+//! ## Time Precision
+//!
+//! The time can be displayed with hour, minute, or second precision, and
+//! zero-valued fields can be automatically hidden.
+//!
+//! ```
+//! use icu::calendar::Time;
+//! use icu::datetime::fieldset::T;
+//! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::neo_skeleton::TimePrecision;
+//! use icu::datetime::FixedCalendarDateTimeFormatter;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatters = [
+//!     TimePrecision::HourPlus,
+//!     TimePrecision::HourExact,
+//!     TimePrecision::MinutePlus,
+//!     TimePrecision::MinuteExact,
+//!     TimePrecision::SecondPlus,
+//!     TimePrecision::SecondExact(FractionalSecondDigits::F0),
+//! ].map(|time_precision| {
+//!     FixedCalendarDateTimeFormatter::<(), _>::try_new(
+//!         &locale!("en-US").into(),
+//!         T::short().with_time_precision(time_precision),
+//!     )
+//!     .unwrap()
+//! });
+//!
+//! let times = [
+//!     Time::try_new(7, 0, 0, 0).unwrap(),
+//!     Time::try_new(7, 0, 10, 0).unwrap(),
+//!     Time::try_new(7, 12, 20, 5).unwrap(),
+//! ];
+//!
+//! // TODO(#5782): the Plus variants should render fractional digits
+//! let expected_value_table = [
+//!     // 7:00:00, 7:00:10, 7:12:20.5432
+//!     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
+//!     ["7 AM", "7 AM", "7 AM"], // HourExact
+//!     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
+//!     ["7:00 AM", "7:00 AM", "7:12 AM"], // MinuteExact
+//!     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
+//!     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
+//! ];
+//!
+//! for (expected_value_row, formatter) in expected_value_table.iter().zip(formatters.iter()) {
+//!     for (expected_value, time) in expected_value_row.iter().zip(times.iter()) {
+//!         assert_try_writeable_eq!(
+//!             formatter.format(time),
+//!             *expected_value,
+//!             Ok(()),
+//!             "{formatter:?} @ {time:?}"
+//!         );
+//!     }
+//! }
 //! ```
 //!
 //! ## Fractional Second Digits
@@ -232,15 +290,16 @@
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HMS;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::neo_skeleton::TimePrecision;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US").into(),
-//!     HMS::short().with_fractional_second_digits(FractionalSecondDigits::F2),
+//!     T::short().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)),
 //! )
 //! .unwrap();
 //!
@@ -376,7 +435,7 @@ impl DateTimeMarkers for NeoDateSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -439,7 +498,7 @@ impl DateTimeMarkers for NeoCalendarPeriodSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -488,14 +547,14 @@ impl DateTimeMarkers for NeoTimeSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
 impl_get_field!(NeoTimeSkeleton, never);
 impl_get_field!(NeoTimeSkeleton, length, yes);
 impl_get_field!(NeoTimeSkeleton, alignment, yes);
-impl_get_field!(NeoTimeSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoTimeSkeleton, time_precision, yes);
 
 impl UnstableSealed for NeoTimeZoneSkeleton {}
 
@@ -542,7 +601,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment,);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
@@ -580,7 +639,7 @@ impl DateTimeMarkers for NeoDateTimeSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -588,7 +647,7 @@ impl_get_field!(NeoDateTimeSkeleton, never);
 impl_get_field!(NeoDateTimeSkeleton, length, yes);
 impl_get_field!(NeoDateTimeSkeleton, alignment, yes);
 impl_get_field!(NeoDateTimeSkeleton, year_style, yes);
-impl_get_field!(NeoDateTimeSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoDateTimeSkeleton, time_precision, yes);
 
 impl UnstableSealed for NeoSkeleton {}
 
@@ -621,7 +680,7 @@ impl DateTimeMarkers for NeoSkeleton {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
+    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -629,4 +688,4 @@ impl_get_field!(NeoSkeleton, never);
 impl_get_field!(NeoSkeleton, length, yes);
 impl_get_field!(NeoSkeleton, alignment, yes);
 impl_get_field!(NeoSkeleton, year_style, yes);
-impl_get_field!(NeoSkeleton, fractional_second_digits, yes);
+impl_get_field!(NeoSkeleton, time_precision, yes);

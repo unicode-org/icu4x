@@ -4,11 +4,7 @@
 
 //! Serde definitions for semantic skeleta
 
-use crate::neo_skeleton::{
-    Alignment, FractionalSecondDigits, NeoCalendarPeriodComponents, NeoComponents,
-    NeoDateComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneStyle,
-    YearStyle,
-};
+use crate::neo_skeleton::*;
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -31,8 +27,8 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) alignment: Option<Alignment>,
     #[serde(rename = "yearStyle")]
     pub(crate) year_style: Option<YearStyle>,
-    #[serde(rename = "fractionalSecondDigits")]
-    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    #[serde(rename = "timePrecision")]
+    pub(crate) time_precision: Option<TimePrecision>,
 }
 
 impl From<NeoSkeleton> for SemanticSkeletonSerde {
@@ -42,7 +38,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
             length: value.length,
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -55,8 +51,72 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
             components: value.field_set,
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         })
+    }
+}
+
+#[derive(Copy, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) enum TimePrecisionSerde {
+    HourPlus,
+    HourExact,
+    MinutePlus,
+    MinuteExact,
+    SecondPlus,
+    SecondF0,
+    SecondF1,
+    SecondF2,
+    SecondF3,
+    SecondF4,
+    SecondF5,
+    SecondF6,
+    SecondF7,
+    SecondF8,
+    SecondF9,
+}
+
+impl From<TimePrecision> for TimePrecisionSerde {
+    fn from(value: TimePrecision) -> Self {
+        match value {
+            TimePrecision::HourPlus => TimePrecisionSerde::HourPlus,
+            TimePrecision::HourExact => TimePrecisionSerde::HourExact,
+            TimePrecision::MinutePlus => TimePrecisionSerde::MinutePlus,
+            TimePrecision::MinuteExact => TimePrecisionSerde::MinuteExact,
+            TimePrecision::SecondPlus => TimePrecisionSerde::SecondPlus,
+            TimePrecision::SecondExact(FractionalSecondDigits::F0) => TimePrecisionSerde::SecondF0,
+            TimePrecision::SecondExact(FractionalSecondDigits::F1) => TimePrecisionSerde::SecondF1,
+            TimePrecision::SecondExact(FractionalSecondDigits::F2) => TimePrecisionSerde::SecondF2,
+            TimePrecision::SecondExact(FractionalSecondDigits::F3) => TimePrecisionSerde::SecondF3,
+            TimePrecision::SecondExact(FractionalSecondDigits::F4) => TimePrecisionSerde::SecondF4,
+            TimePrecision::SecondExact(FractionalSecondDigits::F5) => TimePrecisionSerde::SecondF5,
+            TimePrecision::SecondExact(FractionalSecondDigits::F6) => TimePrecisionSerde::SecondF6,
+            TimePrecision::SecondExact(FractionalSecondDigits::F7) => TimePrecisionSerde::SecondF7,
+            TimePrecision::SecondExact(FractionalSecondDigits::F8) => TimePrecisionSerde::SecondF8,
+            TimePrecision::SecondExact(FractionalSecondDigits::F9) => TimePrecisionSerde::SecondF9,
+        }
+    }
+}
+
+impl From<TimePrecisionSerde> for TimePrecision {
+    fn from(value: TimePrecisionSerde) -> Self {
+        match value {
+            TimePrecisionSerde::HourPlus => TimePrecision::HourPlus,
+            TimePrecisionSerde::HourExact => TimePrecision::HourExact,
+            TimePrecisionSerde::MinutePlus => TimePrecision::MinutePlus,
+            TimePrecisionSerde::MinuteExact => TimePrecision::MinuteExact,
+            TimePrecisionSerde::SecondPlus => TimePrecision::SecondPlus,
+            TimePrecisionSerde::SecondF0 => TimePrecision::SecondExact(FractionalSecondDigits::F0),
+            TimePrecisionSerde::SecondF1 => TimePrecision::SecondExact(FractionalSecondDigits::F1),
+            TimePrecisionSerde::SecondF2 => TimePrecision::SecondExact(FractionalSecondDigits::F2),
+            TimePrecisionSerde::SecondF3 => TimePrecision::SecondExact(FractionalSecondDigits::F3),
+            TimePrecisionSerde::SecondF4 => TimePrecision::SecondExact(FractionalSecondDigits::F4),
+            TimePrecisionSerde::SecondF5 => TimePrecision::SecondExact(FractionalSecondDigits::F5),
+            TimePrecisionSerde::SecondF6 => TimePrecision::SecondExact(FractionalSecondDigits::F6),
+            TimePrecisionSerde::SecondF7 => TimePrecision::SecondExact(FractionalSecondDigits::F7),
+            TimePrecisionSerde::SecondF8 => TimePrecision::SecondExact(FractionalSecondDigits::F8),
+            TimePrecisionSerde::SecondF9 => TimePrecision::SecondExact(FractionalSecondDigits::F9),
+        }
     }
 }
 
@@ -71,9 +131,7 @@ enum FieldSetField {
     WeekOfYear = 5,
     WeekOfMonth = 6,
     // Time Fields
-    Hour = 16,
-    Minute = 17,
-    Second = 18,
+    Time = 16,
     // Zone Fields
     ZoneGeneric = 32,
     ZoneGenericShort = 33,
@@ -91,9 +149,7 @@ impl FieldSetField {
         Month,
         Day,
         Weekday,
-        Hour,
-        Minute,
-        Second,
+        Time,
         WeekOfYear,
         WeekOfMonth,
         ZoneGeneric,
@@ -158,9 +214,7 @@ impl FieldSetSerde {
     const YEAR_WEEK: Self = Self::from_fields(&[Year, WeekOfYear]);
 
     // Time Components
-    const HOUR: Self = Self::from_fields(&[Hour]);
-    const HOUR_MINUTE: Self = Self::from_fields(&[Hour, Minute]);
-    const HOUR_MINUTE_SECOND: Self = Self::from_fields(&[Hour, Minute, Second]);
+    const TIME: Self = Self::from_fields(&[Time]);
 
     // Zone Components
     const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
@@ -305,11 +359,9 @@ impl TryFrom<FieldSetSerde> for NeoCalendarPeriodComponents {
 impl From<NeoTimeComponents> for FieldSetSerde {
     fn from(value: NeoTimeComponents) -> Self {
         match value {
-            NeoTimeComponents::Hour => Self::HOUR,
-            NeoTimeComponents::HourMinute => Self::HOUR_MINUTE,
-            NeoTimeComponents::HourMinuteSecond => Self::HOUR_MINUTE_SECOND,
+            NeoTimeComponents::Time => Self::TIME,
             // TODO: support auto?
-            NeoTimeComponents::Auto => Self::HOUR_MINUTE,
+            NeoTimeComponents::Auto => Self::TIME,
             _ => todo!(),
         }
     }
@@ -319,9 +371,7 @@ impl TryFrom<FieldSetSerde> for NeoTimeComponents {
     type Error = Error;
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
-            FieldSetSerde::HOUR => Ok(Self::Hour),
-            FieldSetSerde::HOUR_MINUTE => Ok(Self::HourMinute),
-            FieldSetSerde::HOUR_MINUTE_SECOND => Ok(Self::HourMinuteSecond),
+            FieldSetSerde::TIME => Ok(Self::Time),
             _ => Err(Error::InvalidFields),
         }
     }
@@ -405,19 +455,19 @@ fn test_basic() {
     let skeleton = NeoSkeleton {
         components: NeoComponents::DateTimeZone(
             NeoDateComponents::YearMonthDayWeekday,
-            NeoTimeComponents::HourMinute,
+            NeoTimeComponents::Time,
             NeoTimeZoneStyle::Generic,
         ),
         length: NeoSkeletonLength::Medium,
         alignment: Some(Alignment::Column),
         year_style: Some(YearStyle::Always),
-        fractional_second_digits: Some(FractionalSecondDigits::F3),
+        time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","fractionalSecondDigits":3}"#
+        r#"{"fieldSet":["year","month","day","weekday","time","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);

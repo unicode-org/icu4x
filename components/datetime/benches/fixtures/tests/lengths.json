@@ -61,8 +61,9 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute", "second"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -74,8 +75,9 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     }
                 }
             },
@@ -87,8 +89,9 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
-                        "length": "long"
+                        "fieldSet": ["year", "month", "day", "weekday", "time"],
+                        "length": "long",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -100,8 +103,9 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "hour", "minute"],
-                        "length": "long"
+                        "fieldSet": ["year", "month", "day", "time"],
+                        "length": "long",
+                        "timePrecision": "minuteExact"
                     }
                 }
             },
@@ -113,8 +117,9 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "hour", "minute", "second"],
-                        "length": "medium"
+                        "fieldSet": ["year", "month", "day", "time"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -126,8 +131,9 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "hour", "minute"],
-                        "length": "short"
+                        "fieldSet": ["year", "month", "day", "time"],
+                        "length": "short",
+                        "timePrecision": "minuteExact"
                     }
                 }
             }

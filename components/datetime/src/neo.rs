@@ -113,7 +113,7 @@ impl RawNeoOptions {
         FSet: GetField<FSet::LengthOption>,
         FSet: GetField<FSet::AlignmentOption>,
         FSet: GetField<FSet::YearStyleOption>,
-        FSet: GetField<FSet::FractionalSecondDigitsOption>,
+        FSet: GetField<FSet::TimePrecisionOption>,
     {
         // TODO: Return an error if there are more options than field set
         let hour_cycle = locale
@@ -130,10 +130,8 @@ impl RawNeoOptions {
             },
             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-            fractional_second_digits: GetField::<FSet::FractionalSecondDigitsOption>::get_field(
-                field_set,
-            )
-            .into_option(),
+            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
+                .into_option(),
             hour_cycle,
         }
     }
@@ -163,7 +161,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -249,7 +247,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at runtime.
@@ -313,6 +311,7 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::TimePrecision;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -320,7 +319,11 @@ where
     /// let fmt =
     ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///         &locale!("es-MX").into(),
-    ///         NeoTimeComponents::Hour.medium(),
+    ///         {
+    ///             let mut skeleton = NeoTimeComponents::Time.medium();
+    ///             skeleton.time_precision = Some(TimePrecision::HourExact);
+    ///             skeleton
+    ///         }
     ///     )
     ///     .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -345,9 +348,10 @@ where
     ///         &locale!("es-MX").into(),
     ///         NeoDateTimeComponents::DateTime(
     ///             NeoDateComponents::Weekday,
-    ///             NeoTimeComponents::HourMinute,
+    ///             NeoTimeComponents::Time,
     ///         )
-    ///         .long(),
+    ///         .long()
+    ///         .hm(),
     ///     )
     ///     .unwrap();
     /// let dt = DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
@@ -550,7 +554,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -644,7 +648,7 @@ where
     FSet: GetField<FSet::LengthOption>,
     FSet: GetField<FSet::AlignmentOption>,
     FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::FractionalSecondDigitsOption>,
+    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at runtime.
@@ -703,14 +707,18 @@ where
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::datetime::neo_skeleton::TimePrecision;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = DateTimeFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour.medium(),
+    ///     {
+    ///         let mut skeleton = NeoTimeComponents::Time.medium();
+    ///         skeleton.time_precision = Some(TimePrecision::HourExact);
+    ///         skeleton
+    ///     }
     /// )
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -734,9 +742,10 @@ where
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeComponents::DateTime(
     ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::HourMinute,
+    ///         NeoTimeComponents::Time,
     ///     )
-    ///     .long(),
+    ///     .long()
+    ///     .hm(),
     /// )
     /// .unwrap();
     /// let dt = DateTime::try_new_iso(2024, 1, 10, 16, 20, 0).unwrap();

@@ -466,6 +466,12 @@ macro_rules! dt_unit {
             pub fn try_sub(self, other: $storage) -> Option<Self> {
                 self.0.checked_sub(other).map(Self)
             }
+
+            /// Returns whether the value is zero.
+            #[inline]
+            pub fn is_zero(self) -> bool {
+                self.0 == 0
+            }
         }
     };
 }

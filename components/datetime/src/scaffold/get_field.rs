@@ -49,10 +49,10 @@ macro_rules! impl_get_field {
             }
         }
     };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, fractional_second_digits, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<FractionalSecondDigits>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<FractionalSecondDigits> {
-                self.fractional_second_digits
+    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, time_precision, yes) => {
+        impl $(<$($generics0),+>)? GetField<Option<TimePrecision>> for $type $(<$($generics1),+>)? {
+            fn get_field(&self) -> Option<TimePrecision> {
+                self.time_precision
             }
         }
     };

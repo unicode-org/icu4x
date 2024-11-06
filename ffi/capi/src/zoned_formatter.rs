@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldset::YMDHMSV, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::{fieldset::YMDTV, neo_skeleton::NeoSkeletonLength};
     use icu_timezone::ZoneVariant;
 
     use crate::{
@@ -25,7 +25,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDHMSV>,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDTV>,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -41,7 +41,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -80,7 +80,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDHMSV>);
+    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDTV>);
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
@@ -95,7 +95,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
