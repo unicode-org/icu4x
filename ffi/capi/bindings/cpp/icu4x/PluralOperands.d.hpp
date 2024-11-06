@@ -10,10 +10,10 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct FixedDecimal; }
-class FixedDecimal;
 namespace capi { struct PluralOperands; }
 class PluralOperands;
+namespace capi { struct SignedFixedDecimal; }
+class SignedFixedDecimal;
 class FixedDecimalParseError;
 }
 
@@ -30,7 +30,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError> from_string(std::string_view s);
 
-  inline static std::unique_ptr<icu4x::PluralOperands> from_fixed_decimal(const icu4x::FixedDecimal& x);
+  inline static std::unique_ptr<icu4x::PluralOperands> from_fixed_decimal(const icu4x::SignedFixedDecimal& x);
 
   inline const icu4x::capi::PluralOperands* AsFFI() const;
   inline icu4x::capi::PluralOperands* AsFFI();

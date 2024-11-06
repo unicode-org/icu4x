@@ -10,8 +10,8 @@
 #include <memory>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "FixedDecimal.hpp"
 #include "FixedDecimalParseError.hpp"
+#include "SignedFixedDecimal.hpp"
 
 
 namespace icu4x {
@@ -21,7 +21,7 @@ namespace capi {
     typedef struct icu4x_PluralOperands_from_string_mv1_result {union {icu4x::capi::PluralOperands* ok; icu4x::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
     icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1(diplomat::capi::DiplomatStringView s);
     
-    icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::FixedDecimal* x);
+    icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::SignedFixedDecimal* x);
     
     
     void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
@@ -35,7 +35,7 @@ inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDeci
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Err<icu4x::FixedDecimalParseError>(icu4x::FixedDecimalParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::FixedDecimal& x) {
+inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::SignedFixedDecimal& x) {
   auto result = icu4x::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
   return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
 }

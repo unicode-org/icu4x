@@ -80,7 +80,7 @@ export { LocaleFallbacker } from "./LocaleFallbacker"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 
-export { FixedDecimal } from "./FixedDecimal"
+export { SignedFixedDecimal } from "./SignedFixedDecimal"
 
 export { ListFormatter } from "./ListFormatter"
 
@@ -239,6 +239,8 @@ export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode"
 export { FixedDecimalSign } from "./FixedDecimalSign"
 
 export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay"
+
+export { FixedDecimalUnsignedRoundingMode } from "./FixedDecimalUnsignedRoundingMode"
 
 export { ListLength } from "./ListLength"
 

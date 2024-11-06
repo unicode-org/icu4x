@@ -1,7 +1,7 @@
 import { DataProvider } from "icu4x"
-import { FixedDecimal } from "icu4x"
 import { FixedDecimalFormatter } from "icu4x"
 import { Locale } from "icu4x"
+import { SignedFixedDecimal } from "icu4x"
 export function format() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
@@ -24,7 +24,7 @@ export function format() {
                     terminusArgs[1]
                 ]
             ),
-            FixedDecimal.fromNumberWithLowerMagnitude.apply(
+            SignedFixedDecimal.fromNumberWithLowerMagnitude.apply(
                 null,
                 [
                     terminusArgs[2],

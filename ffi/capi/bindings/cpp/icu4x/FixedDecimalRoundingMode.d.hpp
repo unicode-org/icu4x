@@ -14,14 +14,9 @@ namespace icu4x {
 namespace capi {
     enum FixedDecimalRoundingMode {
       FixedDecimalRoundingMode_Ceil = 0,
-      FixedDecimalRoundingMode_Expand = 1,
-      FixedDecimalRoundingMode_Floor = 2,
-      FixedDecimalRoundingMode_Trunc = 3,
-      FixedDecimalRoundingMode_HalfCeil = 4,
-      FixedDecimalRoundingMode_HalfExpand = 5,
-      FixedDecimalRoundingMode_HalfFloor = 6,
-      FixedDecimalRoundingMode_HalfTrunc = 7,
-      FixedDecimalRoundingMode_HalfEven = 8,
+      FixedDecimalRoundingMode_Floor = 1,
+      FixedDecimalRoundingMode_HalfCeil = 2,
+      FixedDecimalRoundingMode_HalfFloor = 3,
     };
     
     typedef struct FixedDecimalRoundingMode_option {union { FixedDecimalRoundingMode ok; }; bool is_ok; } FixedDecimalRoundingMode_option;
@@ -33,14 +28,9 @@ class FixedDecimalRoundingMode {
 public:
   enum Value {
     Ceil = 0,
-    Expand = 1,
-    Floor = 2,
-    Trunc = 3,
-    HalfCeil = 4,
-    HalfExpand = 5,
-    HalfFloor = 6,
-    HalfTrunc = 7,
-    HalfEven = 8,
+    Floor = 1,
+    HalfCeil = 2,
+    HalfFloor = 3,
   };
 
   FixedDecimalRoundingMode() = default;

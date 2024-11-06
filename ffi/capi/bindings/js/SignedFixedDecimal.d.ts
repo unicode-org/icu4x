@@ -10,22 +10,22 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
 */
-export class FixedDecimal {
+export class SignedFixedDecimal {
     
 
     get ffiValue(): pointer;
 
-    static fromNumber(v: number): FixedDecimal;
+    static fromNumber(v: number): SignedFixedDecimal;
 
-    static fromBigInt(v: bigint): FixedDecimal;
+    static fromBigInt(v: bigint): SignedFixedDecimal;
 
-    static fromNumberWithLowerMagnitude(f: number, magnitude: number): FixedDecimal;
+    static fromNumberWithLowerMagnitude(f: number, magnitude: number): SignedFixedDecimal;
 
-    static fromNumberWithSignificantDigits(f: number, digits: number): FixedDecimal;
+    static fromNumberWithSignificantDigits(f: number, digits: number): SignedFixedDecimal;
 
-    static fromNumberWithRoundTripPrecision(f: number): FixedDecimal;
+    static fromNumberWithRoundTripPrecision(f: number): SignedFixedDecimal;
 
-    static fromString(v: string): FixedDecimal;
+    static fromString(v: string): SignedFixedDecimal;
 
     digitAt(magnitude: number): number;
 
@@ -71,7 +71,7 @@ export class FixedDecimal {
 
     roundWithModeAndIncrement(position: number, mode: FixedDecimalRoundingMode, increment: FixedDecimalRoundingIncrement): void;
 
-    concatenateEnd(other: FixedDecimal): boolean;
+    concatenateEnd(other: SignedFixedDecimal): boolean;
 
     toString(): string;
 }

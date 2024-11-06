@@ -78,7 +78,7 @@ export { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 
-export { FixedDecimal } from "./FixedDecimal.mjs"
+export { SignedFixedDecimal } from "./SignedFixedDecimal.mjs"
 
 export { ListFormatter } from "./ListFormatter.mjs"
 
@@ -237,6 +237,8 @@ export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode.mjs"
 export { FixedDecimalSign } from "./FixedDecimalSign.mjs"
 
 export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay.mjs"
+
+export { FixedDecimalUnsignedRoundingMode } from "./FixedDecimalUnsignedRoundingMode.mjs"
 
 export { ListLength } from "./ListLength.mjs"
 

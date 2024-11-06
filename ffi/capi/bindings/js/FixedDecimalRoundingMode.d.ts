@@ -2,9 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 // Base enumerator definition
-/** Mode used in a rounding operation.
+/** Mode used in a rounding operation for signed numbers.
 *
-*See the [Rust documentation for `RoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingMode.html) for more information.
+*See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
 */
 export class FixedDecimalRoundingMode {
     constructor(value : FixedDecimalRoundingMode | string);
@@ -14,12 +14,7 @@ export class FixedDecimalRoundingMode {
     get ffiValue() : number;
 
     static Ceil : FixedDecimalRoundingMode;
-    static Expand : FixedDecimalRoundingMode;
     static Floor : FixedDecimalRoundingMode;
-    static Trunc : FixedDecimalRoundingMode;
     static HalfCeil : FixedDecimalRoundingMode;
-    static HalfExpand : FixedDecimalRoundingMode;
     static HalfFloor : FixedDecimalRoundingMode;
-    static HalfTrunc : FixedDecimalRoundingMode;
-    static HalfEven : FixedDecimalRoundingMode;
 }

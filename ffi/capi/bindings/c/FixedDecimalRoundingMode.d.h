@@ -13,14 +13,9 @@
 
 typedef enum FixedDecimalRoundingMode {
   FixedDecimalRoundingMode_Ceil = 0,
-  FixedDecimalRoundingMode_Expand = 1,
-  FixedDecimalRoundingMode_Floor = 2,
-  FixedDecimalRoundingMode_Trunc = 3,
-  FixedDecimalRoundingMode_HalfCeil = 4,
-  FixedDecimalRoundingMode_HalfExpand = 5,
-  FixedDecimalRoundingMode_HalfFloor = 6,
-  FixedDecimalRoundingMode_HalfTrunc = 7,
-  FixedDecimalRoundingMode_HalfEven = 8,
+  FixedDecimalRoundingMode_Floor = 1,
+  FixedDecimalRoundingMode_HalfCeil = 2,
+  FixedDecimalRoundingMode_HalfFloor = 3,
 } FixedDecimalRoundingMode;
 
 typedef struct FixedDecimalRoundingMode_option {union { FixedDecimalRoundingMode ok; }; bool is_ok; } FixedDecimalRoundingMode_option;

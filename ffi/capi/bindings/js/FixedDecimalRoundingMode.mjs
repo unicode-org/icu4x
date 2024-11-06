@@ -3,23 +3,18 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 // Base enumerator definition
-/** Mode used in a rounding operation.
+/** Mode used in a rounding operation for signed numbers.
 *
-*See the [Rust documentation for `RoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingMode.html) for more information.
+*See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
 */
 export class FixedDecimalRoundingMode {
     #value = undefined;
 
     static #values = new Map([
         ["Ceil", 0],
-        ["Expand", 1],
-        ["Floor", 2],
-        ["Trunc", 3],
-        ["HalfCeil", 4],
-        ["HalfExpand", 5],
-        ["HalfFloor", 6],
-        ["HalfTrunc", 7],
-        ["HalfEven", 8]
+        ["Floor", 1],
+        ["HalfCeil", 2],
+        ["HalfFloor", 3]
     ]);
 
     static getAllEntries() {
@@ -63,20 +58,10 @@ export class FixedDecimalRoundingMode {
         new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
-        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
-        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
-        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
     ];
 
     static Ceil = FixedDecimalRoundingMode.#objectValues[0];
-    static Expand = FixedDecimalRoundingMode.#objectValues[1];
-    static Floor = FixedDecimalRoundingMode.#objectValues[2];
-    static Trunc = FixedDecimalRoundingMode.#objectValues[3];
-    static HalfCeil = FixedDecimalRoundingMode.#objectValues[4];
-    static HalfExpand = FixedDecimalRoundingMode.#objectValues[5];
-    static HalfFloor = FixedDecimalRoundingMode.#objectValues[6];
-    static HalfTrunc = FixedDecimalRoundingMode.#objectValues[7];
-    static HalfEven = FixedDecimalRoundingMode.#objectValues[8];
+    static Floor = FixedDecimalRoundingMode.#objectValues[1];
+    static HalfCeil = FixedDecimalRoundingMode.#objectValues[2];
+    static HalfFloor = FixedDecimalRoundingMode.#objectValues[3];
 }
