@@ -229,6 +229,7 @@ where
                 }
             }
         }
+        (FieldSymbol::Week(w), _) => match w {},
         (FieldSymbol::Weekday(weekday), l) => {
             input!(iso_weekday = input.iso_weekday);
             match datetime_names
@@ -412,14 +413,6 @@ where
                     Err(DateTimeWriteError::UnsupportedField(field))
                 }
             }
-        }
-        (FieldSymbol::Week(_), _) => {
-            w.with_part(Part::ERROR, |w| {
-                w.write_str("{unsupported:")?;
-                w.write_char(char::from(field.symbol))?;
-                w.write_str("}")
-            })?;
-            Err(DateTimeWriteError::UnsupportedField(field))
         }
     })
 }

@@ -66,7 +66,7 @@ impl From<fields::SymbolError> for SkeletonError {
                     // Extended year
                     | 'u'
                     // TODO(#5643) - Weeks
-                    | 'Y'
+                    | 'Y' | 'w' | 'W'
                     // Modified Julian Day
                     | 'g'
                     => Self::SymbolUnimplemented(ch),
