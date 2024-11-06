@@ -58,12 +58,13 @@ macro_rules! constructor {
                 ListLength::Short => ListFormatterPatternsV2::SHORT,
                 ListLength::Wide => ListFormatterPatternsV2::WIDE,
             };
-            let locale = get_data_locale_from_prefs(prefs);
+            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
             let data = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         length,
-                        &locale),
+                        &locale
+                    ),
                     ..Default::default()
                 })?
                 .payload
@@ -71,17 +72,6 @@ macro_rules! constructor {
             Ok(Self { data })
         }
     };
-}
-
-fn get_data_locale_from_prefs(prefs: ListFormatterPreferences) -> DataLocale {
-    // TODO(#5764): This should utilize region source priority.
-    DataLocale::from_subtags(
-        prefs.locale_prefs.language,
-        prefs.locale_prefs.script,
-        prefs.locale_prefs.region,
-        prefs.locale_prefs.variant,
-        prefs.locale_prefs.subdivision,
-    )
 }
 
 impl ListFormatter {

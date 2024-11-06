@@ -529,13 +529,12 @@ macro_rules! __define_preferences {
             }
         }
 
-        impl $name {
-            /// Constructs a `Locale` corresponding to these preferences.
-            pub fn into_locale(self) -> $crate::Locale {
+        impl From<$name> for $crate::Locale {
+            fn from(other: $name) -> Self {
                 use $crate::preferences::PreferenceKey;
-                let mut result = $crate::Locale::from(self.locale_prefs);
+                let mut result = Self::from(other.locale_prefs);
                 $(
-                    if let Some(value) = &self.$key {
+                    if let Some(value) = other.$key {
                         if let Some(ue) = <$pref>::unicode_extension_key() {
                             let val = value.unicode_extension_value().unwrap();
                             result.extensions.unicode.keywords.set(ue, val);
@@ -544,7 +543,9 @@ macro_rules! __define_preferences {
                 )*
                 result
             }
+        }
 
+        impl $name {
             /// Extends the preferences with the values from another set of preferences.
             pub fn extend(&mut self, other: $name) {
                 self.locale_prefs.extend(other.locale_prefs);
