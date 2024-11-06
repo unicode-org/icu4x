@@ -358,10 +358,10 @@ where
             let payloads = datetime_names.get_payloads();
 
             let mut r = Err(FormatTimeZoneError::Fallback);
-            for formatter in time_zone.units(length) {
-                match formatter.format(w, input, payloads, fdf)? {
+            for unit in time_zone.units(length) {
+                match unit.format(w, input, payloads, fdf)? {
                     Err(FormatTimeZoneError::Fallback) => {
-                        // Expected common case: the unit needs fall back to the next one
+                        // Expected, try the next unit
                         continue;
                     }
                     r2 => {
@@ -373,14 +373,7 @@ where
 
             match r {
                 Ok(()) => Ok(()),
-                Err(FormatTimeZoneError::MissingInputField(f)) => {
-                    write_value_missing(w, field)?;
-                    Err(DateTimeWriteError::MissingInputField(f))
-                }
-                Err(
-                    e @ (FormatTimeZoneError::FixedDecimalFormatterNotLoaded
-                    | FormatTimeZoneError::NamesNotLoaded),
-                ) => {
+                Err(e) => {
                     if let Some(offset) = input.offset {
                         w.with_part(Part::ERROR, |w| {
                             Iso8601Format {
@@ -393,24 +386,21 @@ where
                     } else {
                         write_value_missing(w, field)?;
                     }
-                    Err(match e {
+                    match e {
                         FormatTimeZoneError::FixedDecimalFormatterNotLoaded => {
-                            DateTimeWriteError::FixedDecimalFormatterNotLoaded
+                            Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
                         }
                         FormatTimeZoneError::NamesNotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(field)
+                            Err(DateTimeWriteError::NamesNotLoaded(field))
                         }
-                        _ => unreachable!(),
-                    })
-                }
-                Err(FormatTimeZoneError::Fallback) => {
-                    // unreachable because our current fallback chains don't fall through
-                    w.with_part(Part::ERROR, |w| {
-                        w.write_str("{unsupported:")?;
-                        w.write_char(char::from(field.symbol))?;
-                        w.write_str("}")
-                    })?;
-                    Err(DateTimeWriteError::UnsupportedField(field))
+                        FormatTimeZoneError::MissingInputField(f) => {
+                            Err(DateTimeWriteError::MissingInputField(f))
+                        }
+                        FormatTimeZoneError::Fallback => {
+                            debug_assert!(false, "timezone fallback chain fell through {input:?}");
+                            Ok(())
+                        }
+                    }
                 }
             }
         }
