@@ -203,7 +203,7 @@ impl FieldSymbol {
                 | FieldSymbol::Year(Year::Cyclic)
                 | FieldSymbol::Weekday(Weekday::Format)
                 | FieldSymbol::DayPeriod(_)
-                | FieldSymbol::TimeZone(TimeZone::LowerZ | TimeZone::UpperZ)
+                | FieldSymbol::TimeZone(TimeZone::SpecificNonLocation)
         )
     }
 }
@@ -311,13 +311,12 @@ impl FieldSymbol {
             Self::DecimalSecond(DecimalSecond::SecondF7) => 37,
             Self::DecimalSecond(DecimalSecond::SecondF8) => 38,
             Self::DecimalSecond(DecimalSecond::SecondF9) => 39,
-            Self::TimeZone(TimeZone::LowerZ) => 100,
-            Self::TimeZone(TimeZone::UpperZ) => 101,
-            Self::TimeZone(TimeZone::UpperO) => 102,
-            Self::TimeZone(TimeZone::LowerV) => 103,
-            Self::TimeZone(TimeZone::UpperV) => 104,
-            Self::TimeZone(TimeZone::LowerX) => 105,
-            Self::TimeZone(TimeZone::UpperX) => 106,
+            Self::TimeZone(TimeZone::SpecificNonLocation) => 100,
+            Self::TimeZone(TimeZone::LocalizedOffset) => 102,
+            Self::TimeZone(TimeZone::GenericNonLocation) => 103,
+            Self::TimeZone(TimeZone::Location) => 104,
+            Self::TimeZone(TimeZone::Iso) => 105,
+            Self::TimeZone(TimeZone::IsoWithZ) => 106,
         }
     }
 }
@@ -676,54 +675,36 @@ field_type!(
         /// Field symbol for the specific non-location format of a time zone.
         ///
         /// For example: "Pacific Standard Time"
-        'z' => LowerZ = 0,
-        /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
-        /// long localized offset format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
-        'Z' => UpperZ = 1,
+        'z' => SpecificNonLocation = 0,
         /// Field symbol for the localized offset format of a time zone.
         ///
         /// For example: "GMT-07:00"
-        'O' => UpperO = 2,
+        'O' => LocalizedOffset = 1,
         /// Field symbol for the generic non-location format of a time zone.
         ///
         /// For example: "Pacific Time"
-        'v' => LowerV = 3,
+        'v' => GenericNonLocation = 2,
         /// Field symbol for any of: the time zone id, time zone exemplar city, or generic location format.
-        'V' => UpperV = 4,
-        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `Z`.
-        'x' => LowerX = 5,
-        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
-        /// optional ISO8601 UTC indicator `Z`, whereas [`TimeZone::LowerX`] allows the optional `Z`.
-        'X' => UpperX = 6,
+        'V' => Location = 3,
+        /// Field symbol for either the ISO-8601 basic format or ISO-8601 extended format. This does not use an
+        /// optional ISO-8601 UTC indicator `Z`, whereas [`TimeZone::IsoWithZ`] produces `Z`.
+        'x' => Iso = 4,
+        /// Field symbol for either the ISO-8601 basic format or ISO-8601 extended format, with the ISO-8601 UTC indicator `Z`.
+        'X' => IsoWithZ = 5,
     };
     TimeZoneULE
 );
 
 #[cfg(feature = "datagen")]
 impl LengthType for TimeZone {
-    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _: FieldLength) -> TextOrNumeric {
         use TextOrNumeric::*;
         match self {
-            // It is reasonable to default to Text on release builds instead of panicking.
-            //
-            // Erroneous symbols are gracefully handled by returning error Results
-            // in the formatting code.
-            //
-            // The default cases may want to be updated to return errors themselves
-            // if the skeleton matching code ever becomes fallible.
-            Self::UpperZ => match length.idx() {
-                1..=3 => Numeric,
-                4 => Text,
-                5 => Numeric,
-                _ => Text,
-            },
-            Self::UpperO => match length.idx() {
-                1 => Text,
-                4 => Numeric,
-                _ => Text,
-            },
-            Self::LowerX | Self::UpperX => Numeric,
-            Self::LowerZ | Self::LowerV | Self::UpperV => Text,
+            Self::Iso | Self::IsoWithZ => Numeric,
+            Self::LocalizedOffset
+            | Self::SpecificNonLocation
+            | Self::GenericNonLocation
+            | Self::Location => Text,
         }
     }
 }

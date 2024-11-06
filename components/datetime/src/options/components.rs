@@ -372,7 +372,7 @@ impl Bag {
         if self.time_zone_name.is_some() {
             // Only the lower "v" field is used in skeletons.
             fields.push(Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::One,
             });
         }
@@ -603,27 +603,27 @@ impl From<TimeZoneName> for Field {
     fn from(time_zone_name: TimeZoneName) -> Self {
         match time_zone_name {
             TimeZoneName::ShortSpecific => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
                 length: FieldLength::One,
             },
             TimeZoneName::LongSpecific => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
                 length: FieldLength::Wide,
             },
             TimeZoneName::LongOffset => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
                 length: FieldLength::Wide,
             },
             TimeZoneName::ShortOffset => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
                 length: FieldLength::One,
             },
             TimeZoneName::ShortGeneric => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::One,
             },
             TimeZoneName::LongGeneric => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::Wide,
             },
         }
@@ -817,22 +817,21 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
-                        fields::TimeZone::LowerZ => match field.length {
+                        fields::TimeZone::SpecificNonLocation => match field.length {
                             FieldLength::One => TimeZoneName::ShortSpecific,
                             _ => TimeZoneName::LongSpecific,
                         },
-                        fields::TimeZone::LowerV => match field.length {
+                        fields::TimeZone::GenericNonLocation => match field.length {
                             FieldLength::One => TimeZoneName::ShortGeneric,
                             _ => TimeZoneName::LongGeneric,
                         },
-                        fields::TimeZone::UpperO => match field.length {
+                        fields::TimeZone::LocalizedOffset => match field.length {
                             FieldLength::One => TimeZoneName::ShortOffset,
                             _ => TimeZoneName::LongOffset,
                         },
-                        fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
-                        fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
-                        fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),
-                        fields::TimeZone::UpperX => unimplemented!("fields::TimeZone::UpperX"),
+                        fields::TimeZone::Location => unimplemented!("fields::TimeZone::Location"),
+                        fields::TimeZone::Iso => unimplemented!("fields::TimeZone::IsoZ"),
+                        fields::TimeZone::IsoWithZ => unimplemented!("fields::TimeZone::Iso"),
                     });
                 }
             }
