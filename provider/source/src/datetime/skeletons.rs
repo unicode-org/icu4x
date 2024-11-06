@@ -438,7 +438,7 @@ mod test {
         assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");
 
         assert_pattern_to_skeleton("y", "y", "The year is passed through");
-        assert_pattern_to_skeleton("Y", "Y", "The year is passed through");
+        assert_pattern_to_skeleton("U", "U", "The year is passed through");
 
         assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
 

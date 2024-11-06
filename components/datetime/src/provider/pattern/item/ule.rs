@@ -323,10 +323,10 @@ mod test {
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
                 [
                     0x80,
-                    FieldSymbol::Year(Year::WeekOf).idx(),
+                    FieldSymbol::Year(Year::Cyclic).idx(),
                     FieldLength::Wide.idx(),
                 ],
             ),

@@ -124,9 +124,9 @@ mod test {
                 ],
             ),
             (
-                Field::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
+                Field::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
                 [
-                    FieldSymbol::Year(Year::WeekOf).idx(),
+                    FieldSymbol::Year(Year::Cyclic).idx(),
                     FieldLength::Wide.idx(),
                 ],
             ),
