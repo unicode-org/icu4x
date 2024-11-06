@@ -160,7 +160,7 @@ fn overlap_patterns() {
                 NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
-            expected: "Fri 8:40\u{202f}PM",
+            expected: "Fri 8:40:07\u{202f}PM",
         },
         TestCase {
             locale: locale!("en-US"),
@@ -169,7 +169,7 @@ fn overlap_patterns() {
                 NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
-            expected: "Fri, Aug 9, 8:40\u{202f}PM",
+            expected: "Fri, Aug 9, 8:40:07\u{202f}PM",
         },
         // Note: in ru, the standalone weekday name is used when it is the only one in the pattern
         // (but the strings are the same in data)
@@ -180,7 +180,7 @@ fn overlap_patterns() {
                 NeoTimeComponents::Time,
             ),
             length: NeoSkeletonLength::Medium,
-            expected: "пт 20:40",
+            expected: "пт 20:40:07",
         },
         TestCase {
             locale: locale!("ru"),
@@ -260,7 +260,7 @@ fn test_5387() {
     .unwrap();
 
     // TODO(#5387): All of these should resolve to a pattern without a comma
-    assert_try_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15\u{202f}PM");
-    assert_try_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15\u{202f}PM");
-    assert_try_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15");
+    assert_try_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15:16\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15:16\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15:16");
 }

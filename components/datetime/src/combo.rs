@@ -16,7 +16,7 @@ use icu_provider::marker::NeverMarker;
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::fieldset::{Combo, E, T, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -24,7 +24,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// let formatter = DateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short(),
+///     Combo::<E, T, L>::short().hm(),
 /// )
 /// .unwrap();
 ///
@@ -43,7 +43,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::fieldset::{Combo, E, T, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -51,7 +51,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short(),
+///     Combo::<E, T, L>::short().hm(),
 /// )
 /// .unwrap();
 ///
@@ -107,6 +107,17 @@ impl<D, T, Z> Combo<D, T, Z> {
     /// Creates a date/time/zone skeleton with a short length.
     pub const fn short() -> Self {
         Self::with_length(NeoSkeletonLength::Short)
+    }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
     }
 }
 

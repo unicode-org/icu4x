@@ -146,7 +146,7 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HM;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -156,7 +156,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h12").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -166,7 +166,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US-u-hc-h23").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -176,7 +176,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h12").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -186,7 +186,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("fr-FR-u-hc-h23").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -199,14 +199,14 @@
 //!
 //! ```
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HM;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h11").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -216,7 +216,7 @@
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("und-u-hc-h24").into(),
-//!     HM::short(),
+//!     T::short().hm(),
 //! )
 //! .unwrap();
 //! assert_try_writeable_eq!(
@@ -225,6 +225,10 @@
 //! );
 //! ```
 //!
+//! ## Time Precision
+//!
+//! // TODO: Add time precision docs tests.
+//!
 //! ## Fractional Second Digits
 //!
 //! Times can be displayed with a custom number of fractional digits from 0-9:
@@ -232,15 +236,16 @@
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
-//! use icu::datetime::fieldset::HMS;
+//! use icu::datetime::fieldset::T;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::neo_skeleton::TimePrecision;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 //!     &locale!("en-US").into(),
-//!     HMS::short().with_fractional_second_digits(FractionalSecondDigits::F2),
+//!     T::short().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)),
 //! )
 //! .unwrap();
 //!

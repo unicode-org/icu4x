@@ -311,6 +311,7 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
+    /// use icu::datetime::neo_skeleton::TimePrecision;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -318,7 +319,11 @@ where
     /// let fmt =
     ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
     ///         &locale!("es-MX").into(),
-    ///         NeoTimeComponents::Hour.medium(),
+    ///         {
+    ///             let mut skeleton = NeoTimeComponents::Time.medium();
+    ///             skeleton.time_precision = Some(TimePrecision::HourExact);
+    ///             skeleton
+    ///         }
     ///     )
     ///     .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -343,9 +348,10 @@ where
     ///         &locale!("es-MX").into(),
     ///         NeoDateTimeComponents::DateTime(
     ///             NeoDateComponents::Weekday,
-    ///             NeoTimeComponents::HourMinute,
+    ///             NeoTimeComponents::Time,
     ///         )
-    ///         .long(),
+    ///         .long()
+    ///         .hm(),
     ///     )
     ///     .unwrap();
     /// let dt = DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
@@ -698,14 +704,18 @@ where
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::datetime::neo_skeleton::TimePrecision;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let fmt = DateTimeFormatter::try_new_with_skeleton(
     ///     &locale!("es-MX").into(),
-    ///     NeoTimeComponents::Hour.medium(),
+    ///     {
+    ///         let mut skeleton = NeoTimeComponents::Time.medium();
+    ///         skeleton.time_precision = Some(TimePrecision::HourExact);
+    ///         skeleton
+    ///     }
     /// )
     /// .unwrap();
     /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
@@ -729,9 +739,10 @@ where
     ///     &locale!("es-MX").into(),
     ///     NeoDateTimeComponents::DateTime(
     ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::HourMinute,
+    ///         NeoTimeComponents::Time,
     ///     )
-    ///     .long(),
+    ///     .long()
+    ///     .hm(),
     /// )
     /// .unwrap();
     /// let dt = DateTime::try_new_iso(2024, 1, 10, 16, 20, 0).unwrap();

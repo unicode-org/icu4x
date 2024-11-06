@@ -1169,6 +1169,18 @@ impl NeoTimeSkeleton {
             time_precision: None,
         }
     }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
+    }
 }
 
 /// A skeleton for formatting parts of a date and time (without time zone).
@@ -1200,6 +1212,18 @@ impl NeoDateTimeSkeleton {
             year_style: None,
             time_precision: None,
         }
+    }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
     }
 }
 

@@ -14,7 +14,7 @@ use crate::{
 };
 use icu_calendar::{
     types::{
-        DayOfMonth, IsoHour, IsoWeekday, MonthInfo, YearInfo,
+        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
     },
     AnyCalendarKind, Date, Iso, Time,
 };
@@ -136,6 +136,16 @@ macro_rules! impl_marker_with_options {
                 /// Sets the time precision option.
                 pub const fn with_time_precision(mut self, time_precision: TimePrecision) -> Self {
                     self.time_precision = Some(time_precision);
+                    self
+                }
+                /// Sets the time precision to [`TimePrecision::MinuteExact`]
+                pub fn hm(mut self) -> Self {
+                    self.time_precision = Some(TimePrecision::MinuteExact);
+                    self
+                }
+                /// Sets the time precision to [`TimePrecision::SecondPlus`]
+                pub fn hms(mut self) -> Self {
+                    self.time_precision = Some(TimePrecision::SecondPlus);
                     self
                 }
             }
@@ -925,16 +935,19 @@ impl_time_marker!(
     NeoTimeComponents::Time,
     description = "time (locale-dependent hour cycle)",
     sample_length = medium,
-    sample = "3:47 PM",
+    sample = "3:47:50 PM",
     dayperiods = yes,
     input_hour = yes,
+    input_minute = yes,
+    input_second = yes,
+    input_nanosecond = yes,
 );
 
 impl_datetime_marker!(
     YMDT,
     description = "year, month, day, and time",
     sample_length = medium,
-    sample = "May 17, 2024, 3:47 PM",
+    sample = "May 17, 2024, 3:47:50 PM",
     date = YMD,
     time = T,
 );
@@ -1019,7 +1032,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::T;
     /// use icu::datetime::fieldset::Zs;
     /// use icu::datetime::fieldset::Combo;
     /// use icu::locale::locale;
@@ -1028,7 +1041,7 @@ impl_zone_marker!(
     ///
     /// type MyDateTimeZoneSet = Combo<
     ///     MD,
-    ///     HM,
+    ///     T,
     ///     Zs,
     /// >;
     ///
@@ -1042,7 +1055,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47 PM CDT"
+    ///     "September 17, 3:47:50 PM CDT"
     /// );
     /// ```
     ///
@@ -1236,7 +1249,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::T;
     /// use icu::datetime::fieldset::Vs;
     /// use icu::datetime::fieldset::Combo;
     /// use icu::locale::locale;
@@ -1245,7 +1258,7 @@ impl_zone_marker!(
     ///
     /// type MyDateTimeZoneSet = Combo<
     ///     MD,
-    ///     HM,
+    ///     T,
     ///     Vs,
     /// >;
     ///
@@ -1259,7 +1272,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47 PM CT"
+    ///     "September 17, 3:47:50 PM CT"
     /// );
     /// ```
     ///
