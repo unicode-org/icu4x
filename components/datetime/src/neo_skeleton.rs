@@ -664,12 +664,7 @@ pub enum NeoTimeComponents {
 
 impl NeoTimeComponents {
     /// All values of this enum.
-    pub const VALUES: &'static [Self] = &[
-        Self::Time,
-        Self::Time12,
-        Self::Time24,
-        Self::Auto,
-    ];
+    pub const VALUES: &'static [Self] = &[Self::Time, Self::Time12, Self::Time24, Self::Auto];
 
     const HOUR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("j");
     const HOUR12: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h");
@@ -868,7 +863,7 @@ impl NeoComponents {
     // Attributes for skeleta that span date/time/zone
     // TODO: Add variants for H, h, and B hours
     const WEEKDAY_HOUR: &'static DataMarkerAttributes =
-    DataMarkerAttributes::from_str_or_panic("ej");
+        DataMarkerAttributes::from_str_or_panic("ej");
 
     // For matching
     const WEEKDAY_HOUR_STR: &'static str = Self::WEEKDAY_HOUR.as_str();
@@ -1308,7 +1303,10 @@ impl NeoDateTimeSkeleton {
         let time_precision = TimePrecision::from_time_length(time_length);
         NeoDateTimeSkeleton {
             length: date_skeleton.length,
-            components: NeoDateTimeComponents::DateTime(date_skeleton.components, NeoTimeComponents::Time),
+            components: NeoDateTimeComponents::DateTime(
+                date_skeleton.components,
+                NeoTimeComponents::Time,
+            ),
             alignment: None,
             year_style: None,
             time_precision: Some(time_precision),

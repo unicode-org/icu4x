@@ -7,7 +7,8 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::neo_skeleton::{
-    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength, NeoTimeComponents
+    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength,
+    NeoTimeComponents,
 };
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, length, preferences};
@@ -123,10 +124,7 @@ impl SourceDataProvider {
                     )
                 }
                 DateTimeFormatterOptions::Components(
-                    components @ components::Bag {
-                        hour: Some(_),
-                        ..
-                    },
+                    components @ components::Bag { hour: Some(_), .. },
                 ) => {
                     let mut components_with_minute = components;
                     components_with_minute.minute = Some(components::Numeric::Numeric);
@@ -505,7 +503,9 @@ fn test_en_overlap_patterns() {
     let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time).id_str().unwrap(),
+                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time)
+                    .id_str()
+                    .unwrap(),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),

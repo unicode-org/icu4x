@@ -87,17 +87,17 @@ fn neo_datetime_lengths() {
                 locale!("zh").into(),
                 locale!("hi").into(),
             ] {
-                let formatter = FixedCalendarDateTimeFormatter::try_new_with_skeleton(
-                    &locale,
-                    {
-                        let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
-                            date_skeleton.length,
-                            NeoDateTimeComponents::DateTime(date_skeleton.components, NeoTimeComponents::Time),
-                        );
-                        skeleton.time_precision = Some(time_precision);
-                        skeleton
-                    }
-                )
+                let formatter = FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale, {
+                    let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
+                        date_skeleton.length,
+                        NeoDateTimeComponents::DateTime(
+                            date_skeleton.components,
+                            NeoTimeComponents::Time,
+                        ),
+                    );
+                    skeleton.time_precision = Some(time_precision);
+                    skeleton
+                })
                 .unwrap();
                 let formatted = formatter.format(&datetime);
                 let expected = expected_iter.next().unwrap();
@@ -229,10 +229,7 @@ fn test_5387() {
         &locale!("en").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
-            NeoDateTimeComponents::DateTime(
-                NeoDateComponents::Weekday,
-                NeoTimeComponents::Time,
-            ),
+            NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time),
         ),
     )
     .unwrap();
@@ -240,10 +237,7 @@ fn test_5387() {
         &locale!("en-u-hc-h12").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
-            NeoDateTimeComponents::DateTime(
-                NeoDateComponents::Weekday,
-                NeoTimeComponents::Time,
-            ),
+            NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time),
         ),
     )
     .unwrap();
@@ -251,10 +245,7 @@ fn test_5387() {
         &locale!("en-u-hc-h23").into(),
         NeoDateTimeSkeleton::for_length_and_components(
             NeoSkeletonLength::Medium,
-            NeoDateTimeComponents::DateTime(
-                NeoDateComponents::Weekday,
-                NeoTimeComponents::Time,
-            ),
+            NeoDateTimeComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time),
         ),
     )
     .unwrap();

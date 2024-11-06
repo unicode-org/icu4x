@@ -39,11 +39,9 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, YMDTO>::try_new(
-            &locale,
-            YMDTO::medium(),
-        )
-        .expect("Failed to create zoned datetime formatter.");
+        let dtf =
+            FixedCalendarDateTimeFormatter::<Gregorian, YMDTO>::try_new(&locale, YMDTO::medium())
+                .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
         let zone = TimeZoneInfo::utc();
