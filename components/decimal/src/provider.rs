@@ -95,7 +95,8 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
+/// Symbols and metadata required for formatting a Fixed decimal numbers such as
+/// [`UnsignedFixedDecimal`](crate::UnsignedFixedDecimal) and [`SignedFixedDecimal`](crate::SignedFixedDecimal).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
