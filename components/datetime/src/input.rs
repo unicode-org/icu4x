@@ -7,6 +7,7 @@
 
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::any_calendar::AnyCalendarKind;
+use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::{Date, Iso, Time};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -22,6 +23,7 @@ pub(crate) struct ExtractedInput {
     pub(crate) month: Option<MonthInfo>,
     pub(crate) day_of_month: Option<DayOfMonth>,
     pub(crate) iso_weekday: Option<IsoWeekday>,
+    pub(crate) day_of_year: Option<DayOfYearInfo>,
     pub(crate) any_calendar_kind: Option<AnyCalendarKind>,
     pub(crate) hour: Option<IsoHour>,
     pub(crate) minute: Option<IsoMinute>,
@@ -45,6 +47,7 @@ impl ExtractedInput {
             + GetField<D::MonthInput>
             + GetField<D::DayOfMonthInput>
             + GetField<D::DayOfWeekInput>
+            + GetField<D::DayOfYearInput>
             + GetField<D::AnyCalendarKindInput>
             + GetField<T::HourInput>
             + GetField<T::MinuteInput>
@@ -60,6 +63,7 @@ impl ExtractedInput {
             month: GetField::<D::MonthInput>::get_field(input).into_option(),
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
             iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
+            day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
             any_calendar_kind: GetField::<D::AnyCalendarKindInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),
             minute: GetField::<T::MinuteInput>::get_field(input).into_option(),
