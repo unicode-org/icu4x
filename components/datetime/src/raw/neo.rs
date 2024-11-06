@@ -364,7 +364,7 @@ impl OverlapPatternSelectionData {
                 // We do not currently support overlap patterns with both a
                 // year and a time because that would involve 3*3 = 9 variants
                 // instead of 3 variants.
-                debug_assert!(matches!(options.year_style, None));
+                debug_assert!(options.year_style.is_none());
                 let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
