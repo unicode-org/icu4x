@@ -5,9 +5,16 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Measurement System Identifier defines a preferred measurement system.
+    ///
+    /// Specifying "ms" in a locale identifier overrides the default value specified by supplemental measurement system data for the region
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeMeasurementSystemIdentifier).
     MeasurementSystem {
-        "metric" => Metric,
-        "ussystem" => USSystem,
-        "uksystem" => UKSystem
+        /// Metric System
+        ("metric" => Metric),
+        /// US System of measurement: feet, pints, etc.; pints are 16oz
+        ("ussystem" => USSystem),
+        /// UK System of measurement: feet, pints, etc.; pints are 20oz
+        ("uksystem" => UKSystem)
 }, "ms");

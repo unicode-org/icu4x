@@ -14,9 +14,7 @@ use core::hash::Hash;
 use core::ops::Deref;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
-use icu_locale_core::subtags::Subtag;
-use icu_locale_core::subtags::Variant;
-use icu_locale_core::subtags::{Language, Region, Script};
+use icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use zerovec::ule::VarULE;
 
@@ -277,6 +275,25 @@ impl DataLocale {
             self.variant,
             self.subdivision,
         )
+    }
+
+    /// Creates a [`DataLocale`] from a list of subtags.
+    pub const fn from_subtags(
+        language: Language,
+        script: Option<Script>,
+        region: Option<Region>,
+        variant: Option<Variant>,
+        subdivision: Option<Subtag>,
+    ) -> Self {
+        Self {
+            language,
+            script,
+            region,
+            variant,
+            subdivision,
+
+            keywords: unicode_ext::Keywords::new(),
+        }
     }
 }
 

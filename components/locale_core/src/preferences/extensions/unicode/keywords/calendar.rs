@@ -6,36 +6,65 @@
 
 use crate::preferences::extensions::unicode::enum_keyword;
 
-// https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml
 enum_keyword!(
-    /// TODO
+    /// Islamic Calendar sub-type
+    ///
+    /// The list is based on [`CLDR Calendars`](https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml)
     IslamicCalendarAlgorithm {
-        "umalqura" => Umalqura,
-        "tbla" => Tbla,
-        "civil" => Civil,
-        "rgsa" => Rgsa
+        /// Islamic calendar, Umm al-Qura
+        ("umalqura" => Umalqura),
+        /// Hijri calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - astronomical epoch)
+        ("tbla" => Tbla),
+        /// Islamic calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - civil epoch)
+        ("civil" => Civil),
+        /// Hijri calendar, Saudi Arabia sighting
+        ("rgsa" => Rgsa)
 });
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Calendar Identifier defines a type of calendar.
+    ///
+    /// This selects calendar-specific data within a locale used for formatting and parsing,
+    /// such as date/time symbols and patterns; it also selects supplemental calendarData used
+    /// for calendrical calculations. The value can affect the computation of the first day of the week.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     CalendarAlgorithm {
-        "buddhist" => Buddhist,
-        "chinese" => Chinese,
-        "coptic" => Coptic,
-        "dangi" => Dangi,
-        "ethioaa" => Ethioaa,
-        "ethiopic" => Ethiopic,
-        "gregory" => Gregory,
-        "hebrew" => Hebrew,
-        "indian" => Indian,
-        "islamic" => Islamic(IslamicCalendarAlgorithm) {
-            "umalqura" => Umalqura,
-            "tbla" => Tbla,
-            "civil" => Civil,
-            "rgsa" => Rgsa
-        },
-        "iso8601" => Iso8601,
-        "japanese" => Japanese,
-        "persian" => Persian,
-        "roc" => Roc
+        /// Thai Buddhist calendar (same as Gregorian except for the year)
+        ("buddhist" => Buddhist),
+        /// Traditional Chinese calendar
+        ("chinese" => Chinese),
+        /// Coptic calendar
+        ("coptic" => Coptic),
+        /// Traditional Korean calendar
+        ("dangi" => Dangi),
+        /// Ethiopic calendar, Amete Alem (epoch approx. 5493 B.C.E)
+        ("ethioaa" => Ethioaa),
+        /// Ethiopic calendar, Amete Mihret (epoch approx, 8 C.E.)
+        ("ethiopic" => Ethiopic),
+        /// Gregorian calendar
+        ("gregory" => Gregory),
+        /// Traditional Hebrew calendar
+        ("hebrew" => Hebrew),
+        /// Indian calendar
+        ("indian" => Indian),
+        /// Islamic calendar
+        ("islamic" => Islamic(IslamicCalendarAlgorithm) {
+             /// Islamic calendar, Umm al-Qura
+             ("umalqura" => Umalqura),
+             /// Hijri calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - astronomical epoch)
+             ("tbla" => Tbla),
+             /// Islamic calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - civil epoch)
+             ("civil" => Civil),
+             /// Hijri calendar, Saudi Arabia sighting
+             ("rgsa" => Rgsa)
+        }),
+        /// ISO calendar (Gregorian calendar using the ISO 8601 calendar week rules)
+        ("iso8601" => Iso8601),
+        /// Japanese Imperial calendar
+        ("japanese" => Japanese),
+        /// Persian calendar
+        ("persian" => Persian),
+        /// Republic of China calendar
+        ("roc" => Roc)
 }, "ca");

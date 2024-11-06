@@ -2,15 +2,36 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+/// Macro used to generate a preference keyword as a struct.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locale::{
+///     preferences::extensions::unicode::struct_keyword,
+///     extensions::unicode::{Key, Value},
+/// };
+///
+/// struct_keyword!(
+///     CurrencyType,
+///     "cu",
+///     String,
+///     |input: Value| {
+///         Ok(Self(input.to_string()))
+///     },
+///     |input: CurrencyType| {
+///         icu::locale::extensions::unicode::Value::try_from_str(input.0.as_str()).unwrap()
+///     }
+/// );
+/// ```
 #[macro_export]
-/// TODO
 #[doc(hidden)]
 macro_rules! __struct_keyword {
     ($(#[$doc:meta])* $name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
         #[derive(Debug, Clone, Eq, PartialEq)]
         #[allow(clippy::exhaustive_structs)] // TODO
         $(#[$doc])*
-        pub struct $name(pub $value);
+        pub struct $name($value);
 
         impl TryFrom<$crate::extensions::unicode::Value> for $name {
             type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
@@ -31,6 +52,18 @@ macro_rules! __struct_keyword {
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
                 Some($crate::extensions::unicode::key!($ext_key))
+            }
+
+            fn try_from_key_value(
+                key: &$crate::extensions::unicode::Key,
+                value: &$crate::extensions::unicode::Value,
+            ) -> Result<Option<Self>, $crate::preferences::extensions::unicode::errors::PreferencesParseError> {
+                if Self::unicode_extension_key() == Some(*key) {
+                    let result = Self::try_from(value.clone())?;
+                    Ok(Some(result))
+                } else {
+                    Ok(None)
+                }
             }
 
             fn unicode_extension_value(
@@ -55,7 +88,6 @@ mod tests {
     #[test]
     fn struct_keywords_test() {
         struct_keyword!(
-            /// TODO
             DummyKeyword,
             "dk",
             Subtag,

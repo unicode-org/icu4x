@@ -7,7 +7,9 @@ use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{extensions::unicode::Value, subtags::Subtag};
 
 struct_keyword!(
-    /// TODO
+    /// A Unicode Timezone Identifier defines a timezone.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeTimezoneIdentifier).
     TimeZoneShortId,
     "tz",
     Subtag,

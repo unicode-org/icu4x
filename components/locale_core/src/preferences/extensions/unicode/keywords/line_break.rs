@@ -5,9 +5,17 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Line Break Style Identifier defines a preferred line break style corresponding to the CSS level 3 line-break option.
+    ///
+    /// Specifying "lb" in a locale identifier overrides the locale’s default style
+    /// (which may correspond to "normal" or "strict").
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeLineBreakStyleIdentifier).
     LineBreakStyle {
-        "strict" => Strict,
-        "normal" => Normal,
-        "loose" => Loose,
+        /// CSS level 3 line-break=strict, e.g. treat CJ as NS
+        ("strict" => Strict),
+        /// CSS level 3 line-break=normal, e.g. treat CJ as ID, break before hyphens for ja,zh
+        ("normal" => Normal),
+        /// CSS lev 3 line-break=loose
+        ("loose" => Loose),
 }, "lb");
