@@ -11,7 +11,7 @@ use super::{
     GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
 };
 use crate::error::DateTimeWriteError;
-use crate::fields::{self, Day, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::input::ExtractedInput;
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
@@ -413,13 +413,7 @@ where
                 }
             }
         }
-        (
-            FieldSymbol::Year(Year::WeekOf)
-            | FieldSymbol::Week(Week::WeekOfYear)
-            | FieldSymbol::Week(Week::WeekOfMonth)
-            | FieldSymbol::Day(Day::ModifiedJulianDay),
-            _,
-        ) => {
+        (FieldSymbol::Week(_), _) => {
             w.with_part(Part::ERROR, |w| {
                 w.write_str("{unsupported:")?;
                 w.write_char(char::from(field.symbol))?;

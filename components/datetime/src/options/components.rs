@@ -200,7 +200,9 @@ impl Bag {
             fields.push(Field {
                 symbol: FieldSymbol::Year(match year {
                     Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
-                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
+                    Year::NumericWeekOf | Year::TwoDigitWeekOf => {
+                        unimplemented!("fields::Year::WeekOf")
+                    }
                 }),
                 length: match year {
                     // Calendar year (numeric).
@@ -681,10 +683,10 @@ impl From<&Pattern<'_>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigit,
                             _ => Year::Numeric,
                         },
-                        fields::Year::WeekOf => match field.length {
-                            FieldLength::TwoDigit => Year::TwoDigitWeekOf,
-                            _ => Year::NumericWeekOf,
-                        },
+                        // fields::Year::WeekOf => match field.length {
+                        //     FieldLength::TwoDigit => Year::TwoDigitWeekOf,
+                        //     _ => Year::NumericWeekOf,
+                        // },
                         // TODO(#3762): Add support for U and r
                         _ => Year::Numeric,
                     });
@@ -718,9 +720,6 @@ impl From<&Pattern<'_>> for Bag {
                         },
                         fields::Day::DayOfYear => Day::DayOfYear,
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
-                        fields::Day::ModifiedJulianDay => {
-                            unimplemented!("fields::Day::ModifiedJulianDay")
-                        }
                     });
                 }
                 FieldSymbol::Weekday(weekday) => {

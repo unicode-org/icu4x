@@ -279,7 +279,7 @@ impl FieldSymbol {
         match self {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
-            Self::Year(Year::WeekOf) => 2,
+            // Self::Year(Year::WeekOf) => 2,
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
@@ -289,7 +289,7 @@ impl FieldSymbol {
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            Self::Day(Day::ModifiedJulianDay) => 12,
+            // Self::Day(Day::ModifiedJulianDay) => 12,
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -497,16 +497,16 @@ field_type! (
     Year; {
         /// Field symbol for calendar year (numeric).
         ///
-        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
+        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or `Year::WeekOf` should be adequate.
         'y' => Calendar = 0,
-        /// Field symbol for year in "week of year".
-        ///
-        /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        'Y' => WeekOf = 1,
         /// Field symbol for cyclic year; used in calendars where years are tracked in cycles, such as the Chinese or Dangi calendars.
-        'U' => Cyclic = 2,
+        'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
-        'r' => RelatedIso = 3,
+        'r' => RelatedIso = 2,
+        // /// Field symbol for year in "week of year".
+        // ///
+        // /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
+        // 'Y' => WeekOf = 3,
     };
     YearULE
 );
@@ -559,10 +559,10 @@ field_type!(
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
-        /// Field symbol for the modified Julian day (numeric).
-        ///
-        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        'g' => ModifiedJulianDay = 3,
+        // /// Field symbol for the modified Julian day (numeric).
+        // ///
+        // /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        // 'g' => ModifiedJulianDay = 3,
     };
     Numeric;
     DayULE
@@ -606,7 +606,7 @@ field_type!(
     Week; {
         /// Field symbol for week of year (numeric).
         ///
-        /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
+        /// When used in a pattern with year, use `Year::WeekOf` for the year field instead of [`Year::Calendar`].
         'w' => WeekOfYear = 0,
         /// Field symbol for week of month (numeric).
         'W' => WeekOfMonth = 1,
