@@ -28,7 +28,7 @@ inline icu4x::capi::PatternLoadError icu4x::PatternLoadError::AsFFI() const {
 inline icu4x::PatternLoadError icu4x::PatternLoadError::FromFFI(icu4x::capi::PatternLoadError c_enum) {
   switch (c_enum) {
     case icu4x::capi::PatternLoadError_Unknown:
-    case icu4x::capi::PatternLoadError_UnsupportedField:
+    case icu4x::capi::PatternLoadError_UnsupportedLength:
     case icu4x::capi::PatternLoadError_DuplicateField:
     case icu4x::capi::PatternLoadError_TypeTooSpecific:
     case icu4x::capi::PatternLoadError_DataMarkerNotFound:

@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 enum PatternLoadError {
   unknown,
 
-  unsupportedField,
+  unsupportedLength,
 
   duplicateField,
 
@@ -32,7 +32,7 @@ enum PatternLoadError {
     switch (this) {
       case unknown:
         return 0;
-      case unsupportedField:
+      case unsupportedLength:
         return 2051;
       case duplicateField:
         return 2057;

@@ -10,7 +10,7 @@ export class PatternLoadError {
 
     static #values = new Map([
         ["Unknown", 0],
-        ["UnsupportedField", 2051],
+        ["UnsupportedLength", 2051],
         ["DuplicateField", 2057],
         ["TypeTooSpecific", 2058],
         ["DataMarkerNotFound", 1],
@@ -79,7 +79,7 @@ export class PatternLoadError {
     };
 
     static Unknown = PatternLoadError.#objectValues[0];
-    static UnsupportedField = PatternLoadError.#objectValues[2051];
+    static UnsupportedLength = PatternLoadError.#objectValues[2051];
     static DuplicateField = PatternLoadError.#objectValues[2057];
     static TypeTooSpecific = PatternLoadError.#objectValues[2058];
     static DataMarkerNotFound = PatternLoadError.#objectValues[1];
