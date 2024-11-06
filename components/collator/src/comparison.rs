@@ -70,11 +70,22 @@ struct LocaleSpecificDataHolder {
     lithuanian_dot_above: bool,
 }
 
+icu_locale_core::preferences::define_preferences!(
+    /// The preferences for collation.
+    CollatorPreferences,
+    {
+        /// The collation type. This corresponds to the `-u-co` BCP-47 tag.
+        collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType
+    }
+);
+
+impl Copy for CollatorPreferences {}
+
 impl LocaleSpecificDataHolder {
     /// The constructor code reused between owned and borrowed cases.
     fn try_new_unstable_internal<D>(
         provider: &D,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -84,15 +95,20 @@ impl LocaleSpecificDataHolder {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
-        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-            DataMarkerAttributes::from_str_or_panic(
-                locale.get_single_unicode_ext("co").unwrap_or_default(),
-            ),
-            locale,
+        let marker_attributes = preferences
+            .collation_type
+            .as_ref()
+            // all collation types are valid marker attributes
+            .map(|c| DataMarkerAttributes::from_str_or_panic(c.as_str()))
+            .unwrap_or_default();
+
+        let data_locale = DataLocale::from_preferences_locale::<CollationTailoringV1Marker>(
+            preferences.locale_prefs,
         );
+        let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale.clone());
 
         let req = DataRequest {
-            id,
+            id: id.as_borrowed(),
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -100,8 +116,11 @@ impl LocaleSpecificDataHolder {
             },
         };
 
+        let fallback_id =
+            DataIdentifierCow::from_borrowed_and_owned(Default::default(), data_locale);
+
         let fallback_req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
+            id: fallback_id.as_borrowed(),
             ..Default::default()
         };
 
@@ -228,14 +247,14 @@ impl Collator {
     /// Creates `CollatorBorrowed` for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<CollatorBorrowed<'static>, DataError> {
-        CollatorBorrowed::try_new(locale, options)
+        CollatorBorrowed::try_new(preferences, options)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: CollatorOptions) -> error: DataError,
+        (preferences: CollatorPreferences, options: CollatorOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -248,7 +267,7 @@ impl Collator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -270,7 +289,7 @@ impl Collator {
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
             || provider.load(Default::default()).map(|r| r.payload),
-            locale,
+            preferences,
             options,
         )
     }
@@ -286,7 +305,7 @@ impl Collator {
             DataPayload<CollationSpecialPrimariesV1Marker>,
             DataError,
         >,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -298,7 +317,7 @@ impl Collator {
             + ?Sized,
     {
         let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
+            LocaleSpecificDataHolder::try_new_unstable_internal(provider, preferences, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
@@ -355,9 +374,13 @@ pub struct CollatorBorrowed<'a> {
 impl CollatorBorrowed<'static> {
     /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
+    pub fn try_new(
+        preferences: CollatorPreferences,
+        options: CollatorOptions,
+    ) -> Result<Self, DataError> {
         // These are assigned to locals in order to keep the code after these assignments
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
+
         let provider = &crate::provider::Baked;
         let decompositions =
             icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER;
@@ -367,7 +390,7 @@ impl CollatorBorrowed<'static> {
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
 
         let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
+            LocaleSpecificDataHolder::try_new_unstable_internal(provider, preferences, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.ce32s.len() != JAMO_COUNT {
