@@ -316,7 +316,7 @@ impl Collator {
             + ?Sized,
     {
         let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, preferences, options)?;
+            LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
