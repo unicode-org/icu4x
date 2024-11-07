@@ -549,9 +549,9 @@ impl LengthType for Month {
             FieldLength::One => TextOrNumeric::Numeric,
             FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
             FieldLength::Two => TextOrNumeric::Numeric,
-            FieldLength::Abbreviated => TextOrNumeric::Text,
-            FieldLength::Wide => TextOrNumeric::Text,
-            FieldLength::Narrow => TextOrNumeric::Text,
+            FieldLength::Three => TextOrNumeric::Text,
+            FieldLength::Four => TextOrNumeric::Text,
+            FieldLength::Five => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
         }
     }

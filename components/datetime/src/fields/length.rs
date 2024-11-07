@@ -32,21 +32,29 @@ impl std::error::Error for LengthError {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
-    /// Typical style is 1-2 digits. For numeric-only fields.
+    /// Numeric: minimum digits
+    ///
+    /// Text: same as [`Self::Abbreviated`]
     One,
-    /// Typical style is 2 digits. For numeric-only fields.
+    /// Numeric: pad to 2 digits
+    ///
+    /// Text: same as [`Self::Abbreviated`]
     Two,
-    /// Abbreviated (spellout) format.
-    Abbreviated,
-    /// Wide / Long / Full  (spellout) format.
-    Wide,
-    /// Narrow / Long / Full  (spellout) format.
-    Narrow,
-    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`](super::Weekday) pattern like
-    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`](super::Hour) may mean
-    /// "Numeric hour (2 digits, zero pad if needed), narrow dayPeriod if used". See the
-    /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
-    /// for more details.
+    /// Numeric: pad to 3 digits
+    ///
+    /// Text: Abbreviated format.
+    Three,
+    /// Numeric: pad to 4 digits
+    ///
+    /// Text: Wide format.
+    Four,
+    /// Numeric: pad to 5 digits
+    ///
+    /// Text: Narrow format.
+    Five,
+    /// Numeric: pad to 6 digits
+    ///
+    /// Text: Short format.
     Six,
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
@@ -66,9 +74,9 @@ impl FieldLength {
         match self {
             FieldLength::One => 1,
             FieldLength::Two => 2,
-            FieldLength::Abbreviated => 3,
-            FieldLength::Wide => 4,
-            FieldLength::Narrow => 5,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
@@ -81,9 +89,9 @@ impl FieldLength {
         Ok(match idx {
             1 => Self::One,
             2 => Self::Two,
-            3 => Self::Abbreviated,
-            4 => Self::Wide,
-            5 => Self::Narrow,
+            3 => Self::Three,
+            4 => Self::Four,
+            5 => Self::Five,
             6 => Self::Six,
             idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
                 Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
@@ -97,9 +105,9 @@ impl FieldLength {
         match self {
             FieldLength::One => 1,
             FieldLength::Two => 2,
-            FieldLength::Abbreviated => 3,
-            FieldLength::Wide => 4,
-            FieldLength::Narrow => 5,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
         }
@@ -111,7 +119,7 @@ impl FieldLength {
     /// This function maps field lengths 1 and 2 to field length 3.
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
-            FieldLength::One | FieldLength::Two => FieldLength::Abbreviated,
+            FieldLength::One | FieldLength::Two => FieldLength::Three,
             other => other,
         }
     }

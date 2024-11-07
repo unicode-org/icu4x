@@ -34,9 +34,9 @@ where
         num.pad_start(match length {
             FieldLength::One | FieldLength::NumericOverride(_) => 1,
             FieldLength::Two => 2,
-            FieldLength::Abbreviated => 3,
-            FieldLength::Wide => 4,
-            FieldLength::Narrow => 5,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
             FieldLength::Six => 6,
         });
 
@@ -353,7 +353,7 @@ where
                 ],
             )?
         }
-        (FieldSymbol::TimeZone(fields::TimeZone::Location), FieldLength::Wide) => {
+        (FieldSymbol::TimeZone(fields::TimeZone::Location), FieldLength::Four) => {
             perform_timezone_fallback(
                 w,
                 input,
@@ -362,7 +362,7 @@ where
                 field,
                 &[
                     TimeZoneFormatterUnit::GenericLocation,
-                    TimeZoneFormatterUnit::LocalizedOffset(FieldLength::Wide),
+                    TimeZoneFormatterUnit::LocalizedOffset(FieldLength::Four),
                 ],
             )?
         }
@@ -478,11 +478,8 @@ mod tests {
         let samples = &[
             (FieldLength::One, ["2", "20", "201", "2017", "20173"]),
             (FieldLength::Two, ["02", "20", "201", "2017", "20173"]),
-            (
-                FieldLength::Abbreviated,
-                ["002", "020", "201", "2017", "20173"],
-            ),
-            (FieldLength::Wide, ["0002", "0020", "0201", "2017", "20173"]),
+            (FieldLength::Three, ["002", "020", "201", "2017", "20173"]),
+            (FieldLength::Four, ["0002", "0020", "0201", "2017", "20173"]),
         ];
 
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();

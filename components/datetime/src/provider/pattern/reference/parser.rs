@@ -507,15 +507,15 @@ mod tests {
             ),
             (
                 "yyy",
-                vec![(fields::Year::Calendar.into(), FieldLength::Abbreviated).into()],
+                vec![(fields::Year::Calendar.into(), FieldLength::Three).into()],
             ),
             (
                 "yyyy",
-                vec![(fields::Year::Calendar.into(), FieldLength::Wide).into()],
+                vec![(fields::Year::Calendar.into(), FieldLength::Four).into()],
             ),
             (
                 "yyyyy",
-                vec![(fields::Year::Calendar.into(), FieldLength::Narrow).into()],
+                vec![(fields::Year::Calendar.into(), FieldLength::Five).into()],
             ),
             (
                 "yyyyyy",
@@ -727,23 +727,23 @@ mod tests {
             ),
             (
                 "Z",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZ",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZZ",
-                vec![(fields::TimeZone::Iso.into(), FieldLength::Wide).into()],
+                vec![(fields::TimeZone::Iso.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZZZ",
-                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::Wide).into()],
+                vec![(fields::TimeZone::LocalizedOffset.into(), FieldLength::Four).into()],
             ),
             (
                 "ZZZZZ",
-                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::Narrow).into()],
+                vec![(fields::TimeZone::IsoWithZ.into(), FieldLength::Five).into()],
             ),
             (
                 "O",

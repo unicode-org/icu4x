@@ -185,9 +185,9 @@ impl Bag {
                     // G..GGG  AD           Abbreviated
                     // GGGG    Anno Domini  Wide
                     // GGGGG   A            Narrow
-                    Text::Short => FieldLength::Abbreviated,
-                    Text::Long => FieldLength::Wide,
-                    Text::Narrow => FieldLength::Narrow,
+                    Text::Short => FieldLength::Three,
+                    Text::Long => FieldLength::Four,
+                    Text::Narrow => FieldLength::Five,
                 },
             })
         }
@@ -234,9 +234,9 @@ impl Bag {
                     // MMMMM  S          Narrow
                     Month::Numeric => FieldLength::One,
                     Month::TwoDigit => FieldLength::Two,
-                    Month::Long => FieldLength::Wide,
-                    Month::Short => FieldLength::Abbreviated,
-                    Month::Narrow => FieldLength::Narrow,
+                    Month::Long => FieldLength::Four,
+                    Month::Short => FieldLength::Three,
+                    Month::Narrow => FieldLength::Five,
                 },
             });
         }
@@ -292,9 +292,9 @@ impl Bag {
                     // EEEE     Tuesday  Wide
                     // EEEEE    T 	     Narrow
                     // EEEEEE   Tu       Short
-                    Text::Long => FieldLength::Wide,
+                    Text::Long => FieldLength::Four,
                     Text::Short => FieldLength::One,
-                    Text::Narrow => FieldLength::Narrow,
+                    Text::Narrow => FieldLength::Five,
                 },
             });
         }
@@ -618,11 +618,11 @@ impl From<TimeZoneName> for Field {
             },
             TimeZoneName::LongSpecific => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
-                length: FieldLength::Wide,
+                length: FieldLength::Four,
             },
             TimeZoneName::LongOffset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
-                length: FieldLength::Wide,
+                length: FieldLength::Four,
             },
             TimeZoneName::ShortOffset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
@@ -634,7 +634,7 @@ impl From<TimeZoneName> for Field {
             },
             TimeZoneName::LongGeneric => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
-                length: FieldLength::Wide,
+                length: FieldLength::Four,
             },
         }
     }
@@ -675,9 +675,9 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::One
                         | FieldLength::NumericOverride(_)
                         | FieldLength::Two
-                        | FieldLength::Abbreviated => Text::Short,
-                        FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        | FieldLength::Three => Text::Short,
+                        FieldLength::Four => Text::Long,
+                        FieldLength::Five | FieldLength::Six => Text::Narrow,
                     });
                 }
                 FieldSymbol::Year(year) => {
@@ -701,9 +701,9 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
                         FieldLength::Two => Month::TwoDigit,
-                        FieldLength::Abbreviated => Month::Short,
-                        FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                        FieldLength::Three => Month::Short,
+                        FieldLength::Four => Month::Long,
+                        FieldLength::Five | FieldLength::Six => Month::Narrow,
                     });
                 }
                 FieldSymbol::Week(_week) => {
@@ -729,10 +729,8 @@ impl From<&Pattern<'_>> for Bag {
                 FieldSymbol::Weekday(weekday) => {
                     bag.weekday = Some(match weekday {
                         fields::Weekday::Format => match field.length {
-                            FieldLength::One | FieldLength::Two | FieldLength::Abbreviated => {
-                                Text::Short
-                            }
-                            FieldLength::Wide => Text::Long,
+                            FieldLength::One | FieldLength::Two | FieldLength::Three => Text::Short,
+                            FieldLength::Four => Text::Long,
                             _ => Text::Narrow,
                         },
                         fields::Weekday::StandAlone => match field.length {
@@ -762,9 +760,9 @@ impl From<&Pattern<'_>> for Bag {
                                 //     'ccc, MMM d. y'
                                 unimplemented!("Numeric stand-alone fields are not supported.")
                             }
-                            FieldLength::Abbreviated => Text::Short,
-                            FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                            FieldLength::Three => Text::Short,
+                            FieldLength::Four => Text::Long,
+                            FieldLength::Five | FieldLength::Six => Text::Narrow,
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });
@@ -873,7 +871,7 @@ mod test {
             bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
-                (Symbol::Month(fields::Month::Format), Length::Wide).into(),
+                (Symbol::Month(fields::Month::Format), Length::Four).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),

@@ -124,7 +124,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
         };
         let Some(names) = (match self.0 {
-            FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
+            FieldLength::Four => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
@@ -171,7 +171,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         };
 
         let Some(names) = (match self.0 {
-            FieldLength::Wide => data_payloads.mz_specific_long.as_ref(),
+            FieldLength::Four => data_payloads.mz_specific_long.as_ref(),
             _ => data_payloads.mz_specific_short.as_ref(),
         }) else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
@@ -246,7 +246,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                         .format(
                             &FixedDecimal::from(self.offset.hours_part())
                                 .with_sign_display(fixed_decimal::SignDisplay::Always)
-                                .padded_start(if self.length == FieldLength::Wide {
+                                .padded_start(if self.length == FieldLength::Four {
                                     2
                                 } else {
                                     0
@@ -254,7 +254,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                         )
                         .write_to(sink)?;
 
-                    if self.length == FieldLength::Wide
+                    if self.length == FieldLength::Four
                         || self.offset.minutes_part() != 0
                         || self.offset.seconds_part() != 0
                     {
@@ -408,7 +408,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(non_locations) = (match self.0 {
-            FieldLength::Wide => data_payloads.mz_generic_long.as_ref(),
+            FieldLength::Four => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
@@ -504,12 +504,12 @@ impl Iso8601Format {
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
-            FieldLength::Abbreviated => Self {
+            FieldLength::Three => Self {
                 format: IsoFormat::UtcExtended,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
-            FieldLength::Wide => Self {
+            FieldLength::Four => Self {
                 format: IsoFormat::UtcBasic,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
@@ -534,12 +534,12 @@ impl Iso8601Format {
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
-            FieldLength::Abbreviated => Self {
+            FieldLength::Three => Self {
                 format: IsoFormat::Extended,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
-            FieldLength::Wide => Self {
+            FieldLength::Four => Self {
                 format: IsoFormat::Basic,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
