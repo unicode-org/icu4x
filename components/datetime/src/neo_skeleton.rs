@@ -809,11 +809,6 @@ impl NeoDateTimeComponents {
 
 /// A specification of components for parts of a datetime and/or time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "FieldSetSerde", into = "FieldSetSerde")
-)]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for a date.
@@ -1260,11 +1255,6 @@ impl NeoDateTimeSkeleton {
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
-)]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.

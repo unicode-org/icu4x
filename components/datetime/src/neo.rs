@@ -103,36 +103,36 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
-impl RawNeoOptions {
-    pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
-    where
-        FSet: DateTimeMarkers,
-        FSet: GetField<FSet::LengthOption>,
-        FSet: GetField<FSet::AlignmentOption>,
-        FSet: GetField<FSet::YearStyleOption>,
-        FSet: GetField<FSet::TimePrecisionOption>,
-    {
-        // TODO: Return an error if there are more options than field set
-        let hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
-        Self {
-            length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
-                Some(length) => length,
-                None => {
-                    debug_assert!(false, "unreachable");
-                    NeoSkeletonLength::Medium
-                }
-            },
-            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
-            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
-                .into_option(),
-            hour_cycle,
-        }
-    }
-}
+// impl RawNeoOptions {
+//     pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
+//     where
+//         FSet: DateTimeMarkers,
+//         FSet: GetField<FSet::LengthOption>,
+//         FSet: GetField<FSet::AlignmentOption>,
+//         FSet: GetField<FSet::YearStyleOption>,
+//         FSet: GetField<FSet::TimePrecisionOption>,
+//     {
+//         // TODO: Return an error if there are more options than field set
+//         let hour_cycle = locale
+//             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+//             .as_ref()
+//             .and_then(HourCycle::from_locale_value);
+//         Self {
+//             length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
+//                 Some(length) => length,
+//                 None => {
+//                     debug_assert!(false, "unreachable");
+//                     NeoSkeletonLength::Medium
+//                 }
+//             },
+//             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
+//             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
+//             time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
+//                 .into_option(),
+//             hour_cycle,
+//         }
+//     }
+// }
 
 size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 456);
 
@@ -149,8 +149,7 @@ pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMa
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers>
-    FixedCalendarDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -606,7 +605,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            field_set.get_field()
+            field_set.get_field(),
         )
     }
 

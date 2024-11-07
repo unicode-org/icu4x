@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::dynamic::{CompositeFieldSet, TimeFieldSet};
-use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::format::neo::FieldForDataLoading;
+use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::*;
@@ -26,6 +25,17 @@ pub(crate) struct RawNeoOptions {
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
+}
+
+impl RawNeoOptions {
+    pub(crate) fn merge(self, other: RawNeoOptions) -> Self {
+        Self {
+            length: self.length,
+            alignment: self.alignment.or(other.alignment),
+            year_style: self.year_style.or(other.year_style),
+            time_precision: self.time_precision.or(other.time_precision),
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -284,7 +294,11 @@ impl OverlapPatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonDateTime { options, prefs, payload })
+        Ok(Self::SkeletonDateTime {
+            options,
+            prefs,
+            payload,
+        })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
@@ -306,7 +320,11 @@ impl OverlapPatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
-            OverlapPatternSelectionData::SkeletonDateTime { options, payload } => {
+            OverlapPatternSelectionData::SkeletonDateTime {
+                options,
+                prefs,
+                payload,
+            } => {
                 // Currently, none of the overlap patterns have a year field,
                 // so we can use the variant to select the time precision.
                 //
@@ -365,7 +383,11 @@ impl TimePatternSelectionData {
                     .payload
             }
         };
-        Ok(Self::SkeletonTime { options, prefs, payload })
+        Ok(Self::SkeletonTime {
+            options,
+            prefs,
+            payload,
+        })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
@@ -387,7 +409,11 @@ impl TimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
-            TimePatternSelectionData::SkeletonTime { options, payload } => {
+            TimePatternSelectionData::SkeletonTime {
+                options,
+                prefs,
+                payload,
+            } => {
                 let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);

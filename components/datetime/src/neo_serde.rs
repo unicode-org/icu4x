@@ -4,7 +4,7 @@
 
 //! Serde definitions for semantic skeleta
 
-use crate::neo_skeleton::*;
+use crate::{dynamic::*, fieldset, neo_skeleton::*, raw::neo::RawNeoOptions};
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
@@ -22,7 +22,7 @@ pub(crate) enum Error {
 #[derive(Serialize, Deserialize)]
 pub(crate) struct SemanticSkeletonSerde {
     #[serde(rename = "fieldSet")]
-    pub(crate) field_set: NeoComponents,
+    pub(crate) field_set: FieldSetSerde,
     pub(crate) length: NeoSkeletonLength,
     pub(crate) alignment: Option<Alignment>,
     #[serde(rename = "yearStyle")]
@@ -31,28 +31,143 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
-impl From<NeoSkeleton> for SemanticSkeletonSerde {
-    fn from(value: NeoSkeleton) -> Self {
+impl From<CompositeFieldSet> for SemanticSkeletonSerde {
+    fn from(value: CompositeFieldSet) -> Self {
+        let (serde_field, options) = match value {
+            CompositeFieldSet::Date(v) => FieldSetSerde::from_date_field_set(v),
+            CompositeFieldSet::CalendarPeriod(v) => {
+                FieldSetSerde::from_calendar_period_field_set(v)
+            }
+            CompositeFieldSet::Time(v) => FieldSetSerde::from_time_field_set(v),
+            CompositeFieldSet::Zone(v) => {
+                let zone_serde = FieldSetSerde::from_time_zone_style(v.style);
+                (
+                    zone_serde,
+                    RawNeoOptions {
+                        length: v.length,
+                        alignment: None,
+                        year_style: None,
+                        time_precision: None,
+                    },
+                )
+            }
+            CompositeFieldSet::DateTime(v) => {
+                let (date_serde, date_options) =
+                    FieldSetSerde::from_date_field_set(v.to_date_field_set());
+                let (time_serde, time_options) =
+                    FieldSetSerde::from_time_field_set(v.to_time_field_set());
+                (
+                    date_serde.extend(time_serde),
+                    date_options.merge(time_options),
+                )
+            }
+            CompositeFieldSet::DateZone(v, z) => {
+                let (date_serde, date_options) = FieldSetSerde::from_date_field_set(v);
+                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+                (date_serde.extend(zone_serde), date_options)
+            }
+            CompositeFieldSet::TimeZone(v, z) => {
+                let (time_serde, time_options) = FieldSetSerde::from_time_field_set(v);
+                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+                (time_serde.extend(zone_serde), time_options)
+            }
+            CompositeFieldSet::DateTimeZone(v, z) => {
+                let (date_serde, date_options) =
+                    FieldSetSerde::from_date_field_set(v.to_date_field_set());
+                let (time_serde, time_options) =
+                    FieldSetSerde::from_time_field_set(v.to_time_field_set());
+                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+                (
+                    date_serde.extend(time_serde).extend(zone_serde),
+                    date_options.merge(time_options),
+                )
+            }
+        };
         Self {
-            field_set: value.components,
-            length: value.length,
-            alignment: value.alignment,
-            year_style: value.year_style,
-            time_precision: value.time_precision,
+            field_set: serde_field,
+            length: options.length,
+            alignment: options.alignment,
+            year_style: options.year_style,
+            time_precision: options.time_precision,
         }
     }
 }
 
-impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
-    type Error = core::convert::Infallible;
+impl TryFrom<SemanticSkeletonSerde> for CompositeFieldSet {
+    type Error = Error;
     fn try_from(value: SemanticSkeletonSerde) -> Result<Self, Self::Error> {
-        Ok(NeoSkeleton {
+        let date = value.field_set.date_only();
+        let time = value.field_set.time_only();
+        let zone = value.field_set.zone_only();
+        let options = RawNeoOptions {
             length: value.length,
-            components: value.field_set,
             alignment: value.alignment,
             year_style: value.year_style,
             time_precision: value.time_precision,
-        })
+        };
+        match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
+            (true, false, false) => date
+                .to_date_field_set(options)
+                .map(|v| CompositeFieldSet::Date(v))
+                .or_else(|| {
+                    date.to_calendar_period_field_set(options)
+                        .map(|v| CompositeFieldSet::CalendarPeriod(v))
+                })
+                .ok_or(Error::InvalidFields),
+            (false, true, false) => time
+                .to_time_field_set(options)
+                .map(|v| CompositeFieldSet::Time(v))
+                .ok_or(Error::InvalidFields),
+            (false, false, true) => zone
+                .to_time_zone_style()
+                .map(|style| {
+                    CompositeFieldSet::Zone(TimeZoneStyleWithLength {
+                        style,
+                        length: options.length,
+                    })
+                })
+                .ok_or(Error::InvalidFields),
+            (true, true, false) => date
+                .to_date_field_set(options)
+                .map(|date_field_set| {
+                    CompositeFieldSet::DateTime(
+                        DateAndTimeFieldSet::from_date_field_set_with_raw_options(
+                            date_field_set,
+                            options,
+                        ),
+                    )
+                })
+                .ok_or(Error::InvalidFields),
+            (true, false, true) => date
+                .to_date_field_set(options)
+                .and_then(|date_field_set| {
+                    zone.to_time_zone_style()
+                        .map(|style| CompositeFieldSet::DateZone(date_field_set, style))
+                })
+                .ok_or(Error::InvalidFields),
+            (false, true, true) => time
+                .to_time_field_set(options)
+                .and_then(|time_field_set| {
+                    zone.to_time_zone_style()
+                        .map(|style| CompositeFieldSet::TimeZone(time_field_set, style))
+                })
+                .ok_or(Error::InvalidFields),
+            (true, true, true) => date
+                .to_date_field_set(options)
+                .and_then(|date_field_set| {
+                    zone.to_time_zone_style().map(|style| {
+                        CompositeFieldSet::DateTimeZone(
+                            DateAndTimeFieldSet::from_date_field_set_with_raw_options(
+                                date_field_set,
+                                options,
+                            ),
+                            style,
+                        )
+                    })
+                })
+                .ok_or(Error::InvalidFields),
+            (false, false, false) => Err(Error::NoFields),
+        }
     }
 }
 
@@ -299,86 +414,69 @@ impl<'de> Deserialize<'de> for FieldSetSerde {
     }
 }
 
-impl From<NeoDateComponents> for FieldSetSerde {
-    fn from(value: NeoDateComponents) -> Self {
+impl FieldSetSerde {
+    fn from_date_field_set(value: DateFieldSet) -> (Self, RawNeoOptions) {
         match value {
-            NeoDateComponents::Day => Self::DAY,
-            NeoDateComponents::MonthDay => Self::MONTH_DAY,
-            NeoDateComponents::YearMonthDay => Self::YEAR_MONTH_DAY,
-            NeoDateComponents::DayWeekday => Self::DAY_WEEKDAY,
-            NeoDateComponents::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY,
-            NeoDateComponents::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
-            NeoDateComponents::Weekday => Self::WEEKDAY,
-            // TODO: support auto?
-            NeoDateComponents::Auto => Self::YEAR_MONTH_DAY,
-            NeoDateComponents::AutoWeekday => Self::YEAR_MONTH_DAY_WEEKDAY,
+            DateFieldSet::D(v) => (Self::DAY, v.to_raw_options()),
+            DateFieldSet::MD(v) => (Self::MONTH_DAY, v.to_raw_options()),
+            DateFieldSet::YMD(v) => (Self::YEAR_MONTH_DAY, v.to_raw_options()),
+            DateFieldSet::DE(v) => (Self::DAY_WEEKDAY, v.to_raw_options()),
+            DateFieldSet::MDE(v) => (Self::MONTH_DAY_WEEKDAY, v.to_raw_options()),
+            DateFieldSet::YMDE(v) => (Self::YEAR_MONTH_DAY_WEEKDAY, v.to_raw_options()),
+            DateFieldSet::E(v) => (Self::WEEKDAY, v.to_raw_options()),
         }
     }
-}
 
-impl TryFrom<FieldSetSerde> for NeoDateComponents {
-    type Error = Error;
-    fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        match value {
-            FieldSetSerde::DAY => Ok(Self::Day),
-            FieldSetSerde::MONTH_DAY => Ok(Self::MonthDay),
-            FieldSetSerde::YEAR_MONTH_DAY => Ok(Self::YearMonthDay),
-            FieldSetSerde::DAY_WEEKDAY => Ok(Self::DayWeekday),
-            FieldSetSerde::MONTH_DAY_WEEKDAY => Ok(Self::MonthDayWeekday),
-            FieldSetSerde::YEAR_MONTH_DAY_WEEKDAY => Ok(Self::YearMonthDayWeekday),
-            FieldSetSerde::WEEKDAY => Ok(Self::Weekday),
-            _ => Err(Error::InvalidFields),
+    fn to_date_field_set(self, options: RawNeoOptions) -> Option<DateFieldSet> {
+        use DateFieldSet::*;
+        match self {
+            Self::DAY => Some(D(fieldset::D::from_raw_options(options))),
+            Self::MONTH_DAY => Some(MD(fieldset::MD::from_raw_options(options))),
+            Self::YEAR_MONTH_DAY => Some(YMD(fieldset::YMD::from_raw_options(options))),
+            Self::DAY_WEEKDAY => Some(DE(fieldset::DE::from_raw_options(options))),
+            Self::MONTH_DAY_WEEKDAY => Some(MDE(fieldset::MDE::from_raw_options(options))),
+            Self::YEAR_MONTH_DAY_WEEKDAY => Some(YMDE(fieldset::YMDE::from_raw_options(options))),
+            Self::WEEKDAY => Some(E(fieldset::E::from_raw_options(options))),
+            _ => None,
         }
     }
-}
 
-impl From<NeoCalendarPeriodComponents> for FieldSetSerde {
-    fn from(value: NeoCalendarPeriodComponents) -> Self {
+    fn from_calendar_period_field_set(value: CalendarPeriodFieldSet) -> (Self, RawNeoOptions) {
         match value {
-            NeoCalendarPeriodComponents::Month => Self::MONTH,
-            NeoCalendarPeriodComponents::YearMonth => Self::YEAR_MONTH,
-            NeoCalendarPeriodComponents::Year => Self::YEAR,
-            NeoCalendarPeriodComponents::YearWeek => Self::YEAR_WEEK,
+            CalendarPeriodFieldSet::M(v) => (Self::MONTH, v.to_raw_options()),
+            CalendarPeriodFieldSet::YM(v) => (Self::YEAR_MONTH, v.to_raw_options()),
+            CalendarPeriodFieldSet::Y(v) => (Self::YEAR, v.to_raw_options()),
         }
     }
-}
 
-impl TryFrom<FieldSetSerde> for NeoCalendarPeriodComponents {
-    type Error = Error;
-    fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        match value {
-            FieldSetSerde::MONTH => Ok(Self::Month),
-            FieldSetSerde::YEAR_MONTH => Ok(Self::YearMonth),
-            FieldSetSerde::YEAR => Ok(Self::Year),
-            FieldSetSerde::YEAR_WEEK => Ok(Self::YearWeek),
-            _ => Err(Error::InvalidFields),
+    fn to_calendar_period_field_set(
+        self,
+        options: RawNeoOptions,
+    ) -> Option<CalendarPeriodFieldSet> {
+        use CalendarPeriodFieldSet::*;
+        match self {
+            Self::MONTH => Some(M(fieldset::M::from_raw_options(options))),
+            Self::YEAR_MONTH => Some(YM(fieldset::YM::from_raw_options(options))),
+            Self::YEAR => Some(Y(fieldset::Y::from_raw_options(options))),
+            _ => None,
         }
     }
-}
 
-impl From<NeoTimeComponents> for FieldSetSerde {
-    fn from(value: NeoTimeComponents) -> Self {
+    fn from_time_field_set(value: TimeFieldSet) -> (Self, RawNeoOptions) {
         match value {
-            NeoTimeComponents::Time => Self::TIME,
-            // TODO: support auto?
-            NeoTimeComponents::Auto => Self::TIME,
-            _ => todo!(),
+            TimeFieldSet::T(v) => (Self::TIME, v.to_raw_options()),
         }
     }
-}
 
-impl TryFrom<FieldSetSerde> for NeoTimeComponents {
-    type Error = Error;
-    fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        match value {
-            FieldSetSerde::TIME => Ok(Self::Time),
-            _ => Err(Error::InvalidFields),
+    fn to_time_field_set(self, options: RawNeoOptions) -> Option<TimeFieldSet> {
+        use TimeFieldSet::*;
+        match self {
+            Self::TIME => Some(T(fieldset::T::from_raw_options(options))),
+            _ => None,
         }
     }
-}
 
-impl From<NeoTimeZoneStyle> for FieldSetSerde {
-    fn from(value: NeoTimeZoneStyle) -> Self {
+    fn from_time_zone_style(value: NeoTimeZoneStyle) -> Self {
         match value {
             NeoTimeZoneStyle::Location => Self::ZONE_LOCATION,
             NeoTimeZoneStyle::Generic => Self::ZONE_GENERIC,
@@ -387,92 +485,39 @@ impl From<NeoTimeZoneStyle> for FieldSetSerde {
             _ => todo!(),
         }
     }
-}
 
-impl TryFrom<FieldSetSerde> for NeoTimeZoneStyle {
-    type Error = Error;
-    fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        match value {
-            FieldSetSerde::ZONE_LOCATION => Ok(NeoTimeZoneStyle::Location),
-            FieldSetSerde::ZONE_GENERIC => Ok(NeoTimeZoneStyle::Generic),
-            FieldSetSerde::ZONE_SPECIFIC => Ok(NeoTimeZoneStyle::Specific),
-            FieldSetSerde::ZONE_OFFSET => Ok(NeoTimeZoneStyle::Offset),
-            _ => Err(Error::InvalidFields),
-        }
-    }
-}
-
-impl From<NeoComponents> for FieldSetSerde {
-    fn from(value: NeoComponents) -> Self {
-        match value {
-            NeoComponents::Date(date) => FieldSetSerde::from(date),
-            NeoComponents::CalendarPeriod(calendar_period) => FieldSetSerde::from(calendar_period),
-            NeoComponents::Time(time) => FieldSetSerde::from(time),
-            NeoComponents::Zone(zone) => FieldSetSerde::from(zone),
-            NeoComponents::DateTime(day, time) => {
-                FieldSetSerde::from(day).extend(FieldSetSerde::from(time))
-            }
-            NeoComponents::DateZone(date, zone) => {
-                FieldSetSerde::from(date).extend(FieldSetSerde::from(zone))
-            }
-            NeoComponents::TimeZone(time, zone) => {
-                FieldSetSerde::from(time).extend(FieldSetSerde::from(zone))
-            }
-            NeoComponents::DateTimeZone(day, time, zone) => FieldSetSerde::from(day)
-                .extend(FieldSetSerde::from(time))
-                .extend(FieldSetSerde::from(zone)),
-        }
-    }
-}
-
-impl TryFrom<FieldSetSerde> for NeoComponents {
-    type Error = Error;
-    fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
-        let date = value.date_only();
-        let time = value.time_only();
-        let zone = value.zone_only();
-        match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
-            (true, false, false) => NeoDateComponents::try_from(date)
-                .map(NeoComponents::from)
-                .or_else(|_| NeoCalendarPeriodComponents::try_from(date).map(NeoComponents::from)),
-            (false, true, false) => Ok(NeoComponents::Time(time.try_into()?)),
-            (false, false, true) => Ok(NeoComponents::Zone(zone.try_into()?)),
-            (true, true, false) => Ok(NeoComponents::DateTime(date.try_into()?, time.try_into()?)),
-            (true, false, true) => Ok(NeoComponents::DateZone(date.try_into()?, zone.try_into()?)),
-            (false, true, true) => Ok(NeoComponents::TimeZone(time.try_into()?, zone.try_into()?)),
-            (true, true, true) => Ok(NeoComponents::DateTimeZone(
-                date.try_into()?,
-                time.try_into()?,
-                zone.try_into()?,
-            )),
-            (false, false, false) => Err(Error::NoFields),
+    fn to_time_zone_style(self) -> Option<NeoTimeZoneStyle> {
+        match self {
+            FieldSetSerde::ZONE_LOCATION => Some(NeoTimeZoneStyle::Location),
+            FieldSetSerde::ZONE_GENERIC => Some(NeoTimeZoneStyle::Generic),
+            FieldSetSerde::ZONE_SPECIFIC => Some(NeoTimeZoneStyle::Specific),
+            FieldSetSerde::ZONE_OFFSET => Some(NeoTimeZoneStyle::Offset),
+            _ => None,
         }
     }
 }
 
 #[test]
 fn test_basic() {
-    let skeleton = NeoSkeleton {
-        components: NeoComponents::DateTimeZone(
-            NeoDateComponents::YearMonthDayWeekday,
-            NeoTimeComponents::Time,
-            NeoTimeZoneStyle::Generic,
-        ),
-        length: NeoSkeletonLength::Medium,
-        alignment: Some(Alignment::Column),
-        year_style: Some(YearStyle::Always),
-        time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
-    };
+    let skeleton = CompositeFieldSet::DateTimeZone(
+        DateAndTimeFieldSet::YMDT(fieldset::YMDT {
+            length: NeoSkeletonLength::Medium,
+            alignment: Some(Alignment::Column),
+            year_style: Some(YearStyle::Always),
+            time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
+        }),
+        NeoTimeZoneStyle::Generic,
+    );
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
         r#"{"fieldSet":["year","month","day","weekday","time","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
     );
-    let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
+    let json_skeleton = serde_json::from_str::<CompositeFieldSet>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
 
     let bincode_bytes = bincode::serialize(&skeleton).unwrap();
-    let bincode_skeleton = bincode::deserialize::<NeoSkeleton>(&bincode_bytes).unwrap();
+    let bincode_skeleton = bincode::deserialize::<CompositeFieldSet>(&bincode_bytes).unwrap();
     assert_eq!(skeleton, bincode_skeleton);
 }

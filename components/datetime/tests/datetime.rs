@@ -15,6 +15,7 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     AsCalendar, Calendar, DateTime,
 };
+use icu_datetime::fieldset::dynamic::*;
 use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
@@ -61,16 +62,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => {
-                let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
-                    semantic.length,
-                    NeoDateTimeComponents::try_from_components(semantic.components).unwrap(),
-                );
-                skeleton.alignment = semantic.alignment;
-                skeleton.time_precision = semantic.time_precision;
-                skeleton.year_style = semantic.year_style;
-                skeleton
-            }
+            Some(semantic) => semantic,
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -261,7 +253,7 @@ fn assert_fixture_element<A>(
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &TestOutputItem,
-    skeleton: NeoDateTimeSkeleton,
+    skeleton: CompositeFieldSet,
     description: &str,
 ) where
     A: AsCalendar + Clone,
@@ -299,11 +291,11 @@ fn assert_fixture_element<A>(
         zone: TimeZoneInfo::utc(),
     };
 
-    let dtf = FixedCalendarDateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton)
+    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale.into(), skeleton)
         .expect(description);
 
     let any_dtf =
-        DateTimeFormatter::try_new_with_skeleton(&locale.into(), skeleton).expect(description);
+        DateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(

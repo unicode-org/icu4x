@@ -7,12 +7,12 @@
 pub use crate::combo::Combo;
 
 use crate::{
+    dynamic::*,
     format::neo::*,
     neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
     raw::neo::RawNeoOptions,
     scaffold::*,
-    dynamic::*,
 };
 use icu_calendar::{
     types::{
@@ -23,12 +23,16 @@ use icu_calendar::{
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
+pub mod dynamic {
+    pub use crate::dynamic::*;
+}
+
 #[cfg(doc)]
 use icu_timezone::TimeZoneInfo;
 
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
-    ($any:ident, yes) => {
+    ($any:expr, yes) => {
         $any
     };
     () => {
@@ -123,7 +127,15 @@ macro_rules! impl_marker_with_options {
                     length: self.length,
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
-                    fractional_second_digits: ternary!(self.fractional_second_digits, None, $($fractionalsecondigits_yes)?),
+                    time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
+                }
+            }
+            pub(crate) fn from_raw_options(options: RawNeoOptions) -> Self {
+                Self {
+                    length: options.length,
+                    $(alignment: yes_to!(options.alignment, $alignment_yes),)?
+                    $(year_style: yes_to!(options.year_style, $yearstyle_yes),)?
+                    $(time_precision: yes_to!(options.time_precision, $timeprecision_yes),)?
                 }
             }
         }
@@ -317,10 +329,12 @@ macro_rules! impl_date_marker {
     (
         $(#[$attr:meta])*
         $type:ident,
+        $type_time:ident,
         $components:expr,
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
+        sample_time = $sample_time:literal,
         $(years = $years_yes:ident,)?
         $(months = $months_yes:ident,)?
         $(dates = $dates_yes:ident,)?
@@ -351,16 +365,133 @@ macro_rules! impl_date_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl HasConstDateComponents for $type {
-            const COMPONENTS: NeoDateComponents = $components;
-        }
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
-        }
         impl GetField<CompositeFieldSet> for $type {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
                 CompositeFieldSet::Date(DateFieldSet::$type(*self))
+            }
+        }
+        impl_marker_with_options!(
+            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
+            ///
+            /// # Examples
+            ///
+            /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::datetime::DateTimeFormatter;
+            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            #[doc = concat!("let fmt = DateTimeFormatter::<", stringify!($type_time), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.convert_and_format(&dt),
+            #[doc = concat!("    \"", $sample_time, "\"")]
+            /// );
+            /// ```
+            ///
+            /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::FixedCalendarDateTimeFormatter;
+            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type_time), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_gregorian(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.format(&dt),
+            #[doc = concat!("    \"", $sample_time, "\"")]
+            /// );
+            /// ```
+            $(#[$attr])*
+            $type_time,
+            sample_length: $sample_length,
+            alignment: yes,
+            $(year_style: $year_yes,)?
+            time_precision: yes,
+        );
+        impl UnstableSealed for $type_time {}
+        impl DateTimeNamesMarker for $type_time {
+            type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
+            type MonthNames = datetime_marker_helper!(@names/month, $($months_yes)?);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday, $($weekdays_yes)?);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
+            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+            type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
+            type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
+        }
+        impl DateInputMarkers for $type_time {
+            type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
+            type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
+            type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
+            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
+        }
+        impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
+            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $($years_yes)?);
+            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $($months_yes)?);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+        }
+        impl DateDataMarkers for $type_time {
+            type Skel = datetime_marker_helper!(@calmarkers, yes);
+            type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
+            type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+        }
+        impl TimeMarkers for $type_time {
+            // TODO: Consider making dayperiods optional again
+            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, yes);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
+            type HourInput = datetime_marker_helper!(@input/hour, yes);
+            type MinuteInput = datetime_marker_helper!(@input/minute, yes);
+            type SecondInput = datetime_marker_helper!(@input/second, yes);
+            type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
+        }
+        impl DateTimeMarkers for $type_time {
+            type D = Self;
+            type T = Self;
+            type Z = NeoNeverMarker;
+            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
+            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
+            type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
+        }
+        impl GetField<CompositeFieldSet> for $type_time {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::DateTime(DateAndTimeFieldSet::$type_time(*self))
+            }
+        }
+        impl $type_time {
+            pub(crate) fn to_date_field_set(self) -> $type {
+                $type {
+                    length: self.length,
+                    $(alignment: yes_to!(self.alignment, $option_alignment_yes),)?
+                    $(year_style: yes_to!(self.year_style, $years_yes),)?
+                }
             }
         }
     };
@@ -403,9 +534,6 @@ macro_rules! impl_calendar_period_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::CalendarPeriod($components);
-        }
         impl GetField<CompositeFieldSet> for $type {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
@@ -515,9 +643,6 @@ macro_rules! impl_time_marker {
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
         }
-        impl HasConstTimeComponents for $type {
-            const COMPONENTS: NeoTimeComponents = $components;
-        }
         impl TimeMarkers for $type {
             type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
             type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
@@ -535,9 +660,6 @@ macro_rules! impl_time_marker {
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
-        }
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Time($components);
         }
         impl GetField<CompositeFieldSet> for $type {
             #[inline]
@@ -670,9 +792,6 @@ macro_rules! impl_zone_marker {
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, $($metazone_periods_yes)?);
         }
-        impl HasConstZoneComponent for $type {
-            const COMPONENT: NeoTimeZoneStyle = $components;
-        }
         impl ZoneMarkers for $type {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, $($tzid_input_yes)?);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
@@ -696,71 +815,16 @@ macro_rules! impl_zone_marker {
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
-        impl HasConstComponents for $type {
-            const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::Zone(TimeZoneStyleWithLength {
+                    style: $components,
+                    length: self.length,
+                })
+            }
         }
     };
-}
-
-macro_rules! impl_datetime_marker {
-    (
-        $type:ident,
-        description = $description:literal,
-        sample_length = $sample_length:ident,
-        sample = $sample:literal,
-        date = $date:path,
-        time = $time:path,
-    ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::DateTime;
-        /// use icu::datetime::DateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = DateTimeFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.convert_and_format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::DateTime;
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::FixedCalendarDateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = DateTime::try_new_gregorian(2024, 5, 17, 15, 47, 50).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        pub type $type = Combo<$date, $time, NeoNeverMarker>;
-    }
 }
 
 macro_rules! impl_zoneddatetime_marker {
@@ -835,10 +899,12 @@ impl_date_marker!(
     /// This format may use ordinal formatting, such as "the 17th",
     /// in the future. See CLDR-18040.
     D,
+    DT,
     NeoDateComponents::Day,
     description = "day of month (standalone)",
     sample_length = short,
     sample = "17",
+    sample_time = "17, 3:47:50 PM",
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
@@ -846,10 +912,12 @@ impl_date_marker!(
 
 impl_date_marker!(
     E,
+    ET,
     NeoDateComponents::Weekday,
     description = "weekday (standalone)",
     sample_length = long,
     sample = "Friday",
+    sample_time = "Friday, 3:47:50 PM",
     weekdays = yes,
     input_day_of_week = yes,
 );
@@ -858,10 +926,12 @@ impl_date_marker!(
     /// This format may use ordinal formatting, such as "Friday the 17th",
     /// in the future. See CLDR-18040.
     DE,
+    DET,
     NeoDateComponents::DayWeekday,
     description = "day of month and weekday",
     sample_length = long,
     sample = "17 Friday",
+    sample_time = "17 Friday, 3:47:50 PM",
     weekdays = yes,
     input_day_of_month = yes,
     input_day_of_week = yes,
@@ -870,10 +940,12 @@ impl_date_marker!(
 
 impl_date_marker!(
     MD,
+    MDT,
     NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = medium,
     sample = "May 17",
+    sample_time = "May 17, 3:47:50 PM",
     months = yes,
     input_month = yes,
     input_day_of_month = yes,
@@ -884,10 +956,12 @@ impl_date_marker!(
 impl_date_marker!(
     /// See CLDR-18040 for progress on improving this format.
     MDE,
+    MDET,
     NeoDateComponents::MonthDayWeekday,
     description = "month, day, and weekday",
     sample_length = medium,
     sample = "Fri, May 17",
+    sample_time = "Fri, May 17, 3:47:50 PM",
     months = yes,
     weekdays = yes,
     input_month = yes,
@@ -899,10 +973,12 @@ impl_date_marker!(
 
 impl_date_marker!(
     YMD,
+    YMDT,
     NeoDateComponents::YearMonthDay,
     description = "year, month, and day",
     sample_length = short,
     sample = "5/17/24",
+    sample_time = "May 17, 2024, 3:47:50 PM",
     years = yes,
     months = yes,
     input_year = yes,
@@ -914,10 +990,12 @@ impl_date_marker!(
 
 impl_date_marker!(
     YMDE,
+    YMDET,
     NeoDateComponents::YearMonthDayWeekday,
     description = "year, month, day, and weekday",
     sample_length = short,
     sample = "Fri, 5/17/24",
+    sample_time = "Fri, 5/17/24, 3:47:50 PM",
     years = yes,
     months = yes,
     weekdays = yes,
@@ -978,15 +1056,6 @@ impl_time_marker!(
     input_minute = yes,
     input_second = yes,
     input_nanosecond = yes,
-);
-
-impl_datetime_marker!(
-    YMDT,
-    description = "year, month, day, and time",
-    sample_length = medium,
-    sample = "May 17, 2024, 3:47:50 PM",
-    date = YMD,
-    time = T,
 );
 
 impl_zone_marker!(
