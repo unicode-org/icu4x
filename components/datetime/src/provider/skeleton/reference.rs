@@ -134,9 +134,6 @@ impl TryFrom<&str> for Skeleton {
 
         let mut iter = skeleton_string.chars().peekable();
         while let Some(ch) = iter.next() {
-            // Convert the byte to a valid field symbol.
-            let field_symbol = FieldSymbol::try_from(ch)?;
-
             // Go through the chars to count how often it's repeated.
             let mut field_length: u8 = 1;
             while let Some(next_ch) = iter.peek() {
@@ -147,6 +144,23 @@ impl TryFrom<&str> for Skeleton {
                 iter.next();
             }
 
+            // Convert the byte to a valid field symbol.
+            let field_symbol = if ch == 'Z' {
+                match field_length {
+                    1..=3 => {
+                        field_length = 4;
+                        FieldSymbol::try_from('x')?
+                    }
+                    4 => FieldSymbol::try_from('O')?,
+                    5 => {
+                        field_length = 4;
+                        FieldSymbol::try_from('X')?
+                    }
+                    _ => FieldSymbol::try_from(ch)?,
+                }
+            } else {
+                FieldSymbol::try_from(ch)?
+            };
             let field = Field::from((field_symbol, FieldLength::from_idx(field_length)?));
 
             match fields.binary_search(&field) {

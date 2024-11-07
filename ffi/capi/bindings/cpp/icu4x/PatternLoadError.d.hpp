@@ -14,7 +14,7 @@ namespace icu4x {
 namespace capi {
     enum PatternLoadError {
       PatternLoadError_Unknown = 0,
-      PatternLoadError_UnsupportedField = 2051,
+      PatternLoadError_UnsupportedLength = 2051,
       PatternLoadError_DuplicateField = 2057,
       PatternLoadError_TypeTooSpecific = 2058,
       PatternLoadError_DataMarkerNotFound = 1,
@@ -36,7 +36,7 @@ class PatternLoadError {
 public:
   enum Value {
     Unknown = 0,
-    UnsupportedField = 2051,
+    UnsupportedLength = 2051,
     DuplicateField = 2057,
     TypeTooSpecific = 2058,
     DataMarkerNotFound = 1,

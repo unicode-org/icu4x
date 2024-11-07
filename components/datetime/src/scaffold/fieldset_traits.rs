@@ -14,7 +14,8 @@ use icu_calendar::{
         IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     },
     types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
+        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        NanoSecond, YearInfo,
     },
     AnyCalendarKind, Date, Iso, Time,
 };
@@ -61,6 +62,8 @@ pub trait DateInputMarkers: UnstableSealed {
     type MonthInput: IntoOption<MonthInfo>;
     /// Marker for resolving the day-of-month input field.
     type DayOfMonthInput: IntoOption<DayOfMonth>;
+    /// Marker for resolving the day-of-year input field.
+    type DayOfYearInput: IntoOption<DayOfYearInfo>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<IsoWeekday>;
     /// Marker for resolving the any-calendar-kind input field.
@@ -158,8 +161,8 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     type AlignmentOption: IntoOption<Alignment>;
     /// Type of the year style option in the constructor.
     type YearStyleOption: IntoOption<YearStyle>;
-    /// Type of the fractional seconds display option in the constructor.
-    type FractionalSecondDigitsOption: IntoOption<FractionalSecondDigits>;
+    /// Type of the time precision option in the constructor.
+    type TimePrecisionOption: IntoOption<TimePrecision>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
@@ -170,6 +173,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::MonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+    + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
     + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
@@ -196,6 +200,7 @@ where
         + GetField<<R::D as DateInputMarkers>::MonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+        + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
         + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
@@ -446,6 +451,7 @@ impl DateInputMarkers for NeoNeverMarker {
     type YearInput = ();
     type MonthInput = ();
     type DayOfMonthInput = ();
+    type DayOfYearInput = ();
     type DayOfWeekInput = ();
     type AnyCalendarKindInput = ();
 }
@@ -554,8 +560,8 @@ macro_rules! datetime_marker_helper {
     (@option/alignment, yes) => {
         Option<Alignment>
     };
-    (@option/fractionalsecondigits, yes) => {
-        Option<FractionalSecondDigits>
+    (@option/timeprecision, yes) => {
+        Option<TimePrecision>
     };
     (@option/$any:ident,) => {
         ()

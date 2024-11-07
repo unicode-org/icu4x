@@ -2,21 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::format::neo::FieldForDataLoading;
+use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{
-    Alignment, FractionalSecondDigits, NeoComponents, NeoSkeletonLength, NeoTimeComponents,
-    NeoTimeZoneStyle, YearStyle,
-};
+use crate::neo_skeleton::*;
 use crate::options::preferences::HourCycle;
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
@@ -27,7 +22,7 @@ pub(crate) struct RawNeoOptions {
     pub(crate) length: NeoSkeletonLength,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
-    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    pub(crate) time_precision: Option<TimePrecision>,
     pub(crate) hour_cycle: Option<HourCycle>,
 }
 
@@ -77,7 +72,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug)]
 pub(crate) enum ZonePatternSelectionData {
-    SinglePatternItem(ResolvedNeoTimeZoneSkeleton, <PatternItem as AsULE>::ULE),
+    SinglePatternItem(TimeZone, FieldLength, <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -182,9 +177,7 @@ impl DatePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SkeletonDate { options, payload } => {
                 payload
@@ -193,9 +186,7 @@ impl DatePatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -280,6 +271,34 @@ impl ExtractedInput {
             (YearStyle::Auto, YearDistance::Near) => PackedSkeletonVariant::Standard,
         }
     }
+
+    fn resolve_time_precision(
+        &self,
+        time_precision: TimePrecision,
+    ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
+        enum HourMinute {
+            Hour,
+            Minute,
+        }
+        let smallest_required_field = match time_precision {
+            TimePrecision::HourExact => return (PackedSkeletonVariant::Standard, None),
+            TimePrecision::MinuteExact => return (PackedSkeletonVariant::Variant0, None),
+            TimePrecision::SecondExact(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::HourPlus => HourMinute::Hour,
+            TimePrecision::MinutePlus => HourMinute::Minute,
+            TimePrecision::SecondPlus => return (PackedSkeletonVariant::Variant1, None),
+        };
+        let minute = self.minute.unwrap_or_default();
+        let second = self.second.unwrap_or_default();
+        let nanosecond = self.nanosecond.unwrap_or_default();
+        if !nanosecond.is_zero() || !second.is_zero() {
+            (PackedSkeletonVariant::Variant1, None)
+        } else if !minute.is_zero() || matches!(smallest_required_field, HourMinute::Minute) {
+            (PackedSkeletonVariant::Variant0, None)
+        } else {
+            (PackedSkeletonVariant::Standard, None)
+        }
+    }
 }
 
 impl<'a> DatePatternDataBorrowed<'a> {
@@ -311,9 +330,7 @@ impl OverlapPatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             OverlapPatternSelectionData::SkeletonDateTime {
                 options, payload, ..
@@ -324,22 +341,28 @@ impl OverlapPatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
             OverlapPatternSelectionData::SkeletonDateTime { options, payload } => {
-                let year_style = options.year_style.unwrap_or(YearStyle::Auto);
-                let variant = input.resolve_year_style(year_style);
+                // Currently, none of the overlap patterns have a year field,
+                // so we can use the variant to select the time precision.
+                //
+                // We do not currently support overlap patterns with both a
+                // year and a time because that would involve 3*3 = 9 variants
+                // instead of 3 variants.
+                debug_assert!(options.year_style.is_none());
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let (variant, fractional_second_digits) =
+                    input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
                     options.hour_cycle,
-                    options.fractional_second_digits,
+                    fractional_second_digits,
                 )
             }
         }
@@ -387,9 +410,7 @@ impl TimePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SkeletonTime {
                 options, payload, ..
@@ -400,22 +421,21 @@ impl TimePatternSelectionData {
                     .items
             }
         };
-        items
-            .iter()
-            .filter_map(FieldForDataLoading::try_from_pattern_item)
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _input: &ExtractedInput) -> TimePatternDataBorrowed {
+    pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime { options, payload } => {
+                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let (variant, fractional_second_digits) =
+                    input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get(options.length, PackedSkeletonVariant::Standard),
+                    payload.get().get(options.length, variant),
                     options.alignment,
                     options.hour_cycle,
-                    options.fractional_second_digits,
+                    fractional_second_digits,
                 )
             }
         }
@@ -445,23 +465,28 @@ impl ZonePatternSelectionData {
         } else {
             NeoSkeletonLength::Short
         };
-        let time_zone = components.resolve(length);
-        let pattern_item = PatternItem::Field(time_zone.to_field());
-        Self::SinglePatternItem(time_zone, pattern_item.to_unaligned())
+        let (symbol, length) = components.resolve(length);
+        let pattern_item = PatternItem::Field(Field {
+            symbol: FieldSymbol::TimeZone(symbol),
+            length,
+        });
+        Self::SinglePatternItem(symbol, length, pattern_item.to_unaligned())
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
-        let Self::SinglePatternItem(time_zone, _) = self;
-        [FieldForDataLoading::TimeZone(*time_zone)].into_iter()
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let Self::SinglePatternItem(symbol, length, _) = self;
+        [PatternItem::Field(Field {
+            symbol: FieldSymbol::TimeZone(*symbol),
+            length: *length,
+        })]
+        .into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _input: &ExtractedInput) -> ZonePatternDataBorrowed {
-        let Self::SinglePatternItem(_, pattern_item) = self;
+        let Self::SinglePatternItem(_, _, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
 }
@@ -628,9 +653,7 @@ impl DateTimeZonePatternSelectionData {
 
     /// Returns an iterator over the pattern items that may need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(
-        &self,
-    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let (date, time, zone, overlap) = match self {
             DateTimeZonePatternSelectionData::Date(date) => (Some(date), None, None, None),
             DateTimeZonePatternSelectionData::Time(time) => (None, Some(time), None, None),

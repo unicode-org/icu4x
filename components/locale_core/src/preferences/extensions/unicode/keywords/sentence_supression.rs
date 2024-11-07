@@ -5,8 +5,13 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Sentence Break Suppressions Identifier defines a set of data to be used for suppressing certain
+    /// sentence breaks that would otherwise be found by UAX #14 rules.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeSentenceBreakSuppressionsIdentifier).
     SentenceBreakSupressions {
-        "none" => None,
-        "standard" => Standard,
+        /// Don’t use sentence break suppressions data (the default)
+        ("none" => None),
+        /// Use sentence break suppressions data of type "standard"
+        ("standard" => Standard),
 }, "ss");

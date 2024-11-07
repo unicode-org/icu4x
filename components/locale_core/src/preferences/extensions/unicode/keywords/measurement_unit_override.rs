@@ -5,9 +5,14 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Measurement Unit Preference Override defines an override for measurement unit preference.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#MeasurementUnitPreferenceOverride).
     MeasurementUnitOverride {
-        "celsius" => Celsius,
-        "kelvin" => Kelvin,
-        "fahrenhe" => Fahrenheit,
+        /// Celsius as temperature unit
+        ("celsius" => Celsius),
+        /// Kelvin as temperature unit
+        ("kelvin" => Kelvin),
+        /// Fahrenheit as temperature unit
+        ("fahrenhe" => Fahrenheit),
 }, "mu");

@@ -13,7 +13,7 @@
 
 typedef enum PatternLoadError {
   PatternLoadError_Unknown = 0,
-  PatternLoadError_UnsupportedField = 2051,
+  PatternLoadError_UnsupportedLength = 2051,
   PatternLoadError_DuplicateField = 2057,
   PatternLoadError_TypeTooSpecific = 2058,
   PatternLoadError_DataMarkerNotFound = 1,

@@ -154,7 +154,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDHMS};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDT};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -174,7 +174,7 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
-        YMDHMS::medium()
+        YMDT::medium()
     )
     .expect("blob should contain required markers and `ja` data");
 
@@ -207,7 +207,7 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::YMDHMS, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::YMDT, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -227,7 +227,7 @@ fn main() {
     let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         &LOCALE.into(),
-        YMDHMS::medium(),
+        YMDT::medium(),
     )
     .expect("blob should contain required data");
 

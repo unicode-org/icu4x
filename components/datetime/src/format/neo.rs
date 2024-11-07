@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::{try_write_pattern_items, DateTimeWriteError};
+use super::datetime::try_write_pattern_items;
 use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
     MonthPlaceholderValue,
@@ -22,8 +22,7 @@ use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
-use crate::time_zone::TimeZoneDataPayloadsBorrowed;
+use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::types::FormattingEra;
@@ -1516,9 +1515,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzPeriodV1Marker::bind(provider),
             &ExternalLoaderUnstable(provider),
             locale,
-            pattern
-                .iter_items()
-                .filter_map(FieldForDataLoading::try_from_pattern_item),
+            pattern.iter_items(),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1589,9 +1586,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             &tz::MzPeriodV1Marker::bind(&crate::provider::Baked),
             &ExternalLoaderCompiledData,
             locale,
-            pattern
-                .iter_items()
-                .filter_map(FieldForDataLoading::try_from_pattern_item),
+            pattern.iter_items(),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1612,8 +1607,11 @@ pub enum PatternLoadError {
     /// and `L` (format vs standalone month) conflict.
     #[displaydoc("A field conflicts with a previous field.")]
     ConflictingField(Field),
-    /// The field is not currently supported.
-    UnsupportedField(Field),
+    /// The field symbol is not supported in that length.
+    ///
+    /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
+    #[displaydoc("The field symbol is not supported in that length.")]
+    UnsupportedLength(Field),
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
@@ -1622,20 +1620,6 @@ pub enum PatternLoadError {
     TypeTooSpecific(Field),
     /// An error arising from the [`DataProvider`].
     Data(DataError),
-}
-
-pub(crate) enum FieldForDataLoading {
-    Field(Field),
-    TimeZone(ResolvedNeoTimeZoneSkeleton),
-}
-
-impl FieldForDataLoading {
-    pub(crate) fn try_from_pattern_item(pattern_item: PatternItem) -> Option<Self> {
-        match pattern_item {
-            PatternItem::Field(field) => Some(Self::Field(field)),
-            PatternItem::Literal(_) => None,
-        }
-    }
 }
 
 impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
@@ -1700,7 +1684,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
                     },
                 ),
                 locale,
@@ -1740,7 +1724,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
                     },
                 ),
                 locale,
@@ -1779,7 +1763,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
                     },
                 ),
                 locale,
@@ -1830,7 +1814,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         FieldLength::Narrow => marker_attrs::Length::Narrow,
                         FieldLength::Wide => marker_attrs::Length::Wide,
                         FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(PatternLoadError::UnsupportedField(field)),
+                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
                     },
                 ),
                 locale,
@@ -1853,7 +1837,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1877,7 +1861,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1903,7 +1887,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1929,7 +1913,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
         };
         let variables = ();
@@ -1955,7 +1939,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Wide,
         };
         let variables = ();
@@ -1981,7 +1965,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         locale: &DataLocale,
     ) -> Result<(), PatternLoadError> {
         let field = fields::Field {
-            symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
         };
         let variables = ();
@@ -2048,168 +2032,177 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
         locale: &DataLocale,
-        pattern_items: impl Iterator<Item = FieldForDataLoading>,
+        pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), PatternLoadError> {
-        let mut numeric_field = None;
+        let mut load_fdf = false;
+
         for item in pattern_items {
-            let item = match item {
-                FieldForDataLoading::Field(Field {
-                    symbol: FieldSymbol::TimeZone(field_symbol),
-                    length,
-                }) => {
-                    match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, length) {
-                        Some(time_zone) => FieldForDataLoading::TimeZone(time_zone),
-                        None => {
-                            // Unknown time zone field: ignore for data loading
-                            continue;
-                        }
-                    }
-                }
-                _ => item,
+            let PatternItem::Field(field) = item else {
+                continue;
             };
-            let field = match item {
-                FieldForDataLoading::Field(field) => field,
-                FieldForDataLoading::TimeZone(time_zone) => {
-                    match time_zone {
-                        // `z..zzz`
-                        ResolvedNeoTimeZoneSkeleton::SpecificShort => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                            self.load_time_zone_specific_short_names(
-                                mz_specific_short_provider,
-                                mz_period_provider,
-                                locale,
-                            )?;
-                        }
-                        // `zzzz`
-                        ResolvedNeoTimeZoneSkeleton::SpecificLong => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                            self.load_time_zone_specific_long_names(
-                                mz_specific_long_provider,
-                                mz_period_provider,
-                                locale,
-                            )?;
-                        }
-                        // 'v'
-                        ResolvedNeoTimeZoneSkeleton::GenericShort => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                            self.load_time_zone_generic_short_names(
-                                mz_generic_short_provider,
-                                mz_period_provider,
-                                locale,
-                            )?;
-                            // For fallback:
-                            self.load_time_zone_location_names(locations_provider, locale)?;
-                        }
-                        // 'vvvv'
-                        ResolvedNeoTimeZoneSkeleton::GenericLong => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                            self.load_time_zone_generic_long_names(
-                                mz_generic_long_provider,
-                                mz_period_provider,
-                                locale,
-                            )?;
-                            // For fallback:
-                            self.load_time_zone_location_names(locations_provider, locale)?;
-                        }
-                        // 'VVVV' (note: `V..VV` are for identifiers only)
-                        ResolvedNeoTimeZoneSkeleton::Location => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                            self.load_time_zone_location_names(locations_provider, locale)?;
-                        }
-                        ResolvedNeoTimeZoneSkeleton::OffsetShort
-                        | ResolvedNeoTimeZoneSkeleton::OffsetLong => {
-                            self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                            self.load_fixed_decimal_formatter(
-                                fixed_decimal_formatter_loader,
-                                locale,
-                            )
-                            .map_err(PatternLoadError::Data)?;
-                        }
-                        ResolvedNeoTimeZoneSkeleton::Isox
-                        | ResolvedNeoTimeZoneSkeleton::Isoxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxxx
-                        | ResolvedNeoTimeZoneSkeleton::Isoxxxxx
-                        | ResolvedNeoTimeZoneSkeleton::IsoX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXXX
-                        | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
-                        | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-                            // no data required
-                        }
-                    };
-                    continue;
-                }
-            };
-            match field.symbol {
+
+            use fields::*;
+            use FieldLength::*;
+            use FieldSymbol as FS;
+
+            match (field.symbol, field.length) {
                 ///// Textual symbols /////
-                FieldSymbol::Era => {
+
+                // G..GGGGG
+                (FS::Era, One | TwoDigit | Abbreviated | Wide | Narrow) => {
                     self.load_year_names(year_provider, locale, field.length)?;
                 }
-                FieldSymbol::Month(symbol) => match field.length {
-                    FieldLength::One => numeric_field = Some(field),
-                    FieldLength::TwoDigit => numeric_field = Some(field),
-                    _ => {
-                        self.load_month_names(month_provider, locale, symbol, field.length)?;
-                    }
-                },
-                // 'E' is always text
-                // 'e' and 'c' are either numeric or text
-                FieldSymbol::Weekday(symbol) => match field.length {
-                    FieldLength::One | FieldLength::TwoDigit
-                        if !matches!(symbol, fields::Weekday::Format) =>
-                    {
-                        numeric_field = Some(field)
-                    }
-                    _ => {
-                        self.load_weekday_names(weekday_provider, locale, symbol, field.length)?;
-                    }
-                },
-                FieldSymbol::DayPeriod(_) => {
+
+                // MMM..MMMMM
+                (FS::Month(Month::Format), Abbreviated | Wide | Narrow) => {
+                    self.load_month_names(month_provider, locale, Month::Format, field.length)?;
+                }
+
+                // LLL..LLLLL
+                (FS::Month(Month::StandAlone), Abbreviated | Wide | Narrow) => {
+                    self.load_month_names(month_provider, locale, Month::StandAlone, field.length)?;
+                }
+
+                // E..EE
+                (FS::Weekday(Weekday::Format), One | TwoDigit) => {
+                    self.load_weekday_names(
+                        weekday_provider,
+                        locale,
+                        Weekday::Format,
+                        field.length,
+                    )?;
+                }
+                // EEE..EEEEEE, eee..eeeeee, ccc..cccccc
+                (FS::Weekday(symbol), Abbreviated | Wide | Narrow | Six) => {
+                    self.load_weekday_names(weekday_provider, locale, symbol, field.length)?;
+                }
+
+                // a..aaaaa, b..bbbbb
+                (FS::DayPeriod(_), One | TwoDigit | Abbreviated | Wide | Narrow) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
-                FieldSymbol::TimeZone(_) => {
-                    debug_assert!(false, "handled above");
+
+                // U..UUUUU
+                (FS::Year(Year::Cyclic), One | TwoDigit | Abbreviated | Wide | Narrow) => {
+                    // hard coded at the moment
+                }
+
+                ///// Time zone symbols /////
+
+                // z..zzz
+                (FS::TimeZone(TimeZone::SpecificNonLocation), One | TwoDigit | Abbreviated) => {
+                    load_fdf = true;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    self.load_time_zone_specific_short_names(
+                        mz_specific_short_provider,
+                        mz_period_provider,
+                        locale,
+                    )?;
+                }
+                // zzzz
+                (FS::TimeZone(TimeZone::SpecificNonLocation), Wide) => {
+                    load_fdf = true;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    self.load_time_zone_specific_long_names(
+                        mz_specific_long_provider,
+                        mz_period_provider,
+                        locale,
+                    )?;
+                }
+
+                // v
+                (FS::TimeZone(TimeZone::GenericNonLocation), One) => {
+                    load_fdf = true;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    self.load_time_zone_generic_short_names(
+                        mz_generic_short_provider,
+                        mz_period_provider,
+                        locale,
+                    )?;
+                    // For fallback:
+                    self.load_time_zone_location_names(locations_provider, locale)?;
+                }
+                // vvvv
+                (FS::TimeZone(TimeZone::GenericNonLocation), Wide) => {
+                    load_fdf = true;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    self.load_time_zone_generic_long_names(
+                        mz_generic_long_provider,
+                        mz_period_provider,
+                        locale,
+                    )?;
+                    // For fallback:
+                    self.load_time_zone_location_names(locations_provider, locale)?;
+                }
+
+                // V
+                (FS::TimeZone(TimeZone::Location), One) => {
+                    // no data required
+                }
+                // VVVV
+                (FS::TimeZone(TimeZone::Location), Wide) => {
+                    load_fdf = true;
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    self.load_time_zone_location_names(locations_provider, locale)?;
+                }
+
+                // O, OOOO
+                (FS::TimeZone(TimeZone::LocalizedOffset), One | Wide) => {
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    load_fdf = true;
+                }
+
+                // X..XXXXX, x..xxxxx
+                (
+                    FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
+                    One | TwoDigit | Abbreviated | Wide | Narrow,
+                ) => {
+                    // no data required
                 }
 
                 ///// Numeric symbols /////
-                FieldSymbol::Year(_) => numeric_field = Some(field),
-                FieldSymbol::Week(_) => numeric_field = Some(field),
-                FieldSymbol::Day(_) => numeric_field = Some(field),
-                FieldSymbol::Hour(_) => numeric_field = Some(field),
-                FieldSymbol::Minute => numeric_field = Some(field),
-                FieldSymbol::Second(_) => numeric_field = Some(field),
-                FieldSymbol::DecimalSecond(_) => numeric_field = Some(field),
-            };
+
+                // y+, r+
+                (FS::Year(Year::Calendar | Year::RelatedIso), _) => load_fdf = true,
+
+                // M..MM, L..LL
+                (FS::Month(_), One | TwoDigit) => load_fdf = true,
+
+                // e..ee, c..cc
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | TwoDigit) => {
+                    load_fdf = true
+                }
+
+                // d..dd
+                (FS::Day(Day::DayOfMonth), One | TwoDigit) => load_fdf = true,
+                // D..DDD
+                (FS::Day(Day::DayOfYear), One | TwoDigit | Abbreviated) => load_fdf = true,
+                // F
+                (FS::Day(Day::DayOfWeekInMonth), One) => load_fdf = true,
+
+                // K..KK, h..hh, H..HH, k..kk
+                (FS::Hour(_), One | TwoDigit) => load_fdf = true,
+
+                // m..mm
+                (FS::Minute, One | TwoDigit) => load_fdf = true,
+
+                // s..ss
+                (FS::Second(Second::Second), One | TwoDigit) => load_fdf = true,
+
+                // A
+                (FS::Second(Second::MillisInDay), _) => load_fdf = true,
+
+                // s.S, ss.S, s.SS, ss.SS, s.SSS, ...
+                (FS::DecimalSecond(_), One | TwoDigit) => load_fdf = true,
+
+                ///// Unsupported symbols /////
+                _ => {
+                    return Err(PatternLoadError::UnsupportedLength(field));
+                }
+            }
         }
 
-        if numeric_field.is_some() {
+        if load_fdf {
             self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, locale)
                 .map_err(PatternLoadError::Data)?;
         }
@@ -2299,6 +2292,7 @@ where
             + GetField<<R::D as DateInputMarkers>::MonthInput>
             + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
             + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
             + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
             + GetField<()>,
     {
@@ -2616,8 +2610,29 @@ impl RawDateTimeNamesBorrowed<'_> {
     }
 }
 
+/// A container contains all data payloads for time zone formatting (borrowed version).
+#[derive(Debug, Copy, Clone, Default)]
+pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
+    /// The data that contains meta information about how to display content.
+    pub(crate) essentials: Option<&'a tz::EssentialsV1<'a>>,
+    /// The root location names, e.g. Toronto
+    pub(crate) locations_root: Option<&'a tz::LocationsV1<'a>>,
+    /// The language specific location names, e.g. Italy
+    pub(crate) locations: Option<&'a tz::LocationsV1<'a>>,
+    /// The generic long metazone names, e.g. Pacific Time
+    pub(crate) mz_generic_long: Option<&'a tz::MzGenericV1<'a>>,
+    /// The generic short metazone names, e.g. PT
+    pub(crate) mz_generic_short: Option<&'a tz::MzGenericV1<'a>>,
+    /// The specific long metazone names, e.g. Pacific Daylight Time
+    pub(crate) mz_specific_long: Option<&'a tz::MzSpecificV1<'a>>,
+    /// The specific short metazone names, e.g. Pacific Daylight Time
+    pub(crate) mz_specific_short: Option<&'a tz::MzSpecificV1<'a>>,
+    /// The metazone lookup
+    pub(crate) mz_periods: Option<&'a tz::MzPeriodV1<'a>>,
+}
+
 impl<'data> RawDateTimeNamesBorrowed<'data> {
-    pub(crate) fn get_payloads(&self) -> crate::time_zone::TimeZoneDataPayloadsBorrowed<'data> {
+    pub(crate) fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data> {
         TimeZoneDataPayloadsBorrowed {
             essentials: self.zone_essentials.get_option(),
             locations_root: self.locations_root.get_option(),

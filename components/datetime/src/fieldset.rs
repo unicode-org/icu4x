@@ -48,7 +48,7 @@ macro_rules! impl_marker_with_options {
         $(sample_length: $sample_length:ident,)?
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
-        $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
+        $(time_precision: $timeprecision_yes:ident,)?
     ) => {
         $(#[$attr])*
         #[derive(Debug)]
@@ -73,10 +73,10 @@ macro_rules! impl_marker_with_options {
                 pub year_style: datetime_marker_helper!(@option/yearstyle, $yearstyle_yes),
             )?
             $(
-                /// How many fractional seconds to display.
+                /// How precisely to display the time of day
                 ///
-                /// See: [`FractionalSecondDigits`]
-                pub fractional_second_digits: datetime_marker_helper!(@option/fractionalsecondigits, $fractionalsecondigits_yes),
+                /// See: [`TimePrecision`]
+                pub time_precision: datetime_marker_helper!(@option/timeprecision, $timeprecision_yes),
             )?
         }
         impl $type {
@@ -91,7 +91,7 @@ macro_rules! impl_marker_with_options {
                         year_style: yes_to!(None, $yearstyle_yes),
                     )?
                     $(
-                        fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
+                        time_precision: yes_to!(None, $timeprecision_yes),
                     )?
                 }
             }
@@ -131,11 +131,21 @@ macro_rules! impl_marker_with_options {
             }
         )?
         $(
-            impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
+            impl_get_field!($type, time_precision, $timeprecision_yes);
             impl $type {
-                /// Sets the fractional second digits option.
-                pub const fn with_fractional_second_digits(mut self, digits: FractionalSecondDigits) -> Self {
-                    self.fractional_second_digits = Some(digits);
+                /// Sets the time precision option.
+                pub const fn with_time_precision(mut self, time_precision: TimePrecision) -> Self {
+                    self.time_precision = Some(time_precision);
+                    self
+                }
+                /// Sets the time precision to [`TimePrecision::MinuteExact`]
+                pub fn hm(mut self) -> Self {
+                    self.time_precision = Some(TimePrecision::MinuteExact);
+                    self
+                }
+                /// Sets the time precision to [`TimePrecision::SecondPlus`]
+                pub fn hms(mut self) -> Self {
+                    self.time_precision = Some(TimePrecision::SecondPlus);
                     self
                 }
             }
@@ -249,6 +259,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
+            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
@@ -271,7 +282,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
     };
@@ -458,7 +469,7 @@ macro_rules! impl_time_marker {
             $type,
             sample_length: $sample_length,
             alignment: yes,
-            $(fractional_second_digits: $nanosecond_yes,)?
+            time_precision: yes,
         );
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -492,7 +503,7 @@ macro_rules! impl_time_marker {
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $($nanosecond_yes)?);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
@@ -646,7 +657,7 @@ macro_rules! impl_zone_marker {
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type AlignmentOption = datetime_marker_helper!(@option/alignment,);
             type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
@@ -921,30 +932,9 @@ impl_calendar_period_marker!(
 );
 
 impl_time_marker!(
-    H,
-    NeoTimeComponents::Hour,
-    description = "hour (locale-dependent hour cycle)",
-    sample_length = medium,
-    sample = "3 PM",
-    dayperiods = yes,
-    input_hour = yes,
-);
-
-impl_time_marker!(
-    HM,
-    NeoTimeComponents::HourMinute,
-    description = "hour and minute (locale-dependent hour cycle)",
-    sample_length = medium,
-    sample = "3:47 PM",
-    dayperiods = yes,
-    input_hour = yes,
-    input_minute = yes,
-);
-
-impl_time_marker!(
-    HMS,
-    NeoTimeComponents::HourMinuteSecond,
-    description = "hour, minute, and second (locale-dependent hour cycle)",
+    T,
+    NeoTimeComponents::Time,
+    description = "time (locale-dependent hour cycle)",
     sample_length = medium,
     sample = "3:47:50 PM",
     dayperiods = yes,
@@ -955,21 +945,12 @@ impl_time_marker!(
 );
 
 impl_datetime_marker!(
-    YMDHM,
-    description = "year, month, day, hour, and minute",
-    sample_length = medium,
-    sample = "May 17, 2024, 3:47 PM",
-    date = YMD,
-    time = HM,
-);
-
-impl_datetime_marker!(
-    YMDHMS,
-    description = "year, month, day, hour, minute, and second",
+    YMDT,
+    description = "year, month, day, and time",
     sample_length = medium,
     sample = "May 17, 2024, 3:47:50 PM",
     date = YMD,
-    time = HMS,
+    time = T,
 );
 
 impl_zone_marker!(
@@ -1052,7 +1033,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::T;
     /// use icu::datetime::fieldset::Zs;
     /// use icu::datetime::fieldset::Combo;
     /// use icu::locale::locale;
@@ -1061,7 +1042,7 @@ impl_zone_marker!(
     ///
     /// type MyDateTimeZoneSet = Combo<
     ///     MD,
-    ///     HM,
+    ///     T,
     ///     Zs,
     /// >;
     ///
@@ -1075,7 +1056,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47 PM CDT"
+    ///     "September 17, 3:47:50 PM CDT"
     /// );
     /// ```
     ///
@@ -1269,7 +1250,7 @@ impl_zone_marker!(
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::HM;
+    /// use icu::datetime::fieldset::T;
     /// use icu::datetime::fieldset::Vs;
     /// use icu::datetime::fieldset::Combo;
     /// use icu::locale::locale;
@@ -1278,7 +1259,7 @@ impl_zone_marker!(
     ///
     /// type MyDateTimeZoneSet = Combo<
     ///     MD,
-    ///     HM,
+    ///     T,
     ///     Vs,
     /// >;
     ///
@@ -1292,7 +1273,7 @@ impl_zone_marker!(
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47 PM CT"
+    ///     "September 17, 3:47:50 PM CT"
     /// );
     /// ```
     ///
@@ -1386,31 +1367,31 @@ impl_zone_marker!(
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSV,
+    YMDTV,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = V,
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSZ,
+    YMDTZ,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 BST",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = Z,
 );
 
 impl_zoneddatetime_marker!(
-    YMDHMSO,
+    YMDTO,
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT+1",
     date = YMD,
-    time = HMS,
+    time = T,
     zone = O,
 );

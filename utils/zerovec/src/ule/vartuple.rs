@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Types to help compose VarULE primitives.
+//! Types to help compose fixed-size [`ULE`] and variable-size [`VarULE`] primitives.
 //!
 //! This module exports [`VarTuple`] and [`VarTupleULE`], which allow a single sized type and
 //! a single unsized type to be stored together as a [`VarULE`].

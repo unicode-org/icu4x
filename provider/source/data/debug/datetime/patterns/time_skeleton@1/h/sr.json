@@ -1,13 +1,15 @@
 {
   "variant_pattern_indices": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
   ],
   "elements": [
-    "h a"
+    "h a",
+    "hh:mm a",
+    "hh:mm:ss a"
   ]
 }

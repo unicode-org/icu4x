@@ -147,7 +147,7 @@ impl DurationUnitFormatter {
     }
 }
 
-impl From<BaseStyle> for icu_list::ListLength {
+impl From<BaseStyle> for icu_list::ListFormatterOptions {
     fn from(style: BaseStyle) -> Self {
         // Section 1.1.13
         // 1. Let lfOpts be OrdinaryObjectCreate(null).
@@ -157,11 +157,12 @@ impl From<BaseStyle> for icu_list::ListLength {
         //     a. Set listStyle to "short".
         // 5. Perform ! CreateDataPropertyOrThrow(lfOpts, "style", listStyle).
         // 6. Let lf be ! Construct(%ListFormat%, « durationFormat.[[Locale]], lfOpts »).
-        match style {
+        let length = match style {
             BaseStyle::Long => ListLength::Wide,
             BaseStyle::Short | BaseStyle::Digital => ListLength::Short,
             BaseStyle::Narrow => ListLength::Narrow,
-        }
+        };
+        Self::default().with_length(length)
     }
 }
 
@@ -194,11 +195,12 @@ impl DurationFormatter {
             })?
             .payload;
 
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
             unit: DurationUnitFormatter::try_new(locale, options)?,
-            list: ListFormatter::try_new_unit_with_length(locale, options.base.into())?,
+            list: ListFormatter::try_new_unit(temp_loc.into(), options.base.into())?,
             fdf: FixedDecimalFormatter::try_new(locale, Default::default())?,
         })
     }
@@ -223,13 +225,14 @@ impl DurationFormatter {
             })?
             .payload;
 
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
             unit: DurationUnitFormatter::try_new_unstable(provider, locale, options)?,
-            list: ListFormatter::try_new_unit_with_length_unstable(
+            list: ListFormatter::try_new_unit_unstable(
                 provider,
-                locale,
+                temp_loc.into(),
                 options.base.into(),
             )?,
             fdf: FixedDecimalFormatter::try_new_unstable(provider, locale, Default::default())?,

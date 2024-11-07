@@ -395,8 +395,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "hour", "minute"],
-                    "length": "medium"
+                    "fieldSet": ["weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "minuteExact"
                 }
             }
         },
@@ -418,8 +419,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "hour", "minute", "second"],
-                    "length": "medium"
+                    "fieldSet": ["weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "secondPlus"
                 }
             }
         },
@@ -440,8 +442,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "hour", "minute"],
-                    "length": "medium"
+                    "fieldSet": ["weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "minuteExact"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -464,8 +467,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "hour", "minute", "second"],
-                    "length": "medium"
+                    "fieldSet": ["weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -485,8 +489,9 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -507,8 +512,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -530,8 +536,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -551,8 +558,9 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -573,8 +581,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -596,8 +605,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }

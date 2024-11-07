@@ -5,9 +5,17 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Emoji Presentation Style Identifier
+    ///
+    /// It specifies a request for the preferred emoji
+    /// presentation style. This can be used as part of the value for an HTML lang attribute,
+    /// for example `<html lang="sr-Latn-u-em-emoji">`.
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeEmojiPresentationStyleIdentifier).
     EmojiPresentationStyle {
-        "emoji" => Emoji,
-        "text" => Text,
-        "default" => Default
+        /// Use an emoji presentation for emoji characters if possible
+        ("emoji" => Emoji),
+        /// Use a text presentation for emoji characters if possible
+        ("text" => Text),
+        /// Use the default presentation for emoji characters as specified in UTR #51 Presentation Style
+        ("default" => Default)
 }, "em");

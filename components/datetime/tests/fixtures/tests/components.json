@@ -14,8 +14,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
+                    "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
                 "preferences": { "hourCycle": "h23" }
@@ -71,8 +72,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
+                    "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
                 "preferences": { "hourCycle": "h23" }
@@ -100,8 +102,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
+                    "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
                 "preferences": { "hourCycle": "h23" }
@@ -125,8 +128,9 @@
                     "fractional_second": 0
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -148,9 +152,9 @@
                     "fractional_second": 9
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
+                    "fieldSet": ["time"],
                     "length": "short",
-                    "fractionalSecondDigits": 9
+                    "timePrecision": "secondF9"
                 },
                 "preferences": { "hourCycle": "h23" }
             }

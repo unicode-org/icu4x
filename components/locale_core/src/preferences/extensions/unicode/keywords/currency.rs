@@ -8,7 +8,9 @@ use crate::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 
 struct_keyword!(
-    /// TODO
+    /// A Unicode Currency Identifier defines a type of currency.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeCurrencyIdentifier).
     CurrencyType,
     "cu",
     TinyAsciiStr<3>,
