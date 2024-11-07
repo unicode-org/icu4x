@@ -16,7 +16,7 @@ use icu_calendar::{
     types::{
         DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
     },
-    AnyCalendarKind, Date, Iso, Time,
+    Date, Iso, Time,
 };
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -261,7 +261,6 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
-            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);

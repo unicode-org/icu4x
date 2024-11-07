@@ -567,8 +567,7 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
             // only replace numeric items
             if field.length != FieldLength::One {
                 assert!(
-                    field.length != FieldLength::TwoDigit
-                        || symbol_to_replace != Some(field.symbol),
+                    field.length != FieldLength::Two || symbol_to_replace != Some(field.symbol),
                     "We don't know what to do when there is a non-targeted numeric override \
                          on a two-digit numeric field"
                 );

@@ -300,7 +300,7 @@ mod test {
             Skeleton::from(vec![
                 Field {
                     symbol: Month::Format.into(),
-                    length: FieldLength::Wide
+                    length: FieldLength::Four
                 },
                 Field {
                     symbol: Day::DayOfMonth.into(),
@@ -308,7 +308,7 @@ mod test {
                 },
                 Field {
                     symbol: Weekday::Format.into(),
-                    length: FieldLength::Wide
+                    length: FieldLength::Four
                 },
             ])
         );

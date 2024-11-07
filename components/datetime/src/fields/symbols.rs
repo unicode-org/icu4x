@@ -548,10 +548,10 @@ impl LengthType for Month {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
             FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
-            FieldLength::TwoDigit => TextOrNumeric::Numeric,
-            FieldLength::Abbreviated => TextOrNumeric::Text,
-            FieldLength::Wide => TextOrNumeric::Text,
-            FieldLength::Narrow => TextOrNumeric::Text,
+            FieldLength::Two => TextOrNumeric::Numeric,
+            FieldLength::Three => TextOrNumeric::Text,
+            FieldLength::Four => TextOrNumeric::Text,
+            FieldLength::Five => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
         }
     }
@@ -690,7 +690,7 @@ impl LengthType for Weekday {
         match self {
             Self::Format => TextOrNumeric::Text,
             Self::Local | Self::StandAlone => match length {
-                FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Numeric,
+                FieldLength::One | FieldLength::Two => TextOrNumeric::Numeric,
                 _ => TextOrNumeric::Text,
             },
         }
