@@ -238,6 +238,12 @@ fn year_as_gregorian(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "gregory").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
                 era_year: year,
+                ambiguity: match year {
+                    ..1000 => types::YearAmbiguity::EraAndCenturyRequired,
+                    1000..1950 => types::YearAmbiguity::CenturyRequired,
+                    1950..2050 => types::YearAmbiguity::Unambiguous,
+                    2050.. => types::YearAmbiguity::CenturyRequired,
+                },
             },
         )
     } else {
@@ -247,6 +253,7 @@ fn year_as_gregorian(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "gregory-inverse").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
                 era_year: 1_i32.saturating_sub(year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             },
         )
     }

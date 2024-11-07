@@ -304,6 +304,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethioaa").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
                     era_year: year + AMETE_ALEM_OFFSET,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         } else if year > 0 {
@@ -313,6 +314,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethiopic").into(),
                     formatting_era: types::FormattingEra::Index(2, tinystr!(16, "Incarnation")),
                     era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         } else {
@@ -322,6 +324,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethiopic-inverse").into(),
                     formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Pre-Incarnation")),
                     era_year: 1 - year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         }

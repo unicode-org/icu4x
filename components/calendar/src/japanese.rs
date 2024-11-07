@@ -278,6 +278,7 @@ impl Calendar for Japanese {
                 formatting_era: types::FormattingEra::Code(date.era.into()),
                 standard_era: date.era.into(),
                 era_year: date.adjusted_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     }
