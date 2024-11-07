@@ -1056,25 +1056,25 @@ impl NeoTimeZoneStyle {
                 NeoSkeletonLength::Short | NeoSkeletonLength::Medium,
             ) => (TimeZone::SpecificNonLocation, FieldLength::One),
             (NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific, NeoSkeletonLength::Long) => {
-                (TimeZone::SpecificNonLocation, FieldLength::Wide)
+                (TimeZone::SpecificNonLocation, FieldLength::Four)
             }
             (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
                 (TimeZone::LocalizedOffset, FieldLength::One)
             }
             (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Long) => {
-                (TimeZone::LocalizedOffset, FieldLength::Wide)
+                (TimeZone::LocalizedOffset, FieldLength::Four)
             }
             (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
                 (TimeZone::GenericNonLocation, FieldLength::One)
             }
             (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Long) => {
-                (TimeZone::GenericNonLocation, FieldLength::Wide)
+                (TimeZone::GenericNonLocation, FieldLength::Four)
             }
             (NeoTimeZoneStyle::Location, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::Location, FieldLength::Wide)
+                (TimeZone::Location, FieldLength::Four)
             }
             (NeoTimeZoneStyle::Location, NeoSkeletonLength::Long) => {
-                (TimeZone::Location, FieldLength::Wide)
+                (TimeZone::Location, FieldLength::Four)
             }
         }
     }

@@ -209,7 +209,7 @@ pub fn create_best_pattern_for_fields<'data>(
             // 4. Otherwise use length::Date::Short
             let length = match month_field {
                 Some(field) => match field.length {
-                    FieldLength::Wide => {
+                    FieldLength::Four => {
                         let weekday = fields
                             .iter()
                             .find(|f| matches!(f.symbol, FieldSymbol::Weekday(_)));
@@ -220,7 +220,7 @@ pub fn create_best_pattern_for_fields<'data>(
                             length::Date::Long
                         }
                     }
-                    FieldLength::Abbreviated => length::Date::Medium,
+                    FieldLength::Three => length::Date::Medium,
                     _ => length::Date::Short,
                 },
                 None => length::Date::Short,

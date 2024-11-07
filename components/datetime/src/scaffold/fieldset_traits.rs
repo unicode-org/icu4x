@@ -17,7 +17,7 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendarKind, Date, Iso, Time,
+    Date, Iso, Time,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::{marker::NeverMarker, prelude::*};
@@ -66,8 +66,6 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfYearInput: IntoOption<DayOfYearInfo>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<IsoWeekday>;
-    /// Marker for resolving the any-calendar-kind input field.
-    type AnyCalendarKindInput: IntoOption<AnyCalendarKind>;
 }
 
 /// A trait associating types for date formatting in a specific calendar
@@ -174,7 +172,6 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
-    + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -201,7 +198,6 @@ where
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
-        + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -453,7 +449,6 @@ impl DateInputMarkers for NeoNeverMarker {
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
     type DayOfWeekInput = ();
-    type AnyCalendarKindInput = ();
 }
 
 impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
@@ -580,9 +575,6 @@ macro_rules! datetime_marker_helper {
     };
     (@input/day_of_year, yes) => {
         DayOfYearInfo
-    };
-    (@input/any_calendar_kind, yes) => {
-        AnyCalendarKind
     };
     (@input/hour, yes) => {
         IsoHour

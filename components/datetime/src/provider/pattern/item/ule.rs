@@ -311,23 +311,23 @@ mod test {
     fn test_pattern_item_as_ule() {
         let samples = [
             (
-                PatternItem::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                PatternItem::from((FieldSymbol::Minute, FieldLength::Two)),
+                [0x80, FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Four)),
                 [
                     0x80,
                     FieldSymbol::Year(Year::Cyclic).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
@@ -353,7 +353,7 @@ mod test {
     fn test_pattern_item_ule() {
         let samples = [(
             [
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 PatternItem::from('z'),
                 PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
@@ -361,7 +361,7 @@ mod test {
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
                 [0x00, 0x00, 0x7a],
                 [
