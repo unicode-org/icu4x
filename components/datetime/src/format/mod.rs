@@ -6,24 +6,31 @@ pub(crate) mod datetime;
 pub(crate) mod neo;
 pub(crate) mod time_zone;
 
-use crate::fields::Field;
 use crate::provider::neo::SimpleSubstitutionPattern;
 
 pub(crate) enum GetNameForMonthError {
-    Missing,
-    MissingNames(Field),
+    Invalid,
+    NotLoaded,
 }
 pub(crate) enum GetNameForWeekdayError {
-    MissingNames(Field),
+    NotLoaded,
 }
 
 pub(crate) enum GetSymbolForEraError {
-    Missing,
-    MissingNames(Field),
+    Invalid,
+    NotLoaded,
+}
+
+pub(crate) enum GetSymbolForCyclicYearError {
+    Invalid {
+        max: usize,
+    },
+    #[allow(dead_code)] // TODO(#3761)
+    NotLoaded,
 }
 
 pub(crate) enum GetNameForDayPeriodError {
-    MissingNames(Field),
+    NotLoaded,
 }
 
 /// Internal enum to represent the kinds of month symbols for interpolation

@@ -6,10 +6,7 @@
 
 use super::neo::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
-use crate::{
-    fields::{FieldLength, TimeZone},
-    input::ExtractedInput,
-};
+use crate::{fields::FieldLength, input::ExtractedInput};
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_calendar::{Date, Iso, Time};
@@ -17,126 +14,6 @@ use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::provider::EPOCH;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
-
-impl TimeZone {
-    pub(super) fn units(self, length: FieldLength) -> impl Iterator<Item = TimeZoneFormatterUnit> {
-        match (self, length) {
-            (Self::SpecificNonLocation, _) => [
-                Some(TimeZoneFormatterUnit::SpecificNonLocation(length)),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
-                None,
-            ],
-            (Self::GenericNonLocation, _) => [
-                Some(TimeZoneFormatterUnit::GenericNonLocation(length)),
-                Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
-            ],
-            (Self::Location, FieldLength::Wide) => [
-                Some(TimeZoneFormatterUnit::GenericLocation),
-                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
-                None,
-            ],
-            (Self::LocalizedOffset, _) => [
-                Some(TimeZoneFormatterUnit::LocalizedOffset(length)),
-                None,
-                None,
-            ],
-            (Self::Location, _) => [Some(TimeZoneFormatterUnit::Bcp47Id), None, None],
-            (Self::IsoWithZ, FieldLength::One) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Optional,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::IsoWithZ, FieldLength::Two) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::IsoWithZ, FieldLength::Abbreviated) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::IsoWithZ, FieldLength::Wide) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcBasic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                })),
-                None,
-                None,
-            ],
-            (Self::IsoWithZ, _) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::UtcExtended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                })),
-                None,
-                None,
-            ],
-            (Self::Iso, FieldLength::One) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Optional,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::Iso, FieldLength::Two) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::Iso, FieldLength::Abbreviated) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Never,
-                })),
-                None,
-                None,
-            ],
-            (Self::Iso, FieldLength::Wide) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Basic,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                })),
-                None,
-                None,
-            ],
-            (Self::Iso, _) => [
-                Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
-                    format: IsoFormat::Extended,
-                    minutes: IsoMinutes::Required,
-                    seconds: IsoSeconds::Optional,
-                })),
-                None,
-                None,
-            ],
-        }
-        .into_iter()
-        .flatten()
-    }
-}
 
 impl crate::provider::time_zones::MetazonePeriodV1<'_> {
     fn resolve(
@@ -159,53 +36,6 @@ impl crate::provider::time_zones::MetazonePeriodV1<'_> {
         }
         metazone_id
     }
-}
-
-/// Determines which ISO-8601 format should be used to format the timezone offset.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum IsoFormat {
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +0500, +0000
-    Basic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +05:00, +00:00
-    Extended,
-
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +0500, Z
-    UtcBasic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +05:00, Z
-    UtcExtended,
-}
-
-/// Whether the minutes field should be optional or required in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum IsoMinutes {
-    /// Minutes are always displayed.
-    Required,
-
-    /// Minutes are displayed only if they are non-zero.
-    Optional,
-}
-
-/// Whether the seconds field should be optional or excluded in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum IsoSeconds {
-    /// Seconds are displayed only if they are non-zero.
-    Optional,
-
-    /// Seconds are not displayed.
-    Never,
 }
 
 // An enum for time zone format unit.
@@ -610,11 +440,117 @@ impl FormatTimeZone for GenericPartialLocationFormat {
     }
 }
 
+/// Determines which ISO-8601 format should be used to format the timezone offset.
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum IsoFormat {
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset numerically.
+    /// e.g. +0500, +0000
+    Basic,
+
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset numerically.
+    /// e.g. +05:00, +00:00
+    Extended,
+
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +0500, Z
+    UtcBasic,
+
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +05:00, Z
+    UtcExtended,
+}
+
+/// Whether the minutes field should be optional or required in ISO-8601 format.
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum IsoMinutes {
+    /// Minutes are always displayed.
+    Required,
+
+    /// Minutes are displayed only if they are non-zero.
+    Optional,
+}
+
+/// Whether the seconds field should be optional or excluded in ISO-8601 format.
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum IsoSeconds {
+    /// Seconds are displayed only if they are non-zero.
+    Optional,
+
+    /// Seconds are not displayed.
+    Never,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct Iso8601Format {
-    pub(crate) format: IsoFormat,
-    pub(crate) minutes: IsoMinutes,
-    pub(crate) seconds: IsoSeconds,
+    format: IsoFormat,
+    minutes: IsoMinutes,
+    seconds: IsoSeconds,
+}
+
+impl Iso8601Format {
+    pub(crate) fn with_z(length: FieldLength) -> Self {
+        match length {
+            FieldLength::One => Self {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Optional,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Two => Self {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Abbreviated => Self {
+                format: IsoFormat::UtcExtended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Wide => Self {
+                format: IsoFormat::UtcBasic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            },
+            _ => Self {
+                format: IsoFormat::UtcExtended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            },
+        }
+    }
+
+    pub(crate) fn without_z(length: FieldLength) -> Self {
+        match length {
+            FieldLength::One => Self {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Optional,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Two => Self {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Abbreviated => Self {
+                format: IsoFormat::Extended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Never,
+            },
+            FieldLength::Wide => Self {
+                format: IsoFormat::Basic,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            },
+            _ => Self {
+                format: IsoFormat::Extended,
+                minutes: IsoMinutes::Required,
+                seconds: IsoSeconds::Optional,
+            },
+        }
+    }
 }
 
 impl FormatTimeZone for Iso8601Format {

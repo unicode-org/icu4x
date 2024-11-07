@@ -4,8 +4,8 @@
 
 use super::datetime::try_write_pattern_items;
 use super::{
-    GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError,
-    MonthPlaceholderValue,
+    GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
+    GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
 };
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
@@ -25,8 +25,10 @@ use crate::scaffold::{
 use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
+use core::num::NonZeroU8;
 use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
+use icu_calendar::AnyCalendarKind;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -2053,6 +2055,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                     self.load_year_names(year_provider, locale, field.length)?;
                 }
 
+                // U..UUUUU
+                (FS::Year(Year::Cyclic), One | Two | Abbreviated | Wide | Narrow) => {
+                    load_fdf = true;
+                    // TODO(#3761): Load data
+                }
+
                 // MMM..MMMMM
                 (FS::Month(Month::Format), Abbreviated | Wide | Narrow) => {
                     self.load_month_names(month_provider, locale, Month::Format, field.length)?;
@@ -2080,11 +2088,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 // a..aaaaa, b..bbbbb
                 (FS::DayPeriod(_), One | Two | Abbreviated | Wide | Narrow) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
-                }
-
-                // U..UUUUU
-                (FS::Year(Year::Cyclic), One | Two | Abbreviated | Wide | Narrow) => {
-                    // hard coded at the moment
                 }
 
                 ///// Time zone symbols /////
@@ -2169,7 +2172,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 (FS::Month(_), One | Two) => load_fdf = true,
 
                 // e..ee, c..cc
-                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => load_fdf = true,
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
+                    // TODO(#5643): Requires locale-aware day-of-week calculation
+                    return Err(PatternLoadError::UnsupportedLength(field));
+                }
 
                 // d..dd
                 (FS::Day(Day::DayOfMonth), One | Two) => load_fdf = true,
@@ -2187,10 +2193,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 // s..ss
                 (FS::Second(Second::Second), One | Two) => load_fdf = true,
 
-                // A
+                // A+
                 (FS::Second(Second::MillisInDay), _) => load_fdf = true,
 
-                // s.S, ss.S, s.SS, ss.SS, s.SSS, ...
+                // s.S+, ss.S+ (s is modelled by length, S+ by symbol)
                 (FS::DecimalSecond(_), One | Two) => load_fdf = true,
 
                 ///// Unsupported symbols /////
@@ -2468,19 +2474,15 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
-        let field = fields::Field {
-            symbol: FieldSymbol::Month(field_symbol),
-            length: field_length,
-        };
         let month_names = self
             .month_names
             .get_with_variables((field_symbol, field_length))
-            .ok_or(GetNameForMonthError::MissingNames(field))?;
+            .ok_or(GetNameForMonthError::NotLoaded)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::Missing);
+            return Err(GetNameForMonthError::Invalid);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::Missing);
+            return Err(GetNameForMonthError::Invalid);
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
@@ -2512,7 +2514,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
         name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::Missing)
+            .ok_or(GetNameForMonthError::Invalid)
     }
 
     pub(crate) fn get_name_for_weekday(
@@ -2521,10 +2523,6 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, GetNameForWeekdayError> {
-        let field = fields::Field {
-            symbol: FieldSymbol::Weekday(field_symbol),
-            length: field_length,
-        };
         // UTS 35 says that "e" and "E" have the same non-numeric names
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
@@ -2537,12 +2535,12 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         let weekday_names = self
             .weekday_names
             .get_with_variables((field_symbol, field_length))
-            .ok_or(GetNameForWeekdayError::MissingNames(field))?;
+            .ok_or(GetNameForWeekdayError::NotLoaded)?;
         weekday_names
             .names
             .get((day as usize) % 7)
             // TODO: make weekday_names length 7 in the type system
-            .ok_or(GetNameForWeekdayError::MissingNames(field))
+            .ok_or(GetNameForWeekdayError::NotLoaded)
     }
 
     /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.
@@ -2554,32 +2552,26 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         era: FormattingEra,
     ) -> Result<&str, GetSymbolForEraError> {
-        let field = fields::Field {
-            symbol: FieldSymbol::Era,
-            length: field_length,
-        };
         // UTS 35 says that "G..GGG" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         let year_names = self
             .year_names
             .get_with_variables(field_length)
-            .ok_or(GetSymbolForEraError::MissingNames(field))?;
+            .ok_or(GetSymbolForEraError::NotLoaded)?;
 
         match (year_names, era) {
             (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
                 .get(era_code.0.as_str().into())
-                .ok_or(GetSymbolForEraError::Missing),
+                .ok_or(GetSymbolForEraError::Invalid),
             (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())
-                    .ok_or(GetSymbolForEraError::Missing)
+                    .ok_or(GetSymbolForEraError::Invalid)
             }
-            _ => Err(GetSymbolForEraError::Missing),
+            _ => Err(GetSymbolForEraError::Invalid),
         }
     }
-}
 
-impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
@@ -2588,23 +2580,54 @@ impl RawDateTimeNamesBorrowed<'_> {
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
-        let field = fields::Field {
-            symbol: FieldSymbol::DayPeriod(field_symbol),
-            length: field_length,
-        };
         // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         let dayperiod_names = self
             .dayperiod_names
             .get_with_variables(field_length)
-            .ok_or(GetNameForDayPeriodError::MissingNames(field))?;
+            .ok_or(GetNameForDayPeriodError::NotLoaded)?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),
             (NoonMidnight, 12, true) => dayperiod_names.noon().or_else(|| dayperiod_names.pm()),
             (_, hour, _) if hour < 12 => dayperiod_names.am(),
             _ => dayperiod_names.pm(),
         };
-        option_value.ok_or(GetNameForDayPeriodError::MissingNames(field))
+        option_value.ok_or(GetNameForDayPeriodError::NotLoaded)
+    }
+
+    pub(crate) fn get_name_for_cyclic(
+        &self,
+        _field_length: FieldLength,
+        cyclic: NonZeroU8,
+        any_calendar_kind: Option<AnyCalendarKind>,
+    ) -> Result<&str, GetSymbolForCyclicYearError> {
+        // TODO(#3761): This is a hack, we should use actual data for cyclic years
+
+        let cyclics: &[&str; 60] = match any_calendar_kind {
+            Some(AnyCalendarKind::Dangi) => &[
+                "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유",
+                "갑술", "을해", "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미",
+                "갑신", "을유", "병술", "정해", "무자", "기축", "경인", "신묘", "임진", "계사",
+                "갑오", "을미", "병신", "정유", "무술", "기해", "경자", "신축", "임인", "계묘",
+                "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해", "임자", "계축",
+                "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
+            ],
+            // for now assume all other calendars use the stem-branch model
+            _ => &[
+                "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉",
+                "甲戌", "乙亥", "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未",
+                "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
+                "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯",
+                "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥", "壬子", "癸丑",
+                "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
+            ],
+        };
+
+        cyclics.get((cyclic.get() as usize) - 1).copied().ok_or(
+            GetSymbolForCyclicYearError::Invalid {
+                max: cyclics.len() + 1,
+            },
+        )
     }
 }
 

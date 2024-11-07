@@ -3,12 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::neo::RawDateTimeNamesBorrowed;
-use super::time_zone::{
-    FormatTimeZone, FormatTimeZoneError, Iso8601Format, IsoFormat, IsoMinutes, IsoSeconds,
-};
-use super::GetNameForDayPeriodError;
+use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use super::{
-    GetNameForMonthError, GetNameForWeekdayError, GetSymbolForEraError, MonthPlaceholderValue,
+    GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
+    GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
 };
 use crate::error::DateTimeWriteError;
 use crate::fields::{self, FieldLength, FieldSymbol, Second, Year};
@@ -19,7 +17,6 @@ use crate::provider::pattern::PatternItem;
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
 use icu_calendar::types::{DayOfWeekInMonth, IsoWeekday};
-use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::{Part, Writeable};
 
@@ -98,18 +95,6 @@ fn try_write_field<W>(
 where
     W: writeable::PartsWrite + ?Sized,
 {
-    // Writes an error string for the given symbol
-    fn write_value_missing(
-        w: &mut (impl writeable::PartsWrite + ?Sized),
-        field: fields::Field,
-    ) -> Result<(), fmt::Error> {
-        w.with_part(Part::ERROR, |w| {
-            "{".write_to(w)?;
-            char::from(field.symbol).write_to(w)?;
-            "}".write_to(w)
-        })
-    }
-
     macro_rules! input {
         ($name:ident = $input:expr) => {
             let Some($name) = $input else {
@@ -128,8 +113,8 @@ where
             let era_symbol = datetime_names
                 .get_name_for_era(l, era)
                 .map_err(|e| match e {
-                    GetSymbolForEraError::Missing => DateTimeWriteError::InvalidEra(era),
-                    GetSymbolForEraError::MissingNames(f) => DateTimeWriteError::NamesNotLoaded(f),
+                    GetSymbolForEraError::Invalid => DateTimeWriteError::InvalidEra(era),
+                    GetSymbolForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(field),
                 });
             match era_symbol {
                 Err(e) => {
@@ -152,42 +137,37 @@ where
             input!(year = input.year);
             input!(cyclic = year.cyclic());
 
-            // TODO(#3761): This is a hack, we should use actual data for cyclic years
-            let cyclics: &[&str; 60] = match input.any_calendar_kind {
-                Some(AnyCalendarKind::Dangi) => &[
-                    "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유",
-                    "갑술", "을해", "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미",
-                    "갑신", "을유", "병술", "정해", "무자", "기축", "경인", "신묘", "임진", "계사",
-                    "갑오", "을미", "병신", "정유", "무술", "기해", "경자", "신축", "임인", "계묘",
-                    "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해", "임자", "계축",
-                    "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
-                ],
-                // for now assume all other calendars use the stem-branch model
-                _ => &[
-                    "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉",
-                    "甲戌", "乙亥", "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未",
-                    "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
-                    "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯",
-                    "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥", "壬子", "癸丑",
-                    "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
-                ],
-            };
-
-            let Some(cyclic_str) = cyclics.get((cyclic.get() as usize) - 1) else {
-                w.with_part(Part::ERROR, |w| {
-                    try_write_number(w, fdf, year.era_year_or_extended().into(), l).map(|_| ())
-                })?;
-                return Ok(Err(DateTimeWriteError::InvalidCyclicYear {
-                    value: cyclic.get() as usize,
-                    max: cyclics.len() + 1,
-                }));
-            };
-            Ok(w.write_str(cyclic_str)?)
+            match datetime_names.get_name_for_cyclic(l, cyclic, input.any_calendar_kind) {
+                Ok(name) => Ok(w.write_str(name)?),
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| {
+                        try_write_number(
+                            w,
+                            fdf,
+                            year.era_year_or_extended().into(),
+                            FieldLength::One,
+                        )
+                        .map(|_| ())
+                    })?;
+                    return Ok(Err(match e {
+                        GetSymbolForCyclicYearError::Invalid { max } => {
+                            DateTimeWriteError::InvalidCyclicYear {
+                                value: cyclic.get() as usize,
+                                max,
+                            }
+                        }
+                        GetSymbolForCyclicYearError::NotLoaded => {
+                            DateTimeWriteError::NamesNotLoaded(field)
+                        }
+                    }));
+                }
+            }
         }
         (FieldSymbol::Year(Year::RelatedIso), l) => {
             input!(year = input.year);
             input!(related_iso = year.related_iso());
 
+            // TODO: This should use a latin FDF
             try_write_number(w, fdf, related_iso.into(), l)?
         }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
@@ -196,30 +176,32 @@ where
         }
         (FieldSymbol::Month(symbol), l) => {
             input!(month = input.month);
-            match datetime_names
-                .get_name_for_month(symbol, l, month.formatting_code)
-                .map_err(|e| match e {
-                    GetNameForMonthError::Missing => {
-                        DateTimeWriteError::InvalidMonthCode(month.formatting_code)
-                    }
-                    GetNameForMonthError::MissingNames(f) => DateTimeWriteError::NamesNotLoaded(f),
-                }) {
-                Err(e) => {
-                    w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))?;
-                    Err(e)
-                }
+            match datetime_names.get_name_for_month(symbol, l, month.formatting_code) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.write_str(symbol)?;
                     Ok(())
                 }
                 Ok(MonthPlaceholderValue::Numeric) => {
+                    debug_assert!(l == FieldLength::One);
                     try_write_number(w, fdf, month.ordinal.into(), l)?
                 }
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
+                    debug_assert!(l == FieldLength::One);
                     w.write_str(substitution_pattern.get_prefix())?;
                     let r = try_write_number(w, fdf, month.ordinal.into(), l)?;
                     w.write_str(substitution_pattern.get_suffix())?;
                     r
+                }
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))?;
+                    Err(match e {
+                        GetNameForMonthError::Invalid => {
+                            DateTimeWriteError::InvalidMonthCode(month.formatting_code)
+                        }
+                        GetNameForMonthError::NotLoaded => {
+                            DateTimeWriteError::NamesNotLoaded(field)
+                        }
+                    })
                 }
             }
         }
@@ -229,9 +211,7 @@ where
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
-                    GetNameForWeekdayError::MissingNames(f) => {
-                        DateTimeWriteError::NamesNotLoaded(f)
-                    }
+                    GetNameForWeekdayError::NotLoaded => DateTimeWriteError::NamesNotLoaded(field),
                 }) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| {
@@ -323,78 +303,162 @@ where
         (FieldSymbol::DayPeriod(period), l) => {
             input!(hour = input.hour);
 
-            match datetime_names
-                .get_name_for_day_period(
-                    period,
-                    l,
-                    hour,
-                    pattern_metadata.time_granularity().is_top_of_hour(
-                        input.minute.unwrap_or_default().number(),
-                        input.second.unwrap_or_default().number(),
-                        input.nanosecond.unwrap_or_default().number(),
-                    ),
-                )
-                .map_err(|e| match e {
-                    GetNameForDayPeriodError::MissingNames(f) => {
-                        DateTimeWriteError::NamesNotLoaded(f)
-                    }
-                }) {
+            match datetime_names.get_name_for_day_period(
+                period,
+                l,
+                hour,
+                pattern_metadata.time_granularity().is_top_of_hour(
+                    input.minute.unwrap_or_default().number(),
+                    input.second.unwrap_or_default().number(),
+                    input.nanosecond.unwrap_or_default().number(),
+                ),
+            ) {
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| {
                         w.write_str(if hour.number() < 12 { "AM" } else { "PM" })
                     })?;
-                    Err(e)
+                    Err(match e {
+                        GetNameForDayPeriodError::NotLoaded => {
+                            DateTimeWriteError::NamesNotLoaded(field)
+                        }
+                    })
                 }
                 Ok(s) => Ok(w.write_str(s)?),
             }
         }
-        (FieldSymbol::TimeZone(time_zone), length) => {
-            let payloads = datetime_names.get_payloads();
+        (FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation), l) => {
+            perform_timezone_fallback(
+                w,
+                input,
+                datetime_names,
+                fdf,
+                field,
+                &[
+                    TimeZoneFormatterUnit::SpecificNonLocation(l),
+                    TimeZoneFormatterUnit::LocalizedOffset(l),
+                ],
+            )?
+        }
+        (FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation), l) => {
+            perform_timezone_fallback(
+                w,
+                input,
+                datetime_names,
+                fdf,
+                field,
+                &[
+                    TimeZoneFormatterUnit::GenericNonLocation(l),
+                    TimeZoneFormatterUnit::GenericLocation,
+                    TimeZoneFormatterUnit::LocalizedOffset(l),
+                ],
+            )?
+        }
+        (FieldSymbol::TimeZone(fields::TimeZone::Location), FieldLength::Wide) => {
+            perform_timezone_fallback(
+                w,
+                input,
+                datetime_names,
+                fdf,
+                field,
+                &[
+                    TimeZoneFormatterUnit::GenericLocation,
+                    TimeZoneFormatterUnit::LocalizedOffset(FieldLength::Wide),
+                ],
+            )?
+        }
+        (FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset), l) => perform_timezone_fallback(
+            w,
+            input,
+            datetime_names,
+            fdf,
+            field,
+            &[TimeZoneFormatterUnit::LocalizedOffset(l)],
+        )?,
+        (FieldSymbol::TimeZone(fields::TimeZone::Location), _) => perform_timezone_fallback(
+            w,
+            input,
+            datetime_names,
+            fdf,
+            field,
+            &[TimeZoneFormatterUnit::Bcp47Id],
+        )?,
+        (FieldSymbol::TimeZone(fields::TimeZone::IsoWithZ), l) => perform_timezone_fallback(
+            w,
+            input,
+            datetime_names,
+            fdf,
+            field,
+            &[TimeZoneFormatterUnit::Iso8601(Iso8601Format::with_z(l))],
+        )?,
+        (FieldSymbol::TimeZone(fields::TimeZone::Iso), l) => perform_timezone_fallback(
+            w,
+            input,
+            datetime_names,
+            fdf,
+            field,
+            &[TimeZoneFormatterUnit::Iso8601(Iso8601Format::without_z(l))],
+        )?,
+    })
+}
 
-            let mut r = Err(FormatTimeZoneError::Fallback);
-            for unit in time_zone.units(length) {
-                match unit.format(w, input, payloads, fdf)? {
-                    Err(FormatTimeZoneError::Fallback) => {
-                        // Expected, try the next unit
-                        continue;
-                    }
-                    r2 => {
-                        r = r2;
-                        break;
-                    }
-                }
+// Writes an error string for the given symbol
+fn write_value_missing(
+    w: &mut (impl writeable::PartsWrite + ?Sized),
+    field: fields::Field,
+) -> Result<(), fmt::Error> {
+    w.with_part(Part::ERROR, |w| {
+        "{".write_to(w)?;
+        char::from(field.symbol).write_to(w)?;
+        "}".write_to(w)
+    })
+}
+
+fn perform_timezone_fallback(
+    w: &mut (impl writeable::PartsWrite + ?Sized),
+    input: &ExtractedInput,
+    datetime_names: &RawDateTimeNamesBorrowed,
+    fdf: Option<&FixedDecimalFormatter>,
+    field: fields::Field,
+    units: &[TimeZoneFormatterUnit],
+) -> Result<Result<(), DateTimeWriteError>, core::fmt::Error> {
+    let payloads = datetime_names.get_payloads();
+    let mut r = Err(FormatTimeZoneError::Fallback);
+    for unit in units {
+        match unit.format(w, input, payloads, fdf)? {
+            Err(FormatTimeZoneError::Fallback) => {
+                // Expected, try the next unit
+                continue;
             }
+            r2 => {
+                r = r2;
+                break;
+            }
+        }
+    }
 
-            match r {
-                Ok(()) => Ok(()),
-                Err(e) => {
-                    if let Some(offset) = input.offset {
-                        w.with_part(Part::ERROR, |w| {
-                            Iso8601Format {
-                                format: IsoFormat::Basic,
-                                minutes: IsoMinutes::Required,
-                                seconds: IsoSeconds::Optional,
-                            }
-                            .format_infallible(w, offset)
-                        })?;
-                    } else {
-                        write_value_missing(w, field)?;
-                    }
-                    match e {
-                        FormatTimeZoneError::FixedDecimalFormatterNotLoaded => {
-                            Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
-                        }
-                        FormatTimeZoneError::NamesNotLoaded => {
-                            Err(DateTimeWriteError::NamesNotLoaded(field))
-                        }
-                        FormatTimeZoneError::MissingInputField(f) => {
-                            Err(DateTimeWriteError::MissingInputField(f))
-                        }
-                        FormatTimeZoneError::Fallback => {
-                            debug_assert!(false, "timezone fallback chain fell through {input:?}");
-                            Ok(())
-                        }
-                    }
+    Ok(match r {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            if let Some(offset) = input.offset {
+                w.with_part(Part::ERROR, |w| {
+                    Iso8601Format::without_z(field.length).format_infallible(w, offset)
+                })?;
+            } else {
+                write_value_missing(w, field)?;
+            }
+            match e {
+                FormatTimeZoneError::FixedDecimalFormatterNotLoaded => {
+                    Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
+                }
+                FormatTimeZoneError::NamesNotLoaded => {
+                    Err(DateTimeWriteError::NamesNotLoaded(field))
+                }
+                FormatTimeZoneError::MissingInputField(f) => {
+                    Err(DateTimeWriteError::MissingInputField(f))
+                }
+                FormatTimeZoneError::Fallback => {
+                    debug_assert!(false, "timezone fallback chain fell through {input:?}");
+                    Ok(())
                 }
             }
         }
