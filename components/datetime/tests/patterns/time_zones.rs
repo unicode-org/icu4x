@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
+use icu_datetime::{fieldset::dynamic::TimeZoneStyleWithLength, neo_skeleton::{NeoSkeletonLength, NeoTimeZoneStyle}};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -16,35 +16,35 @@ pub struct TimeZoneTest {
     pub expectations: HashMap<String, String>,
 }
 
-pub fn pattern_to_semantic_skeleton(p: &str) -> Option<NeoTimeZoneSkeleton> {
+pub fn pattern_to_semantic_skeleton(p: &str) -> Option<TimeZoneStyleWithLength> {
     Some(match p {
-        "vvvv" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
+        "vvvv" => TimeZoneStyleWithLength::from_style_and_length(
             NeoTimeZoneStyle::Generic,
+            NeoSkeletonLength::Long,
         ),
-        "v" => NeoTimeZoneSkeleton::for_length_and_components(
+        "v" => TimeZoneStyleWithLength::from_style_and_length(
+            NeoTimeZoneStyle::Generic,
             NeoSkeletonLength::Short,
-            NeoTimeZoneStyle::Generic,
         ),
-        "VVVV" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
+        "VVVV" => TimeZoneStyleWithLength::from_style_and_length(
             NeoTimeZoneStyle::Location,
-        ),
-        "zzzz" => NeoTimeZoneSkeleton::for_length_and_components(
             NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Specific,
         ),
-        "z" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Short,
+        "zzzz" => TimeZoneStyleWithLength::from_style_and_length(
             NeoTimeZoneStyle::Specific,
-        ),
-        "OOOO" => NeoTimeZoneSkeleton::for_length_and_components(
             NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Offset,
         ),
-        "O" => NeoTimeZoneSkeleton::for_length_and_components(
+        "z" => TimeZoneStyleWithLength::from_style_and_length(
+            NeoTimeZoneStyle::Specific,
             NeoSkeletonLength::Short,
+        ),
+        "OOOO" => TimeZoneStyleWithLength::from_style_and_length(
             NeoTimeZoneStyle::Offset,
+            NeoSkeletonLength::Long,
+        ),
+        "O" => TimeZoneStyleWithLength::from_style_and_length(
+            NeoTimeZoneStyle::Offset,
+            NeoSkeletonLength::Short,
         ),
         _ => return None,
     })

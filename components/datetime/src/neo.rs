@@ -155,10 +155,6 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -549,10 +545,6 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.

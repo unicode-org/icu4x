@@ -72,6 +72,12 @@ pub struct TimeZoneStyleWithLength {
     pub length: NeoSkeletonLength,
 }
 
+impl TimeZoneStyleWithLength {
+    pub fn from_style_and_length(style: NeoTimeZoneStyle, length: NeoSkeletonLength) -> Self {
+        Self { style, length }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
@@ -98,6 +104,53 @@ pub enum DateAndTimeFieldSet {
     ET(fieldset::ET),
 }
 
+/// An enum supporting date, calendar period, time, and date+time field sets
+/// and options. Time zones are not supported with this enum.
+///
+/// This enum is useful when formatting a type that does not contain a
+/// time zone or to avoid storing time zone data.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum CompositeDateTimeFieldSet {
+    /// Field set for a date.
+    Date(DateFieldSet),
+    /// Field set for a calendar period.
+    CalendarPeriod(CalendarPeriodFieldSet),
+    /// Field set for a time.
+    Time(TimeFieldSet),
+    /// Field set for a date and a time together.
+    DateTime(DateAndTimeFieldSet),
+}
+
+impl CompositeDateTimeFieldSet {
+    /// If the [`CompositeFieldSet`] does not contain a time zone,
+    /// returns the corresponding [`CompositeDateTimeFieldSet`].
+    pub fn try_from_composite_field_set(field_set: CompositeFieldSet) -> Option<Self> {
+        match field_set {
+            CompositeFieldSet::Date(v) => Some(Self::Date(v)),
+            CompositeFieldSet::CalendarPeriod(v) => Some(Self::CalendarPeriod(v)),
+            CompositeFieldSet::Time(v) => Some(Self::Time(v)),
+            CompositeFieldSet::Zone(_) => None,
+            CompositeFieldSet::DateTime(v) => Some(Self::DateTime(v)),
+            CompositeFieldSet::DateZone(_, _) => None,
+            CompositeFieldSet::TimeZone(_, _) => None,
+            CompositeFieldSet::DateTimeZone(_, _) => None,
+        }
+    }
+
+    /// Returns the [`CompositeFieldSet`] corresponding to this
+    /// [`CompositeDateTimeFieldSet`].
+    pub fn to_composite_field_set(self) -> CompositeFieldSet {
+        match self {
+            Self::Date(v) => CompositeFieldSet::Date(v),
+            Self::CalendarPeriod(v) => CompositeFieldSet::CalendarPeriod(v),
+            Self::Time(v) => CompositeFieldSet::Time(v),
+            Self::DateTime(v) => CompositeFieldSet::DateTime(v),
+        }
+    }
+}
+
+/// An enum supporting all possible field sets and options.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(

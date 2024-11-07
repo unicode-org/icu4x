@@ -62,7 +62,12 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => semantic,
+            Some(semantic) => match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
+                Some(v) => v,
+                None => {
+                    panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
+                }
+            },
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -253,7 +258,7 @@ fn assert_fixture_element<A>(
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &TestOutputItem,
-    skeleton: CompositeFieldSet,
+    skeleton: CompositeDateTimeFieldSet,
     description: &str,
 ) where
     A: AsCalendar + Clone,
@@ -360,7 +365,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(preferences, &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                     &locale.into(),
                     skeleton,
                 )
@@ -433,7 +438,7 @@ fn test_time_zone_format_configs() {
             else {
                 continue;
             };
-            let tzf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+            let tzf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                 &data_locale,
                 skeleton,
             )

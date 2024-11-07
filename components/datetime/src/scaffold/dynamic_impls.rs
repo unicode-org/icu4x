@@ -245,20 +245,26 @@ impl DateTimeMarkers for TimeZoneStyleWithLength {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
+impl GetField<CompositeFieldSet> for TimeZoneStyleWithLength {
+    fn get_field(&self) -> CompositeFieldSet {
+        CompositeFieldSet::Zone(*self)
+    }
+}
+
 // impl_get_field!(TimeZoneStyleWithLength, never);
 // impl_get_field!(TimeZoneStyleWithLength, length, yes);
 
-impl UnstableSealed for DateAndTimeFieldSet {}
+impl UnstableSealed for CompositeDateTimeFieldSet {}
 
-// impl GetField<NeoComponents> for DateAndTimeFieldSet {
+// impl GetField<NeoComponents> for CompositeDateTimeFieldSet {
 //     fn get_field(&self) -> NeoComponents {
 //         self.components.into()
 //     }
 // }
 
-// impl IsRuntimeComponents for DateAndTimeFieldSet {}
+// impl IsRuntimeComponents for CompositeDateTimeFieldSet {}
 
-impl DateTimeNamesMarker for DateAndTimeFieldSet {
+impl DateTimeNamesMarker for CompositeDateTimeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
@@ -272,7 +278,7 @@ impl DateTimeNamesMarker for DateAndTimeFieldSet {
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
 }
 
-impl DateTimeMarkers for DateAndTimeFieldSet {
+impl DateTimeMarkers for CompositeDateTimeFieldSet {
     type D = NeoDateSkeleton;
     type T = TimeFieldSet;
     type Z = NeoNeverMarker;
@@ -283,11 +289,17 @@ impl DateTimeMarkers for DateAndTimeFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
-// impl_get_field!(DateAndTimeFieldSet, never);
-// impl_get_field!(DateAndTimeFieldSet, length, yes);
-// impl_get_field!(DateAndTimeFieldSet, alignment, yes);
-// impl_get_field!(DateAndTimeFieldSet, year_style, yes);
-// impl_get_field!(DateAndTimeFieldSet, time_precision, yes);
+impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
+    fn get_field(&self) -> CompositeFieldSet {
+        self.to_composite_field_set()
+    }
+}
+
+// impl_get_field!(CompositeDateTimeFieldSet, never);
+// impl_get_field!(CompositeDateTimeFieldSet, length, yes);
+// impl_get_field!(CompositeDateTimeFieldSet, alignment, yes);
+// impl_get_field!(CompositeDateTimeFieldSet, year_style, yes);
+// impl_get_field!(CompositeDateTimeFieldSet, time_precision, yes);
 
 impl UnstableSealed for CompositeFieldSet {}
 
