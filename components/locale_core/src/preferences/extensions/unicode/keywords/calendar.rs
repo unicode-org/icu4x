@@ -12,13 +12,13 @@ enum_keyword!(
     /// The list is based on [`CLDR Calendars`](https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml)
     IslamicCalendarAlgorithm {
         /// Islamic calendar, Umm al-Qura
-        ("umalqura" => Umalqura),
+        Umalqura,
         /// Hijri calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - astronomical epoch)
-        ("tbla" => Tbla),
+        Tbla,
         /// Islamic calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - civil epoch)
-        ("civil" => Civil),
+        Civil,
         /// Hijri calendar, Saudi Arabia sighting
-        ("rgsa" => Rgsa)
+        Rgsa
 });
 
 enum_keyword!(
@@ -50,13 +50,9 @@ enum_keyword!(
         ("indian" => Indian),
         /// Islamic calendar
         ("islamic" => Islamic(IslamicCalendarAlgorithm) {
-             /// Islamic calendar, Umm al-Qura
              ("umalqura" => Umalqura),
-             /// Hijri calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - astronomical epoch)
              ("tbla" => Tbla),
-             /// Islamic calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - civil epoch)
              ("civil" => Civil),
-             /// Hijri calendar, Saudi Arabia sighting
              ("rgsa" => Rgsa)
         }),
         /// ISO calendar (Gregorian calendar using the ISO 8601 calendar week rules)

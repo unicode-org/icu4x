@@ -9,12 +9,16 @@ macro_rules! __enum_keyword_inner {
     ($name:ident, $variant:ident) => {
         $name::$variant
     };
-    ($name:ident, $variant:ident, $s:ident, $v2:ident) => {{
-        if $s.subtag_count() < 1 {
-            $name::$variant(None)
-        } else {
-            $name::$variant($v2::try_from($s).ok())
-        }
+    ($name:ident, $variant:ident, $s:ident, $v2:ident, $($subk:expr => $subv:ident),*) => {{
+        let sv = $s.get_subtag(1).and_then(|st| {
+            match st.as_str() {
+                $(
+                    $subk => Some($v2::$subv),
+                )*
+                _ => None,
+            }
+        });
+        $name::$variant(sv)
     }};
 }
 
@@ -51,13 +55,8 @@ macro_rules! __enum_keyword {
         $(#[$doc:meta])*
         $name:ident {
             $(
-                $(#[$key_doc:meta])*
-                ($key:expr => $variant:ident $(($v2:ident) {
-                    $(
-                        $(#[$subkey_doc:meta])*
-                        ($subk:expr => $subv:ident)
-                    ),*
-                })?)
+                $(#[$variant_doc:meta])*
+                $variant:ident $($v2:ident)?
             ),*
         }
     ) => {
@@ -66,73 +65,30 @@ macro_rules! __enum_keyword {
         $(#[$doc])*
         pub enum $name {
             $(
-                $(#[$key_doc])*
+                $(#[$variant_doc])*
                 $variant $((Option<$v2>))?
             ),*
-        }
-
-        impl $name {
-            pub(crate) fn extend_value(self, input: &mut $crate::extensions::unicode::Value) {
-                match self {
-                    $(
-                        // This is circumventing a limitation of the macro_rules - we need to have a conditional
-                        // $()? case here for when the variant has a value, and macro_rules require us to
-                        // reference the $v2 inside it, but in match case it becomes a variable, so clippy
-                        // complaints.
-                        #[allow(non_snake_case)]
-                        Self::$variant $(($v2))? => {
-                            input.push_subtag($crate::subtags::subtag!($key));
-
-                            $(
-                                if let Some(v2) = $v2 {
-                                    v2.extend_value(input);
-                                }
-                            )?
-                        },
-                    )*
-                }
-            }
-        }
-
-        impl TryFrom<$crate::extensions::unicode::Value> for $name {
-            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
-
-            fn try_from(mut s: $crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
-                let subtag = s.remove_subtag(0)
-                              .ok_or(Self::Error::InvalidKeywordValue)?;
-                Ok(match subtag.as_str() {
-                    $(
-                        $key => {
-                            $crate::__enum_keyword_inner!($name, $variant$(, s, $v2)?)
-                        }
-                    )*
-                    _ => {
-                        return Err(Self::Error::InvalidKeywordValue);
-                    }
-                })
-            }
-        }
-
-        impl From<$name>  for $crate::extensions::unicode::Value {
-            fn from(input: $name) -> $crate::extensions::unicode::Value {
-                let mut result = $crate::extensions::unicode::Value::default();
-                input.extend_value(&mut result);
-                result
-            }
         }
     };
     ($(#[$doc:meta])* $name:ident {
         $(
-            $(#[$key_doc:meta])*
+            $(#[$variant_doc:meta])*
             ($key:expr => $variant:ident $(($v2:ident) {
                 $(
-                    $(#[$subkey_doc:meta])*
                     ($subk:expr => $subv:ident)
                 ),*
             })?)
         ),* $(,)?
     }, $ext_key:literal) => {
-        $crate::__enum_keyword!($(#[$doc])* $name {$($(#[$key_doc])* ($key => $variant $(($v2) {$(($(#[$subkey_doc])* $subk => $subv)),*})?)),*});
+        $crate::__enum_keyword!(
+            $(#[$doc])*
+            $name {
+                $(
+                    $(#[$variant_doc])*
+                    $variant $($v2)?
+                ),*
+            }
+        );
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
@@ -151,7 +107,86 @@ macro_rules! __enum_keyword {
             }
 
             fn unicode_extension_value(&self) -> Option<$crate::extensions::unicode::Value> {
-                Some(self.clone().into())
+                Some((*self).into())
+            }
+        }
+
+        impl TryFrom<$crate::extensions::unicode::Value> for $name {
+            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
+
+            fn try_from(s: $crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
+                let subtag = s.get_subtag(0)
+                                .ok_or(Self::Error::InvalidKeywordValue)?;
+                Ok(match subtag.as_str() {
+                    $(
+                        $key => {
+                            $crate::__enum_keyword_inner!($name, $variant$(, s, $v2, $($subk => $subv),*)?)
+                        }
+                    )*
+                    _ => {
+                        return Err(Self::Error::InvalidKeywordValue);
+                    }
+                })
+            }
+        }
+
+        impl From<$name>  for $crate::extensions::unicode::Value {
+            fn from(input: $name) -> $crate::extensions::unicode::Value {
+                let mut result = $crate::extensions::unicode::Value::default();
+                input.extend_value(&mut result);
+                result
+            }
+        }
+
+        impl $name {
+            pub(crate) fn extend_value(self, input: &mut $crate::extensions::unicode::Value) {
+                match self {
+                    $(
+                        // This is circumventing a limitation of the macro_rules - we need to have a conditional
+                        // $()? case here for when the variant has a value, and macro_rules require us to
+                        // reference the $v2 inside it, but in match case it becomes a variable, so clippy
+                        // complaints.
+                        #[allow(non_snake_case)]
+                        Self::$variant $(($v2))? => {
+                            input.push_subtag($crate::subtags::subtag!($key));
+
+                            $(
+                                if let Some(v2) = $v2 {
+                                    match v2 {
+                                        $(
+                                            $v2::$subv => input.push_subtag($crate::subtags::subtag!($subk)),
+                                        )*
+                                    }
+                                }
+                            )?
+                        },
+                    )*
+                }
+            }
+
+            /// A helper function for displaying as a `&str`.
+            pub const fn as_str(&self) -> &str {
+                match self {
+                    $(
+                        // This is circumventing a limitation of the macro_rules - we need to have a conditional
+                        // $()? case here for when the variant has a value, and macro_rules require us to
+                        // reference the $v2 inside it, but in match case it becomes a variable, so clippy
+                        // complaints.
+                        #[allow(non_snake_case)]
+                        Self::$variant $(($v2))? => {
+                            $(
+                                if let Some(v2) = $v2 {
+                                    return match v2 {
+                                        $(
+                                            $v2::$subv => concat!($key, '-', $subk),
+                                        )*
+                                    };
+                                }
+                            )?
+                            return $key;
+                        },
+                    )*
+                }
             }
         }
     };
@@ -184,14 +219,13 @@ mod tests {
         let v = unicode::Value::from_str("foo").unwrap();
         let dk = DummyKeyword::try_from(v);
         assert!(dk.is_err());
+
+        assert_eq!(DummyKeyword::Standard.as_str(), "standard");
     }
 
     #[test]
     fn enum_keywords_nested_test() {
-        enum_keyword!(DummySubKeyword {
-            ("standard" => Standard),
-            ("rare" => Rare)
-        });
+        enum_keyword!(DummySubKeyword { Standard, Rare });
 
         enum_keyword!(DummyKeyword {
             ("default" => Default),
@@ -229,5 +263,10 @@ mod tests {
         let dk = DummyKeyword::try_from(v.clone()).unwrap();
         assert_eq!(dk, DummyKeyword::Sub(None));
         assert_eq!(unicode::Value::from(dk), unicode::value!("sub"));
+
+        assert_eq!(
+            DummyKeyword::Sub(Some(DummySubKeyword::Rare)).as_str(),
+            "sub-rare"
+        );
     }
 }
