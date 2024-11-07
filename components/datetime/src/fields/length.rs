@@ -34,11 +34,11 @@ impl std::error::Error for LengthError {}
 pub enum FieldLength {
     /// Numeric: minimum digits
     ///
-    /// Text: same as [`Self::Abbreviated`]
+    /// Text: same as [`Self::Three`]
     One,
     /// Numeric: pad to 2 digits
     ///
-    /// Text: same as [`Self::Abbreviated`]
+    /// Text: same as [`Self::Three`]
     Two,
     /// Numeric: pad to 3 digits
     ///
