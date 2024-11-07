@@ -403,7 +403,7 @@ impl LocaleDisplayNamesFormatter {
             if let Some(script) = locale.id.script {
                 let data = self.locale_data.get();
                 let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
-                let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
+                let cmp = |uvstr: &PotentialUtf8| writeable::cmp_bytes(&id, uvstr).reverse();
                 if let Some(x) = match self.options.style {
                     Some(Style::Short) => data.short_names.get_by(cmp),
                     Some(Style::Long) => data.long_names.get_by(cmp),
@@ -421,7 +421,7 @@ impl LocaleDisplayNamesFormatter {
                 if let Some(region) = locale.id.region {
                     let data = self.locale_data.get();
                     let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
-                    let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
+                    let cmp = |uvstr: &PotentialUtf8| writeable::cmp_bytes(&id, uvstr).reverse();
                     if let Some(x) = match self.options.style {
                         Some(Style::Short) => data.short_names.get_by(cmp),
                         Some(Style::Long) => data.long_names.get_by(cmp),

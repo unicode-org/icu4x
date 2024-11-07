@@ -5,7 +5,7 @@
 //! Documentation on zero-copy deserialization of locale types.
 //!
 //! [`Locale`] and [`LanguageIdentifier`] are highly structured types that cannot be directly
-//! stored in a zero-copy data structure, such as those provided by the [`zerovec`](crate::zerovec) module.
+//! stored in a zero-copy data structure, such as those provided by the [`zerovec`](crate::zerovec) crate.
 //! This page explains how to indirectly store these types in a [`zerovec`](crate::zerovec).
 //!
 //! There are two main use cases, which have different solutions:
@@ -17,13 +17,14 @@
 //! # Lookup
 //!
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
-//! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
+//! and then use [`writeable::cmp_bytes()`] to perform an efficient, zero-allocation comparison.
 //!
 //! To produce more human-readable serialized output, you can use `PotentialUtf8`.
 //!
 //! ```
 //! use icu::locale::Locale;
 //! use potential_utf::PotentialUtf8;
+//! use writeable::Writeable;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from locales to integers
@@ -38,7 +39,7 @@
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(uvstr).reverse());
+//! let value = zm.get_copied_by(|uvstr| writeable::cmp_bytes(&loc, uvstr).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -127,5 +128,4 @@
 //! ```
 //!
 //! [`Locale`]: crate::Locale
-//! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier

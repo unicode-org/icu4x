@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::borrow::Borrow;
-use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::str::FromStr;
 use litemap::LiteMap;
@@ -277,41 +276,6 @@ impl Keywords {
         F: FnMut(&Key) -> bool,
     {
         self.0.retain(|k, _| predicate(k))
-    }
-
-    /// Compare this [`Keywords`] with BCP-47 bytes.
-    ///
-    /// The return value is equivalent to what would happen if you first converted this
-    /// [`Keywords`] to a BCP-47 string and then performed a byte comparison.
-    ///
-    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::Locale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let bcp47_strings: &[&str] =
-    ///     &["ca-hebrew", "ca-japanese", "ca-japanese-nu-latn", "nu-latn"];
-    ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_kwds = format!("und-u-{}", a)
-    ///         .parse::<Locale>()
-    ///         .unwrap()
-    ///         .extensions
-    ///         .unicode
-    ///         .keywords;
-    ///     assert!(a_kwds.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_kwds.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
-    /// ```
-    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {

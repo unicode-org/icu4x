@@ -32,6 +32,7 @@ icu_provider = { workspace = true, features = ["macros"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
+writeable = { workspace = true }
 zerovec = { workspace = true,  features = ["yoke"] }
 
 icu_collections = { workspace = true }

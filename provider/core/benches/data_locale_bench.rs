@@ -29,7 +29,7 @@ fn overview_bench(c: &mut Criterion) {
                 let loc = DataLocale::from_str(s).unwrap();
                 let loc = loc.clone();
                 let s = loc.write_to_string();
-                loc.strict_cmp(s.as_bytes());
+                writeable::cmp_bytes(&loc, s.as_bytes());
             }
         });
     });
@@ -64,11 +64,11 @@ fn data_locale_bench(c: &mut Criterion) {
             }
         });
     });
-    c.bench_function("data_locale/strict_cmp", |b| {
+    c.bench_function("data_locale/writeable_cmp_bytes", |b| {
         b.iter(|| {
             for loc in black_box(&data_locales).iter() {
                 for s in black_box(BCP47_STRINGS).iter() {
-                    loc.strict_cmp(s.as_bytes());
+                    writeable::cmp_bytes(loc, s.as_bytes());
                 }
             }
         });

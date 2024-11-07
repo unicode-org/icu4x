@@ -161,9 +161,9 @@ pub mod ffi {
             }
         }
 
-        #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
+        #[diplomat::rust_link(writeable::cmp_bytes, Fn)]
         pub fn compare_to_string(&self, other: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.strict_cmp(other)
+            writeable::cmp_bytes(&self.0, other)
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]

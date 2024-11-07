@@ -32,13 +32,10 @@ use alloc::borrow::Cow;
 ///
 /// # Ordering
 ///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
 /// multiple possible orderings, and the team did not want to favor one over any other.
 ///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`LanguageIdentifier::strict_cmp`]
-/// - [`LanguageIdentifier::total_cmp`]
+/// Instead, there is a method that returns an ordering: [`LanguageIdentifier::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
@@ -204,43 +201,6 @@ impl LanguageIdentifier {
         Self::normalize_utf8(input.as_bytes())
     }
 
-    /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
-    ///
-    /// The return value is equivalent to what would happen if you first converted this
-    /// [`LanguageIdentifier`] to a BCP-47 string and then performed a byte comparison.
-    ///
-    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::LanguageIdentifier;
-    /// use std::cmp::Ordering;
-    ///
-    /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-Adlm",
-    ///     "und-GB",
-    ///     "und-ZA",
-    ///     "und-fonipa",
-    ///     "zh",
-    /// ];
-    ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
-    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
-    /// ```
-    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
-    }
-
     pub(crate) fn as_tuple(
         &self,
     ) -> (
@@ -255,8 +215,8 @@ impl LanguageIdentifier {
     /// Compare this [`LanguageIdentifier`] with another [`LanguageIdentifier`] field-by-field.
     /// The result is a total ordering sufficient for use in a [`BTreeSet`].
     ///
-    /// Unlike [`LanguageIdentifier::strict_cmp`], the ordering may or may not be equivalent
-    /// to string ordering, and it may or may not be stable across ICU4X releases.
+    /// The ordering may or may not be equivalent to string ordering, and it may or may not be
+    /// stable across ICU4X releases.
     ///
     /// # Examples
     ///

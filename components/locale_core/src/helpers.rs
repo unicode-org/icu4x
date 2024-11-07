@@ -103,19 +103,6 @@ macro_rules! impl_tinystr_subtag {
                 self.0
             }
 
-            /// Compare with BCP-47 bytes.
-            ///
-            /// The return value is equivalent to what would happen if you first converted
-            /// `self` to a BCP-47 string and then performed a byte comparison.
-            ///
-            /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-            /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
-            /// is `self.as_str().as_bytes()`.
-            #[inline]
-            pub fn strict_cmp(self, other: &[u8]) -> core::cmp::Ordering {
-                self.as_str().as_bytes().cmp(other)
-            }
-
             /// Compare with a potentially unnormalized BCP-47 string.
             ///
             /// The return value is equivalent to what would happen if you first parsed the

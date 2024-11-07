@@ -159,7 +159,7 @@ impl BinarySearchKey for Locale {
     type Type = &'static str;
 
     fn cmp(locale: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
-        id.locale.strict_cmp(locale.as_bytes()).reverse()
+        writeable::cmp_bytes(&id.locale, locale.as_bytes()).reverse()
     }
 
     fn to_id(locale: Self::Type) -> DataIdentifierCow<'static> {
@@ -191,7 +191,7 @@ impl BinarySearchKey for AttributesAndLocale {
     fn cmp((attributes, locale): Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering {
         attributes
             .cmp(id.marker_attributes)
-            .then_with(|| id.locale.strict_cmp(locale.as_bytes()).reverse())
+            .then_with(|| writeable::cmp_bytes(&id.locale, locale.as_bytes()).reverse())
     }
 
     fn to_id((attributes, locale): Self::Type) -> DataIdentifierCow<'static> {

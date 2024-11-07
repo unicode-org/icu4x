@@ -236,7 +236,7 @@ impl LocaleFallbackIteratorInner<'_> {
     ) -> Option<(Language, Option<Script>, Option<Region>)> {
         self.parents
             .parents
-            .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
+            .get_copied_by(|uvstr| writeable::cmp_bytes(locale, uvstr).reverse())
     }
 }
 

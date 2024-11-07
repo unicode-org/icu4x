@@ -59,7 +59,7 @@ fn bench_langid_compare_components_str() {
     assert_eq!(result, 2);
 }
 
-fn bench_langid_strict_cmp() {
+fn bench_langid_writeable_cmp_bytes() {
     // Tests the cost of comparing a langid against byte strings.
     use core::cmp::Ordering;
 
@@ -67,7 +67,7 @@ fn bench_langid_strict_cmp() {
 
     let result = LIDS_STR
         .iter()
-        .filter(|s| lid.strict_cmp(s.as_bytes()) == Ordering::Equal)
+        .filter(|s| writeable::cmp_bytes(&lid, s.as_bytes()) == Ordering::Equal)
         .count();
 
     assert_eq!(result, 1);
@@ -116,7 +116,7 @@ iai::main!(
     bench_langid_constr,
     bench_langid_compare_components,
     bench_langid_compare_components_str,
-    bench_langid_strict_cmp,
+    bench_langid_writeable_cmp_bytes,
     bench_langid_matching,
     bench_langid_matching_str,
     bench_langid_serialize,

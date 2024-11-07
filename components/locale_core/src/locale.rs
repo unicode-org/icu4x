@@ -39,13 +39,10 @@ use core::str::FromStr;
 ///
 /// # Ordering
 ///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
 /// multiple possible orderings, and the team did not want to favor one over any other.
 ///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`Locale::strict_cmp`]
-/// - [`Locale::total_cmp`]
+/// Instead, there is a method that returns an ordering: [`Locale::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
@@ -188,43 +185,6 @@ impl Locale {
         Self::normalize_utf8(input.as_bytes())
     }
 
-    /// Compare this [`Locale`] with BCP-47 bytes.
-    ///
-    /// The return value is equivalent to what would happen if you first converted this
-    /// [`Locale`] to a BCP-47 string and then performed a byte comparison.
-    ///
-    /// This function is case-sensitive and results in a *total order*, so it is appropriate for
-    /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::Locale;
-    /// use std::cmp::Ordering;
-    ///
-    /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-fonipa",
-    ///     "und-t-m0-true",
-    ///     "und-u-ca-hebrew",
-    ///     "und-u-ca-japanese",
-    ///     "zh",
-    /// ];
-    ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_loc = a.parse::<Locale>().unwrap();
-    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
-    /// ```
-    pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
-    }
-
     #[allow(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
@@ -258,8 +218,8 @@ impl Locale {
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
     ///
-    /// Unlike [`Locale::strict_cmp`], the ordering may or may not be equivalent
-    /// to string ordering, and it may or may not be stable across ICU4X releases.
+    /// The ordering may or may not be equivalent to string ordering, and it may or may not be
+    /// stable across ICU4X releases.
     ///
     /// # Examples
     ///
