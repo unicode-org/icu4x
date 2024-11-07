@@ -188,7 +188,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     return result;
   }
 
-  /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
+  /// See the [Rust documentation for `cmp_bytes`](https://docs.rs/writeable/latest/writeable/fn.cmp_bytes.html) for more information.
   int compareToString(String other) {
     final temp = _FinalizedArena();
     final result = _icu4x_Locale_compare_to_string_mv1(_ffi, other._utf8AllocIn(temp.arena));
