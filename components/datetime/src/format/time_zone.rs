@@ -44,7 +44,6 @@ pub(super) enum TimeZoneFormatterUnit {
     GenericNonLocation(FieldLength),
     SpecificNonLocation(FieldLength),
     GenericLocation,
-    #[allow(dead_code)]
     SpecificLocation,
     #[allow(dead_code)]
     GenericPartialLocation(FieldLength),

@@ -334,6 +334,20 @@ where
                 Ok(s) => Ok(w.write_str(s)?),
             }
         }
+        (FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation), FieldLength::Four) => {
+            perform_timezone_fallback(
+                w,
+                input,
+                datetime_names,
+                fdf,
+                field,
+                &[
+                    TimeZoneFormatterUnit::SpecificNonLocation(FieldLength::Four),
+                    TimeZoneFormatterUnit::SpecificLocation,
+                    TimeZoneFormatterUnit::LocalizedOffset(FieldLength::Four),
+                ],
+            )?
+        }
         (FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation), l) => {
             perform_timezone_fallback(
                 w,

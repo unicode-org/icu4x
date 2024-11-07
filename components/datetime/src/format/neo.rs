@@ -2110,6 +2110,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         mz_period_provider,
                         locale,
                     )?;
+                    self.load_time_zone_location_names(locations_provider, locale)?;
                 }
 
                 // v

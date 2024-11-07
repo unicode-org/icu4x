@@ -240,20 +240,6 @@
     ],
     [
       [
-        "arme",
-        "Standard"
-      ],
-      "Jermenija, standardno vreme"
-    ],
-    [
-      [
-        "arme",
-        "Daylight"
-      ],
-      "Jermenija, letnje vreme"
-    ],
-    [
-      [
         "arwe",
         "Standard"
       ],
@@ -338,48 +324,6 @@
     ],
     [
       [
-        "azer",
-        "Standard"
-      ],
-      "Azerbejdžan, standardno vreme"
-    ],
-    [
-      [
-        "azer",
-        "Daylight"
-      ],
-      "Azerbejdžan, letnje vreme"
-    ],
-    [
-      [
-        "azor",
-        "Standard"
-      ],
-      "Azori, standardno vreme"
-    ],
-    [
-      [
-        "azor",
-        "Daylight"
-      ],
-      "Azori, letnje vreme"
-    ],
-    [
-      [
-        "bang",
-        "Standard"
-      ],
-      "Bangladeš, standardno vreme"
-    ],
-    [
-      [
-        "bang",
-        "Daylight"
-      ],
-      "Bangladeš, letnje vreme"
-    ],
-    [
-      [
         "bhut",
         "Standard"
       ],
@@ -415,38 +359,10 @@
     ],
     [
       [
-        "cave",
-        "Standard"
-      ],
-      "Zelenortska Ostrva, standardno vreme"
-    ],
-    [
-      [
-        "cave",
-        "Daylight"
-      ],
-      "Zelenortska Ostrva, letnje vreme"
-    ],
-    [
-      [
         "cham",
         "Standard"
       ],
       "Čamoro vreme"
-    ],
-    [
-      [
-        "chat",
-        "Standard"
-      ],
-      "Čatam, standardno vreme"
-    ],
-    [
-      [
-        "chat",
-        "Daylight"
-      ],
-      "Čatam, letnje vreme"
     ],
     [
       [
@@ -492,20 +408,6 @@
     ],
     [
       [
-        "colo",
-        "Standard"
-      ],
-      "Kolumbija, standardno vreme"
-    ],
-    [
-      [
-        "colo",
-        "Daylight"
-      ],
-      "Kolumbija, letnje vreme"
-    ],
-    [
-      [
         "cook",
         "Standard"
       ],
@@ -517,20 +419,6 @@
         "Daylight"
       ],
       "Kukova ostrva, polu-letnje vreme"
-    ],
-    [
-      [
-        "cuba",
-        "Standard"
-      ],
-      "Kuba, standardno vreme"
-    ],
-    [
-      [
-        "cuba",
-        "Daylight"
-      ],
-      "Kuba, letnje vreme"
     ],
     [
       [
@@ -639,20 +527,6 @@
     ],
     [
       [
-        "fiji",
-        "Standard"
-      ],
-      "Fidži, standardno vreme"
-    ],
-    [
-      [
-        "fiji",
-        "Daylight"
-      ],
-      "Fidži, letnje vreme"
-    ],
-    [
-      [
         "frgu",
         "Standard"
       ],
@@ -678,20 +552,6 @@
         "Standard"
       ],
       "Gambije vreme"
-    ],
-    [
-      [
-        "geor",
-        "Standard"
-      ],
-      "Gruzija, standardno vreme"
-    ],
-    [
-      [
-        "geor",
-        "Daylight"
-      ],
-      "Gruzija, letnje vreme"
     ],
     [
       [
@@ -1052,20 +912,6 @@
     ],
     [
       [
-        "maur",
-        "Standard"
-      ],
-      "Mauricijus, standardno vreme"
-    ],
-    [
-      [
-        "maur",
-        "Daylight"
-      ],
-      "Mauricijus, letnje vreme"
-    ],
-    [
-      [
         "maws",
         "Standard"
       ],
@@ -1094,20 +940,6 @@
     ],
     [
       [
-        "mong",
-        "Standard"
-      ],
-      "Ulan Bator, standardno vreme"
-    ],
-    [
-      [
-        "mong",
-        "Daylight"
-      ],
-      "Ulan Bator, letnje vreme"
-    ],
-    [
-      [
         "mosc",
         "Standard"
       ],
@@ -1133,20 +965,6 @@
         "Standard"
       ],
       "Nauru vreme"
-    ],
-    [
-      [
-        "neca",
-        "Standard"
-      ],
-      "Nova Kaledonija, standardno vreme"
-    ],
-    [
-      [
-        "neca",
-        "Daylight"
-      ],
-      "Nova Kaledonija, letnje vreme"
     ],
     [
       [
@@ -1283,66 +1101,10 @@
     ],
     [
       [
-        "para",
-        "Standard"
-      ],
-      "Paragvaj, standardno vreme"
-    ],
-    [
-      [
-        "para",
-        "Daylight"
-      ],
-      "Paragvaj, letnje vreme"
-    ],
-    [
-      [
-        "peru",
-        "Standard"
-      ],
-      "Peru, standardno vreme"
-    ],
-    [
-      [
-        "peru",
-        "Daylight"
-      ],
-      "Peru, letnje vreme"
-    ],
-    [
-      [
-        "phil",
-        "Standard"
-      ],
-      "Filipini, standardno vreme"
-    ],
-    [
-      [
-        "phil",
-        "Daylight"
-      ],
-      "Filipini, letnje vreme"
-    ],
-    [
-      [
         "phis",
         "Standard"
       ],
       "Feniks ostrva vreme"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "Sen Pjer i Mikelon, standardno vreme"
-    ],
-    [
-      [
-        "pimi",
-        "Daylight"
-      ],
-      "Sen Pjer i Mikelon, letnje vreme"
     ],
     [
       [
@@ -1395,20 +1157,6 @@
     ],
     [
       [
-        "sakh",
-        "Standard"
-      ],
-      "Sahalin, standardno vreme"
-    ],
-    [
-      [
-        "sakh",
-        "Daylight"
-      ],
-      "Sahalin, letnje vreme"
-    ],
-    [
-      [
         "sama",
         "Standard"
       ],
@@ -1441,13 +1189,6 @@
         "Standard"
       ],
       "Sejšeli vreme"
-    ],
-    [
-      [
-        "sing",
-        "Standard"
-      ],
-      "Singapur, standardno vreme"
     ],
     [
       [
@@ -1556,20 +1297,6 @@
     ],
     [
       [
-        "urug",
-        "Standard"
-      ],
-      "Urugvaj, standardno vreme"
-    ],
-    [
-      [
-        "urug",
-        "Daylight"
-      ],
-      "Urugvaj, letnje vreme"
-    ],
-    [
-      [
         "uzbe",
         "Standard"
       ],
@@ -1665,20 +1392,6 @@
         "Daylight"
       ],
       "Jakutsk, letnje vreme"
-    ],
-    [
-      [
-        "yeka",
-        "Standard"
-      ],
-      "Jekaterinburg, standardno vreme"
-    ],
-    [
-      [
-        "yeka",
-        "Daylight"
-      ],
-      "Jekaterinburg, letnje vreme"
     ],
     [
       [
