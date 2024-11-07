@@ -239,9 +239,9 @@ fn year_as_gregorian(year: i32) -> types::YearInfo {
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
                 era_year: year,
                 ambiguity: match year {
-                    ..1000 => types::YearAmbiguity::EraAndCenturyRequired,
-                    1000..1950 => types::YearAmbiguity::CenturyRequired,
-                    1950..2050 => types::YearAmbiguity::Unambiguous,
+                    ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
+                    1000..=1949 => types::YearAmbiguity::CenturyRequired,
+                    1950..=2049 => types::YearAmbiguity::Unambiguous,
                     2050.. => types::YearAmbiguity::CenturyRequired,
                 },
             },
