@@ -136,6 +136,7 @@ impl YearInfo {
 /// For example 2024 AD can be formatted as `2024`, or even `24`, but 1931 AD
 /// should not be formatted as `31`, and 2024 BC should not be formatted as `2024`.
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // logically complete
 pub enum YearAmbiguity {
     /// The year is unambiguous without a century or era.
     Unambiguous,
