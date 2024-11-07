@@ -61,6 +61,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
             standard_era: standard_era.into(),
             era_year: year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         },
     )
 }

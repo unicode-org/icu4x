@@ -6,7 +6,7 @@ pub(crate) mod datetime;
 pub(crate) mod neo;
 pub(crate) mod time_zone;
 
-use crate::provider::neo::SimpleSubstitutionPattern;
+use icu_pattern::SinglePlaceholderPattern;
 
 pub(crate) enum GetNameForMonthError {
     Invalid,
@@ -34,5 +34,5 @@ pub(crate) enum GetNameForDayPeriodError {
 pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     Numeric,
-    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
+    NumericPattern(&'a SinglePlaceholderPattern),
 }

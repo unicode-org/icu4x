@@ -294,10 +294,6 @@ impl PluralRules {
         (locale, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
         /// # Examples
         ///
         /// ```
@@ -337,10 +333,6 @@ impl PluralRules {
         ///
         /// * [`One`]: `1 day`
         /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -392,10 +384,6 @@ impl PluralRules {
         /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
         /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
         /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -603,10 +591,6 @@ impl PluralRulesWithRanges<PluralRules> {
         (locale, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
         /// # Examples
         ///
         /// ```
@@ -641,10 +625,6 @@ impl PluralRulesWithRanges<PluralRules> {
         /// compiled data.
         ///
         /// See [`PluralRules::try_new_cardinal`] for more information.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -682,10 +662,6 @@ impl PluralRulesWithRanges<PluralRules> {
         /// compiled data.
         ///
         /// See [`PluralRules::try_new_ordinal`] for more information.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -734,10 +710,6 @@ where
         ///
         /// The provided `locale` **MUST** be the same as the locale provided to the constructor
         /// of `rules`. Otherwise, [`Self::category_for_range`] will return incorrect results.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///

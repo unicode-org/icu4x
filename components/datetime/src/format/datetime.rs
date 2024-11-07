@@ -182,10 +182,22 @@ where
                 }
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     debug_assert!(l == FieldLength::One);
-                    w.write_str(substitution_pattern.get_prefix())?;
-                    let r = try_write_number(w, fdf, month.ordinal.into(), l)?;
-                    w.write_str(substitution_pattern.get_suffix())?;
-                    r
+                    if let Some(fdf) = fdf {
+                        substitution_pattern
+                            .interpolate([fdf.format(
+                                &FixedDecimal::from(month.ordinal).padded_start(l.to_len() as i16),
+                            )])
+                            .write_to(w)?;
+                        Ok(())
+                    } else {
+                        w.with_part(Part::ERROR, |w| {
+                            substitution_pattern
+                                .interpolate([FixedDecimal::from(month.ordinal)
+                                    .padded_start(l.to_len() as i16)])
+                                .write_to(w)
+                        })?;
+                        Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
+                    }
                 }
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))?;
