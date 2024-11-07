@@ -14,6 +14,7 @@ use icu::datetime::provider::neo::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
+use writeable::Writeable;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
@@ -438,16 +439,7 @@ fn months_convert(
             panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
-        let leap = &pattern.leap;
-        let Some(index) = leap.find("{0}") else {
-            panic!("Calendar {calendar} for {locale} has leap pattern {leap}, which does not contain {{0}} placeholder");
-        };
-        let string = leap.replace("{0}", "");
-        let pattern = SimpleSubstitutionPattern {
-            pattern: string.into(),
-            subst_index: index,
-        };
-        return Ok(MonthNamesV1::LeapNumeric(pattern));
+        return Ok(MonthNamesV1::LeapNumeric(Cow::Owned(pattern.leap.0.to_owned())));
     }
 
     let months = data.months.get_symbols(context, length);
@@ -532,7 +524,7 @@ fn months_convert(
                 if symbols[i].is_empty() {
                     continue;
                 }
-                let replaced = leap.replace("{0}", &symbols[i]);
+                let replaced = leap.0.interpolate([&symbols[i]]).write_to_string().into_owned();
                 symbols[nonleap + i] = replaced.into();
             }
             Ok(MonthNamesV1::LeapLinear((&symbols).into()))
