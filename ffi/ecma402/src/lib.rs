@@ -35,20 +35,6 @@ pub mod list;
 #[derive(Debug, Hash, Clone, PartialEq)]
 pub struct DataLocale(icu_provider::DataLocale);
 
-impl DataLocale {
-    /// Creates a `DataLocale` from any other [`ecma402_traits::Locale`]
-    fn from_ecma_locale<L: ecma402_traits::Locale>(other: L) -> Self {
-        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
-        Self(
-            other
-                .to_string()
-                .parse::<icu::locale::Locale>()
-                .unwrap()
-                .into(),
-        )
-    }
-}
-
 impl core::ops::Deref for DataLocale {
     type Target = icu_provider::DataLocale;
     fn deref(&self) -> &Self::Target {

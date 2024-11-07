@@ -107,7 +107,7 @@ fn test_basic() {
         .unwrap()
         .payload;
     let plural_rules =
-        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into())
+        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into())
             .unwrap();
     let patterns_en = &en.get().patterns;
     assert_writeable_eq!(

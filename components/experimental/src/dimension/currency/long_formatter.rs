@@ -80,7 +80,8 @@ impl LongCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal(locale)?;
+        let temp_loc = locale.clone().into_locale();
+        let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
 
         Ok(Self {
             extended,
@@ -127,7 +128,8 @@ impl LongCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+        let temp_loc = locale.clone().into_locale();
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
 
         Ok(Self {
             extended,

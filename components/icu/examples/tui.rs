@@ -67,7 +67,7 @@ fn main() {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&locale!("en").into())
+        let pr = PluralRules::try_new_cardinal(locale!("en").into())
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {

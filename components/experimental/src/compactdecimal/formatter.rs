@@ -87,12 +87,13 @@ impl CompactDecimalFormatter {
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            plural_rules: PluralRules::try_new_cardinal(temp_loc.into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
@@ -128,13 +129,14 @@ impl CompactDecimalFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
@@ -171,12 +173,13 @@ impl CompactDecimalFormatter {
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            plural_rules: PluralRules::try_new_cardinal(temp_loc.into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
@@ -212,13 +215,14 @@ impl CompactDecimalFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
+        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
