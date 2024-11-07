@@ -18,6 +18,9 @@ use icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use zerovec::ule::VarULE;
 
+use crate::fallback::LocaleFallbackPriority;
+use crate::DataMarker;
+
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -277,20 +280,26 @@ impl DataLocale {
         )
     }
 
-    /// Creates a [`DataLocale`] from a list of subtags.
-    pub const fn from_subtags(
-        language: Language,
-        script: Option<Script>,
-        region: Option<Region>,
-        variant: Option<Variant>,
-        subdivision: Option<Subtag>,
+    /// Returns a [`DataLocale`] usable for the marker `M`.
+    pub const fn from_preferences_locale<M: DataMarker>(
+        locale: icu_locale_core::preferences::LocalePreferences,
     ) -> Self {
         Self {
-            language,
-            script,
-            region,
-            variant,
-            subdivision,
+            language: locale.language,
+            script: locale.script,
+            region: match (locale.region, locale.ue_region) {
+                (Some(_), Some(r))
+                    if matches!(
+                        M::INFO.fallback_config.priority,
+                        LocaleFallbackPriority::Region
+                    ) =>
+                {
+                    Some(r)
+                }
+                (r, _) => r,
+            },
+            variant: locale.variant,
+            subdivision: locale.subdivision,
 
             keywords: unicode_ext::Keywords::new(),
         }

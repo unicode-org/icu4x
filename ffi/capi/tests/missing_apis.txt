@@ -154,7 +154,6 @@ icu::list::ListFormatterOptions::default#FnInStruct
 icu::list::ListFormatterOptions::with_length#FnInStruct
 icu::list::ListFormatterPreferences#Struct
 icu::list::ListFormatterPreferences::extend#FnInStruct
-icu::list::ListFormatterPreferences::into_locale#FnInStruct
 icu::locale::preferences::LocalePreferences#Struct
 icu::locale::preferences::LocalePreferences::default#FnInStruct
 icu::locale::preferences::LocalePreferences::extend#FnInStruct
