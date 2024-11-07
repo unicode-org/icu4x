@@ -127,13 +127,8 @@ impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-
         (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

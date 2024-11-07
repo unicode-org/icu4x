@@ -160,10 +160,6 @@ impl SentenceSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         (options: SentenceBreakOptions) -> error: DataError,
         /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new_with_options,
             try_new_with_options_with_any_provider,
