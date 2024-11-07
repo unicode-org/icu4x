@@ -670,12 +670,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// // (note that the padding is ignored in this fallback mode)
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern(&pattern).format(&date),
-    ///     "It is: 2024-7-1",
+    ///     "It is: 2024-07-01",
     ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
-    ///         (12, 13, Part::ERROR), // 7
-    ///         (14, 15, Part::ERROR), // 1
+    ///         (12, 14, Part::ERROR), // 07
+    ///         (15, 17, Part::ERROR), // 01
     ///     ]
     /// );
     /// ```
@@ -2165,8 +2165,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
 
                 ///// Numeric symbols /////
 
-                // y+, r+
-                (FS::Year(Year::Calendar | Year::RelatedIso), _) => load_fdf = true,
+                // y+
+                (FS::Year(Year::Calendar), _) => load_fdf = true,
+                // r+
+                (FS::Year(Year::RelatedIso), _) => {
+                    // always formats as ASCII
+                }
 
                 // M..MM, L..LL
                 (FS::Month(_), One | Two) => load_fdf = true,

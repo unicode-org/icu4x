@@ -440,30 +440,6 @@ impl FormatTimeZone for GenericPartialLocationFormat {
     }
 }
 
-/// Determines which ISO-8601 format should be used to format the timezone offset.
-#[derive(Debug, Clone, Copy, PartialEq)]
-enum IsoFormat {
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +0500, +0000
-    Basic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +05:00, +00:00
-    Extended,
-
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +0500, Z
-    UtcBasic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +05:00, Z
-    UtcExtended,
-}
-
 /// Whether the minutes field should be optional or required in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum IsoMinutes {
@@ -486,7 +462,10 @@ enum IsoSeconds {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct Iso8601Format {
-    format: IsoFormat,
+    // 1000 vs 10:00
+    extended: bool,
+    // 00:00 vs Z
+    z: bool,
     minutes: IsoMinutes,
     seconds: IsoSeconds,
 }
@@ -495,27 +474,32 @@ impl Iso8601Format {
     pub(crate) fn with_z(length: FieldLength) -> Self {
         match length {
             FieldLength::One => Self {
-                format: IsoFormat::UtcBasic,
+                extended: false,
+                z: true,
                 minutes: IsoMinutes::Optional,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Two => Self {
-                format: IsoFormat::UtcBasic,
+                extended: false,
+                z: true,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Three => Self {
-                format: IsoFormat::UtcExtended,
+                extended: true,
+                z: true,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Four => Self {
-                format: IsoFormat::UtcBasic,
+                extended: false,
+                z: true,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
             },
             _ => Self {
-                format: IsoFormat::UtcExtended,
+                extended: true,
+                z: true,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
             },
@@ -525,27 +509,32 @@ impl Iso8601Format {
     pub(crate) fn without_z(length: FieldLength) -> Self {
         match length {
             FieldLength::One => Self {
-                format: IsoFormat::Basic,
+                extended: false,
+                z: false,
                 minutes: IsoMinutes::Optional,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Two => Self {
-                format: IsoFormat::Basic,
+                extended: false,
+                z: false,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Three => Self {
-                format: IsoFormat::Extended,
+                extended: true,
+                z: false,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Never,
             },
             FieldLength::Four => Self {
-                format: IsoFormat::Basic,
+                extended: false,
+                z: false,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
             },
             _ => Self {
-                format: IsoFormat::Extended,
+                extended: true,
+                z: false,
                 minutes: IsoMinutes::Required,
                 seconds: IsoSeconds::Optional,
             },
@@ -586,40 +575,33 @@ impl Iso8601Format {
         sink: &mut W,
         offset: UtcOffset,
     ) -> Result<(), fmt::Error> {
-        fn format_time_segment<W: writeable::PartsWrite + ?Sized>(
-            sink: &mut W,
-            n: u32,
-        ) -> fmt::Result {
-            if n < 10 {
-                sink.write_char('0')?;
-            }
-            n.write_to(sink)
-        }
-
-        if offset.is_zero() && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended) {
+        if offset.is_zero() && self.z {
             return sink.write_char('Z');
         }
 
-        let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
-
-        sink.write_char(if offset.is_non_negative() { '+' } else { '-' })?;
-
-        format_time_segment(sink, offset.hours_part().unsigned_abs())?;
+        FixedDecimal::from(offset.hours_part())
+            .padded_start(2)
+            .with_sign_display(fixed_decimal::SignDisplay::Always)
+            .write_to(sink)?;
 
         if self.minutes == IsoMinutes::Required
             || (self.minutes == IsoMinutes::Optional && offset.minutes_part() != 0)
         {
-            if extended_format {
+            if self.extended {
                 sink.write_char(':')?;
             }
-            format_time_segment(sink, offset.minutes_part())?;
+            FixedDecimal::from(offset.minutes_part())
+                .padded_start(2)
+                .write_to(sink)?;
         }
 
         if self.seconds == IsoSeconds::Optional && offset.seconds_part() != 0 {
-            if extended_format {
+            if self.extended {
                 sink.write_char(':')?;
             }
-            format_time_segment(sink, offset.seconds_part())?;
+            FixedDecimal::from(offset.seconds_part())
+                .padded_start(2)
+                .write_to(sink)?;
         }
 
         Ok(())

@@ -30,16 +30,9 @@ fn try_write_number<W>(
 where
     W: writeable::PartsWrite + ?Sized,
 {
-    if let Some(fdf) = fixed_decimal_format {
-        num.pad_start(match length {
-            FieldLength::One | FieldLength::NumericOverride(_) => 1,
-            FieldLength::Two => 2,
-            FieldLength::Three => 3,
-            FieldLength::Four => 4,
-            FieldLength::Five => 5,
-            FieldLength::Six => 6,
-        });
+    num.pad_start(length.to_len() as i16);
 
+    if let Some(fdf) = fixed_decimal_format {
         fdf.format(&num).write_to(result)?;
         Ok(Ok(()))
     } else {
@@ -167,8 +160,10 @@ where
             input!(year = input.year);
             input!(related_iso = year.related_iso());
 
-            // TODO: This should use a latin FDF
-            try_write_number(w, fdf, related_iso.into(), l)?
+            FixedDecimal::from(related_iso)
+                .padded_start(l.to_len() as i16)
+                .write_to(w)?;
+            Ok(())
         }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             input!(month = input.month);
