@@ -401,9 +401,9 @@ mod tests {
             (
                 "dd/MM/y",
                 vec![
-                    (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
+                    (fields::Day::DayOfMonth.into(), FieldLength::Two).into(),
                     '/'.into(),
-                    (fields::Month::Format.into(), FieldLength::TwoDigit).into(),
+                    (fields::Month::Format.into(), FieldLength::Two).into(),
                     '/'.into(),
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
                 ],
@@ -411,11 +411,11 @@ mod tests {
             (
                 "HH:mm:ss",
                 vec![
-                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H23.into(), FieldLength::Two).into(),
                     ':'.into(),
-                    (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                    (FieldSymbol::Minute, FieldLength::Two).into(),
                     ':'.into(),
-                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (
@@ -432,15 +432,11 @@ mod tests {
             (
                 "HH:mm:ss.SS",
                 vec![
-                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H23.into(), FieldLength::Two).into(),
                     ':'.into(),
-                    (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                    (FieldSymbol::Minute, FieldLength::Two).into(),
                     ':'.into(),
-                    (
-                        fields::DecimalSecond::SecondF2.into(),
-                        FieldLength::TwoDigit,
-                    )
-                        .into(),
+                    (fields::DecimalSecond::SecondF2.into(), FieldLength::Two).into(),
                 ],
             ),
         ];
@@ -507,7 +503,7 @@ mod tests {
             ),
             (
                 "yy",
-                vec![(fields::Year::Calendar.into(), FieldLength::TwoDigit).into()],
+                vec![(fields::Year::Calendar.into(), FieldLength::Two).into()],
             ),
             (
                 "yyy",
@@ -550,7 +546,7 @@ mod tests {
             (
                 "hh''a",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
@@ -558,7 +554,7 @@ mod tests {
             (
                 "hh''b",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
@@ -598,7 +594,7 @@ mod tests {
             (
                 "hh 'o''clock' a",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     ' '.into(),
                     'o'.into(),
                     '\''.into(),
@@ -614,7 +610,7 @@ mod tests {
             (
                 "hh 'o''clock' b",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     ' '.into(),
                     'o'.into(),
                     '\''.into(),
@@ -630,7 +626,7 @@ mod tests {
             (
                 "hh''a",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
@@ -638,7 +634,7 @@ mod tests {
             (
                 "hh''b",
                 vec![
-                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H12.into(), FieldLength::Two).into(),
                     '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
@@ -691,14 +687,14 @@ mod tests {
                 "s.SSss",
                 vec![
                     (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
-                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (
                 "sSSss",
                 vec![
                     (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
-                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (
@@ -718,7 +714,7 @@ mod tests {
                 vec![
                     (fields::Second::Second.into(), FieldLength::One).into(),
                     '.'.into(),
-                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                    (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (

@@ -35,7 +35,7 @@ pub enum FieldLength {
     /// Typical style is 1-2 digits. For numeric-only fields.
     One,
     /// Typical style is 2 digits. For numeric-only fields.
-    TwoDigit,
+    Two,
     /// Abbreviated (spellout) format.
     Abbreviated,
     /// Wide / Long / Full  (spellout) format.
@@ -65,7 +65,7 @@ impl FieldLength {
     pub(crate) fn idx(&self) -> u8 {
         match self {
             FieldLength::One => 1,
-            FieldLength::TwoDigit => 2,
+            FieldLength::Two => 2,
             FieldLength::Abbreviated => 3,
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
@@ -80,7 +80,7 @@ impl FieldLength {
     pub(crate) fn from_idx(idx: u8) -> Result<Self, LengthError> {
         Ok(match idx {
             1 => Self::One,
-            2 => Self::TwoDigit,
+            2 => Self::Two,
             3 => Self::Abbreviated,
             4 => Self::Wide,
             5 => Self::Narrow,
@@ -96,7 +96,7 @@ impl FieldLength {
     pub(crate) fn to_len(self) -> usize {
         match self {
             FieldLength::One => 1,
-            FieldLength::TwoDigit => 2,
+            FieldLength::Two => 2,
             FieldLength::Abbreviated => 3,
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
@@ -111,7 +111,7 @@ impl FieldLength {
     /// This function maps field lengths 1 and 2 to field length 3.
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
-            FieldLength::One | FieldLength::TwoDigit => FieldLength::Abbreviated,
+            FieldLength::One | FieldLength::Two => FieldLength::Abbreviated,
             other => other,
         }
     }

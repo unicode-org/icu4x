@@ -311,8 +311,8 @@ mod test {
     fn test_pattern_item_as_ule() {
         let samples = [
             (
-                PatternItem::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                PatternItem::from((FieldSymbol::Minute, FieldLength::Two)),
+                [0x80, FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
                 PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),

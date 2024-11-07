@@ -2049,7 +2049,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 ///// Textual symbols /////
 
                 // G..GGGGG
-                (FS::Era, One | TwoDigit | Abbreviated | Wide | Narrow) => {
+                (FS::Era, One | Two | Abbreviated | Wide | Narrow) => {
                     self.load_year_names(year_provider, locale, field.length)?;
                 }
 
@@ -2064,7 +2064,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 }
 
                 // E..EE
-                (FS::Weekday(Weekday::Format), One | TwoDigit) => {
+                (FS::Weekday(Weekday::Format), One | Two) => {
                     self.load_weekday_names(
                         weekday_provider,
                         locale,
@@ -2078,19 +2078,19 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 }
 
                 // a..aaaaa, b..bbbbb
-                (FS::DayPeriod(_), One | TwoDigit | Abbreviated | Wide | Narrow) => {
+                (FS::DayPeriod(_), One | Two | Abbreviated | Wide | Narrow) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
 
                 // U..UUUUU
-                (FS::Year(Year::Cyclic), One | TwoDigit | Abbreviated | Wide | Narrow) => {
+                (FS::Year(Year::Cyclic), One | Two | Abbreviated | Wide | Narrow) => {
                     // hard coded at the moment
                 }
 
                 ///// Time zone symbols /////
 
                 // z..zzz
-                (FS::TimeZone(TimeZone::SpecificNonLocation), One | TwoDigit | Abbreviated) => {
+                (FS::TimeZone(TimeZone::SpecificNonLocation), One | Two | Abbreviated) => {
                     load_fdf = true;
                     self.load_time_zone_essentials(zone_essentials_provider, locale)?;
                     self.load_time_zone_specific_short_names(
@@ -2155,7 +2155,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 // X..XXXXX, x..xxxxx
                 (
                     FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
-                    One | TwoDigit | Abbreviated | Wide | Narrow,
+                    One | Two | Abbreviated | Wide | Narrow,
                 ) => {
                     // no data required
                 }
@@ -2166,34 +2166,32 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 (FS::Year(Year::Calendar | Year::RelatedIso), _) => load_fdf = true,
 
                 // M..MM, L..LL
-                (FS::Month(_), One | TwoDigit) => load_fdf = true,
+                (FS::Month(_), One | Two) => load_fdf = true,
 
                 // e..ee, c..cc
-                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | TwoDigit) => {
-                    load_fdf = true
-                }
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => load_fdf = true,
 
                 // d..dd
-                (FS::Day(Day::DayOfMonth), One | TwoDigit) => load_fdf = true,
+                (FS::Day(Day::DayOfMonth), One | Two) => load_fdf = true,
                 // D..DDD
-                (FS::Day(Day::DayOfYear), One | TwoDigit | Abbreviated) => load_fdf = true,
+                (FS::Day(Day::DayOfYear), One | Two | Abbreviated) => load_fdf = true,
                 // F
                 (FS::Day(Day::DayOfWeekInMonth), One) => load_fdf = true,
 
                 // K..KK, h..hh, H..HH, k..kk
-                (FS::Hour(_), One | TwoDigit) => load_fdf = true,
+                (FS::Hour(_), One | Two) => load_fdf = true,
 
                 // m..mm
-                (FS::Minute, One | TwoDigit) => load_fdf = true,
+                (FS::Minute, One | Two) => load_fdf = true,
 
                 // s..ss
-                (FS::Second(Second::Second), One | TwoDigit) => load_fdf = true,
+                (FS::Second(Second::Second), One | Two) => load_fdf = true,
 
                 // A
                 (FS::Second(Second::MillisInDay), _) => load_fdf = true,
 
                 // s.S, ss.S, s.SS, ss.SS, s.SSS, ...
-                (FS::DecimalSecond(_), One | TwoDigit) => load_fdf = true,
+                (FS::DecimalSecond(_), One | Two) => load_fdf = true,
 
                 ///// Unsupported symbols /////
                 _ => {

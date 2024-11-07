@@ -113,8 +113,8 @@ mod test {
     fn test_field_as_ule() {
         let samples = [
             (
-                Field::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                Field::from((FieldSymbol::Minute, FieldLength::Two)),
+                [FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
                 Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),

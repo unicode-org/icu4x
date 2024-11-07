@@ -51,7 +51,7 @@ impl TimeZone {
                 None,
                 None,
             ],
-            (Self::IsoWithZ, FieldLength::TwoDigit) => [
+            (Self::IsoWithZ, FieldLength::Two) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::UtcBasic,
                     minutes: IsoMinutes::Required,
@@ -96,7 +96,7 @@ impl TimeZone {
                 None,
                 None,
             ],
-            (Self::Iso, FieldLength::TwoDigit) => [
+            (Self::Iso, FieldLength::Two) => [
                 Some(TimeZoneFormatterUnit::Iso8601(Iso8601Format {
                     format: IsoFormat::Basic,
                     minutes: IsoMinutes::Required,

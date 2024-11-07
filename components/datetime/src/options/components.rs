@@ -212,7 +212,7 @@ impl Bag {
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
                     Year::Numeric | Year::NumericWeekOf => FieldLength::One,
-                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
+                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::Two,
                 },
             });
         }
@@ -233,7 +233,7 @@ impl Bag {
                     // MMMM   September  Wide
                     // MMMMM  S          Narrow
                     Month::Numeric => FieldLength::One,
-                    Month::TwoDigit => FieldLength::TwoDigit,
+                    Month::TwoDigit => FieldLength::Two,
                     Month::Long => FieldLength::Wide,
                     Month::Short => FieldLength::Abbreviated,
                     Month::Narrow => FieldLength::Narrow,
@@ -252,7 +252,7 @@ impl Bag {
                 }),
                 length: match week {
                     Week::WeekOfMonth | Week::NumericWeekOfYear => FieldLength::One,
-                    Week::TwoDigitWeekOfYear => FieldLength::TwoDigit,
+                    Week::TwoDigitWeekOfYear => FieldLength::Two,
                 },
             });
         }
@@ -274,7 +274,7 @@ impl Bag {
                     Day::NumericDayOfMonth | Day::DayOfWeekInMonth | Day::DayOfYear => {
                         FieldLength::One
                     }
-                    Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
+                    Day::TwoDigitDayOfMonth => FieldLength::Two,
                 },
             });
         }
@@ -340,7 +340,7 @@ impl Bag {
                     // h     1, 12  Numeric: minimum digits
                     // hh   01, 12  Numeric: 2 digits, zero pad if needed
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
         }
@@ -352,7 +352,7 @@ impl Bag {
                 symbol: FieldSymbol::Minute,
                 length: match minute {
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
         }
@@ -370,7 +370,7 @@ impl Bag {
                 symbol,
                 length: match second {
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
             // S - Fractional seconds. Represented as DecimalSecond.
@@ -674,7 +674,7 @@ impl From<&Pattern<'_>> for Bag {
                     bag.era = Some(match field.length {
                         FieldLength::One
                         | FieldLength::NumericOverride(_)
-                        | FieldLength::TwoDigit
+                        | FieldLength::Two
                         | FieldLength::Abbreviated => Text::Short,
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six => Text::Narrow,
@@ -683,7 +683,7 @@ impl From<&Pattern<'_>> for Bag {
                 FieldSymbol::Year(year) => {
                     bag.year = Some(match year {
                         fields::Year::Calendar => match field.length {
-                            FieldLength::TwoDigit => Year::TwoDigit,
+                            FieldLength::Two => Year::TwoDigit,
                             _ => Year::Numeric,
                         },
                         // fields::Year::WeekOf => match field.length {
@@ -700,7 +700,7 @@ impl From<&Pattern<'_>> for Bag {
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
-                        FieldLength::TwoDigit => Month::TwoDigit,
+                        FieldLength::Two => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
                         FieldLength::Narrow | FieldLength::Six => Month::Narrow,
@@ -719,7 +719,7 @@ impl From<&Pattern<'_>> for Bag {
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
                         fields::Day::DayOfMonth => match field.length {
-                            FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
+                            FieldLength::Two => Day::TwoDigitDayOfMonth,
                             _ => Day::NumericDayOfMonth,
                         },
                         fields::Day::DayOfYear => Day::DayOfYear,
@@ -729,7 +729,7 @@ impl From<&Pattern<'_>> for Bag {
                 FieldSymbol::Weekday(weekday) => {
                     bag.weekday = Some(match weekday {
                         fields::Weekday::Format => match field.length {
-                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
+                            FieldLength::One | FieldLength::Two | FieldLength::Abbreviated => {
                                 Text::Short
                             }
                             FieldLength::Wide => Text::Long,
@@ -737,7 +737,7 @@ impl From<&Pattern<'_>> for Bag {
                         },
                         fields::Weekday::StandAlone => match field.length {
                             FieldLength::One
-                            | FieldLength::TwoDigit
+                            | FieldLength::Two
                             | FieldLength::NumericOverride(_) => {
                                 // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
                                 // no way to request it using the current system. As of 2021-12-06
@@ -774,7 +774,7 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::Hour(hour) => {
                     bag.hour = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                     bag.preferences = Some(preferences::Bag {
@@ -788,14 +788,14 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::Minute => {
                     bag.minute = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                 }
                 FieldSymbol::Second(second) => match second {
                     fields::Second::Second => {
                         bag.second = Some(match field.length {
-                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            FieldLength::Two => Numeric::TwoDigit,
                             _ => Numeric::Numeric,
                         });
                     }
@@ -804,7 +804,7 @@ impl From<&Pattern<'_>> for Bag {
                 FieldSymbol::DecimalSecond(decimal_second) => {
                     use FractionalSecondDigits::*;
                     bag.second = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                     bag.fractional_second = Some(match decimal_second {
@@ -898,7 +898,7 @@ mod test {
             bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
-                (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),
+                (Symbol::Month(fields::Month::Format), Length::Two).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
             ]
         );

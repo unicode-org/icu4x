@@ -34,25 +34,14 @@ where
     W: writeable::PartsWrite + ?Sized,
 {
     if let Some(fdf) = fixed_decimal_format {
-        match length {
-            FieldLength::One | FieldLength::NumericOverride(_) => {}
-            FieldLength::TwoDigit => {
-                num.pad_start(2);
-                num.set_max_position(2);
-            }
-            FieldLength::Abbreviated => {
-                num.pad_start(3);
-            }
-            FieldLength::Wide => {
-                num.pad_start(4);
-            }
-            FieldLength::Narrow => {
-                num.pad_start(5);
-            }
-            FieldLength::Six => {
-                num.pad_start(6);
-            }
-        }
+        num.pad_start(match length {
+            FieldLength::One | FieldLength::NumericOverride(_) => 1,
+            FieldLength::Two => 2,
+            FieldLength::Abbreviated => 3,
+            FieldLength::Wide => 4,
+            FieldLength::Narrow => 5,
+            FieldLength::Six => 6,
+        });
 
         fdf.format(&num).write_to(result)?;
         Ok(Ok(()))
@@ -152,7 +141,12 @@ where
         }
         (FieldSymbol::Year(Year::Calendar), l) => {
             input!(year = input.year);
-            try_write_number(w, fdf, year.era_year_or_extended().into(), l)?
+            let mut year = FixedDecimal::from(year.era_year_or_extended());
+            if matches!(l, FieldLength::Two) {
+                // 'yy' and 'YY' truncate
+                year.set_max_position(2);
+            }
+            try_write_number(w, fdf, year, l)?
         }
         (FieldSymbol::Year(Year::Cyclic), l) => {
             input!(year = input.year);
@@ -196,7 +190,7 @@ where
 
             try_write_number(w, fdf, related_iso.into(), l)?
         }
-        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::TwoDigit)) => {
+        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             input!(month = input.month);
             try_write_number(w, fdf, month.ordinal.into(), l)?
         }
@@ -419,7 +413,7 @@ mod tests {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
             (FieldLength::One, ["2", "20", "201", "2017", "20173"]),
-            (FieldLength::TwoDigit, ["02", "20", "01", "17", "73"]),
+            (FieldLength::Two, ["02", "20", "201", "2017", "20173"]),
             (
                 FieldLength::Abbreviated,
                 ["002", "020", "201", "2017", "20173"],

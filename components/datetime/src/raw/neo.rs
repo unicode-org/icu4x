@@ -888,7 +888,7 @@ impl<'a> ItemsAndOptions<'a> {
                                 | FieldSymbol::Hour(_)
                         )
                     {
-                        field.length = FieldLength::TwoDigit;
+                        field.length = FieldLength::Two;
                     }
                     if let Some(hour_cycle) = self.hour_cycle {
                         if let FieldSymbol::Hour(_) = field.symbol {
