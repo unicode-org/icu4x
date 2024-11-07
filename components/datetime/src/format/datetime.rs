@@ -160,6 +160,7 @@ where
             input!(year = input.year);
             input!(related_iso = year.related_iso());
 
+            // Always in latin digits according to spec
             FixedDecimal::from(related_iso)
                 .padded_start(l.to_len() as i16)
                 .write_to(w)?;

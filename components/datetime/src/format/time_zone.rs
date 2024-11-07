@@ -579,6 +579,7 @@ impl Iso8601Format {
             return sink.write_char('Z');
         }
 
+        // Always in latin digits according to spec
         FixedDecimal::from(offset.hours_part())
             .padded_start(2)
             .with_sign_display(fixed_decimal::SignDisplay::Always)
