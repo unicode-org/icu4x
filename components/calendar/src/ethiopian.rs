@@ -324,7 +324,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethiopic-inverse").into(),
                     formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Pre-Incarnation")),
                     era_year: 1 - year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
                 },
             )
         }

@@ -323,7 +323,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "coptic-inverse").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
                 era_year: 1 - year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             },
         )
     }
