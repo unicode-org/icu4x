@@ -321,6 +321,8 @@ icu::plurals::PluralElements::with_zero_value#FnInStruct
 icu::plurals::PluralElements::zero#FnInStruct
 icu::plurals::PluralOperands::is_exactly_one#FnInStruct
 icu::plurals::PluralOperands::is_exactly_zero#FnInStruct
+icu::plurals::PluralRulesPreferences#Struct
+icu::plurals::PluralRulesPreferences::extend#FnInStruct
 icu::properties::PropertyNamesLong#Struct
 icu::properties::PropertyNamesLong::new#FnInStruct
 icu::properties::PropertyNamesLongBorrowed#Struct
