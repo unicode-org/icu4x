@@ -130,7 +130,7 @@ where
             input!(year = input.year);
             input!(cyclic = year.cyclic());
 
-            match datetime_names.get_name_for_cyclic(l, cyclic, input.any_calendar_kind) {
+            match datetime_names.get_name_for_cyclic(l, cyclic) {
                 Ok(name) => Ok(w.write_str(name)?),
                 Err(e) => {
                     w.with_part(Part::ERROR, |w| {

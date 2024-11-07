@@ -22,10 +22,7 @@ pub(crate) enum GetSymbolForEraError {
 }
 
 pub(crate) enum GetSymbolForCyclicYearError {
-    Invalid {
-        max: usize,
-    },
-    #[allow(dead_code)] // TODO(#3761)
+    Invalid { max: usize },
     NotLoaded,
 }
 

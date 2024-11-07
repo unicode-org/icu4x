@@ -28,7 +28,6 @@ use core::marker::PhantomData;
 use core::num::NonZeroU8;
 use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
-use icu_calendar::AnyCalendarKind;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -2058,7 +2057,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 // U..UUUUU
                 (FS::Year(Year::Cyclic), One | Two | Three | Four | Five) => {
                     load_fdf = true;
-                    // TODO(#3761): Load data
+                    self.load_year_names(year_provider, locale, field.length)?;
                 }
 
                 // MMM..MMMMM
@@ -2576,6 +2575,29 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         }
     }
 
+    pub(crate) fn get_name_for_cyclic(
+        &self,
+        field_length: FieldLength,
+        cyclic: NonZeroU8,
+    ) -> Result<&str, GetSymbolForCyclicYearError> {
+        // UTS 35 says that "U..UUU" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        let year_names = self
+            .year_names
+            .get_with_variables(field_length)
+            .ok_or(GetSymbolForCyclicYearError::NotLoaded)?;
+
+        let YearNamesV1::Cyclic(cyclics) = year_names else {
+            return Err(GetSymbolForCyclicYearError::Invalid { max: 0 });
+        };
+
+        cyclics
+            .get((cyclic.get() as usize) - 1)
+            .ok_or(GetSymbolForCyclicYearError::Invalid {
+                max: cyclics.len() + 1,
+            })
+    }
+
     pub(crate) fn get_name_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
@@ -2597,41 +2619,6 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             _ => dayperiod_names.pm(),
         };
         option_value.ok_or(GetNameForDayPeriodError::NotLoaded)
-    }
-
-    pub(crate) fn get_name_for_cyclic(
-        &self,
-        _field_length: FieldLength,
-        cyclic: NonZeroU8,
-        any_calendar_kind: Option<AnyCalendarKind>,
-    ) -> Result<&str, GetSymbolForCyclicYearError> {
-        // TODO(#3761): This is a hack, we should use actual data for cyclic years
-
-        let cyclics: &[&str; 60] = match any_calendar_kind {
-            Some(AnyCalendarKind::Dangi) => &[
-                "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유",
-                "갑술", "을해", "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미",
-                "갑신", "을유", "병술", "정해", "무자", "기축", "경인", "신묘", "임진", "계사",
-                "갑오", "을미", "병신", "정유", "무술", "기해", "경자", "신축", "임인", "계묘",
-                "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해", "임자", "계축",
-                "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
-            ],
-            // for now assume all other calendars use the stem-branch model
-            _ => &[
-                "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉",
-                "甲戌", "乙亥", "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未",
-                "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
-                "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯",
-                "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥", "壬子", "癸丑",
-                "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
-            ],
-        };
-
-        cyclics.get((cyclic.get() as usize) - 1).copied().ok_or(
-            GetSymbolForCyclicYearError::Invalid {
-                max: cyclics.len() + 1,
-            },
-        )
     }
 }
 
