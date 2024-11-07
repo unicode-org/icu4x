@@ -2192,8 +2192,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 // A
                 (FS::Second(Second::MillisInDay), _) => load_fdf = true,
 
-                // ???
-                (FS::DecimalSecond(_), _) => load_fdf = true,
+                // s.S, ss.S, s.SS, ss.SS, s.SSS, ...
+                (FS::DecimalSecond(_), One | TwoDigit) => load_fdf = true,
 
                 ///// Unsupported symbols /////
                 _ => {

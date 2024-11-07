@@ -224,6 +224,7 @@ fn iso_year_as_buddhist(year: i32) -> types::YearInfo {
             standard_era: tinystr!(16, "buddhist").into(),
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
             era_year: buddhist_year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         },
     )
 }
