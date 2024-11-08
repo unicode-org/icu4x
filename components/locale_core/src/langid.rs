@@ -30,15 +30,6 @@ use alloc::borrow::Cow;
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
-/// # Ordering
-///
-/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
-///
-/// Instead, there is a method that returns an ordering: [`LanguageIdentifier::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
-///
 /// # Examples
 ///
 /// Simple example:
