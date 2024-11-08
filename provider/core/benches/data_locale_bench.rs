@@ -29,7 +29,7 @@ fn overview_bench(c: &mut Criterion) {
                 let loc = DataLocale::from_str(s).unwrap();
                 let loc = loc.clone();
                 let s = loc.write_to_string();
-                writeable::cmp_bytes(&loc, s.as_bytes());
+                writeable::cmp_str(&loc, &s);
             }
         });
     });
@@ -68,7 +68,7 @@ fn data_locale_bench(c: &mut Criterion) {
         b.iter(|| {
             for loc in black_box(&data_locales).iter() {
                 for s in black_box(BCP47_STRINGS).iter() {
-                    writeable::cmp_bytes(loc, s.as_bytes());
+                    writeable::cmp_str(loc, s);
                 }
             }
         });

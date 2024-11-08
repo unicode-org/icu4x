@@ -134,7 +134,7 @@ fn writeable_benches(c: &mut Criterion) {
             .into_owned()
         });
     });
-    c.bench_function("writeable/cmp_bytes", |b| {
+    c.bench_function("writeable/cmp_str", |b| {
         b.iter(|| {
             let short = black_box(SHORT_STR);
             let medium = black_box(MEDIUM_STR);
@@ -143,7 +143,7 @@ fn writeable_benches(c: &mut Criterion) {
             [short, medium, long, long_overlap].map(|s1| {
                 [short, medium, long, long_overlap].map(|s2| {
                     let message = WriteableMessage { message: s1 };
-                    writeable::cmp_bytes(&message, s2.as_bytes())
+                    writeable::cmp_str(&message, s2)
                 })
             })
         });
@@ -238,10 +238,10 @@ fn complex_benches(c: &mut Criterion) {
         MEDIUM_STR,
         LONG_STR,
     ];
-    c.bench_function("complex/cmp_bytes", |b| {
+    c.bench_function("complex/cmp_str", |b| {
         b.iter(|| {
             black_box(REFERENCE_STRS)
-                .map(|s| writeable::cmp_bytes(black_box(&COMPLEX_WRITEABLE_MEDIUM), s.as_bytes()))
+                .map(|s| writeable::cmp_str(black_box(&COMPLEX_WRITEABLE_MEDIUM), s))
         });
     });
 }

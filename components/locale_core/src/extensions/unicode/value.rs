@@ -127,7 +127,7 @@ impl Value {
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
     /// v.push_subtag(subtag!("bar"));
-    /// assert_eq!(v, "foo-bar");
+    /// assert!(writeable::cmp_str(&v, "foo-bar").is_eq());
     /// ```
     pub fn push_subtag(&mut self, subtag: Subtag) {
         self.0.push(subtag);
@@ -185,7 +185,7 @@ impl Value {
     /// v.push_subtag(subtag!("baz"));
     ///
     /// assert_eq!(v.remove_subtag(1), Some(subtag!("bar")));
-    /// assert_eq!(v, "foo-baz");
+    /// assert!(writeable::cmp_str(&v, "foo-baz").is_eq());
     /// ```
     pub fn remove_subtag(&mut self, idx: usize) -> Option<Subtag> {
         if self.0.len() < idx {
@@ -300,12 +300,6 @@ impl FromStr for Value {
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(s)
-    }
-}
-
-impl PartialEq<&str> for Value {
-    fn eq(&self, other: &&str) -> bool {
-        writeable::cmp_bytes(self, other.as_bytes()).is_eq()
     }
 }
 

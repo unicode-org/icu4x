@@ -147,7 +147,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .iter()
             .find(|(l, a, _)| {
-                writeable::cmp_bytes(&req.id.locale, l.as_bytes()).is_eq()
+                writeable::cmp_str(&req.id.locale, l).is_eq()
                     && *a == req.id.marker_attributes.as_str()
             })
             .map(|(_, _, v)| v)

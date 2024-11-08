@@ -132,7 +132,7 @@ fn test_langid_normalizing_eq_str() {
 }
 
 #[test]
-fn test_langid_writeable_cmp_bytes() {
+fn test_langid_writeable_cmp_str() {
     let tests: Vec<fixtures::LocaleTest> =
         serde_json::from_str(include_str!("fixtures/langid.json"))
             .expect("Failed to read a fixture");
@@ -150,7 +150,7 @@ fn test_langid_writeable_cmp_bytes() {
                 .expect("Invalid BCP-47 in fixture");
             let a_normalized = a_langid.write_to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
-            let test_cmp = writeable::cmp_bytes(&a_langid, b.as_bytes());
+            let test_cmp = writeable::cmp_str(&a_langid, b);
             assert_eq!(string_cmp, test_cmp, "{a:?}/{b:?}");
         }
     }

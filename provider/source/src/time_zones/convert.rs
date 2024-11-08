@@ -558,11 +558,11 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     let Some(location) = locations.get(tz) else {
                         return true;
                     };
-                    let eq = writeable::cmp_bytes(
+                    let eq = writeable::cmp_str(
                         &time_zone_names_resource
                             .region_format
                             .interpolate([location]),
-                        v.as_bytes(),
+                        v,
                     );
                     eq != Ordering::Equal
                 })

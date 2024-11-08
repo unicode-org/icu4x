@@ -365,7 +365,6 @@ where
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// For a usage example, see [`TryWriteable`].
 ///

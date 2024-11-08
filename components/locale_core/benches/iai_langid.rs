@@ -67,7 +67,7 @@ fn bench_langid_writeable_cmp_bytes() {
 
     let result = LIDS_STR
         .iter()
-        .filter(|s| writeable::cmp_bytes(&lid, s.as_bytes()) == Ordering::Equal)
+        .filter(|s| writeable::cmp_str(&lid, s) == Ordering::Equal)
         .count();
 
     assert_eq!(result, 1);

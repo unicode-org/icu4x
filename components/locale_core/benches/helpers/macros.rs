@@ -88,10 +88,7 @@ macro_rules! compare_str {
             |b| {
                 b.iter(|| {
                     for (lid, s) in $data1.iter().zip($data2.iter()) {
-                        let _ = writeable::cmp_bytes(
-                            &black_box(lid),
-                            &black_box(s).as_str().as_bytes(),
-                        );
+                        let _ = writeable::cmp_str(&black_box(lid), &black_box(s).as_str());
                     }
                 })
             },

@@ -17,7 +17,7 @@
 //! # Lookup
 //!
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
-//! and then use [`writeable::cmp_bytes()`] to perform an efficient, zero-allocation comparison.
+//! and then use [`writeable::cmp_utf8()`] to perform an efficient, zero-allocation comparison.
 //!
 //! To produce more human-readable serialized output, you can use `PotentialUtf8`.
 //!
@@ -39,7 +39,7 @@
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|uvstr| writeable::cmp_bytes(&loc, uvstr).reverse());
+//! let value = zm.get_copied_by(|uvstr| writeable::cmp_utf8(&loc, uvstr).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
