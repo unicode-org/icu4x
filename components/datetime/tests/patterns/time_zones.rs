@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{fieldset::dynamic::TimeZoneStyleWithLength, neo_skeleton::{NeoSkeletonLength, NeoTimeZoneStyle}};
+use icu_datetime::{
+    fieldset::dynamic::TimeZoneStyleWithLength,
+    neo_skeleton::{NeoSkeletonLength, NeoTimeZoneStyle},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

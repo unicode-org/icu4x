@@ -62,12 +62,14 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
-                Some(v) => v,
-                None => {
-                    panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
+            Some(semantic) => {
+                match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
+                    Some(v) => v,
+                    None => {
+                        panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
+                    }
                 }
-            },
+            }
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -296,11 +298,9 @@ fn assert_fixture_element<A>(
         zone: TimeZoneInfo::utc(),
     };
 
-    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale.into(), skeleton)
-        .expect(description);
+    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
 
-    let any_dtf =
-        DateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
+    let any_dtf = DateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(
@@ -365,11 +365,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(preferences, &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-                    &locale.into(),
-                    skeleton,
-                )
-                .unwrap()
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&locale.into(), skeleton)
+                    .unwrap()
             };
             assert_writeable_eq!(
                 writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
@@ -438,11 +435,9 @@ fn test_time_zone_format_configs() {
             else {
                 continue;
             };
-            let tzf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-                &data_locale,
-                skeleton,
-            )
-            .unwrap();
+            let tzf =
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&data_locale, skeleton)
+                    .unwrap();
             assert_writeable_eq!(
                 writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
                 *expect,
