@@ -670,6 +670,21 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     {
                         // We don't need it
                         if let Some(val) = defaults.remove(&mz) {
+                            let zone_val = time_zone_names_resource
+                                .region_format
+                                .0
+                                .interpolate([locations.get(&tz).unwrap()])
+                                .to_string();
+                            if req.id.to_string() == "en" {
+                                println!(
+                                    "{}TZ {:?} ({}) in MZ {:?} ({})",
+                                    if zone_val != val { "! " } else { "  " },
+                                    tz.0,
+                                    zone_val,
+                                    mz.0,
+                                    val
+                                );
+                            }
                             overrides.insert(tz, val);
                         }
                     }
