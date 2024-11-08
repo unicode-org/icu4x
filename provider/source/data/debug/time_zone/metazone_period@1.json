@@ -14,10 +14,6 @@
   "altia": {
     "0": "euce"
   },
-  "amevn": {
-    "0": null,
-    "11426160": "arme"
-  },
   "ancur": {
     "0": "atla"
   },
@@ -155,19 +151,11 @@
   "awaua": {
     "0": "atla"
   },
-  "azbak": {
-    "0": null,
-    "11391600": "azer"
-  },
   "basjj": {
     "0": "euce"
   },
   "bbbgi": {
     "0": "atla"
-  },
-  "bddac": {
-    "0": null,
-    "646200": "bang"
   },
   "bebru": {
     "0": "euce"
@@ -481,10 +469,6 @@
   "gdgnd": {
     "0": "atla"
   },
-  "getbs": {
-    "0": null,
-    "11185680": "geor"
-  },
   "gggci": {
     "0": null,
     "962040": "mgmt"
@@ -607,10 +591,6 @@
   },
   "kenbo": {
     "0": "afea"
-  },
-  "kgfru": {
-    "0": null,
-    "11393040": "kyrg"
   },
   "khpnh": {
     "0": "indo"
@@ -876,10 +856,6 @@
   "pgraw": {
     "0": "pang"
   },
-  "pkkhi": {
-    "0": null,
-    "646260": "paki"
-  },
   "plwaw": {
     "0": "euce"
   },
@@ -983,10 +959,6 @@
   "ruvvo": {
     "0": "vlad"
   },
-  "ruyek": {
-    "0": null,
-    "11596200": "yeka"
-  },
   "ruyks": {
     "0": "yaku"
   },
@@ -1028,10 +1000,6 @@
   "somgq": {
     "0": "afea"
   },
-  "srpbm": {
-    "0": null,
-    "3094770": "suri"
-  },
   "ssjub": {
     "0": "afce",
     "15798840": "afea",
@@ -1068,18 +1036,10 @@
   "thbkk": {
     "0": "indo"
   },
-  "tjdyu": {
-    "0": null,
-    "11406060": "taji"
-  },
   "tldil": {
     "0": "eati",
     "3331620": "ince",
     "16152000": "eati"
-  },
-  "tmasb": {
-    "0": null,
-    "11475120": "turk"
   },
   "tntun": {
     "0": "euce"

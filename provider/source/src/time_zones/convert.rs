@@ -371,10 +371,14 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
             // There's only one TZ that has ever been in the MZ
             if tzs.len() == 1 {
                 let tz = tzs.first().unwrap();
-                // The TZ has always been in the MZ
-                if periods.get(&tz).map(|v| v.as_slice()) == Some(&[(0, Some(mz))]) {
-                    // We don't need it
-                    periods.remove(&tz);
+                // The TZ has not been in another metazone
+                if let Some(v) = periods.get(&tz) {
+                    if v.iter()
+                        .all(|(_, maybe_mz)| maybe_mz.is_none() || *maybe_mz == Some(mz))
+                    {
+                        // We don't need it
+                        periods.remove(&tz);
+                    }
                 }
             }
         }
@@ -659,11 +663,15 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             // There's only one TZ that has ever been in the MZ
             if tzs.len() == 1 {
                 let tz = *tzs.first().unwrap();
-                // The TZ has always been in the MZ
-                if periods.get(&tz).map(|v| v.as_slice()) == Some(&[(0, Some(mz))]) {
-                    // We don't need it
-                    if let Some(val) = defaults.remove(&mz) {
-                        overrides.insert(tz, val);
+                // The TZ has not been in another metazone
+                if let Some(v) = periods.get(&tz) {
+                    if v.iter()
+                        .all(|(_, maybe_mz)| maybe_mz.is_none() || *maybe_mz == Some(mz))
+                    {
+                        // We don't need it
+                        if let Some(val) = defaults.remove(&mz) {
+                            overrides.insert(tz, val);
+                        }
                     }
                 }
             }
