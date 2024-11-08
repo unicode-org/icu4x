@@ -30,7 +30,7 @@ wasm_obj/icu4c/%.o: $(ICU4C_SOURCE)/%.cpp
 wasm_obj/ucptrie_wrap.o: ucptrie_wrap.cpp
 	mkdir -p wasm_obj
 	$(CXX) --target=wasm32-unknown-wasi \
-		-I/usr/include/wasm32-wasi \
+		-I/usr/include/wasm32-wasip1 \
 		--compile \
 		-flto \
 		-I$(ICU4C_SOURCE)/common \
