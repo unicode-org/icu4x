@@ -108,7 +108,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.offset_seconds) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html), [2](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html#method.without_offset)
   void clearOffset() {
     _icu4x_TimeZoneInfo_clear_offset_mv1(_ffi);
   }

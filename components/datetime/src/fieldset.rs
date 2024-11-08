@@ -953,7 +953,8 @@ impl_datetime_marker!(
 );
 
 impl_zone_marker!(
-    /// When a display name is unavailable, falls back to the offset format:
+    /// When a display name is unavailable, falls back to the localized offset format for short lengths, and
+    /// to the location format for long lengths:
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
@@ -965,21 +966,32 @@ impl_zone_marker!(
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
+    /// // Time zone info for Europe/Istanbul in the winter
+    /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
+    ///     .with_offset("+02".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
+    ///     .with_zone_variant(ZoneVariant::Standard);
+    ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
     ///     Z::short(),
     /// )
     /// .unwrap();
     ///
-    /// // Time zone info for America/Sao_Paulo in the winter
-    /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
-    ///     .with_offset("-03".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::Standard);
+    /// assert_try_writeable_eq!(
+    ///     fmt.format(&zone),
+    ///     "GMT+2"
+    /// );
+    ///
+    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+    ///     &locale!("en").into(),
+    ///     Z::long(),
+    /// )
+    /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
-    ///     "GMT-3"
+    ///     "Türkiye Standard Time"
     /// );
     /// ```
     ///
@@ -1015,6 +1027,7 @@ impl_zone_marker!(
     sample_length = long,
     sample = "Central Daylight Time",
     zone_essentials = yes,
+    zone_locations = yes,
     zone_specific_long = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
@@ -1184,21 +1197,20 @@ impl_zone_marker!(
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
+    /// // Time zone info for Europe/Istanbul
+    /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
+    ///     .without_offset()
+    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
+    ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     &locale!("en").into(),
     ///     V::short(),
     /// )
     /// .unwrap();
     ///
-    /// // Time zone info for America/Sao_Paulo in the winter
-    /// let zone = TimeZoneBcp47Id(tinystr!(8, "brsao"))
-    ///     .with_offset("-03".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::Standard);
-    ///
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
-    ///     "Sao Paulo Time"
+    ///     "Türkiye Time"
     /// );
     /// ```
     ///
@@ -1214,7 +1226,7 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).without_offset();
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
