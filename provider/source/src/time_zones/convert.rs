@@ -653,23 +653,6 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         let mut defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
-            .filter(|&(mz, v)| {
-                let Some(tzs) = reverse_meta_zone_id_data.get(&mz) else {
-                    log::warn!("No tzs for {mz:?}");
-                    return false;
-                };
-                tzs.iter().any(|tz| {
-                    let Some(location) = locations.get(tz) else {
-                        return true;
-                    };
-                    writeable::cmp_bytes(
-                        &time_zone_names_resource
-                            .region_format
-                            .interpolate([location]),
-                        v.as_bytes(),
-                    ) != Ordering::Equal
-                })
-            })
             .collect::<BTreeMap<_, _>>();
 
         for (mz, tzs) in reverse_meta_zone_id_data {
