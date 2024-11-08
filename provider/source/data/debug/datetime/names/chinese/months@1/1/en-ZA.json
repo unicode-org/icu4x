@@ -1,6 +1,10 @@
 {
-  "LeapNumeric": {
-    "pattern": "bis",
-    "subst_index": 0
-  }
+  "LeapNumeric": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "bis"
+    }
+  ]
 }

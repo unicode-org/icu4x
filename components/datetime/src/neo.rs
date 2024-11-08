@@ -922,16 +922,7 @@ where
     where
         I: ?Sized + IsAnyCalendarKind + AllInputMarkers<FSet>,
     {
-        if !datetime.is_any_calendar_kind(self.calendar.kind()) {
-            return Err(crate::MismatchedCalendarError {
-                this_kind: self.calendar.kind(),
-                date_kind:
-                    GetField::<<FSet::D as DateInputMarkers>::AnyCalendarKindInput>::get_field(
-                        datetime,
-                    )
-                    .into_option(),
-            });
-        }
+        datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =
             ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
         Ok(FormattedNeoDateTime {

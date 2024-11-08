@@ -4,12 +4,11 @@
 
 use crate::scaffold::*;
 use icu_calendar::{
-    any_calendar::IntoAnyCalendar,
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Time,
+    AsCalendar, Calendar, Date, DateTime, Iso, Time,
 };
 use icu_timezone::{
     CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
@@ -104,13 +103,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind> for Date<A> {
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.calendar().kind()
-    }
-}
-
 impl GetField<IsoHour> for Time {
     #[inline]
     fn get_field(&self) -> IsoHour {
@@ -171,13 +163,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for DateT
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind> for DateTime<A> {
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.date.calendar().kind()
     }
 }
 
@@ -249,15 +234,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYearInfo>
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z> GetField<AnyCalendarKind>
-    for CustomZonedDateTime<A, Z>
-{
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.date.calendar().kind()
     }
 }
 

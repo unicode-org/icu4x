@@ -42,10 +42,6 @@ impl RegionDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -113,10 +109,6 @@ impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -185,10 +177,6 @@ impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -252,10 +240,6 @@ impl LanguageDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
@@ -340,10 +324,6 @@ impl LocaleDisplayNamesFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,

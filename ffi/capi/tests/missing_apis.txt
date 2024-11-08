@@ -14,6 +14,9 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::types::YearAmbiguity#Enum
+icu::calendar::types::YearInfo::year_ambiguity#FnInStruct
+icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::convert_and_format#FnInStruct
 icu::datetime::DateTimeFormatter::strict_format#FnInStruct
@@ -319,6 +322,8 @@ icu::plurals::PluralElements::with_zero_value#FnInStruct
 icu::plurals::PluralElements::zero#FnInStruct
 icu::plurals::PluralOperands::is_exactly_one#FnInStruct
 icu::plurals::PluralOperands::is_exactly_zero#FnInStruct
+icu::plurals::PluralRulesPreferences#Struct
+icu::plurals::PluralRulesPreferences::extend#FnInStruct
 icu::properties::PropertyNamesLong#Struct
 icu::properties::PropertyNamesLong::new#FnInStruct
 icu::properties::PropertyNamesLongBorrowed#Struct

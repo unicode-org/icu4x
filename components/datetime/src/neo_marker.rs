@@ -376,7 +376,7 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendarKind, Date, Iso, Time,
+    Date, Iso, Time,
 };
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -411,7 +411,6 @@ impl DateInputMarkers for NeoDateSkeleton {
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
-    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoDateSkeleton {
@@ -474,7 +473,6 @@ impl DateInputMarkers for NeoCalendarPeriodSkeleton {
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
-    type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, yes);
 }
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for NeoCalendarPeriodSkeleton {

@@ -34,10 +34,6 @@ macro_rules! constructor {
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
             /// an explanation of the different types.
-            ///
-            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-            ///
-            /// [📚 Help choosing a constructor](icu_provider::constructors)
             functions: [
                 $name,
                 $name_any,

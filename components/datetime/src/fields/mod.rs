@@ -113,21 +113,21 @@ mod test {
     fn test_field_as_ule() {
         let samples = [
             (
-                Field::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                Field::from((FieldSymbol::Minute, FieldLength::Two)),
+                [FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
-                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 [
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
-                Field::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
+                Field::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Four)),
                 [
                     FieldSymbol::Year(Year::Cyclic).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
@@ -151,13 +151,13 @@ mod test {
     fn test_field_ule() {
         let samples = [(
             [
-                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 Field::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
             [
                 [
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
                 [
                     FieldSymbol::Second(Second::MillisInDay).idx(),

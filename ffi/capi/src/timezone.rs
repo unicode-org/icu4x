@@ -114,6 +114,7 @@ pub mod ffi {
         /// Clears the `offset` field.
         #[diplomat::rust_link(icu::timezone::UtcOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::without_offset, FnInStruct, compact)]
         pub fn clear_offset(&mut self) {
             self.offset.take();
         }

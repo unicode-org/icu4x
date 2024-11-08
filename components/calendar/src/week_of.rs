@@ -34,10 +34,6 @@ impl WeekCalculator {
     icu_provider::gen_any_buffer_data_constructors!(
         (locale) -> error: DataError,
         /// Creates a new [`WeekCalculator`] from compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

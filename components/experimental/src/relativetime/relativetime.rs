@@ -123,7 +123,8 @@ macro_rules! constructor {
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError> {
-            let plural_rules = PluralRules::try_new_cardinal(locale)?;
+            let temp_loc = locale.clone().into_locale();
+            let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
                 locale,
@@ -167,7 +168,8 @@ macro_rules! constructor {
                 + DataProvider<DecimalSymbolsV1Marker>
                 + ?Sized,
         {
-            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+            let temp_loc = locale.clone().into_locale();
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
                 provider,
