@@ -46,15 +46,16 @@ impl<'a> WriteComparator<'a> {
     }
 }
 
-/// Like [`cmp_str`], but accepts unvalidated UTF-8.
+/// Compares the contents of a [`Writeable`] to the given UTF-8 bytes without allocating memory.
+///
+/// For more details, see: [`cmp_str`]
 pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
     let mut wc = WriteComparator::new(other);
     let _ = writeable.write_to(&mut wc);
     wc.finish().reverse()
 }
 
-/// Compares the contents of a `Writeable` to the given `str`
-/// without allocating a `String` to hold the `Writeable` contents.
+/// Compares the contents of a [`Writeable`] to the given string without allocating memory.
 ///
 /// This returns a lexicographical comparison, the same as if the `Writeable`
 /// were first converted to a `String` and then compared with `Ord`.
