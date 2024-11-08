@@ -114,6 +114,15 @@ impl ExtensionType {
 }
 
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
+///
+/// # Ordering
+///
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there is a method that returns an ordering: [`Extensions::total_cmp`].
+///
+/// String comparison (i.e. [`PartialOrd<&str>`]) can be replicated using [`writeable::cmp_str`].
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
 #[non_exhaustive]
 pub struct Extensions {

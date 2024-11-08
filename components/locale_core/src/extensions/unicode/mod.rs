@@ -81,6 +81,14 @@ pub(crate) const UNICODE_EXT_STR: &str = "u";
 ///     Some(&value!("buddhist"))
 /// );
 /// ```
+/// # Ordering
+///
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there is a method that returns an ordering: [`Unicode::total_cmp`].
+///
+/// String comparison (i.e. [`PartialOrd<&str>`]) can be replicated using [`writeable::cmp_str`].
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash)]
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure
 pub struct Unicode {

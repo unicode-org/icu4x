@@ -73,6 +73,38 @@ use alloc::borrow::Cow;
 /// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
 /// ```
 ///
+/// # Ordering
+///
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there is a method that returns an ordering: [`LanguageIdentifier::total_cmp`].
+///
+/// String comparison (i.e. [`PartialOrd<&str>`]) can be replicated using [`writeable::cmp_str`].
+///
+/// ```
+/// use core::cmp::Ordering;
+/// use icu::locale::langid;
+/// use writeable::Writeable;
+///
+/// let a = langid!("hi-TH");
+/// let a_str = a.write_to_string();
+///
+/// let b = langid!("hi-Latn");
+/// let b_str = b.write_to_string();
+///
+/// // Under `total_cmp`, a < b. There's no semantic meaning to this.
+/// assert_eq!(a.total_cmp(&b), Ordering::Less);
+///
+/// // Under string comparison, a > b, as 'T' > 'L'
+/// assert_eq!(a_str.cmp(&b_str), Ordering::Greater);
+///
+/// // If you don't have both strings, `cmp_str` gives the same ordering.
+/// assert_eq!(writeable::cmp_str(&a, &b_str), Ordering::Greater);
+/// ```
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)

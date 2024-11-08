@@ -725,6 +725,76 @@ fn test_data_locale_from_string() {
 }
 
 #[test]
+fn test_data_locale_cmp_str() {
+    use std::cmp::Ordering;
+
+    let bcp47_strings: &[&str] = &[
+        "ca",
+        "ca-ES",
+        "ca-ES-u-sd-esct",
+        "ca-ES-valencia",
+        "cat",
+        "pl-Latn-PL",
+        "und",
+        "und-fonipa",
+        "zh",
+    ];
+
+    for ab in bcp47_strings.windows(2) {
+        let a = ab[0];
+        let b = ab[1];
+        assert_eq!(a.cmp(b), Ordering::Less, "strings: {} < {}", a, b);
+        let a_loc: DataLocale = a.parse().unwrap();
+        assert_eq!(
+            writeable::cmp_str(&a_loc, a),
+            Ordering::Equal,
+            "strict_cmp: {} == {}",
+            a_loc,
+            a
+        );
+        assert_eq!(
+            writeable::cmp_str(&a_loc, b),
+            Ordering::Less,
+            "strict_cmp: {} < {}",
+            a_loc,
+            b
+        );
+        let b_loc: DataLocale = b.parse().unwrap();
+        assert_eq!(
+            writeable::cmp_str(&b_loc, b),
+            Ordering::Equal,
+            "strict_cmp: {} == {}",
+            b_loc,
+            b
+        );
+        assert_eq!(
+            writeable::cmp_str(&b_loc, a),
+            Ordering::Greater,
+            "strict_cmp: {} > {}",
+            b_loc,
+            a
+        );
+    }
+
+    let invalid_strings: &[&str] = &[
+        // Less than "ca-ES"
+        "CA",
+        "ar-x-gbp-FOO",
+        // Greater than "ca-AR"
+        "ca_ES",
+        "ca-ES-x-gbp-FOO",
+    ];
+
+    let data_locale = "ca-ES".parse::<DataLocale>().unwrap();
+
+    for s in invalid_strings.iter() {
+        let expected_ordering = "ca-AR".cmp(s);
+        let actual_ordering = writeable::cmp_str(&data_locale, s);
+        assert_eq!(expected_ordering, actual_ordering, "{}", s);
+    }
+}
+
+#[test]
 fn test_data_marker_attributes_from_utf8() {
     let bytes_vec: Vec<&[u8]> = vec![
         b"long-meter",

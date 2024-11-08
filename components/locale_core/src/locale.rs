@@ -37,15 +37,6 @@ use core::str::FromStr;
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
-/// # Ordering
-///
-/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
-///
-/// Instead, there is a method that returns an ordering: [`Locale::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
-///
 /// # Examples
 ///
 /// Simple example:
@@ -86,6 +77,38 @@ use core::str::FromStr;
 ///     "valencia".parse::<Variant>().ok().as_ref()
 /// );
 /// ```
+///
+/// # Ordering
+///
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there is a method that returns an ordering: [`Locale::total_cmp`].
+///
+/// String comparison (i.e. [`PartialOrd<&str>`]) can be replicated using [`writeable::cmp_str`].
+///
+/// ```
+/// use core::cmp::Ordering;
+/// use icu::locale::locale;
+/// use writeable::Writeable;
+///
+/// let a = locale!("en-u-ca-chinese");
+/// let a_str = a.write_to_string();
+///
+/// let b = locale!("en-GB");
+/// let b_str = b.write_to_string();
+///
+/// // Under `total_cmp`, a < b. There's no semantic meaning to this.
+/// assert_eq!(a.total_cmp(&b), Ordering::Less);
+///
+/// // Under string comparison, a > b, as 'u' > 'G'
+/// assert_eq!(a_str.cmp(&b_str), Ordering::Greater);
+///
+/// // If you don't have both strings, `cmp_str` gives the same ordering.
+/// assert_eq!(writeable::cmp_str(&a, &b_str), Ordering::Greater);
+/// ```
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs

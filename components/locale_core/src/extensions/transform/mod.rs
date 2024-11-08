@@ -76,6 +76,16 @@ pub(crate) const TRANSFORM_EXT_STR: &str = "t";
 /// let value: Value = "hybrid".parse().expect("Parsing value failed.");
 /// assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 /// ```
+///
+/// # Ordering
+///
+/// This type deliberately does not implement [`Ord`] or [`PartialOrd`] because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there is a method that returns an ordering: [`Transform::total_cmp`].
+///
+/// String comparison (i.e. [`PartialOrd<&str>`]) can be replicated using [`writeable::cmp_str`].
+///
 /// [`Unicode BCP47 T Extensions`]: https://unicode.org/reports/tr35/#t_Extension
 /// [`RFC 6497`]: https://www.ietf.org/rfc/rfc6497.txt
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
