@@ -39,7 +39,8 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new(locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new(temp_loc.into(), options)
     }
 }
 
@@ -64,7 +65,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_with_any_provider(self.0, temp_loc.into(), options)
     }
 }
 
@@ -93,7 +95,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, temp_loc.into(), options)
     }
 }
 
@@ -121,7 +124,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_unstable(self.0, temp_loc.into(), options)
     }
 }
 

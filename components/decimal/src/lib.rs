@@ -21,7 +21,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("bn").into(),
+//!     locale!("bn").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
@@ -40,7 +40,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf =
-//!     FixedDecimalFormatter::try_new(&Default::default(), Default::default())
+//!     FixedDecimalFormatter::try_new(Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
@@ -60,7 +60,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("th-u-nu-thai").into(),
+//!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
@@ -100,11 +100,23 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem,
+};
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
 size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 88);
+
+define_preferences!(
+    /// The preferences for fixed decimal formatting.
+    FixedDecimalFormatterPreferences,
+    {
+        /// Numbering System. Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        numbering_system: NumberingSystem
+    }
+);
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -133,23 +145,29 @@ impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
+        (prefs: FixedDecimalFormatterPreferences, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV2Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = DataLocale::from_preferences_locale::<provider::DecimalSymbolsV2Marker>(
+            prefs.locale_prefs,
+        );
+        let nu: &str = prefs
+            .numbering_system
+            .as_ref()
+            .map(|s| s.as_str())
+            .unwrap_or("");
         let symbols = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(
-                        locale.get_single_unicode_ext("nu").unwrap_or_default(),
-                    ),
-                    locale,
+                    DataMarkerAttributes::from_str_or_panic(nu),
+                    &locale,
                 ),
                 ..Default::default()
             })?

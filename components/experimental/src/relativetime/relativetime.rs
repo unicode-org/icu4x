@@ -6,6 +6,7 @@ use fixed_decimal::{FixedDecimal, Sign};
 use icu_decimal::{
     options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV2Marker, FixedDecimalFormatter,
 };
+use icu_locale_core::preferences::define_preferences;
 use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -13,6 +14,12 @@ use icu_provider::prelude::*;
 use crate::relativetime::format::FormattedRelativeTime;
 use crate::relativetime::options::RelativeTimeFormatterOptions;
 use crate::relativetime::provider::*;
+
+define_preferences!(
+    /// The preferences for relative time formatting.
+    RelativeTimeFormatterPreferences,
+    {}
+);
 
 /// A formatter to render locale-sensitive relative time.
 ///
@@ -27,7 +34,7 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
-///     &locale!("en").into(),
+///     locale!("en").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
@@ -54,7 +61,7 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     &locale!("es").into(),
+///     locale!("es").into(),
 ///     RelativeTimeFormatterOptions {
 ///         numeric: Numeric::Auto,
 ///     },
@@ -89,7 +96,7 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
-///     &locale!("bn").into(),
+///     locale!("bn").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
@@ -120,19 +127,19 @@ macro_rules! constructor {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
         pub fn $baked(
-            locale: &DataLocale,
+            prefs: RelativeTimeFormatterPreferences,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError> {
-            let temp_loc = locale.clone().into_locale();
-            let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
+            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let plural_rules = PluralRules::try_new_cardinal(prefs.locale_prefs.into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
-                locale,
+                prefs.locale_prefs.into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();
@@ -145,7 +152,7 @@ macro_rules! constructor {
         }
 
         icu_provider::gen_any_buffer_data_constructors!(
-            (locale, options: RelativeTimeFormatterOptions) -> error: DataError,
+            (prefs: RelativeTimeFormatterPreferences, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
                 $baked: skip,
                 $any,
@@ -159,7 +166,7 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
-            locale: &DataLocale,
+            prefs: RelativeTimeFormatterPreferences,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError>
         where
@@ -168,17 +175,17 @@ macro_rules! constructor {
                 + DataProvider<DecimalSymbolsV2Marker>
                 + ?Sized,
         {
-            let temp_loc = locale.clone().into_locale();
-            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
+            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, prefs.locale_prefs.into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
                 provider,
-                locale,
+                prefs.locale_prefs.into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();

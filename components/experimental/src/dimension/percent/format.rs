@@ -102,16 +102,16 @@ mod tests {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::percent::{
-        formatter::PercentFormatter,
+        formatter::{PercentFormatter, PercentFormatterPreferences},
         options::{Display, PercentFormatterOptions},
     };
 
     #[test]
     pub fn test_en_us() {
-        let locale = locale!("en-US").into();
+        let prefs: PercentFormatterPreferences = locale!("en-US").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs.clone(), Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "12,345.67%");
 
@@ -123,7 +123,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -134,7 +134,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },
@@ -146,10 +146,10 @@ mod tests {
 
     #[test]
     pub fn test_tr() {
-        let locale = locale!("tr").into();
+        let prefs: PercentFormatterPreferences = locale!("tr").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs.clone(), Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "%12.345,67");
 
@@ -161,7 +161,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -172,7 +172,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },
@@ -184,10 +184,10 @@ mod tests {
 
     #[test]
     pub fn test_blo() {
-        let locale = locale!("blo").into();
+        let prefs: PercentFormatterPreferences = locale!("blo").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs.clone(), Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "%\u{a0}12\u{a0}345,67");
 
@@ -199,7 +199,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -210,7 +210,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs.clone(),
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },

@@ -7,6 +7,7 @@
 use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::FixedDecimalFormatter;
+use icu_locale_core::preferences::define_preferences;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 
@@ -17,6 +18,12 @@ use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
 extern crate alloc;
+
+define_preferences!(
+    /// The preferences for units formatting.
+    UnitsFormatterPreferences,
+    {}
+);
 
 /// A formatter for measurement unit values.
 ///
@@ -44,7 +51,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (wprefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -75,15 +82,18 @@ impl UnitsFormatter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        prefs: UnitsFormatterPreferences,
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+        let locale =
+            DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
+            prefs.locale_prefs.into(),
+            FixedDecimalFormatterOptions::default(),
+        )?;
 
-        let temp_loc = locale.clone().into_locale();
-        let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
+        let plural_rules = PluralRules::try_new_cardinal(prefs.locale_prefs.into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);
@@ -94,7 +104,7 @@ impl UnitsFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     unit_attribute,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?
@@ -111,7 +121,7 @@ impl UnitsFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: UnitsFormatterPreferences,
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
@@ -121,14 +131,16 @@ impl UnitsFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
+        let locale =
+            DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            locale,
+            prefs.locale_prefs.into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
-        let temp_loc = locale.clone().into_locale();
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
+        let plural_rules =
+            PluralRules::try_new_cardinal_unstable(provider, prefs.locale_prefs.into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);
@@ -139,7 +151,7 @@ impl UnitsFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     unit_attribute,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?

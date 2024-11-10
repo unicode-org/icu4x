@@ -91,7 +91,7 @@ fn test_basic() {
     ];
 
     for (locale, unit, value, options, expected) in test_cases {
-        let fmt = UnitsFormatter::try_new(&locale.into(), unit, options).unwrap();
+        let fmt = UnitsFormatter::try_new(locale.into(), unit, options).unwrap();
         let value = value.parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&value), expected);
     }

@@ -299,6 +299,8 @@ icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::TimePrecision::into_option#FnInEnum
 icu::datetime::options::YearStyle#Enum
 icu::datetime::options::YearStyle::into_option#FnInEnum
+icu::decimal::FixedDecimalFormatterPreferences#Struct
+icu::decimal::FixedDecimalFormatterPreferences::extend#FnInStruct
 icu::list::ListFormatterOptions#Struct
 icu::list::ListFormatterOptions::default#FnInStruct
 icu::list::ListFormatterOptions::with_length#FnInStruct

@@ -16,7 +16,14 @@ pub use super::validated_options::ValidatedDurationFormatterOptions;
 use icu_decimal::provider::DecimalSymbolsV2Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_list::{ListFormatter, ListLength};
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
+
+define_preferences!(
+    /// The preferences for duration formatting.
+    DurationFormatterPreferences,
+    {}
+);
 
 /// A formatter for [`Duration`](crate::duration::Duration)s.
 ///
@@ -86,14 +93,18 @@ impl DurationUnitFormatter {
 
     #[cfg(feature = "compiled_data")]
     fn try_new(
-        locale: &DataLocale,
+        prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            UnitsFormatter::try_new(locale, unit.as_unit_formatter_name(), options)
+            UnitsFormatter::try_new(
+                prefs.locale_prefs.into(),
+                unit.as_unit_formatter_name(),
+                options,
+            )
         };
 
         Ok(DurationUnitFormatter {
@@ -117,7 +128,7 @@ impl DurationUnitFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     >(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
@@ -126,7 +137,7 @@ impl DurationUnitFormatter {
 
             UnitsFormatter::try_new_unstable(
                 provider,
-                locale,
+                prefs.locale_prefs.into(),
                 unit.as_unit_formatter_name(),
                 options,
             )
@@ -168,7 +179,7 @@ impl From<BaseStyle> for icu_list::ListFormatterOptions {
 
 impl DurationFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: ValidatedDurationFormatterOptions) -> error: DataError,
+        (prefs: DurationFormatterPreferences, options: ValidatedDurationFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -185,23 +196,25 @@ impl DurationFormatter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = DataLocale::from_preferences_locale::<provider::DigitalDurationDataV1Marker>(
+            prefs.locale_prefs,
+        );
         let digital = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
 
-        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
-            unit: DurationUnitFormatter::try_new(locale, options)?,
-            list: ListFormatter::try_new_unit(temp_loc.into(), options.base.into())?,
-            fdf: FixedDecimalFormatter::try_new(locale, Default::default())?,
+            unit: DurationUnitFormatter::try_new(prefs.locale_prefs.into(), options)?,
+            list: ListFormatter::try_new_unit(prefs.locale_prefs.into(), options.base.into())?,
+            fdf: FixedDecimalFormatter::try_new(prefs.locale_prefs.into(), Default::default())?,
         })
     }
 
@@ -215,27 +228,37 @@ impl DurationFormatter {
             + ?Sized,
     >(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = DataLocale::from_preferences_locale::<provider::DigitalDurationDataV1Marker>(
+            prefs.locale_prefs,
+        );
         let digital = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
 
-        let temp_loc = locale.clone().into_locale();
         Ok(Self {
             digital,
             options,
-            unit: DurationUnitFormatter::try_new_unstable(provider, locale, options)?,
+            unit: DurationUnitFormatter::try_new_unstable(
+                provider,
+                prefs.locale_prefs.into(),
+                options,
+            )?,
             list: ListFormatter::try_new_unit_unstable(
                 provider,
-                temp_loc.into(),
+                prefs.locale_prefs.into(),
                 options.base.into(),
             )?,
-            fdf: FixedDecimalFormatter::try_new_unstable(provider, locale, Default::default())?,
+            fdf: FixedDecimalFormatter::try_new_unstable(
+                provider,
+                prefs.locale_prefs.into(),
+                Default::default(),
+            )?,
         })
     }
 

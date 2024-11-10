@@ -235,7 +235,7 @@ let provider = CustomDecimalSymbolsProvider(
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und").into(),
+    locale!("und").into(),
     Default::default(),
 )
 .unwrap();
@@ -244,7 +244,7 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und-CH").into(),
+    locale!("und-CH").into(),
     Default::default(),
 )
 .unwrap();

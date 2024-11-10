@@ -166,7 +166,7 @@ fn test_grouper() {
             };
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider.as_downcasting(),
-                &Default::default(),
+                Default::default(),
                 options,
             )
             .unwrap();

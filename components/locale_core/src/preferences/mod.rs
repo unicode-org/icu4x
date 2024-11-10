@@ -529,6 +529,18 @@ macro_rules! __define_preferences {
             }
         }
 
+        impl From<$crate::preferences::LocalePreferences> for $name {
+            fn from(locale_prefs: $crate::preferences::LocalePreferences) -> Self {
+                Self {
+                    locale_prefs,
+
+                    $(
+                        $key: None,
+                    )*
+                }
+            }
+        }
+
         impl From<$name> for $crate::Locale {
             fn from(other: $name) -> Self {
                 use $crate::preferences::PreferenceKey;

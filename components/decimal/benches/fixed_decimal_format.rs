@@ -42,7 +42,7 @@ fn overview_bench(c: &mut Criterion) {
             // ranging from -1e9 to 1e9.
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider,
-                &Default::default(),
+                Default::default(),
                 Default::default(),
             )
             .unwrap();
