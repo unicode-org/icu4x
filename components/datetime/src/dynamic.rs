@@ -10,6 +10,7 @@ use crate::raw::neo::RawNeoOptions;
 use crate::{fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 
+/// An enumeration over all possible date field sets.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -36,6 +37,7 @@ pub enum DateFieldSet {
     E(fieldset::E),
 }
 
+/// An enumeration over all possible calendar period field sets.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -55,6 +57,7 @@ pub enum CalendarPeriodFieldSet {
     // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
+/// An enumeration over all possible time field sets.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum TimeFieldSet {
@@ -75,6 +78,7 @@ impl TimeZoneStyleWithLength {
     }
 }
 
+/// An enumeration over all possible date+time composite field sets.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {

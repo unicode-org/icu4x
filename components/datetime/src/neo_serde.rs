@@ -326,7 +326,6 @@ impl FieldSetSerde {
     const MONTH: Self = Self::from_fields(&[Month]);
     const YEAR_MONTH: Self = Self::from_fields(&[Year, Month]);
     const YEAR: Self = Self::from_fields(&[Year]);
-    const YEAR_WEEK: Self = Self::from_fields(&[Year, WeekOfYear]);
 
     // Time Components
     const TIME: Self = Self::from_fields(&[Time]);

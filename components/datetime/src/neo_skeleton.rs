@@ -712,15 +712,6 @@ impl NeoTimeComponents {
         }
     }
 
-    pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
-        use CoarseHourCycle::*;
-        match (self, hour_cycle) {
-            (Self::Time, H11H12) => Self::Time12,
-            (Self::Time, H23H24) => Self::Time24,
-            _ => self,
-        }
-    }
-
     /// Whether this field set contains the time of day.
     pub fn has_time(self) -> bool {
         true
