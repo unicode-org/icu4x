@@ -213,13 +213,13 @@ macro_rules! tuple_varule {
             where
                 'de: 'a {
             fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
-                if !deserializer.is_human_readable() {
-                    let bytes = <&[u8]>::deserialize(deserializer)?;
-                    $name::<$($T),+>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
-                } else {
+                if deserializer.is_human_readable() {
                     Err(serde::de::Error::custom(
                         concat!("&", stringify!($name), " can only deserialize in zero-copy ways"),
                     ))
+                } else {
+                    let bytes = <&[u8]>::deserialize(deserializer)?;
+                    $name::<$($T),+>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
                 }
             }
         }
