@@ -59,7 +59,7 @@ use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 /// A sized type that can be converted to a [`VarTupleULE`].
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VarTuple<A, B> {
@@ -70,7 +70,7 @@ pub struct VarTuple<A, B> {
 /// A dynamically-sized type combining a sized and an unsized type.
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
 #[repr(C)]
 pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
@@ -288,6 +288,10 @@ fn test_simple() {
     let var_tuple_ule = super::encode_varule_to_box(&var_tuple);
     assert_eq!(var_tuple_ule.sized.as_unsigned_int(), 1500);
     assert_eq!(&var_tuple_ule.variable, "hello");
+
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<VarTupleULE<u16, str>>(&var_tuple_ule);
 }
 
 #[test]
@@ -307,4 +311,9 @@ fn test_nested() {
         &var_tuple_ule.variable.variable,
         ZeroSlice::from_ule_slice(b"ICU")
     );
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<
+        VarTupleULE<u16, VarTupleULE<char, ZeroSlice<_>>>,
+    >(&var_tuple_ule);
 }

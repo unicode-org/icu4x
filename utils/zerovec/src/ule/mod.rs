@@ -20,6 +20,8 @@ mod niche;
 mod option;
 mod plain;
 mod slices;
+#[cfg(test)]
+pub mod test_utils;
 
 pub mod tuple;
 pub mod tuplevar;

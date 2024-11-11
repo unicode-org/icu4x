@@ -249,6 +249,12 @@ mod tests {
         // Note: ipsum\xFF is not a valid str
         let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_byte_slice(bytes);
         assert!(zerovec3.is_err());
+
+        #[cfg(feature = "serde")]
+        for val in zerovec.iter() {
+            // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+            crate::ule::test_utils::assert_serde_roundtrips::<Tuple2VarULE<str, [u8]>>(val);
+        }
     }
     #[test]
     fn test_tripleule_validate() {
@@ -270,5 +276,13 @@ mod tests {
         // Note: the str is unlikely to be a valid varzerovec
         let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>>>::parse_byte_slice(bytes);
         assert!(zerovec3.is_err());
+
+        #[cfg(feature = "serde")]
+        for val in zerovec.iter() {
+            // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+            crate::ule::test_utils::assert_serde_roundtrips::<
+                Tuple3VarULE<str, [u8], VarZeroSlice<str>>,
+            >(val);
+        }
     }
 }
