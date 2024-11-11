@@ -164,64 +164,48 @@ const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
 /// Marker for UTS 46 ignorables.
 const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
 
-/// Marker for starters that decompose to themselves but may
-/// combine backwards under canonical composition.
-/// (Main trie only; not used in the supplementary trie.)
-const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
+/// Marker that the decomposition does not round trip via NFC.
+const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
-/// Magic marker trie value for characters whose decomposition
-/// starts with a non-starter. The actual decomposition is
-/// hard-coded.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
+/// Marker that the first character of the decomposition
+/// can combine backwards.
+const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
-/// `u16` version of the previous marker value.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
+/// Mask for marker that the first character of the decomposition
+/// can combine backwards.
+const BACKWARD_COMBINING_MASK: u32 = !BACKWARD_COMBINING_MARKER;
 
-/// Marker that a complex decomposition isn't round-trippable
-/// under re-composition.
-///
-/// TODO: When taking a data format break, swap this and
-/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
-/// to make backward-combiningness use the same bit in all
-/// cases.
-const NON_ROUND_TRIP_MARKER: u16 = 0b1;
+/// Mask for the bits have to be zero for this to be a BMP
+/// singleton decomposition, or value baked into the surrogate
+/// range.
+const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
 
-/// Marker that a complex decomposition starts with a starter
-/// that can combine backwards.
-const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
-
-/// Values above this are treated as a BMP character.
-const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
+/// Mask for the bits have to be zero for this to be a complex
+/// decomposition.
+const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
 fn trie_value_has_ccc(trie_value: u32) -> bool {
-    (trie_value & 0xFFFFFF00) == 0xD800
+    (trie_value & 0x3FFFFE00) == 0xD800
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
-    trie_value == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER
+    (trie_value & 0x3FFFFF00) == 0xD900
 }
 
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
 fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
     trie_value_has_ccc(trie_value)
-        || trie_value_indicates_special_non_starter_decomposition(trie_value)
 }
 
 /// Extracts a canonical combining class (possibly zero) from a trie value.
-///
-/// # Panics
-///
-/// The trie value must not be one that signifies a special non-starter
-/// decomposition. (Debug-only)
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
         CanonicalCombiningClass(trie_value as u8)
     } else {
-        debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
         CCC_NOT_REORDERED
     }
 }
@@ -234,7 +218,7 @@ static FDFA_NFKD: [u16; 17] = [
 ];
 
 /// Marker value for U+FDFA in NFKD
-const FDFA_MARKER: u16 = 3;
+const FDFA_MARKER: u16 = 0xDA00;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -294,11 +278,6 @@ const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
-}
-
-#[inline(always)]
-fn in_inclusive_range32(u: u32, start: u32, end: u32) -> bool {
-    u.wrapping_sub(start) <= (end - start)
 }
 
 #[inline(always)]
@@ -400,7 +379,7 @@ impl CharacterAndTrieValue {
     }
     #[inline(always)]
     pub fn starter_and_decomposes_to_self(&self) -> bool {
-        if self.trie_val > BACKWARD_COMBINING_STARTER_MARKER {
+        if (self.trie_val & BACKWARD_COMBINING_MASK) != 0 {
             return false;
         }
         // Hangul syllables get 0 as their trie value
@@ -408,63 +387,15 @@ impl CharacterAndTrieValue {
     }
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
-        decomposition_starts_with_non_starter(self.trie_val)
-            || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
-            || (((self.trie_val as u16) & !1) == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
-            || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
+        (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
     }
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
-        self.potential_passthrough_impl(BACKWARD_COMBINING_STARTER_MARKER)
+        (self.trie_val & NON_ROUND_TRIP_MARKER) == 0
     }
     #[inline(always)]
     pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
-        self.potential_passthrough_impl(0)
-    }
-    #[inline(always)]
-    fn potential_passthrough_impl(&self, bound: u32) -> bool {
-        // This methods looks badly branchy, but most characters
-        // take the first return.
-        if self.trie_val <= bound {
-            return true;
-        }
-        if self.from_supplement {
-            return false;
-        }
-        let trail_or_complex = (self.trie_val >> 16) as u16;
-        if trail_or_complex == 0 {
-            return false;
-        }
-        let lead = self.trie_val as u16;
-        if lead == 0 {
-            return true;
-        }
-        if lead <= HIGHEST_MARKER {
-            return false;
-        }
-        if (trail_or_complex & 0x7F) == 0x3C
-            && in_inclusive_range16(trail_or_complex, 0x0900, 0x0BFF)
-        {
-            // Nukta
-            return false;
-        }
-        if in_inclusive_range(self.character, '\u{FB1D}', '\u{FB4E}') {
-            // Hebrew presentation forms
-            return false;
-        }
-        if in_inclusive_range(self.character, '\u{1F71}', '\u{1FFB}') {
-            // Polytonic Greek with oxia
-            return false;
-        }
-        // To avoid more branchiness, 4 characters that decompose to
-        // a BMP starter followed by a BMP non-starter are excluded
-        // from being encoded directly into the trie value and are
-        // handled as complex decompositions instead. These are:
-        // U+0F76 TIBETAN VOWEL SIGN VOCALIC R
-        // U+0F78 TIBETAN VOWEL SIGN VOCALIC L
-        // U+212B ANGSTROM SIGN
-        // U+2ADC FORKING
-        true
+        (self.trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
     }
 }
 
@@ -662,11 +593,11 @@ where
 
     fn push_decomposition16(
         &mut self,
-        low: u16,
         offset: usize,
+        len: usize,
+        only_non_starters_in_trail: bool,
         slice16: &ZeroSlice<u16>,
     ) -> (char, usize) {
-        let len = usize::from(low >> 13) + 2;
         let (starter, tail) = slice16
             .get_subslice(offset..offset + len)
             .and_then(|slice| slice.split_first())
@@ -678,7 +609,7 @@ where
                 },
                 |(first, trail)| (char_from_u16(first), trail),
             );
-        if low & 0x1000 != 0 {
+        if only_non_starters_in_trail {
             // All the rest are combining
             self.buffer.extend(
                 tail.iter()
@@ -707,11 +638,11 @@ where
 
     fn push_decomposition32(
         &mut self,
-        low: u16,
         offset: usize,
+        len: usize,
+        only_non_starters_in_trail: bool,
         slice32: &ZeroSlice<char>,
     ) -> (char, usize) {
-        let len = usize::from(low >> 13) + 1;
         let (starter, tail) = slice32
             .get_subslice(offset..offset + len)
             .and_then(|slice| slice.split_first())
@@ -720,7 +651,7 @@ where
                 debug_assert!(false);
                 (REPLACEMENT_CHARACTER, EMPTY_CHAR)
             });
-        if low & 0x1000 != 0 {
+        if only_non_starters_in_trail {
             // All the rest are combining
             self.buffer
                 .extend(tail.iter().map(CharacterAndClass::new_with_placeholder));
@@ -801,7 +732,7 @@ where
                             IgnorableBehavior::ReplacementCharacter => {
                                 return Some(CharacterAndTrieValue::new(
                                     c,
-                                    u32::from(REPLACEMENT_CHARACTER),
+                                    u32::from(REPLACEMENT_CHARACTER) | NON_ROUND_TRIP_MARKER,
                                 ));
                             }
                             IgnorableBehavior::Ignored => {
@@ -837,32 +768,29 @@ where
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 let decomposition = c_and_trie_val.trie_val;
-                if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
+                if (decomposition & BACKWARD_COMBINING_MASK) == 0 {
                     // The character is its own decomposition
                     (c, 0)
                 } else {
-                    let trail_or_complex = (decomposition >> 16) as u16;
-                    let lead = decomposition as u16;
-                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
+                    let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                    let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                    if !high_zeros && !low_zeros {
                         // Decomposition into two BMP characters: starter and non-starter
-                        let starter = char_from_u16(lead);
-                        let combining = char_from_u16(trail_or_complex);
+                        let starter = char_from_u32(decomposition & 0x7FFF);
+                        let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
                         self.buffer
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
-                    } else if trail_or_complex == 0 {
-                        if lead != FDFA_MARKER {
-                            debug_assert_ne!(
-                                lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
-                                "Should not reach this point with non-starter marker"
-                            );
+                    } else if high_zeros {
+                        let singleton = decomposition as u16;
+                        if singleton != FDFA_MARKER {
                             // Decomposition into one BMP character
-                            let starter = char_from_u16(lead);
+                            let starter = char_from_u16(singleton);
                             (starter, 0)
                         } else {
                             // Special case for the NFKD form of U+FDFA.
                             self.buffer.extend(FDFA_NFKD.map(|u| {
-                                // Safe, because `FDFA_NFKD` is known not to contain
+                                // SAFETY: `FDFA_NFKD` is known not to contain
                                 // surrogates.
                                 CharacterAndClass::new_starter(unsafe {
                                     core::char::from_u32_unchecked(u32::from(u))
@@ -871,29 +799,24 @@ where
                             ('\u{0635}', 17)
                         }
                     } else {
-                        // Complex decomposition
-                        // Format for 16-bit value:
-                        // 15..13: length minus two for 16-bit case and length minus one for
-                        //         the 32-bit case. Length 8 needs to fit in three bits in
-                        //         the 16-bit case, and this way the value is future-proofed
-                        //         up to 9 in the 16-bit case. Zero is unused and length one
-                        //         in the 16-bit case goes directly into the trie.
-                        //     12: 1 if all trailing characters are guaranteed non-starters,
-                        //         0 if no guarantees about non-starterness.
-                        //         Note: The bit choice is this way around to allow for
-                        //         dynamically falling back to not having this but instead
-                        //         having one more bit for length by merely choosing
-                        //         different masks.
-                        //  11..0: Start offset in storage. The offset is to the logical
-                        //         sequence of scalars16, scalars32, supplementary_scalars16,
-                        //         supplementary_scalars32.
-                        let offset = usize::from(trail_or_complex & 0xFFF);
+                        debug_assert!(low_zeros);
+                        // Only 12 of 14 bits used as of Unicode 16.
+                        let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                        // Only 3 of 4 bits used as of Unicode 16.
+                        let len_bits = decomposition & 0b1111;
+                        let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
                         if offset < self.scalars16.len() {
-                            self.push_decomposition16(trail_or_complex, offset, self.scalars16)
+                            self.push_decomposition16(
+                                offset,
+                                (len_bits + 2) as usize,
+                                only_non_starters_in_trail,
+                                self.scalars16,
+                            )
                         } else if offset < self.scalars16.len() + self.scalars24.len() {
                             self.push_decomposition32(
-                                trail_or_complex,
                                 offset - self.scalars16.len(),
+                                (len_bits + 1) as usize,
+                                only_non_starters_in_trail,
                                 self.scalars24,
                             )
                         } else if offset
@@ -902,17 +825,19 @@ where
                                 + self.supplementary_scalars16.len()
                         {
                             self.push_decomposition16(
-                                trail_or_complex,
                                 offset - (self.scalars16.len() + self.scalars24.len()),
+                                (len_bits + 2) as usize,
+                                only_non_starters_in_trail,
                                 self.supplementary_scalars16,
                             )
                         } else {
                             self.push_decomposition32(
-                                trail_or_complex,
                                 offset
                                     - (self.scalars16.len()
                                         + self.scalars24.len()
                                         + self.supplementary_scalars16.len()),
+                                (len_bits + 1) as usize,
+                                only_non_starters_in_trail,
                                 self.supplementary_scalars24,
                             )
                         }
@@ -952,60 +877,61 @@ where
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
         while let Some(ch_and_trie_val) = self.delegate_next() {
-            if trie_value_has_ccc(ch_and_trie_val.trie_val) {
-                self.buffer
-                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
-            } else if trie_value_indicates_special_non_starter_decomposition(
-                ch_and_trie_val.trie_val,
-            ) {
-                // The Tibetan special cases are starters that decompose into non-starters.
-                let mapped = match ch_and_trie_val.character {
-                    '\u{0340}' => {
-                        // COMBINING GRAVE TONE MARK
-                        CharacterAndClass::new('\u{0300}', CCC_ABOVE)
-                    }
-                    '\u{0341}' => {
-                        // COMBINING ACUTE TONE MARK
-                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
-                    }
-                    '\u{0343}' => {
-                        // COMBINING GREEK KORONIS
-                        CharacterAndClass::new('\u{0313}', CCC_ABOVE)
-                    }
-                    '\u{0344}' => {
-                        // COMBINING GREEK DIALYTIKA TONOS
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
-                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
-                    }
-                    '\u{0F73}' => {
-                        // TIBETAN VOWEL SIGN II
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
-                    }
-                    '\u{0F75}' => {
-                        // TIBETAN VOWEL SIGN UU
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
-                    }
-                    '\u{0F81}' => {
-                        // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
-                    }
-                    _ => {
-                        // GIGO case
-                        debug_assert!(false);
-                        CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
-                    }
-                };
-                self.buffer.push(mapped);
-            } else {
+            if !trie_value_has_ccc(ch_and_trie_val.trie_val) {
                 self.pending = Some(ch_and_trie_val);
                 break;
+            } else {
+                if !trie_value_indicates_special_non_starter_decomposition(ch_and_trie_val.trie_val)
+                {
+                    self.buffer
+                        .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
+                } else {
+                    // The Tibetan special cases are starters that decompose into non-starters.
+                    let mapped = match ch_and_trie_val.character {
+                        '\u{0340}' => {
+                            // COMBINING GRAVE TONE MARK
+                            CharacterAndClass::new('\u{0300}', CCC_ABOVE)
+                        }
+                        '\u{0341}' => {
+                            // COMBINING ACUTE TONE MARK
+                            CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                        }
+                        '\u{0343}' => {
+                            // COMBINING GREEK KORONIS
+                            CharacterAndClass::new('\u{0313}', CCC_ABOVE)
+                        }
+                        '\u{0344}' => {
+                            // COMBINING GREEK DIALYTIKA TONOS
+                            self.buffer
+                                .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
+                            CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                        }
+                        '\u{0F73}' => {
+                            // TIBETAN VOWEL SIGN II
+                            self.buffer
+                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                            CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
+                        }
+                        '\u{0F75}' => {
+                            // TIBETAN VOWEL SIGN UU
+                            self.buffer
+                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                            CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
+                        }
+                        '\u{0F81}' => {
+                            // TIBETAN VOWEL SIGN REVERSED II
+                            self.buffer
+                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                            CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
+                        }
+                        _ => {
+                            // GIGO case
+                            debug_assert!(false);
+                            CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
+                        }
+                    };
+                    self.buffer.push(mapped);
+                }
             }
         }
         // Slicing succeeds by construction; we've always ensured that `combining_start`

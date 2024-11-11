@@ -12,6 +12,7 @@
 //! glyph-availability-guided custom normalizer.
 
 use crate::char_from_u16;
+use crate::char_from_u32;
 use crate::in_inclusive_range;
 use crate::provider::CanonicalCompositionsV1;
 use crate::provider::CanonicalCompositionsV1Marker;
@@ -22,9 +23,8 @@ use crate::provider::DecompositionTablesV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
-use crate::trie_value_indicates_special_non_starter_decomposition;
 use crate::CanonicalCombiningClass;
-use crate::BACKWARD_COMBINING_STARTER_MARKER;
+use crate::BACKWARD_COMBINING_MASK;
 use crate::FDFA_MARKER;
 use crate::HANGUL_L_BASE;
 use crate::HANGUL_N_COUNT;
@@ -33,8 +33,8 @@ use crate::HANGUL_S_COUNT;
 use crate::HANGUL_T_BASE;
 use crate::HANGUL_T_COUNT;
 use crate::HANGUL_V_BASE;
-use crate::NON_ROUND_TRIP_MARKER;
-use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
+use crate::HIGH_ZEROS_MASK;
+use crate::LOW_ZEROS_MASK;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -287,30 +287,28 @@ impl CanonicalDecompositionBorrowed<'_> {
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
         let decomposition = self.decompositions.trie.get(c);
-        if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
+        if (decomposition & BACKWARD_COMBINING_MASK) == 0 {
             return Decomposed::Default;
         }
         // The loop is only broken out of as goto forward
         #[allow(clippy::never_loop)]
         loop {
-            let trail_or_complex = (decomposition >> 16) as u16;
-            let lead = decomposition as u16;
-            if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
+            let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+            let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+            if !high_zeros && !low_zeros {
                 // Decomposition into two BMP characters: starter and non-starter
                 if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
                     // Look in the other trie due to oxia singleton
                     // mappings to corresponding character with tonos.
                     break;
                 }
-                return Decomposed::Expansion(char_from_u16(lead), char_from_u16(trail_or_complex));
+                let starter = char_from_u32(decomposition & 0x7FFF);
+                let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                return Decomposed::Expansion(starter, combining);
             }
-            if lead > NON_ROUND_TRIP_MARKER {
+            if high_zeros {
                 // Decomposition into one BMP character or non-starter
-                debug_assert_ne!(
-                    lead, FDFA_MARKER,
-                    "How come we got the U+FDFA NFKD marker here?"
-                );
-                if lead == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16 {
+                if trie_value_has_ccc(decomposition) {
                     // Non-starter
                     if !in_inclusive_range(c, '\u{0340}', '\u{0F81}') {
                         return Decomposed::Default;
@@ -347,35 +345,24 @@ impl CanonicalDecompositionBorrowed<'_> {
                         _ => Decomposed::Default,
                     };
                 }
-                return Decomposed::Singleton(char_from_u16(lead));
+                let singleton = decomposition as u16;
+                debug_assert_ne!(
+                    singleton, FDFA_MARKER,
+                    "How come we got the U+FDFA NFKD marker here?"
+                );
+                return Decomposed::Singleton(char_from_u16(singleton));
             }
-            // The recursive decomposition of ANGSTROM SIGN is in the complex
-            // decomposition structure to avoid a branch in `potential_passthrough`
-            // for the BMP case.
             if c == '\u{212B}' {
                 // ANGSTROM SIGN
                 return Decomposed::Singleton('\u{00C5}');
             }
-            // Complex decomposition
-            // Format for 16-bit value:
-            // 15..13: length minus two for 16-bit case and length minus one for
-            //         the 32-bit case. Length 8 needs to fit in three bits in
-            //         the 16-bit case, and this way the value is future-proofed
-            //         up to 9 in the 16-bit case. Zero is unused and length one
-            //         in the 16-bit case goes directly into the trie.
-            //     12: 1 if all trailing characters are guaranteed non-starters,
-            //         0 if no guarantees about non-starterness.
-            //         Note: The bit choice is this way around to allow for
-            //         dynamically falling back to not having this but instead
-            //         having one more bit for length by merely choosing
-            //         different masks.
-            //  11..0: Start offset in storage. The offset is to the logical
-            //         sequence of scalars16, scalars32, supplementary_scalars16,
-            //         supplementary_scalars32.
-            let offset = usize::from(trail_or_complex & 0xFFF);
+            // Only 12 of 14 bits used as of Unicode 16.
+            let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+            // Only 3 of 4 bits used as of Unicode 16.
+            let len_bits = decomposition & 0b1111;
             let tables = self.tables;
             if offset < tables.scalars16.len() {
-                if usize::from(trail_or_complex >> 13) != 0 {
+                if len_bits != 0 {
                     // i.e. logical len isn't 2
                     break;
                 }
@@ -389,7 +376,7 @@ impl CanonicalDecompositionBorrowed<'_> {
                 debug_assert!(false);
                 return Decomposed::Default;
             }
-            let len = usize::from(trail_or_complex >> 13) + 1;
+            let len = len_bits + 1;
             if len > 2 {
                 break;
             }
@@ -594,11 +581,6 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
         let trie_value = self.decompositions.trie.get32(c);
         if trie_value_has_ccc(trie_value) {
             trie_value as u8
-        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
-            match c {
-                0x0340 | 0x0341 | 0x0343 | 0x0344 => ccc!(Above, 230).0,
-                _ => ccc!(NotReordered, 0).0,
-            }
         } else {
             ccc!(NotReordered, 0).0
         }
