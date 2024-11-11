@@ -289,6 +289,7 @@ fn test_zh_non_baked() {
     use core::cmp::Ordering;
     use icu::collator::Collator;
     use icu::locale::fallback::LocaleFallbacker;
+    use icu::locale::locale;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
     let provider = LocaleFallbackProvider::new(
@@ -298,9 +299,12 @@ fn test_zh_non_baked() {
 
     // Note: ㄅ is Bopomofo.
     {
-        let locale: icu::locale::Locale = "zh-u-co-gb2312".parse().unwrap();
-        let owned =
-            Collator::try_new_unstable(&provider, &locale.into(), Default::default()).unwrap();
+        let owned = Collator::try_new_unstable(
+            &provider,
+            locale!("zh-u-co-gb2312").into(),
+            Default::default(),
+        )
+        .unwrap();
         let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
@@ -316,9 +320,12 @@ fn test_zh_non_baked() {
         assert_ne!(collator.compare("不", "把"), Ordering::Greater);
     }
     {
-        let locale: icu::locale::Locale = "zh-u-co-big5han".parse().unwrap();
-        let owned =
-            Collator::try_new_unstable(&provider, &locale.into(), Default::default()).unwrap();
+        let owned = Collator::try_new_unstable(
+            &provider,
+            locale!("zh-u-co-big5han").into(),
+            Default::default(),
+        )
+        .unwrap();
         let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);

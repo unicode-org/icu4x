@@ -203,7 +203,7 @@ impl FieldSymbol {
                 | FieldSymbol::Year(Year::Cyclic)
                 | FieldSymbol::Weekday(Weekday::Format)
                 | FieldSymbol::DayPeriod(_)
-                | FieldSymbol::TimeZone(TimeZone::LowerZ | TimeZone::UpperZ)
+                | FieldSymbol::TimeZone(TimeZone::SpecificNonLocation)
         )
     }
 }
@@ -279,17 +279,19 @@ impl FieldSymbol {
         match self {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
-            Self::Year(Year::WeekOf) => 2,
+            // Self::Year(Year::WeekOf) => 2,
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
             Self::Month(Month::StandAlone) => 6,
-            Self::Week(Week::WeekOfYear) => 7,
-            Self::Week(Week::WeekOfMonth) => 8,
+            // TODO(#5643): Add week fields back
+            // Self::Week(Week::WeekOfYear) => 7,
+            // Self::Week(Week::WeekOfMonth) => 8,
+            Self::Week(_) => unreachable!(), // ZST references aren't uninhabited
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            Self::Day(Day::ModifiedJulianDay) => 12,
+            // Self::Day(Day::ModifiedJulianDay) => 12,
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -301,7 +303,7 @@ impl FieldSymbol {
             Self::Hour(Hour::H24) => 21,
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
-            Self::Second(Second::Millisecond) => 24,
+            Self::Second(Second::MillisInDay) => 24,
             Self::DecimalSecond(DecimalSecond::SecondF1) => 31,
             Self::DecimalSecond(DecimalSecond::SecondF2) => 32,
             Self::DecimalSecond(DecimalSecond::SecondF3) => 33,
@@ -311,13 +313,12 @@ impl FieldSymbol {
             Self::DecimalSecond(DecimalSecond::SecondF7) => 37,
             Self::DecimalSecond(DecimalSecond::SecondF8) => 38,
             Self::DecimalSecond(DecimalSecond::SecondF9) => 39,
-            Self::TimeZone(TimeZone::LowerZ) => 100,
-            Self::TimeZone(TimeZone::UpperZ) => 101,
-            Self::TimeZone(TimeZone::UpperO) => 102,
-            Self::TimeZone(TimeZone::LowerV) => 103,
-            Self::TimeZone(TimeZone::UpperV) => 104,
-            Self::TimeZone(TimeZone::LowerX) => 105,
-            Self::TimeZone(TimeZone::UpperX) => 106,
+            Self::TimeZone(TimeZone::SpecificNonLocation) => 100,
+            Self::TimeZone(TimeZone::LocalizedOffset) => 102,
+            Self::TimeZone(TimeZone::GenericNonLocation) => 103,
+            Self::TimeZone(TimeZone::Location) => 104,
+            Self::TimeZone(TimeZone::Iso) => 105,
+            Self::TimeZone(TimeZone::IsoWithZ) => 106,
         }
     }
 }
@@ -387,8 +388,8 @@ impl Ord for FieldSymbol {
 }
 
 macro_rules! field_type {
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
-        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $ule_name);
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $($ule_name:ident)?) => (
+        field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $($ule_name)?);
 
         #[cfg(feature = "datagen")]
         impl LengthType for $i {
@@ -397,7 +398,7 @@ macro_rules! field_type {
             }
         }
     );
-    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+    ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $($ule_name:ident)?) => (
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
@@ -405,9 +406,11 @@ macro_rules! field_type {
         #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
         #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
         #[allow(clippy::enum_variant_names)]
-        #[repr(u8)]
-        #[zerovec::make_ule($ule_name)]
-        #[zerovec::derive(Debug)]
+        $(
+            #[repr(u8)]
+            #[zerovec::make_ule($ule_name)]
+            #[zerovec::derive(Debug)]
+        )?
         #[allow(clippy::exhaustive_enums)] // used in data struct
         $(#[$enum_attr])*
         pub enum $i {
@@ -418,6 +421,10 @@ macro_rules! field_type {
                 $val = $idx,
             )*
         }
+
+        $(
+            #[allow(path_statements)] // #5643 impl conditional on $ule_name
+            const _: () = { $ule_name; };
 
         impl $i {
             /// Retrieves an index of the field variant.
@@ -461,6 +468,7 @@ macro_rules! field_type {
                     .ok_or(SymbolError::InvalidIndex(idx))
             }
         }
+        )?
 
         impl TryFrom<char> for $i {
             type Error = SymbolError;
@@ -498,16 +506,16 @@ field_type! (
     Year; {
         /// Field symbol for calendar year (numeric).
         ///
-        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or [`Year::WeekOf`] should be adequate.
+        /// In most cases the length of this field specifies the minimum number of digits to display, zero-padded as necessary. For most use cases, [`Year::Calendar`] or `Year::WeekOf` should be adequate.
         'y' => Calendar = 0,
-        /// Field symbol for year in "week of year".
-        ///
-        /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        'Y' => WeekOf = 1,
         /// Field symbol for cyclic year; used in calendars where years are tracked in cycles, such as the Chinese or Dangi calendars.
-        'U' => Cyclic = 2,
+        'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
-        'r' => RelatedIso = 3,
+        'r' => RelatedIso = 2,
+        // /// Field symbol for year in "week of year".
+        // ///
+        // /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
+        // 'Y' => WeekOf = 3,
     };
     YearULE
 );
@@ -540,10 +548,10 @@ impl LengthType for Month {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
             FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
-            FieldLength::TwoDigit => TextOrNumeric::Numeric,
-            FieldLength::Abbreviated => TextOrNumeric::Text,
-            FieldLength::Wide => TextOrNumeric::Text,
-            FieldLength::Narrow => TextOrNumeric::Text,
+            FieldLength::Two => TextOrNumeric::Numeric,
+            FieldLength::Three => TextOrNumeric::Text,
+            FieldLength::Four => TextOrNumeric::Text,
+            FieldLength::Five => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
         }
     }
@@ -560,10 +568,10 @@ field_type!(
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
-        /// Field symbol for the modified Julian day (numeric).
-        ///
-        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        'g' => ModifiedJulianDay = 3,
+        // /// Field symbol for the modified Julian day (numeric).
+        // ///
+        // /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        // 'g' => ModifiedJulianDay = 3,
     };
     Numeric;
     DayULE
@@ -596,7 +604,7 @@ field_type!(
         /// Field symbol for milliseconds in day (numeric).
         ///
         /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
-        'A' => Millisecond = 1,
+        'A' => MillisInDay = 1,
     };
     Numeric;
     SecondULE
@@ -605,16 +613,59 @@ field_type!(
 field_type!(
     /// An enum for the possible symbols of a week field in a date pattern.
     Week; {
-        /// Field symbol for week of year (numeric).
-        ///
-        /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
-        'w' => WeekOfYear = 0,
-        /// Field symbol for week of month (numeric).
-        'W' => WeekOfMonth = 1,
+        // /// Field symbol for week of year (numeric).
+        // ///
+        // /// When used in a pattern with year, use [`Year::WeekOf`] for the year field instead of [`Year::Calendar`].
+        // 'w' => WeekOfYear = 0,
+        // /// Field symbol for week of month (numeric).
+        // 'W' => WeekOfMonth = 1,
     };
     Numeric;
-    WeekULE
+    // TODO(#5643): Recover ULE once the type is inhabited
+    // WeekULE
 );
+
+impl Week {
+    /// Retrieves an index of the field variant.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use icu::datetime::fields::Month;
+    ///
+    /// assert_eq!(Month::StandAlone::idx(), 1);
+    /// ```
+    ///
+    /// # Stability
+    ///
+    /// This is mostly useful for serialization,
+    /// and does not guarantee index stability between ICU4X
+    /// versions.
+    #[inline]
+    pub(crate) fn idx(self) -> u8 {
+        0
+    }
+
+    /// Retrieves a field variant from an index.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use icu::datetime::fields::Month;
+    ///
+    /// assert_eq!(Month::from_idx(0), Month::Format);
+    /// ```
+    ///
+    /// # Stability
+    ///
+    /// This is mostly useful for serialization,
+    /// and does not guarantee index stability between ICU4X
+    /// versions.
+    #[inline]
+    pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+        Err(SymbolError::InvalidIndex(idx))
+    }
+}
 
 field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
@@ -639,7 +690,7 @@ impl LengthType for Weekday {
         match self {
             Self::Format => TextOrNumeric::Text,
             Self::Local | Self::StandAlone => match length {
-                FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Numeric,
+                FieldLength::One | FieldLength::Two => TextOrNumeric::Numeric,
                 _ => TextOrNumeric::Text,
             },
         }
@@ -676,54 +727,36 @@ field_type!(
         /// Field symbol for the specific non-location format of a time zone.
         ///
         /// For example: "Pacific Standard Time"
-        'z' => LowerZ = 0,
-        /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
-        /// long localized offset format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
-        'Z' => UpperZ = 1,
+        'z' => SpecificNonLocation = 0,
         /// Field symbol for the localized offset format of a time zone.
         ///
         /// For example: "GMT-07:00"
-        'O' => UpperO = 2,
+        'O' => LocalizedOffset = 1,
         /// Field symbol for the generic non-location format of a time zone.
         ///
         /// For example: "Pacific Time"
-        'v' => LowerV = 3,
+        'v' => GenericNonLocation = 2,
         /// Field symbol for any of: the time zone id, time zone exemplar city, or generic location format.
-        'V' => UpperV = 4,
-        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format, with an optional ISO8601 UTC indicator `Z`.
-        'x' => LowerX = 5,
-        /// Field symbol for either the ISO8601 basic format or ISO8601 extended format.  This does not allow an
-        /// optional ISO8601 UTC indicator `Z`, whereas [`TimeZone::LowerX`] allows the optional `Z`.
-        'X' => UpperX = 6,
+        'V' => Location = 3,
+        /// Field symbol for either the ISO-8601 basic format or ISO-8601 extended format. This does not use an
+        /// optional ISO-8601 UTC indicator `Z`, whereas [`TimeZone::IsoWithZ`] produces `Z`.
+        'x' => Iso = 4,
+        /// Field symbol for either the ISO-8601 basic format or ISO-8601 extended format, with the ISO-8601 UTC indicator `Z`.
+        'X' => IsoWithZ = 5,
     };
     TimeZoneULE
 );
 
 #[cfg(feature = "datagen")]
 impl LengthType for TimeZone {
-    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _: FieldLength) -> TextOrNumeric {
         use TextOrNumeric::*;
         match self {
-            // It is reasonable to default to Text on release builds instead of panicking.
-            //
-            // Erroneous symbols are gracefully handled by returning error Results
-            // in the formatting code.
-            //
-            // The default cases may want to be updated to return errors themselves
-            // if the skeleton matching code ever becomes fallible.
-            Self::UpperZ => match length.idx() {
-                1..=3 => Numeric,
-                4 => Text,
-                5 => Numeric,
-                _ => Text,
-            },
-            Self::UpperO => match length.idx() {
-                1 => Text,
-                4 => Numeric,
-                _ => Text,
-            },
-            Self::LowerX | Self::UpperX => Numeric,
-            Self::LowerZ | Self::LowerV | Self::UpperV => Text,
+            Self::Iso | Self::IsoWithZ => Numeric,
+            Self::LocalizedOffset
+            | Self::SpecificNonLocation
+            | Self::GenericNonLocation
+            | Self::Location => Text,
         }
     }
 }

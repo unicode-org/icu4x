@@ -6,7 +6,7 @@ use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
     neo_skeleton::{
         Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, YearStyle,
+        NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, TimePrecision, YearStyle,
     },
     options::{components, preferences},
     FixedCalendarDateTimeFormatter,
@@ -102,7 +102,7 @@ fn test_date_and_time() {
         ),
     );
     skeleton.year_style = Some(YearStyle::Always);
-    skeleton.fractional_second_digits = Some(FractionalSecondDigits::F4);
+    skeleton.time_precision = Some(TimePrecision::SecondExact(FractionalSecondDigits::F4));
     skeleton.alignment = Some(Alignment::Column);
 
     let mut input_bag = components::Bag::default();

@@ -58,20 +58,6 @@
     ],
     [
       [
-        "alam",
-        "Standard"
-      ],
-      "Almatı Standart Saati"
-    ],
-    [
-      [
-        "alam",
-        "Daylight"
-      ],
-      "Almatı Yaz Saati"
-    ],
-    [
-      [
         "alas",
         "Standard"
       ],
@@ -156,20 +142,6 @@
     ],
     [
       [
-        "anad",
-        "Standard"
-      ],
-      "Anadır Standart Saati"
-    ],
-    [
-      [
-        "anad",
-        "Daylight"
-      ],
-      "Anadır Yaz Saati"
-    ],
-    [
-      [
         "apia",
         "Standard"
       ],
@@ -181,34 +153,6 @@
         "Daylight"
       ],
       "Apia Yaz Saati"
-    ],
-    [
-      [
-        "aqta",
-        "Standard"
-      ],
-      "Aktav Standart Saati"
-    ],
-    [
-      [
-        "aqta",
-        "Daylight"
-      ],
-      "Aktav Yaz Saati"
-    ],
-    [
-      [
-        "aqto",
-        "Standard"
-      ],
-      "Aktöbe Standart Saati"
-    ],
-    [
-      [
-        "aqto",
-        "Daylight"
-      ],
-      "Aktöbe Yaz Saati"
     ],
     [
       [
@@ -237,20 +181,6 @@
         "Daylight"
       ],
       "Arjantin Yaz Saati"
-    ],
-    [
-      [
-        "arme",
-        "Standard"
-      ],
-      "Ermenistan Standart Saati"
-    ],
-    [
-      [
-        "arme",
-        "Daylight"
-      ],
-      "Ermenistan Yaz Saati"
     ],
     [
       [
@@ -338,20 +268,6 @@
     ],
     [
       [
-        "azer",
-        "Standard"
-      ],
-      "Azerbaycan Standart Saati"
-    ],
-    [
-      [
-        "azer",
-        "Daylight"
-      ],
-      "Azerbaycan Yaz Saati"
-    ],
-    [
-      [
         "azor",
         "Standard"
       ],
@@ -363,20 +279,6 @@
         "Daylight"
       ],
       "Azorlar Yaz Saati"
-    ],
-    [
-      [
-        "bang",
-        "Standard"
-      ],
-      "Bangladeş Standart Saati"
-    ],
-    [
-      [
-        "bang",
-        "Daylight"
-      ],
-      "Bangladeş Yaz Saati"
     ],
     [
       [
@@ -499,45 +401,10 @@
     ],
     [
       [
-        "colo",
-        "Standard"
-      ],
-      "Kolombiya Standart Saati"
-    ],
-    [
-      [
-        "colo",
-        "Daylight"
-      ],
-      "Kolombiya Yaz Saati"
-    ],
-    [
-      [
-        "cook",
-        "Standard"
-      ],
-      "Cook Adaları Standart Saati"
-    ],
-    [
-      [
         "cook",
         "Daylight"
       ],
       "Cook Adaları Yarı Yaz Saati"
-    ],
-    [
-      [
-        "cuba",
-        "Standard"
-      ],
-      "Küba Standart Saati"
-    ],
-    [
-      [
-        "cuba",
-        "Daylight"
-      ],
-      "Küba Yaz Saati"
     ],
     [
       [
@@ -552,20 +419,6 @@
         "Standard"
       ],
       "Dumont-d’Urville Saati"
-    ],
-    [
-      [
-        "east",
-        "Standard"
-      ],
-      "Paskalya Adası Standart Saati"
-    ],
-    [
-      [
-        "east",
-        "Daylight"
-      ],
-      "Paskalya Adası Yaz Saati"
     ],
     [
       [
@@ -632,20 +485,6 @@
     ],
     [
       [
-        "falk",
-        "Standard"
-      ],
-      "Falkland Adaları Standart Saati"
-    ],
-    [
-      [
-        "falk",
-        "Daylight"
-      ],
-      "Falkland Adaları Yaz Saati"
-    ],
-    [
-      [
         "fiji",
         "Standard"
       ],
@@ -685,20 +524,6 @@
         "Standard"
       ],
       "Gambier Saati"
-    ],
-    [
-      [
-        "geor",
-        "Standard"
-      ],
-      "Gürcistan Standart Saati"
-    ],
-    [
-      [
-        "geor",
-        "Daylight"
-      ],
-      "Gürcistan Yaz Saati"
     ],
     [
       [
@@ -842,20 +667,6 @@
     ],
     [
       [
-        "iran",
-        "Standard"
-      ],
-      "İran Standart Saati"
-    ],
-    [
-      [
-        "iran",
-        "Daylight"
-      ],
-      "İran Yaz Saati"
-    ],
-    [
-      [
         "irku",
         "Standard"
       ],
@@ -881,20 +692,6 @@
         "Daylight"
       ],
       "İsrail Yaz Saati"
-    ],
-    [
-      [
-        "japa",
-        "Standard"
-      ],
-      "Japonya Standart Saati"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "Japonya Yaz Saati"
     ],
     [
       [
@@ -1003,20 +800,6 @@
     ],
     [
       [
-        "maca",
-        "Standard"
-      ],
-      "Makao Standart Saati"
-    ],
-    [
-      [
-        "maca",
-        "Daylight"
-      ],
-      "Makao Yaz Saati"
-    ],
-    [
-      [
         "maga",
         "Standard"
       ],
@@ -1101,20 +884,6 @@
     ],
     [
       [
-        "mong",
-        "Standard"
-      ],
-      "Ulan Batur Standart Saati"
-    ],
-    [
-      [
-        "mong",
-        "Daylight"
-      ],
-      "Ulan Batur Yaz Saati"
-    ],
-    [
-      [
         "mosc",
         "Standard"
       ],
@@ -1140,20 +909,6 @@
         "Standard"
       ],
       "Nauru Saati"
-    ],
-    [
-      [
-        "neca",
-        "Standard"
-      ],
-      "Yeni Kaledonya Standart Saati"
-    ],
-    [
-      [
-        "neca",
-        "Daylight"
-      ],
-      "Yeni Kaledonya Yaz Saati"
     ],
     [
       [
@@ -1203,20 +958,6 @@
         "Standard"
       ],
       "Kuzey Mariana Adaları Saati"
-    ],
-    [
-      [
-        "norf",
-        "Standard"
-      ],
-      "Norfolk Adası Standart Saati"
-    ],
-    [
-      [
-        "norf",
-        "Daylight"
-      ],
-      "Norfolk Adası Yaz Saati"
     ],
     [
       [
@@ -1304,52 +1045,10 @@
     ],
     [
       [
-        "peru",
-        "Standard"
-      ],
-      "Peru Standart Saati"
-    ],
-    [
-      [
-        "peru",
-        "Daylight"
-      ],
-      "Peru Yaz Saati"
-    ],
-    [
-      [
-        "phil",
-        "Standard"
-      ],
-      "Filipinler Standart Saati"
-    ],
-    [
-      [
-        "phil",
-        "Daylight"
-      ],
-      "Filipinler Yaz Saati"
-    ],
-    [
-      [
         "phis",
         "Standard"
       ],
       "Phoenix Adaları Saati"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "Saint Pierre ve Miquelon Standart Saati"
-    ],
-    [
-      [
-        "pimi",
-        "Daylight"
-      ],
-      "Saint Pierre ve Miquelon Yaz Saati"
     ],
     [
       [
@@ -1374,20 +1073,6 @@
     ],
     [
       [
-        "qyzy",
-        "Standard"
-      ],
-      "Kızılorda Standart Saati"
-    ],
-    [
-      [
-        "qyzy",
-        "Daylight"
-      ],
-      "Kızılorda Yaz Saati"
-    ],
-    [
-      [
         "reun",
         "Standard"
       ],
@@ -1399,20 +1084,6 @@
         "Standard"
       ],
       "Rothera Saati"
-    ],
-    [
-      [
-        "sakh",
-        "Standard"
-      ],
-      "Sahalin Standart Saati"
-    ],
-    [
-      [
-        "sakh",
-        "Daylight"
-      ],
-      "Sahalin Yaz Saati"
     ],
     [
       [
@@ -1448,13 +1119,6 @@
         "Standard"
       ],
       "Seyşeller Saati"
-    ],
-    [
-      [
-        "sing",
-        "Standard"
-      ],
-      "Singapur Standart Saati"
     ],
     [
       [
@@ -1539,20 +1203,6 @@
         "Standard"
       ],
       "Chuuk Saati"
-    ],
-    [
-      [
-        "turk",
-        "Standard"
-      ],
-      "Türkmenistan Standart Saati"
-    ],
-    [
-      [
-        "turk",
-        "Daylight"
-      ],
-      "Türkmenistan Yaz Saati"
     ],
     [
       [

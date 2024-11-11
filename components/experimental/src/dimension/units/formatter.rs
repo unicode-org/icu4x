@@ -82,7 +82,8 @@ impl UnitsFormatter {
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
 
-        let plural_rules = PluralRules::try_new_cardinal(locale)?;
+        let temp_loc = locale.clone().into_locale();
+        let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);
@@ -126,7 +127,8 @@ impl UnitsFormatter {
             FixedDecimalFormatterOptions::default(),
         )?;
 
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+        let temp_loc = locale.clone().into_locale();
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);

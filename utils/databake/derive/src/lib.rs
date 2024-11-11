@@ -101,6 +101,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 env.insert(#crate_name);
                 match self {
                     #bake_body
+                    &_ => unreachable!() // ZST references aren't uninhabited
                 }
             }
         }
@@ -108,6 +109,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
             fn borrows_size(&self) -> usize {
                 match self {
                     #borrows_size_body
+                    &_ => unreachable!() // ZST references aren't uninhabited
                 }
             }
         }

@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use crate::parser::ParseError;
-use crate::subtags::Region;
+use crate::subtags::{Region, Subtag};
 
 impl_tinystr_subtag!(
     /// A subdivision suffix used in [`SubdivisionId`].
@@ -130,6 +130,12 @@ impl SubdivisionId {
             Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
+    }
+
+    /// Convert to [`Subtag`]
+    pub fn into_subtag(self) -> Subtag {
+        let result = self.region.to_tinystr().concat(self.suffix.to_tinystr());
+        Subtag::from_tinystr_unvalidated(result)
     }
 }
 

@@ -186,7 +186,7 @@ mod tests {
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
             data.get().past.get(1.into(), &rules).interpolate([1]),
@@ -213,7 +213,7 @@ mod tests {
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, &langid!("ar").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.

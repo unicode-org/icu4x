@@ -5,5 +5,5 @@
 import("//tutorials/gn/build/rust_toolchain.gni")
 
 rust_toolchain("rust_wasi") {
-  rust_target = "wasm32-wasi"
+  rust_target = "wasm32-wasip1"
 }

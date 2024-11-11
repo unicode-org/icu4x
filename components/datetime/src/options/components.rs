@@ -8,7 +8,7 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+//! including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
@@ -98,7 +98,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -185,9 +185,9 @@ impl Bag {
                     // G..GGG  AD           Abbreviated
                     // GGGG    Anno Domini  Wide
                     // GGGGG   A            Narrow
-                    Text::Short => FieldLength::Abbreviated,
-                    Text::Long => FieldLength::Wide,
-                    Text::Narrow => FieldLength::Narrow,
+                    Text::Short => FieldLength::Three,
+                    Text::Long => FieldLength::Four,
+                    Text::Narrow => FieldLength::Five,
                 },
             })
         }
@@ -200,7 +200,9 @@ impl Bag {
             fields.push(Field {
                 symbol: FieldSymbol::Year(match year {
                     Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
-                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
+                    Year::NumericWeekOf | Year::TwoDigitWeekOf => {
+                        unimplemented!("fields::Year::WeekOf")
+                    }
                 }),
                 length: match year {
                     // Calendar year (numeric).
@@ -210,7 +212,7 @@ impl Bag {
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
                     Year::Numeric | Year::NumericWeekOf => FieldLength::One,
-                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
+                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::Two,
                 },
             });
         }
@@ -231,42 +233,48 @@ impl Bag {
                     // MMMM   September  Wide
                     // MMMMM  S          Narrow
                     Month::Numeric => FieldLength::One,
-                    Month::TwoDigit => FieldLength::TwoDigit,
-                    Month::Long => FieldLength::Wide,
-                    Month::Short => FieldLength::Abbreviated,
-                    Month::Narrow => FieldLength::Narrow,
+                    Month::TwoDigit => FieldLength::Two,
+                    Month::Long => FieldLength::Four,
+                    Month::Short => FieldLength::Three,
+                    Month::Narrow => FieldLength::Five,
                 },
             });
         }
 
         if let Some(week) = self.week {
+            #[allow(unreachable_code)]
             fields.push(Field {
                 symbol: FieldSymbol::Week(match week {
-                    Week::WeekOfMonth => fields::Week::WeekOfMonth,
-                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => fields::Week::WeekOfYear,
+                    Week::WeekOfMonth => unimplemented!("#5643 fields::Week::WeekOfMonth"),
+                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => {
+                        unimplemented!("#5643 fields::Week::WeekOfYear")
+                    }
                 }),
                 length: match week {
                     Week::WeekOfMonth | Week::NumericWeekOfYear => FieldLength::One,
-                    Week::TwoDigitWeekOfYear => FieldLength::TwoDigit,
+                    Week::TwoDigitWeekOfYear => FieldLength::Two,
                 },
             });
         }
 
         if let Some(day) = self.day {
             // TODO(#591) Unimplemented day fields:
-            // D - Day of year
             // g - Modified Julian day.
             fields.push(Field {
                 symbol: FieldSymbol::Day(match day {
                     Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
                     Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
+                    Day::DayOfYear => fields::Day::DayOfYear,
                 }),
                 length: match day {
                     // d    1 	  Numeric day of month: minimum digits
                     // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
                     // F    1  	  Numeric day of week in month: minimum digits
-                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth => FieldLength::One,
-                    Day::TwoDigitDayOfMonth => FieldLength::TwoDigit,
+                    // D    1     Numeric day of year: minimum digits
+                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth | Day::DayOfYear => {
+                        FieldLength::One
+                    }
+                    Day::TwoDigitDayOfMonth => FieldLength::Two,
                 },
             });
         }
@@ -284,9 +292,9 @@ impl Bag {
                     // EEEE     Tuesday  Wide
                     // EEEEE    T 	     Narrow
                     // EEEEEE   Tu       Short
-                    Text::Long => FieldLength::Wide,
+                    Text::Long => FieldLength::Four,
                     Text::Short => FieldLength::One,
-                    Text::Narrow => FieldLength::Narrow,
+                    Text::Narrow => FieldLength::Five,
                 },
             });
         }
@@ -332,7 +340,7 @@ impl Bag {
                     // h     1, 12  Numeric: minimum digits
                     // hh   01, 12  Numeric: 2 digits, zero pad if needed
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
         }
@@ -344,7 +352,7 @@ impl Bag {
                 symbol: FieldSymbol::Minute,
                 length: match minute {
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
         }
@@ -362,7 +370,7 @@ impl Bag {
                 symbol,
                 length: match second {
                     Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Numeric::TwoDigit => FieldLength::Two,
                 },
             });
             // S - Fractional seconds. Represented as DecimalSecond.
@@ -372,7 +380,7 @@ impl Bag {
         if self.time_zone_name.is_some() {
             // Only the lower "v" field is used in skeletons.
             fields.push(Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::One,
             });
         }
@@ -394,7 +402,7 @@ impl Bag {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -416,7 +424,7 @@ pub enum Numeric {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -443,7 +451,7 @@ pub enum Text {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -471,7 +479,7 @@ pub enum Year {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -504,7 +512,7 @@ pub enum Month {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -528,7 +536,7 @@ pub enum Week {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -546,6 +554,8 @@ pub enum Day {
     TwoDigitDayOfMonth,
     /// The day of week in this month, such as the "2" in 2nd Wednesday of July.
     DayOfWeekInMonth,
+    /// The day of year (numeric).
+    DayOfYear,
 }
 
 /// Options for displaying a time zone for the `components::`[`Bag`].
@@ -555,7 +565,7 @@ pub enum Day {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// including in SemVer minor releases. It can be enabled with the `experimental` Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
@@ -603,28 +613,28 @@ impl From<TimeZoneName> for Field {
     fn from(time_zone_name: TimeZoneName) -> Self {
         match time_zone_name {
             TimeZoneName::ShortSpecific => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
                 length: FieldLength::One,
             },
             TimeZoneName::LongSpecific => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
-                length: FieldLength::Wide,
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
+                length: FieldLength::Four,
             },
             TimeZoneName::LongOffset => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
-                length: FieldLength::Wide,
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
+                length: FieldLength::Four,
             },
             TimeZoneName::ShortOffset => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
                 length: FieldLength::One,
             },
             TimeZoneName::ShortGeneric => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::One,
             },
             TimeZoneName::LongGeneric => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-                length: FieldLength::Wide,
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
+                length: FieldLength::Four,
             },
         }
     }
@@ -664,22 +674,22 @@ impl From<&Pattern<'_>> for Bag {
                     bag.era = Some(match field.length {
                         FieldLength::One
                         | FieldLength::NumericOverride(_)
-                        | FieldLength::TwoDigit
-                        | FieldLength::Abbreviated => Text::Short,
-                        FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        | FieldLength::Two
+                        | FieldLength::Three => Text::Short,
+                        FieldLength::Four => Text::Long,
+                        FieldLength::Five | FieldLength::Six => Text::Narrow,
                     });
                 }
                 FieldSymbol::Year(year) => {
                     bag.year = Some(match year {
                         fields::Year::Calendar => match field.length {
-                            FieldLength::TwoDigit => Year::TwoDigit,
+                            FieldLength::Two => Year::TwoDigit,
                             _ => Year::Numeric,
                         },
-                        fields::Year::WeekOf => match field.length {
-                            FieldLength::TwoDigit => Year::TwoDigitWeekOf,
-                            _ => Year::NumericWeekOf,
-                        },
+                        // fields::Year::WeekOf => match field.length {
+                        //     FieldLength::TwoDigit => Year::TwoDigitWeekOf,
+                        //     _ => Year::NumericWeekOf,
+                        // },
                         // TODO(#3762): Add support for U and r
                         _ => Year::Numeric,
                     });
@@ -690,46 +700,42 @@ impl From<&Pattern<'_>> for Bag {
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
-                        FieldLength::TwoDigit => Month::TwoDigit,
-                        FieldLength::Abbreviated => Month::Short,
-                        FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                        FieldLength::Two => Month::TwoDigit,
+                        FieldLength::Three => Month::Short,
+                        FieldLength::Four => Month::Long,
+                        FieldLength::Five | FieldLength::Six => Month::Narrow,
                     });
                 }
-                FieldSymbol::Week(week) => {
-                    bag.week = Some(match week {
-                        fields::Week::WeekOfYear => match field.length {
-                            FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
-                            _ => Week::NumericWeekOfYear,
-                        },
-                        fields::Week::WeekOfMonth => Week::WeekOfMonth,
-                    });
+                FieldSymbol::Week(_week) => {
+                    // TODO(#5643): Add week fields back
+                    // bag.week = Some(match week {
+                    //     fields::Week::WeekOfYear => match field.length {
+                    //         FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
+                    //         _ => Week::NumericWeekOfYear,
+                    //     },
+                    //     fields::Week::WeekOfMonth => Week::WeekOfMonth,
+                    // });
                 }
                 FieldSymbol::Day(day) => {
                     bag.day = Some(match day {
                         fields::Day::DayOfMonth => match field.length {
-                            FieldLength::TwoDigit => Day::TwoDigitDayOfMonth,
+                            FieldLength::Two => Day::TwoDigitDayOfMonth,
                             _ => Day::NumericDayOfMonth,
                         },
-                        fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
+                        fields::Day::DayOfYear => Day::DayOfYear,
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
-                        fields::Day::ModifiedJulianDay => {
-                            unimplemented!("fields::Day::ModifiedJulianDay")
-                        }
                     });
                 }
                 FieldSymbol::Weekday(weekday) => {
                     bag.weekday = Some(match weekday {
                         fields::Weekday::Format => match field.length {
-                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
-                                Text::Short
-                            }
-                            FieldLength::Wide => Text::Long,
+                            FieldLength::One | FieldLength::Two | FieldLength::Three => Text::Short,
+                            FieldLength::Four => Text::Long,
                             _ => Text::Narrow,
                         },
                         fields::Weekday::StandAlone => match field.length {
                             FieldLength::One
-                            | FieldLength::TwoDigit
+                            | FieldLength::Two
                             | FieldLength::NumericOverride(_) => {
                                 // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
                                 // no way to request it using the current system. As of 2021-12-06
@@ -754,9 +760,9 @@ impl From<&Pattern<'_>> for Bag {
                                 //     'ccc, MMM d. y'
                                 unimplemented!("Numeric stand-alone fields are not supported.")
                             }
-                            FieldLength::Abbreviated => Text::Short,
-                            FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                            FieldLength::Three => Text::Short,
+                            FieldLength::Four => Text::Long,
+                            FieldLength::Five | FieldLength::Six => Text::Narrow,
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });
@@ -766,7 +772,7 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::Hour(hour) => {
                     bag.hour = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                     bag.preferences = Some(preferences::Bag {
@@ -780,27 +786,23 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::Minute => {
                     bag.minute = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                 }
-                FieldSymbol::Second(second) => {
-                    match second {
-                        fields::Second::Second => {
-                            bag.second = Some(match field.length {
-                                FieldLength::TwoDigit => Numeric::TwoDigit,
-                                _ => Numeric::Numeric,
-                            });
-                        }
-                        fields::Second::Millisecond => {
-                            // fields::Second::Millisecond is not implemented (#1834)
-                        }
+                FieldSymbol::Second(second) => match second {
+                    fields::Second::Second => {
+                        bag.second = Some(match field.length {
+                            FieldLength::Two => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        });
                     }
-                }
+                    fields::Second::MillisInDay => unimplemented!("fields::Second::MillisInDay"),
+                },
                 FieldSymbol::DecimalSecond(decimal_second) => {
                     use FractionalSecondDigits::*;
                     bag.second = Some(match field.length {
-                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
                     bag.fractional_second = Some(match decimal_second {
@@ -817,22 +819,21 @@ impl From<&Pattern<'_>> for Bag {
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
-                        fields::TimeZone::LowerZ => match field.length {
+                        fields::TimeZone::SpecificNonLocation => match field.length {
                             FieldLength::One => TimeZoneName::ShortSpecific,
                             _ => TimeZoneName::LongSpecific,
                         },
-                        fields::TimeZone::LowerV => match field.length {
+                        fields::TimeZone::GenericNonLocation => match field.length {
                             FieldLength::One => TimeZoneName::ShortGeneric,
                             _ => TimeZoneName::LongGeneric,
                         },
-                        fields::TimeZone::UpperO => match field.length {
+                        fields::TimeZone::LocalizedOffset => match field.length {
                             FieldLength::One => TimeZoneName::ShortOffset,
                             _ => TimeZoneName::LongOffset,
                         },
-                        fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
-                        fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
-                        fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),
-                        fields::TimeZone::UpperX => unimplemented!("fields::TimeZone::UpperX"),
+                        fields::TimeZone::Location => unimplemented!("fields::TimeZone::Location"),
+                        fields::TimeZone::Iso => unimplemented!("fields::TimeZone::IsoZ"),
+                        fields::TimeZone::IsoWithZ => unimplemented!("fields::TimeZone::Iso"),
                     });
                 }
             }
@@ -855,7 +856,8 @@ mod test {
         let bag = Bag {
             year: Some(Year::Numeric),
             month: Some(Month::Long),
-            week: Some(Week::WeekOfMonth),
+            // TODO(#5643): Add week fields back
+            week: None,
             day: Some(Day::NumericDayOfMonth),
 
             hour: Some(Numeric::Numeric),
@@ -869,8 +871,7 @@ mod test {
             bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
-                (Symbol::Month(fields::Month::Format), Length::Wide).into(),
-                (Symbol::Week(fields::Week::WeekOfMonth), Length::One).into(),
+                (Symbol::Month(fields::Month::Format), Length::Four).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
@@ -895,7 +896,7 @@ mod test {
             bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
-                (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),
+                (Symbol::Month(fields::Month::Format), Length::Two).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
             ]
         );

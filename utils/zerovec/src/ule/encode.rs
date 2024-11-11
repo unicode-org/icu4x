@@ -81,7 +81,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
 /// Given an [`EncodeAsVarULE`] type `S`, encode it into a `Box<T>`
 ///
 /// This is primarily useful for generating `Deserialize` impls for VarULE types
-pub fn encode_varule_to_box<S: EncodeAsVarULE<T>, T: VarULE + ?Sized>(x: &S) -> Box<T> {
+pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x: &S) -> Box<T> {
     // zero-fill the vector to avoid uninitialized data UB
     let mut vec: Vec<u8> = vec![0; x.encode_var_ule_len()];
     x.encode_var_ule_write(&mut vec);

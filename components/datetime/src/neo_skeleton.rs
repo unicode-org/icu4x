@@ -8,8 +8,10 @@
 use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
-use crate::provider::pattern::CoarseHourCycle;
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use crate::{
+    fields::{FieldLength, TimeZone},
+    provider::pattern::CoarseHourCycle,
+};
 use icu_provider::DataMarkerAttributes;
 use icu_timezone::scaffold::IntoOption;
 
@@ -144,6 +146,95 @@ impl IntoOption<YearStyle> for YearStyle {
     }
 }
 
+/// A specification for how precisely to display the time of day.
+///
+/// The examples below are based on the following inputs and hour cycles:
+///
+/// 1. 11 o'clock with 12-hour time
+/// 2. 16:20 (4:20 pm) with 24-hour time
+/// 3. 7:15:01.85 with 24-hour time
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(from = "TimePrecisionSerde", into = "TimePrecisionSerde")
+)]
+#[non_exhaustive]
+pub enum TimePrecision {
+    /// Always display the hour. Display smaller fields if they are nonzero.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11 am`
+    /// 2. `16:20`
+    /// 3. `07:15:01.85`
+    HourPlus,
+    /// Always display the hour. Hide all other time fields.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11 am`
+    /// 2. `16h`
+    /// 3. `07h`
+    HourExact,
+    /// Always display the hour and minute. Display the second if nonzero.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11:00 am`
+    /// 2. `16:20`
+    /// 3. `07:15:01.85`
+    MinutePlus,
+    /// Always display the hour and minute. Hide the second.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11:00 am`
+    /// 2. `16:20`
+    /// 3. `07:15`
+    MinuteExact,
+    /// Display the hour, minute, and second. Display fractional seconds if nonzero.
+    ///
+    /// This is the default.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11:00:00 am`
+    /// 2. `16:20:00`
+    /// 3. `07:15:01.85`
+    SecondPlus,
+    /// Display the hour, minute, and second with the given number of
+    /// fractional second digits.
+    ///
+    /// Examples with [`FractionalSecondDigits::F1`]:
+    ///
+    /// 1. `11:00:00.0 am`
+    /// 2. `16:20:00.0`
+    /// 3. `07:15:01.8`
+    SecondExact(FractionalSecondDigits),
+}
+
+impl IntoOption<TimePrecision> for TimePrecision {
+    #[inline]
+    fn into_option(self) -> Option<Self> {
+        Some(self)
+    }
+}
+
+impl TimePrecision {
+    /// Converts a [`length::Time`] to its nearest [`TimePrecision`].
+    #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
+    pub fn from_time_length(time_length: length::Time) -> Self {
+        match time_length {
+            length::Time::Full => todo!(),
+            length::Time::Long => todo!(),
+            length::Time::Medium => Self::SecondPlus,
+            length::Time::Short => Self::MinuteExact,
+        }
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -175,13 +266,6 @@ pub enum FractionalSecondDigits {
     F8,
     /// Nine fractional digits.
     F9,
-}
-
-impl IntoOption<FractionalSecondDigits> for FractionalSecondDigits {
-    #[inline]
-    fn into_option(self) -> Option<Self> {
-        Some(self)
-    }
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
@@ -568,42 +652,16 @@ impl NeoCalendarPeriodComponents {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
-    /// An hour (12-hour or 24-hour chosen by locale), as in
-    /// "4 pm" or "16h"
-    Hour,
-    /// An hour and minute (12-hour or 24-hour chosen by locale), as in
-    /// "4:03 pm" or "16:03"
-    HourMinute,
-    /// An hour, minute, and second (12-hour or 24-hour chosen by locale), as in
-    /// "4:03:51 pm" or "16:03:51"
-    HourMinuteSecond,
-    /// An hour with a 12-hour clock and day period, as in
-    /// "4 in the afternoon"
-    DayPeriodHour12,
-    /// An hour with a 12-hour clock, as in
-    /// "4 pm"
-    Hour12,
-    /// An hour and minute with a 12-hour clock and a day period, as in
-    /// "4:03 in the afternoon"
-    DayPeriodHour12Minute,
-    /// An hour and minute with a 12-hour clock, as in
-    /// "4:03 pm"
-    Hour12Minute,
-    /// An hour, minute, and second with a 12-hour clock and day period, as in
-    /// "4:03:51 in the afternoon"
-    DayPeriodHour12MinuteSecond,
-    /// An hour, minute, and second with a 12-hour clock, as in
-    /// "4:03:51 pm"
-    Hour12MinuteSecond,
-    /// An hour with a 24-hour clock, as in
-    /// "16h"
-    Hour24,
-    /// An hour and minute with a 24-hour clock, as in
-    /// "16:03"
-    Hour24Minute,
-    /// An hour, minute, and second with a 24-hour clock, as in
-    /// "16:03:51"
-    Hour24MinuteSecond,
+    /// A time of day (12-hour or 24-hour chosen by locale),
+    /// with the precision chosen by [`TimePrecision`]
+    Time,
+    // TODO: Remove these other variants. Collapse this enum to TimePrecision
+    /// A time of day with a 12-hour clock,
+    /// with the precision chosen by [`TimePrecision`]
+    Time12,
+    /// A time of day with a 24-hour clock,
+    /// with the precision chosen by [`TimePrecision`]
+    Time24,
     /// Fields to represent the time chosen by the locale.
     ///
     /// These are the _standard time patterns_ for types "medium" and
@@ -616,59 +674,17 @@ pub enum NeoTimeComponents {
 
 impl NeoTimeComponents {
     /// All values of this enum.
-    pub const VALUES: &'static [Self] = &[
-        Self::Hour,
-        Self::HourMinute,
-        Self::HourMinuteSecond,
-        Self::DayPeriodHour12,
-        Self::Hour12,
-        Self::DayPeriodHour12Minute,
-        Self::Hour12Minute,
-        Self::DayPeriodHour12MinuteSecond,
-        Self::Hour12MinuteSecond,
-        Self::Hour24,
-        Self::Hour24Minute,
-        Self::Hour24MinuteSecond,
-        Self::Auto,
-    ];
+    pub const VALUES: &'static [Self] = &[Self::Time, Self::Time12, Self::Time24, Self::Auto];
 
     const HOUR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("j");
-    const HOUR_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("jm");
-    const HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("jms");
-    const DAY_PERIOD_HOUR12: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bh");
     const HOUR12: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h");
-    const DAY_PERIOD_HOUR12_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bhm");
-    const HOUR12_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("hm");
-    const DAY_PERIOD_HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("bhms");
-    const HOUR12_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("hms");
     const HOUR24: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("h0");
-    const HOUR24_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("h0m");
-    const HOUR24_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("h0ms");
     const AUTO: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("a1");
 
     // For matching
     const HOUR_STR: &'static str = Self::HOUR.as_str();
-    const HOUR_MINUTE_STR: &'static str = Self::HOUR_MINUTE.as_str();
-    const HOUR_MINUTE_SECOND_STR: &'static str = Self::HOUR_MINUTE_SECOND.as_str();
-    const DAY_PERIOD_HOUR12_STR: &'static str = Self::DAY_PERIOD_HOUR12.as_str();
     const HOUR12_STR: &'static str = Self::HOUR12.as_str();
-    const DAY_PERIOD_HOUR12_MINUTE_STR: &'static str = Self::DAY_PERIOD_HOUR12_MINUTE.as_str();
-    const HOUR12_MINUTE_STR: &'static str = Self::HOUR12_MINUTE.as_str();
-    const DAY_PERIOD_HOUR12_MINUTE_SECOND_STR: &'static str =
-        Self::DAY_PERIOD_HOUR12_MINUTE_SECOND.as_str();
-    const HOUR12_MINUTE_SECOND_STR: &'static str = Self::HOUR12_MINUTE_SECOND.as_str();
     const HOUR24_STR: &'static str = Self::HOUR24.as_str();
-    const HOUR24_MINUTE_STR: &'static str = Self::HOUR24_MINUTE.as_str();
-    const HOUR24_MINUTE_SECOND_STR: &'static str = Self::HOUR24_MINUTE_SECOND.as_str();
     const AUTO_STR: &'static str = Self::AUTO.as_str();
 
     /// Returns a stable string identifying this set of components.
@@ -676,18 +692,9 @@ impl NeoTimeComponents {
     /// For details, see [`NeoDateComponents::id_str()`].
     pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
-            Self::Hour => Self::HOUR,
-            Self::HourMinute => Self::HOUR_MINUTE,
-            Self::HourMinuteSecond => Self::HOUR_MINUTE_SECOND,
-            Self::DayPeriodHour12 => Self::DAY_PERIOD_HOUR12,
-            Self::Hour12 => Self::HOUR12,
-            Self::DayPeriodHour12Minute => Self::DAY_PERIOD_HOUR12_MINUTE,
-            Self::Hour12Minute => Self::HOUR12_MINUTE,
-            Self::DayPeriodHour12MinuteSecond => Self::DAY_PERIOD_HOUR12_MINUTE_SECOND,
-            Self::Hour12MinuteSecond => Self::HOUR12_MINUTE_SECOND,
-            Self::Hour24 => Self::HOUR24,
-            Self::Hour24Minute => Self::HOUR24_MINUTE,
-            Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND,
+            Self::Time => Self::HOUR,
+            Self::Time12 => Self::HOUR12,
+            Self::Time24 => Self::HOUR24,
             Self::Auto => Self::AUTO,
         }
     }
@@ -697,18 +704,9 @@ impl NeoTimeComponents {
     /// For details, see [`NeoDateComponents::from_id_str()`].
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
-            Self::HOUR_STR => Some(Self::Hour),
-            Self::HOUR_MINUTE_STR => Some(Self::HourMinute),
-            Self::HOUR_MINUTE_SECOND_STR => Some(Self::HourMinuteSecond),
-            Self::DAY_PERIOD_HOUR12_STR => Some(Self::DayPeriodHour12),
-            Self::HOUR12_STR => Some(Self::Hour12),
-            Self::DAY_PERIOD_HOUR12_MINUTE_STR => Some(Self::DayPeriodHour12Minute),
-            Self::HOUR12_MINUTE_STR => Some(Self::Hour12Minute),
-            Self::DAY_PERIOD_HOUR12_MINUTE_SECOND_STR => Some(Self::DayPeriodHour12MinuteSecond),
-            Self::HOUR12_MINUTE_SECOND_STR => Some(Self::Hour12MinuteSecond),
-            Self::HOUR24_STR => Some(Self::Hour24),
-            Self::HOUR24_MINUTE_STR => Some(Self::Hour24Minute),
-            Self::HOUR24_MINUTE_SECOND_STR => Some(Self::Hour24MinuteSecond),
+            Self::HOUR_STR => Some(Self::Time),
+            Self::HOUR12_STR => Some(Self::Time12),
+            Self::HOUR24_STR => Some(Self::Time24),
             Self::AUTO_STR => Some(Self::Auto),
             _ => None,
         }
@@ -717,54 +715,15 @@ impl NeoTimeComponents {
     pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
         use CoarseHourCycle::*;
         match (self, hour_cycle) {
-            (Self::Hour, H11H12) => Self::Hour12,
-            (Self::HourMinute, H11H12) => Self::Hour12Minute,
-            (Self::HourMinuteSecond, H11H12) => Self::Hour12MinuteSecond,
-            (Self::Hour, H23H24) => Self::Hour24,
-            (Self::HourMinute, H23H24) => Self::Hour24Minute,
-            (Self::HourMinuteSecond, H23H24) => Self::Hour24MinuteSecond,
+            (Self::Time, H11H12) => Self::Time12,
+            (Self::Time, H23H24) => Self::Time24,
             _ => self,
         }
     }
 
-    /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
-    #[doc(hidden)] // the types involved in this mapping may change
-    #[cfg(feature = "datagen")]
-    pub fn from_time_length(time_length: length::Time) -> Self {
-        match time_length {
-            length::Time::Full => todo!(),
-            length::Time::Long => todo!(),
-            length::Time::Medium => NeoTimeComponents::HourMinuteSecond,
-            length::Time::Short => NeoTimeComponents::HourMinute,
-        }
-    }
-
-    /// Whether this field set contains the hour.
-    pub fn has_hour(self) -> bool {
+    /// Whether this field set contains the time of day.
+    pub fn has_time(self) -> bool {
         true
-    }
-
-    /// Whether this field set contains the minute.
-    pub fn has_minute(self) -> bool {
-        matches!(
-            self,
-            NeoTimeComponents::HourMinute
-                | NeoTimeComponents::Hour12Minute
-                | NeoTimeComponents::Hour24Minute
-                | NeoTimeComponents::HourMinuteSecond
-                | NeoTimeComponents::Hour12MinuteSecond
-                | NeoTimeComponents::Hour24MinuteSecond
-        )
-    }
-
-    /// Whether this field set contains the second.
-    pub fn has_second(self) -> bool {
-        matches!(
-            self,
-            NeoTimeComponents::HourMinuteSecond
-                | NeoTimeComponents::Hour12MinuteSecond
-                | NeoTimeComponents::Hour24MinuteSecond
-        )
     }
 
     /// Creates a skeleton for this field set with a long length.
@@ -913,18 +872,15 @@ impl From<NeoTimeZoneStyle> for NeoComponents {
 impl NeoComponents {
     // Attributes for skeleta that span date/time/zone
     // TODO: Add variants for H, h, and B hours
-    const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("ejm");
-    const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("ejms");
+    const WEEKDAY_TIME: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ej");
 
     // For matching
-    const WEEKDAY_HOUR_MINUTE_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE.as_str();
-    const WEEKDAY_HOUR_MINUTE_SECOND_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE_SECOND.as_str();
+    const WEEKDAY_TIME_STR: &'static str = Self::WEEKDAY_TIME.as_str();
 
     #[doc(hidden)] // for datagen
     pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
-        &[Self::WEEKDAY_HOUR_MINUTE, Self::WEEKDAY_HOUR_MINUTE_SECOND]
+        &[Self::WEEKDAY_TIME]
     }
 
     /// Returns a stable string identifying this field set,
@@ -933,11 +889,8 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::id_str()`].
     pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
-            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinute) => {
-                Some(Self::WEEKDAY_HOUR_MINUTE)
-            }
-            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::HourMinuteSecond) => {
-                Some(Self::WEEKDAY_HOUR_MINUTE_SECOND)
+            Self::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time) => {
+                Some(Self::WEEKDAY_TIME)
             }
             _ => None,
         }
@@ -949,13 +902,9 @@ impl NeoComponents {
     /// For details, see [`NeoDateComponents::from_id_str()`].
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
-            Self::WEEKDAY_HOUR_MINUTE_STR => Some(Self::DateTime(
+            Self::WEEKDAY_TIME_STR => Some(Self::DateTime(
                 NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinute,
-            )),
-            Self::WEEKDAY_HOUR_MINUTE_SECOND_STR => Some(Self::DateTime(
-                NeoDateComponents::Weekday,
-                NeoTimeComponents::HourMinuteSecond,
+                NeoTimeComponents::Time,
             )),
             _ => None,
         }
@@ -1021,45 +970,17 @@ impl NeoComponents {
         }
     }
 
-    /// Whether this field set contains the hour.
-    pub fn has_hour(self) -> bool {
+    /// Whether this field set contains the time of day.
+    pub fn has_time(self) -> bool {
         match self {
             NeoComponents::Date(_) => false,
             NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_hour(),
+            NeoComponents::Time(_) => true,
             NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_hour(),
+            NeoComponents::DateTime(_, _) => true,
             NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_hour(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_hour(),
-        }
-    }
-
-    /// Whether this field set contains the minute.
-    pub fn has_minute(self) -> bool {
-        match self {
-            NeoComponents::Date(_) => false,
-            NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_minute(),
-            NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_minute(),
-            NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_minute(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_minute(),
-        }
-    }
-
-    /// Whether this field set contains the second.
-    pub fn has_second(self) -> bool {
-        match self {
-            NeoComponents::Date(_) => false,
-            NeoComponents::CalendarPeriod(_) => false,
-            NeoComponents::Time(time_components) => time_components.has_second(),
-            NeoComponents::Zone(_) => false,
-            NeoComponents::DateTime(_, time_components) => time_components.has_second(),
-            NeoComponents::DateZone(_, _) => false,
-            NeoComponents::TimeZone(time_components, _) => time_components.has_second(),
-            NeoComponents::DateTimeZone(_, time_components, _) => time_components.has_second(),
+            NeoComponents::TimeZone(_, _) => true,
+            NeoComponents::DateTimeZone(_, _, _) => true,
         }
     }
 
@@ -1128,8 +1049,34 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneStyle {
-    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
-        crate::tz_registry::skeleton_to_resolved(self, length)
+    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> (TimeZone, FieldLength) {
+        match (self, length) {
+            (
+                NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific,
+                NeoSkeletonLength::Short | NeoSkeletonLength::Medium,
+            ) => (TimeZone::SpecificNonLocation, FieldLength::One),
+            (NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific, NeoSkeletonLength::Long) => {
+                (TimeZone::SpecificNonLocation, FieldLength::Four)
+            }
+            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::LocalizedOffset, FieldLength::One)
+            }
+            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Long) => {
+                (TimeZone::LocalizedOffset, FieldLength::Four)
+            }
+            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::GenericNonLocation, FieldLength::One)
+            }
+            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Long) => {
+                (TimeZone::GenericNonLocation, FieldLength::Four)
+            }
+            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
+                (TimeZone::Location, FieldLength::Four)
+            }
+            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Long) => {
+                (TimeZone::Location, FieldLength::Four)
+            }
+        }
     }
 
     /// Creates a skeleton for this time zone style with a long length.
@@ -1236,8 +1183,8 @@ pub struct NeoTimeSkeleton {
     pub components: NeoTimeComponents,
     /// Alignment option.
     pub alignment: Option<Alignment>,
-    /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    /// Time precision option.
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl NeoTimeSkeleton {
@@ -1250,8 +1197,20 @@ impl NeoTimeSkeleton {
             length,
             components,
             alignment: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
+    }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
     }
 }
 
@@ -1267,8 +1226,8 @@ pub struct NeoDateTimeSkeleton {
     pub alignment: Option<Alignment>,
     /// Era display option.
     pub year_style: Option<YearStyle>,
-    /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    /// Time precision option.
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl NeoDateTimeSkeleton {
@@ -1282,8 +1241,20 @@ impl NeoDateTimeSkeleton {
             components,
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
+    }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
     }
 }
 
@@ -1305,7 +1276,7 @@ pub struct NeoSkeleton {
     /// Era display option.
     pub year_style: Option<YearStyle>,
     /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl From<NeoDateSkeleton> for NeoSkeleton {
@@ -1315,7 +1286,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1327,7 +1298,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: None,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -1339,7 +1310,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
             components: value.components.into(),
             alignment: value.alignment,
             year_style: value.year_style,
-            fractional_second_digits: value.fractional_second_digits,
+            time_precision: value.time_precision,
         }
     }
 }
@@ -1352,7 +1323,7 @@ impl NeoSkeleton {
             components,
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
 }
@@ -1365,13 +1336,16 @@ impl NeoDateTimeSkeleton {
         time_length: crate::options::length::Time,
     ) -> Self {
         let date_skeleton = NeoDateSkeleton::from_date_length(date_length);
-        let time_components = NeoTimeComponents::from_time_length(time_length);
+        let time_precision = TimePrecision::from_time_length(time_length);
         NeoDateTimeSkeleton {
             length: date_skeleton.length,
-            components: NeoDateTimeComponents::DateTime(date_skeleton.components, time_components),
+            components: NeoDateTimeComponents::DateTime(
+                date_skeleton.components,
+                NeoTimeComponents::Time,
+            ),
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: Some(time_precision),
         }
     }
 }

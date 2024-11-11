@@ -7,7 +7,6 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::list::ListFormatter;
-use icu::list::ListLength;
 use icu::locale::locale;
 use std::sync::OnceLock;
 
@@ -16,7 +15,7 @@ static SPANISH_LIST_FORMATTER: OnceLock<ListFormatter> = OnceLock::new();
 fn main() {
     let result = SPANISH_LIST_FORMATTER
         .get_or_init(|| {
-            ListFormatter::try_new_and_with_length(&locale!("es").into(), ListLength::Wide)
+            ListFormatter::try_new_and(locale!("es").into(), Default::default())
                 .expect("locale 'es' should be present in compiled data")
         })
         .format_to_string(["uno", "dos", "tres"].iter());

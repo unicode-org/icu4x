@@ -5,8 +5,12 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode Currency Format Identifier defines a style for currency formatting.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeCurrencyFormatIdentifier).
     CurrencyFormatStyle {
-        "standard" => Standard,
-        "account" => Account
+        /// Negative numbers use the minusSign symbol (the default)
+        ("standard" => Standard),
+        /// Negative numbers use parentheses or equivalent
+        ("account" => Account)
 }, "cf");

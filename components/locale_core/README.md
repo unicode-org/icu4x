@@ -8,7 +8,9 @@ This module is published as its own crate ([`icu_locale_core`](https://docs.rs/i
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 The module provides algorithms for parsing a string into a well-formed language or locale identifier
-as defined by [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`].
+as defined by [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`]. Additionally
+the module provides [`preferences`] interface for operations on locale preferences and conversions
+from and to locale unicode extensions.
 
 [`Locale`] is the most common structure to use for storing information about a language,
 script, region, variants and extensions. In almost all cases, this struct should be used as the

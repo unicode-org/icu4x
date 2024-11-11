@@ -16,7 +16,7 @@ use icu_provider::marker::NeverMarker;
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::fieldset::{Combo, E, T, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -24,7 +24,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// let formatter = DateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short(),
+///     Combo::<E, T, L>::short().hm(),
 /// )
 /// .unwrap();
 ///
@@ -43,7 +43,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::{Combo, E, HM, L};
+/// use icu::datetime::fieldset::{Combo, E, T, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -51,7 +51,7 @@ use icu_provider::marker::NeverMarker;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, HM, L>::short(),
+///     Combo::<E, T, L>::short().hm(),
 /// )
 /// .unwrap();
 ///
@@ -77,8 +77,8 @@ pub struct Combo<D, T, Z> {
     pub alignment: Option<Alignment>,
     /// Era display option.
     pub year_style: Option<YearStyle>,
-    /// Fractional second digits option.
-    pub fractional_second_digits: Option<FractionalSecondDigits>,
+    /// Time precision option.
+    pub time_precision: Option<TimePrecision>,
 }
 
 impl<D, T, Z> UnstableSealed for Combo<D, T, Z> {}
@@ -93,7 +93,7 @@ impl<D, T, Z> Combo<D, T, Z> {
             length,
             alignment: None,
             year_style: None,
-            fractional_second_digits: None,
+            time_precision: None,
         }
     }
     /// Creates a date/time/zone skeleton with a long length.
@@ -108,13 +108,24 @@ impl<D, T, Z> Combo<D, T, Z> {
     pub const fn short() -> Self {
         Self::with_length(NeoSkeletonLength::Short)
     }
+
+    /// Sets the time precision to [`TimePrecision::MinuteExact`]
+    pub fn hm(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::MinuteExact);
+        self
+    }
+    /// Sets the time precision to [`TimePrecision::SecondPlus`]
+    pub fn hms(mut self) -> Self {
+        self.time_precision = Some(TimePrecision::SecondPlus);
+        self
+    }
 }
 
 impl_get_field!(<D, T, Z> Combo<D, T, Z>, never);
 impl_get_field!(<D, T, Z> Combo<D, T, Z>, length, yes);
 impl_get_field!(<D, T, Z> Combo<D, T, Z>, alignment, yes);
 impl_get_field!(<D, T, Z> Combo<D, T, Z>, year_style, yes);
-impl_get_field!(<D, T, Z> Combo<D, T, Z>, fractional_second_digits, yes);
+impl_get_field!(<D, T, Z> Combo<D, T, Z>, time_precision, yes);
 
 impl<D> DateTimeNamesMarker for Combo<D, NeoNeverMarker, NeoNeverMarker>
 where
@@ -150,7 +161,7 @@ where
     type LengthOption = NeoSkeletonLength; // always needed for date
     type AlignmentOption = D::AlignmentOption;
     type YearStyleOption = D::YearStyleOption;
-    type FractionalSecondDigitsOption = ();
+    type TimePrecisionOption = ();
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -188,7 +199,7 @@ where
     type LengthOption = NeoSkeletonLength; // always needed for time
     type AlignmentOption = Option<Alignment>; // always needed for time
     type YearStyleOption = (); // no year in a time-only format
-    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
+    type TimePrecisionOption = T::TimePrecisionOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -226,7 +237,7 @@ where
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
     type AlignmentOption = Z::AlignmentOption; // no date or time: inherit from zone
     type YearStyleOption = (); // no year in a zone-only format
-    type FractionalSecondDigitsOption = ();
+    type TimePrecisionOption = ();
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -267,7 +278,7 @@ where
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
     type YearStyleOption = D::YearStyleOption;
-    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
+    type TimePrecisionOption = T::TimePrecisionOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -312,7 +323,7 @@ where
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type AlignmentOption = Option<Alignment>; // always needed for date/time
     type YearStyleOption = D::YearStyleOption;
-    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
+    type TimePrecisionOption = T::TimePrecisionOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 

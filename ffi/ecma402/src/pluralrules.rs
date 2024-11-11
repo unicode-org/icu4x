@@ -244,9 +244,14 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
+        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
+        let locale = icu::locale::Locale::try_from_str(&l.to_string()).unwrap();
+
+        let prefs = icu::plurals::PluralRulesPreferences::from(&locale);
+
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), rule_type)?;
+        let rep = ipr::PluralRules::try_new(prefs, rule_type)?;
         Ok(Self { opts, rep })
     }
 

@@ -5,13 +5,25 @@
 use crate::preferences::extensions::unicode::enum_keyword;
 
 enum_keyword!(
-    /// TODO
+    /// A Unicode First Day Identifier defines the preferred first day of the week for calendar display.
+    ///
+    /// Specifying "fw" in a locale identifier overrides the default value specified by
+    /// supplemental week data for the region.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeFirstDayIdentifier).
     FirstDay {
-        "sun" => Sun,
-        "mon" => Mon,
-        "tue" => Tue,
-        "wed" => Wed,
-        "thu" => Thu,
-        "fri" => Fri,
-        "sat" => Sat
+        /// Sunday
+        ("sun" => Sun),
+        /// Monday
+        ("mon" => Mon),
+        /// Tuesday
+        ("tue" => Tue),
+        /// Wednesday
+        ("wed" => Wed),
+        /// Thursday
+        ("thu" => Thu),
+        /// Friday
+        ("fri" => Fri),
+        /// Saturday
+        ("sat" => Sat)
 }, "fw");

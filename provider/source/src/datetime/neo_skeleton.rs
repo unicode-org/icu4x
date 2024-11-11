@@ -123,6 +123,34 @@ impl SourceDataProvider {
                         )),
                     )
                 }
+                DateTimeFormatterOptions::Components(
+                    components @ components::Bag { hour: Some(_), .. },
+                ) => {
+                    let mut components_with_minute = components;
+                    components_with_minute.minute = Some(components::Numeric::Numeric);
+                    let mut components_with_second = components;
+                    components_with_second.minute = Some(components::Numeric::Numeric);
+                    components_with_second.second = Some(components::Numeric::Numeric);
+                    (
+                        pattern,
+                        Some(expand_pp_to_pe(
+                            DateTimeFormatterOptions::Components(components_with_minute)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )),
+                        Some(expand_pp_to_pe(
+                            DateTimeFormatterOptions::Components(components_with_second)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )),
+                    )
+                }
                 _ => (pattern, None, None),
             }
         });
@@ -168,14 +196,6 @@ impl SourceDataProvider {
             .flat_map(|locale| {
                 NeoTimeComponents::VALUES
                     .iter()
-                    .filter(|neo_components| {
-                        !matches!(
-                            neo_components,
-                            NeoTimeComponents::DayPeriodHour12
-                                | NeoTimeComponents::DayPeriodHour12Minute
-                                | NeoTimeComponents::DayPeriodHour12MinuteSecond
-                        )
-                    })
                     .copied()
                     .map(NeoTimeComponents::id_str)
                     .map(move |attrs| {
@@ -237,25 +257,15 @@ fn gen_time_components(
         ));
     }
     let mut filtered_components = components::Bag::empty();
-    if neo_components.has_hour() {
+    if neo_components.has_time() {
         filtered_components.hour = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_minute() {
-        filtered_components.minute = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_second() {
-        filtered_components.second = Some(components::Numeric::Numeric);
     }
     // Select the correct hour cycle
     filtered_components.preferences = match neo_components {
-        NeoTimeComponents::Hour12
-        | NeoTimeComponents::Hour12Minute
-        | NeoTimeComponents::Hour12MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+        NeoTimeComponents::Time12 => Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H12,
         )),
-        NeoTimeComponents::Hour24
-        | NeoTimeComponents::Hour24Minute
-        | NeoTimeComponents::Hour24MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+        NeoTimeComponents::Time24 => Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H23,
         )),
         _ => None,
@@ -333,14 +343,8 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if neo_components.has_hour() {
+    if neo_components.has_time() {
         filtered_components.hour = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_minute() {
-        filtered_components.minute = Some(components::Numeric::Numeric);
-    }
-    if neo_components.has_second() {
-        filtered_components.second = Some(components::Numeric::Numeric);
     }
     DateTimeFormatterOptions::Components(filtered_components)
 }
@@ -448,6 +452,88 @@ fn test_en_year_patterns() {
     "MMMM d, y GGG",
     "MMM d, y GGG",
     "M/d/y GGG"
+  ]
+}"#
+    );
+}
+
+#[test]
+fn test_en_hour_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                NeoTimeComponents::Time.id_str(),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "h a",
+    "h:mm a",
+    "h:mm:ss a"
+  ]
+}"#
+    );
+}
+
+#[test]
+fn test_en_overlap_patterns() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time)
+                    .id_str()
+                    .unwrap(),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "cccc, h a",
+    "ccc, h a",
+    "EEEE h:m a",
+    "E h:mm a",
+    "EEEE h:m:s a",
+    "E h:mm:ss a"
   ]
 }"#
     );

@@ -2,33 +2,37 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod datetime;
-pub mod neo;
+pub(crate) mod datetime;
+pub(crate) mod neo;
+pub(crate) mod time_zone;
 
-use crate::fields::Field;
-use crate::provider::neo::SimpleSubstitutionPattern;
+use icu_pattern::SinglePlaceholderPattern;
 
 pub(crate) enum GetNameForMonthError {
-    Missing,
-    MissingNames(Field),
+    Invalid,
+    NotLoaded,
 }
 pub(crate) enum GetNameForWeekdayError {
-    Missing,
-    MissingNames(Field),
+    NotLoaded,
 }
 
 pub(crate) enum GetSymbolForEraError {
-    Missing,
-    MissingNames(Field),
+    Invalid,
+    NotLoaded,
+}
+
+pub(crate) enum GetSymbolForCyclicYearError {
+    Invalid { max: usize },
+    NotLoaded,
 }
 
 pub(crate) enum GetNameForDayPeriodError {
-    MissingNames(Field),
+    NotLoaded,
 }
 
 /// Internal enum to represent the kinds of month symbols for interpolation
 pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     Numeric,
-    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
+    NumericPattern(&'a SinglePlaceholderPattern),
 }

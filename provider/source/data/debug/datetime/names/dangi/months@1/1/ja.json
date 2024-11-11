@@ -1,6 +1,10 @@
 {
-  "LeapNumeric": {
-    "pattern": "閏",
-    "subst_index": 3
-  }
+  "LeapNumeric": [
+    {
+      "Literal": "閏"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ]
 }

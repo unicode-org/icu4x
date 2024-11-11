@@ -278,6 +278,7 @@ impl Calendar for Japanese {
                 formatting_era: types::FormattingEra::Code(date.era.into()),
                 standard_era: date.era.into(),
                 era_year: date.adjusted_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     }
@@ -504,11 +505,6 @@ impl Date<JapaneseExtended> {
             .0
             .new_japanese_date_inner(era, year, month, day)?;
         Ok(Date::from_raw(inner, japanext_calendar))
-    }
-
-    #[doc(hidden)] // for testing
-    pub fn into_japanese_date(self) -> Date<Japanese> {
-        Date::from_raw(self.inner, self.calendar.0)
     }
 }
 

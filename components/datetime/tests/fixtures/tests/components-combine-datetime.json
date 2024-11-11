@@ -14,8 +14,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "medium"
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "minuteExact"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -44,8 +45,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "length": "long",
+                    "timePrecision": "minuteExact"
                 },
                 "preferences": { "hourCycle": "h12" }
             }

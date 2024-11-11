@@ -48,13 +48,13 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRules(call_constructor!(
                 icu_plurals::PluralRules::try_new_cardinal,
                 icu_plurals::PluralRules::try_new_cardinal_with_any_provider,
                 icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider,
                 provider,
-                &locale
+                prefs
             )?)))
         }
 
@@ -67,13 +67,13 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRules(call_constructor!(
                 icu_plurals::PluralRules::try_new_ordinal,
                 icu_plurals::PluralRules::try_new_ordinal_with_any_provider,
                 icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider,
                 provider,
-                &locale
+                prefs
             )?)))
         }
 
