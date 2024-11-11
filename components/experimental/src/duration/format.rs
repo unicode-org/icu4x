@@ -238,10 +238,7 @@ impl FormattedDuration<'_> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted.absolute = prev_formatted
-                    .absolute
-                    // TODO: remove this clone.
-                    .clone()
+                prev_formatted.absolute = UnsignedFixedDecimal::from(val % 1000)
                     .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
 
