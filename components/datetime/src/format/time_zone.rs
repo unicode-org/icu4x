@@ -241,17 +241,17 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     &self,
                     sink: &mut S,
                 ) -> fmt::Result {
-                    self.fdf
-                        .format(
-                            &FixedDecimal::from(self.offset.hours_part())
-                                .with_sign_display(fixed_decimal::SignDisplay::Always)
-                                .padded_start(if self.length == FieldLength::Four {
-                                    2
-                                } else {
-                                    0
-                                }),
-                        )
-                        .write_to(sink)?;
+                    let fd = {
+                        let mut fd = SignedFixedDecimal::from(self.offset.hours_part())
+                            .with_sign_display(fixed_decimal::SignDisplay::Always);
+                        fd.pad_start(if self.length == FieldLength::Four {
+                            2
+                        } else {
+                            0
+                        });
+                        fd
+                    };
+                    self.fdf.format(&fd).write_to(sink)?;
 
                     if self.length == FieldLength::Four
                         || self.offset.minutes_part() != 0
@@ -580,10 +580,13 @@ impl Iso8601Format {
         }
 
         // Always in latin digits according to spec
-        FixedDecimal::from(offset.hours_part())
-            .padded_start(2)
-            .with_sign_display(fixed_decimal::SignDisplay::Always)
-            .write_to(sink)?;
+        {
+            let mut fd = SignedFixedDecimal::from(offset.hours_part())
+                .with_sign_display(fixed_decimal::SignDisplay::Always);
+            fd.pad_start(2);
+            fd
+        }
+        .write_to(sink)?;
 
         if self.minutes == IsoMinutes::Required
             || (self.minutes == IsoMinutes::Optional && offset.minutes_part() != 0)
@@ -591,18 +594,24 @@ impl Iso8601Format {
             if self.extended {
                 sink.write_char(':')?;
             }
-            FixedDecimal::from(offset.minutes_part())
-                .padded_start(2)
-                .write_to(sink)?;
+            {
+                let mut fd = SignedFixedDecimal::from(offset.minutes_part());
+                fd.pad_start(2);
+                fd
+            }
+            .write_to(sink)?;
         }
 
         if self.seconds == IsoSeconds::Optional && offset.seconds_part() != 0 {
             if self.extended {
                 sink.write_char(':')?;
             }
-            FixedDecimal::from(offset.seconds_part())
-                .padded_start(2)
-                .write_to(sink)?;
+            {
+                let mut fd = SignedFixedDecimal::from(offset.seconds_part());
+                fd.pad_start(2);
+                fd
+            }
+            .write_to(sink)?;
         }
 
         Ok(())
