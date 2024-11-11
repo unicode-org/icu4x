@@ -69,7 +69,7 @@ impl Direction {
 ///       {$AE} [:Lowercase:] → Ae;
 ///       {$OE} [:Lowercase:] → Oe;
 ///       {$UE} [:Lowercase:] → Ue;
-///  
+///
 ///       $AE → AE;
 ///       $OE → OE;
 ///       $UE → UE;
@@ -232,8 +232,7 @@ impl RuleCollection {
             + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<XidStartV1Marker>,
         NP: ?Sized
-            + DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CompatibilityDecompositionDataV2Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>,
@@ -414,8 +413,7 @@ macro_rules! redirect {
 }
 
 redirect!(
-    CanonicalDecompositionDataV1Marker,
-    CompatibilityDecompositionSupplementV1Marker,
+    CompatibilityDecompositionDataV2Marker,
     CanonicalDecompositionTablesV1Marker,
     CompatibilityDecompositionTablesV1Marker,
     CanonicalCompositionsV1Marker

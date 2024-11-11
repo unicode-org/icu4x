@@ -21,7 +21,7 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionDataV2;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
@@ -835,7 +835,7 @@ where
         tailoring: &'data CollationDataV1,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data ZeroSlice<u16>,
-        decompositions: &'data DecompositionDataV1,
+        decompositions: &'data DecompositionDataV2,
         tables: &'data DecompositionTablesV1,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,

@@ -29,9 +29,9 @@ use crate::provider::CollationTailoringV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
+use icu_normalizer::provider::CanonicalDecompositionDataV2Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
-use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionDataV2;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
@@ -203,7 +203,7 @@ pub struct Collator {
     diacritics: DataPayload<CollationDiacriticsV1Marker>,
     options: CollatorOptionsBitField,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
-    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     lithuanian_dot_above: bool,
 }
@@ -259,7 +259,7 @@ impl Collator {
             + DataProvider<CollationJamoV1Marker>
             + DataProvider<CollationMetadataV1Marker>
             + DataProvider<CollationReorderingV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionDataV2Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
@@ -279,7 +279,7 @@ impl Collator {
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1Marker>,
-        decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+        decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
         tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
         jamo: DataPayload<CollationJamoV1Marker>,
         special_primaries: impl FnOnce() -> Result<
@@ -347,7 +347,7 @@ pub struct CollatorBorrowed<'a> {
     diacritics: &'a CollationDiacriticsV1<'a>,
     options: CollatorOptionsBitField,
     reordering: Option<&'a CollationReorderingV1<'a>>,
-    decompositions: &'a DecompositionDataV1<'a>,
+    decompositions: &'a DecompositionDataV2<'a>,
     tables: &'a DecompositionTablesV1<'a>,
     lithuanian_dot_above: bool,
 }
