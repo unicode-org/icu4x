@@ -16,7 +16,7 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime,
 };
 use icu_datetime::fieldset::dynamic::*;
-use icu_datetime::neo_skeleton::{NeoDateTimeComponents, NeoDateTimeSkeleton};
+use icu_datetime::neo_skeleton::NeoDateTimeSkeleton;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
     neo_pattern::DateTimePattern,

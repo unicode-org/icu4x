@@ -8,11 +8,6 @@ use icu_datetime::fieldset::dynamic::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldset::{self, YMD};
-use icu_datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDateTimeSkeleton,
-    NeoSkeletonLength, NeoTimeComponents, TimePrecision,
-};
-use icu_datetime::options::length;
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_locale_core::{locale, Locale};
 use writeable::assert_try_writeable_eq;

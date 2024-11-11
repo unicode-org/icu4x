@@ -10,14 +10,12 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
-    HasConstComponents, IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers,
-    TypedDateDataMarkers, ZoneMarkers,
+    IsAnyCalendarKind, IsInCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
 use crate::MismatchedCalendarError;
@@ -26,7 +24,6 @@ use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::AnyCalendar;
 use icu_provider::prelude::*;
-use icu_timezone::scaffold::IntoOption;
 use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.

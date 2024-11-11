@@ -2,14 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-use crate::neo_skeleton::{Alignment, FractionalSecondDigits, NeoTimeZoneStyle};
+use crate::neo_skeleton::NeoTimeZoneStyle;
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
-use crate::scaffold::DateTimeMarkers;
 use crate::{fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 

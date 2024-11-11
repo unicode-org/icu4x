@@ -108,15 +108,15 @@ impl TryFrom<SemanticSkeletonSerde> for CompositeFieldSet {
         match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
             (true, false, false) => date
                 .to_date_field_set(options)
-                .map(|v| CompositeFieldSet::Date(v))
+                .map(CompositeFieldSet::Date)
                 .or_else(|| {
                     date.to_calendar_period_field_set(options)
-                        .map(|v| CompositeFieldSet::CalendarPeriod(v))
+                        .map(CompositeFieldSet::CalendarPeriod)
                 })
                 .ok_or(Error::InvalidFields),
             (false, true, false) => time
                 .to_time_field_set(options)
-                .map(|v| CompositeFieldSet::Time(v))
+                .map(CompositeFieldSet::Time)
                 .ok_or(Error::InvalidFields),
             (false, false, true) => zone
                 .to_time_zone_style()
