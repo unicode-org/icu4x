@@ -149,8 +149,13 @@ where
     if let Some(first) = varzerovec.get(0) {
         let bincode = bincode::serialize(first).unwrap();
         let deserialized: &T = bincode::deserialize(&bincode).unwrap();
+        let deserialized_box: Box<T> = bincode::deserialize(&bincode).unwrap();
         assert_eq!(
             first, deserialized,
+            "Single element roundtrips with bincode"
+        );
+        assert_eq!(
+            first, &*deserialized_box,
             "Single element roundtrips with bincode"
         );
 
