@@ -333,6 +333,17 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
     }
 }
 
+// XXX: Relax this to allow characters that round-trip to
+// self under NFC.
+#[inline(always)]
+pub fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
+    if (trie_val & BACKWARD_COMBINING_MASK) != 0 {
+        return false;
+    }
+    // Hangul syllables get 0 as their trie value
+    c.wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+}
+
 /// Struct for holding together a character and the value
 /// looked up for it from the NFD trie in a more explicit
 /// way than an anonymous pair.
@@ -351,13 +362,11 @@ impl CharacterAndTrieValue {
             trie_val: trie_value,
         }
     }
+    // XXX: Relax this to allow characters that round-trip to
+    // self under NFC.
     #[inline(always)]
     pub fn starter_and_decomposes_to_self(&self) -> bool {
-        if (self.trie_val & BACKWARD_COMBINING_MASK) != 0 {
-            return false;
-        }
-        // Hangul syllables get 0 as their trie value
-        u32::from(self.character).wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+        starter_and_decomposes_to_self_impl(self.trie_val, u32::from(self.character))
     }
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
@@ -1847,6 +1856,13 @@ impl DecomposingNormalizerBorrowed<'_> {
                     if upcoming32 < decomposition_passthrough_bound && counter != 0 {
                         continue 'fast;
                     }
+                    // We might be doing a trie lookup by surrogate. Surrogates get
+                    // a decomposition to U+FFFD.
+                    let mut trie_value = decomposition.trie.get32(upcoming32);
+                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) && counter != 0 {
+                        continue 'fast;
+                    }
+                    // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
                     #[allow(clippy::never_loop)]
                     'surrogateloop: loop {
@@ -1861,6 +1877,11 @@ impl DecomposingNormalizerBorrowed<'_> {
                                 if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
                                     upcoming32 = (upcoming32 << 10) + u32::from(low)
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    // Successfully-paired surrogate. Read from the trie again.
+                                    trie_value = decomposition.trie.get32(upcoming32);
+                                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) && counter != 0 {
+                                        continue 'fast;
+                                    }
                                     break 'surrogateloop;
                                 } else {
                                     code_unit_iter = iter_backup;
@@ -1868,23 +1889,14 @@ impl DecomposingNormalizerBorrowed<'_> {
                             }
                         }
                         // unpaired surrogate
-                        let slice_to_write = &pending_slice
-                            [..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
-                        sink.write_slice(slice_to_write)?;
-                        undecomposed_starter =
-                            CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        debug_assert!(decomposition.pending.is_none());
-                        // We could instead call `gather_and_sort_combining` and `continue 'outer`, but
-                        // assuming this is better for code size.
-                        break 'fast;
+                        upcoming32 = 0; // Safe value for `char::from_u32_unchecked` and has UTF-16 code unit length of 1.
+                        // trie_value already holds a decomposition to U+FFFD.
+                        break 'surrogateloop;
                     }
-                    // Not unpaired surrogate
+
                     let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                    let upcoming_with_trie_value =
-                        decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.starter_and_decomposes_to_self() && counter != 0 {
-                        continue 'fast;
-                    }
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
+
                     let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                         - code_unit_iter.as_slice().len()
                         - upcoming.len_utf16()];
