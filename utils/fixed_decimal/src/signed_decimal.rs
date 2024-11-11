@@ -7,10 +7,12 @@ use core::ops::{Deref, DerefMut};
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
+#[cfg(feature = "ryu")]
+use crate::FloatPrecision;
 use crate::{variations::Signed, UnsignedFixedDecimal};
 use crate::{
-    FloatPrecision, IncrementLike, LimitError, NoIncrement, ParseError, RoundingIncrement, Sign,
-    SignDisplay, SignedRoundingMode, UnsignedRoundingMode,
+    IncrementLike, LimitError, NoIncrement, ParseError, RoundingIncrement, Sign, SignDisplay,
+    SignedRoundingMode, UnsignedRoundingMode,
 };
 
 /// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`].
