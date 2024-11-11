@@ -24,12 +24,13 @@ fn triangular_nums_unsigned(range: f64) -> Vec<usize> {
 }
 
 // TODO: move to helpers.rs
+// Generate 1000 numbers between 0 and + 2 * range, weighted around range.
 #[cfg(feature = "bench")]
 fn triangular_floats(range: f64) -> impl Iterator<Item = f64> {
     // Use Lcg64Xsh32, a small, fast PRNG.s
     // Generate 1000 numbers between -range and +range, weighted around 0.
     let rng = Lcg64Xsh32::seed_from_u64(2024);
-    let dist = Triangular::new(-range, range, 0.0).unwrap();
+    let dist = Triangular::new(0.0, 2.0 * range, range).unwrap();
     dist.sample_iter(rng).take(1000)
 }
 
@@ -145,7 +146,6 @@ fn from_string_benches(c: &mut Criterion) {
         "0012.3400",
         "00.0012216734340",
         "00002342561123400.0",
-        "-00123400",
         "922337203685477580898230948203840239384.9823094820384023938423424",
         "0.000000001",
         "1000000001",

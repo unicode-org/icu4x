@@ -10,45 +10,22 @@ use writeable::Writeable;
 #[test]
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
-    let cases: [(_, _, _, _, _, _, _); 5] = [
-        ("expand", UnsignedRoundingMode::Expand, -2, 1, 1, 1, 2),
-        ("trunc", UnsignedRoundingMode::Trunc, -1, 0, 0, 0, 1),
-        (
-            "half_expand",
-            UnsignedRoundingMode::HalfExpand,
-            -2,
-            0,
-            1,
-            1,
-            2,
-        ),
-        (
-            "half_trunc",
-            UnsignedRoundingMode::HalfTrunc,
-            -1,
-            0,
-            0,
-            1,
-            1,
-        ),
-        ("half_even", UnsignedRoundingMode::HalfEven, -2, 0, 0, 1, 2),
+    let cases: [(_, _, _, _, _, _); 5] = [
+        ("expand", UnsignedRoundingMode::Expand, 1, 1, 1, 2),
+        ("trunc", UnsignedRoundingMode::Trunc, 0, 0, 0, 1),
+        ("half_expand", UnsignedRoundingMode::HalfExpand, 0, 1, 1, 2),
+        ("half_trunc", UnsignedRoundingMode::HalfTrunc, 0, 0, 1, 1),
+        ("half_even", UnsignedRoundingMode::HalfEven, 0, 0, 1, 2),
     ];
-    for (name, mode, e1, e2, e3, e4, e5) in cases {
-        let mut fd1: UnsignedFixedDecimal = "-1.5".parse().unwrap();
+    for (name, mode, e2, e3, e4, e5) in cases {
         let mut fd2: UnsignedFixedDecimal = "0.4".parse().unwrap();
         let mut fd3: UnsignedFixedDecimal = "0.5".parse().unwrap();
         let mut fd4: UnsignedFixedDecimal = "0.6".parse().unwrap();
         let mut fd5: UnsignedFixedDecimal = "1.5".parse().unwrap();
-        fd1.round_with_mode(0, mode);
         fd2.round_with_mode(0, mode);
         fd3.round_with_mode(0, mode);
         fd4.round_with_mode(0, mode);
         fd5.round_with_mode(0, mode);
-        assert_eq!(
-            fd1.write_to_string(),
-            e1.write_to_string(),
-            "-1.5 failed for {name}"
-        );
         assert_eq!(
             fd2.write_to_string(),
             e2.write_to_string(),
@@ -173,67 +150,49 @@ pub fn extra_rounding_mode_cases() {
     struct TestCase {
         input: &'static str,
         position: i16,
-        // ceil, floor, expand, trunc, half_ceil, half_floor, half_expand, half_trunc, half_even
-        all_expected: [&'static str; 9],
+        // expand, trunc, half_expand, half_trunc, half_even
+        all_expected: [&'static str; 5],
     }
     let cases: [TestCase; 8] = [
         TestCase {
             input: "505.050",
             position: -3,
-            all_expected: [
-                "505.050", "505.050", "505.050", "505.050", "505.050", "505.050", "505.050",
-                "505.050", "505.050",
-            ],
+            all_expected: ["505.050", "505.050", "505.050", "505.050", "505.050"],
         },
         TestCase {
             input: "505.050",
             position: -2,
-            all_expected: [
-                "505.05", "505.05", "505.05", "505.05", "505.05", "505.05", "505.05", "505.05",
-                "505.05",
-            ],
+            all_expected: ["505.05", "505.05", "505.05", "505.05", "505.05"],
         },
         TestCase {
             input: "505.050",
             position: -1,
-            all_expected: [
-                "505.1", "505.0", "505.1", "505.0", "505.1", "505.0", "505.1", "505.0", "505.0",
-            ],
+            all_expected: ["505.1", "505.0", "505.1", "505.0", "505.0"],
         },
         TestCase {
             input: "505.050",
             position: 0,
-            all_expected: [
-                "506", "505", "506", "505", "505", "505", "505", "505", "505",
-            ],
+            all_expected: ["506", "505", "505", "505", "505"],
         },
         TestCase {
             input: "505.050",
             position: 1,
-            all_expected: [
-                "510", "500", "510", "500", "510", "510", "510", "510", "510",
-            ],
+            all_expected: ["510", "500", "510", "510", "510"],
         },
         TestCase {
             input: "505.050",
             position: 2,
-            all_expected: [
-                "600", "500", "600", "500", "500", "500", "500", "500", "500",
-            ],
+            all_expected: ["600", "500", "500", "500", "500"],
         },
         TestCase {
             input: "505.050",
             position: 3,
-            all_expected: [
-                "1000", "000", "1000", "000", "1000", "1000", "1000", "1000", "1000",
-            ],
+            all_expected: ["1000", "000", "1000", "1000", "1000"],
         },
         TestCase {
             input: "505.050",
             position: 4,
-            all_expected: [
-                "10000", "0000", "10000", "0000", "0000", "0000", "0000", "0000", "0000",
-            ],
+            all_expected: ["10000", "0000", "0000", "0000", "0000"],
         },
     ];
     #[allow(clippy::type_complexity)] // most compact representation in code
@@ -270,33 +229,32 @@ pub fn test_ecma402_table_with_increments() {
 
     #[rustfmt::skip] // Don't split everything on its own line. Makes it look a lot nicer.
     #[allow(clippy::type_complexity)]
-    let cases: [(_, _, [(_, _, _, _, _, _, _); 5]); 3] = [
+    let cases: [(_, _, [(_, _, _, _, _, _); 5]); 3] = [
         ("two", RoundingIncrement::MultiplesOf2, [
-            ("expand", UnsignedRoundingMode::Expand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("trunc", UnsignedRoundingMode::Trunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_expand", UnsignedRoundingMode::HalfExpand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("half_trunc", UnsignedRoundingMode::HalfTrunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_even", UnsignedRoundingMode::HalfEven, "-1.6", "0.4", "0.4", "0.6", "1.6"),
+            ("expand", UnsignedRoundingMode::Expand, "0.4", "0.6", "0.6", "1.6"),
+            ("trunc", UnsignedRoundingMode::Trunc,  "0.4", "0.4", "0.6", "1.4"),
+            ("half_expand", UnsignedRoundingMode::HalfExpand, "0.4", "0.6", "0.6", "1.6"),
+            ("half_trunc", UnsignedRoundingMode::HalfTrunc, "0.4", "0.4", "0.6", "1.4"),
+            ("half_even", UnsignedRoundingMode::HalfEven, "0.4", "0.4", "0.6", "1.6"),
         ]),
         ("five", RoundingIncrement::MultiplesOf5, [
-            ("expand", UnsignedRoundingMode::Expand, "-1.5", "0.5", "0.5", "1.0", "1.5"),
-            ("trunc", UnsignedRoundingMode::Trunc, "-1.5", "0.0", "0.5", "0.5", "1.5"),
-            ("half_expand", UnsignedRoundingMode::HalfExpand, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_trunc", UnsignedRoundingMode::HalfTrunc, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_even", UnsignedRoundingMode::HalfEven, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("expand", UnsignedRoundingMode::Expand,  "0.5", "0.5", "1.0", "1.5"),
+            ("trunc", UnsignedRoundingMode::Trunc,  "0.0", "0.5", "0.5", "1.5"),
+            ("half_expand", UnsignedRoundingMode::HalfExpand,  "0.5", "0.5", "0.5", "1.5"),
+            ("half_trunc", UnsignedRoundingMode::HalfTrunc,  "0.5", "0.5", "0.5", "1.5"),
+            ("half_even", UnsignedRoundingMode::HalfEven,  "0.5", "0.5", "0.5", "1.5"),
         ]),
         ("twenty-five", RoundingIncrement::MultiplesOf25, [
-            ("expand", UnsignedRoundingMode::Expand, "-2.5", "2.5", "2.5", "2.5", "2.5"),
-            ("trunc", UnsignedRoundingMode::Trunc, "-0.0", "0.0", "0.0", "0.0", "0.0"),
-            ("half_expand", UnsignedRoundingMode::HalfExpand, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_trunc", UnsignedRoundingMode::HalfTrunc, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_even", UnsignedRoundingMode::HalfEven, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("expand", UnsignedRoundingMode::Expand, "2.5", "2.5", "2.5", "2.5"),
+            ("trunc", UnsignedRoundingMode::Trunc,  "0.0", "0.0", "0.0", "0.0"),
+            ("half_expand", UnsignedRoundingMode::HalfExpand, "0.0", "0.0", "0.0", "2.5"),
+            ("half_trunc", UnsignedRoundingMode::HalfTrunc, "0.0", "0.0", "0.0", "2.5"),
+            ("half_even", UnsignedRoundingMode::HalfEven, "0.0", "0.0", "0.0", "2.5"),
         ]),
     ];
 
     for (increment_str, increment, cases) in cases {
-        for (rounding_mode_name, rounding_mode, e1, e2, e3, e4, e5) in cases {
-            let mut fd1: UnsignedFixedDecimal = "-1.5".parse().unwrap();
+        for (rounding_mode_name, rounding_mode, e2, e3, e4, e5) in cases {
             let mut fd2: UnsignedFixedDecimal = "0.4".parse().unwrap();
             let mut fd3: UnsignedFixedDecimal = "0.5".parse().unwrap();
             let mut fd4: UnsignedFixedDecimal = "0.6".parse().unwrap();
@@ -304,16 +262,11 @@ pub fn test_ecma402_table_with_increments() {
             // The original ECMA-402 table tests rounding at magnitude 0.
             // However, testing rounding at magnitude -1 gives more
             // interesting test cases for increments.
-            fd1.round_with_mode_and_increment(-1, rounding_mode, increment);
             fd2.round_with_mode_and_increment(-1, rounding_mode, increment);
             fd3.round_with_mode_and_increment(-1, rounding_mode, increment);
             fd4.round_with_mode_and_increment(-1, rounding_mode, increment);
             fd5.round_with_mode_and_increment(-1, rounding_mode, increment);
-            assert_eq!(
-                fd1.write_to_string(),
-                e1,
-                "-1.5 failed for {rounding_mode_name} with increments of {increment_str}"
-            );
+
             assert_eq!(
                 fd2.write_to_string(),
                 e2,
