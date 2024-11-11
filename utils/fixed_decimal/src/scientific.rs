@@ -9,7 +9,7 @@ use crate::FixedInteger;
 use crate::ParseError;
 use crate::SignedFixedDecimal;
 
-/// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
+/// A struct containing a [`SignedFixedDecimal`] significand together with an exponent, representing a
 /// number written in scientific notation, such as 1.729×10³.
 ///
 /// This structure represents any 0s shown in the significand and exponent,

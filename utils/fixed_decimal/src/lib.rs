@@ -86,13 +86,13 @@ pub use variations::SignDisplay;
 pub(crate) use rounding::IncrementLike;
 pub(crate) use rounding::NoIncrement;
 
-/// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`].
+/// The magnitude or number of digits exceeds the limit of the [`UnsignedFixedDecimal`] or [`SignedFixedDecimal`].
 ///
 /// The highest
 /// magnitude of the most significant digit is [`i16::MAX`], and the lowest magnitude of the
 /// least significant digit is [`i16::MIN`].
 ///
-/// This error is also returned when constructing a [`FixedInteger`] from a [`FixedDecimal`] with a
+/// This error is also returned when constructing a [`FixedInteger`] from a [`SignedFixedDecimal`] with a
 /// fractional part.
 ///
 /// # Examples

@@ -28,9 +28,10 @@ use crate::{
 /// - Strings representing an arbitrary-precision decimal
 /// - Floating point values (using the `ryu` feature)
 ///
-/// To create a [`SignedFixedDecimal`] with fraction digits, either create it from an integer and then
-/// call [`SignedFixedDecimal::multiplied_pow10`], create it from a string, or (when the `ryu` feature is
-/// enabled) create it from a floating point value using [`SignedFixedDecimal::try_from_f64`].
+/// To create a [`SignedFixedDecimal`] with fractional digits, you have several options:
+/// - Create it from an integer and then call [`UnsignedFixedDecimal::multiply_pow10`] (you can also call `multiply_pow10` directly on the [`SignedFixedDecimal`]).
+/// - Create it from a string.
+/// - When the `ryu` feature is enabled, create it from a floating point value using [`SignedFixedDecimal::try_from_f64`].
 ///
 /// # Magnitude and Position
 ///

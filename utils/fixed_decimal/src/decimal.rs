@@ -684,7 +684,7 @@ impl UnsignedFixedDecimal {
     ///
     /// Negative position numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::with_max_position()`].
+    /// Also see [`UnsignedFixedDecimal::with_max_position()`].
     ///
     /// # Examples
     ///
@@ -710,7 +710,7 @@ impl UnsignedFixedDecimal {
     ///
     /// Negative position numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::set_max_position()`].
+    /// Also see [`UnsignedFixedDecimal::set_max_position()`].
     ///
     /// # Examples
     ///
@@ -751,7 +751,7 @@ impl UnsignedFixedDecimal {
     ///
     /// Positive position numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::trunced()`].
+    /// Also see [`UnsignedFixedDecimal::trunced()`].
     ///
     /// # Examples
     ///
@@ -780,7 +780,7 @@ impl UnsignedFixedDecimal {
     ///
     /// Positive position numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::trunc()`].
+    /// Also see [`UnsignedFixedDecimal::trunc()`].
     ///
     /// # Examples
     ///
@@ -820,7 +820,7 @@ impl UnsignedFixedDecimal {
     /// Returns this number with the leading significant digits truncated to a particular position,
     /// deleting digits if necessary.
     ///
-    /// Also see [`FixedDecimal::padded_start()`].
+    /// Also see [`UnsignedFixedDecimal::padded_start()`].
     ///
     /// # Examples
     ///
