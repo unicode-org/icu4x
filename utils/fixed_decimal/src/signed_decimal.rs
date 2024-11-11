@@ -7,11 +7,11 @@ use core::ops::{Deref, DerefMut};
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
-#[cfg(feature = "ryu")]
-use crate::FloatPrecision;
 use crate::{variations::Signed, UnsignedFixedDecimal};
+#[cfg(feature = "ryu")]
+use crate::{FloatPrecision, LimitError};
 use crate::{
-    IncrementLike, LimitError, NoIncrement, ParseError, RoundingIncrement, Sign, SignDisplay,
+    IncrementLike, NoIncrement, ParseError, RoundingIncrement, Sign, SignDisplay,
     SignedRoundingMode, UnsignedRoundingMode,
 };
 

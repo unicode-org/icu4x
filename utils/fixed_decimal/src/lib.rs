@@ -105,6 +105,7 @@ pub(crate) use rounding::NoIncrement;
 /// dec1.multiply_pow10(i16::MAX);
 /// assert!(dec1.is_zero());
 /// ```
+#[cfg(feature = "ryu")]
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)]
 #[displaydoc("Magnitude or number of digits exceeded")]
