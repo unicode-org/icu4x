@@ -191,17 +191,17 @@ impl DateTimeMarkers for TimeFieldSet {
 // impl_get_field!(TimeFieldSet, alignment, yes);
 // impl_get_field!(TimeFieldSet, time_precision, yes);
 
-impl UnstableSealed for TimeZoneStyleWithLength {}
+impl UnstableSealed for ZoneFieldSet {}
 
-// impl GetField<NeoComponents> for TimeZoneStyleWithLength {
+// impl GetField<NeoComponents> for ZoneFieldSet {
 //     fn get_field(&self) -> NeoComponents {
 //         self.style.into()
 //     }
 // }
 
-// impl IsRuntimeComponents for TimeZoneStyleWithLength {}
+// impl IsRuntimeComponents for ZoneFieldSet {}
 
-impl DateTimeNamesMarker for TimeZoneStyleWithLength {
+impl DateTimeNamesMarker for ZoneFieldSet {
     type YearNames = datetime_marker_helper!(@names/year,);
     type MonthNames = datetime_marker_helper!(@names/month,);
     type WeekdayNames = datetime_marker_helper!(@names/weekday,);
@@ -215,7 +215,7 @@ impl DateTimeNamesMarker for TimeZoneStyleWithLength {
     type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, yes);
 }
 
-impl ZoneMarkers for TimeZoneStyleWithLength {
+impl ZoneMarkers for ZoneFieldSet {
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
@@ -229,7 +229,7 @@ impl ZoneMarkers for TimeZoneStyleWithLength {
     type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, yes);
 }
 
-impl DateTimeMarkers for TimeZoneStyleWithLength {
+impl DateTimeMarkers for ZoneFieldSet {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
@@ -240,14 +240,14 @@ impl DateTimeMarkers for TimeZoneStyleWithLength {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl GetField<CompositeFieldSet> for TimeZoneStyleWithLength {
+impl GetField<CompositeFieldSet> for ZoneFieldSet {
     fn get_field(&self) -> CompositeFieldSet {
         CompositeFieldSet::Zone(*self)
     }
 }
 
-// impl_get_field!(TimeZoneStyleWithLength, never);
-// impl_get_field!(TimeZoneStyleWithLength, length, yes);
+// impl_get_field!(ZoneFieldSet, never);
+// impl_get_field!(ZoneFieldSet, length, yes);
 
 impl UnstableSealed for CompositeDateTimeFieldSet {}
 
@@ -323,7 +323,7 @@ impl DateTimeNamesMarker for CompositeFieldSet {
 impl DateTimeMarkers for CompositeFieldSet {
     type D = NeoDateSkeleton;
     type T = TimeFieldSet;
-    type Z = TimeZoneStyleWithLength;
+    type Z = ZoneFieldSet;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);

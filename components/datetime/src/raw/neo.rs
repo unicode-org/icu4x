@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dynamic::{CompositeFieldSet, TimeFieldSet};
+use crate::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
@@ -441,17 +441,8 @@ impl<'a> TimePatternDataBorrowed<'a> {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn new_with_skeleton(
-        style: NeoTimeZoneStyle,
-        options: RawNeoOptions,
-        is_only_field: bool,
-    ) -> Self {
-        let length = if is_only_field {
-            options.length
-        } else {
-            NeoSkeletonLength::Short
-        };
-        let (symbol, length) = style.resolve(length);
+    pub(crate) fn new_with_skeleton(field_set: ZoneFieldSet) -> Self {
+        let (symbol, length) = field_set.to_field();
         let pattern_item = PatternItem::Field(Field {
             symbol: FieldSymbol::TimeZone(symbol),
             length,
@@ -530,9 +521,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self::Time(selection))
             }
             CompositeFieldSet::Zone(field_set) => {
-                let options = field_set.to_raw_options();
-                let selection =
-                    ZonePatternSelectionData::new_with_skeleton(field_set.style, options, true);
+                let selection = ZonePatternSelectionData::new_with_skeleton(field_set);
                 Ok(Self::Zone(selection))
             }
             CompositeFieldSet::DateTime(field_set) => {
@@ -577,8 +566,12 @@ impl DateTimeZonePatternSelectionData {
                     field_set.id_str(),
                     options,
                 )?;
-                let zone =
-                    ZonePatternSelectionData::new_with_skeleton(time_zone_style, options, false);
+                // Always use the short length for time zones when mixed with another field (Date)
+                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
+                    time_zone_style,
+                    NeoSkeletonLength::Short,
+                );
+                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, locale, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
@@ -591,8 +584,12 @@ impl DateTimeZonePatternSelectionData {
                     options,
                     prefs,
                 )?;
-                let zone =
-                    ZonePatternSelectionData::new_with_skeleton(time_zone_style, options, false);
+                // Always use the short length for time zones when mixed with another field (Time)
+                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
+                    time_zone_style,
+                    NeoSkeletonLength::Short,
+                );
+                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, locale, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
@@ -611,8 +608,12 @@ impl DateTimeZonePatternSelectionData {
                     options,
                     prefs,
                 )?;
-                let zone =
-                    ZonePatternSelectionData::new_with_skeleton(time_zone_style, options, false);
+                // Always use the short length for time zones when mixed with another field (Date + Time)
+                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
+                    time_zone_style,
+                    NeoSkeletonLength::Short,
+                );
+                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, locale, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,

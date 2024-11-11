@@ -7,7 +7,7 @@ use crate::neo_serde::*;
 use crate::neo_skeleton::NeoTimeZoneStyle;
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
-use crate::{fieldset, NeoSkeletonLength};
+use crate::{fields, fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -63,6 +63,17 @@ pub enum CalendarPeriodFieldSet {
 pub enum TimeFieldSet {
     /// A time of day.
     T(fieldset::T),
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum ZoneFieldSet {
+    Z(fieldset::Z),
+    // Zs(fieldset::Zs),
+    O(fieldset::O),
+    V(fieldset::V),
+    // Vs(fieldset::Vs),
+    L(fieldset::L),
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -167,7 +178,7 @@ pub enum CompositeFieldSet {
     /// Field set for a time.
     Time(TimeFieldSet),
     /// Field set for a time zone.
-    Zone(TimeZoneStyleWithLength),
+    Zone(ZoneFieldSet),
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
@@ -216,6 +227,18 @@ macro_rules! impl_attrs {
                 match self {
                     $(
                         Self::$variant(variant) => variant.to_raw_options(),
+                    )+
+                }
+            }
+        }
+    };
+    (@zone_fns, $type:path, [$($variant:ident),+,]) => {
+        impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
+        impl $type {
+            pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+                match self {
+                    $(
+                        Self::$variant(variant) => variant.to_field(),
                     )+
                 }
             }
@@ -332,6 +355,34 @@ impl TimeZoneStyleWithLength {
             alignment: None,
             year_style: None,
             time_precision: None,
+        }
+    }
+}
+
+impl_attrs! {
+    @zone_fns,
+    ZoneFieldSet,
+    [
+        Z,
+        // Zs,
+        O,
+        V,
+        // Vs,
+        L,
+    ]
+}
+
+impl ZoneFieldSet {
+    pub(crate) fn from_time_zone_style_and_length(
+        style: NeoTimeZoneStyle,
+        length: NeoSkeletonLength,
+    ) -> Self {
+        match style {
+            NeoTimeZoneStyle::Default => Self::L(fieldset::L::with_length(length)),
+            NeoTimeZoneStyle::Location => Self::Z(fieldset::Z::with_length(length)),
+            NeoTimeZoneStyle::Generic => Self::V(fieldset::V::with_length(length)),
+            NeoTimeZoneStyle::Specific => Self::Z(fieldset::Z::with_length(length)),
+            NeoTimeZoneStyle::Offset => Self::O(fieldset::O::with_length(length)),
         }
     }
 }

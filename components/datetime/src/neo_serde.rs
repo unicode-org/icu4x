@@ -40,16 +40,7 @@ impl From<CompositeFieldSet> for SemanticSkeletonSerde {
             }
             CompositeFieldSet::Time(v) => FieldSetSerde::from_time_field_set(v),
             CompositeFieldSet::Zone(v) => {
-                let zone_serde = FieldSetSerde::from_time_zone_style(v.style);
-                (
-                    zone_serde,
-                    RawNeoOptions {
-                        length: v.length,
-                        alignment: None,
-                        year_style: None,
-                        time_precision: None,
-                    },
-                )
+                FieldSetSerde::from_zone_field_set(v)
             }
             CompositeFieldSet::DateTime(v) => {
                 let (date_serde, date_options) =
@@ -119,14 +110,17 @@ impl TryFrom<SemanticSkeletonSerde> for CompositeFieldSet {
                 .map(CompositeFieldSet::Time)
                 .ok_or(Error::InvalidFields),
             (false, false, true) => zone
-                .to_time_zone_style()
-                .map(|style| {
-                    CompositeFieldSet::Zone(TimeZoneStyleWithLength {
-                        style,
-                        length: options.length,
-                    })
-                })
+                .to_zone_field_set(options)
+                .map(CompositeFieldSet::Zone)
                 .ok_or(Error::InvalidFields),
+            // .to_time_zone_style()
+            // .map(|style| {
+            //     CompositeFieldSet::Zone(TimeZoneStyleWithLength {
+            //         style,
+            //         length: options.length,
+            //     })
+            // })
+            // .ok_or(Error::InvalidFields),
             (true, true, false) => date
                 .to_date_field_set(options)
                 .map(|date_field_set| {
@@ -491,6 +485,30 @@ impl FieldSetSerde {
             FieldSetSerde::ZONE_GENERIC => Some(NeoTimeZoneStyle::Generic),
             FieldSetSerde::ZONE_SPECIFIC => Some(NeoTimeZoneStyle::Specific),
             FieldSetSerde::ZONE_OFFSET => Some(NeoTimeZoneStyle::Offset),
+            _ => None,
+        }
+    }
+
+    fn from_zone_field_set(value: ZoneFieldSet) -> (Self, RawNeoOptions) {
+        match value {
+            ZoneFieldSet::Z(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
+            // ZoneFieldSet::Zs(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
+            ZoneFieldSet::O(v) => (Self::ZONE_OFFSET, v.to_raw_options()),
+            ZoneFieldSet::V(v) => (Self::ZONE_GENERIC, v.to_raw_options()),
+            // ZoneFieldSet::Vs(v) => (Self::ZONE_GENERIC, v.to_raw_options()),
+            ZoneFieldSet::L(v) => (Self::ZONE_LOCATION, v.to_raw_options()),
+        }
+    }
+
+    fn to_zone_field_set(self, options: RawNeoOptions) -> Option<ZoneFieldSet> {
+        use ZoneFieldSet::*;
+        match self {
+            Self::ZONE_SPECIFIC => Some(Z(fieldset::Z::from_raw_options(options))),
+            // Self::ZONE_SPECIFIC => Some(Zs(fieldset::Zs::from_raw_options(options))),
+            Self::ZONE_OFFSET => Some(O(fieldset::O::from_raw_options(options))),
+            Self::ZONE_GENERIC => Some(V(fieldset::V::from_raw_options(options))),
+            // Self::ZONE_GENERIC => Some(Vs(fieldset::Vs::from_raw_options(options))),
+            Self::ZONE_LOCATION => Some(L(fieldset::L::from_raw_options(options))),
             _ => None,
         }
     }
