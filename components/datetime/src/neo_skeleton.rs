@@ -317,7 +317,7 @@ impl TryFrom<u8> for FractionalSecondDigits {
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoDateComponents {
+pub(crate) enum NeoDateComponents {
     /// The day of the month, as in
     /// “on the 1st”.
     Day,
@@ -509,7 +509,7 @@ impl NeoDateComponents {
 /// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoCalendarPeriodComponents {
+pub(crate) enum NeoCalendarPeriodComponents {
     /// A standalone month, as in
     /// “January”.
     Month,
@@ -598,7 +598,7 @@ impl NeoCalendarPeriodComponents {
 /// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoTimeComponents {
+pub(crate) enum NeoTimeComponents {
     /// A time of day (12-hour or 24-hour chosen by locale),
     /// with the precision chosen by [`TimePrecision`]
     Time,
@@ -671,7 +671,7 @@ impl NeoTimeComponents {
 /// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoDateTimeComponents {
+pub(crate) enum NeoDateTimeComponents {
     /// Components for parts of a date.
     Date(NeoDateComponents),
     /// Components for parts of a date with fields larger than a date.
@@ -736,7 +736,7 @@ impl NeoDateTimeComponents {
 /// A specification of components for parts of a datetime and/or time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum NeoComponents {
+pub(crate) enum NeoComponents {
     /// Components for a date.
     Date(NeoDateComponents),
     /// Components for a calendar period.

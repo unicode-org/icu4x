@@ -6,10 +6,8 @@ use std::collections::HashSet;
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
-use icu::datetime::neo_skeleton::{
-    NeoCalendarPeriodComponents, NeoComponents, NeoDateComponents, NeoSkeletonLength,
-    NeoTimeComponents,
-};
+use icu::datetime::neo_skeleton::NeoSkeletonLength;
+use icu::datetime::fieldset::dynamic::*;
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, preferences};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
@@ -23,24 +21,23 @@ use icu_provider::prelude::*;
 use super::supported_cals;
 
 impl SourceDataProvider {
-    fn load_neo_skeletons_key<M, C>(
+    fn load_neo_skeletons_key<M>(
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        from_id_str: impl Fn(&DataMarkerAttributes) -> Option<C>,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
+        to_components_bag: impl Fn(NeoSkeletonLength, &DataMarkerAttributes, &DateLengthsV1) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        let neo_components = from_id_str(req.id.marker_attributes)
-            .expect("Skeleton data provider called with unknown skeleton");
+        // let neo_components = from_id_str(req.id.marker_attributes)
+        //     .expect("Skeleton data provider called with unknown skeleton");
         let packed_skeleton_data = self.make_packed_skeleton_data(
             req.id.locale,
             calendar,
-            neo_components,
+            req.id.marker_attributes,
             to_components_bag,
         )?;
         Ok(DataResponse {
@@ -49,12 +46,12 @@ impl SourceDataProvider {
         })
     }
 
-    fn make_packed_skeleton_data<C>(
+    fn make_packed_skeleton_data(
         &self,
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
-        neo_components: C,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
+        attributes: &DataMarkerAttributes,
+        to_components_bag: impl Fn(NeoSkeletonLength, &DataMarkerAttributes, &DateLengthsV1) -> DateTimeFormatterOptions,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -81,7 +78,7 @@ impl SourceDataProvider {
             NeoSkeletonLength::Medium,
             NeoSkeletonLength::Short,
         ]
-        .map(|length| to_components_bag(length, &neo_components, &date_lengths_v1))
+        .map(|length| to_components_bag(length, &attributes, &date_lengths_v1))
         .map(|bag| {
             let pattern = expand_pp_to_pe(bag.select_pattern(
                 &skeleton_patterns,
@@ -194,10 +191,8 @@ impl SourceDataProvider {
             .dates("generic")
             .list_locales()?
             .flat_map(|locale| {
-                NeoTimeComponents::VALUES
+                TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES
                     .iter()
-                    .copied()
-                    .map(NeoTimeComponents::id_str)
                     .map(move |attrs| {
                         DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
                     })
@@ -218,17 +213,12 @@ impl SourceDataProvider {
             .dates(cldr_cal)
             .list_locales()?
             .flat_map(|locale| {
-                NeoDateComponents::VALUES
+                DateFieldSet::ALL_DATA_MARKER_ATTRIBUTES
                     .iter()
-                    .copied()
-                    .map(NeoDateComponents::id_str)
                     .chain(
-                        NeoCalendarPeriodComponents::VALUES
-                            .iter()
-                            .copied()
-                            .map(NeoCalendarPeriodComponents::id_str),
+                        CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter()
                     )
-                    .chain(NeoComponents::attributes_with_overrides().iter().copied())
+                    .chain(DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
                     .map(move |attrs| {
                         DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
                     })
@@ -240,7 +230,7 @@ impl SourceDataProvider {
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
 fn gen_time_components(
     _: NeoSkeletonLength,
-    neo_components: &NeoTimeComponents,
+    attributes: &DataMarkerAttributes,
     _: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
     // TODO: Should this use timeSkeletons?
@@ -252,9 +242,7 @@ fn gen_time_components(
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
     let mut filtered_components = components::Bag::empty();
-    if neo_components.has_time() {
-        filtered_components.hour = Some(components::Numeric::Numeric);
-    }
+    filtered_components.hour = Some(components::Numeric::Numeric);
     // Select the correct hour cycle
     filtered_components.preferences = match neo_components {
         NeoTimeComponents::Time12 => Some(preferences::Bag::from_hour_cycle(
@@ -271,7 +259,7 @@ fn gen_time_components(
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
 fn gen_date_components(
     length: NeoSkeletonLength,
-    neo_components: &NeoComponents,
+    attributes: &DataMarkerAttributes,
     date_lengths_v1: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
     // Pull the field lengths from the date length patterns, and then use
@@ -339,7 +327,6 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
         self.load_neo_skeletons_key(
             req,
             Either::Right("generic"),
-            NeoTimeComponents::from_id_str,
             gen_time_components,
         )
     }
@@ -358,16 +345,6 @@ macro_rules! impl_neo_skeleton_datagen {
                 self.load_neo_skeletons_key(
                     req,
                     Either::Left(&value!($calendar)),
-                    |id_str| {
-                        NeoComponents::from_id_str(id_str)
-                            .or_else(|| {
-                                NeoDateComponents::from_id_str(id_str).map(NeoComponents::Date)
-                            })
-                            .or_else(|| {
-                                NeoCalendarPeriodComponents::from_id_str(id_str)
-                                    .map(NeoComponents::CalendarPeriod)
-                            })
-                    },
                     gen_date_components,
                 )
             }
@@ -403,7 +380,7 @@ fn test_en_year_patterns() {
     let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoDateComponents::YearMonthDay.id_str(),
+                DataMarkerAttributes::from_str_or_panic("ym0d"),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),
@@ -447,7 +424,7 @@ fn test_en_hour_patterns() {
     let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoTimeComponents::Time.id_str(),
+                DataMarkerAttributes::from_str_or_panic("j"),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),
@@ -485,9 +462,7 @@ fn test_en_overlap_patterns() {
     let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                NeoComponents::DateTime(NeoDateComponents::Weekday, NeoTimeComponents::Time)
-                    .id_str()
-                    .unwrap(),
+                DataMarkerAttributes::from_str_or_panic("ej"),
                 &locale!("en").into(),
             ),
             metadata: Default::default(),
