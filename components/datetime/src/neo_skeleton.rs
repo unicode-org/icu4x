@@ -519,27 +519,22 @@ pub enum NeoCalendarPeriodComponents {
     /// A year, as in
     /// “2000”.
     Year,
-    /// The year and week of the year, as in
-    /// “52nd week of 1999”.
-    YearWeek,
     // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
 impl NeoCalendarPeriodComponents {
     /// All values of this enum.
-    pub const VALUES: &'static [Self] = &[Self::Month, Self::YearMonth, Self::Year, Self::YearWeek];
+    pub const VALUES: &'static [Self] = &[Self::Month, Self::YearMonth, Self::Year];
 
     const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
     const YEAR_MONTH: &'static DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("ym0");
     const YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y");
-    const YEAR_WEEK: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y0w");
 
     // For matching
     const MONTH_STR: &'static str = Self::MONTH.as_str();
     const YEAR_MONTH_STR: &'static str = Self::YEAR_MONTH.as_str();
     const YEAR_STR: &'static str = Self::YEAR.as_str();
-    const YEAR_WEEK_STR: &'static str = Self::YEAR_WEEK.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -549,7 +544,6 @@ impl NeoCalendarPeriodComponents {
             Self::Month => Self::MONTH,
             Self::YearMonth => Self::YEAR_MONTH,
             Self::Year => Self::YEAR,
-            Self::YearWeek => Self::YEAR_WEEK,
         }
     }
 
@@ -561,7 +555,6 @@ impl NeoCalendarPeriodComponents {
             Self::MONTH_STR => Some(Self::Month),
             Self::YEAR_MONTH_STR => Some(Self::YearMonth),
             Self::YEAR_STR => Some(Self::Year),
-            Self::YEAR_WEEK_STR => Some(Self::YearWeek),
             _ => None,
         }
     }
@@ -572,7 +565,6 @@ impl NeoCalendarPeriodComponents {
             Self::Month => false,
             Self::YearMonth => true,
             Self::Year => true,
-            Self::YearWeek => true,
         }
     }
 
@@ -582,7 +574,6 @@ impl NeoCalendarPeriodComponents {
             Self::Month => true,
             Self::YearMonth => true,
             Self::Year => false,
-            Self::YearWeek => false,
         }
     }
 
