@@ -36,11 +36,8 @@ icu::datetime::NeoSkeletonLength::into_option#FnInEnum
 icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
 icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
 icu::datetime::fieldset::Combo#Struct
-icu::datetime::fieldset::Combo::dt#FnInStruct
 icu::datetime::fieldset::Combo::long#FnInStruct
 icu::datetime::fieldset::Combo::medium#FnInStruct
-icu::datetime::fieldset::Combo::new#FnInStruct
-icu::datetime::fieldset::Combo::set_dt#FnInStruct
 icu::datetime::fieldset::Combo::short#FnInStruct
 icu::datetime::fieldset::Combo::with_length#FnInStruct
 icu::datetime::fieldset::D#Struct
