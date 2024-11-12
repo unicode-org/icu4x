@@ -92,7 +92,7 @@ The following example shows all the pieces that make up the data pipeline for `D
 ```rust
 use std::borrow::Cow;
 use icu_provider::prelude::*;
-use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
+use icu::decimal::provider::GroupingSizesV1;
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 #[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
@@ -101,14 +101,6 @@ use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
-    /// Prefix and suffix to apply when a negative sign is needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_affixes: AffixesV1<'data>,
-
-    /// Prefix and suffix to apply when a plus sign is needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_affixes: AffixesV1<'data>,
-
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,

@@ -18,6 +18,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
+use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -55,9 +56,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct GroupingSizesV1 {
     /// The size of the first (lowest-magnitude) group.
     ///
@@ -82,13 +83,13 @@ pub struct GroupingSizesV1 {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[zerovec::make_varule(DecimalSymbolsV1StringsULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
-#[cfg_attr(feature = "serde", zerovec::derive(Serialize))]
-#[cfg_attr(feature = "datagen", zerovec::derive(Deserialize))]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct DecimalSymbolsV1Strings<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -145,19 +146,15 @@ impl databake::BakeSize for &DecimalSymbolsV1StringsULE {
 /// </div>
 #[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// String data for the symbols: +/- affixes and separators
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[cfg_attr(
-        feature = "serde",
-        serde(deserialize_with = "deserialize_borrowed_cow")
-    )]
-    // We use a Cow here to reduce the stack size of DecimalSymbolsV1: instead of serializing multiple strs,
+    // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV1: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
-    pub strings: Cow<'data, DecimalSymbolsV1StringsULE>,
+    pub strings: VarZeroCow<'data, DecimalSymbolsV1StringsULE>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
@@ -165,21 +162,6 @@ pub struct DecimalSymbolsV1<'data> {
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
     pub digits: [char; 10],
-}
-
-#[cfg(feature = "serde")]
-fn deserialize_borrowed_cow<'de, 'data, D: serde::Deserializer<'de>>(
-    deserializer: D,
-) -> Result<Cow<'data, DecimalSymbolsV1StringsULE>, D::Error>
-where
-    'de: 'data,
-{
-    use serde::Deserialize;
-    if deserializer.is_human_readable() {
-        Box::<DecimalSymbolsV1StringsULE>::deserialize(deserializer).map(Cow::Owned)
-    } else {
-        <&DecimalSymbolsV1StringsULE>::deserialize(deserializer).map(Cow::Borrowed)
-    }
 }
 
 impl<'data> DecimalSymbolsV1<'data> {
@@ -217,9 +199,8 @@ impl Default for DecimalSymbolsV1<'static> {
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
         };
-        let strings = zerovec::ule::encode_varule_to_box(&strings);
         Self {
-            strings: Cow::Owned(strings),
+            strings: VarZeroCow::from_encodeable(&strings),
             grouping_sizes: GroupingSizesV1 {
                 primary: 3,
                 secondary: 3,

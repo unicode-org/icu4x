@@ -47,7 +47,7 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde"]
-datagen = ["serde", "dep:databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake"]
 bench = ["serde"]
 compiled_data = ["dep:icu_decimal_data"]
 

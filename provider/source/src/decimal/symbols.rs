@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use zerovec::VarZeroCow;
 
 impl DataProvider<DecimalSymbolsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
@@ -86,9 +87,8 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
             decimal_separator: Cow::Owned(symbols.decimal.clone()),
             grouping_separator: Cow::Owned(symbols.group.clone()),
         };
-        let strings = zerovec::ule::encode_varule_to_box(&strings);
         Ok(Self {
-            strings: Cow::Owned(strings),
+            strings: VarZeroCow::from_encodeable(&strings),
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
