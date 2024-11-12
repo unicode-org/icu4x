@@ -237,16 +237,39 @@ pub enum CompositeFieldSet {
     DateTimeZone(DateAndTimeFieldSet, ZoneStyle),
 }
 
+macro_rules! first {
+    ($first:literal, $($remainder:literal,)*) => {
+        $first
+    };
+}
+
 macro_rules! impl_attrs {
-    (@attrs, $type:path, [$(($attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
+    (@attrs, $type:path, [$(($attr_var:ident, $str_var:ident, $value:literal),)+]) => {
         impl $type {
             $(
                 const $attr_var: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic($value);
             )+
-            // $(
-            //     const $str_var: &'static str = $value;
-            // )+
             /// All attributes associated with this enum.
+            ///
+            /// # Encoding Details
+            ///
+            /// The string is based roughly on the UTS 35 symbol table with the following exceptions:
+            ///
+            /// 1. Lowercase letters are chosen where there is no ambiguity: `E` becomes `e`
+            /// 2. Capitals are replaced with their lowercase and a number 0: `M` becomes `m0`
+            /// 3. A single symbol is included for each component: length doesn't matter
+            /// 4. Time fields are encoded with their hour field only: `j`, `h`, or `h0`
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldset::dynamic::", stringify!($type), " as FS;")]
+            /// use icu_provider::DataMarkerAttributes;
+            ///
+            /// assert!(FS::ALL_DATA_MARKER_ATTRIBUTES.contains(
+            #[doc = concat!("    &DataMarkerAttributes::from_str_or_panic(\"", first!($($value,)*), "\")")]
+            /// ));
+            /// ```
             pub const ALL_DATA_MARKER_ATTRIBUTES: &'static [&'static DataMarkerAttributes] = &[
                 $(
                     Self::$attr_var,
