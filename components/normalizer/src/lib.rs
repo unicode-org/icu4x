@@ -133,18 +133,6 @@ enum IgnorableBehavior {
     ReplacementCharacter,
 }
 
-/// Number of iterations allowed on the fast path before flushing.
-/// Since a typical UTF-16 iteration advances over a 2-byte BMP
-/// character, this means two memory pages.
-/// Intel Core i7-4770 had the best results between 2 and 4 pages
-/// when testing powers of two. Apple M1 didn't seem to care
-/// about 1, 2, 4, or 8 pages.
-///
-/// Curiously, the `str` case does not appear to benefit from
-/// similar flushing, though the tested monomorphization never
-/// passes an error through from `Write`.
-const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
-
 /// Marker for UTS 46 ignorables.
 const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
 
@@ -1847,22 +1835,16 @@ impl DecomposingNormalizerBorrowed<'_> {
         as_slice,
         {
             let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-            // The purpose of the counter is to flush once in a while. If we flush
-            // too much, there is too much flushing overhead. If we flush too rarely,
-            // the flush starts reading from too far behind compared to the hot
-            // recently-read memory.
-            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
             'fast: loop {
-                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     let mut upcoming32 = u32::from(upcoming_code_unit);
-                    if upcoming32 < decomposition_passthrough_bound && counter != 0 {
+                    if upcoming32 < decomposition_passthrough_bound {
                         continue 'fast;
                     }
                     // We might be doing a trie lookup by surrogate. Surrogates get
                     // a decomposition to U+FFFD.
                     let mut trie_value = decomposition.trie.get32(upcoming32);
-                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) && counter != 0 {
+                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) {
                         continue 'fast;
                     }
                     // We might now be looking at a surrogate.
@@ -1882,7 +1864,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                     // Successfully-paired surrogate. Read from the trie again.
                                     trie_value = decomposition.trie.get32(upcoming32);
-                                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) && counter != 0 {
+                                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) {
                                         continue 'fast;
                                     }
                                     break 'surrogateloop;
@@ -2270,13 +2252,7 @@ impl ComposingNormalizerBorrowed<'_> {
                 // non-ASCII lead bytes is worthwhile is ever introduced.
                 composition_passthrough_bound.min(0x80) as u8
             };
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
-            // Annotation belongs really on inner statements, but Rust doesn't
-            // allow it there.
+            // Attributes have to be on blocks, so hoisting all the way here.
             #[allow(clippy::unwrap_used)]
             'fast: loop {
                 let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
@@ -2284,7 +2260,6 @@ impl ComposingNormalizerBorrowed<'_> {
                     if let Some(&upcoming_byte) = code_unit_iter.next() {
                         if upcoming_byte < composition_passthrough_byte_bound {
                             // Fast-track succeeded!
-                            undecomposed_starter_valid = false;
                             continue 'fastest;
                         }
                         composition.decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
@@ -2303,26 +2278,19 @@ impl ComposingNormalizerBorrowed<'_> {
                     // starter albeit past `composition_passthrough_bound`
 
                     // Fast-track succeeded!
-                    undecomposed_starter = upcoming_with_trie_value;
-                    undecomposed_starter_valid = true;
                     continue 'fast;
                 }
                 // We need to fall off the fast path.
                 composition.decomposition.pending = Some(upcoming_with_trie_value);
-                let consumed_so_far_slice = if undecomposed_starter_valid {
-                    &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
-                } else {
-                    // slicing and unwrap OK, because we've just evidently read enough previously.
-                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
-                    // `unwrap` OK, because we've previously manage to read the previous character
-                    undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                    undecomposed_starter_valid = true;
-                    consumed_so_far.as_str()
-                };
+
+                // slicing and unwrap OK, because we've just evidently read enough previously.
+                let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
+                // `unwrap` OK, because we've previously manage to read the previous character
+                undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                let consumed_so_far_slice = consumed_so_far.as_str();
                 sink.write_str(consumed_so_far_slice)?;
                 break 'fast;
             }
-            debug_assert!(undecomposed_starter_valid);
         },
         text,
         sink,
@@ -2346,16 +2314,10 @@ impl ComposingNormalizerBorrowed<'_> {
         false,
         as_slice,
         {
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
             'fast: loop {
                 if let Some(upcoming) = composition.decomposition.delegate.next() {
                     if u32::from(upcoming) < composition_passthrough_bound {
                         // Fast-track succeeded!
-                        undecomposed_starter_valid = false;
                         continue 'fast;
                     }
                     // TODO(#2006): Annotate as unlikely
@@ -2371,35 +2333,34 @@ impl ComposingNormalizerBorrowed<'_> {
                         let consumed_so_far_slice = consumed_so_far.as_slice();
                         sink.write_str(unsafe{ from_utf8_unchecked(consumed_so_far_slice)})?;
                         undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        undecomposed_starter_valid = true;
                         composition.decomposition.pending = None;
                         break 'fast;
                     }
+                    // TODO: Be statically aware of fast/small trie.
                     let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
                     if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
                         // Can't combine backwards, hence a plain (non-backwards-combining)
                         // starter albeit past `composition_passthrough_bound`
 
                         // Fast-track succeeded!
-                        undecomposed_starter = upcoming_with_trie_value;
-                        undecomposed_starter_valid = true;
                         continue 'fast;
                     }
                     // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
-                    // Annotation belongs really on inner statement, but Rust doesn't
-                    // allow it there.
+                    // slicing and unwrap OK, because we've just evidently read enough previously.
+                    // `unwrap` OK, because we've previously manage to read the previous character
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
                     #[allow(clippy::unwrap_used)]
-                    let consumed_so_far_slice = if undecomposed_starter_valid {
-                        &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
-                    } else {
-                        // slicing and unwrap OK, because we've just evidently read enough previously.
-                        let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
-                        // `unwrap` OK, because we've previously manage to read the previous character
+                    {
+                        // TODO: If the previous character was below the passthrough bound,
+                        // we really need to read from the trie. Otherwise, we could maintain
+                        // the most-recent trie value. Need to measure what's more expensive:
+                        // Remembering the trie value on each iteration or re-reading the
+                        // last one after the fast-track run.
+
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                        undecomposed_starter_valid = true;
-                        consumed_so_far.as_slice()
-                    };
+                    }
+                    let consumed_so_far_slice = consumed_so_far.as_slice();
                     sink.write_str(unsafe { from_utf8_unchecked(consumed_so_far_slice)})?;
                     break 'fast;
                 }
@@ -2407,7 +2368,6 @@ impl ComposingNormalizerBorrowed<'_> {
                 sink.write_str(unsafe {from_utf8_unchecked(pending_slice) })?;
                 return Ok(());
             }
-            debug_assert!(undecomposed_starter_valid);
         },
         text,
         sink,
@@ -2435,11 +2395,9 @@ impl ComposingNormalizerBorrowed<'_> {
         {
             let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
             let mut upcoming32;
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
+            // Declaring this up here is useful for getting compile errors about invalid changes
+            // to the code structure below.
+            let mut trie_value;
             'fast: loop {
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
@@ -2448,23 +2406,20 @@ impl ComposingNormalizerBorrowed<'_> {
                         // `composition_passthrough_bound` cannot be higher than
                         // U+0300.
                         // Fast-track succeeded!
-                        undecomposed_starter_valid = false;
+                        // At this point, `trie_value` is out of sync with `upcoming32`.
+                        // However, we either 1) reach the end of `code_unit_iter`, at
+                        // which point nothing reads `trie_value` anymore or we
+                        // execute the line immediately below this loop.
                         continue 'fast;
                     }
                     // We might be doing a trie lookup by surrogate. Surrogates get
                     // a decomposition to U+FFFD.
-                    let mut trie_value = composition.decomposition.trie.get32(upcoming32);
+                    trie_value = composition.decomposition.trie.get32(upcoming32);
                     if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
                         // Can't combine backwards, hence a plain (non-backwards-combining)
                         // starter albeit past `composition_passthrough_bound`
 
-                        // SAFETY: If we get here, upcoming32 is a valid BMP character and not a surrogate.
-                        let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                        let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
-
                         // Fast-track succeeded!
-                        undecomposed_starter = upcoming_with_trie_value;
-                        undecomposed_starter_valid = true;
                         continue 'fast;
                     }
 
@@ -2486,13 +2441,7 @@ impl ComposingNormalizerBorrowed<'_> {
                                     // Successfully-paired surrogate. Read from the trie again.
                                     trie_value = composition.decomposition.trie.get32(upcoming32);
                                     if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
-                                        // SAFETY: If we get here, upcoming32 is a valid BMP character and not a surrogate.
-                                        let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                                        let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
-
                                         // Fast-track succeeded!
-                                        undecomposed_starter = upcoming_with_trie_value;
-                                        undecomposed_starter_valid = true;
                                         continue 'fast;
                                     }
                                     break 'surrogateloop;
@@ -2504,6 +2453,7 @@ impl ComposingNormalizerBorrowed<'_> {
                         // unpaired surrogate
                         upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
                         // trie_value already holds a decomposition to U+FFFD.
+                        debug_assert_eq!(trie_value, NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER | 0xFFFD);
                         break 'surrogateloop;
                     }
 
@@ -2512,19 +2462,18 @@ impl ComposingNormalizerBorrowed<'_> {
                     let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
                     // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
-                    // Annotation belongs really on inner statement, but Rust doesn't
-                    // allow it there.
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
+                    // `unwrap` OK, because we've previously managed to read the previous character
                     #[allow(clippy::unwrap_used)]
-                    let consumed_so_far_slice = if undecomposed_starter_valid {
-                        &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16() - undecomposed_starter.character.len_utf16()]
-                    } else {
-                        // slicing and unwrap OK, because we've just evidently read enough previously.
-                        let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
-                        // `unwrap` OK, because we've previously manage to read the previous character
+                    {
+                        // TODO: If the previous character was below the passthrough bound,
+                        // we really need to read from the trie. Otherwise, we could maintain
+                        // the most-recent trie value. Need to measure what's more expensive:
+                        // Remembering the trie value on each iteration or re-reading the
+                        // last one after the fast-track run.
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                        undecomposed_starter_valid = true;
-                        consumed_so_far.as_slice()
-                    };
+                    }
+                    let consumed_so_far_slice = consumed_so_far.as_slice();
                     sink.write_slice(consumed_so_far_slice)?;
                     break 'fast;
                 }
@@ -2532,7 +2481,6 @@ impl ComposingNormalizerBorrowed<'_> {
                 sink.write_slice(pending_slice)?;
                 return Ok(());
             }
-            debug_assert!(undecomposed_starter_valid);
             // Sync the main iterator
             composition.decomposition.delegate = code_unit_iter.as_slice().chars();
         },
