@@ -339,6 +339,7 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
+            #[cfg(feature = "serde")]
             pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawNeoOptions) -> Self {
                 match date_field_set {
                     $(

@@ -28,6 +28,7 @@ pub(crate) struct RawNeoOptions {
 }
 
 impl RawNeoOptions {
+    #[cfg(feature = "serde")]
     pub(crate) fn merge(self, other: RawNeoOptions) -> Self {
         Self {
             length: self.length,
