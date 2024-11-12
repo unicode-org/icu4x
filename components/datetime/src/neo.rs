@@ -18,6 +18,7 @@ use crate::scaffold::{
     HasConstComponents, IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
+use crate::size_test_macro::size_test;
 use crate::DateTimeWriteError;
 use crate::MismatchedCalendarError;
 use core::fmt;

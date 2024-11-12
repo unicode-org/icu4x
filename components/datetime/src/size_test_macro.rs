@@ -2,10 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+/*************************************************************************************
+ * NOTE: PLEASE KEEP THIS FILE IN SYNC WITH ALL OTHER FILES NAMED size_test_macro.rs *
+ * TODO(#4467): Copy this file automatically                                         *
+ *************************************************************************************/
+
 /// Generates a test that checks the stack size of an item and a macro
 /// that should be used with `#[doc]` to document it.
 ///
-/// ```ignore
+/// ```text
 /// size_test!(MyType, my_type_size, 32);
 ///
 /// // Add this annotation to the type's docs:
@@ -17,7 +22,7 @@
 /// If the size on latest beta differs from rust-toolchain.toml, use the
 /// named arguments version of this macro to specify both sizes:
 ///
-/// ```ignore
+/// ```text
 /// size_test!(MyType, my_type_size, pinned = 32, beta = 24, nightly = 24);
 /// ```
 ///

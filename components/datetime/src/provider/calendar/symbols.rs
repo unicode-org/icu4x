@@ -5,6 +5,7 @@
 // allowed for providers
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;

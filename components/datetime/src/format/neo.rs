@@ -9,7 +9,6 @@ use super::{
 };
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::helpers::size_test;
 use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
@@ -22,6 +21,7 @@ use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
+use crate::size_test_macro::size_test;
 use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
