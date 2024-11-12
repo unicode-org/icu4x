@@ -9,6 +9,7 @@ use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use core::ptr::NonNull;
+use zerofrom::ZeroFrom;
 
 /// Copy-on-write type that efficiently represents [`VarULE`] types as their bitstream representation.
 ///
@@ -46,6 +47,35 @@ pub struct VarZeroCow<'a, V: ?Sized> {
 // This is mostly just a `Cow<[u8]>`, safe to implement Send and Sync on
 unsafe impl<'a, V: ?Sized> Send for VarZeroCow<'a, V> {}
 unsafe impl<'a, V: ?Sized> Sync for VarZeroCow<'a, V> {}
+
+impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
+    fn clone(&self) -> Self {
+        if self.is_owned() {
+            // This clones the box
+            let b: Box<[u8]> = self.as_bytes().into();
+            let b = ManuallyDrop::new(b);
+            let buf: NonNull<[u8]> = (&**b).into();
+            Self {
+                // Invariants upheld:
+                // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
+                // 3: This is owned (we cloned it), so we set owned to true.
+                buf,
+                owned: true,
+                _phantom: PhantomData,
+            }
+        } else {
+            // Unfortunately we can't just use `new_borrowed(self.deref())` since the lifetime is shorter
+            Self {
+                // Invariants upheld:
+                // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
+                // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
+                buf: self.buf.clone(),
+                owned: false,
+                _phantom: PhantomData,
+            }
+        }
+    }
+}
 
 impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V> {
     fn drop(&mut self) {
@@ -130,7 +160,9 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
             _phantom: PhantomData,
         }
     }
+}
 
+impl<'a, V: ?Sized> VarZeroCow<'a, V> {
     /// Whether or not this is owned
     pub fn is_owned(&self) -> bool {
         self.owned
@@ -267,6 +299,20 @@ impl<'a, V: VarULE + ?Sized> databake::Bake for VarZeroCow<'a, V> {
 impl<'a, V: VarULE + ?Sized> databake::BakeSize for VarZeroCow<'a, V> {
     fn borrows_size(&self) -> usize {
         self.as_bytes().len()
+    }
+}
+
+impl<'a, V: VarULE + ?Sized> ZeroFrom<'a, V> for VarZeroCow<'a, V> {
+    #[inline]
+    fn zero_from(other: &'a V) -> Self {
+        Self::new_borrowed(other)
+    }
+}
+
+impl<'a, 'b, V: VarULE + ?Sized> ZeroFrom<'a, VarZeroCow<'b, V>> for VarZeroCow<'a, V> {
+    #[inline]
+    fn zero_from(other: &'a VarZeroCow<'b, V>) -> Self {
+        Self::new_borrowed(&other)
     }
 }
 
