@@ -12,6 +12,7 @@
 //! [`VarTupleULE`]: crate::ule::vartuple::VarTupleULE
 
 use super::*;
+use crate::varzerovec::{Index16, VarZeroVecFormat};
 use alloc::borrow::ToOwned;
 use core::fmt;
 use core::marker::PhantomData;
@@ -30,17 +31,17 @@ macro_rules! tuple_varule {
         #[doc = concat!("VarULE type for tuples with ", $len, " elements. See module docs for more information")]
         #[repr(transparent)]
         #[allow(clippy::exhaustive_structs)] // stable
-        pub struct $name<$($T: ?Sized),+> {
+        pub struct $name<$($T: ?Sized,)+ Format: VarZeroVecFormat = Index16> {
             $($t: PhantomData<$T>,)+
             // Safety invariant: Each "field" $i of the MultiFieldsULE is a valid instance of $t
             //
             // In other words, calling `.get_field::<$T>($i)` is always safe.
             //
             // This invariant is upheld when this type is constructed during VarULE parsing/validation
-            multi: MultiFieldsULE<$len>
+            multi: MultiFieldsULE<$len, Format>
         }
 
-        impl<$($T: VarULE + ?Sized),+> $name<$($T),+> {
+        impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> $name<$($T,)+ Format> {
             $(
                 #[doc = concat!("Get field ", $i, "of this tuple")]
                 pub fn $t(&self) -> &$T {
@@ -67,10 +68,10 @@ macro_rules! tuple_varule {
         // 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
         // 6. All other methods are left at their default impl.
         // 7. The inner ULEs have byte equality, so this composition has byte equality.
-        unsafe impl<$($T: VarULE + ?Sized),+> VarULE for $name<$($T),+>
+        unsafe impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> VarULE for $name<$($T,)+ Format>
         {
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-                let multi = <MultiFieldsULE<$len> as VarULE>::parse_byte_slice(bytes)?;
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_byte_slice(bytes)?;
                 $(
                     // Safety invariant: $i < $len, from the macro invocation
                     unsafe {
@@ -81,37 +82,37 @@ macro_rules! tuple_varule {
             }
 
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                let multi = <MultiFieldsULE<$len> as VarULE>::from_byte_slice_unchecked(bytes);
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_byte_slice_unchecked(bytes);
 
                 // This type is repr(transparent) over MultiFieldsULE<$len>, so its slices can be transmuted
                 // Field invariant upheld here: validate_byte_slice above validates every field for being the right type
-                mem::transmute::<&MultiFieldsULE<$len>, &Self>(multi)
+                mem::transmute::<&MultiFieldsULE<$len, Format>, &Self>(multi)
             }
         }
 
-        impl<$($T: fmt::Debug + VarULE + ?Sized),+> fmt::Debug for $name<$($T),+> {
+        impl<$($T: fmt::Debug + VarULE + ?Sized,)+ Format: VarZeroVecFormat> fmt::Debug for $name<$($T,)+ Format> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
                 ($(self.$t(),)+).fmt(f)
             }
         }
 
         // We need manual impls since `#[derive()]` is disallowed on packed types
-        impl<$($T: PartialEq + VarULE + ?Sized),+> PartialEq for $name<$($T),+> {
+        impl<$($T: PartialEq + VarULE + ?Sized,)+ Format: VarZeroVecFormat> PartialEq for $name<$($T,)+ Format> {
             fn eq(&self, other: &Self) -> bool {
 
                 ($(self.$t(),)+).eq(&($(other.$t(),)+))
             }
         }
 
-        impl<$($T: Eq + VarULE + ?Sized),+> Eq for $name<$($T),+> {}
+        impl<$($T: Eq + VarULE + ?Sized,)+ Format: VarZeroVecFormat> Eq for $name<$($T,)+ Format> {}
 
-        impl<$($T: PartialOrd + VarULE + ?Sized),+> PartialOrd for $name<$($T),+> {
+        impl<$($T: PartialOrd + VarULE + ?Sized,)+ Format: VarZeroVecFormat> PartialOrd for $name<$($T,)+ Format> {
             fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
                 ($(self.$t(),)+).partial_cmp(&($(other.$t(),)+))
             }
         }
 
-        impl<$($T: Ord + VarULE + ?Sized),+> Ord for $name<$($T),+> {
+        impl<$($T: Ord + VarULE + ?Sized,)+ Format: VarZeroVecFormat> Ord for $name<$($T,)+ Format>  {
             fn cmp(&self, other: &Self) -> core::cmp::Ordering {
                 ($(self.$t(),)+).cmp(&($(other.$t(),)+))
             }
@@ -122,10 +123,11 @@ macro_rules! tuple_varule {
         // encode_var_ule_len: returns the length of the individual VarULEs together.
         //
         // encode_var_ule_write: writes bytes by deferring to the inner VarULE impls.
-        unsafe impl<$($T,)+ $($T_alt),+> EncodeAsVarULE<$name<$($T),+>> for ( $($T_alt),+ )
+        unsafe impl<$($T,)+ $($T_alt,)+ Format> EncodeAsVarULE<$name<$($T,)+ Format>> for ( $($T_alt),+ )
         where
             $($T: VarULE + ?Sized,)+
             $($T_alt: EncodeAsVarULE<$T>,)+
+            Format: VarZeroVecFormat,
         {
             fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
                 // unnecessary if the other two are implemented
@@ -134,13 +136,13 @@ macro_rules! tuple_varule {
 
             #[inline]
             fn encode_var_ule_len(&self) -> usize {
-                MultiFieldsULE::<$len>::compute_encoded_len_for([$(self.$i.encode_var_ule_len()),+])
+                MultiFieldsULE::<$len, Format>::compute_encoded_len_for([$(self.$i.encode_var_ule_len()),+])
             }
 
             #[inline]
             fn encode_var_ule_write(&self, dst: &mut [u8]) {
                 let lengths = [$(self.$i.encode_var_ule_len()),+];
-                let multi = MultiFieldsULE::<$len>::new_from_lengths_partially_initialized(lengths, dst);
+                let multi = MultiFieldsULE::<$len, Format>::new_from_lengths_partially_initialized(lengths, dst);
                 $(
                     // Safety: $i < $len, from the macro invocation, and field $i is supposed to be of type $T
                     unsafe {
@@ -150,18 +152,19 @@ macro_rules! tuple_varule {
             }
         }
 
-        impl<$($T: VarULE + ?Sized),+> ToOwned for $name<$($T),+> {
+        impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> ToOwned for $name<$($T,)+ Format> {
             type Owned = Box<Self>;
             fn to_owned(&self) -> Self::Owned {
                 encode_varule_to_box(self)
             }
         }
 
-        impl<'a, $($T,)+ $($T_alt),+> ZeroFrom <'a, $name<$($T,)+>> for ($($T_alt),+)
+        impl<'a, $($T,)+ $($T_alt,)+ Format> ZeroFrom <'a, $name<$($T,)+ Format>> for ($($T_alt),+)
         where
                     $($T: VarULE + ?Sized,)+
-                    $($T_alt: ZeroFrom<'a, $T>,)+ {
-            fn zero_from(other: &'a $name<$($T,)+>) -> Self {
+                    $($T_alt: ZeroFrom<'a, $T>,)+
+                    Format: VarZeroVecFormat {
+            fn zero_from(other: &'a $name<$($T,)+ Format>) -> Self {
                 (
                     $($T_alt::zero_from(other.$t()),)+
                 )
@@ -169,11 +172,12 @@ macro_rules! tuple_varule {
         }
 
         #[cfg(feature = "serde")]
-        impl<$($T: serde::Serialize),+> serde::Serialize for $name<$($T),+>
+        impl<$($T: serde::Serialize,)+ Format> serde::Serialize for $name<$($T,)+ Format>
         where
             $($T: VarULE + ?Sized,)+
             // This impl should be present on almost all VarULE types. if it isn't, that is a bug
-            $(for<'a> &'a $T: ZeroFrom<'a, $T>),+
+            $(for<'a> &'a $T: ZeroFrom<'a, $T>,)+
+            Format: VarZeroVecFormat
         {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
                 if serializer.is_human_readable() {
@@ -188,10 +192,11 @@ macro_rules! tuple_varule {
         }
 
         #[cfg(feature = "serde")]
-        impl<'de, $($T: VarULE + ?Sized),+> serde::Deserialize<'de> for Box<$name<$($T),+>>
+        impl<'de, $($T: VarULE + ?Sized,)+ Format> serde::Deserialize<'de> for Box<$name<$($T,)+ Format>>
             where
                 // This impl should be present on almost all deserializable VarULE types
-                $( Box<$T>: serde::Deserialize<'de>),+ {
+                $( Box<$T>: serde::Deserialize<'de>,)+
+                Format: VarZeroVecFormat {
             fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
                 if deserializer.is_human_readable() {
                     let this = <( $(Box<$T>),+) as serde::Deserialize>::deserialize(deserializer)?;
@@ -202,16 +207,14 @@ macro_rules! tuple_varule {
                 } else {
                     // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.
 
-                    let deserialized = <&$name<$($T),+>>::deserialize(deserializer)?;
+                    let deserialized = <&$name<$($T,)+ Format>>::deserialize(deserializer)?;
                     Ok(deserialized.to_boxed())
                 }
             }
         }
 
         #[cfg(feature = "serde")]
-        impl<'a, 'de, $($T: VarULE + ?Sized),+> serde::Deserialize<'de> for &'a $name<$($T),+>
-            where
-                'de: 'a {
+        impl<'a, 'de: 'a, $($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> serde::Deserialize<'de> for &'a $name<$($T,)+ Format> {
             fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
                 if deserializer.is_human_readable() {
                     Err(serde::de::Error::custom(
@@ -219,7 +222,7 @@ macro_rules! tuple_varule {
                     ))
                 } else {
                     let bytes = <&[u8]>::deserialize(deserializer)?;
-                    $name::<$($T),+>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+                    $name::<$($T,)+ Format>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
                 }
             }
         }
@@ -235,8 +238,10 @@ tuple_varule!(Tuple6VarULE, 6, [ A a AE 0, B b BE 1, C c CE 2, D d DE 3, E e EE 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat};
     use crate::VarZeroSlice;
     use crate::VarZeroVec;
+
     #[test]
     fn test_pairvarule_validate() {
         let vec: Vec<(&str, &[u8])> = vec![("a", b"b"), ("foo", b"bar"), ("lorem", b"ipsum\xFF")];
@@ -256,8 +261,7 @@ mod tests {
             crate::ule::test_utils::assert_serde_roundtrips::<Tuple2VarULE<str, [u8]>>(val);
         }
     }
-    #[test]
-    fn test_tripleule_validate() {
+    fn test_tripleule_validate_inner<Format: VarZeroVecFormat>() {
         let vec: Vec<(&str, &[u8], VarZeroVec<str>)> = vec![
             ("a", b"b", (&vec!["a", "b", "c"]).into()),
             ("foo", b"bar", (&vec!["baz", "quux"]).into()),
@@ -267,22 +271,29 @@ mod tests {
                 (&vec!["dolor", "sit", "amet"]).into(),
             ),
         ];
-        let zerovec: VarZeroVec<Tuple3VarULE<str, [u8], VarZeroSlice<str>>> = (&vec).into();
+        let zerovec: VarZeroVec<Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>> = (&vec).into();
         let bytes = zerovec.as_bytes();
         let zerovec2 = VarZeroVec::parse_byte_slice(bytes).unwrap();
         assert_eq!(zerovec, zerovec2);
 
         // Test failed validation with a correctly sized but differently constrained tuple
         // Note: the str is unlikely to be a valid varzerovec
-        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>>>::parse_byte_slice(bytes);
+        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>, Format>>::parse_byte_slice(bytes);
         assert!(zerovec3.is_err());
 
         #[cfg(feature = "serde")]
         for val in zerovec.iter() {
             // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
             crate::ule::test_utils::assert_serde_roundtrips::<
-                Tuple3VarULE<str, [u8], VarZeroSlice<str>>,
+                Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>,
             >(val);
         }
+    }
+
+    #[test]
+    fn test_tripleule_validate() {
+        test_tripleule_validate_inner::<Index8>();
+        test_tripleule_validate_inner::<Index16>();
+        test_tripleule_validate_inner::<Index32>();
     }
 }
