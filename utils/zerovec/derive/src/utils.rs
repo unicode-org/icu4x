@@ -270,6 +270,7 @@ pub fn extract_field_attributes(attrs: &mut Vec<Attribute>) -> Result<Option<Ide
 pub struct ZeroVecAttrs {
     pub skip_kv: bool,
     pub skip_ord: bool,
+    pub skip_toowned: bool,
     pub serialize: bool,
     pub deserialize: bool,
     pub debug: bool,
@@ -322,6 +323,8 @@ pub fn extract_attributes_common(
             attrs.skip_kv = true;
         } else if ident == "Ord" {
             attrs.skip_ord = true;
+        } else if ident == "ToOwned" && is_var {
+            attrs.skip_toowned = true;
         } else {
             return Err(Error::new(
                 ident.span(),

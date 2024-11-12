@@ -167,6 +167,62 @@ macro_rules! tuple_varule {
                 )
             }
         }
+
+        #[cfg(feature = "serde")]
+        impl<$($T: serde::Serialize),+> serde::Serialize for $name<$($T),+>
+        where
+            $($T: VarULE + ?Sized,)+
+            // This impl should be present on almost all VarULE types. if it isn't, that is a bug
+            $(for<'a> &'a $T: ZeroFrom<'a, $T>),+
+        {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+                if serializer.is_human_readable() {
+                    let this = (
+                        $(self.$t()),+
+                    );
+                    <($(&$T),+) as serde::Serialize>::serialize(&this, serializer)
+                } else {
+                    serializer.serialize_bytes(self.multi.as_bytes())
+                }
+            }
+        }
+
+        #[cfg(feature = "serde")]
+        impl<'de, $($T: VarULE + ?Sized),+> serde::Deserialize<'de> for Box<$name<$($T),+>>
+            where
+                // This impl should be present on almost all deserializable VarULE types
+                $( Box<$T>: serde::Deserialize<'de>),+ {
+            fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
+                if deserializer.is_human_readable() {
+                    let this = <( $(Box<$T>),+) as serde::Deserialize>::deserialize(deserializer)?;
+                    let this_ref = (
+                        $(&*this.$i),+
+                    );
+                    Ok(crate::ule::encode_varule_to_box(&this_ref))
+                } else {
+                    // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.
+
+                    let deserialized = <&$name<$($T),+>>::deserialize(deserializer)?;
+                    Ok(deserialized.to_boxed())
+                }
+            }
+        }
+
+        #[cfg(feature = "serde")]
+        impl<'a, 'de, $($T: VarULE + ?Sized),+> serde::Deserialize<'de> for &'a $name<$($T),+>
+            where
+                'de: 'a {
+            fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
+                if deserializer.is_human_readable() {
+                    Err(serde::de::Error::custom(
+                        concat!("&", stringify!($name), " can only deserialize in zero-copy ways"),
+                    ))
+                } else {
+                    let bytes = <&[u8]>::deserialize(deserializer)?;
+                    $name::<$($T),+>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+                }
+            }
+        }
     };
 }
 
@@ -193,6 +249,12 @@ mod tests {
         // Note: ipsum\xFF is not a valid str
         let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_byte_slice(bytes);
         assert!(zerovec3.is_err());
+
+        #[cfg(feature = "serde")]
+        for val in zerovec.iter() {
+            // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+            crate::ule::test_utils::assert_serde_roundtrips::<Tuple2VarULE<str, [u8]>>(val);
+        }
     }
     #[test]
     fn test_tripleule_validate() {
@@ -214,5 +276,13 @@ mod tests {
         // Note: the str is unlikely to be a valid varzerovec
         let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>>>::parse_byte_slice(bytes);
         assert!(zerovec3.is_err());
+
+        #[cfg(feature = "serde")]
+        for val in zerovec.iter() {
+            // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+            crate::ule::test_utils::assert_serde_roundtrips::<
+                Tuple3VarULE<str, [u8], VarZeroSlice<str>>,
+            >(val);
+        }
     }
 }

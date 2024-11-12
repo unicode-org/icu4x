@@ -98,13 +98,17 @@ mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
+pub(crate) mod size_test_macro;
 
 pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
 use icu_provider::prelude::*;
+use size_test_macro::size_test;
 use writeable::Writeable;
+
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 208);
 
 /// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -117,6 +121,8 @@ use writeable::Writeable;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
+///
+#[doc = fixed_decimal_formatter_size!()]
 #[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,

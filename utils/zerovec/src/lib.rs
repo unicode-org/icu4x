@@ -241,6 +241,7 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 
+    pub use alloc::borrow;
     pub use alloc::boxed;
 
     #[cfg(feature = "serde")]
