@@ -274,7 +274,7 @@ impl DateTimeNamesMarker for CompositeDateTimeFieldSet {
 }
 
 impl DateTimeMarkers for CompositeDateTimeFieldSet {
-    type D = NeoDateSkeleton;
+    type D = DateFieldSet;
     type T = TimeFieldSet;
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
@@ -315,7 +315,7 @@ impl DateTimeNamesMarker for CompositeFieldSet {
 }
 
 impl DateTimeMarkers for CompositeFieldSet {
-    type D = NeoDateSkeleton;
+    type D = DateFieldSet;
     type T = TimeFieldSet;
     type Z = ZoneFieldSet;
     type LengthOption = datetime_marker_helper!(@option/length, yes);

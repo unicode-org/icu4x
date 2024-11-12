@@ -16,11 +16,9 @@ use icu_calendar::{
     AsCalendar, Calendar, DateTime,
 };
 use icu_datetime::fieldset::dynamic::*;
-use icu_datetime::neo_skeleton::NeoDateTimeSkeleton;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
     neo_pattern::DateTimePattern,
-    neo_skeleton::NeoTimeZoneSkeleton,
     options::preferences::{self, HourCycle},
     DateTimeFormatter, FixedCalendarDateTimeFormatter, TypedDateTimeNames,
 };
@@ -394,7 +392,7 @@ fn test_dayperiod_patterns() {
                         let parsed_pattern =
                             DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
                         let mut pattern_formatter =
-                            TypedDateTimeNames::<Gregorian, NeoDateTimeSkeleton>::try_new(
+                            TypedDateTimeNames::<Gregorian, CompositeDateTimeFieldSet>::try_new(
                                 &(&locale).into(),
                             )
                             .unwrap();
@@ -499,7 +497,7 @@ fn test_time_zone_patterns() {
             }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&data_locale)
+                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(&data_locale)
                     .unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
