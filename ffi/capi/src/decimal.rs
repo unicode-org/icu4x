@@ -81,7 +81,9 @@ pub mod ffi {
                 }
             }
 
-            use icu_decimal::provider::{AffixesV1, DecimalSymbolsV1, GroupingSizesV1};
+            use icu_decimal::provider::{
+                DecimalSymbolsV1, DecimalSymbolsV1Strings, GroupingSizesV1,
+            };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
                 .iter()
@@ -92,14 +94,16 @@ pub mod ffi {
                 *new = char::from_u32(old).unwrap_or(char::REPLACEMENT_CHARACTER);
             }
             let digits = new_digits;
-            let plus_sign_affixes = AffixesV1 {
-                prefix: str_to_cow(plus_sign_prefix),
-                suffix: str_to_cow(plus_sign_suffix),
+            let strings = DecimalSymbolsV1Strings {
+                plus_sign_prefix: str_to_cow(plus_sign_prefix),
+                plus_sign_suffix: str_to_cow(plus_sign_suffix),
+                minus_sign_prefix: str_to_cow(minus_sign_prefix),
+                minus_sign_suffix: str_to_cow(minus_sign_suffix),
+                decimal_separator: str_to_cow(decimal_separator),
+                grouping_separator: str_to_cow(grouping_separator),
             };
-            let minus_sign_affixes = AffixesV1 {
-                prefix: str_to_cow(minus_sign_prefix),
-                suffix: str_to_cow(minus_sign_suffix),
-            };
+            let strings = zerovec::ule::encode_varule_to_box(&strings);
+
             let grouping_sizes = GroupingSizesV1 {
                 primary: primary_group_size,
                 secondary: secondary_group_size,
@@ -113,10 +117,7 @@ pub mod ffi {
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(
                     &icu_provider_adapters::fixed::FixedProvider::from_owned(DecimalSymbolsV1 {
-                        plus_sign_affixes,
-                        minus_sign_affixes,
-                        decimal_separator: str_to_cow(decimal_separator),
-                        grouping_separator: str_to_cow(grouping_separator),
+                        strings: Cow::Owned(strings),
                         grouping_sizes,
                         digits,
                     }),

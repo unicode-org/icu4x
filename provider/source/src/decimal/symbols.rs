@@ -76,11 +76,19 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
             .parse()
             .map_err(|s: super::decimal_pattern::Error| s.to_string())?;
 
-        Ok(Self {
-            minus_sign_affixes: parsed_pattern.localize_sign(&symbols.minus_sign),
-            plus_sign_affixes: parsed_pattern.localize_sign(&symbols.plus_sign),
+        let minus_sign_affixes = parsed_pattern.localize_sign(&symbols.minus_sign);
+        let plus_sign_affixes = parsed_pattern.localize_sign(&symbols.plus_sign);
+        let strings = DecimalSymbolsV1Strings {
+            minus_sign_prefix: minus_sign_affixes.0.into(),
+            minus_sign_suffix: minus_sign_affixes.1.into(),
+            plus_sign_prefix: plus_sign_affixes.0.into(),
+            plus_sign_suffix: plus_sign_affixes.1.into(),
             decimal_separator: Cow::Owned(symbols.decimal.clone()),
             grouping_separator: Cow::Owned(symbols.group.clone()),
+        };
+        let strings = zerovec::ule::encode_varule_to_box(&strings);
+        Ok(Self {
+            strings: Cow::Owned(strings),
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
@@ -104,6 +112,6 @@ fn test_basic() {
         })
         .unwrap();
 
-    assert_eq!(ar_decimal.payload.get().decimal_separator, "٫");
+    assert_eq!(ar_decimal.payload.get().decimal_separator(), "٫");
     assert_eq!(ar_decimal.payload.get().digits[0], '٠');
 }

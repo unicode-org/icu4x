@@ -24,7 +24,7 @@ displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 writeable = { workspace = true }
-
+zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
@@ -46,7 +46,7 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
-serde = ["dep:serde", "icu_provider/serde"]
+serde = ["dep:serde", "icu_provider/serde", "zerovec/serde"]
 datagen = ["serde", "dep:databake"]
 bench = ["serde"]
 compiled_data = ["dep:icu_decimal_data"]

@@ -104,7 +104,7 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 208);
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 88);
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///

@@ -46,27 +46,6 @@ const _: () = {
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
 
-/// A collection of strings to affix to a decimal number.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct AffixesV1<'data> {
-    /// String to prepend before the decimal number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub prefix: Cow<'data, str>,
-
-    /// String to append after the decimal number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub suffix: Cow<'data, str>,
-}
-
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
 ///
@@ -95,6 +74,68 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
+/// The strings used in DecimalSymbolsV1
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[zerovec::make_varule(DecimalSymbolsV1StringsULE)]
+#[zerovec::derive(Debug)]
+#[zerovec::skip_derive(Ord)]
+#[cfg_attr(feature = "serde", zerovec::derive(Serialize))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Deserialize))]
+pub struct DecimalSymbolsV1Strings<'data> {
+    /// Prefix to apply when a negative sign is needed.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub minus_sign_prefix: Cow<'data, str>,
+    /// Suffix to apply when a negative sign is needed.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub minus_sign_suffix: Cow<'data, str>,
+
+    /// Prefix to apply when a positive sign is needed.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub plus_sign_prefix: Cow<'data, str>,
+    /// Suffix to apply when a positive sign is needed.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub plus_sign_suffix: Cow<'data, str>,
+
+    /// Character used to separate the integer and fraction parts of the number.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub decimal_separator: Cow<'data, str>,
+
+    /// Character used to separate groups in the integer part of the number.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub grouping_separator: Cow<'data, str>,
+}
+
+// DO NOT SUBMIT THIS IS A TEMPORARY HACK
+// THIS IS SOUND BUT NOT A GREAT USE OF UNSAFE (we should use reusable APIs here)
+#[cfg(feature = "datagen")]
+impl databake::Bake for &DecimalSymbolsV1StringsULE {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        use zerovec::ule::VarULE;
+        let buf = self.as_byte_slice();
+        let baked_bytes = buf.bake(ctx);
+        databake::quote!(
+            unsafe { core::mem::transmute::<&[u8], &DecimalSymbolsV1StringsULE>(#baked_bytes) }
+        )
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for &DecimalSymbolsV1StringsULE {
+    fn borrows_size(&self) -> usize {
+        use zerovec::ule::VarULE;
+
+        self.as_byte_slice().borrows_size()
+    }
+}
+
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 ///
 /// <div class="stab unstable">
@@ -108,21 +149,15 @@ pub struct GroupingSizesV1 {
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
-    /// Prefix and suffix to apply when a negative sign is needed.
+    /// String data for the symbols: +/- affixes and separators
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_affixes: AffixesV1<'data>,
-
-    /// Prefix and suffix to apply when a plus sign is needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_affixes: AffixesV1<'data>,
-
-    /// Character used to separate the integer and fraction parts of the number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decimal_separator: Cow<'data, str>,
-
-    /// Character used to separate groups in the integer part of the number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub grouping_separator: Cow<'data, str>,
+    #[cfg_attr(
+        feature = "serde",
+        serde(deserialize_with = "deserialize_borrowed_cow")
+    )]
+    // We use a Cow here to reduce the stack size of DecimalSymbolsV1: instead of serializing multiple strs,
+    // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
+    pub strings: Cow<'data, DecimalSymbolsV1StringsULE>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
@@ -132,19 +167,59 @@ pub struct DecimalSymbolsV1<'data> {
     pub digits: [char; 10],
 }
 
+#[cfg(feature = "serde")]
+fn deserialize_borrowed_cow<'de, 'data, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Cow<'data, DecimalSymbolsV1StringsULE>, D::Error>
+where
+    'de: 'data,
+{
+    use serde::Deserialize;
+    if deserializer.is_human_readable() {
+        Box::<DecimalSymbolsV1StringsULE>::deserialize(deserializer).map(Cow::Owned)
+    } else {
+        <&DecimalSymbolsV1StringsULE>::deserialize(deserializer).map(Cow::Borrowed)
+    }
+}
+
+impl<'data> DecimalSymbolsV1<'data> {
+    /// Return (prefix, suffix) for the minus sign
+    pub fn minus_sign_affixes(&self) -> (&str, &str) {
+        (
+            &self.strings.minus_sign_prefix(),
+            &self.strings.minus_sign_suffix(),
+        )
+    }
+    /// Return (prefix, suffix) for the minus sign
+    pub fn plus_sign_affixes(&self) -> (&str, &str) {
+        (
+            &self.strings.plus_sign_prefix(),
+            &self.strings.plus_sign_suffix(),
+        )
+    }
+    /// Return thhe decimal separator
+    pub fn decimal_separator(&self) -> &str {
+        &self.strings.decimal_separator()
+    }
+    /// Return thhe decimal separator
+    pub fn grouping_separator(&self) -> &str {
+        &self.strings.grouping_separator()
+    }
+}
+
 impl Default for DecimalSymbolsV1<'static> {
     fn default() -> Self {
-        Self {
-            minus_sign_affixes: AffixesV1 {
-                prefix: Cow::Borrowed("-"),
-                suffix: Cow::Borrowed(""),
-            },
-            plus_sign_affixes: AffixesV1 {
-                prefix: Cow::Borrowed("+"),
-                suffix: Cow::Borrowed(""),
-            },
+        let strings = DecimalSymbolsV1Strings {
+            minus_sign_prefix: Cow::Borrowed("-"),
+            minus_sign_suffix: Cow::Borrowed(""),
+            plus_sign_prefix: Cow::Borrowed("+"),
+            plus_sign_suffix: Cow::Borrowed(""),
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
+        };
+        let strings = zerovec::ule::encode_varule_to_box(&strings);
+        Self {
+            strings: Cow::Owned(strings),
             grouping_sizes: GroupingSizesV1 {
                 primary: 3,
                 secondary: 3,
