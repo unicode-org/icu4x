@@ -105,7 +105,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         .to_compile_error();
     }
 
-    let unsized_field_info = UnsizedFields::new(unsized_fields);
+    let unsized_field_info = UnsizedFields::new(unsized_fields, attrs.vzv_format);
 
     let mut field_inits = crate::ule::make_ule_fields(&sized_fields);
     let last_field_ule = unsized_field_info.varule_ty();
@@ -488,21 +488,29 @@ struct UnsizedField<'a> {
 
 struct UnsizedFields<'a> {
     fields: Vec<UnsizedField<'a>>,
+    format_param: TokenStream2,
 }
 
 impl<'a> UnsizedFields<'a> {
-    fn new(fields: Vec<UnsizedField<'a>>) -> Self {
+    /// The format_param is an optional tokenstream describing a VZVFormat argument needed by MultiFieldsULE
+    fn new(fields: Vec<UnsizedField<'a>>, format_param: Option<TokenStream2>) -> Self {
         assert!(!fields.is_empty(), "Must have at least one unsized field");
-        Self { fields }
+
+        let format_param = format_param.unwrap_or_else(|| quote!(zerovec::vecs::Index16));
+        Self {
+            fields,
+            format_param,
+        }
     }
 
     // Get the corresponding VarULE type that can store all of these
     fn varule_ty(&self) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].kind.varule_ty()
         } else {
-            quote!(zerovec::ule::MultiFieldsULE::<#len>)
+            quote!(zerovec::ule::MultiFieldsULE::<#len, #format_param>)
         }
     }
 
@@ -546,6 +554,7 @@ impl<'a> UnsizedFields<'a> {
     // Takes all unsized fields on self and encodes them into a byte slice `out`
     fn encode_write(&self, out: TokenStream2) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(#out))
         } else {
@@ -562,7 +571,7 @@ impl<'a> UnsizedFields<'a> {
             quote!(
                 let lengths = [#(#lengths),*];
                 // Todo: index type should be settable by attribute
-                let mut multi = zerovec::ule::MultiFieldsULE::<#len, zerovec::vecs::Index32>::new_from_lengths_partially_initialized(lengths, #out);
+                let mut multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::new_from_lengths_partially_initialized(lengths, #out);
                 unsafe {
                     #(#writers;)*
                 }
@@ -573,6 +582,7 @@ impl<'a> UnsizedFields<'a> {
     // Takes all unsized fields on self and returns the length needed for encoding into a byte slice
     fn encode_len(&self) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_len), quote!())
         } else {
@@ -581,7 +591,7 @@ impl<'a> UnsizedFields<'a> {
                 lengths.push(field.encode_func(quote!(encode_var_ule_len), quote!()));
             }
             // Todo: index type should be settable by attribute
-            quote!(zerovec::ule::MultiFieldsULE::<#len, zerovec::vecs::Index32>::compute_encoded_len_for([#(#lengths),*]))
+            quote!(zerovec::ule::MultiFieldsULE::<#len, #format_param>::compute_encoded_len_for([#(#lengths),*]))
         }
     }
 
@@ -638,6 +648,7 @@ impl<'a> UnsizedFields<'a> {
     /// The code will validate a variable known as `last_field_bytes`
     fn varule_validator(&self) -> Option<TokenStream2> {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             None
         } else {
@@ -648,7 +659,7 @@ impl<'a> UnsizedFields<'a> {
             }
 
             Some(quote!(
-                let multi = zerovec::ule::MultiFieldsULE::<#len>::parse_byte_slice(last_field_bytes)?;
+                let multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::parse_byte_slice(last_field_bytes)?;
                 unsafe {
                     #(#validators)*
                 }
