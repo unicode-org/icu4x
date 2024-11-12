@@ -272,21 +272,25 @@ macro_rules! impl_zone_combo_helpers {
         impl $type {
             /// Associates this field set with a specific non-location format time zone, as in
             /// “Pacific Daylight Time”.
+            #[inline]
             pub fn z(self) -> Combo<Self, Zs> {
                 Combo::new(self)
             }
             /// Associates this field set with an offset format time zone, as in
             /// “GMT−8”.
+            #[inline]
             pub fn o(self) -> Combo<Self, O> {
                 Combo::new(self)
             }
             /// Associates this field set with a generic non-location format time zone, as in
             /// “Pacific Time”.
+            #[inline]
             pub fn v(self) -> Combo<Self, Vs> {
                 Combo::new(self)
             }
             /// Associates this field set with a location format time zone, as in
             /// “Los Angeles time”.
+            #[inline]
             pub fn l(self) -> Combo<Self, L> {
                 Combo::new(self)
             }

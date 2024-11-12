@@ -6,9 +6,12 @@ use core::marker::PhantomData;
 
 use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 
-/// Struct for combining date, time, and zone fields.
+/// Struct for combining date/time fields with zone fields.
 ///
 /// This struct produces "composite field sets" as defined in UTS 35.
+///
+/// This struct does not have its own constructor, but it can be produced via
+/// factory functions on the other field sets.
 ///
 /// # Examples
 ///
@@ -69,6 +72,33 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
+///
+/// Mix a dynamic [`DateFieldSet`](crate::fieldset::dynamic::DateFieldSet)
+/// with a static time zone:
+///
+/// ```
+/// use icu::datetime::fieldset::{YMD, dynamic::DateFieldSet};
+/// use icu::datetime::DateTimeFormatter;
+/// use icu::locale::locale;
+/// use icu::timezone::IxdtfParser;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let formatter = DateTimeFormatter::try_new(
+///     &locale!("en-US").into(),
+///     DateFieldSet::YMD(YMD::long()).v(),
+/// )
+/// .unwrap();
+///
+/// let zdt = IxdtfParser::new().try_location_only_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+/// )
+/// .unwrap();
+///
+/// assert_try_writeable_eq!(
+///     formatter.convert_and_format(&zdt),
+///     "October 18, 2024 PT"
+/// );
+/// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Combo<DT, Z> {
     date_time_field_set: DT,
@@ -76,11 +106,8 @@ pub struct Combo<DT, Z> {
 }
 
 impl<DT, Z> Combo<DT, Z> {
-    /// Creates a new [`Combo`] from a datetime field set.
-    ///
-    /// It may be more convenient to use the helper functions on the field set types.
     #[inline]
-    pub const fn new(date_time_field_set: DT) -> Self {
+    pub(crate) const fn new(date_time_field_set: DT) -> Self {
         Self {
             date_time_field_set,
             _z: PhantomData,
@@ -91,24 +118,7 @@ impl<DT, Z> Combo<DT, Z> {
 impl<DT, Z> UnstableSealed for Combo<DT, Z> {}
 
 impl<DT, Z> Combo<DT, Z> {
-    /// Gets a mutable reference to the inner date/time field set.
-    ///
-    /// # Examples
-    ///
-    /// Override the length option:
-    ///
-    /// ```no_run
-    /// use icu::datetime::fieldset::{self, Combo};
-    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    ///
-    /// let mut field_set: Combo<fieldset::YMD, fieldset::L> = unimplemented!();
-    ///
-    /// field_set.as_mut_dt().length = NeoSkeletonLength::Medium;
-    /// ```
-    pub fn as_mut_dt(&mut self) -> &mut DT {
-        &mut self.date_time_field_set
-    }
-
+    #[inline]
     pub(crate) fn dt(self) -> DT {
         self.date_time_field_set
     }
@@ -137,9 +147,9 @@ where
     DT: DateTimeMarkers,
     Z: DateTimeMarkers,
 {
-    type D = DT;
-    type T = DT;
-    type Z = Z;
+    type D = DT::D;
+    type T = DT::T;
+    type Z = Z::Z;
     type LengthOption = NeoSkeletonLength; // always needed for date
     type AlignmentOption = DT::AlignmentOption;
     type YearStyleOption = DT::YearStyleOption;
