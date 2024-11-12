@@ -708,6 +708,8 @@ macro_rules! impl_zone_marker {
         field_short = $field_short:expr,
         // The field symbol and field length when the semantic length is long.
         field_long = $field_long:expr,
+        // The type in ZoneFieldSet for this field set
+        resolved_type = $resolved_type:ident,
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
         // Whether locations formats can occur.
@@ -835,14 +837,16 @@ macro_rules! impl_zone_marker {
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::Zone(ZoneFieldSet::$resolved_type($resolved_type {
+                    length: self.length,
+                }))
+            }
+        }
         $(
             const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
-            impl GetField<CompositeFieldSet> for $type {
-                #[inline]
-                fn get_field(&self) -> CompositeFieldSet {
-                    CompositeFieldSet::Zone(ZoneFieldSet::$type(*self))
-                }
-            }
             impl $type {
                 pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                     match self.length {
@@ -1162,6 +1166,7 @@ impl_zone_marker!(
     sample = "Central Daylight Time",
     field_short = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
+    resolved_type = Z,
     zone_essentials = yes,
     zone_locations = yes,
     zone_specific_long = yes,
@@ -1260,6 +1265,7 @@ impl_zone_marker!(
     sample = "CDT",
     field_short = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
+    resolved_type = Z,
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
@@ -1322,6 +1328,7 @@ impl_zone_marker!(
     sample = "GMT-5",
     field_short = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
     field_long = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
+    resolved_type = O,
     zone_essentials = yes,
     enumerated = yes,
 );
@@ -1387,6 +1394,7 @@ impl_zone_marker!(
     sample = "Central Time",
     field_short = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
+    resolved_type = V,
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_long = yes,
@@ -1481,6 +1489,7 @@ impl_zone_marker!(
     sample = "CT",
     field_short = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
+    resolved_type = V,
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_short = yes,
@@ -1521,6 +1530,7 @@ impl_zone_marker!(
     sample = "Chicago Time",
     field_short = (fields::TimeZone::Location, fields::FieldLength::Four),
     field_long = (fields::TimeZone::Location, fields::FieldLength::Four),
+    resolved_type = L,
     zone_essentials = yes,
     zone_locations = yes,
     input_tzid = yes,

@@ -502,7 +502,7 @@ impl FieldSetSerde {
 #[test]
 fn test_basic() {
     let skeleton = CompositeFieldSet::DateTimeZone(
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT {
+        DateAndTimeFieldSet::YMDET(fieldset::YMDET {
             length: NeoSkeletonLength::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),
