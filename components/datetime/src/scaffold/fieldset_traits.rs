@@ -24,33 +24,6 @@ use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
-/// Trait for components that can be formatted at runtime.
-pub trait IsRuntimeComponents: UnstableSealed + GetField<NeoComponents> {}
-
-/// A trait associating [`NeoComponents`].
-pub trait HasConstComponents {
-    /// The associated components.
-    const COMPONENTS: NeoComponents;
-}
-
-/// A trait associating [`NeoDateComponents`].
-pub trait HasConstDateComponents {
-    /// The associated components.
-    const COMPONENTS: NeoDateComponents;
-}
-
-/// A trait associating [`NeoTimeComponents`].
-pub trait HasConstTimeComponents {
-    /// The associated components.
-    const COMPONENTS: NeoTimeComponents;
-}
-
-/// A trait associating [`NeoTimeZoneStyle`].
-pub trait HasConstZoneComponent {
-    /// The associated component.
-    const COMPONENT: NeoTimeZoneStyle;
-}
-
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
 /// A trait associating types for date formatting in any calendar
