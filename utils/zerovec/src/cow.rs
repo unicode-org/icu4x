@@ -117,13 +117,19 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     ///
     /// `bytes` must be a valid `V`, i.e. it must successfully pass through
     /// `V::parse_byte_slice()` or `V::validate_byte_slice()`.
-    pub unsafe fn from_byte_slice_unchecked(bytes: &'a [u8]) -> Self {
-        let v = unsafe {
-            // Safety: invariant passed down from caller
-            V::from_byte_slice_unchecked(bytes)
-        };
-
-        Self::new_borrowed(v)
+    pub const unsafe fn from_byte_slice_unchecked(bytes: &'a [u8]) -> Self {
+        unsafe {
+            // Safety: bytes is an &T which is always non-null
+            let buf: NonNull<[u8]> = NonNull::new_unchecked(bytes as *const [u8] as *mut [u8]);
+            Self {
+                // Invariants upheld:
+                // 1 & 2: Passed upstream to caller
+                // 3: This is borrowed, so we set owned to false.
+                buf,
+                owned: false,
+                _phantom: PhantomData,
+            }
+        }
     }
 
     /// Construct this from an [`EncodeAsVarULE`] version of the contained type
@@ -136,14 +142,9 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
 
     /// Construct a new borrowed version of this
     pub fn new_borrowed(val: &'a V) -> Self {
-        let buf: NonNull<[u8]> = val.as_byte_slice().into();
-        Self {
-            // Invariants upheld:
-            // 1 & 2: The bytes came from `val` so they're a valid value and byte slice
-            // 3: This is borrowed, so we set owned to false.
-            buf,
-            owned: false,
-            _phantom: PhantomData,
+        unsafe {
+            // Safety: val is a valid V, by type
+            Self::from_byte_slice_unchecked(val.as_byte_slice())
         }
     }
 
