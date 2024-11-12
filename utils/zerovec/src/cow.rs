@@ -228,9 +228,9 @@ impl<'a, V: VarULE + ?Sized + Ord> Ord for VarZeroCow<'a, V> {
 
 // # Safety
 //
-// encode_var_ule_len: Defers to the impl for &V
+// encode_var_ule_len: Produces the length of the contained bytes, which are known to be a valid V by invariant
 //
-// encode_var_ule_write: Defers to the impl for &V
+// encode_var_ule_write: Writes the contained bytes, which are known to be a valid V by invariant
 unsafe impl<'a, V: VarULE + ?Sized> EncodeAsVarULE<V> for VarZeroCow<'a, V> {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
@@ -239,12 +239,12 @@ unsafe impl<'a, V: VarULE + ?Sized> EncodeAsVarULE<V> for VarZeroCow<'a, V> {
 
     #[inline]
     fn encode_var_ule_len(&self) -> usize {
-        <&V as EncodeAsVarULE<V>>::encode_var_ule_len(&self.deref())
+        self.as_bytes().len()
     }
 
     #[inline]
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        <&V as EncodeAsVarULE<V>>::encode_var_ule_write(&self.deref(), dst)
+        dst.copy_from_slice(self.as_bytes())
     }
 }
 
