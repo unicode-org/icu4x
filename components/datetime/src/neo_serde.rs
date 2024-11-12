@@ -113,14 +113,6 @@ impl TryFrom<SemanticSkeletonSerde> for CompositeFieldSet {
                 .to_zone_field_set(options)
                 .map(CompositeFieldSet::Zone)
                 .ok_or(Error::InvalidFields),
-            // .to_time_zone_style()
-            // .map(|style| {
-            //     CompositeFieldSet::Zone(TimeZoneStyleWithLength {
-            //         style,
-            //         length: options.length,
-            //     })
-            // })
-            // .ok_or(Error::InvalidFields),
             (true, true, false) => date
                 .to_date_field_set(options)
                 .map(|date_field_set| {

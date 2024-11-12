@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::{
-    fieldset::dynamic::TimeZoneStyleWithLength,
-    neo_skeleton::{NeoSkeletonLength, NeoTimeZoneStyle},
+    fieldset::{self, dynamic::ZoneFieldSet},
+    neo_skeleton::NeoSkeletonLength,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -19,36 +19,29 @@ pub struct TimeZoneTest {
     pub expectations: HashMap<String, String>,
 }
 
-pub fn pattern_to_semantic_skeleton(p: &str) -> Option<TimeZoneStyleWithLength> {
+pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Generic,
+        "vvvv" => ZoneFieldSet::V(fieldset::V::with_length(
             NeoSkeletonLength::Long,
-        ),
-        "v" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Generic,
+        )),
+        "v" => ZoneFieldSet::V(fieldset::V::with_length(
             NeoSkeletonLength::Short,
-        ),
-        "VVVV" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Location,
+        )),
+        "VVVV" => ZoneFieldSet::L(fieldset::L::with_length(
             NeoSkeletonLength::Long,
-        ),
-        "zzzz" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Specific,
+        )),
+        "zzzz" => ZoneFieldSet::Z(fieldset::Z::with_length(
             NeoSkeletonLength::Long,
-        ),
-        "z" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Specific,
+        )),
+        "z" => ZoneFieldSet::Z(fieldset::Z::with_length(
             NeoSkeletonLength::Short,
-        ),
-        "OOOO" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Offset,
+        )),
+        "OOOO" => ZoneFieldSet::O(fieldset::O::with_length(
             NeoSkeletonLength::Long,
-        ),
-        "O" => TimeZoneStyleWithLength::from_style_and_length(
-            NeoTimeZoneStyle::Offset,
+        )),
+        "O" => ZoneFieldSet::O(fieldset::O::with_length(
             NeoSkeletonLength::Short,
-        ),
+        )),
         _ => return None,
     })
 }

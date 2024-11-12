@@ -76,19 +76,6 @@ pub enum ZoneFieldSet {
     L(fieldset::L),
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct TimeZoneStyleWithLength {
-    pub style: NeoTimeZoneStyle,
-    pub length: NeoSkeletonLength,
-}
-
-impl TimeZoneStyleWithLength {
-    pub fn from_style_and_length(style: NeoTimeZoneStyle, length: NeoSkeletonLength) -> Self {
-        Self { style, length }
-    }
-}
-
 /// An enumeration over all possible date+time composite field sets.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -344,17 +331,6 @@ impl TimeFieldSet {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,
             Some(H23 | H24) => Self::ATTR_T24,
-        }
-    }
-}
-
-impl TimeZoneStyleWithLength {
-    pub(crate) fn to_raw_options(self) -> RawNeoOptions {
-        RawNeoOptions {
-            length: self.length,
-            alignment: None,
-            year_style: None,
-            time_precision: None,
         }
     }
 }

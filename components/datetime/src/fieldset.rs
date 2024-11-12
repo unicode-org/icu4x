@@ -24,7 +24,9 @@ use icu_calendar::{
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
+/// Enumerations over field sets.
 pub mod dynamic {
+    // TODO: Rename to `pub mod enums`
     pub use crate::dynamic::*;
 }
 
@@ -65,6 +67,7 @@ macro_rules! impl_marker_with_options {
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
         $(time_precision: $timeprecision_yes:ident,)?
+        $(enumerated: $enumerated_yes:ident,)?
     ) => {
         $(#[$attr])*
         #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -123,6 +126,13 @@ macro_rules! impl_marker_with_options {
             pub const fn short() -> Self {
                 Self::with_length(NeoSkeletonLength::Short)
             }
+        }
+        #[allow(dead_code)]
+        impl $type {
+            $(
+                const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
+                #[warn(dead_code)]
+            )?
             pub(crate) fn to_raw_options(self) -> RawNeoOptions {
                 RawNeoOptions {
                     length: self.length,
@@ -131,6 +141,10 @@ macro_rules! impl_marker_with_options {
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
                 }
             }
+            $(
+                const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
+                #[warn(dead_code)]
+            )?
             pub(crate) fn from_raw_options(options: RawNeoOptions) -> Self {
                 Self {
                     length: options.length,
