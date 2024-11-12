@@ -39,9 +39,7 @@ impl From<CompositeFieldSet> for SemanticSkeletonSerde {
                 FieldSetSerde::from_calendar_period_field_set(v)
             }
             CompositeFieldSet::Time(v) => FieldSetSerde::from_time_field_set(v),
-            CompositeFieldSet::Zone(v) => {
-                FieldSetSerde::from_zone_field_set(v)
-            }
+            CompositeFieldSet::Zone(v) => FieldSetSerde::from_zone_field_set(v),
             CompositeFieldSet::DateTime(v) => {
                 let (date_serde, date_options) =
                     FieldSetSerde::from_date_field_set(v.to_date_field_set());
@@ -317,10 +315,10 @@ impl FieldSetSerde {
     const TIME: Self = Self::from_fields(&[Time]);
 
     // Zone Components
-    const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
     const ZONE_SPECIFIC: Self = Self::from_fields(&[ZoneSpecific]);
-    const ZONE_LOCATION: Self = Self::from_fields(&[ZoneLocation]);
     const ZONE_OFFSET: Self = Self::from_fields(&[ZoneOffset]);
+    const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
+    const ZONE_LOCATION: Self = Self::from_fields(&[ZoneLocation]);
 
     const fn from_fields(fields: &[FieldSetField]) -> Self {
         let mut bit_fields = 0;
@@ -461,22 +459,21 @@ impl FieldSetSerde {
         }
     }
 
-    fn from_time_zone_style(value: NeoTimeZoneStyle) -> Self {
+    fn from_time_zone_style(value: ZoneStyle) -> Self {
         match value {
-            NeoTimeZoneStyle::Location => Self::ZONE_LOCATION,
-            NeoTimeZoneStyle::Generic => Self::ZONE_GENERIC,
-            NeoTimeZoneStyle::Specific => Self::ZONE_SPECIFIC,
-            NeoTimeZoneStyle::Offset => Self::ZONE_OFFSET,
-            _ => todo!(),
+            ZoneStyle::Z => Self::ZONE_SPECIFIC,
+            ZoneStyle::O => Self::ZONE_OFFSET,
+            ZoneStyle::V => Self::ZONE_GENERIC,
+            ZoneStyle::L => Self::ZONE_LOCATION,
         }
     }
 
-    fn to_time_zone_style(self) -> Option<NeoTimeZoneStyle> {
+    fn to_time_zone_style(self) -> Option<ZoneStyle> {
         match self {
-            FieldSetSerde::ZONE_LOCATION => Some(NeoTimeZoneStyle::Location),
-            FieldSetSerde::ZONE_GENERIC => Some(NeoTimeZoneStyle::Generic),
-            FieldSetSerde::ZONE_SPECIFIC => Some(NeoTimeZoneStyle::Specific),
-            FieldSetSerde::ZONE_OFFSET => Some(NeoTimeZoneStyle::Offset),
+            FieldSetSerde::ZONE_SPECIFIC => Some(ZoneStyle::Z),
+            FieldSetSerde::ZONE_OFFSET => Some(ZoneStyle::O),
+            FieldSetSerde::ZONE_GENERIC => Some(ZoneStyle::V),
+            FieldSetSerde::ZONE_LOCATION => Some(ZoneStyle::L),
             _ => None,
         }
     }
@@ -484,10 +481,8 @@ impl FieldSetSerde {
     fn from_zone_field_set(value: ZoneFieldSet) -> (Self, RawNeoOptions) {
         match value {
             ZoneFieldSet::Z(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
-            // ZoneFieldSet::Zs(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
             ZoneFieldSet::O(v) => (Self::ZONE_OFFSET, v.to_raw_options()),
             ZoneFieldSet::V(v) => (Self::ZONE_GENERIC, v.to_raw_options()),
-            // ZoneFieldSet::Vs(v) => (Self::ZONE_GENERIC, v.to_raw_options()),
             ZoneFieldSet::L(v) => (Self::ZONE_LOCATION, v.to_raw_options()),
         }
     }
@@ -496,10 +491,8 @@ impl FieldSetSerde {
         use ZoneFieldSet::*;
         match self {
             Self::ZONE_SPECIFIC => Some(Z(fieldset::Z::from_raw_options(options))),
-            // Self::ZONE_SPECIFIC => Some(Zs(fieldset::Zs::from_raw_options(options))),
             Self::ZONE_OFFSET => Some(O(fieldset::O::from_raw_options(options))),
             Self::ZONE_GENERIC => Some(V(fieldset::V::from_raw_options(options))),
-            // Self::ZONE_GENERIC => Some(Vs(fieldset::Vs::from_raw_options(options))),
             Self::ZONE_LOCATION => Some(L(fieldset::L::from_raw_options(options))),
             _ => None,
         }
@@ -515,7 +508,7 @@ fn test_basic() {
             year_style: Some(YearStyle::Always),
             time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
         }),
-        NeoTimeZoneStyle::Generic,
+        ZoneStyle::V,
     );
 
     let json_string = serde_json::to_string(&skeleton).unwrap();

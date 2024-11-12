@@ -4,13 +4,15 @@
 
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-use crate::neo_skeleton::NeoTimeZoneStyle;
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
 use crate::{fields, fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
+///
+/// 📏 Caution: This enumeration links more data than the
+/// individual field set structs!
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -38,6 +40,9 @@ pub enum DateFieldSet {
 }
 
 /// An enumeration over all possible calendar period field sets.
+///
+/// 📏 Caution: This enumeration links more data than the
+/// individual field set structs!
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -65,18 +70,63 @@ pub enum TimeFieldSet {
     T(fieldset::T),
 }
 
+/// An enumeration over all possible zone field sets.
+///
+/// 📏 Caution: This enumeration links more data than the
+/// individual field set structs!
+///
+/// Note: [`fieldset::Zs`] and [`fieldset::Vs`] are not included in this enum
+/// because they are data size optimizations only.
+///
+/// # Time Zone Data Size
+///
+/// Time zone names contribute a lot of data size. For resource-constrained
+/// environments, the following formats require the least amount of data:
+///
+/// - [`fieldset::Zs`]
+/// - [`fieldset::O`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
+    /// The specific non-location format, as in
+    /// “Pacific Daylight Time”.
     Z(fieldset::Z),
-    // Zs(fieldset::Zs),
+    /// The offset format, as in
+    /// “GMT−8”.
     O(fieldset::O),
+    /// The generic non-location format, as in
+    /// “Pacific Time”.
     V(fieldset::V),
-    // Vs(fieldset::Vs),
+    /// The location format, as in
+    /// “Los Angeles time”.
     L(fieldset::L),
 }
 
+/// An enumeration over all possible zone styles.
+///
+/// This is similar to [`ZoneFieldSet`], except the fields are not
+/// self-contained semantic skeletons: they do not contain the length.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
+pub enum ZoneStyle {
+    /// The specific non-location format, as in
+    /// “Pacific Daylight Time”.
+    Z,
+    /// The offset format, as in
+    /// “GMT−8”.
+    O,
+    /// The generic non-location format, as in
+    /// “Pacific Time”.
+    V,
+    /// The location format, as in
+    /// “Los Angeles time”.
+    L,
+}
+
 /// An enumeration over all possible date+time composite field sets.
+///
+/// 📏 Caution: This enumeration links more data than the
+/// individual field set structs!
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
@@ -169,26 +219,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(DateFieldSet, NeoTimeZoneStyle),
+    DateZone(DateFieldSet, ZoneStyle),
     /// Field set for a time and a time zone together.
-    TimeZone(TimeFieldSet, NeoTimeZoneStyle),
+    TimeZone(TimeFieldSet, ZoneStyle),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(DateAndTimeFieldSet, NeoTimeZoneStyle),
-}
-
-impl CompositeFieldSet {
-    pub(crate) fn to_raw_options(self) -> RawNeoOptions {
-        match self {
-            CompositeFieldSet::Date(field_set) => field_set.to_raw_options(),
-            CompositeFieldSet::CalendarPeriod(field_set) => field_set.to_raw_options(),
-            CompositeFieldSet::Time(field_set) => field_set.to_raw_options(),
-            CompositeFieldSet::Zone(field_set) => field_set.to_raw_options(),
-            CompositeFieldSet::DateTime(field_set) => field_set.to_raw_options(),
-            CompositeFieldSet::DateZone(field_set, _) => field_set.to_raw_options(),
-            CompositeFieldSet::TimeZone(field_set, _) => field_set.to_raw_options(),
-            CompositeFieldSet::DateTimeZone(field_set, _) => field_set.to_raw_options(),
-        }
-    }
+    DateTimeZone(DateAndTimeFieldSet, ZoneStyle),
 }
 
 macro_rules! impl_attrs {
@@ -220,7 +255,6 @@ macro_rules! impl_attrs {
         }
     };
     (@zone_fns, $type:path, [$($variant:ident),+,]) => {
-        impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
         impl $type {
             pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                 match self {
@@ -350,15 +384,14 @@ impl_attrs! {
 
 impl ZoneFieldSet {
     pub(crate) fn from_time_zone_style_and_length(
-        style: NeoTimeZoneStyle,
+        style: ZoneStyle,
         length: NeoSkeletonLength,
     ) -> Self {
         match style {
-            NeoTimeZoneStyle::Default => Self::L(fieldset::L::with_length(length)),
-            NeoTimeZoneStyle::Location => Self::Z(fieldset::Z::with_length(length)),
-            NeoTimeZoneStyle::Generic => Self::V(fieldset::V::with_length(length)),
-            NeoTimeZoneStyle::Specific => Self::Z(fieldset::Z::with_length(length)),
-            NeoTimeZoneStyle::Offset => Self::O(fieldset::O::with_length(length)),
+            ZoneStyle::Z => Self::Z(fieldset::Z::with_length(length)),
+            ZoneStyle::O => Self::O(fieldset::O::with_length(length)),
+            ZoneStyle::V => Self::V(fieldset::V::with_length(length)),
+            ZoneStyle::L => Self::L(fieldset::L::with_length(length)),
         }
     }
 }

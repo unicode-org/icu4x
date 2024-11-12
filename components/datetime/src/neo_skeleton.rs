@@ -8,10 +8,6 @@
 use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
-use crate::{
-    fields::{FieldLength, TimeZone},
-    provider::pattern::CoarseHourCycle,
-};
 use icu_provider::DataMarkerAttributes;
 use icu_timezone::scaffold::IntoOption;
 
@@ -1035,36 +1031,6 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneStyle {
-    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> (TimeZone, FieldLength) {
-        match (self, length) {
-            (
-                NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific,
-                NeoSkeletonLength::Short | NeoSkeletonLength::Medium,
-            ) => (TimeZone::SpecificNonLocation, FieldLength::One),
-            (NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific, NeoSkeletonLength::Long) => {
-                (TimeZone::SpecificNonLocation, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::LocalizedOffset, FieldLength::One)
-            }
-            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Long) => {
-                (TimeZone::LocalizedOffset, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::GenericNonLocation, FieldLength::One)
-            }
-            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Long) => {
-                (TimeZone::GenericNonLocation, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::Location, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Long) => {
-                (TimeZone::Location, FieldLength::Four)
-            }
-        }
-    }
-
     /// Creates a skeleton for this time zone style with a long length.
     pub fn long(self) -> NeoTimeZoneSkeleton {
         NeoTimeZoneSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)

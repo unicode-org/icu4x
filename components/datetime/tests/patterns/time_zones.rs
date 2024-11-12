@@ -21,27 +21,13 @@ pub struct TimeZoneTest {
 
 pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => ZoneFieldSet::V(fieldset::V::with_length(
-            NeoSkeletonLength::Long,
-        )),
-        "v" => ZoneFieldSet::V(fieldset::V::with_length(
-            NeoSkeletonLength::Short,
-        )),
-        "VVVV" => ZoneFieldSet::L(fieldset::L::with_length(
-            NeoSkeletonLength::Long,
-        )),
-        "zzzz" => ZoneFieldSet::Z(fieldset::Z::with_length(
-            NeoSkeletonLength::Long,
-        )),
-        "z" => ZoneFieldSet::Z(fieldset::Z::with_length(
-            NeoSkeletonLength::Short,
-        )),
-        "OOOO" => ZoneFieldSet::O(fieldset::O::with_length(
-            NeoSkeletonLength::Long,
-        )),
-        "O" => ZoneFieldSet::O(fieldset::O::with_length(
-            NeoSkeletonLength::Short,
-        )),
+        "vvvv" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Long)),
+        "v" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Short)),
+        "VVVV" => ZoneFieldSet::L(fieldset::L::with_length(NeoSkeletonLength::Long)),
+        "zzzz" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Long)),
+        "z" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Short)),
+        "OOOO" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Long)),
+        "O" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Short)),
         _ => return None,
     })
 }
