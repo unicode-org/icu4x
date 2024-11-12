@@ -213,6 +213,7 @@
 
 extern crate alloc;
 
+mod cow;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
 mod map;
@@ -225,11 +226,11 @@ mod zerovec;
 // This must be after `mod zerovec` for some impls on `ZeroSlice<RawBytesULE>`
 // to show up in the right spot in the docs
 pub mod ule;
-
 #[cfg(feature = "yoke")]
 mod yoke_impls;
 mod zerofrom_impls;
 
+pub use crate::cow::VarZeroCow;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
 pub use crate::map::map::ZeroMap;
