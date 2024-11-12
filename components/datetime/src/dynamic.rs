@@ -243,7 +243,7 @@ macro_rules! impl_attrs {
             //     const $str_var: &'static str = $value;
             // )+
             /// All attributes associated with this enum.
-            pub const ALL_DATA_MARKER_ATTRIBUTES: &[&DataMarkerAttributes] = &[
+            pub const ALL_DATA_MARKER_ATTRIBUTES: &'static [&'static DataMarkerAttributes] = &[
                 $(
                     Self::$attr_var,
                 )+
