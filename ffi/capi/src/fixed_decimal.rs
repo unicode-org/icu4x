@@ -386,20 +386,36 @@ pub mod ffi {
     }
 }
 
-
 impl From<FixedDecimalSignedRoundingMode> for fixed_decimal::SignedRoundingMode {
     fn from(mode: FixedDecimalSignedRoundingMode) -> Self {
         match mode {
-            FixedDecimalSignedRoundingMode::Expand => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::Expand),
-            FixedDecimalSignedRoundingMode::Trunc => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::Trunc),
-            FixedDecimalSignedRoundingMode::HalfExpand => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfExpand),
-            FixedDecimalSignedRoundingMode::HalfTrunc => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfTrunc),
-            FixedDecimalSignedRoundingMode::HalfEven => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfEven),
+            FixedDecimalSignedRoundingMode::Expand => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::Expand,
+            ),
+            FixedDecimalSignedRoundingMode::Trunc => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::Trunc,
+            ),
+            FixedDecimalSignedRoundingMode::HalfExpand => {
+                fixed_decimal::SignedRoundingMode::Unsigned(
+                    fixed_decimal::UnsignedRoundingMode::HalfExpand,
+                )
+            }
+            FixedDecimalSignedRoundingMode::HalfTrunc => {
+                fixed_decimal::SignedRoundingMode::Unsigned(
+                    fixed_decimal::UnsignedRoundingMode::HalfTrunc,
+                )
+            }
+            FixedDecimalSignedRoundingMode::HalfEven => {
+                fixed_decimal::SignedRoundingMode::Unsigned(
+                    fixed_decimal::UnsignedRoundingMode::HalfEven,
+                )
+            }
             FixedDecimalSignedRoundingMode::Ceil => fixed_decimal::SignedRoundingMode::Ceil,
             FixedDecimalSignedRoundingMode::Floor => fixed_decimal::SignedRoundingMode::Floor,
             FixedDecimalSignedRoundingMode::HalfCeil => fixed_decimal::SignedRoundingMode::HalfCeil,
-            FixedDecimalSignedRoundingMode::HalfFloor => fixed_decimal::SignedRoundingMode::HalfFloor,
+            FixedDecimalSignedRoundingMode::HalfFloor => {
+                fixed_decimal::SignedRoundingMode::HalfFloor
+            }
         }
     }
 }
-
