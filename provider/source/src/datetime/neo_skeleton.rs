@@ -6,8 +6,8 @@ use std::collections::HashSet;
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
-use icu::datetime::neo_skeleton::NeoSkeletonLength;
 use icu::datetime::fieldset::dynamic::*;
+use icu::datetime::neo_skeleton::NeoSkeletonLength;
 use icu::datetime::options::DateTimeFormatterOptions;
 use icu::datetime::options::{components, preferences};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
@@ -25,7 +25,11 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        to_components_bag: impl Fn(NeoSkeletonLength, &DataMarkerAttributes, &DateLengthsV1) -> DateTimeFormatterOptions,
+        to_components_bag: impl Fn(
+            NeoSkeletonLength,
+            &DataMarkerAttributes,
+            &DateLengthsV1,
+        ) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
@@ -51,7 +55,11 @@ impl SourceDataProvider {
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
         attributes: &DataMarkerAttributes,
-        to_components_bag: impl Fn(NeoSkeletonLength, &DataMarkerAttributes, &DateLengthsV1) -> DateTimeFormatterOptions,
+        to_components_bag: impl Fn(
+            NeoSkeletonLength,
+            &DataMarkerAttributes,
+            &DateLengthsV1,
+        ) -> DateTimeFormatterOptions,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -215,9 +223,7 @@ impl SourceDataProvider {
             .flat_map(|locale| {
                 DateFieldSet::ALL_DATA_MARKER_ATTRIBUTES
                     .iter()
-                    .chain(
-                        CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter()
-                    )
+                    .chain(CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
                     .chain(DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
                     .map(move |attrs| {
                         DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
@@ -257,15 +263,42 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
 
 #[test]
 fn test_check_for_field() {
-    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "y"));
-    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "m0"));
-    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "d"));
-    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "y0"));
-    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "m"));
-    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "e"));
-    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "h0"));
-    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "e0"));
-    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "h"));
+    assert!(check_for_field(
+        DataMarkerAttributes::from_str_or_panic("ym0d"),
+        "y"
+    ));
+    assert!(check_for_field(
+        DataMarkerAttributes::from_str_or_panic("ym0d"),
+        "m0"
+    ));
+    assert!(check_for_field(
+        DataMarkerAttributes::from_str_or_panic("ym0d"),
+        "d"
+    ));
+    assert!(!check_for_field(
+        DataMarkerAttributes::from_str_or_panic("ym0d"),
+        "y0"
+    ));
+    assert!(!check_for_field(
+        DataMarkerAttributes::from_str_or_panic("ym0d"),
+        "m"
+    ));
+    assert!(check_for_field(
+        DataMarkerAttributes::from_str_or_panic("eh0"),
+        "e"
+    ));
+    assert!(check_for_field(
+        DataMarkerAttributes::from_str_or_panic("eh0"),
+        "h0"
+    ));
+    assert!(!check_for_field(
+        DataMarkerAttributes::from_str_or_panic("eh0"),
+        "e0"
+    ));
+    assert!(!check_for_field(
+        DataMarkerAttributes::from_str_or_panic("eh0"),
+        "h"
+    ));
 }
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
@@ -330,7 +363,10 @@ fn gen_date_components(
     if check_for_field(attributes, "m0") {
         filtered_components.month = date_bag.month;
     }
-    if check_for_field(attributes, "m0") && !check_for_field(attributes, "y") && !check_for_field(attributes, "d") {
+    if check_for_field(attributes, "m0")
+        && !check_for_field(attributes, "y")
+        && !check_for_field(attributes, "d")
+    {
         // standalone month: use the skeleton length
         filtered_components.month = match length {
             NeoSkeletonLength::Long => Some(components::Month::Long),
@@ -366,11 +402,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
-        self.load_neo_skeletons_key(
-            req,
-            Either::Right("generic"),
-            gen_time_components,
-        )
+        self.load_neo_skeletons_key(req, Either::Right("generic"), gen_time_components)
     }
 }
 
