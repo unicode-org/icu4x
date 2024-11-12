@@ -49,15 +49,19 @@
 //! assert_eq!(&employees_vzv.get(1).unwrap().variable, "John Doe");
 //! ```
 
+use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
 use core::mem::{size_of, transmute_copy};
+use zerofrom::ZeroFrom;
 
 use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 
 /// A sized type that can be converted to a [`VarTupleULE`].
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VarTuple<A, B> {
     pub sized: A,
     pub variable: B,
@@ -66,7 +70,7 @@ pub struct VarTuple<A, B> {
 /// A dynamically-sized type combining a sized and an unsized type.
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
 #[repr(C)]
 pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
@@ -180,6 +184,101 @@ where
     }
 }
 
+impl<A, V> ToOwned for VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+{
+    type Owned = Box<Self>;
+    fn to_owned(&self) -> Self::Owned {
+        crate::ule::encode_varule_to_box(self)
+    }
+}
+
+impl<'a, A, B, V> ZeroFrom<'a, VarTupleULE<A, V>> for VarTuple<A, B>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    B: ZeroFrom<'a, V>,
+{
+    fn zero_from(other: &'a VarTupleULE<A, V>) -> Self {
+        VarTuple {
+            sized: AsULE::from_unaligned(other.sized),
+            variable: B::zero_from(&other.variable),
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<A, V> serde::Serialize for VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Serialize,
+    V: serde::Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            let this = VarTuple {
+                sized: A::from_unaligned(self.sized),
+                variable: &self.variable,
+            };
+            this.serialize(serializer)
+        } else {
+            serializer.serialize_bytes(self.as_byte_slice())
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'a, 'de: 'a, A, V> serde::Deserialize<'de> for &'a VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Deserialize<'de>,
+{
+    fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
+    where
+        Des: serde::Deserializer<'de>,
+    {
+        if !deserializer.is_human_readable() {
+            let bytes = <&[u8]>::deserialize(deserializer)?;
+            VarTupleULE::<A, V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+        } else {
+            Err(serde::de::Error::custom(
+                "&VarTupleULE can only deserialize in zero-copy ways",
+            ))
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, A, V> serde::Deserialize<'de> for Box<VarTupleULE<A, V>>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Deserialize<'de>,
+    Box<V>: serde::Deserialize<'de>,
+{
+    fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
+    where
+        Des: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            let this = VarTuple::<A, Box<V>>::deserialize(deserializer)?;
+            Ok(crate::ule::encode_varule_to_box(&this))
+        } else {
+            // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.
+
+            let deserialized = <&VarTupleULE<A, V>>::deserialize(deserializer)?;
+            Ok(deserialized.to_boxed())
+        }
+    }
+}
+
 #[test]
 fn test_simple() {
     let var_tuple = VarTuple {
@@ -189,6 +288,10 @@ fn test_simple() {
     let var_tuple_ule = super::encode_varule_to_box(&var_tuple);
     assert_eq!(var_tuple_ule.sized.as_unsigned_int(), 1500);
     assert_eq!(&var_tuple_ule.variable, "hello");
+
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<VarTupleULE<u16, str>>(&var_tuple_ule);
 }
 
 #[test]
@@ -208,4 +311,9 @@ fn test_nested() {
         &var_tuple_ule.variable.variable,
         ZeroSlice::from_ule_slice(b"ICU")
     );
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<
+        VarTupleULE<u16, VarTupleULE<char, ZeroSlice<_>>>,
+    >(&var_tuple_ule);
 }

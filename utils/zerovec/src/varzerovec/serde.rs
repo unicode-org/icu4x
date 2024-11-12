@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::vec::VarZeroVecInner;
 use super::{VarZeroSlice, VarZeroVec, VarZeroVecFormat};
 use crate::ule::*;
 use alloc::boxed::Box;
@@ -86,7 +85,6 @@ where
 impl<'de, 'a, T, F> Deserialize<'de> for &'a VarZeroSlice<T, F>
 where
     T: VarULE + ?Sized,
-    Box<T>: Deserialize<'de>,
     F: VarZeroVecFormat,
     'de: 'a,
 {
@@ -99,15 +97,8 @@ where
                 "&VarZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
-            let deserialized = VarZeroVec::<'a, T, F>::deserialize(deserializer)?;
-            let borrowed = if let VarZeroVec(VarZeroVecInner::Borrowed(b)) = deserialized {
-                b
-            } else {
-                return Err(de::Error::custom(
-                    "&VarZeroSlice can only deserialize in zero-copy ways",
-                ));
-            };
-            Ok(borrowed)
+            let bytes = <&[u8]>::deserialize(deserializer)?;
+            VarZeroSlice::<T, F>::parse_byte_slice(bytes).map_err(de::Error::custom)
         }
     }
 }

@@ -104,6 +104,11 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
         // &Self is transparent over &VZS<..>
         mem::transmute(<VarZeroLengthlessSlice<[u8]>>::from_bytes_unchecked(bytes))
     }
+
+    /// Get the bytes behind this value
+    pub fn as_bytes(&self) -> &[u8] {
+        self.0.as_bytes()
+    }
 }
 
 impl<const LEN: usize, Format: VarZeroVecFormat> fmt::Debug for MultiFieldsULE<LEN, Format> {
