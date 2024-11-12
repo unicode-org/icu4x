@@ -14,7 +14,7 @@ use core::mem;
 /// Without knowing the length this is of course unsafe to use directly.
 #[repr(transparent)]
 #[derive(PartialEq, Eq)]
-pub(crate) struct VarZeroLengthlessSlice<T: ?Sized, F = Index16> {
+pub(crate) struct VarZeroLengthlessSlice<T: ?Sized, F> {
     marker: PhantomData<(F, T)>,
     /// The original slice this was constructed from
     // Safety invariant: This field must have successfully passed through

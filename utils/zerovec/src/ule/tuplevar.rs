@@ -71,6 +71,8 @@ macro_rules! tuple_varule {
         unsafe impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> VarULE for $name<$($T,)+ Format>
         {
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+                // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
+                // as in the type def
                 let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_byte_slice(bytes)?;
                 $(
                     // Safety invariant: $i < $len, from the macro invocation
@@ -82,6 +84,8 @@ macro_rules! tuple_varule {
             }
 
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+                 // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
+                // as in the type def
                 let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_byte_slice_unchecked(bytes);
 
                 // This type is repr(transparent) over MultiFieldsULE<$len>, so its slices can be transmuted
@@ -136,12 +140,16 @@ macro_rules! tuple_varule {
 
             #[inline]
             fn encode_var_ule_len(&self) -> usize {
+                // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
+                // as in the type def
                 MultiFieldsULE::<$len, Format>::compute_encoded_len_for([$(self.$i.encode_var_ule_len()),+])
             }
 
             #[inline]
             fn encode_var_ule_write(&self, dst: &mut [u8]) {
                 let lengths = [$(self.$i.encode_var_ule_len()),+];
+                // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
+                // as in the type def
                 let multi = MultiFieldsULE::<$len, Format>::new_from_lengths_partially_initialized(lengths, dst);
                 $(
                     // Safety: $i < $len, from the macro invocation, and field $i is supposed to be of type $T

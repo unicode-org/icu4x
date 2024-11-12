@@ -24,16 +24,13 @@ pub struct MultiFieldsULE<const LEN: usize, Format: VarZeroVecFormat>(
 impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// Compute the amount of bytes needed to support elements with lengths `lengths`
     #[inline]
+    #[allow(clippy::expect_used)] // See #1410
     pub fn compute_encoded_len_for(lengths: [usize; LEN]) -> usize {
-        #[allow(clippy::expect_used)] // See #1410
-        unsafe {
-            // safe since BlankSliceEncoder is transparent over usize
-            let lengths = &*(lengths.as_slice() as *const [usize] as *const [BlankSliceEncoder]);
-            crate::varzerovec::components::compute_serializable_len_without_length::<_, _, Format>(
-                lengths,
-            )
-            .expect("Too many bytes to encode") as usize
-        }
+        let lengths = lengths.map(BlankSliceEncoder);
+        crate::varzerovec::components::compute_serializable_len_without_length::<_, _, Format>(
+            &lengths,
+        )
+        .expect("Too many bytes to encode") as usize
     }
 
     /// Construct a partially initialized MultiFieldsULE backed by a mutable byte buffer
@@ -41,21 +38,19 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
         lengths: [usize; LEN],
         output: &'a mut [u8],
     ) -> &'a mut Self {
+        let lengths = lengths.map(BlankSliceEncoder);
+        crate::varzerovec::components::write_serializable_bytes_without_length::<_, _, Format>(
+            &lengths, output,
+        );
+        debug_assert!(
+            <VarZeroLengthlessSlice<[u8], Format>>::parse_byte_slice(LEN as u32, output).is_ok(),
+            "Encoded slice must be valid VarZeroSlice"
+        );
         unsafe {
-            // safe since BlankSliceEncoder is transparent over usize
-            let lengths = &*(lengths.as_slice() as *const [usize] as *const [BlankSliceEncoder]);
-            crate::varzerovec::components::write_serializable_bytes_without_length::<_, _, Format>(
-                lengths, output,
-            );
-            debug_assert!(
-                <VarZeroLengthlessSlice<[u8], Format>>::parse_byte_slice(LEN as u32, output)
-                    .is_ok(),
-                "Encoded slice must be valid VarZeroSlice"
-            );
-            // Safe since write_serializable_bytes produces a valid VarZeroSlice buffer
+            // Safe since write_serializable_bytes produces a valid VarZeroLengthlessSlice buffer with the right format
             let slice = <VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked_mut(output);
-            // safe since `Self` is transparent over VarZeroSlice
-            mem::transmute::<&mut VarZeroLengthlessSlice<_, Format>, &mut Self>(slice)
+            // safe since `Self` is transparent over VarZeroLengthlessSlice<[u8], Format>
+            mem::transmute::<&mut VarZeroLengthlessSlice<[u8], Format>, &mut Self>(slice)
         }
     }
 
@@ -97,11 +92,11 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// Construct from a byte slice
     ///
     /// # Safety
-    /// - byte slice must be a valid VarZeroLengthlessSlice<[u8]> with length LEN
+    /// - byte slice must be a valid VarZeroLengthlessSlice<[u8], Format> with length LEN
     #[inline]
     pub unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        // &Self is transparent over &VZS<..>
-        mem::transmute(<VarZeroLengthlessSlice<[u8]>>::from_bytes_unchecked(bytes))
+        // &Self is transparent over &VZS<..> with the right format
+        mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
     }
 
     /// Get the bytes behind this value
