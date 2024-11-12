@@ -12,8 +12,9 @@ use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
 ///
-/// 📏 Caution: This enumeration links more data than the
-/// individual field set structs!
+/// 📏 Note: This enum can be used as the field set parameter of
+/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
+/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -42,8 +43,9 @@ pub enum DateFieldSet {
 
 /// An enumeration over all possible calendar period field sets.
 ///
-/// 📏 Caution: This enumeration links more data than the
-/// individual field set structs!
+/// 📏 Note: This enum can be used as the field set parameter of
+/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
+/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -73,8 +75,9 @@ pub enum TimeFieldSet {
 
 /// An enumeration over all possible zone field sets.
 ///
-/// 📏 Caution: This enumeration links more data than the
-/// individual field set structs!
+/// 📏 Note: This enum can be used as the field set parameter of
+/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
+/// more formatting data compared to the individual field set structs.
 ///
 /// Note: [`fieldset::Zs`] and [`fieldset::Vs`] are not included in this enum
 /// because they are data size optimizations only.
@@ -126,8 +129,9 @@ pub enum ZoneStyle {
 
 /// An enumeration over all possible date+time composite field sets.
 ///
-/// 📏 Caution: This enumeration links more data than the
-/// individual field set structs!
+/// 📏 Note: This enum can be used as the field set parameter of
+/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
+/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
