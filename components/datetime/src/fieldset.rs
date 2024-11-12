@@ -1625,13 +1625,8 @@ impl_zoneddatetime_marker!(
     zone = O,
 );
 
-impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet, no_wrap);
+impl_zone_combo_helpers!(DateFieldSet, DateZone, UNREACHABLE, no_wrap);
 
-impl_zone_combo_helpers!(TimeFieldSet, TimeZone, TimeFieldSet, no_wrap);
+impl_zone_combo_helpers!(TimeFieldSet, TimeZone, UNREACHABLE, no_wrap);
 
-impl_zone_combo_helpers!(
-    DateAndTimeFieldSet,
-    DateTimeZone,
-    DateAndTimeFieldSet,
-    no_wrap
-);
+impl_zone_combo_helpers!(DateAndTimeFieldSet, DateTimeZone, UNREACHABLE, no_wrap);
