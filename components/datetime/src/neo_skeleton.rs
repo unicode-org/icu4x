@@ -374,28 +374,6 @@ impl NeoDateComponents {
     const YEAR_MONTH_DAY_WEEKDAY_STR: &'static str = Self::YEAR_MONTH_DAY_WEEKDAY.as_str();
     const WEEKDAY_STR: &'static str = Self::WEEKDAY.as_str();
 
-    /// Returns a stable string identifying this set of components.
-    ///
-    /// # Encoding Details
-    ///
-    /// The string is based roughly on the UTS 35 symbol table with the following exceptions:
-    ///
-    /// 1. Lowercase letters are chosen where there is no ambiguity: `G` becomes `g`\*
-    /// 2. Capitals are replaced with their lowercase and a number 0: `M` becomes `m0`
-    /// 3. A single symbol is included for each component: length doesn't matter
-    ///
-    /// \* `g` represents a different field, but it is never used in skeleta.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    ///
-    /// assert_eq!(
-    ///     "ym0de",
-    ///     NeoDateComponents::YearMonthDayWeekday.id_str().as_str()
-    /// );
-    /// ```
     pub const fn id_str(self) -> &'static DataMarkerAttributes {
         match self {
             Self::Day => Self::DAY,
@@ -408,21 +386,6 @@ impl NeoDateComponents {
         }
     }
 
-    /// Returns the set of components for the given stable string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert_eq!(
-    ///     NeoDateComponents::from_id_str(
-    ///         DataMarkerAttributes::from_str_or_panic("ym0de")
-    ///     ),
-    ///     Some(NeoDateComponents::YearMonthDayWeekday)
-    /// );
-    /// ```
     pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
         match &**id_str {
             Self::DAY_STR => Some(Self::Day),
