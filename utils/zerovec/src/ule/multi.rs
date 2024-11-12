@@ -4,21 +4,20 @@
 
 use super::*;
 use crate::varzerovec::lengthless::VarZeroLengthlessSlice;
-use crate::varzerovec::Index32;
 use crate::vecs::VarZeroVecFormat;
 use core::{fmt, mem};
 
 /// This type is used by the custom derive to represent multiple [`VarULE`]
 /// fields packed into a single end-of-struct field. It is not recommended
-/// to use this type directly.
+/// to use this type directly, use [`Tuple2VarULE`](crate::ule::tuplevar::Tuple2VarULE) etc instead.
 ///
 /// Logically, consider it to be `(V1, V2, V3, ..)`
 /// where `V1` etc are potentially different [`VarULE`] types.
 ///
-/// Internally, it is represented by a VarZeroSlice.
+/// Internally, it is represented by a VarZeroSlice without the length part.
 #[derive(PartialEq, Eq)]
 #[repr(transparent)]
-pub struct MultiFieldsULE<const LEN: usize, Format: VarZeroVecFormat = Index32>(
+pub struct MultiFieldsULE<const LEN: usize, Format: VarZeroVecFormat>(
     VarZeroLengthlessSlice<[u8], Format>,
 );
 
