@@ -79,6 +79,10 @@ use crate::{
 pub type SignedFixedDecimal = Signed<UnsignedFixedDecimal>;
 
 impl SignedFixedDecimal {
+    pub fn new(sign: Sign, absolute: UnsignedFixedDecimal) -> Self {
+        SignedFixedDecimal { sign, absolute }
+    }
+
     #[inline]
     /// Parses a [`SignedFixedDecimal`].
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {

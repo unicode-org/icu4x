@@ -244,12 +244,12 @@ impl FormattedDuration<'_> {
 
                 prev_val = val;
             } else {
-                return SignedFixedDecimal {
-                    sign: prev_formatted.sign,
-                    absolute: UnsignedFixedDecimal::from(val)
+                return SignedFixedDecimal::new(
+                    prev_formatted.sign,
+                    UnsignedFixedDecimal::from(val)
                         .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                         .unwrap(),
-                };
+                );
             }
         }
 

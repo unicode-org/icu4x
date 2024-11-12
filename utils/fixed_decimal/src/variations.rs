@@ -46,6 +46,7 @@ pub enum SignDisplay {
 }
 
 /// The `Signed` struct represents a numeric value with an associated sign.
+#[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Signed<T> {
     pub sign: Sign,
