@@ -7,6 +7,7 @@
 mod adapter;
 
 use crate::provider::pattern::runtime::{self, PatternULE};
+use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;

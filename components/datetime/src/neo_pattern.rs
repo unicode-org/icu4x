@@ -8,8 +8,8 @@ use core::str::FromStr;
 
 use writeable::{impl_display_with_writeable, Writeable};
 
-use crate::helpers::size_test;
 use crate::provider::pattern::{runtime, PatternError, PatternItem};
+use crate::size_test_macro::size_test;
 
 size_test!(DateTimePattern, date_time_pattern_size, 32);
 
