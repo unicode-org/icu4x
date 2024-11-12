@@ -43,8 +43,20 @@ macro_rules! yes_to {
     };
 }
 
+macro_rules! yes_or {
+    ($fallback:expr, $actual:expr) => {
+        $actual
+    };
+    ($fallback:expr,) => {
+        $fallback
+    };
+}
+
 macro_rules! ternary {
     ($present:expr, $missing:expr, yes) => {
+        $present
+    };
+    ($present:expr, $missing:expr, $any:literal) => {
         $present
     };
     ($present:expr, $missing:expr,) => {
@@ -478,7 +490,7 @@ macro_rules! impl_date_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::calendar::DateTime;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -488,7 +500,7 @@ macro_rules! impl_date_marker {
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
+            /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.convert_and_format(&dt),
@@ -499,7 +511,7 @@ macro_rules! impl_date_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::calendar::DateTime;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
@@ -511,7 +523,7 @@ macro_rules! impl_date_marker {
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = Date::try_new_gregorian(2024, 5, 17).unwrap();
+            /// let dt = DateTime::try_new_gregorian(2024, 5, 17, 15, 47, 50).unwrap();
             ///
             /// assert_try_writeable_eq!(
             ///     fmt.format(&dt),
@@ -783,6 +795,8 @@ macro_rules! impl_zone_marker {
         field_long = $field_long:expr,
         // The type in ZoneFieldSet for this field set
         resolved_type = $resolved_type:ident,
+        // Whether to skip tests and render a message instead.
+        $(skip_tests = $skip_tests:literal,)?
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
         // Whether locations formats can occur.
@@ -809,11 +823,13 @@ macro_rules! impl_zone_marker {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
             ///
+            #[doc = yes_or!("", $($skip_tests)?)]
+            ///
             /// # Examples
             ///
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
-            /// ```
+            #[doc = concat!("```", ternary!("compile_fail", "", $($skip_tests)?))]
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::DateTimeFormatter;
@@ -842,7 +858,7 @@ macro_rules! impl_zone_marker {
             ///
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
-            /// ```
+            #[doc = concat!("```", ternary!("compile_fail", "", $($skip_tests)?))]
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::calendar::Gregorian;
@@ -1244,58 +1260,6 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// This marker only loads data for the short length. Useful when combined with other fields:
-    ///
-    /// ```
-    /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::T;
-    /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::fieldset::Combo;
-    /// use icu::locale::locale;
-    /// use tinystr::tinystr;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// type MyDateTimeZoneSet = Combo<
-    ///     MD,
-    ///     T,
-    ///     Zs,
-    /// >;
-    ///
-    /// let fmt = DateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
-    ///     MyDateTimeZoneSet::long(),
-    /// )
-    /// .unwrap();
-    ///
-    /// let dtz = IxdtfParser::new().try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47:50 PM CDT"
-    /// );
-    /// ```
-    ///
-    /// Don't use long length if it is the only field:
-    ///
-    /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Zs;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::locale::locale;
-    ///
-    /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     &locale!("en").into(),
-    ///     Zs::long(),
-    /// );
-    ///
-    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
-    /// ```
-    ///
     /// This style requires a [`ZoneVariant`], so
     /// only a full time zone info can be formatted with this style.
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
@@ -1303,7 +1267,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Zs;
+    /// use icu::datetime::fieldset::{Combo, T, Zs};
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1315,7 +1279,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     &locale!("en-US").into(),
-    ///     Zs::medium(),
+    ///     Combo::<T, Zs>::medium(),
     /// )
     /// .unwrap();
     ///
@@ -1331,6 +1295,7 @@ impl_zone_marker!(
     field_short = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     resolved_type = Z,
+    skip_tests = "This field set can be used only in combination with others.",
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
@@ -1471,58 +1436,6 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// This marker only loads data for the short length. Useful when combined with other fields:
-    ///
-    /// ```
-    /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::MD;
-    /// use icu::datetime::fieldset::T;
-    /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::fieldset::Combo;
-    /// use icu::locale::locale;
-    /// use tinystr::tinystr;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// type MyDateTimeZoneSet = Combo<
-    ///     MD,
-    ///     T,
-    ///     Vs,
-    /// >;
-    ///
-    /// let fmt = DateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
-    ///     MyDateTimeZoneSet::long(),
-    /// )
-    /// .unwrap();
-    ///
-    /// let dtz = IxdtfParser::new().try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.convert_and_format(&dtz),
-    ///     "September 17, 3:47:50 PM CT"
-    /// );
-    /// ```
-    ///
-    /// Don't use long length if it is the only field:
-    ///
-    /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Vs;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::locale::locale;
-    ///
-    /// let result = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     &locale!("en").into(),
-    ///     Vs::long(),
-    /// );
-    ///
-    /// assert!(matches!(result, Err(PatternLoadError::TypeTooSpecific(_))));
-    /// ```
-    ///
     /// Since non-location names might change over time,
     /// this time zone style requires a reference time.
     ///
@@ -1555,6 +1468,7 @@ impl_zone_marker!(
     field_short = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     field_long = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     resolved_type = V,
+    skip_tests = "This field set can be used only in combination with others.",
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_short = yes,

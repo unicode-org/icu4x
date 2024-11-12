@@ -15,15 +15,17 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, E, T, L};
+/// use icu::datetime::fieldset::{Combo, ET, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
+/// let field_set: Combo<ET, L> = ET::short().hm().l();
+///
 /// let formatter = DateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, T, L>::short().hm(),
+///     field_set,
 /// )
 /// .unwrap();
 ///
@@ -42,15 +44,17 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::{Combo, E, T, L};
+/// use icu::datetime::fieldset::{Combo, ET, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
+/// let field_set: Combo<ET, L> = ET::short().hm().l();
+///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     &locale!("en-US").into(),
-///     Combo::<E, T, L>::short().hm(),
+///     field_set,
 /// )
 /// .unwrap();
 ///
@@ -94,7 +98,7 @@ impl<DT, Z> Combo<DT, Z> {
     /// Override the length option:
     ///
     /// ```no_run
-    /// use icu::datetime::fieldset::Combo;
+    /// use icu::datetime::fieldset::{self, Combo};
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     ///
     /// let mut field_set: Combo<fieldset::YMD, fieldset::L> = unimplemented!();
