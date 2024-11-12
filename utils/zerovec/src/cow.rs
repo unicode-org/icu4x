@@ -69,7 +69,7 @@ impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
                 // Invariants upheld:
                 // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
                 // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
-                buf: self.buf.clone(),
+                buf: self.buf,
                 owned: false,
                 _phantom: PhantomData,
             }
@@ -313,7 +313,7 @@ impl<'a, V: VarULE + ?Sized> ZeroFrom<'a, V> for VarZeroCow<'a, V> {
 impl<'a, 'b, V: VarULE + ?Sized> ZeroFrom<'a, VarZeroCow<'b, V>> for VarZeroCow<'a, V> {
     #[inline]
     fn zero_from(other: &'a VarZeroCow<'b, V>) -> Self {
-        Self::new_borrowed(&other)
+        Self::new_borrowed(other)
     }
 }
 
