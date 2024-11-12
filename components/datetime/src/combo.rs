@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{dynamic::*, format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
+use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 
 /// Struct for combining date, time, and zone fields.
 ///
@@ -104,6 +104,10 @@ impl<DT, Z> Combo<DT, Z> {
     pub fn as_mut_dt(&mut self) -> &mut DT {
         &mut self.date_time_field_set
     }
+
+    pub(crate) fn dt(self) -> DT {
+        self.date_time_field_set
+    }
 }
 
 impl<DT, Z> DateTimeNamesMarker for Combo<DT, Z>
@@ -137,10 +141,4 @@ where
     type YearStyleOption = DT::YearStyleOption;
     type TimePrecisionOption = DT::TimePrecisionOption;
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
-}
-
-impl<DT, Z> GetField<CompositeFieldSet> for Combo<DT, Z> {
-    fn get_field(&self) -> CompositeFieldSet {
-        todo!()
-    }
 }

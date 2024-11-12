@@ -199,9 +199,35 @@ macro_rules! impl_marker_with_options {
     };
 }
 
+macro_rules! wrap {
+    ($outer:path, $inner:expr) => {
+        $outer($inner)
+    };
+}
+
+macro_rules! no_wrap {
+    ($_outer:path, $inner:expr) => {
+        $inner
+    };
+}
+
+macro_rules! impl_combo_zone_get_field {
+    ($type:ident, $composite:ident, $enum:ident, $wrap:ident, $in:ident, $out:ident) => {
+        impl GetField<CompositeFieldSet> for Combo<$type, $in> {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::$composite($wrap!($enum::$type, self.dt()), ZoneStyle::$out)
+            }
+        }
+    };
+}
+
 macro_rules! impl_zone_combo_helpers {
     (
-        $type:ident
+        $type:ident,
+        $composite:ident,
+        $enum:ident,
+        $wrap:ident
     ) => {
         impl $type {
             /// Associates this field set with a specific non-location format time zone, as in
@@ -225,6 +251,10 @@ macro_rules! impl_zone_combo_helpers {
                 Combo::new(self)
             }
         }
+        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, Zs, Z);
+        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, O, O);
+        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, Vs, V);
+        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, L, L);
     };
 }
 
@@ -409,7 +439,7 @@ macro_rules! impl_date_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl_zone_combo_helpers!($type);
+        impl_zone_combo_helpers!($type, DateZone, DateFieldSet, wrap);
         impl GetField<CompositeFieldSet> for $type {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
@@ -471,7 +501,7 @@ macro_rules! impl_date_marker {
             $(year_style: $year_yes,)?
             time_precision: yes,
         );
-        impl_zone_combo_helpers!($type_time);
+        impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet, wrap);
         impl UnstableSealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -674,7 +704,7 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
-        impl_zone_combo_helpers!($type);
+        impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet, wrap);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -1593,4 +1623,15 @@ impl_zoneddatetime_marker!(
     sample = "17 May 2024, 15:47:50 GMT+1",
     datetime = YMDT,
     zone = O,
+);
+
+impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet, no_wrap);
+
+impl_zone_combo_helpers!(TimeFieldSet, TimeZone, TimeFieldSet, no_wrap);
+
+impl_zone_combo_helpers!(
+    DateAndTimeFieldSet,
+    DateTimeZone,
+    DateAndTimeFieldSet,
+    no_wrap
 );
