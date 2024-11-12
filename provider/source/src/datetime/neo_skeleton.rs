@@ -227,7 +227,7 @@ impl SourceDataProvider {
     }
 }
 
-/// A terrible internal function that checks if the attributes contain a field.
+/// An internal function that checks if the attributes contain a field.
 fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
     let f0 = field.as_bytes().get(0).unwrap();
     let f1 = field.as_bytes().get(1);
@@ -237,6 +237,9 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
             let p = it.peek();
             if p == f1.as_ref() {
                 return true;
+            }
+            if field.len() != 1 {
+                return false;
             }
             let Some(q) = p else {
                 // end of string
@@ -250,6 +253,19 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
         }
     }
     false
+}
+
+#[test]
+fn test_check_for_field() {
+    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "y"));
+    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "m0"));
+    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "d"));
+    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "y0"));
+    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("ym0d"), "m"));
+    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "e"));
+    assert!(check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "h0"));
+    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "e0"));
+    assert!(!check_for_field(DataMarkerAttributes::from_str_or_panic("eh0"), "h"));
 }
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
