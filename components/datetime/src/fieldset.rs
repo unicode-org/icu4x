@@ -199,6 +199,35 @@ macro_rules! impl_marker_with_options {
     };
 }
 
+macro_rules! impl_zone_combo_helpers {
+    (
+        $type:ident
+    ) => {
+        impl $type {
+            /// Associates this field set with a specific non-location format time zone, as in
+            /// “Pacific Daylight Time”.
+            pub fn z(self) -> Combo<Self, Zs> {
+                Combo::new(self)
+            }
+            /// Associates this field set with an offset format time zone, as in
+            /// “GMT−8”.
+            pub fn o(self) -> Combo<Self, O> {
+                Combo::new(self)
+            }
+            /// Associates this field set with a generic non-location format time zone, as in
+            /// “Pacific Time”.
+            pub fn v(self) -> Combo<Self, Vs> {
+                Combo::new(self)
+            }
+            /// Associates this field set with a location format time zone, as in
+            /// “Los Angeles time”.
+            pub fn l(self) -> Combo<Self, L> {
+                Combo::new(self)
+            }
+        }
+    };
+}
+
 /// Internal helper macro used by [`impl_date_marker`] and [`impl_calendar_period_marker`]
 macro_rules! impl_date_or_calendar_period_marker {
     (
@@ -380,6 +409,7 @@ macro_rules! impl_date_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
+        impl_zone_combo_helpers!($type);
         impl GetField<CompositeFieldSet> for $type {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
@@ -441,6 +471,7 @@ macro_rules! impl_date_marker {
             $(year_style: $year_yes,)?
             time_precision: yes,
         );
+        impl_zone_combo_helpers!($type_time);
         impl UnstableSealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -643,6 +674,7 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
+        impl_zone_combo_helpers!($type);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -865,8 +897,7 @@ macro_rules! impl_zoneddatetime_marker {
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
-        date = $date:path,
-        time = $time:path,
+        datetime = $datetime:path,
         zone = $zone:path,
     ) => {
         #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -923,7 +954,7 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```
-        pub type $type = Combo<$date, $time, $zone>;
+        pub type $type = Combo<$datetime, $zone>;
     }
 }
 
@@ -1542,9 +1573,8 @@ impl_zoneddatetime_marker!(
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT",
-    date = YMD,
-    time = T,
-    zone = V,
+    datetime = YMDT,
+    zone = Vs,
 );
 
 impl_zoneddatetime_marker!(
@@ -1552,9 +1582,8 @@ impl_zoneddatetime_marker!(
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 BST",
-    date = YMD,
-    time = T,
-    zone = Z,
+    datetime = YMDT,
+    zone = Zs,
 );
 
 impl_zoneddatetime_marker!(
@@ -1562,7 +1591,6 @@ impl_zoneddatetime_marker!(
     description = "locale-dependent date and time fields with a time zone",
     sample_length = medium,
     sample = "17 May 2024, 15:47:50 GMT+1",
-    date = YMD,
-    time = T,
+    datetime = YMDT,
     zone = O,
 );
