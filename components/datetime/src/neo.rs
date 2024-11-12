@@ -413,11 +413,12 @@ where
         L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut prefs = RawPreferences::default();
-        prefs.hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
+        let prefs = RawPreferences {
+            hour_cycle: locale
+                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+                .as_ref()
+                .and_then(HourCycle::from_locale_value),
+        };
         // END TODO
 
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
@@ -804,11 +805,12 @@ where
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut prefs = RawPreferences::default();
-        prefs.hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
+        let prefs = RawPreferences {
+            hour_cycle: locale
+                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+                .as_ref()
+                .and_then(HourCycle::from_locale_value),
+        };
         // END TODO
 
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(PatternLoadError::Data)?;

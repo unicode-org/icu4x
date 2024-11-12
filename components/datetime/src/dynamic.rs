@@ -6,6 +6,7 @@
 use crate::neo_serde::*;
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
+use crate::scaffold::GetField;
 use crate::{fields, fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 
@@ -199,6 +200,12 @@ impl CompositeDateTimeFieldSet {
     }
 }
 
+impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
+    fn get_field(&self) -> CompositeFieldSet {
+        self.to_composite_field_set()
+    }
+}
+
 /// An enum supporting all possible field sets and options.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -243,6 +250,18 @@ macro_rules! impl_attrs {
             ];
         }
     };
+    (@id_str, $type:path, [$(($variant:ident, $attr_var:ident)),+,]) => {
+        impl $type {
+            /// Returns a stable string identifying this set of fields.
+            pub(crate) const fn id_str(self) -> &'static DataMarkerAttributes {
+                match self {
+                    $(
+                        Self::$variant(_) => Self::$attr_var,
+                    )+
+                }
+            }
+        }
+    };
     (@to_raw_options, $type:path, [$($variant:ident),+,]) => {
         impl $type {
             pub(crate) fn to_raw_options(self) -> RawNeoOptions {
@@ -254,7 +273,39 @@ macro_rules! impl_attrs {
             }
         }
     };
-    (@zone_fns, $type:path, [$($variant:ident),+,]) => {
+    (@composite, $type:path, $variant:ident) => {
+        impl $type {
+            #[inline]
+            pub(crate) fn to_enum(self) -> $type {
+                self
+            }
+        }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::$variant(self.to_enum())
+            }
+        }
+    };
+    (@date, $type:path, [$(($variant:ident, $attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
+        impl_attrs! { @attrs, $type, [$(($attr_var, $str_var, $value)),+,] }
+        impl_attrs! { @id_str, $type, [$(($variant, $attr_var)),+,] }
+        impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
+        impl_attrs! { @composite, $type, Date }
+    };
+    (@calendar_period, $type:path, [$(($variant:ident, $attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
+        impl_attrs! { @attrs, $type, [$(($attr_var, $str_var, $value)),+,] }
+        impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
+        impl_attrs! { @composite, $type, CalendarPeriod }
+        impl_attrs! { @id_str, $type, [$(($variant, $attr_var)),+,] }
+    };
+    (@time, $type:path, [$(($attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
+        impl_attrs! { @attrs, $type, [$(($attr_var, $str_var, $value)),+,] }
+        impl_attrs! { @to_raw_options, $type, [T,] }
+        impl_attrs! { @composite, $type, Time }
+    };
+    (@zone, $type:path, [$($variant:ident),+,]) => {
+        impl_attrs! { @composite, $type, Zone }
         impl $type {
             pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                 match self {
@@ -265,8 +316,9 @@ macro_rules! impl_attrs {
             }
         }
     };
-    (@datetime_fns, $type:path, [$(($d_variant:ident, $variant:ident)),+,]) => {
+    (@datetime, $type:path, [$(($d_variant:ident, $variant:ident)),+,]) => {
         impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
+        impl_attrs! { @composite, $type, DateTime }
         impl $type {
             pub(crate) fn to_date_field_set(self) -> DateFieldSet {
                 match self {
@@ -296,26 +348,10 @@ macro_rules! impl_attrs {
             }
         }
     };
-    (@id_str, $type:path, [$(($variant:ident, $attr_var:ident)),+,]) => {
-        impl $type {
-            /// Returns a stable string identifying this set of fields.
-            pub(crate) const fn id_str(self) -> &'static DataMarkerAttributes {
-                match self {
-                    $(
-                        Self::$variant(_) => Self::$attr_var,
-                    )+
-                }
-            }
-        }
-    };
-    ($type:path, [$(($variant:ident, $attr_var:ident, $str_var:ident, $value:literal)),+,]) => {
-        impl_attrs! { @attrs, $type, [$(($attr_var, $str_var, $value)),+,] }
-        impl_attrs! { @to_raw_options, $type, [$($variant),+,] }
-        impl_attrs! { @id_str, $type, [$(($variant, $attr_var)),+,] }
-    };
 }
 
 impl_attrs! {
+    @date,
     DateFieldSet,
     [
         (D, ATTR_D, STR_D, "d"),
@@ -329,6 +365,7 @@ impl_attrs! {
 }
 
 impl_attrs! {
+    @calendar_period,
     CalendarPeriodFieldSet,
     [
         (M, ATTR_M, STR_M, "m0"),
@@ -338,20 +375,12 @@ impl_attrs! {
 }
 
 impl_attrs! {
-    @attrs,
+    @time,
     TimeFieldSet,
     [
         (ATTR_T, STR_T, "j"),
         (ATTR_T12, STR_T12, "h"),
         (ATTR_T24, STR_T24, "h0"),
-    ]
-}
-
-impl_attrs! {
-    @to_raw_options,
-    TimeFieldSet,
-    [
-        T,
     ]
 }
 
@@ -370,14 +399,12 @@ impl TimeFieldSet {
 }
 
 impl_attrs! {
-    @zone_fns,
+    @zone,
     ZoneFieldSet,
     [
         Z,
-        // Zs,
         O,
         V,
-        // Vs,
         L,
     ]
 }
@@ -405,7 +432,7 @@ impl_attrs! {
 }
 
 impl_attrs! {
-    @datetime_fns,
+    @datetime,
     DateAndTimeFieldSet,
     [
         (D, DT),

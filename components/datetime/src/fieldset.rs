@@ -59,6 +59,23 @@ macro_rules! length_option_helper {
     };
 }
 
+macro_rules! impl_composite {
+    ($type:ident, $variant:ident, $enum:ident) => {
+        impl $type {
+            #[inline]
+            pub(crate) fn to_enum(self) -> $enum {
+                $enum::$type(self)
+            }
+        }
+        impl GetField<CompositeFieldSet> for $type {
+            #[inline]
+            fn get_field(&self) -> CompositeFieldSet {
+                CompositeFieldSet::$variant(self.to_enum())
+            }
+        }
+    };
+}
+
 macro_rules! impl_marker_with_options {
     (
         $(#[$attr:meta])*
@@ -199,24 +216,35 @@ macro_rules! impl_marker_with_options {
     };
 }
 
-macro_rules! wrap {
-    ($outer:path, $inner:expr) => {
-        $outer($inner)
-    };
-}
-
-macro_rules! no_wrap {
-    ($_outer:path, $inner:expr) => {
-        $inner
-    };
-}
-
-macro_rules! impl_combo_zone_get_field {
+macro_rules! impl_combo_get_field {
     ($type:ident, $composite:ident, $enum:ident, $wrap:ident, $in:ident, $out:ident) => {
         impl GetField<CompositeFieldSet> for Combo<$type, $in> {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::$composite($wrap!($enum::$type, self.dt()), ZoneStyle::$out)
+                CompositeFieldSet::$composite(self.dt().to_enum(), ZoneStyle::$out)
+            }
+        }
+    };
+}
+
+macro_rules! impl_combo_generic_fns {
+    ($type:ident) => {
+        impl<Z> Combo<$type, Z> {
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length and a time zone.")]
+            pub fn with_length(length: NeoSkeletonLength) -> Self {
+                Self::new($type::with_length(length))
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length and a time zone.")]
+            pub const fn long() -> Self {
+                Self::new($type::long())
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length and a time zone.")]
+            pub const fn medium() -> Self {
+                Self::new($type::medium())
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length and a time zone.")]
+            pub const fn short() -> Self {
+                Self::new($type::short())
             }
         }
     };
@@ -251,10 +279,10 @@ macro_rules! impl_zone_combo_helpers {
                 Combo::new(self)
             }
         }
-        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, Zs, Z);
-        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, O, O);
-        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, Vs, V);
-        impl_combo_zone_get_field!($type, $composite, $enum, $wrap, L, L);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Zs, Z);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, O, O);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Vs, V);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, L, L);
     };
 }
 
@@ -440,12 +468,8 @@ macro_rules! impl_date_marker {
             $(option_alignment = $option_alignment_yes,)?
         );
         impl_zone_combo_helpers!($type, DateZone, DateFieldSet, wrap);
-        impl GetField<CompositeFieldSet> for $type {
-            #[inline]
-            fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::Date(DateFieldSet::$type(*self))
-            }
-        }
+        impl_combo_generic_fns!($type);
+        impl_composite!($type, Date, DateFieldSet);
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
             ///
@@ -502,6 +526,7 @@ macro_rules! impl_date_marker {
             time_precision: yes,
         );
         impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet, wrap);
+        impl_combo_generic_fns!($type_time);
         impl UnstableSealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -554,12 +579,7 @@ macro_rules! impl_date_marker {
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
         }
-        impl GetField<CompositeFieldSet> for $type_time {
-            #[inline]
-            fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::DateTime(DateAndTimeFieldSet::$type_time(*self))
-            }
-        }
+        impl_composite!($type_time, DateTime, DateAndTimeFieldSet);
         impl $type_time {
             pub(crate) fn to_date_field_set(self) -> $type {
                 $type {
@@ -609,12 +629,7 @@ macro_rules! impl_calendar_period_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl GetField<CompositeFieldSet> for $type {
-            #[inline]
-            fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::$type(*self))
-            }
-        }
+        impl_composite!($type, CalendarPeriod, CalendarPeriodFieldSet);
     };
 }
 
@@ -705,6 +720,7 @@ macro_rules! impl_time_marker {
             time_precision: yes,
         );
         impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet, wrap);
+        impl_combo_generic_fns!($type);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -737,12 +753,7 @@ macro_rules! impl_time_marker {
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
-        impl GetField<CompositeFieldSet> for $type {
-            #[inline]
-            fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::Time(TimeFieldSet::$type(*self))
-            }
-        }
+        impl_composite!($type, Time, TimeFieldSet);
     };
 }
 
@@ -899,16 +910,9 @@ macro_rules! impl_zone_marker {
             type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
-        impl GetField<CompositeFieldSet> for $type {
-            #[inline]
-            fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::Zone(ZoneFieldSet::$resolved_type($resolved_type {
-                    length: self.length,
-                }))
-            }
-        }
         $(
             const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
+            impl_composite!($type, Zone, ZoneFieldSet);
             impl $type {
                 pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                     match self.length {

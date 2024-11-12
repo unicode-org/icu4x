@@ -240,11 +240,11 @@ impl DateTimeMarkers for ZoneFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl GetField<CompositeFieldSet> for ZoneFieldSet {
-    fn get_field(&self) -> CompositeFieldSet {
-        CompositeFieldSet::Zone(*self)
-    }
-}
+// impl GetField<CompositeFieldSet> for ZoneFieldSet {
+//     fn get_field(&self) -> CompositeFieldSet {
+//         CompositeFieldSet::Zone(*self)
+//     }
+// }
 
 // impl_get_field!(ZoneFieldSet, never);
 // impl_get_field!(ZoneFieldSet, length, yes);
@@ -282,12 +282,6 @@ impl DateTimeMarkers for CompositeDateTimeFieldSet {
     type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
     type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
-}
-
-impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
-    fn get_field(&self) -> CompositeFieldSet {
-        self.to_composite_field_set()
-    }
 }
 
 // impl_get_field!(CompositeDateTimeFieldSet, never);
