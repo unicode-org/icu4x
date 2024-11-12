@@ -2,9 +2,9 @@
 import type { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 import type { FixedDecimalParseError } from "./FixedDecimalParseError"
 import type { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
-import type { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode"
 import type { FixedDecimalSign } from "./FixedDecimalSign"
 import type { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay"
+import type { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -67,9 +67,9 @@ export class SignedFixedDecimal {
 
     trunc(position: number): void;
 
-    roundWithMode(position: number, mode: FixedDecimalRoundingMode): void;
+    roundWithMode(position: number, mode: FixedDecimalSignedRoundingMode): void;
 
-    roundWithModeAndIncrement(position: number, mode: FixedDecimalRoundingMode, increment: FixedDecimalRoundingIncrement): void;
+    roundWithModeAndIncrement(position: number, mode: FixedDecimalSignedRoundingMode, increment: FixedDecimalRoundingIncrement): void;
 
     concatenateEnd(other: SignedFixedDecimal): boolean;
 

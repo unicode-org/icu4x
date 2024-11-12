@@ -234,13 +234,11 @@ export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement.mjs"
 
-export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode.mjs"
-
 export { FixedDecimalSign } from "./FixedDecimalSign.mjs"
 
 export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay.mjs"
 
-export { FixedDecimalUnsignedRoundingMode } from "./FixedDecimalUnsignedRoundingMode.mjs"
+export { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode.mjs"
 
 export { ListLength } from "./ListLength.mjs"
 

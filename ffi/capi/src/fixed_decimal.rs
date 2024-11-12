@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use ffi::FixedDecimalSignedRoundingMode;
+
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
@@ -49,24 +51,14 @@ pub mod ffi {
         MultiplesOf25,
     }
 
-    /// Mode used in a rounding operation for unsigned numbers.
-    #[diplomat::rust_link(fixed_decimal::UnsignedRoundingMode, Enum)]
-    #[diplomat::enum_convert(fixed_decimal::UnsignedRoundingMode, needs_wildcard)]
-    pub enum FixedDecimalUnsignedRoundingMode {
+    /// Mode used in a rounding operation for signed numbers.
+    #[diplomat::rust_link(fixed_decimal::SignedRoundingMode, Enum)]
+    pub enum FixedDecimalSignedRoundingMode {
         Expand,
         Trunc,
         HalfExpand,
         HalfTrunc,
         HalfEven,
-    }
-
-    /// Mode used in a rounding operation for signed numbers.
-    #[diplomat::rust_link(fixed_decimal::SignedRoundingMode, Enum)]
-    #[diplomat::enum_convert(fixed_decimal::SignedRoundingMode, needs_wildcard)]
-    pub enum FixedDecimalRoundingMode {
-        // TODO:Uncomment this once we have a way to convert from UnsignedRoundingMode to SignedRoundingMode.
-        // TODO: this must be done.
-        // Unsigned(FixedDecimalUnsignedRoundingMode),
         Ceil,
         Floor,
         HalfCeil,
@@ -348,7 +340,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn round_with_mode(&mut self, position: i16, mode: FixedDecimalRoundingMode) {
+        pub fn round_with_mode(&mut self, position: i16, mode: FixedDecimalSignedRoundingMode) {
             self.0.round_with_mode(position, mode.into())
         }
 
@@ -364,7 +356,7 @@ pub mod ffi {
         pub fn round_with_mode_and_increment(
             &mut self,
             position: i16,
-            mode: FixedDecimalRoundingMode,
+            mode: FixedDecimalSignedRoundingMode,
             increment: FixedDecimalRoundingIncrement,
         ) {
             self.0
@@ -393,3 +385,21 @@ pub mod ffi {
         }
     }
 }
+
+
+impl From<FixedDecimalSignedRoundingMode> for fixed_decimal::SignedRoundingMode {
+    fn from(mode: FixedDecimalSignedRoundingMode) -> Self {
+        match mode {
+            FixedDecimalSignedRoundingMode::Expand => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::Expand),
+            FixedDecimalSignedRoundingMode::Trunc => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::Trunc),
+            FixedDecimalSignedRoundingMode::HalfExpand => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfExpand),
+            FixedDecimalSignedRoundingMode::HalfTrunc => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfTrunc),
+            FixedDecimalSignedRoundingMode::HalfEven => fixed_decimal::SignedRoundingMode::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfEven),
+            FixedDecimalSignedRoundingMode::Ceil => fixed_decimal::SignedRoundingMode::Ceil,
+            FixedDecimalSignedRoundingMode::Floor => fixed_decimal::SignedRoundingMode::Floor,
+            FixedDecimalSignedRoundingMode::HalfCeil => fixed_decimal::SignedRoundingMode::HalfCeil,
+            FixedDecimalSignedRoundingMode::HalfFloor => fixed_decimal::SignedRoundingMode::HalfFloor,
+        }
+    }
+}
+

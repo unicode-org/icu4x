@@ -9,9 +9,9 @@
 
 #include "FixedDecimalParseError.d.h"
 #include "FixedDecimalRoundingIncrement.d.h"
-#include "FixedDecimalRoundingMode.d.h"
 #include "FixedDecimalSign.d.h"
 #include "FixedDecimalSignDisplay.d.h"
+#include "FixedDecimalSignedRoundingMode.d.h"
 
 #include "SignedFixedDecimal.d.h"
 
@@ -83,9 +83,9 @@ void icu4x_SignedFixedDecimal_floor_mv1(SignedFixedDecimal* self, int16_t positi
 
 void icu4x_SignedFixedDecimal_trunc_mv1(SignedFixedDecimal* self, int16_t position);
 
-void icu4x_SignedFixedDecimal_round_with_mode_mv1(SignedFixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode);
+void icu4x_SignedFixedDecimal_round_with_mode_mv1(SignedFixedDecimal* self, int16_t position, FixedDecimalSignedRoundingMode mode);
 
-void icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(SignedFixedDecimal* self, int16_t position, FixedDecimalRoundingMode mode, FixedDecimalRoundingIncrement increment);
+void icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(SignedFixedDecimal* self, int16_t position, FixedDecimalSignedRoundingMode mode, FixedDecimalRoundingIncrement increment);
 
 typedef struct icu4x_SignedFixedDecimal_concatenate_end_mv1_result { bool is_ok;} icu4x_SignedFixedDecimal_concatenate_end_mv1_result;
 icu4x_SignedFixedDecimal_concatenate_end_mv1_result icu4x_SignedFixedDecimal_concatenate_end_mv1(SignedFixedDecimal* self, SignedFixedDecimal* other);

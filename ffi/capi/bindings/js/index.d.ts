@@ -236,13 +236,11 @@ export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
 
-export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode"
-
 export { FixedDecimalSign } from "./FixedDecimalSign"
 
 export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay"
 
-export { FixedDecimalUnsignedRoundingMode } from "./FixedDecimalUnsignedRoundingMode"
+export { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode"
 
 export { ListLength } from "./ListLength"
 

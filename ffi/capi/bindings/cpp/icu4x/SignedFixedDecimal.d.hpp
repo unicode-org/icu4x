@@ -15,9 +15,9 @@ class SignedFixedDecimal;
 struct FixedDecimalLimitError;
 class FixedDecimalParseError;
 class FixedDecimalRoundingIncrement;
-class FixedDecimalRoundingMode;
 class FixedDecimalSign;
 class FixedDecimalSignDisplay;
+class FixedDecimalSignedRoundingMode;
 }
 
 
@@ -89,9 +89,9 @@ public:
 
   inline void trunc(int16_t position);
 
-  inline void round_with_mode(int16_t position, icu4x::FixedDecimalRoundingMode mode);
+  inline void round_with_mode(int16_t position, icu4x::FixedDecimalSignedRoundingMode mode);
 
-  inline void round_with_mode_and_increment(int16_t position, icu4x::FixedDecimalRoundingMode mode, icu4x::FixedDecimalRoundingIncrement increment);
+  inline void round_with_mode_and_increment(int16_t position, icu4x::FixedDecimalSignedRoundingMode mode, icu4x::FixedDecimalRoundingIncrement increment);
 
   inline diplomat::result<std::monostate, std::monostate> concatenate_end(icu4x::SignedFixedDecimal& other);
 

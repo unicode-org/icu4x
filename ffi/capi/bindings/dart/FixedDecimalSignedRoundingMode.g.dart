@@ -5,7 +5,17 @@ part of 'lib.g.dart';
 /// Mode used in a rounding operation for signed numbers.
 ///
 /// See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
-enum FixedDecimalRoundingMode {
+enum FixedDecimalSignedRoundingMode {
+  expand,
+
+  trunc,
+
+  halfExpand,
+
+  halfTrunc,
+
+  halfEven,
+
   ceil,
 
   floor,

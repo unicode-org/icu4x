@@ -13,9 +13,9 @@
 #include "FixedDecimalLimitError.hpp"
 #include "FixedDecimalParseError.hpp"
 #include "FixedDecimalRoundingIncrement.hpp"
-#include "FixedDecimalRoundingMode.hpp"
 #include "FixedDecimalSign.hpp"
 #include "FixedDecimalSignDisplay.hpp"
+#include "FixedDecimalSignedRoundingMode.hpp"
 
 
 namespace icu4x {
@@ -85,9 +85,9 @@ namespace capi {
     
     void icu4x_SignedFixedDecimal_trunc_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position);
     
-    void icu4x_SignedFixedDecimal_round_with_mode_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position, icu4x::capi::FixedDecimalRoundingMode mode);
+    void icu4x_SignedFixedDecimal_round_with_mode_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position, icu4x::capi::FixedDecimalSignedRoundingMode mode);
     
-    void icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position, icu4x::capi::FixedDecimalRoundingMode mode, icu4x::capi::FixedDecimalRoundingIncrement increment);
+    void icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position, icu4x::capi::FixedDecimalSignedRoundingMode mode, icu4x::capi::FixedDecimalRoundingIncrement increment);
     
     typedef struct icu4x_SignedFixedDecimal_concatenate_end_mv1_result { bool is_ok;} icu4x_SignedFixedDecimal_concatenate_end_mv1_result;
     icu4x_SignedFixedDecimal_concatenate_end_mv1_result icu4x_SignedFixedDecimal_concatenate_end_mv1(icu4x::capi::SignedFixedDecimal* self, icu4x::capi::SignedFixedDecimal* other);
@@ -247,13 +247,13 @@ inline void icu4x::SignedFixedDecimal::trunc(int16_t position) {
     position);
 }
 
-inline void icu4x::SignedFixedDecimal::round_with_mode(int16_t position, icu4x::FixedDecimalRoundingMode mode) {
+inline void icu4x::SignedFixedDecimal::round_with_mode(int16_t position, icu4x::FixedDecimalSignedRoundingMode mode) {
   icu4x::capi::icu4x_SignedFixedDecimal_round_with_mode_mv1(this->AsFFI(),
     position,
     mode.AsFFI());
 }
 
-inline void icu4x::SignedFixedDecimal::round_with_mode_and_increment(int16_t position, icu4x::FixedDecimalRoundingMode mode, icu4x::FixedDecimalRoundingIncrement increment) {
+inline void icu4x::SignedFixedDecimal::round_with_mode_and_increment(int16_t position, icu4x::FixedDecimalSignedRoundingMode mode, icu4x::FixedDecimalRoundingIncrement increment) {
   icu4x::capi::icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(this->AsFFI(),
     position,
     mode.AsFFI(),

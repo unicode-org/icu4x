@@ -2,9 +2,9 @@
 import { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 import { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 import { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement.mjs"
-import { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode.mjs"
 import { FixedDecimalSign } from "./FixedDecimalSign.mjs"
 import { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay.mjs"
+import { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 

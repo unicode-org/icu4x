@@ -214,12 +214,12 @@ final class SignedFixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.SignedFixedDecimal.html#method.round_with_mode) for more information.
-  void roundWithMode(int position, FixedDecimalRoundingMode mode) {
+  void roundWithMode(int position, FixedDecimalSignedRoundingMode mode) {
     _icu4x_SignedFixedDecimal_round_with_mode_mv1(_ffi, position, mode.index);
   }
 
   /// See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode_and_increment) for more information.
-  void roundWithModeAndIncrement(int position, FixedDecimalRoundingMode mode, FixedDecimalRoundingIncrement increment) {
+  void roundWithModeAndIncrement(int position, FixedDecimalSignedRoundingMode mode, FixedDecimalRoundingIncrement increment) {
     _icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(_ffi, position, mode.index, increment.index);
   }
 
