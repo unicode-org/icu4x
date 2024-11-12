@@ -227,6 +227,31 @@ impl SourceDataProvider {
     }
 }
 
+/// A terrible internal function that checks if the attributes contain a field.
+fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
+    let f0 = field.as_bytes().get(0).unwrap();
+    let f1 = field.as_bytes().get(1);
+    let mut it = attributes.as_bytes().iter().peekable();
+    while let Some(b) = it.next() {
+        if b == f0 {
+            let p = it.peek();
+            if p == f1.as_ref() {
+                return true;
+            }
+            let Some(q) = p else {
+                // end of string
+                return true;
+            };
+            if q.is_ascii_alphabetic() {
+                return true;
+            }
+            // "m" != "m0"
+            return false;
+        }
+    }
+    false
+}
+
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
 fn gen_time_components(
     _: NeoSkeletonLength,
@@ -244,15 +269,16 @@ fn gen_time_components(
     let mut filtered_components = components::Bag::empty();
     filtered_components.hour = Some(components::Numeric::Numeric);
     // Select the correct hour cycle
-    filtered_components.preferences = match neo_components {
-        NeoTimeComponents::Time12 => Some(preferences::Bag::from_hour_cycle(
+    if check_for_field(attributes, "h") {
+        filtered_components.preferences = Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H12,
-        )),
-        NeoTimeComponents::Time24 => Some(preferences::Bag::from_hour_cycle(
+        ));
+    }
+    if check_for_field(attributes, "h0") {
+        filtered_components.preferences = Some(preferences::Bag::from_hour_cycle(
             preferences::HourCycle::H23,
-        )),
-        _ => None,
-    };
+        ));
+    }
     DateTimeFormatterOptions::Components(filtered_components)
 }
 
@@ -281,14 +307,14 @@ fn gen_date_components(
     };
     let date_bag = components::Bag::from(date_pattern);
     let mut filtered_components = components::Bag::empty();
-    if neo_components.has_year() {
+    if check_for_field(attributes, "y") {
         filtered_components.era = date_bag.era;
         filtered_components.year = date_bag.year;
     }
-    if neo_components.has_month() {
+    if check_for_field(attributes, "m0") {
         filtered_components.month = date_bag.month;
     }
-    if neo_components.has_month() && !neo_components.has_year() && !neo_components.has_day() {
+    if check_for_field(attributes, "m0") && !check_for_field(attributes, "y") && !check_for_field(attributes, "d") {
         // standalone month: use the skeleton length
         filtered_components.month = match length {
             NeoSkeletonLength::Long => Some(components::Month::Long),
@@ -297,14 +323,14 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if neo_components.has_day() {
+    if check_for_field(attributes, "d") {
         filtered_components.day = date_bag.day;
     }
-    if neo_components.has_day() && !neo_components.has_month() {
+    if check_for_field(attributes, "d") && !check_for_field(attributes, "m0") {
         // override the day field to use the skeleton day length
         filtered_components.day = Some(components::Day::NumericDayOfMonth);
     }
-    if neo_components.has_weekday() {
+    if check_for_field(attributes, "e") {
         // Not all length patterns have the weekday
         filtered_components.weekday = match length {
             NeoSkeletonLength::Long => Some(components::Text::Long),
@@ -313,7 +339,7 @@ fn gen_date_components(
             _ => unreachable!(),
         };
     }
-    if neo_components.has_time() {
+    if check_for_field(attributes, "j") {
         filtered_components.hour = Some(components::Numeric::Numeric);
     }
     DateTimeFormatterOptions::Components(filtered_components)
