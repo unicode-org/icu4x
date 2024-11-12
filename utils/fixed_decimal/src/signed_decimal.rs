@@ -529,7 +529,7 @@ impl SignedFixedDecimal {
 
     /// Rounds this number towards zero at a particular digit position.
     ///
-    /// Also see [`FixedDecimal::pad_end()`].
+    /// Also see [`UnsignedFixedDecimal::pad_end()`].
     ///
     /// # Examples
     ///
@@ -560,7 +560,7 @@ impl SignedFixedDecimal {
 
     /// Returns this number rounded towards zero at a particular digit position.
     ///
-    /// Also see [`FixedDecimal::padded_end()`].
+    /// Also see [`UnsignedFixedDecimal::padded_end()`].
     ///
     /// # Examples
     ///

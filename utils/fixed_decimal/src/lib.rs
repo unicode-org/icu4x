@@ -82,6 +82,7 @@ pub use scientific::ScientificDecimal;
 pub use signed_decimal::SignedFixedDecimal;
 pub use variations::Sign;
 pub use variations::SignDisplay;
+pub use variations::Signed;
 
 pub(crate) use rounding::IncrementLike;
 pub(crate) use rounding::NoIncrement;
