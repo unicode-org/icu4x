@@ -1030,7 +1030,7 @@ impl_date_marker!(
     description = "weekday (standalone)",
     sample_length = long,
     sample = "Friday",
-    sample_time = "Friday, 3:47:50 PM",
+    sample_time = "Friday 3:47:50 PM",
     weekdays = yes,
     input_day_of_week = yes,
 );
@@ -1091,7 +1091,7 @@ impl_date_marker!(
     description = "year, month, and day",
     sample_length = short,
     sample = "5/17/24",
-    sample_time = "May 17, 2024, 3:47:50 PM",
+    sample_time = "5/17/24, 3:47:50 PM",
     years = yes,
     months = yes,
     input_year = yes,
