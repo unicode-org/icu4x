@@ -333,8 +333,6 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
     }
 }
 
-// XXX: Relax this to allow characters that round-trip to
-// self under NFC.
 #[inline(always)]
 pub fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
     if (trie_val & BACKWARD_COMBINING_MASK) != 0 {
@@ -342,6 +340,11 @@ pub fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
     }
     // Hangul syllables get 0 as their trie value
     c.wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+}
+
+#[inline(always)]
+pub fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
+    (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
 }
 
 /// Struct for holding together a character and the value
@@ -378,7 +381,7 @@ impl CharacterAndTrieValue {
     }
     #[inline(always)]
     pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
-        (self.trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
+        potential_passthrough_and_cannot_combine_backwards_impl(self.trie_val)
     }
 }
 
@@ -1889,7 +1892,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                             }
                         }
                         // unpaired surrogate
-                        upcoming32 = 0; // Safe value for `char::from_u32_unchecked` and has UTF-16 code unit length of 1.
+                        upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
                         // trie_value already holds a decomposition to U+FFFD.
                         break 'surrogateloop;
                     }
@@ -2433,34 +2436,39 @@ impl ComposingNormalizerBorrowed<'_> {
             let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
             let mut upcoming32;
             // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes to it are  are as
-            // simple as possible.
-            // Furthermore, this removes the need for `unwrap()` later.
-            let mut undecomposed_starter_valid;
-            // The purpose of the counter is to flush once in a while. If we flush
-            // too much, there is too much flushing overhead. If we flush too rarely,
-            // the flush starts reading from too far behind compared to the hot
-            // recently-read memory.
-            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
-            // The purpose of this trickiness is to avoid writing to
-            // `undecomposed_starter_valid` from the tightest loop. Writing to it
-            // from there destroys performance.
-            let mut counter_reference = counter - 1;
+            // but making it a boolean so that writes in the tightest loop are as
+            // simple as possible (and potentially as peel-hoistable as possible).
+            // Furthermore, this reduces `unwrap()` later.
+            let mut undecomposed_starter_valid = true;
             'fast: loop {
-                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
-                    if upcoming32 < composition_passthrough_bound && counter != 0 {
+                    if upcoming32 < composition_passthrough_bound {
                         // No need for surrogate or U+FFFD check, because
                         // `composition_passthrough_bound` cannot be higher than
                         // U+0300.
                         // Fast-track succeeded!
+                        undecomposed_starter_valid = false;
                         continue 'fast;
                     }
-                    // if `counter` equals `counter_reference`, the `continue 'fast`
-                    // line above has not executed and `undecomposed_starter` is still
-                    // valid.
-                    undecomposed_starter_valid = counter == counter_reference;
+                    // We might be doing a trie lookup by surrogate. Surrogates get
+                    // a decomposition to U+FFFD.
+                    let mut trie_value = composition.decomposition.trie.get32(upcoming32);
+                    if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
+                        // Can't combine backwards, hence a plain (non-backwards-combining)
+                        // starter albeit past `composition_passthrough_bound`
+
+                        // SAFETY: If we get here, upcoming32 is a valid BMP character and not a surrogate.
+                        let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                        let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
+
+                        // Fast-track succeeded!
+                        undecomposed_starter = upcoming_with_trie_value;
+                        undecomposed_starter_valid = true;
+                        continue 'fast;
+                    }
+
+                    // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
                     #[allow(clippy::never_loop)]
                     'surrogateloop: loop {
@@ -2475,6 +2483,18 @@ impl ComposingNormalizerBorrowed<'_> {
                                 if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
                                     upcoming32 = (upcoming32 << 10) + u32::from(low)
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    // Successfully-paired surrogate. Read from the trie again.
+                                    trie_value = composition.decomposition.trie.get32(upcoming32);
+                                    if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
+                                        // SAFETY: If we get here, upcoming32 is a valid BMP character and not a surrogate.
+                                        let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                                        let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
+
+                                        // Fast-track succeeded!
+                                        undecomposed_starter = upcoming_with_trie_value;
+                                        undecomposed_starter_valid = true;
+                                        continue 'fast;
+                                    }
                                     break 'surrogateloop;
                                 } else {
                                     code_unit_iter = iter_backup;
@@ -2482,29 +2502,14 @@ impl ComposingNormalizerBorrowed<'_> {
                             }
                         }
                         // unpaired surrogate
-                        let slice_to_write = &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
-                        sink.write_slice(slice_to_write)?;
-                        undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        undecomposed_starter_valid = true;
-                        composition.decomposition.pending = None;
-                        break 'fast;
+                        upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
+                        // trie_value already holds a decomposition to U+FFFD.
+                        break 'surrogateloop;
                     }
-                    // Not unpaired surrogate
-                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() && counter != 0 {
-                        // Can't combine backwards, hence a plain (non-backwards-combining)
-                        // starter albeit past `composition_passthrough_bound`
 
-                        // Fast-track succeeded!
-                        undecomposed_starter = upcoming_with_trie_value;
-                        // Cause `undecomposed_starter_valid` to be set to true.
-                        // This regresses English performance on Haswell by 11%
-                        // compared to commenting out this assignment to
-                        // `counter_reference`.
-                        counter_reference = counter - 1;
-                        continue 'fast;
-                    }
+                    // SAFETY: upcoming32 can no longer be a surrogate.
+                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
                     // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
                     // Annotation belongs really on inner statement, but Rust doesn't
