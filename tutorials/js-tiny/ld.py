@@ -9,12 +9,12 @@ import subprocess
 SYMBOLS = [
     "icu4x_DataProvider_compiled_mv1",
     "icu4x_DataProvider_destroy_mv1",
-    "icu4x_FixedDecimal_from_int32_mv1",
-    "icu4x_FixedDecimal_destroy_mv1",
-    "icu4x_FixedDecimal_multiply_pow10_mv1",
-    "icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1",
-    "icu4x_FixedDecimalFormatter_destroy_mv1",
-    "icu4x_FixedDecimalFormatter_format_mv1",
+    "icu4x_SignedFixedDecimal_from_int32_mv1",
+    "icu4x_SignedFixedDecimal_destroy_mv1",
+    "icu4x_SignedFixedDecimal_multiply_pow10_mv1",
+    "icu4x_SignedFixedDecimalFormatter_create_with_grouping_strategy_mv1",
+    "icu4x_SignedFixedDecimalFormatter_destroy_mv1",
+    "icu4x_SignedFixedDecimalFormatter_format_mv1",
     "icu4x_Locale_from_string_mv1",
     "icu4x_Locale_destroy_mv1",
 ]
