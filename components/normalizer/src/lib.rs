@@ -474,6 +474,7 @@ where
     // However, when `Decomposition` appears inside a `Composition`, this
     // may become a non-starter before `decomposing_next()` is called.
     pending: Option<CharacterAndTrieValue>, // None at end of stream
+    // See trie-value-format.md
     trie: &'data CodePointTrie<'data, u32>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<char>,
