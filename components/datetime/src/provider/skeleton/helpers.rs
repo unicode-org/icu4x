@@ -146,7 +146,7 @@ pub fn create_best_pattern_for_fields<'data>(
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
         pattern_plurals.for_each_mut(|pattern| {
-            naively_apply_preferences(pattern, &components.preferences);
+            naively_apply_preferences(pattern, components.hour_cycle);
             naively_apply_time_zone_name(pattern, &components.time_zone_name);
             apply_fractional_seconds(pattern, components.fractional_second);
         });
@@ -163,7 +163,7 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::MissingOrExtraFields(mut pattern_plurals) => {
                 if date.is_empty() {
                     pattern_plurals.for_each_mut(|pattern| {
-                        naively_apply_preferences(pattern, &components.preferences);
+                        naively_apply_preferences(pattern, components.hour_cycle);
                         naively_apply_time_zone_name(pattern, &components.time_zone_name);
                         apply_fractional_seconds(pattern, components.fractional_second);
                     });
@@ -192,7 +192,7 @@ pub fn create_best_pattern_for_fields<'data>(
     let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern_plurals| {
         let mut pattern =
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
-        naively_apply_preferences(&mut pattern, &components.preferences);
+        naively_apply_preferences(&mut pattern, components.hour_cycle);
         naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
         apply_fractional_seconds(&mut pattern, components.fractional_second);
         pattern
@@ -538,7 +538,7 @@ impl components::Bag {
         date_patterns: &DateLengthsV1<'data>,
         time_patterns: &TimeLengthsV1<'data>,
     ) -> PatternPlurals<'data> {
-        use crate::options::preferences::HourCycle;
+        use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
         use crate::provider::pattern::runtime::Pattern;
         use crate::provider::pattern::CoarseHourCycle;
 

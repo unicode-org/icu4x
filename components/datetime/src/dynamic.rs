@@ -4,7 +4,6 @@
 
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
 use crate::scaffold::GetField;
 use crate::{fields, fieldset, NeoSkeletonLength};
@@ -415,9 +414,9 @@ impl_attrs! {
 impl TimeFieldSet {
     pub(crate) const fn id_str_for_hour_cycle(
         self,
-        hour_cycle: Option<HourCycle>,
+        hour_cycle: Option<fields::Hour>,
     ) -> &'static DataMarkerAttributes {
-        use HourCycle::*;
+        use fields::Hour::*;
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,

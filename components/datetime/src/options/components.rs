@@ -89,8 +89,8 @@ use crate::{
     provider::skeleton::PatternPlurals,
 };
 
-use super::preferences;
 use crate::neo_pattern::DateTimePattern;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -130,8 +130,8 @@ pub struct Bag {
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
 
-    /// Adjust the preferences for the date, such as setting the hour cycle.
-    pub preferences: Option<preferences::Bag>,
+    /// An override of the hour cycle.
+    pub hour_cycle: Option<HourCycle>,
 }
 
 impl Bag {
@@ -156,7 +156,7 @@ impl Bag {
             second: other.second.or(self.second),
             fractional_second: other.fractional_second.or(self.fractional_second),
             time_zone_name: other.time_zone_name.or(self.time_zone_name),
-            preferences: other.preferences.or(self.preferences),
+            hour_cycle: other.hour_cycle.or(self.hour_cycle),
         }
     }
 
@@ -172,7 +172,7 @@ impl Bag {
     #[cfg(feature = "datagen")]
     pub fn to_vec_fields(
         &self,
-        default_hour_cycle: preferences::HourCycle,
+        default_hour_cycle: HourCycle,
     ) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
@@ -309,12 +309,7 @@ impl Bag {
             // fields::Hour::H23
             // fields::Hour::H24
 
-            let hour_cycle = match self.preferences {
-                Some(preferences::Bag {
-                    hour_cycle: Some(hour_cycle),
-                }) => hour_cycle,
-                _ => default_hour_cycle,
-            };
+            let hour_cycle = self.hour_cycle.unwrap_or(default_hour_cycle);
 
             // When used in skeleton data or in a skeleton passed in an API for flexible date
             // pattern generation, it should match the 12-hour-cycle format preferred by the
@@ -323,16 +318,17 @@ impl Bag {
                 symbol: FieldSymbol::Hour(match hour_cycle {
                     // Skeletons only contain the h12, not h11. The pattern that is matched
                     // is free to use h11 or h12.
-                    preferences::HourCycle::H11 | preferences::HourCycle::H12 => {
+                    HourCycle::H11 | HourCycle::H12 => {
                         // h - symbol
                         fields::Hour::H12
                     }
                     // Skeletons only contain the h23, not h24. The pattern that is matched
                     // is free to use h23 or h24.
-                    preferences::HourCycle::H24 | preferences::HourCycle::H23 => {
+                    HourCycle::H24 | HourCycle::H23 => {
                         // H - symbol
                         fields::Hour::H23
                     }
+                    _ => unreachable!()
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -774,13 +770,11 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
-                    bag.preferences = Some(preferences::Bag {
-                        hour_cycle: Some(match hour {
-                            fields::Hour::H11 => preferences::HourCycle::H11,
-                            fields::Hour::H12 => preferences::HourCycle::H12,
-                            fields::Hour::H23 => preferences::HourCycle::H23,
-                            fields::Hour::H24 => preferences::HourCycle::H24,
-                        }),
+                    bag.hour_cycle = Some(match hour {
+                        fields::Hour::H11 => HourCycle::H11,
+                        fields::Hour::H12 => HourCycle::H12,
+                        fields::Hour::H23 => HourCycle::H23,
+                        fields::Hour::H24 => HourCycle::H24,
                     });
                 }
                 FieldSymbol::Minute => {

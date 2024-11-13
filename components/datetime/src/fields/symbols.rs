@@ -7,6 +7,7 @@ use crate::fields::FieldLength;
 use crate::neo_skeleton::FractionalSecondDigits;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -592,6 +593,18 @@ field_type!(
     Numeric;
     HourULE
 );
+
+impl Hour {
+    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle) -> Self {
+        match hour_cycle {
+            HourCycle::H11 => Self::H11,
+            HourCycle::H12 => Self::H12,
+            HourCycle::H23 => Self::H23,
+            HourCycle::H24 => Self::H24,
+            _ => unreachable!()
+        }
+    }
+}
 
 // NOTE: 'S' FractionalSecond is represented via DecimalSecond,
 // so it is not included in the Second enum.

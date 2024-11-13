@@ -6,8 +6,3 @@
 
 #[cfg(feature = "datagen")]
 pub mod components;
-
-#[cfg(feature = "datagen")]
-pub mod preferences;
-#[cfg(not(feature = "datagen"))]
-pub(crate) mod preferences;

@@ -10,7 +10,6 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::options::preferences::HourCycle;
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -24,6 +23,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::AnyCalendar;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
 
@@ -243,12 +243,15 @@ where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
-        // TODO: Remove this when NeoOptions is gone
+        // TODO: Fix this when we have DateTimePreferences
         let prefs = RawPreferences {
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(HourCycle::from_locale_value),
+                .and_then(|v| {
+                    HourCycle::try_from(v).ok()
+                })
+                .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO
 
@@ -473,12 +476,15 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
-        // TODO: Remove this when NeoOptions is gone
+        // TODO: Fix this when we have DateTimePreferences
         let prefs = RawPreferences {
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(HourCycle::from_locale_value),
+                .and_then(|v| {
+                    HourCycle::try_from(v).ok()
+                })
+                .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO
 
