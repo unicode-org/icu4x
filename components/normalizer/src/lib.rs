@@ -319,7 +319,7 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
 }
 
 #[inline(always)]
-fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
+fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
     // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
     // and this function needs to ignore that.
     (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0
@@ -348,12 +348,12 @@ impl CharacterAndTrieValue {
             trie_val: trie_value,
         }
     }
-    // XXX: Relax this to allow characters that round-trip to
-    // self under NFC.
+
     #[inline(always)]
     pub fn starter_and_decomposes_to_self(&self) -> bool {
-        starter_and_decomposes_to_self_impl(self.trie_val, u32::from(self.character))
+        starter_and_decomposes_to_self_impl(self.trie_val)
     }
+
     #[inline(always)]
     pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
         // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
@@ -695,128 +695,128 @@ where
     fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
             let c = c_and_trie_val.character;
-                let decomposition = c_and_trie_val.trie_val;
-                // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
-                // and that flag needs to be ignored here.
-                if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
-                    // The character is its own decomposition
-                    (c, 0)
-                } else {
-                    let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
-                    let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
-                    if !high_zeros && !low_zeros {
-                        // Decomposition into two BMP characters: starter and non-starter
-                        let starter = char_from_u32(decomposition & 0x7FFF);
-                        let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
-                        self.buffer
-                            .push(CharacterAndClass::new_with_placeholder(combining));
-                        (starter, 0)
-                    } else if high_zeros {
-                        // Do the check by looking at `c` instead of looking at a marker
-                        // in `singleton` below, because if we looked at the trie value,
-                        // we'd still have to check that `c` is in the Hangul syllable
-                        // range in order for the subsequent interpretations as `char`
-                        // to be safe.
-                        // Alternatively, `FDFA_MARKER` and the Hangul marker could
-                        // be unified. That would add a branch for Hangul and remove
-                        // a branch from singleton decompositions. It seems more
-                        // important to favor Hangul syllables than singleton
-                        // decompositions.
-                        // Note that it would be valid to hoist this Hangul check
-                        // one or even two steps earlier in this check hierarchy.
-                        // Right now, it's assumed the kind of decompositions into
-                        // BMP starter and non-starter, which occur in many languages,
-                        // should be checked before Hangul syllables, which are about
-                        // one language specifically. Hopefully, we get some
-                        // instruction-level parallelism out of the disjointness of
-                        // operations on `c` and `decomposition`.
-                        let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
-                        if hangul_offset < HANGUL_S_COUNT {
-                            debug_assert_eq!(decomposition, 1);
-                            // Hangul syllable
-                            // The math here comes from page 144 of Unicode 14.0
-                            let l = hangul_offset / HANGUL_N_COUNT;
-                            let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                            let t = hangul_offset % HANGUL_T_COUNT;
+            let decomposition = c_and_trie_val.trie_val;
+            // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+            // and that flag needs to be ignored here.
+            if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+                // The character is its own decomposition
+                (c, 0)
+            } else {
+                let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                if !high_zeros && !low_zeros {
+                    // Decomposition into two BMP characters: starter and non-starter
+                    let starter = char_from_u32(decomposition & 0x7FFF);
+                    let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                    self.buffer
+                        .push(CharacterAndClass::new_with_placeholder(combining));
+                    (starter, 0)
+                } else if high_zeros {
+                    // Do the check by looking at `c` instead of looking at a marker
+                    // in `singleton` below, because if we looked at the trie value,
+                    // we'd still have to check that `c` is in the Hangul syllable
+                    // range in order for the subsequent interpretations as `char`
+                    // to be safe.
+                    // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                    // be unified. That would add a branch for Hangul and remove
+                    // a branch from singleton decompositions. It seems more
+                    // important to favor Hangul syllables than singleton
+                    // decompositions.
+                    // Note that it would be valid to hoist this Hangul check
+                    // one or even two steps earlier in this check hierarchy.
+                    // Right now, it's assumed the kind of decompositions into
+                    // BMP starter and non-starter, which occur in many languages,
+                    // should be checked before Hangul syllables, which are about
+                    // one language specifically. Hopefully, we get some
+                    // instruction-level parallelism out of the disjointness of
+                    // operations on `c` and `decomposition`.
+                    let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                    if hangul_offset < HANGUL_S_COUNT {
+                        debug_assert_eq!(decomposition, 1);
+                        // Hangul syllable
+                        // The math here comes from page 144 of Unicode 14.0
+                        let l = hangul_offset / HANGUL_N_COUNT;
+                        let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                        let t = hangul_offset % HANGUL_T_COUNT;
 
-                            // The unsafe blocks here are OK, because the values stay
-                            // within the Hangul jamo block and, therefore, the scalar
-                            // value range by construction.
+                        // The unsafe blocks here are OK, because the values stay
+                        // within the Hangul jamo block and, therefore, the scalar
+                        // value range by construction.
+                        self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                            core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                        }));
+                        let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
+                        if t != 0 {
                             self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                                core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                                core::char::from_u32_unchecked(HANGUL_T_BASE + t)
                             }));
-                            let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
-                            if t != 0 {
-                                self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                                    core::char::from_u32_unchecked(HANGUL_T_BASE + t)
-                                }));
-                                (first, 2)
-                            } else {
-                                (first, 1)
-                            }
+                            (first, 2)
                         } else {
-                            let singleton = decomposition as u16;
-                            if singleton != FDFA_MARKER {
-                                // Decomposition into one BMP character
-                                let starter = char_from_u16(singleton);
-                                (starter, 0)
-                            } else {
-                                // Special case for the NFKD form of U+FDFA.
-                                self.buffer.extend(FDFA_NFKD.map(|u| {
-                                    // SAFETY: `FDFA_NFKD` is known not to contain
-                                    // surrogates.
-                                    CharacterAndClass::new_starter(unsafe {
-                                        core::char::from_u32_unchecked(u32::from(u))
-                                    })
-                                }));
-                                ('\u{0635}', 17)
-                            }
+                            (first, 1)
                         }
                     } else {
-                        debug_assert!(low_zeros);
-                        // Only 12 of 14 bits used as of Unicode 16.
-                        let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
-                        // Only 3 of 4 bits used as of Unicode 16.
-                        let len_bits = decomposition & 0b1111;
-                        let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
-                        if offset < self.scalars16.len() {
-                            self.push_decomposition16(
-                                offset,
-                                (len_bits + 2) as usize,
-                                only_non_starters_in_trail,
-                                self.scalars16,
-                            )
-                        } else if offset < self.scalars16.len() + self.scalars24.len() {
-                            self.push_decomposition32(
-                                offset - self.scalars16.len(),
-                                (len_bits + 1) as usize,
-                                only_non_starters_in_trail,
-                                self.scalars24,
-                            )
-                        } else if offset
-                            < self.scalars16.len()
-                                + self.scalars24.len()
-                                + self.supplementary_scalars16.len()
-                        {
-                            self.push_decomposition16(
-                                offset - (self.scalars16.len() + self.scalars24.len()),
-                                (len_bits + 2) as usize,
-                                only_non_starters_in_trail,
-                                self.supplementary_scalars16,
-                            )
+                        let singleton = decomposition as u16;
+                        if singleton != FDFA_MARKER {
+                            // Decomposition into one BMP character
+                            let starter = char_from_u16(singleton);
+                            (starter, 0)
                         } else {
-                            self.push_decomposition32(
-                                offset
-                                    - (self.scalars16.len()
-                                        + self.scalars24.len()
-                                        + self.supplementary_scalars16.len()),
-                                (len_bits + 1) as usize,
-                                only_non_starters_in_trail,
-                                self.supplementary_scalars24,
-                            )
+                            // Special case for the NFKD form of U+FDFA.
+                            self.buffer.extend(FDFA_NFKD.map(|u| {
+                                // SAFETY: `FDFA_NFKD` is known not to contain
+                                // surrogates.
+                                CharacterAndClass::new_starter(unsafe {
+                                    core::char::from_u32_unchecked(u32::from(u))
+                                })
+                            }));
+                            ('\u{0635}', 17)
                         }
                     }
+                } else {
+                    debug_assert!(low_zeros);
+                    // Only 12 of 14 bits used as of Unicode 16.
+                    let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                    // Only 3 of 4 bits used as of Unicode 16.
+                    let len_bits = decomposition & 0b1111;
+                    let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
+                    if offset < self.scalars16.len() {
+                        self.push_decomposition16(
+                            offset,
+                            (len_bits + 2) as usize,
+                            only_non_starters_in_trail,
+                            self.scalars16,
+                        )
+                    } else if offset < self.scalars16.len() + self.scalars24.len() {
+                        self.push_decomposition32(
+                            offset - self.scalars16.len(),
+                            (len_bits + 1) as usize,
+                            only_non_starters_in_trail,
+                            self.scalars24,
+                        )
+                    } else if offset
+                        < self.scalars16.len()
+                            + self.scalars24.len()
+                            + self.supplementary_scalars16.len()
+                    {
+                        self.push_decomposition16(
+                            offset - (self.scalars16.len() + self.scalars24.len()),
+                            (len_bits + 2) as usize,
+                            only_non_starters_in_trail,
+                            self.supplementary_scalars16,
+                        )
+                    } else {
+                        self.push_decomposition32(
+                            offset
+                                - (self.scalars16.len()
+                                    + self.scalars24.len()
+                                    + self.supplementary_scalars16.len()),
+                            (len_bits + 1) as usize,
+                            only_non_starters_in_trail,
+                            self.supplementary_scalars24,
+                        )
+                    }
                 }
+            }
         };
         // Either we're inside `Composition` or `self.pending.is_none()`.
 
@@ -1878,7 +1878,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                     // We might be doing a trie lookup by surrogate. Surrogates get
                     // a decomposition to U+FFFD.
                     let mut trie_value = decomposition.trie.get32(upcoming32);
-                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) {
+                    if starter_and_decomposes_to_self_impl(trie_value) {
                         continue 'fast;
                     }
                     // We might now be looking at a surrogate.
@@ -1898,7 +1898,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                     // Successfully-paired surrogate. Read from the trie again.
                                     trie_value = decomposition.trie.get32(upcoming32);
-                                    if starter_and_decomposes_to_self_impl(trie_value, upcoming32) {
+                                    if starter_and_decomposes_to_self_impl(trie_value) {
                                         continue 'fast;
                                     }
                                     break 'surrogateloop;
