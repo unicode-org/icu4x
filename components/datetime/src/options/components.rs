@@ -103,7 +103,6 @@ use serde::{Deserialize, Serialize};
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
