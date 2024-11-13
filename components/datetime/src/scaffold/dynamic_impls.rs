@@ -3,11 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::provider::{neo::*, time_zones::tz, *};
 use crate::{dynamic::*, format::neo::DateTimeNamesMarker};
-use crate::{
-    neo_skeleton::*,
-    provider::{neo::*, time_zones::tz, *},
-};
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
@@ -18,15 +15,7 @@ use icu_calendar::{
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
-// impl GetField<NeoComponents> for DateFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.components.into()
-//     }
-// }
-
 impl UnstableSealed for DateFieldSet {}
-
-// impl IsRuntimeComponents for DateFieldSet {}
 
 impl DateTimeNamesMarker for DateFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -68,27 +57,10 @@ impl DateTimeMarkers for DateFieldSet {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-// impl_get_field!(DateFieldSet, never);
-// impl_get_field!(DateFieldSet, length, yes);
-// impl_get_field!(DateFieldSet, alignment, yes);
-// impl_get_field!(DateFieldSet, year_style, yes);
-
 impl UnstableSealed for CalendarPeriodFieldSet {}
-
-// impl GetField<NeoComponents> for CalendarPeriodFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.components.into()
-//     }
-// }
-
-// impl IsRuntimeComponents for CalendarPeriodFieldSet {}
 
 impl DateTimeNamesMarker for CalendarPeriodFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -130,27 +102,10 @@ impl DateTimeMarkers for CalendarPeriodFieldSet {
     type D = Self;
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-// impl_get_field!(CalendarPeriodFieldSet, never);
-// impl_get_field!(CalendarPeriodFieldSet, length, yes);
-// impl_get_field!(CalendarPeriodFieldSet, alignment, yes);
-// impl_get_field!(CalendarPeriodFieldSet, year_style, yes);
-
 impl UnstableSealed for TimeFieldSet {}
-
-// impl GetField<NeoComponents> for TimeFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.components.into()
-//     }
-// }
-
-// impl IsRuntimeComponents for TimeFieldSet {}
 
 impl DateTimeNamesMarker for TimeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year,);
@@ -179,27 +134,10 @@ impl DateTimeMarkers for TimeFieldSet {
     type D = NeoNeverMarker;
     type T = Self;
     type Z = NeoNeverMarker;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-// impl_get_field!(TimeFieldSet, never);
-// impl_get_field!(TimeFieldSet, length, yes);
-// impl_get_field!(TimeFieldSet, alignment, yes);
-// impl_get_field!(TimeFieldSet, time_precision, yes);
-
 impl UnstableSealed for ZoneFieldSet {}
-
-// impl GetField<NeoComponents> for ZoneFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.style.into()
-//     }
-// }
-
-// impl IsRuntimeComponents for ZoneFieldSet {}
 
 impl DateTimeNamesMarker for ZoneFieldSet {
     type YearNames = datetime_marker_helper!(@names/year,);
@@ -233,31 +171,10 @@ impl DateTimeMarkers for ZoneFieldSet {
     type D = NeoNeverMarker;
     type T = NeoNeverMarker;
     type Z = Self;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-    type TimePrecisionOption = datetime_marker_helper!(@option/fractionalsecondigits,);
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-// impl GetField<CompositeFieldSet> for ZoneFieldSet {
-//     fn get_field(&self) -> CompositeFieldSet {
-//         CompositeFieldSet::Zone(*self)
-//     }
-// }
-
-// impl_get_field!(ZoneFieldSet, never);
-// impl_get_field!(ZoneFieldSet, length, yes);
-
 impl UnstableSealed for CompositeDateTimeFieldSet {}
-
-// impl GetField<NeoComponents> for CompositeDateTimeFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.components.into()
-//     }
-// }
-
-// impl IsRuntimeComponents for CompositeDateTimeFieldSet {}
 
 impl DateTimeNamesMarker for CompositeDateTimeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -277,28 +194,10 @@ impl DateTimeMarkers for CompositeDateTimeFieldSet {
     type D = DateFieldSet;
     type T = TimeFieldSet;
     type Z = NeoNeverMarker;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
-// impl_get_field!(CompositeDateTimeFieldSet, never);
-// impl_get_field!(CompositeDateTimeFieldSet, length, yes);
-// impl_get_field!(CompositeDateTimeFieldSet, alignment, yes);
-// impl_get_field!(CompositeDateTimeFieldSet, year_style, yes);
-// impl_get_field!(CompositeDateTimeFieldSet, time_precision, yes);
-
 impl UnstableSealed for CompositeFieldSet {}
-
-// impl GetField<NeoComponents> for CompositeFieldSet {
-//     fn get_field(&self) -> NeoComponents {
-//         self.components
-//     }
-// }
-
-// impl IsRuntimeComponents for CompositeFieldSet {}
 
 impl DateTimeNamesMarker for CompositeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -318,15 +217,5 @@ impl DateTimeMarkers for CompositeFieldSet {
     type D = DateFieldSet;
     type T = TimeFieldSet;
     type Z = ZoneFieldSet;
-    type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type YearStyleOption = datetime_marker_helper!(@option/yearstyle, yes);
-    type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
-
-// impl_get_field!(CompositeFieldSet, never);
-// impl_get_field!(CompositeFieldSet, length, yes);
-// impl_get_field!(CompositeFieldSet, alignment, yes);
-// impl_get_field!(CompositeFieldSet, year_style, yes);
-// impl_get_field!(CompositeFieldSet, time_precision, yes);

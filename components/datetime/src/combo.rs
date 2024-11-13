@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
+use crate::{format::neo::*, provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
@@ -149,9 +149,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type LengthOption = NeoSkeletonLength; // always needed for date
-    type AlignmentOption = DT::AlignmentOption;
-    type YearStyleOption = DT::YearStyleOption;
-    type TimePrecisionOption = DT::TimePrecisionOption;
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
