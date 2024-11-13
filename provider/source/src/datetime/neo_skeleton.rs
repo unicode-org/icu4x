@@ -11,7 +11,7 @@ use icu::datetime::neo_skeleton::{
     NeoTimeComponents,
 };
 use icu::datetime::options::DateTimeFormatterOptions;
-use icu::datetime::options::{components, length, preferences};
+use icu::datetime::options::{components, preferences};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::runtime;
 use icu::datetime::provider::skeleton::PatternPlurals;
@@ -239,7 +239,7 @@ impl SourceDataProvider {
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
 fn gen_time_components(
-    length: NeoSkeletonLength,
+    _: NeoSkeletonLength,
     neo_components: &NeoTimeComponents,
     _: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
@@ -251,11 +251,6 @@ fn gen_time_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    if matches!(neo_components, NeoTimeComponents::Auto) {
-        return DateTimeFormatterOptions::Length(length::Bag::from_time_style(
-            length.to_time_style(),
-        ));
-    }
     let mut filtered_components = components::Bag::empty();
     if neo_components.has_time() {
         filtered_components.hour = Some(components::Numeric::Numeric);
@@ -290,19 +285,6 @@ fn gen_date_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    if matches!(neo_components, NeoComponents::Date(NeoDateComponents::Auto)) {
-        return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
-            length.to_date_style(),
-        ));
-    }
-    if length == NeoSkeletonLength::Long
-        && matches!(
-            neo_components,
-            NeoComponents::Date(NeoDateComponents::AutoWeekday)
-        )
-    {
-        return DateTimeFormatterOptions::Length(length::Bag::from_date_style(length::Date::Full));
-    }
     let date_pattern = match length {
         NeoSkeletonLength::Long => &date_lengths_v1.date.long,
         NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
