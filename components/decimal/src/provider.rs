@@ -90,7 +90,7 @@ pub struct GroupingSizesV1 {
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
-pub struct DecimalSymbolsV2StrsBuilder<'data> {
+pub struct DecimalSymbolStrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub minus_sign_prefix: Cow<'data, str>,
@@ -170,7 +170,7 @@ impl DecimalSymbolsV2<'static> {
     #[cfg(test)]
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
-        let strings = DecimalSymbolsV2StrsBuilder {
+        let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: Cow::Borrowed("-"),
             minus_sign_suffix: Cow::Borrowed(""),
             plus_sign_prefix: Cow::Borrowed("+"),
