@@ -185,8 +185,9 @@ static FDFA_NFKD: [u16; 17] = [
     0x633, 0x644, 0x645,
 ];
 
-/// Marker value for U+FDFA in NFKD
-const FDFA_MARKER: u16 = 0xDA00;
+/// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
+/// but they differ by `NON_ROUND_TRIP_MARKER`.)
+const FDFA_MARKER: u16 = 1;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -321,11 +322,7 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
 fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
     // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
     // and this function needs to ignore that.
-    if (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) != 0 {
-        return false;
-    }
-    // Hangul syllables get 0 as their trie value
-    c.wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+    (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0
 }
 
 #[inline(always)]
@@ -363,11 +360,7 @@ impl CharacterAndTrieValue {
         // to be compared with zero. U+FFFD has that flag set despite really
         // being being round-tripping in order to make UTF-8 errors
         // ineligible for passthrough.
-        if (self.trie_val & !BACKWARD_COMBINING_MARKER) != 0 {
-            return false;
-        }
-        // Hangul syllables get 0 as their trie value
-        u32::from(self.character).wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+        (self.trie_val & !BACKWARD_COMBINING_MARKER) == 0
     }
 
     #[inline(always)]
@@ -702,8 +695,6 @@ where
     fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
             let c = c_and_trie_val.character;
-            let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
-            if hangul_offset >= HANGUL_S_COUNT {
                 let decomposition = c_and_trie_val.trie_val;
                 // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
                 // and that flag needs to be ignored here.
@@ -721,21 +712,65 @@ where
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
                     } else if high_zeros {
-                        let singleton = decomposition as u16;
-                        if singleton != FDFA_MARKER {
-                            // Decomposition into one BMP character
-                            let starter = char_from_u16(singleton);
-                            (starter, 0)
-                        } else {
-                            // Special case for the NFKD form of U+FDFA.
-                            self.buffer.extend(FDFA_NFKD.map(|u| {
-                                // SAFETY: `FDFA_NFKD` is known not to contain
-                                // surrogates.
-                                CharacterAndClass::new_starter(unsafe {
-                                    core::char::from_u32_unchecked(u32::from(u))
-                                })
+                        // Do the check by looking at `c` instead of looking at a marker
+                        // in `singleton` below, because if we looked at the trie value,
+                        // we'd still have to check that `c` is in the Hangul syllable
+                        // range in order for the subsequent interpretations as `char`
+                        // to be safe.
+                        // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                        // be unified. That would add a branch for Hangul and remove
+                        // a branch from singleton decompositions. It seems more
+                        // important to favor Hangul syllables than singleton
+                        // decompositions.
+                        // Note that it would be valid to hoist this Hangul check
+                        // one or even two steps earlier in this check hierarchy.
+                        // Right now, it's assumed the kind of decompositions into
+                        // BMP starter and non-starter, which occur in many languages,
+                        // should be checked before Hangul syllables, which are about
+                        // one language specifically. Hopefully, we get some
+                        // instruction-level parallelism out of the disjointness of
+                        // operations on `c` and `decomposition`.
+                        let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                        if hangul_offset < HANGUL_S_COUNT {
+                            debug_assert_eq!(decomposition, 1);
+                            // Hangul syllable
+                            // The math here comes from page 144 of Unicode 14.0
+                            let l = hangul_offset / HANGUL_N_COUNT;
+                            let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                            let t = hangul_offset % HANGUL_T_COUNT;
+
+                            // The unsafe blocks here are OK, because the values stay
+                            // within the Hangul jamo block and, therefore, the scalar
+                            // value range by construction.
+                            self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                                core::char::from_u32_unchecked(HANGUL_V_BASE + v)
                             }));
-                            ('\u{0635}', 17)
+                            let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
+                            if t != 0 {
+                                self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                                    core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                                }));
+                                (first, 2)
+                            } else {
+                                (first, 1)
+                            }
+                        } else {
+                            let singleton = decomposition as u16;
+                            if singleton != FDFA_MARKER {
+                                // Decomposition into one BMP character
+                                let starter = char_from_u16(singleton);
+                                (starter, 0)
+                            } else {
+                                // Special case for the NFKD form of U+FDFA.
+                                self.buffer.extend(FDFA_NFKD.map(|u| {
+                                    // SAFETY: `FDFA_NFKD` is known not to contain
+                                    // surrogates.
+                                    CharacterAndClass::new_starter(unsafe {
+                                        core::char::from_u32_unchecked(u32::from(u))
+                                    })
+                                }));
+                                ('\u{0635}', 17)
+                            }
                         }
                     } else {
                         debug_assert!(low_zeros);
@@ -782,29 +817,6 @@ where
                         }
                     }
                 }
-            } else {
-                // Hangul syllable
-                // The math here comes from page 144 of Unicode 14.0
-                let l = hangul_offset / HANGUL_N_COUNT;
-                let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                let t = hangul_offset % HANGUL_T_COUNT;
-
-                // The unsafe blocks here are OK, because the values stay
-                // within the Hangul jamo block and, therefore, the scalar
-                // value range by construction.
-                self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                    core::char::from_u32_unchecked(HANGUL_V_BASE + v)
-                }));
-                let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
-                if t != 0 {
-                    self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                        core::char::from_u32_unchecked(HANGUL_T_BASE + t)
-                    }));
-                    (first, 2)
-                } else {
-                    (first, 1)
-                }
-            }
         };
         // Either we're inside `Composition` or `self.pending.is_none()`.
 
