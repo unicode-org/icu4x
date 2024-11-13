@@ -69,7 +69,7 @@ Vectors of fixed-size types work via [`ZeroVec<'a, T>`][`ZeroVec`], where `'a` i
  - `ZeroVec<'a, T>` dereferences to `ZeroSlice<T>`, the analog of `[T]` in this world.
  - Only types which implement [`AsULE`] are allowed inside `ZeroVec<T>`. More on this trait later.
 
-Constructing a [`ZeroVec`] by borrowing byte slice data can be done directly via [`ZeroVec::parse_byte_slice()`].
+Constructing a [`ZeroVec`] by borrowing byte slice data can be done directly via [`ZeroVec::parse_bytes()`].
 
 Similar to `Cow`, [`ZeroVec`] has `Owned` and `Borrowed` variants that can be directly accessed.
 
@@ -417,7 +417,7 @@ With some elbow grease this technique can even be used to bitpack the discrimina
  [`ZeroMap2d`]: https://unicode-org.github.io/icu4x/rustdoc/zerovec/map2d/struct.ZeroMap2d.html
  [`ZeroMapBorrowed`]: https://unicode-org.github.io/icu4x/rustdoc/map/struct.ZeroMapBorrowed.html
  [`LiteMap`]: https://docs.rs/litemap/latest/litemap/struct.LiteMap.html
- [`ZeroVec::parse_byte_slice()`]: https://unicode-org.github.io/icu4x/rustdoc/zerovec/enum.ZeroVec.html#method.parse_byte_slice
+ [`ZeroVec::parse_bytes()`]: https://unicode-org.github.io/icu4x/rustdoc/zerovec/enum.ZeroVec.html#method.parse_bytes
  [`ZeroVec::get()`]: https://docs.rs/zerovec/latest/zerovec/enum.ZeroVec.html#method.get
  [`RawBytesULE`]: https://unicode-org.github.io/icu4x/rustdoc/zerovec/ule/struct.RawBytesULE.html
  [`AsULE`]: https://unicode-org.github.io/icu4x/rustdoc/zerovec/ule/trait.AsULE.html

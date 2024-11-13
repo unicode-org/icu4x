@@ -367,7 +367,7 @@ impl CaseMapDataULE {
 /// 6. The equality invariant is satisfied
 unsafe impl ULE for CaseMapDataULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
+        let sixteens = RawBytesULE::<2>::parse_bytes(bytes)?;
 
         for sixteen in sixteens {
             let sixteen = sixteen.as_unsigned_int();

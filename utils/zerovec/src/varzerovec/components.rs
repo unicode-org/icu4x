@@ -174,7 +174,7 @@ unsafe impl IntegerULE for RawBytesULE<4> {
 /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
 /// exist.
 ///
-/// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
+/// See [`VarZeroVecComponents::parse_bytes()`] for information on the internal invariants involved
 #[derive(Debug)]
 pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
@@ -226,7 +226,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices[len - 2]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
+    pub fn parse_bytes(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
         // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
@@ -240,7 +240,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .get(0..F::Len::SIZE)
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_ule =
-            F::Len::parse_byte_slice(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
+            F::Len::parse_bytes(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
 
         let len = len_ule
             .first()
@@ -252,7 +252,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_u32 = u32::try_from(len).map_err(|_| VarZeroVecFormatError::Metadata);
         // We pass down the rest of the invariants
-        Self::parse_byte_slice_with_length(len_u32?, rest)
+        Self::parse_bytes_with_length(len_u32?, rest)
     }
 
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
@@ -263,7 +263,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice_with_length(
+    pub fn parse_bytes_with_length(
         len: u32,
         slice: &'a [u8],
     ) -> Result<Self, VarZeroVecFormatError> {
@@ -300,12 +300,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
     /// successfully returned a [`VarZeroVecComponents`] when passed to
-    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
-    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    /// [`VarZeroVecComponents::parse_bytes()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_bytes()`].
     ///
     /// # Safety
     /// The bytes must have previously successfully run through
-    /// [`VarZeroVecComponents::parse_byte_slice()`]
+    /// [`VarZeroVecComponents::parse_bytes()`]
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
@@ -324,21 +324,21 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let len = len_ule.get_unchecked(0).iule_to_usize();
         let len_u32 = len as u32;
 
-        // Safety: This method requires the bytes to have passed through `parse_byte_slice()`
-        // whereas we're calling something that asks for `parse_byte_slice_with_length()`.
-        // The two methods perform similar validation, with parse_byte_slice() validating an additional
+        // Safety: This method requires the bytes to have passed through `parse_bytes()`
+        // whereas we're calling something that asks for `parse_bytes_with_length()`.
+        // The two methods perform similar validation, with parse_bytes() validating an additional
         // 4-byte `length` header.
         Self::from_bytes_unchecked_with_length(len_u32, slice.get_unchecked(F::Len::SIZE..))
     }
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
     /// successfully returned a [`VarZeroVecComponents`] when passed to
-    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
-    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    /// [`VarZeroVecComponents::parse_bytes()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_bytes()`].
     ///
     /// # Safety
     /// The len,bytes must have previously successfully run through
-    /// [`VarZeroVecComponents::parse_byte_slice_with_length()`]
+    /// [`VarZeroVecComponents::parse_bytes_with_length()`]
     pub unsafe fn from_bytes_unchecked_with_length(len: u32, slice: &'a [u8]) -> Self {
         let len_minus_one = len.checked_sub(1);
         // The empty VZV is special-cased to the empty slice
@@ -467,7 +467,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             }
             // Safety: start..end is a valid range in self.things
             let bytes = unsafe { self.things.get_unchecked(start..end) };
-            T::parse_byte_slice(bytes).map_err(VarZeroVecFormatError::Values)?;
+            T::parse_bytes(bytes).map_err(VarZeroVecFormatError::Values)?;
             start = end;
         }
         Ok(())

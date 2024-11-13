@@ -73,7 +73,7 @@ macro_rules! tuple_varule {
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
                 // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
                 // as in the type def
-                let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_byte_slice(bytes)?;
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_bytes(bytes)?;
                 $(
                     // Safety invariant: $i < $len, from the macro invocation
                     unsafe {
@@ -230,7 +230,7 @@ macro_rules! tuple_varule {
                     ))
                 } else {
                     let bytes = <&[u8]>::deserialize(deserializer)?;
-                    $name::<$($T,)+ Format>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+                    $name::<$($T,)+ Format>::parse_bytes(bytes).map_err(serde::de::Error::custom)
                 }
             }
         }
@@ -255,12 +255,12 @@ mod tests {
         let vec: Vec<(&str, &[u8])> = vec![("a", b"b"), ("foo", b"bar"), ("lorem", b"ipsum\xFF")];
         let zerovec: VarZeroVec<Tuple2VarULE<str, [u8]>> = (&vec).into();
         let bytes = zerovec.as_bytes();
-        let zerovec2 = VarZeroVec::parse_byte_slice(bytes).unwrap();
+        let zerovec2 = VarZeroVec::parse_bytes(bytes).unwrap();
         assert_eq!(zerovec, zerovec2);
 
         // Test failed validation with a correctly sized but differently constrained tuple
         // Note: ipsum\xFF is not a valid str
-        let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_byte_slice(bytes);
+        let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_bytes(bytes);
         assert!(zerovec3.is_err());
 
         #[cfg(feature = "serde")]
@@ -281,12 +281,12 @@ mod tests {
         ];
         let zerovec: VarZeroVec<Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>> = (&vec).into();
         let bytes = zerovec.as_bytes();
-        let zerovec2 = VarZeroVec::parse_byte_slice(bytes).unwrap();
+        let zerovec2 = VarZeroVec::parse_bytes(bytes).unwrap();
         assert_eq!(zerovec, zerovec2);
 
         // Test failed validation with a correctly sized but differently constrained tuple
         // Note: the str is unlikely to be a valid varzerovec
-        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>, Format>>::parse_byte_slice(bytes);
+        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>, Format>>::parse_bytes(bytes);
         assert!(zerovec3.is_err());
 
         #[cfg(feature = "serde")]

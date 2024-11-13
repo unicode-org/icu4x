@@ -898,7 +898,7 @@ where
             ))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
         }
     }
 }
@@ -919,7 +919,7 @@ where
             Ok(plural_elements.into_packed())
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes)
                 .map(|ule| ule.to_owned())
                 .map_err(serde::de::Error::custom)
         }

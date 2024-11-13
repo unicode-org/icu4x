@@ -56,8 +56,8 @@ where
 
     /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
     /// if it's not a valid byte sequence
-    pub fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
-        T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
+    pub fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
+        T::ULE::parse_bytes(bytes).map(Self::from_ule_slice)
     }
 
     /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
@@ -132,7 +132,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(4, zerovec.len());
     /// assert_eq!(
@@ -154,11 +154,11 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_empty());
     ///
     /// let emptyvec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(&[]).expect("infallible");
+    ///     ZeroVec::parse_bytes(&[]).expect("infallible");
     /// assert!(emptyvec.is_empty());
     /// ```
     #[inline]
@@ -180,7 +180,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.get(2), Some(421));
     /// assert_eq!(zerovec.get(4), None);
@@ -203,7 +203,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// let array: [u16; 4] =
     ///     zerovec.get_as_array().expect("should be 4 items in array");
     ///
@@ -224,7 +224,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(
     ///     zerovec.get_subslice(1..3),
@@ -305,7 +305,7 @@ where
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, UleError> {
-        let new_slice = P::ULE::parse_byte_slice(self.as_bytes())?;
+        let new_slice = P::ULE::parse_bytes(self.as_bytes())?;
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
 
@@ -318,7 +318,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.first(), Some(211));
     /// ```
@@ -336,7 +336,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.last(), Some(32973));
     /// ```
@@ -354,7 +354,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// let mut it = zerovec.iter();
     ///
     /// assert_eq!(it.next(), Some(211));
@@ -416,7 +416,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.binary_search(&281), Ok(1));
     /// assert_eq!(zerovec.binary_search(&282), Err(2));
@@ -444,7 +444,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&281)), Ok(1));
     /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&282)), Err(2));
@@ -468,7 +468,7 @@ where
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
-//  6. `as_bytes()` and `parse_byte_slice()` are defaulted
+//  6. `as_bytes()` and `parse_bytes()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]

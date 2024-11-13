@@ -69,7 +69,7 @@ fn test_zerovec<T: ule::AsULE + Debug + PartialEq>(slice: &[T]) {
 
     let bytes = zerovec.as_bytes();
     let name = std::any::type_name::<T>();
-    let reparsed: ZeroVec<T> = ZeroVec::parse_byte_slice(bytes)
+    let reparsed: ZeroVec<T> = ZeroVec::parse_bytes(bytes)
         .unwrap_or_else(|_| panic!("Parsing {name} should succeed"));
 
     assert_eq!(reparsed, slice);
@@ -80,14 +80,14 @@ fn main() {
     test_zerovec(TEST_SLICE_TUPLESTRUCT);
     test_zerovec(TEST_SLICE_ENUM);
 
-    assert!(EnumULE::parse_byte_slice(&[0]).is_ok());
-    assert!(EnumULE::parse_byte_slice(&[1]).is_ok());
-    assert!(EnumULE::parse_byte_slice(&[5]).is_ok());
-    assert!(EnumULE::parse_byte_slice(&[6]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]).is_ok());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[5]).is_ok());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]).is_err());
+    assert!(EnumULE::parse_bytes(&[0]).is_ok());
+    assert!(EnumULE::parse_bytes(&[1]).is_ok());
+    assert!(EnumULE::parse_bytes(&[5]).is_ok());
+    assert!(EnumULE::parse_bytes(&[6]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[0]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[1]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[5]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[6]).is_err());
 }
 
 const TEST_SLICE_STRUCT: &[Struct] = &[

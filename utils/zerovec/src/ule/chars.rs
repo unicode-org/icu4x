@@ -35,7 +35,7 @@ use core::convert::TryFrom;
 /// use zerovec::ule::{CharULE, ULE};
 ///
 /// let bytes: &[u8] = &[0xFF, 0xFF, 0xFF, 0xFF];
-/// CharULE::parse_byte_slice(bytes).expect_err("Invalid bytes");
+/// CharULE::parse_bytes(bytes).expect_err("Invalid bytes");
 /// ```
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -150,7 +150,7 @@ mod test {
         let char_bytes: &[u8] = CharULE::as_bytes(&char_ules);
 
         // Check parsing
-        let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
+        let parsed_ules: &[CharULE] = CharULE::parse_bytes(char_bytes).unwrap();
         assert_eq!(char_ules, parsed_ules);
         let parsed_chars: Vec<char> = parsed_ules
             .iter()
@@ -176,7 +176,7 @@ mod test {
             .map(<u32 as AsULE>::to_unaligned)
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_bytes(&u32_ules);
-        let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
+        let parsed_ules_result = CharULE::parse_bytes(u32_bytes);
         assert!(parsed_ules_result.is_err());
 
         // 0x20FFFF is out of range for a char
@@ -187,7 +187,7 @@ mod test {
             .map(<u32 as AsULE>::to_unaligned)
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_bytes(&u32_ules);
-        let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
+        let parsed_ules_result = CharULE::parse_bytes(u32_bytes);
         assert!(parsed_ules_result.is_err());
     }
 }

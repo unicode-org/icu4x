@@ -43,7 +43,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
             &lengths, output,
         );
         debug_assert!(
-            <VarZeroLengthlessSlice<[u8], Format>>::parse_byte_slice(LEN as u32, output).is_ok(),
+            <VarZeroLengthlessSlice<[u8], Format>>::parse_bytes(LEN as u32, output).is_ok(),
             "Encoded slice must be valid VarZeroSlice"
         );
         unsafe {
@@ -148,7 +148,7 @@ unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsUL
     /// This impl exists so that EncodeAsVarULE can work.
     #[inline]
     fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
-        <VarZeroLengthlessSlice<[u8], Format>>::parse_byte_slice(LEN as u32, slice).map(|_| ())
+        <VarZeroLengthlessSlice<[u8], Format>>::parse_bytes(LEN as u32, slice).map(|_| ())
     }
 
     #[inline]

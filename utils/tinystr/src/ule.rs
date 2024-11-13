@@ -112,7 +112,7 @@ mod test {
 
         let bytes = vec.as_bytes();
 
-        let vec: ZeroVec<TinyAsciiStr<7>> = ZeroVec::parse_byte_slice(bytes).unwrap();
+        let vec: ZeroVec<TinyAsciiStr<7>> = ZeroVec::parse_bytes(bytes).unwrap();
 
         assert_eq!(&*vec.get(0).unwrap(), "foobar");
         assert_eq!(&*vec.get(1).unwrap(), "baz");

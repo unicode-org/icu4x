@@ -73,7 +73,7 @@ use core::ops::Range;
 ///
 /// let bytes = vzv_all.as_bytes();
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
-///     VarZeroVec::parse_byte_slice(bytes).unwrap();
+///     VarZeroVec::parse_bytes(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 ///
@@ -237,7 +237,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
 
     /// Get a reference to the entire encoded backing buffer of this slice
     ///
-    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    /// The bytes can be passed back to [`Self::parse_bytes()`].
     ///
     /// To take the bytes as a vector, see [`VarZeroVec::into_bytes()`].
     ///
@@ -249,7 +249,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// let strings = vec!["foo", "bar", "baz"];
     /// let vzv = VarZeroVec::<str>::from(&strings);
     ///
-    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
+    /// assert_eq!(vzv, VarZeroVec::parse_bytes(vzv.as_bytes()).unwrap());
     /// ```
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
@@ -267,8 +267,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Parse a VarZeroSlice from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
-    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
-        <Self as VarULE>::parse_byte_slice(slice)
+    pub fn parse_bytes<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
+        <Self as VarULE>::parse_bytes(slice)
     }
 }
 
@@ -443,7 +443,7 @@ where
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         let _: VarZeroVecComponents<T, F> =
-            VarZeroVecComponents::parse_byte_slice(bytes).map_err(|_| UleError::parse::<Self>())?;
+            VarZeroVecComponents::parse_bytes(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 

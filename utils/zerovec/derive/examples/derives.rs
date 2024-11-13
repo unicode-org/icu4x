@@ -116,7 +116,7 @@ fn test_zerovec() {
     assert_eq!(zerovec, TEST_SLICE);
 
     let bytes = zerovec.as_bytes();
-    let reparsed: ZeroVec<Foo> = ZeroVec::parse_byte_slice(bytes).expect("Parsing should succeed");
+    let reparsed: ZeroVec<Foo> = ZeroVec::parse_bytes(bytes).expect("Parsing should succeed");
 
     assert_eq!(reparsed, TEST_SLICE);
 }
@@ -144,7 +144,7 @@ fn test_varzerovec() {
     let bytes = vzv.as_bytes();
 
     let recovered: VarZeroVec<RelationULE> =
-        VarZeroVec::parse_byte_slice(bytes).expect("Parsing should succeed");
+        VarZeroVec::parse_bytes(bytes).expect("Parsing should succeed");
 
     for (ule, stack) in recovered.iter().zip(relations.iter()) {
         assert_eq!(*stack, ule.as_relation());

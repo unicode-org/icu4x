@@ -32,7 +32,7 @@ fn overview_bench(c: &mut Criterion) {
     c.bench_function("zerovec_serde/overview", |b| {
         // Same as "zerovec_serde/deserialize_sum/u32/zerovec"
         let buffer = bincode::serialize(
-            &ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap(),
+            &ZeroVec::<u32>::parse_bytes(black_box(TEST_BUFFER_LE)).unwrap(),
         )
         .unwrap();
         b.iter(|| {
@@ -73,7 +73,7 @@ fn u32_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec_serde/deserialize_sum/u32/zerovec", |b| {
         let buffer = bincode::serialize(
-            &ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap(),
+            &ZeroVec::<u32>::parse_bytes(black_box(TEST_BUFFER_LE)).unwrap(),
         )
         .unwrap();
         b.iter(|| {
@@ -135,7 +135,7 @@ fn stress_benches(c: &mut Criterion) {
     });
 
     // *** Compute sum of vec of 100 `u32` ***
-    let zerovec = ZeroVec::<u32>::parse_byte_slice(zerovec_aligned.as_bytes()).unwrap();
+    let zerovec = ZeroVec::<u32>::parse_bytes(zerovec_aligned.as_bytes()).unwrap();
     c.bench_function("zerovec_serde/sum/stress/zerovec", |b| {
         b.iter(|| black_box(&zerovec).iter().sum::<u32>());
     });

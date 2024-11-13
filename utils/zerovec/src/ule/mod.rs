@@ -99,14 +99,14 @@ where
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
+    fn parse_bytes(bytes: &[u8]) -> Result<&[Self], UleError> {
         Self::validate_byte_slice(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_bytes_unchecked(bytes) })
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming
-    /// that this byte slice has previously been run through [`Self::parse_byte_slice()`] with
+    /// that this byte slice has previously been run through [`Self::parse_bytes()`] with
     /// success.
     ///
     /// The default implementation performs a pointer cast to the same region of memory.
@@ -127,7 +127,7 @@ where
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_bytes()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
@@ -314,7 +314,7 @@ pub unsafe trait VarULE: 'static {
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
+    fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_bytes_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
@@ -322,7 +322,7 @@ pub unsafe trait VarULE: 'static {
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime, assuming
-    /// that this byte slice has previously been run through [`Self::parse_byte_slice()`] with
+    /// that this byte slice has previously been run through [`Self::parse_bytes()`] with
     /// success.
     ///
     /// # Safety
@@ -339,7 +339,7 @@ pub unsafe trait VarULE: 'static {
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_bytes()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self;
 

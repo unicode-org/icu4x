@@ -246,7 +246,7 @@ where
     {
         if !deserializer.is_human_readable() {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            VarTupleULE::<A, V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            VarTupleULE::<A, V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
         } else {
             Err(serde::de::Error::custom(
                 "&VarTupleULE can only deserialize in zero-copy ways",

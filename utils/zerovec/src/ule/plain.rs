@@ -90,7 +90,7 @@ macro_rules! impl_const_constructors {
             /// parsing checks.
             ///
             /// This cannot be generic over T because of current limitations in `const`, but if
-            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_byte_slice()`]
+            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_bytes()`]
             /// instead.
             ///
             /// See [`ZeroSlice::cast()`] for an example.

@@ -91,8 +91,8 @@ impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V> {
 
 impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// Construct from a slice. Errors if the slice doesn't represent a valid `V`
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
-        let val = V::parse_byte_slice(bytes)?;
+    pub fn parse_bytes(bytes: &'a [u8]) -> Result<Self, UleError> {
+        let val = V::parse_bytes(bytes)?;
         Ok(Self::new_borrowed(val))
     }
 
@@ -116,7 +116,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// # Safety
     ///
     /// `bytes` must be a valid `V`, i.e. it must successfully pass through
-    /// `V::parse_byte_slice()` or `V::validate_byte_slice()`.
+    /// `V::parse_bytes()` or `V::validate_byte_slice()`.
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         unsafe {
             // Safety: bytes is an &T which is always non-null
@@ -277,7 +277,7 @@ where
             Ok(Self::new_owned(b))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            Self::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            Self::parse_bytes(bytes).map_err(serde::de::Error::custom)
         }
     }
 }

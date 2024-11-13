@@ -39,7 +39,7 @@ unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
-//  6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_bytes_unchecked()`
+//  6. `parse_bytes()` is equivalent to `validate_byte_slice()` followed by `from_bytes_unchecked()`
 //  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
     #[inline]
@@ -49,11 +49,11 @@ unsafe impl VarULE for str {
     }
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
+    fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
         core::str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())
     }
     /// Invariant: must be safe to call when called on a slice that previously
-    /// succeeded with `parse_byte_slice`
+    /// succeeded with `parse_bytes`
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         core::str::from_utf8_unchecked(bytes)

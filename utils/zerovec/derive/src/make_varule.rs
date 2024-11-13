@@ -265,7 +265,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
                     if !deserializer.is_human_readable() {
                         let bytes = <&[u8]>::deserialize(deserializer)?;
-                        <#ule_name as zerovec::ule::VarULE>::parse_byte_slice(bytes).map_err(#serde_path::de::Error::custom)
+                        <#ule_name as zerovec::ule::VarULE>::parse_bytes(bytes).map_err(#serde_path::de::Error::custom)
                     } else {
                         Err(#serde_path::de::Error::custom(#deserialize_error))
                     }
@@ -659,7 +659,7 @@ impl<'a> UnsizedFields<'a> {
             }
 
             Some(quote!(
-                let multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::parse_byte_slice(last_field_bytes)?;
+                let multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::parse_bytes(last_field_bytes)?;
                 unsafe {
                     #(#validators)*
                 }

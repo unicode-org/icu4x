@@ -18,7 +18,7 @@ pub(crate) struct VarZeroLengthlessSlice<T: ?Sized, F> {
     marker: PhantomData<(F, T)>,
     /// The original slice this was constructed from
     // Safety invariant: This field must have successfully passed through
-    // VarZeroVecComponents::parse_byte_slice_with_length() with the length
+    // VarZeroVecComponents::parse_bytes_with_length() with the length
     // associated with this value.
     entire_slice: [u8],
 }
@@ -38,8 +38,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// Parse a VarZeroLengthlessSlice from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
-    pub fn parse_byte_slice<'a>(len: u32, slice: &'a [u8]) -> Result<&'a Self, UleError> {
-        let _ = VarZeroVecComponents::<T, F>::parse_byte_slice_with_length(len, slice)
+    pub fn parse_bytes<'a>(len: u32, slice: &'a [u8]) -> Result<&'a Self, UleError> {
+        let _ = VarZeroVecComponents::<T, F>::parse_bytes_with_length(len, slice)
             .map_err(|_| UleError::parse::<Self>())?;
         unsafe {
             // Safety: We just verified that it is of the correct format.
@@ -52,7 +52,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// # Safety
     ///
     /// `bytes` need to be an output from [`VarZeroLengthlessSlice::as_bytes()`], or alternatively
-    /// successfully pass through `parse_byte_slice` (with `len`)
+    /// successfully pass through `parse_bytes` (with `len`)
     ///
     /// The length associated with this value will be the length associated with the original slice.
     pub(crate) const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
@@ -85,7 +85,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
 
     /// Get a reference to the entire encoded backing buffer of this slice
     ///
-    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    /// The bytes can be passed back to [`Self::parse_bytes()`].
     ///
     /// To take the bytes as a vector, see [`VarZeroVec::into_bytes()`].
     #[inline]

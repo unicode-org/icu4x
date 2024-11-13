@@ -419,7 +419,7 @@ mod serde {
         where
             E: de::Error,
         {
-            let rule = VarZeroVec::parse_byte_slice(rule_bytes).map_err(|err| {
+            let rule = VarZeroVec::parse_bytes(rule_bytes).map_err(|err| {
                 de::Error::invalid_value(
                     de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule byte slice",
