@@ -497,8 +497,7 @@ fn test_time_zone_patterns() {
             }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(&data_locale)
-                    .unwrap();
+                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(&data_locale).unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
                 .unwrap()
