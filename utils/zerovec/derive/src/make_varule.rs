@@ -236,7 +236,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
                         let this = #zerofrom_fq_path::zero_from(self);
                         <#name as #serde_path::Serialize>::serialize(&this, serializer)
                     } else {
-                        serializer.serialize_bytes(zerovec::ule::VarULE::slice_as_bytes(self))
+                        serializer.serialize_bytes(zerovec::ule::VarULE::as_bytes(self))
                     }
                 }
             }
@@ -401,7 +401,7 @@ fn make_encode_impl(
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
-                let src = <<#ty as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::as_bytes(unaligned_slice);
+                let src = <<#ty as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::slice_as_bytes(unaligned_slice);
                 out.copy_from_slice(src);
             )
         },
