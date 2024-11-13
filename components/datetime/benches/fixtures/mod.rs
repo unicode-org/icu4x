@@ -25,6 +25,7 @@ pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
     pub semantic: Option<icu_datetime::fieldset::dynamic::CompositeFieldSet>,
+    #[serde(rename = "hourCycle")]
     pub hour_cycle: Option<TestHourCycle>,
 }
 
