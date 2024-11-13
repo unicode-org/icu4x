@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
+use icu_datetime::{
+    fieldset::{self, dynamic::ZoneFieldSet},
+    neo_skeleton::NeoSkeletonLength,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -16,36 +19,15 @@ pub struct TimeZoneTest {
     pub expectations: HashMap<String, String>,
 }
 
-pub fn pattern_to_semantic_skeleton(p: &str) -> Option<NeoTimeZoneSkeleton> {
+pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Generic,
-        ),
-        "v" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Short,
-            NeoTimeZoneStyle::Generic,
-        ),
-        "VVVV" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Location,
-        ),
-        "zzzz" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Specific,
-        ),
-        "z" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Short,
-            NeoTimeZoneStyle::Specific,
-        ),
-        "OOOO" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Long,
-            NeoTimeZoneStyle::Offset,
-        ),
-        "O" => NeoTimeZoneSkeleton::for_length_and_components(
-            NeoSkeletonLength::Short,
-            NeoTimeZoneStyle::Offset,
-        ),
+        "vvvv" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Long)),
+        "v" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Short)),
+        "VVVV" => ZoneFieldSet::L(fieldset::L::with_length(NeoSkeletonLength::Long)),
+        "zzzz" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Long)),
+        "z" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Short)),
+        "OOOO" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Long)),
+        "O" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Short)),
         _ => return None,
     })
 }

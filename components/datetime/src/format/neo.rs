@@ -7,12 +7,12 @@ use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
     GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
 };
+use crate::dynamic::CompositeDateTimeFieldSet;
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
-use crate::neo_skeleton::NeoDateTimeSkeleton;
 use crate::provider::neo::*;
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
@@ -275,14 +275,14 @@ size_test!(
 /// 1. The calendar chosen at compile time for additional type safety
 /// 2. A components object type containing the fields that might be formatted
 ///
-/// By default, the components object is set to [`NeoDateTimeComponents`],
+/// By default, the components object is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
 /// components object results in smaller stack size.
 ///
-/// To support all fields including time zones, use [`NeoComponents`].
+/// To support all fields including time zones, use [`CompositeFieldSet`].
 ///
-/// [`NeoComponents`]: crate::neo_skeleton::NeoComponents
-/// [`NeoDateTimeComponents`]: crate::neo_skeleton::NeoDateTimeComponents
+/// [`CompositeFieldSet`]: crate::fieldset::dynamic::CompositeFieldSet
+/// [`CompositeDateTimeFieldSet`]: crate::fieldset::dynamic::CompositeDateTimeFieldSet
 ///
 /// # Examples
 ///
@@ -324,13 +324,13 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::neo_skeleton::NeoSkeleton;
+/// use icu::datetime::fieldset::dynamic::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
-/// // Create an instance that can format all fields (NeoSkeleton):
-/// let mut names: TypedDateTimeNames<Gregorian, NeoSkeleton> =
+/// // Create an instance that can format all fields (CompositeFieldSet):
+/// let mut names: TypedDateTimeNames<Gregorian, CompositeFieldSet> =
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
@@ -401,7 +401,7 @@ size_test!(
 /// );
 /// ```
 #[derive(Debug)]
-pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = NeoDateTimeSkeleton> {
+pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
     locale: DataLocale,
     inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
@@ -648,12 +648,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
     /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
+    /// use icu::datetime::fieldset::dynamic::DateFieldSet;
     /// use icu::locale::locale;
     /// use writeable::{Part, assert_try_writeable_parts_eq};
     ///
-    /// // Create an instance that can format all fields (NeoSkeleton):
-    /// let names: TypedDateTimeNames<Gregorian, NeoDateSkeleton> =
+    /// // Create an instance that can format only date fields:
+    /// let names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::new_without_number_formatting(&locale!("en").into());
     ///
     /// // Create a pattern from a pattern string:
@@ -969,7 +969,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -987,7 +987,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1072,7 +1072,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1085,7 +1085,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1139,7 +1139,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1157,7 +1157,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1215,7 +1215,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1233,7 +1233,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1291,7 +1291,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1309,7 +1309,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1367,7 +1367,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1385,7 +1385,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// .zone;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
@@ -1432,7 +1432,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeSkeleton;
+    /// use icu::datetime::fieldset::dynamic::TimeFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -1440,7 +1440,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let locale = &locale!("bn").into();
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<(), NeoTimeSkeleton>::try_new(&locale).unwrap();
+    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(&locale).unwrap();
     /// names.include_fixed_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
@@ -1616,7 +1616,7 @@ pub enum PatternLoadError {
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
-    /// on a [`TypedDateTimeNames<Gregorian, NeoTimeZoneSkeleton>`].
+    /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
     #[displaydoc("The specific type does not support this field.")]
     TypeTooSpecific(Field),
     /// An error arising from the [`DataProvider`].
@@ -2384,7 +2384,7 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -2402,7 +2402,7 @@ where
     /// .to_calendar(Gregorian);
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///         &locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
