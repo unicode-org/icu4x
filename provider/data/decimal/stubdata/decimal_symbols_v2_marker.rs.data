@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_decimal_symbols_v1_marker {
+macro_rules! __impl_decimal_symbols_v2_marker {
     ($ provider : ty) => {
         #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
@@ -16,7 +16,7 @@ macro_rules! __impl_decimal_symbols_v1_marker {
         }
     };
     ($ provider : ty , ITER) => {
-        __impl_decimal_symbols_v1_marker!($provider);
+        __impl_decimal_symbols_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::decimal::provider::DecimalSymbolsV2Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
@@ -25,7 +25,7 @@ macro_rules! __impl_decimal_symbols_v1_marker {
         }
     };
     ($ provider : ty , DRY) => {
-        __impl_decimal_symbols_v1_marker!($provider);
+        __impl_decimal_symbols_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::decimal::provider::DecimalSymbolsV2Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -34,7 +34,7 @@ macro_rules! __impl_decimal_symbols_v1_marker {
         }
     };
     ($ provider : ty , DRY , ITER) => {
-        __impl_decimal_symbols_v1_marker!($provider);
+        __impl_decimal_symbols_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::decimal::provider::DecimalSymbolsV2Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -50,4 +50,4 @@ macro_rules! __impl_decimal_symbols_v1_marker {
     };
 }
 #[doc(inline)]
-pub use __impl_decimal_symbols_v1_marker as impl_decimal_symbols_v1_marker;
+pub use __impl_decimal_symbols_v2_marker as impl_decimal_symbols_v2_marker;
