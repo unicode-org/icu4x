@@ -63,6 +63,7 @@ struct MultiFieldStruct<'a> {
 #[make_varule(MultiFieldConsecutiveStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::derive(Serialize, Deserialize, Debug)]
+#[zerovec::format(zerovec::vecs::Index8)]
 struct MultiFieldConsecutiveStruct<'a> {
     #[serde(borrow)]
     a: Cow<'a, str>,
@@ -87,6 +88,7 @@ struct CustomVarField<'a> {
 #[make_varule(MultiFieldTupleULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
 #[zerovec::derive(Serialize, Deserialize, Debug)]
+#[zerovec::format(zerovec::vecs::Index32)]
 struct MultiFieldTuple<'a>(
     u8,
     char,

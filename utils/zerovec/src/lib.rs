@@ -417,6 +417,7 @@ pub use zerovec_derive::make_ule;
 ///
 /// - [`Ord`] and [`PartialOrd`]
 /// - [`ZeroMapKV`]
+/// - [`alloc::borrow::ToOwned`]
 ///
 /// To disable one of the automatic derives, use `#[zerovec::skip_derive(...)]` like so: `#[zerovec::skip_derive(ZeroMapKV)]`.
 /// `Ord` and `PartialOrd` are implemented as a unit and can only be disabled as a group with `#[zerovec::skip_derive(Ord)]`.
@@ -436,6 +437,10 @@ pub use zerovec_derive::make_ule;
 ///
 /// Note that this implementation will autogenerate [`EncodeAsVarULE`] impls for _both_ `Self` and `&Self`
 /// for convenience. This allows for a little more flexibility encoding slices.
+///
+/// In case there are multiple [`VarULE`] (i.e., variable-sized) fields, this macro will produce private fields that
+/// appropriately pack the data together, with the packing format by default being [`crate::vecs::Index16`], but can be
+/// overridden with `#[zerovec::format(zerovec::vecs::Index8)]`.
 ///
 /// [`EncodeAsVarULE`]: ule::EncodeAsVarULE
 /// [`VarULE`]: ule::VarULE

@@ -30,8 +30,8 @@ pub fn make_ule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, &attrs),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, &attrs),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -80,7 +80,7 @@ fn make_ule_enum_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
-    attrs: ZeroVecAttrs,
+    attrs: &ZeroVecAttrs,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
     if !utils::ReprInfo::compute(&input.attrs).u8 {
@@ -264,7 +264,7 @@ fn make_ule_struct_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
-    attrs: ZeroVecAttrs,
+    attrs: &ZeroVecAttrs,
 ) -> TokenStream2 {
     if struc.fields.iter().next().is_none() {
         return Error::new(

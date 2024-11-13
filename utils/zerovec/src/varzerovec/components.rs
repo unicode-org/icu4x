@@ -17,7 +17,7 @@ use core::ops::Range;
 /// This trait allows switching between different possible internal
 /// representations of VarZeroVec.
 ///
-/// Currently this crate supports two formats: [`Index16`] and [`Index32`],
+/// Currently this crate supports three formats: [`Index8`], [`Index16`] and [`Index32`],
 /// with [`Index16`] being the default for all [`VarZeroVec`](super::VarZeroVec)
 /// types unless explicitly specified otherwise.
 ///
