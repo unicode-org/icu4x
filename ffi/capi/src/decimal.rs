@@ -74,9 +74,11 @@ pub mod ffi {
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
             use alloc::borrow::Cow;
             use zerovec::VarZeroCow;
-            fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
+            fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> Cow<'_, str> {
                 if s.is_empty() {
                     Cow::default()
+                } else if let Ok(s) = core::str::from_utf8(s) {
+                    Cow::Borrowed(s)
                 } else {
                     Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
                 }
