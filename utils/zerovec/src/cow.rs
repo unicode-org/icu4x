@@ -97,7 +97,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Construct from an owned slice. Errors if the slice doesn't represent a valid `V`
-    pub fn parse_owned_byte_slice(bytes: Box<[u8]>) -> Result<Self, UleError> {
+    pub fn parse_owned_bytes(bytes: Box<[u8]>) -> Result<Self, UleError> {
         V::validate_byte_slice(&bytes)?;
         let bytes = ManuallyDrop::new(bytes);
         let buf: NonNull<[u8]> = (&**bytes).into();
