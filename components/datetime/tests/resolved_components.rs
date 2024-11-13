@@ -9,11 +9,11 @@ use icu_datetime::{
         dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
     },
     neo_skeleton::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
-    options::{components, preferences},
+    options::components,
     FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::locale;
 use icu_locale_core::Locale;
+use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
 
 fn assert_resolved_components(
     skeleton: CompositeDateTimeFieldSet,
@@ -50,9 +50,7 @@ fn test_length_time() {
     components_bag.hour = Some(components::Numeric::Numeric);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H12,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H12);
 
     assert_resolved_components(
         skeleton,
@@ -73,9 +71,7 @@ fn test_length_time_preferences() {
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H24,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H24);
 
     assert_resolved_components(
         skeleton,
@@ -103,12 +99,10 @@ fn test_date_and_time() {
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
     input_bag.fractional_second = Some(FractionalSecondDigits::F4);
-    input_bag.preferences = None;
+    input_bag.hour_cycle = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
-    output_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H23,
-    ));
+    output_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
         skeleton,

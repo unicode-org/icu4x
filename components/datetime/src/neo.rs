@@ -248,9 +248,7 @@ where
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(|v| {
-                    HourCycle::try_from(v).ok()
-                })
+                .and_then(|v| HourCycle::try_from(v).ok())
                 .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO
@@ -481,9 +479,7 @@ where
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(|v| {
-                    HourCycle::try_from(v).ok()
-                })
+                .and_then(|v| HourCycle::try_from(v).ok())
                 .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO

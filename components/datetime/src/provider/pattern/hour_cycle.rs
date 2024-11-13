@@ -7,9 +7,7 @@ use super::runtime;
 use super::{reference, PatternItem};
 use crate::fields;
 #[cfg(feature = "datagen")]
-use crate::{
-    provider::{self, skeleton},
-};
+use crate::provider::{self, skeleton};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
@@ -133,8 +131,7 @@ pub(crate) fn naively_apply_preferences(
     hour_cycle: Option<HourCycle>,
 ) {
     // If there is a preference overriding the hour cycle, apply it now.
-    if let Some(hour_cycle) = hour_cycle
-    {
+    if let Some(hour_cycle) = hour_cycle {
         runtime::helpers::maybe_replace_first(pattern, |item| {
             if let PatternItem::Field(fields::Field {
                 symbol: fields::FieldSymbol::Hour(current_hour),

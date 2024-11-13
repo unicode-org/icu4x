@@ -170,10 +170,7 @@ impl Bag {
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
     #[cfg(feature = "datagen")]
-    pub fn to_vec_fields(
-        &self,
-        default_hour_cycle: HourCycle,
-    ) -> alloc::vec::Vec<Field> {
+    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
@@ -328,7 +325,7 @@ impl Bag {
                         // H - symbol
                         fields::Hour::H23
                     }
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -861,7 +858,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(preferences::HourCycle::H23),
+            bag.to_vec_fields(HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Four).into(),
@@ -886,7 +883,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(preferences::HourCycle::H23),
+            bag.to_vec_fields(HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Two).into(),

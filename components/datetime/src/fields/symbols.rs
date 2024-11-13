@@ -601,7 +601,7 @@ impl Hour {
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
             HourCycle::H24 => Self::H24,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }

@@ -25,7 +25,7 @@ pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
     pub semantic: Option<icu_datetime::fieldset::dynamic::CompositeFieldSet>,
-    pub preferences: Option<icu_datetime::options::preferences::Bag>,
+    pub hour_cycle: Option<TestHourCycle>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -61,8 +61,6 @@ pub struct TestComponentsBag {
     pub fractional_second: Option<neo_skeleton::FractionalSecondDigits>,
 
     pub time_zone_name: Option<components::TimeZoneName>,
-
-    pub hour_cycle: Option<TestHourCycle>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

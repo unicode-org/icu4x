@@ -538,9 +538,9 @@ impl components::Bag {
         date_patterns: &DateLengthsV1<'data>,
         time_patterns: &TimeLengthsV1<'data>,
     ) -> PatternPlurals<'data> {
-        use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
         use crate::provider::pattern::runtime::Pattern;
         use crate::provider::pattern::CoarseHourCycle;
+        use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
         let default_hour_cycle = match time_patterns.preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,
