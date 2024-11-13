@@ -56,7 +56,6 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -65,17 +64,6 @@
 //!
 //! bag.hour = Some(components::Numeric::TwoDigit);
 //! bag.minute = Some(components::Numeric::TwoDigit);
-//!
-//! // The options can be created manually.
-//! let options = DateTimeFormatterOptions::Components(bag);
-//! ```
-//!
-//! Or the options can be inferred through the `.into()` trait.
-//!
-//! ```
-//! use icu::datetime::options::components;
-//! use icu::datetime::options::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact formatted result is a subject to change over
