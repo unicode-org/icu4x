@@ -75,7 +75,7 @@ impl PatternItemULE {
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
         if Self::determine_field_from_u8(*value.0) {
             // ensure that unused bytes are all zero
-            fields::FieldULE::validate_bytes((*value.1, *value.2)).is_ok()
+            fields::FieldULE::validate_byte_pair((*value.1, *value.2)).is_ok()
                 && *value.0 == 0b1000_0000
         } else {
             char::try_from(u32::from_be_bytes([0x00, *value.0, *value.1, *value.2])).is_ok()
