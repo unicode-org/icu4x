@@ -215,13 +215,13 @@ Unsized types use [`VarULE`]. Unlike sized types, there is no `AsVarULE` type fo
 ```rust
 pub unsafe trait VarULE: 'static {
     fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self;
 
     // Some automatically provided methods elided
 }
 ```
 
-Similarly to [`ULE`], `VarULE` is an `unsafe` trait which mainly requires the user to specify whether a `&[u8]` slice contains a valid bit pattern for a _single_ `Self` instance. Since pointer metadata can vary between unsized types, `from_byte_slice_unchecked()` must also be specified by the implementor so that `VarZeroVec` can materialize `&Self` instances out of known-valid bit patterns after validation.
+Similarly to [`ULE`], `VarULE` is an `unsafe` trait which mainly requires the user to specify whether a `&[u8]` slice contains a valid bit pattern for a _single_ `Self` instance. Since pointer metadata can vary between unsized types, `from_bytes_unchecked()` must also be specified by the implementor so that `VarZeroVec` can materialize `&Self` instances out of known-valid bit patterns after validation.
 
 `VarULE` types must also accept any alignment, so most custom `VarULE` types will be `#[repr(C, packed)]` wrappers around structs containing `ULE` and `VarULE` types (like `str`, `[u8]`, [`VarZeroSlice`], [`ZeroSlice`]).
 

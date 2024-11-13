@@ -102,7 +102,7 @@ pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
 // 2. No padding: see "Representation" above.
 // 3. `validate_byte_slice` checks length and defers to the inner ULEs.
 // 4. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
+// 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
 // 6. All other methods are left at their default impl.
 // 7. The two ULEs have byte equality, so this composition has byte equality.
 unsafe impl<A, V> VarULE for VarTupleULE<A, V>
@@ -121,15 +121,15 @@ where
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         #[allow(clippy::panic)] // panic is documented in function contract
         if bytes.len() < size_of::<A::ULE>() {
-            panic!("from_byte_slice_unchecked called with short slice")
+            panic!("from_bytes_unchecked called with short slice")
         }
         let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
         // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
         // and a valid Self contains a valid V after the space needed for A::ULE.
-        let variable_ref = V::from_byte_slice_unchecked(variable_chunk);
+        let variable_ref = V::from_bytes_unchecked(variable_chunk);
         let variable_ptr: *const V = variable_ref;
 
         // Safety: The DST of VarTupleULE is a pointer to the `sized` element and has a metadata

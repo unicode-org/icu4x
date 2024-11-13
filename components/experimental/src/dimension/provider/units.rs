@@ -35,13 +35,13 @@ impl<'data> UnitsDisplayNameV1<'data> {
     /// # Safety
     ///
     /// The bytes must represent a valid [`icu_plurals::provider::PluralElementsPackedULE`]
-    pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
+    pub const unsafe fn from_bytes_unchecked(bytes: &'data [u8]) -> Self {
         Self {
             patterns: icu_plurals::provider::PluralElementsPackedCow {
                 elements: alloc::borrow::Cow::Borrowed(
                     // Safety: this function's safety invariant guarantees that the bytes
                     // represent a valid `PluralElementsPackedULE`
-                    icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(
+                    icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(
                         bytes,
                     ),
                 ),
@@ -58,7 +58,7 @@ impl databake::Bake for UnitsDisplayNameV1<'_> {
         let bytes = self.patterns.elements.as_bytes().bake(ctx);
         // Safety: The bytes are returned by `PluralElementsPackedULE::as_bytes`.
         databake::quote! { unsafe {
-            icu_experimental::dimension::provider::units::UnitsDisplayNameV1::from_byte_slice_unchecked(#bytes)
+            icu_experimental::dimension::provider::units::UnitsDisplayNameV1::from_bytes_unchecked(#bytes)
         }}
     }
 }

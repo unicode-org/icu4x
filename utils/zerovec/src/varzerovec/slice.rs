@@ -437,7 +437,7 @@ where
 //     `[u8]` slice which satisfies this invariant)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `as_bytes()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
@@ -447,7 +447,7 @@ unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZer
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // self is really just a wrapper around a byte slice
         mem::transmute(bytes)
     }

@@ -416,7 +416,7 @@ where
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -431,7 +431,7 @@ where
     /// # Safety
     ///
     /// The bytes must be valid according to [`PluralElementsPackedULE::validate_byte_slice`].
-    pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -471,12 +471,12 @@ where
         let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
         // Safety: the bytes are valid by invariant
-        let default = unsafe { V::from_byte_slice_unchecked(unpacked_bytes.v_bytes) };
+        let default = unsafe { V::from_bytes_unchecked(unpacked_bytes.v_bytes) };
         #[allow(clippy::manual_map)] // more explicit with the unsafe code
         let specials = if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             // Safety: the bytes are valid by invariant
             Some(unsafe {
-                PluralElementsTupleSliceVarULE::<V>::from_byte_slice_unchecked(specials_bytes)
+                PluralElementsTupleSliceVarULE::<V>::from_bytes_unchecked(specials_bytes)
             })
         } else {
             None
@@ -956,7 +956,7 @@ where
         let bytes = (&self.bytes).bake(ctx);
         databake::quote! {
             // Safety: the bytes came directly from self.bytes on the previous line.
-            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(#bytes) }
+            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(#bytes) }
         }
     }
 }

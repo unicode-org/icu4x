@@ -63,7 +63,7 @@
 //! //     a struct with only ULE fields)
 //! //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //! //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//! //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//! //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //! //  6. The other VarULE methods use the default impl.
 //! //  7. FooULE byte equality is semantic equality
 //! unsafe impl VarULE for FooULE {
@@ -74,7 +74,7 @@
 //!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| UleError::parse::<Self>())?;
 //!         Ok(())
 //!     }
-//!     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+//!     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
 //!         let ptr = bytes.as_ptr();
 //!         let len = bytes.len();
 //!         // subtract the length of the char and u32 to get the length of the array

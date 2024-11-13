@@ -38,8 +38,8 @@ unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 //  2. str is aligned to 1 byte.
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
-//  6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()`
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+//  6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_bytes_unchecked()`
 //  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
     #[inline]
@@ -55,7 +55,7 @@ unsafe impl VarULE for str {
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_byte_slice`
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         core::str::from_utf8_unchecked(bytes)
     }
 }
@@ -83,7 +83,7 @@ unsafe impl VarULE for str {
 //  2. [T] is aligned to 1 byte (achieved by being a slice of a ULE type)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (achieved by being a slice of a ULE type)
 unsafe impl<T> VarULE for [T]
@@ -96,7 +96,7 @@ where
     }
 
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        T::from_byte_slice_unchecked(bytes)
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        T::from_bytes_unchecked(bytes)
     }
 }

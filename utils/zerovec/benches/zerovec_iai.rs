@@ -42,14 +42,14 @@ fn varzeroslice_parse_get() -> Option<&'static str> {
 fn varzeroslice_get() -> Option<&'static str> {
     // Safety: The bytes are valid.
     let slice: &'static VarZeroSlice<str> =
-        unsafe { VarZeroSlice::from_byte_slice_unchecked(black_box(TEST_VARZEROSLICE_BYTES)) };
+        unsafe { VarZeroSlice::from_bytes_unchecked(black_box(TEST_VARZEROSLICE_BYTES)) };
     slice.get(black_box(1))
 }
 
 fn varzeroslice_get_unchecked() -> &'static str {
     // Safety: The bytes are valid.
     let slice: &'static VarZeroSlice<str> =
-        unsafe { VarZeroSlice::from_byte_slice_unchecked(black_box(TEST_VARZEROSLICE_BYTES)) };
+        unsafe { VarZeroSlice::from_bytes_unchecked(black_box(TEST_VARZEROSLICE_BYTES)) };
     // Safety: The VarZeroVec has length 4.
     unsafe { slice.get_unchecked(black_box(1)) }
 }

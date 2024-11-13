@@ -95,14 +95,14 @@ where
     /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
     ///
     /// The default implementation executes [`Self::validate_byte_slice()`] followed by
-    /// [`Self::from_byte_slice_unchecked`].
+    /// [`Self::from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
         Self::validate_byte_slice(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
-        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+        Ok(unsafe { Self::from_bytes_unchecked(bytes) })
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming
@@ -130,7 +130,7 @@ where
     /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
         let data = bytes.as_ptr();
         let len = bytes.len() / mem::size_of::<Self>();
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
@@ -267,7 +267,7 @@ where
 ///    would not represent a valid slice of this type.
 /// 4. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 5. The impl of [`VarULE::from_byte_slice_unchecked()`] must produce a reference to the same
+/// 5. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
 ///    underlying data assuming that the given bytes previously passed validation.
 /// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
@@ -309,14 +309,14 @@ pub unsafe trait VarULE: 'static {
     /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
     ///
     /// The default implementation executes [`Self::validate_byte_slice()`] followed by
-    /// [`Self::from_byte_slice_unchecked`].
+    /// [`Self::from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
         Self::validate_byte_slice(bytes)?;
-        let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
+        let result = unsafe { Self::from_bytes_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
         Ok(result)
     }
@@ -341,7 +341,7 @@ pub unsafe trait VarULE: 'static {
     ///
     /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self;
 
     /// Given `&Self`, returns a `&[u8]` with the same lifetime.
     ///
@@ -364,7 +364,7 @@ pub unsafe trait VarULE: 'static {
         unsafe {
             // Get the pointer representation
             let ptr: *mut Self =
-                Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
+                Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;
             assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
             // Transmute the pointer to an owned pointer
             Box::from_raw(ptr)

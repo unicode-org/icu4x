@@ -86,7 +86,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// - Element at `index` must have been created with the VarULE type T
     #[inline]
     pub unsafe fn get_field<T: VarULE + ?Sized>(&self, index: usize) -> &T {
-        T::from_byte_slice_unchecked(self.0.get_unchecked(LEN as u32, index))
+        T::from_bytes_unchecked(self.0.get_unchecked(LEN as u32, index))
     }
 
     /// Construct from a byte slice
@@ -94,7 +94,7 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// # Safety
     /// - byte slice must be a valid VarZeroLengthlessSlice<[u8], Format> with length LEN
     #[inline]
-    pub unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    pub unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..> with the right format
         mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
     }
@@ -138,7 +138,7 @@ unsafe impl EncodeAsVarULE<[u8]> for BlankSliceEncoder {
 //  2. MultiFieldsULE is aligned to 1 byte (achieved by being transparent over a VarULE type)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. `MultiFieldsULE` byte equality is semantic equality (achieved by being transparent over a VarULE type)
 unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsULE<LEN, Format> {
@@ -152,7 +152,7 @@ unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsUL
     }
 
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &Self is transparent over &VZS<..>
         mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
     }

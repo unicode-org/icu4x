@@ -65,7 +65,7 @@ pub unsafe trait IntegerULE: ULE {
 
     /// Safety: Should always convert a buffer into an array of Self with the correct length
     #[doc(hidden)]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
 }
 
 /// This is a [`VarZeroVecFormat`] that stores u8s in the index array, and a u8 for a length.
@@ -123,7 +123,7 @@ unsafe impl IntegerULE for u8 {
         u8::try_from(u).ok()
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         bytes
     }
 }
@@ -142,8 +142,8 @@ unsafe impl IntegerULE for RawBytesULE<2> {
         u16::try_from(u).ok().map(u16::to_unaligned)
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
-        Self::from_byte_slice_unchecked_mut(bytes)
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+        Self::from_bytes_unchecked_mut(bytes)
     }
 }
 
@@ -161,8 +161,8 @@ unsafe impl IntegerULE for RawBytesULE<4> {
         u32::try_from(u).ok().map(u32::to_unaligned)
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
-        Self::from_byte_slice_unchecked_mut(bytes)
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+        Self::from_bytes_unchecked_mut(bytes)
     }
 }
 
@@ -319,7 +319,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // MSRV Rust 1.79: Use split_at_unchecked
         let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
         // Safety: F::Len allows all byte sequences
-        let len_ule = F::Len::from_byte_slice_unchecked(len_bytes);
+        let len_ule = F::Len::from_bytes_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).iule_to_usize();
         let len_u32 = len as u32;
@@ -392,7 +392,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     pub(crate) unsafe fn get_unchecked(self, idx: usize) -> &'a T {
         let range = self.get_things_range(idx);
         let things_slice = self.things.get_unchecked(range);
-        T::from_byte_slice_unchecked(things_slice)
+        T::from_bytes_unchecked(things_slice)
     }
 
     /// Get the range in `things` for the element at `idx`. Does not bounds check.
@@ -499,7 +499,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                     .chain(end),
             )
             .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
-            .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
+            .map(|bytes| unsafe { T::from_bytes_unchecked(bytes) })
     }
 
     pub fn to_vec(self) -> Vec<Box<T>> {
@@ -508,7 +508,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     #[inline]
     fn indices_slice(&self) -> &'a [F::Index] {
-        unsafe { F::Index::from_byte_slice_unchecked(self.indices) }
+        unsafe { F::Index::from_bytes_unchecked(self.indices) }
     }
 
     // Dump a debuggable representation of this type

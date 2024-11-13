@@ -88,8 +88,8 @@ pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x
     let boxed = mem::ManuallyDrop::new(vec.into_boxed_slice());
     unsafe {
         // Safety: `ptr` is a box, and `T` is a VarULE which guarantees it has the same memory layout as `[u8]`
-        // and can be recouped via from_byte_slice_unchecked()
-        let ptr: *mut T = T::from_byte_slice_unchecked(&boxed) as *const T as *mut T;
+        // and can be recouped via from_bytes_unchecked()
+        let ptr: *mut T = T::from_bytes_unchecked(&boxed) as *const T as *mut T;
 
         // Safety: we can construct an owned version since we have mem::forgotten the older owner
         Box::from_raw(ptr)

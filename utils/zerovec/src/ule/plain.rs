@@ -23,7 +23,7 @@ impl<const N: usize> RawBytesULE<N> {
     }
 
     #[inline]
-    pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+    pub fn from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         let data = bytes.as_mut_ptr();
         let len = bytes.len() / N;
         // Safe because Self is transparent over [u8; N]

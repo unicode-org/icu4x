@@ -150,7 +150,7 @@ impl<U: VarULE + ?Sized> OptionVarULE<U> {
         if self.1 {
             unsafe {
                 // Safety: byte field is a valid T if boolean field is true
-                Some(U::from_byte_slice_unchecked(&self.2))
+                Some(U::from_bytes_unchecked(&self.2))
             }
         } else {
             None
@@ -170,7 +170,7 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 //  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(C, packed) on ULE types)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
 unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
@@ -196,7 +196,7 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     }
 
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         let entire_struct_as_slice: *const [u8] =
             ::core::ptr::slice_from_raw_parts(bytes.as_ptr(), bytes.len() - 1);
         &*(entire_struct_as_slice as *const Self)

@@ -93,7 +93,7 @@ pub fn derive_impl(
     //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
     //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-    //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+    //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
     //  6. The other VarULE methods use the default impl
     //  7. [This impl does not enforce the non-safety equality constraint, it is up to the user to do so, ideally via a custom derive]
     quote! {
@@ -114,11 +114,11 @@ pub fn derive_impl(
                 Ok(())
             }
             #[inline]
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
                 // just the unsized part
                 #[allow(clippy::indexing_slicing)] // TODO explain
                 let unsized_bytes = &bytes[#ule_size..];
-                let unsized_ref = <#unsized_field as zerovec::ule::VarULE>::from_byte_slice_unchecked(unsized_bytes);
+                let unsized_ref = <#unsized_field as zerovec::ule::VarULE>::from_bytes_unchecked(unsized_bytes);
                 // We should use the pointer metadata APIs here when they are stable: https://github.com/rust-lang/rust/issues/81513
                 // For now we rely on all DST metadata being a usize to extract it via a fake slice pointer
                 let (_ptr, metadata): (usize, usize) = ::core::mem::transmute(unsized_ref);

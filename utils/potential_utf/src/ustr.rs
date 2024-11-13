@@ -145,7 +145,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 //  2. PotentialUtf8 is aligned to 1 byte (transparent over a ULE)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid (impossible)
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety (impossible)
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data (returns the argument directly)
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data (returns the argument directly)
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (transparent over a ULE)
 /// This impl requires enabling the optional `zerovec` Cargo feature
@@ -156,7 +156,7 @@ unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
         Ok(())
     }
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         PotentialUtf8::from_bytes(bytes)
     }
 }

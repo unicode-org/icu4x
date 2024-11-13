@@ -65,7 +65,7 @@ macro_rules! tuple_varule {
         // 2. No padding: see previous point
         // 3. `validate_byte_slice` validates that this type is a valid MultiFieldsULE, and that each field is the correct type from the tuple.
         // 4. `validate_byte_slice` checks length by deferring to the inner ULEs
-        // 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
+        // 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
         // 6. All other methods are left at their default impl.
         // 7. The inner ULEs have byte equality, so this composition has byte equality.
         unsafe impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> VarULE for $name<$($T,)+ Format>
@@ -83,10 +83,10 @@ macro_rules! tuple_varule {
                 Ok(())
             }
 
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
                  // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
                 // as in the type def
-                let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_byte_slice_unchecked(bytes);
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_bytes_unchecked(bytes);
 
                 // This type is repr(transparent) over MultiFieldsULE<$len>, so its slices can be transmuted
                 // Field invariant upheld here: validate_byte_slice above validates every field for being the right type

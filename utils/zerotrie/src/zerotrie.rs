@@ -609,8 +609,8 @@ macro_rules! impl_zerotrie_subtype {
                 Store::validate_byte_slice(bytes)
             }
             #[inline]
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+                core::mem::transmute(Store::from_bytes_unchecked(bytes))
             }
         }
         #[cfg(feature = "zerofrom")]
