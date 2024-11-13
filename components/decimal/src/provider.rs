@@ -85,7 +85,7 @@ pub struct GroupingSizesV1 {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[zerovec::make_varule(DecimalSymbolsV2Strs)]
+#[zerovec::make_varule(DecimalSymbolsStrs)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
@@ -131,7 +131,7 @@ pub struct DecimalSymbolsV2<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV2: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
-    pub strings: VarZeroCow<'data, DecimalSymbolsV2Strs>,
+    pub strings: VarZeroCow<'data, DecimalSymbolsStrs>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
