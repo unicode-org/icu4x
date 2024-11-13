@@ -114,29 +114,6 @@ pub struct DecimalSymbolsV1Strings<'data> {
     pub grouping_separator: Cow<'data, str>,
 }
 
-// DO NOT SUBMIT THIS IS A TEMPORARY HACK
-// THIS IS SOUND BUT NOT A GREAT USE OF UNSAFE (we should use reusable APIs here)
-#[cfg(feature = "datagen")]
-impl databake::Bake for &DecimalSymbolsV1StringsULE {
-    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-        use zerovec::ule::VarULE;
-        let buf = self.as_byte_slice();
-        let baked_bytes = buf.bake(ctx);
-        databake::quote!(
-            unsafe { core::mem::transmute::<&[u8], &DecimalSymbolsV1StringsULE>(#baked_bytes) }
-        )
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl databake::BakeSize for &DecimalSymbolsV1StringsULE {
-    fn borrows_size(&self) -> usize {
-        use zerovec::ule::VarULE;
-
-        self.as_byte_slice().borrows_size()
-    }
-}
-
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 ///
 /// <div class="stab unstable">
