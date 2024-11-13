@@ -143,10 +143,6 @@ const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 /// can combine backwards.
 const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
-/// Mask for marker that the first character of the decomposition
-/// can combine backwards.
-const BACKWARD_COMBINING_MASK: u32 = !BACKWARD_COMBINING_MARKER;
-
 /// Mask for the bits have to be zero for this to be a BMP
 /// singleton decomposition, or value baked into the surrogate
 /// range.
@@ -322,8 +318,10 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
 }
 
 #[inline(always)]
-pub fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
-    if (trie_val & BACKWARD_COMBINING_MASK) != 0 {
+fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
+    // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+    // and this function needs to ignore that.
+    if (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) != 0 {
         return false;
     }
     // Hangul syllables get 0 as their trie value
@@ -331,7 +329,7 @@ pub fn starter_and_decomposes_to_self_impl(trie_val: u32, c: u32) -> bool {
 }
 
 #[inline(always)]
-pub fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
+fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
     (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
 }
 
@@ -359,6 +357,19 @@ impl CharacterAndTrieValue {
     pub fn starter_and_decomposes_to_self(&self) -> bool {
         starter_and_decomposes_to_self_impl(self.trie_val, u32::from(self.character))
     }
+    #[inline(always)]
+    pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
+        // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
+        // to be compared with zero. U+FFFD has that flag set despite really
+        // being being round-tripping in order to make UTF-8 errors
+        // ineligible for passthrough.
+        if (self.trie_val & !BACKWARD_COMBINING_MARKER) != 0 {
+            return false;
+        }
+        // Hangul syllables get 0 as their trie value
+        u32::from(self.character).wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+    }
+
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
         (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
@@ -694,7 +705,9 @@ where
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 let decomposition = c_and_trie_val.trie_val;
-                if (decomposition & BACKWARD_COMBINING_MASK) == 0 {
+                // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+                // and that flag needs to be ignored here.
+                if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                     // The character is its own decomposition
                     (c, 0)
                 } else {
@@ -1770,10 +1783,18 @@ impl DecomposingNormalizerBorrowed<'_> {
                 // is an upcoming byte.
                 let upcoming = decomposition.delegate.next().unwrap();
                 let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
-                    if upcoming != REPLACEMENT_CHARACTER {
-                        continue 'fast;
-                    }
+                if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
+                    // Note: The trie value of the REPLACEMENT CHARACTER is
+                    // intentionally formatted to fail the
+                    // `starter_and_decomposes_to_self` test even though it
+                    // really is a starter that decomposes to self. This
+                    // Allows moving the branch on REPLACEMENT CHARACTER
+                    // below this `continue`.
+                    continue 'fast;
+                }
+
+                // TODO: Annotate as unlikely.
+                if upcoming == REPLACEMENT_CHARACTER {
                     // We might have an error, so fall out of the fast path.
 
                     // Since the U+FFFD might signify an error, we can't
@@ -1791,6 +1812,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                     debug_assert!(decomposition.pending.is_none());
                     break 'fast;
                 }
+
                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                     - decomposition.delegate.as_slice().len()
                     - upcoming.len_utf8()];
@@ -2320,6 +2342,20 @@ impl ComposingNormalizerBorrowed<'_> {
                         // Fast-track succeeded!
                         continue 'fast;
                     }
+                    // TODO: Be statically aware of fast/small trie.
+                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                        // Note: The trie value of the REPLACEMENT CHARACTER is
+                        // intentionally formatted to fail the
+                        // `potential_passthrough_and_cannot_combine_backwards`
+                        // test even though it really is a starter that decomposes
+                        // to self and cannot combine backwards. This
+                        // Allows moving the branch on REPLACEMENT CHARACTER
+                        // below this `continue`.
+                        continue 'fast;
+                    }
+                    // We need to fall off the fast path.
+
                     // TODO(#2006): Annotate as unlikely
                     if upcoming == REPLACEMENT_CHARACTER {
                         // Can't tell if this is an error or a literal U+FFFD in
@@ -2336,16 +2372,7 @@ impl ComposingNormalizerBorrowed<'_> {
                         composition.decomposition.pending = None;
                         break 'fast;
                     }
-                    // TODO: Be statically aware of fast/small trie.
-                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
-                        // Can't combine backwards, hence a plain (non-backwards-combining)
-                        // starter albeit past `composition_passthrough_bound`
 
-                        // Fast-track succeeded!
-                        continue 'fast;
-                    }
-                    // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
                     // slicing and unwrap OK, because we've just evidently read enough previously.
                     // `unwrap` OK, because we've previously manage to read the previous character
@@ -2357,7 +2384,6 @@ impl ComposingNormalizerBorrowed<'_> {
                         // the most-recent trie value. Need to measure what's more expensive:
                         // Remembering the trie value on each iteration or re-reading the
                         // last one after the fast-track run.
-
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
                     }
                     let consumed_so_far_slice = consumed_so_far.as_slice();

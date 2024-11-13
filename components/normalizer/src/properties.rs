@@ -24,7 +24,7 @@ use crate::provider::NonRecursiveDecompositionSupplementV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
 use crate::CanonicalCombiningClass;
-use crate::BACKWARD_COMBINING_MASK;
+use crate::BACKWARD_COMBINING_MARKER;
 use crate::FDFA_MARKER;
 use crate::HANGUL_L_BASE;
 use crate::HANGUL_N_COUNT;
@@ -35,6 +35,7 @@ use crate::HANGUL_T_COUNT;
 use crate::HANGUL_V_BASE;
 use crate::HIGH_ZEROS_MASK;
 use crate::LOW_ZEROS_MASK;
+use crate::NON_ROUND_TRIP_MARKER;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -287,7 +288,9 @@ impl CanonicalDecompositionBorrowed<'_> {
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
         let decomposition = self.decompositions.trie.get(c);
-        if (decomposition & BACKWARD_COMBINING_MASK) == 0 {
+        // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+        // and that flag needs to be ignored here.
+        if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
             return Decomposed::Default;
         }
         // The loop is only broken out of as goto forward
