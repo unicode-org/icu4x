@@ -360,7 +360,7 @@ impl CollatorBorrowed<'static> {
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
         let provider = &crate::provider::Baked;
         let decompositions =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER;
+            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2_MARKER;
         let tables =
             icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
