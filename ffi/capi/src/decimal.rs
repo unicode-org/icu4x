@@ -73,6 +73,7 @@ pub mod ffi {
             grouping_strategy: Option<FixedDecimalGroupingStrategy>,
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
             use alloc::borrow::Cow;
+            use zerovec::VarZeroCow;
             fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
                 if s.is_empty() {
                     Cow::default()
@@ -102,7 +103,6 @@ pub mod ffi {
                 decimal_separator: str_to_cow(decimal_separator),
                 grouping_separator: str_to_cow(grouping_separator),
             };
-            let strings = zerovec::ule::encode_varule_to_box(&strings);
 
             let grouping_sizes = GroupingSizesV1 {
                 primary: primary_group_size,
@@ -117,7 +117,7 @@ pub mod ffi {
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(
                     &icu_provider_adapters::fixed::FixedProvider::from_owned(DecimalSymbolsV1 {
-                        strings: Cow::Owned(strings),
+                        strings: VarZeroCow::from_encodeable(&strings),
                         grouping_sizes,
                         digits,
                     }),
