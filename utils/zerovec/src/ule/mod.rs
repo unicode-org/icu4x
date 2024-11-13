@@ -363,8 +363,7 @@ pub unsafe trait VarULE: 'static {
         let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
-            let ptr: *mut Self =
-                Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;
+            let ptr: *mut Self = Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;
             assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
             // Transmute the pointer to an owned pointer
             Box::from_raw(ptr)

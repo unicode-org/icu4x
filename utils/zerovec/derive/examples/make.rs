@@ -69,8 +69,8 @@ fn test_zerovec<T: ule::AsULE + Debug + PartialEq>(slice: &[T]) {
 
     let bytes = zerovec.as_bytes();
     let name = std::any::type_name::<T>();
-    let reparsed: ZeroVec<T> = ZeroVec::parse_bytes(bytes)
-        .unwrap_or_else(|_| panic!("Parsing {name} should succeed"));
+    let reparsed: ZeroVec<T> =
+        ZeroVec::parse_bytes(bytes).unwrap_or_else(|_| panic!("Parsing {name} should succeed"));
 
     assert_eq!(reparsed, slice);
 }

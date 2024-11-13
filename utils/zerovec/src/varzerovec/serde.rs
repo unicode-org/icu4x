@@ -225,8 +225,7 @@ mod test {
 
     #[test]
     fn test_vzv_borrowed() {
-        let zerovec_orig: &VarZeroSlice<str> =
-            VarZeroSlice::parse_bytes(BYTES).expect("parse");
+        let zerovec_orig: &VarZeroSlice<str> = VarZeroSlice::parse_bytes(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
         let zerovec_new: &VarZeroSlice<str> =
@@ -241,8 +240,7 @@ mod test {
             .copied()
             .map(Box::<str>::from)
             .collect::<Vec<_>>();
-        let mut zerovec: VarZeroVec<str> =
-            VarZeroVec::parse_bytes(NONASCII_BYTES).expect("parse");
+        let mut zerovec: VarZeroVec<str> = VarZeroVec::parse_bytes(NONASCII_BYTES).expect("parse");
         assert_eq!(zerovec.to_vec(), src_vec);
         let bincode_buf = bincode::serialize(&zerovec).expect("serialize");
         let zerovec_result =

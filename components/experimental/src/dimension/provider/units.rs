@@ -41,9 +41,7 @@ impl<'data> UnitsDisplayNameV1<'data> {
                 elements: alloc::borrow::Cow::Borrowed(
                     // Safety: this function's safety invariant guarantees that the bytes
                     // represent a valid `PluralElementsPackedULE`
-                    icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(
-                        bytes,
-                    ),
+                    icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(bytes),
                 ),
             },
         }

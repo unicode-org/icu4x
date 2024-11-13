@@ -1152,9 +1152,7 @@ mod tests {
     fn test_odd_alignment() {
         assert_eq!(
             Some(0x020100),
-            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE)
-                .unwrap()
-                .get(0)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(0)
         );
         assert_eq!(
             Some(0x04000201),
@@ -1200,9 +1198,7 @@ mod tests {
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE)
-                .unwrap()
-                .get(19)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(19)
         );
         // TODO(#1144): Check for correct slice length in RawBytesULE
         // assert_eq!(
@@ -1213,9 +1209,7 @@ mod tests {
         // );
         assert_eq!(
             None,
-            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE)
-                .unwrap()
-                .get(20)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(20)
         );
         assert_eq!(
             None,
