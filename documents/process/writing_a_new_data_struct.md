@@ -29,7 +29,7 @@ With a mental model of the lifecycle of data in ICU4X, we can discuss where to f
 
 The data struct definitions should live in the crate that uses them. By convention, the top-level module `provider` should contain the struct definitions. For example:
 
-- `icu::decimal::provider::DecimalSymbolsV1`
+- `icu::decimal::provider::DecimalSymbolsV2`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
 - `icu::uniset::provider::PropertyCodePointSetV1`
 
@@ -83,7 +83,7 @@ After you are done, add your data marker to the component's `provider::KEYS` lis
 
 ## Example
 
-The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV1`.
+The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV2`.
 
 ### Data Struct
 
@@ -95,12 +95,12 @@ use icu_provider::prelude::*;
 use icu::decimal::provider::GroupingSizesV1;
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
+#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecimalSymbolsV1<'data> {
+pub struct DecimalSymbolsV2<'data> {
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
@@ -118,7 +118,7 @@ pub struct DecimalSymbolsV1<'data> {
 }
 ```
 
-The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+The above example is an abridged definition for `DecimalSymbolsV2`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
 
 ### CLDR JSON Deserialize
 

@@ -104,7 +104,7 @@ fn test_markers_for_bin() {
             crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
             crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
             crate::calendar::provider::WeekDataV2Marker::INFO,
-            crate::decimal::provider::DecimalSymbolsV1Marker::INFO,
+            crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
         ]
     );
 }

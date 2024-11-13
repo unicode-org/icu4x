@@ -154,10 +154,10 @@ fn test_grouper() {
     for cas in &cases {
         for i in 0..4 {
             let dec = FixedDecimal::from(1).multiplied_pow10((i as i16) + 3);
-            let provider = FixedProvider::<DecimalSymbolsV1Marker>::from_owned(
-                crate::provider::DecimalSymbolsV1 {
+            let provider = FixedProvider::<DecimalSymbolsV2Marker>::from_owned(
+                crate::provider::DecimalSymbolsV2 {
                     grouping_sizes: cas.sizes,
-                    ..DecimalSymbolsV1::new_en_for_testing()
+                    ..DecimalSymbolsV2::new_en_for_testing()
                 },
             );
             let options = options::FixedDecimalFormatterOptions {

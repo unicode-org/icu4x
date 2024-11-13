@@ -17,7 +17,7 @@ use writeable::Writeable;
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
-    pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
+    pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
 }
 
 impl FormattedFixedDecimal<'_> {

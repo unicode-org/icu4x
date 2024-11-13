@@ -57,7 +57,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data.
-        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV2, Struct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
@@ -85,7 +85,7 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalSymbolsV1, DecimalSymbolsV1StrsBuilder, GroupingSizesV1,
+                DecimalSymbolsV2, DecimalSymbolsV2StrsBuilder, GroupingSizesV1,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -97,7 +97,7 @@ pub mod ffi {
                 *new = char::from_u32(old).unwrap_or(char::REPLACEMENT_CHARACTER);
             }
             let digits = new_digits;
-            let strings = DecimalSymbolsV1StrsBuilder {
+            let strings = DecimalSymbolsV2StrsBuilder {
                 plus_sign_prefix: str_to_cow(plus_sign_prefix),
                 plus_sign_suffix: str_to_cow(plus_sign_suffix),
                 minus_sign_prefix: str_to_cow(minus_sign_prefix),
@@ -118,7 +118,7 @@ pub mod ffi {
                 .unwrap_or(options.grouping_strategy);
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(
-                    &icu_provider_adapters::fixed::FixedProvider::from_owned(DecimalSymbolsV1 {
+                    &icu_provider_adapters::fixed::FixedProvider::from_owned(DecimalSymbolsV2 {
                         strings: VarZeroCow::from_encodeable(&strings),
                         grouping_sizes,
                         digits,

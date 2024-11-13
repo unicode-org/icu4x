@@ -45,7 +45,7 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO];
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -75,7 +75,7 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// The strings used in DecimalSymbolsV1
+/// The strings used in DecimalSymbolsV2
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -85,12 +85,12 @@ pub struct GroupingSizesV1 {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[zerovec::make_varule(DecimalSymbolsV1Strs)]
+#[zerovec::make_varule(DecimalSymbolsV2Strs)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
-pub struct DecimalSymbolsV1StrsBuilder<'data> {
+pub struct DecimalSymbolsV2StrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub minus_sign_prefix: Cow<'data, str>,
@@ -121,17 +121,17 @@ pub struct DecimalSymbolsV1StrsBuilder<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
+#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalSymbolsV1<'data> {
+pub struct DecimalSymbolsV2<'data> {
     /// String data for the symbols: +/- affixes and separators
     #[cfg_attr(feature = "serde", serde(borrow))]
-    // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV1: instead of serializing multiple strs,
+    // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV2: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
-    pub strings: VarZeroCow<'data, DecimalSymbolsV1Strs>,
+    pub strings: VarZeroCow<'data, DecimalSymbolsV2Strs>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
@@ -141,7 +141,7 @@ pub struct DecimalSymbolsV1<'data> {
     pub digits: [char; 10],
 }
 
-impl<'data> DecimalSymbolsV1<'data> {
+impl<'data> DecimalSymbolsV2<'data> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (
@@ -166,11 +166,11 @@ impl<'data> DecimalSymbolsV1<'data> {
     }
 }
 
-impl DecimalSymbolsV1<'static> {
+impl DecimalSymbolsV2<'static> {
     #[cfg(test)]
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
-        let strings = DecimalSymbolsV1StrsBuilder {
+        let strings = DecimalSymbolsV2StrsBuilder {
             minus_sign_prefix: Cow::Borrowed("-"),
             minus_sign_suffix: Cow::Borrowed(""),
             plus_sign_prefix: Cow::Borrowed("+"),
