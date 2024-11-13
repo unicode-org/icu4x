@@ -128,7 +128,7 @@ final class SignedFixedDecimal implements ffi.Finalizable {
 
   /// Multiply the [`SignedFixedDecimal`] by a given power of ten.
   ///
-  /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.multiply_pow10) for more information.
+  /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.SignedFixedDecimal.html#method.multiply_pow10) for more information.
   void multiplyPow10(int power) {
     _icu4x_SignedFixedDecimal_multiply_pow10_mv1(_ffi, power);
   }

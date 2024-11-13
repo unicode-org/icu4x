@@ -232,14 +232,14 @@ pub mod ffi {
         }
 
         /// Multiply the [`SignedFixedDecimal`] by a given power of ten.
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::multiply_pow10, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::multiply_pow10, FnInStruct)]
         #[diplomat::rust_link(
-            fixed_decimal::UnsignedFixedDecimal::multiplied_pow10,
+            fixed_decimal::SignedFixedDecimal::multiplied_pow10,
             FnInStruct,
             hidden
         )]
         pub fn multiply_pow10(&mut self, power: i16) {
-            self.0.absolute.multiply_pow10(power)
+            self.0.multiply_pow10(power)
         }
 
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::sign, FnInStruct)]

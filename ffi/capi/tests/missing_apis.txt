@@ -45,6 +45,8 @@ fixed_decimal::UnsignedFixedDecimal::concatenated_end#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::expand#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::expanded#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::from_str#FnInStruct
+fixed_decimal::UnsignedFixedDecimal::multiplied_pow10#FnInStruct
+fixed_decimal::UnsignedFixedDecimal::multiply_pow10#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::pad_end#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::pad_start#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::padded_end#FnInStruct
