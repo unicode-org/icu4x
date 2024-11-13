@@ -141,7 +141,7 @@ mod test {
 
         for (ref_field, ref_bytes) in samples {
             let ule = ref_field.to_unaligned();
-            assert_eq!(ULE::as_bytes(&[ule]), ref_bytes);
+            assert_eq!(ULE::slice_as_bytes(&[ule]), ref_bytes);
             let field = Field::from_unaligned(ule);
             assert_eq!(field, ref_field);
         }
@@ -170,7 +170,7 @@ mod test {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_field.iter() {
                 let ule = item.to_unaligned();
-                bytes.extend(ULE::as_bytes(&[ule]));
+                bytes.extend(ULE::slice_as_bytes(&[ule]));
             }
 
             let mut bytes2: Vec<u8> = vec![];

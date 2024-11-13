@@ -157,7 +157,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         assert!(len <= F::Len::MAX_VALUE as usize);
         let len_bytes = len.to_le_bytes();
         let len_ule = F::Len::iule_from_usize(len).expect(F::Len::TOO_LARGE_ERROR);
-        self.entire_slice[0..F::Len::SIZE].copy_from_slice(ULE::as_bytes(&[len_ule]));
+        self.entire_slice[0..F::Len::SIZE].copy_from_slice(ULE::slice_as_bytes(&[len_ule]));
         // Double-check that the length fits in the length field
         assert_eq!(len_bytes[F::Len::SIZE..].iter().sum::<u8>(), 0);
     }

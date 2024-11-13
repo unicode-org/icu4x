@@ -113,7 +113,7 @@ where
     /// ```
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
-        T::ULE::as_bytes(self.as_ule_slice())
+        T::ULE::slice_as_bytes(self.as_ule_slice())
     }
 
     /// Dereferences this slice as `&[T::ULE]`.

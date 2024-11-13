@@ -236,7 +236,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
                         let this = #zerofrom_fq_path::zero_from(self);
                         <#name as #serde_path::Serialize>::serialize(&this, serializer)
                     } else {
-                        serializer.serialize_bytes(zerovec::ule::VarULE::as_bytes(self))
+                        serializer.serialize_bytes(zerovec::ule::VarULE::slice_as_bytes(self))
                     }
                 }
             }

@@ -26,7 +26,7 @@ use core::mem;
 /// it is not possible to implement [`Self::encode_var_ule_as_slices()`] but the other methods still work.
 ///
 /// A typical implementation will take each field in the order found in the [`VarULE`] type,
-/// convert it to ULE, call [`ULE::as_bytes()`] on them, and pass the slices to `cb` in order.
+/// convert it to ULE, call [`ULE::slice_as_bytes()`] on them, and pass the slices to `cb` in order.
 /// A trailing [`ZeroVec`](crate::ZeroVec) or [`VarZeroVec`](crate::VarZeroVec) can have their underlying
 /// byte representation passed through.
 ///
@@ -178,7 +178,7 @@ where
         debug_assert_eq!(self.len() * S, dst.len());
         for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
             let ule = item.to_unaligned();
-            chunk.copy_from_slice(ULE::as_bytes(core::slice::from_ref(&ule)));
+            chunk.copy_from_slice(ULE::slice_as_bytes(core::slice::from_ref(&ule)));
         }
     }
 }

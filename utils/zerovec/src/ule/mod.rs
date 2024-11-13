@@ -67,7 +67,7 @@ use core::{any, fmt, mem, slice};
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, the it *must* be logically
-/// equivalent to byte equality on [`Self::as_bytes()`].
+/// equivalent to byte equality on [`Self::slice_as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
 /// equal byte equality. In such a case, [`Self::validate_bytes()`] should return an error
@@ -149,7 +149,7 @@ where
     /// Keep in mind that `&[Self]` and `&[u8]` may have different lengths.
     #[inline]
     #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
-    fn as_bytes(slice: &[Self]) -> &[u8] {
+    fn slice_as_bytes(slice: &[Self]) -> &[u8] {
         unsafe {
             slice::from_raw_parts(slice as *const [Self] as *const u8, mem::size_of_val(slice))
         }

@@ -418,11 +418,11 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     pub fn into_bytes(self) -> ZeroVec<'a, u8> {
         match self.into_cow() {
             Cow::Borrowed(slice) => {
-                let bytes: &'a [u8] = T::ULE::as_bytes(slice);
+                let bytes: &'a [u8] = T::ULE::slice_as_bytes(slice);
                 ZeroVec::new_borrowed(bytes)
             }
             Cow::Owned(vec) => {
-                let bytes = Vec::from(T::ULE::as_bytes(&vec));
+                let bytes = Vec::from(T::ULE::slice_as_bytes(&vec));
                 ZeroVec::new_owned(bytes)
             }
         }
@@ -542,12 +542,12 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         );
         match self.into_cow() {
             Cow::Borrowed(old_slice) => {
-                let bytes: &'a [u8] = T::ULE::as_bytes(old_slice);
+                let bytes: &'a [u8] = T::ULE::slice_as_bytes(old_slice);
                 let new_slice = P::ULE::parse_bytes(bytes)?;
                 Ok(ZeroVec::new_borrowed(new_slice))
             }
             Cow::Owned(old_vec) => {
-                let bytes: &[u8] = T::ULE::as_bytes(&old_vec);
+                let bytes: &[u8] = T::ULE::slice_as_bytes(&old_vec);
                 P::ULE::validate_bytes(bytes)?;
                 // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
                 let (ptr, len, cap) = {

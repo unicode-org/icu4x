@@ -56,7 +56,7 @@ impl databake::Bake for UnitsDisplayNameV1<'_> {
         use zerovec::ule::VarULE;
         ctx.insert("icu_experimental::dimension::provider::units");
         let bytes = self.patterns.elements.as_bytes().bake(ctx);
-        // Safety: The bytes are returned by `PluralElementsPackedULE::as_bytes`.
+        // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
         databake::quote! { unsafe {
             icu_experimental::dimension::provider::units::UnitsDisplayNameV1::from_bytes_unchecked(#bytes)
         }}
