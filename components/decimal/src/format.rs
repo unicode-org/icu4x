@@ -38,13 +38,13 @@ impl Writeable for FormattedFixedDecimal<'_> {
     {
         let affixes = self.get_affixes();
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.0)?;
+            sink.write_str(affixes.0)?;
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
         for m in range.rev() {
             if m == -1 {
-                sink.write_str(&self.symbols.decimal_separator())?;
+                sink.write_str(self.symbols.decimal_separator())?;
             }
             #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
             sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
@@ -54,11 +54,11 @@ impl Writeable for FormattedFixedDecimal<'_> {
                 self.options.grouping_strategy,
                 &self.symbols.grouping_sizes,
             ) {
-                sink.write_str(&self.symbols.grouping_separator())?;
+                sink.write_str(self.symbols.grouping_separator())?;
             }
         }
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.1)?;
+            sink.write_str(affixes.1)?;
         }
         Ok(())
     }

@@ -168,24 +168,24 @@ impl<'data> DecimalSymbolsV1<'data> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (
-            &self.strings.minus_sign_prefix(),
-            &self.strings.minus_sign_suffix(),
+            self.strings.minus_sign_prefix(),
+            self.strings.minus_sign_suffix(),
         )
     }
     /// Return (prefix, suffix) for the minus sign
     pub fn plus_sign_affixes(&self) -> (&str, &str) {
         (
-            &self.strings.plus_sign_prefix(),
-            &self.strings.plus_sign_suffix(),
+            self.strings.plus_sign_prefix(),
+            self.strings.plus_sign_suffix(),
         )
     }
     /// Return thhe decimal separator
     pub fn decimal_separator(&self) -> &str {
-        &self.strings.decimal_separator()
+        self.strings.decimal_separator()
     }
     /// Return thhe decimal separator
     pub fn grouping_separator(&self) -> &str {
-        &self.strings.grouping_separator()
+        self.strings.grouping_separator()
     }
 }
 
