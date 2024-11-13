@@ -88,6 +88,7 @@
 extern crate alloc;
 
 mod combo;
+mod dynamic;
 mod error;
 mod external_loaders;
 pub mod fields;

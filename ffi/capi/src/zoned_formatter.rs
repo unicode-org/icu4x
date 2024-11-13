@@ -41,7 +41,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -95,7 +95,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,

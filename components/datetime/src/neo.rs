@@ -4,19 +4,18 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::dynamic::CompositeFieldSet;
 use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
 use crate::options::preferences::HourCycle;
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
-    HasConstComponents, IsAnyCalendarKind, IsInCalendar, IsRuntimeComponents, TimeMarkers,
-    TypedDateDataMarkers, ZoneMarkers,
+    IsAnyCalendarKind, IsInCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
 use crate::DateTimeWriteError;
@@ -26,7 +25,6 @@ use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::AnyCalendar;
 use icu_provider::prelude::*;
-use icu_timezone::scaffold::IntoOption;
 use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.
@@ -36,7 +34,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $any_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            skeleton: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
@@ -45,8 +43,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.get_field(),
+                field_set.get_field(),
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -54,7 +51,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            skeleton: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -63,8 +60,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-                skeleton.get_field(),
+                field_set.get_field(),
             )
         }
     };
@@ -73,7 +69,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $any_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            options: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: AnyProvider + ?Sized,
@@ -82,8 +78,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&options, locale),
-                $fset::COMPONENTS,
+                field_set.get_field(),
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
@@ -91,7 +86,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             locale: &DataLocale,
-            options: $fset,
+            field_set: $fset,
         ) -> Result<Self, PatternLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -100,43 +95,42 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 locale,
-                RawNeoOptions::from_field_set_and_locale(&options, locale),
-                $fset::COMPONENTS,
+                field_set.get_field(),
             )
         }
     };
 }
 
-impl RawNeoOptions {
-    pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
-    where
-        FSet: DateTimeMarkers,
-        FSet: GetField<FSet::LengthOption>,
-        FSet: GetField<FSet::AlignmentOption>,
-        FSet: GetField<FSet::YearStyleOption>,
-        FSet: GetField<FSet::TimePrecisionOption>,
-    {
-        // TODO: Return an error if there are more options than field set
-        let hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
-        Self {
-            length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
-                Some(length) => length,
-                None => {
-                    debug_assert!(false, "unreachable");
-                    NeoSkeletonLength::Medium
-                }
-            },
-            alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
-            year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-            time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
-                .into_option(),
-            hour_cycle,
-        }
-    }
-}
+// impl RawNeoOptions {
+//     pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
+//     where
+//         FSet: DateTimeMarkers,
+//         FSet: GetField<FSet::LengthOption>,
+//         FSet: GetField<FSet::AlignmentOption>,
+//         FSet: GetField<FSet::YearStyleOption>,
+//         FSet: GetField<FSet::TimePrecisionOption>,
+//     {
+//         // TODO: Return an error if there are more options than field set
+//         let hour_cycle = locale
+//             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+//             .as_ref()
+//             .and_then(HourCycle::from_locale_value);
+//         Self {
+//             length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
+//                 Some(length) => length,
+//                 None => {
+//                     debug_assert!(false, "unreachable");
+//                     NeoSkeletonLength::Medium
+//                 }
+//             },
+//             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
+//             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
+//             time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
+//                 .into_option(),
+//             hour_cycle,
+//         }
+//     }
+// }
 
 size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 456);
 
@@ -153,16 +147,12 @@ pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMa
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents>
-    FixedCalendarDateTimeFormatter<C, FSet>
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
+    FSet: GetField<CompositeFieldSet>,
 {
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -204,8 +194,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field(),
         )
     }
 
@@ -233,175 +222,7 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
-        )
-    }
-}
-
-impl<C: CldrCalendar, FSet: DateTimeMarkers + IsRuntimeComponents>
-    FixedCalendarDateTimeFormatter<C, FSet>
-where
-    FSet::D: TypedDateDataMarkers<C>,
-    FSet::T: TimeMarkers,
-    FSet::Z: ZoneMarkers,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
-{
-    /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
-    /// datetime components specified at runtime.
-    ///
-    /// If you know the datetime components at build time, use
-    /// [`FixedCalendarDateTimeFormatter::try_new`] for smaller data size and memory use.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Date components:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt =
-    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///         &locale!("es-MX").into(),
-    ///         NeoDateComponents::DayWeekday.medium(),
-    ///     )
-    ///     .unwrap();
-    /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "mié 10");
-    /// ```
-    ///
-    /// Calendar period components:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
-    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt =
-    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///         &locale!("es-MX").into(),
-    ///         NeoCalendarPeriodComponents::YearMonth.medium(),
-    ///     )
-    ///     .unwrap();
-    /// let dt = Date::try_new_gregorian(2024, 1, 10).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
-    /// ```
-    ///
-    /// Time components:
-    ///
-    /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Time;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::neo_skeleton::TimePrecision;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt =
-    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///         &locale!("es-MX").into(),
-    ///         {
-    ///             let mut skeleton = NeoTimeComponents::Time.medium();
-    ///             skeleton.time_precision = Some(TimePrecision::HourExact);
-    ///             skeleton
-    ///         }
-    ///     )
-    ///     .unwrap();
-    /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "04 p.m.");
-    /// ```
-    ///
-    /// Date and time components:
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt =
-    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-    ///         &locale!("es-MX").into(),
-    ///         NeoDateTimeComponents::DateTime(
-    ///             NeoDateComponents::Weekday,
-    ///             NeoTimeComponents::Time,
-    ///         )
-    ///         .long()
-    ///         .hm(),
-    ///     )
-    ///     .unwrap();
-    /// let dt = DateTime::try_new_gregorian(2024, 1, 10, 16, 20, 0).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_skeleton(
-        locale: &DataLocale,
-        skeleton: FSet,
-    ) -> Result<Self, PatternLoadError>
-    where
-        crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
-    {
-        Self::try_new_internal(
-            &crate::provider::Baked,
-            &ExternalLoaderCompiledData,
-            locale,
-            RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.get_field(),
-        )
-    }
-
-    gen_any_buffer_constructors_with_external_loader!(
-        @runtime_fset,
-        FSet,
-        try_new_with_skeleton,
-        try_new_with_skeleton_with_any_provider,
-        try_new_with_skeleton_with_buffer_provider,
-        try_new_internal
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_skeleton_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        skeleton: FSet,
-    ) -> Result<Self, PatternLoadError>
-    where
-        P: ?Sized
-            + AllFixedCalendarFormattingDataMarkers<C, FSet>
-            + AllFixedCalendarExternalDataMarkers,
-    {
-        Self::try_new_internal(
-            provider,
-            &ExternalLoaderUnstable(provider),
-            locale,
-            RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.get_field(),
+            field_set.get_field(),
         )
     }
 }
@@ -416,19 +237,19 @@ where
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        options: RawNeoOptions,
-        components: NeoComponents,
+        field_set: CompositeFieldSet,
     ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut options = options;
-        options.hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
+        let prefs = RawPreferences {
+            hour_cycle: locale
+                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+                .as_ref()
+                .and_then(HourCycle::from_locale_value),
+        };
         // END TODO
 
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
@@ -436,8 +257,8 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
             locale,
-            components,
-            options,
+            field_set,
+            prefs,
         )
         .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
@@ -547,15 +368,12 @@ pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     calendar: AnyCalendar,
 }
 
-impl<FSet: DateTimeMarkers + HasConstComponents> DateTimeFormatter<FSet>
+impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
 where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
+    FSet: GetField<CompositeFieldSet>,
 {
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
@@ -608,8 +426,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
+            field_set.get_field(),
         )
     }
 
@@ -635,168 +452,7 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             locale,
-            RawNeoOptions::from_field_set_and_locale(&field_set, locale),
-            FSet::COMPONENTS,
-        )
-    }
-}
-
-impl<FSet: DateTimeMarkers + IsRuntimeComponents> DateTimeFormatter<FSet>
-where
-    FSet::D: DateDataMarkers,
-    FSet::T: TimeMarkers,
-    FSet::Z: ZoneMarkers,
-    FSet: GetField<FSet::LengthOption>,
-    FSet: GetField<FSet::AlignmentOption>,
-    FSet: GetField<FSet::YearStyleOption>,
-    FSet: GetField<FSet::TimePrecisionOption>,
-{
-    /// Creates a new [`DateTimeFormatter`] from compiled data with
-    /// datetime components specified at runtime.
-    ///
-    /// If you know the datetime components at build time, use
-    /// [`DateTimeFormatter::try_new`] for smaller data size and memory use.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Date components:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    /// use icu::datetime::neo_skeleton::NeoDateSkeleton;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt = DateTimeFormatter::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::DayWeekday.medium(),
-    /// )
-    /// .unwrap();
-    /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "mié 10");
-    /// ```
-    ///
-    /// Calendar period components:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodComponents;
-    /// use icu::datetime::neo_skeleton::NeoCalendarPeriodSkeleton;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt = DateTimeFormatter::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoCalendarPeriodComponents::YearMonth.medium(),
-    /// )
-    /// .unwrap();
-    /// let dt = Date::try_new_iso(2024, 1, 10).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
-    /// ```
-    ///
-    /// Time components:
-    ///
-    /// ```
-    /// use icu::calendar::Time;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::neo_skeleton::TimePrecision;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt = DateTimeFormatter::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     {
-    ///         let mut skeleton = NeoTimeComponents::Time.medium();
-    ///         skeleton.time_precision = Some(TimePrecision::HourExact);
-    ///         skeleton
-    ///     }
-    /// )
-    /// .unwrap();
-    /// let dt = Time::try_new(16, 20, 0, 0).unwrap();
-    ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "04 p.m.");
-    /// ```
-    ///
-    /// Date and time components:
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::datetime::neo_skeleton::NeoDateComponents;
-    /// use icu::datetime::neo_skeleton::NeoDateTimeComponents;
-    /// use icu::datetime::neo_skeleton::NeoDateTimeSkeleton;
-    /// use icu::datetime::neo_skeleton::NeoTimeComponents;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let fmt = DateTimeFormatter::try_new_with_skeleton(
-    ///     &locale!("es-MX").into(),
-    ///     NeoDateTimeComponents::DateTime(
-    ///         NeoDateComponents::Weekday,
-    ///         NeoTimeComponents::Time,
-    ///     )
-    ///     .long()
-    ///     .hm(),
-    /// )
-    /// .unwrap();
-    /// let dt = DateTime::try_new_iso(2024, 1, 10, 16, 20, 0).unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     fmt.convert_and_format(&dt),
-    ///     "miércoles 4:20 p.m."
-    /// );
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_skeleton(
-        locale: &DataLocale,
-        skeleton: FSet,
-    ) -> Result<Self, PatternLoadError>
-    where
-        crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
-    {
-        Self::try_new_internal(
-            &crate::provider::Baked,
-            &ExternalLoaderCompiledData,
-            locale,
-            RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.get_field(),
-        )
-    }
-
-    gen_any_buffer_constructors_with_external_loader!(
-        @runtime_fset,
-        FSet,
-        try_new_with_skeleton,
-        try_new_with_skeleton_with_any_provider,
-        try_new_with_skeleton_with_buffer_provider,
-        try_new_internal
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_skeleton_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        skeleton: FSet,
-    ) -> Result<Self, PatternLoadError>
-    where
-        P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet> + AllAnyCalendarExternalDataMarkers,
-    {
-        Self::try_new_internal(
-            provider,
-            &ExternalLoaderUnstable(provider),
-            locale,
-            RawNeoOptions::from_field_set_and_locale(&skeleton, locale),
-            skeleton.get_field(),
+            field_set.get_field(),
         )
     }
 }
@@ -811,19 +467,19 @@ where
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        options: RawNeoOptions,
-        components: NeoComponents,
+        field_set: CompositeFieldSet,
     ) -> Result<Self, PatternLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // TODO: Remove this when NeoOptions is gone
-        let mut options = options;
-        options.hour_cycle = locale
-            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
+        let prefs = RawPreferences {
+            hour_cycle: locale
+                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+                .as_ref()
+                .and_then(HourCycle::from_locale_value),
+        };
         // END TODO
 
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(PatternLoadError::Data)?;
@@ -833,8 +489,8 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
             locale,
-            components,
-            options,
+            field_set,
+            prefs,
         )
         .map_err(PatternLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();

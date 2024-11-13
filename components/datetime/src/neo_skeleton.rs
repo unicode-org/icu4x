@@ -8,10 +8,6 @@
 use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
-use crate::{
-    fields::{FieldLength, TimeZone},
-    provider::pattern::CoarseHourCycle,
-};
 use icu_provider::DataMarkerAttributes;
 use icu_timezone::scaffold::IntoOption;
 
@@ -712,15 +708,6 @@ impl NeoTimeComponents {
         }
     }
 
-    pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
-        use CoarseHourCycle::*;
-        match (self, hour_cycle) {
-            (Self::Time, H11H12) => Self::Time12,
-            (Self::Time, H23H24) => Self::Time24,
-            _ => self,
-        }
-    }
-
     /// Whether this field set contains the time of day.
     pub fn has_time(self) -> bool {
         true
@@ -809,11 +796,6 @@ impl NeoDateTimeComponents {
 
 /// A specification of components for parts of a datetime and/or time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "FieldSetSerde", into = "FieldSetSerde")
-)]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for a date.
@@ -1049,36 +1031,6 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneStyle {
-    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> (TimeZone, FieldLength) {
-        match (self, length) {
-            (
-                NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific,
-                NeoSkeletonLength::Short | NeoSkeletonLength::Medium,
-            ) => (TimeZone::SpecificNonLocation, FieldLength::One),
-            (NeoTimeZoneStyle::Default | NeoTimeZoneStyle::Specific, NeoSkeletonLength::Long) => {
-                (TimeZone::SpecificNonLocation, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::LocalizedOffset, FieldLength::One)
-            }
-            (NeoTimeZoneStyle::Offset, NeoSkeletonLength::Long) => {
-                (TimeZone::LocalizedOffset, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::GenericNonLocation, FieldLength::One)
-            }
-            (NeoTimeZoneStyle::Generic, NeoSkeletonLength::Long) => {
-                (TimeZone::GenericNonLocation, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Short | NeoSkeletonLength::Medium) => {
-                (TimeZone::Location, FieldLength::Four)
-            }
-            (NeoTimeZoneStyle::Location, NeoSkeletonLength::Long) => {
-                (TimeZone::Location, FieldLength::Four)
-            }
-        }
-    }
-
     /// Creates a skeleton for this time zone style with a long length.
     pub fn long(self) -> NeoTimeZoneSkeleton {
         NeoTimeZoneSkeleton::for_length_and_components(NeoSkeletonLength::Long, self)
@@ -1260,11 +1212,6 @@ impl NeoDateTimeSkeleton {
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
-)]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
