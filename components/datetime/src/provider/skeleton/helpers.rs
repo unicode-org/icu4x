@@ -11,7 +11,13 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
     options::{components, DateTimeFormatterOptions},
-    provider::{calendar::{patterns::{FullLongMediumShort, GenericLengthPatternsV1}, DateSkeletonPatternsV1}, pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity}},
+    provider::{
+        calendar::{
+            patterns::{FullLongMediumShort, GenericLengthPatternsV1},
+            DateSkeletonPatternsV1,
+        },
+        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
+    },
 };
 
 #[cfg(feature = "datagen")]
