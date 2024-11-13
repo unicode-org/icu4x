@@ -8,13 +8,14 @@ use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::fieldset::dynamic::*;
 use icu::datetime::neo_skeleton::NeoSkeletonLength;
-use icu::datetime::options::{components, preferences};
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::runtime;
+use icu::datetime::provider::skeleton::components;
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu::plurals::PluralElements;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
 use super::supported_cals;
@@ -302,14 +303,10 @@ fn gen_time_components(
     filtered_components.hour = Some(components::Numeric::Numeric);
     // Select the correct hour cycle
     if check_for_field(attributes, "h") {
-        filtered_components.preferences = Some(preferences::Bag::from_hour_cycle(
-            preferences::HourCycle::H12,
-        ));
+        filtered_components.hour_cycle = Some(HourCycle::H12);
     }
     if check_for_field(attributes, "h0") {
-        filtered_components.preferences = Some(preferences::Bag::from_hour_cycle(
-            preferences::HourCycle::H23,
-        ));
+        filtered_components.hour_cycle = Some(HourCycle::H23);
     }
     filtered_components
 }

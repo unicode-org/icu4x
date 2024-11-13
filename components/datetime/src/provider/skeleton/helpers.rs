@@ -6,11 +6,11 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
+use super::components;
 use super::plural::PatternPlurals;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    options::components,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatternsV1},

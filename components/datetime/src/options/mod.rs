@@ -3,6 +3,3 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Options types for date/time formatting.
-
-#[cfg(feature = "datagen")]
-pub mod components;

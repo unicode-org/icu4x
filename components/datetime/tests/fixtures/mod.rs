@@ -4,7 +4,7 @@
 
 #![cfg(feature = "serde")]
 
-use icu_datetime::{neo_skeleton, options::components};
+use icu_datetime::{neo_skeleton, provider::skeleton::components};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

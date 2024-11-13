@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Options for constructing DateTimeFormatter objects by each component style.
-//!
-//! ✨ *Enabled with the `experimental` Cargo feature.*
+//! Types for specifying fields in a classical datetime skeleton.
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -12,45 +10,6 @@
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
-//!
-//! # Implementation status
-//!
-//! This module is available by enabling the `"experimental"` Cargo feature.
-//! It may change in breaking ways, including across minor releases.
-//!
-//! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
-//!
-//! | Algorithm step | Status |
-//! |----------------|--------|
-//! | Match skeleton fields according to a ranking             | Implemented |
-//! | Adjust the matched pattern to have certain widths        | Implemented |
-//! | Match date and times separately, and them combine them   | Implemented |
-//! | Use appendItems to fill in a pattern with missing fields | Not yet, and may not be fully implemented. See [issue #586](https://github.com/unicode-org/icu4x/issues/586) |
-//!
-//! # Description
-//!
-//! A [`components::Bag`](struct.Bag.html) is a model of encoding information on how to format date
-//! and time by specifying a list of components the user wants to be visible in the formatted string
-//! and how each field should be displayed.
-//!
-//! This model closely corresponds to `ECMA402` API and allows for high level of customization
-//! compared to `Length` model.
-//!
-//! Additionally, the bag contains an optional set of `Preferences` which represent user
-//! preferred adjustments that can be applied onto the pattern right before formatting.
-//!
-//! ## Pattern Selection
-//!
-//! The [`components::Bag`](struct.Bag.html) is a way for the developer to describe which components
-//! should be included in in a datetime, and how they should be displayed. There is not a strict
-//! guarantee in how the final date will be displayed to the end user. The user's preferences and
-//! locale information can override the developer preferences.
-//!
-//! The fields in the [`components::Bag`](struct.Bag.html) are matched against available patterns in
-//! the `CLDR` locale data. A best fit is found, and presented to the user. This means that in
-//! certain situations, and component combinations, fields will not have a match, or the match will
-//! have a different type of presentation for a given locale.
-//!
 //!
 //! # Examples
 //!
