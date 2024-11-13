@@ -8,19 +8,18 @@
 use crate::neo_serde::*;
 use icu_timezone::scaffold::IntoOption;
 
-/// A specification for the length of a date or component of a date.
+/// The length of a formatted date/time string.
 ///
-/// Contrary to [`crate::options::length::Time`] and
-/// [`crate::options::length::Date`], this has only three levels, with no
-/// `Full`; this is because `Full` corresponds to additional components,
-/// rather than to making the components wider than in `Long`.
+/// Length settings are always a hint, not a guarantee. For example, certain locales and
+/// calendar systems do not define numeric names, so spelled-out names could occur even if a
+/// short length was requested, and likewise with numeric names with a medium or long length.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
-    /// A long date, typically spelled-out, as in “January 1, 2000”.
+    /// A long date; typically spelled-out, as in “January 1, 2000”.
     Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
     Medium = 3,

@@ -10,7 +10,7 @@ use super::plural::PatternPlurals;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    options::{components, DateTimeFormatterOptions},
+    options::components,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatternsV1},
@@ -529,7 +529,7 @@ pub fn get_best_available_format_pattern<'data>(
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }
 
-impl DateTimeFormatterOptions {
+impl components::Bag {
     #[doc(hidden)] // TODO(#4467): Internal
     #[cfg(feature = "datagen")]
     pub fn select_pattern<'data>(
@@ -546,35 +546,29 @@ impl DateTimeFormatterOptions {
             CoarseHourCycle::H11H12 => HourCycle::H12,
             CoarseHourCycle::H23H24 => HourCycle::H23,
         };
-        match self {
-            Self::Components(components_bag) => {
-                let fields = components_bag.to_vec_fields(default_hour_cycle);
-                match create_best_pattern_for_fields(
-                    skeletons,
-                    &date_patterns.length_combinations,
-                    &fields,
-                    &components_bag,
-                    false,
-                ) {
-                    BestSkeleton::AllFieldsMatch(p) => p,
-                    _ => {
-                        // Build a last-resort pattern that contains all of the requested fields.
-                        // This is NOT in the CLDR standard! Better would be:
-                        // - Use Append Items?
-                        // - Fall back to the format from the Gregorian or Generic calendar?
-                        // - Bubble up an error of some sort?
-                        // See issue: <https://github.com/unicode-org/icu4x/issues/586>
-                        let pattern_items = fields
-                            .into_iter()
-                            .flat_map(|field| {
-                                [PatternItem::Literal(' '), PatternItem::Field(field)]
-                            })
-                            .skip(1)
-                            .collect::<Vec<_>>();
-                        let pattern = Pattern::from(pattern_items);
-                        PatternPlurals::SinglePattern(pattern)
-                    }
-                }
+        let fields = self.to_vec_fields(default_hour_cycle);
+        match create_best_pattern_for_fields(
+            skeletons,
+            &date_patterns.length_combinations,
+            &fields,
+            &self,
+            false,
+        ) {
+            BestSkeleton::AllFieldsMatch(p) => p,
+            _ => {
+                // Build a last-resort pattern that contains all of the requested fields.
+                // This is NOT in the CLDR standard! Better would be:
+                // - Use Append Items?
+                // - Fall back to the format from the Gregorian or Generic calendar?
+                // - Bubble up an error of some sort?
+                // See issue: <https://github.com/unicode-org/icu4x/issues/586>
+                let pattern_items = fields
+                    .into_iter()
+                    .flat_map(|field| [PatternItem::Literal(' '), PatternItem::Field(field)])
+                    .skip(1)
+                    .collect::<Vec<_>>();
+                let pattern = Pattern::from(pattern_items);
+                PatternPlurals::SinglePattern(pattern)
             }
         }
     }

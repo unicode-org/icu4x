@@ -148,7 +148,7 @@ pub mod marker_attrs {
 
     /// Pattern lengths supported in data marker attributes.
     ///
-    /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
+    /// For a stable version of this enum, use [`NeoSkeletonLength`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -156,8 +156,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`length::Date`]: crate::options::length::Date
-    /// [`length::Time`]: crate::options::length::Time
+    /// [`NeoSkeletonLength`]: crate::neo_skeleton::NeoSkeletonLength
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
         Long,
