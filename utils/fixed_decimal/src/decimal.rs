@@ -27,7 +27,7 @@ compile_error!("The fixed_decimal crate only works if usizes are at least the si
 /// (power of 10).
 ///
 /// Supports a mantissa of non-zero digits and a number of leading and trailing
-/// zeros, as well as an optional sign; used for formatting and plural selection.
+/// zeros; used for formatting and plural selection.
 ///
 /// # Data Types
 ///

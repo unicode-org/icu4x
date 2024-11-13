@@ -15,7 +15,7 @@ use crate::{
     SignedRoundingMode, UnsignedRoundingMode,
 };
 
-/// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`].
+/// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`] to represent a signed decimal number.
 ///
 /// Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, as well as an optional sign; used for formatting and plural selection.
@@ -32,38 +32,6 @@ use crate::{
 /// - Create it from an integer and then call [`UnsignedFixedDecimal::multiply_pow10`] (you can also call `multiply_pow10` directly on the [`SignedFixedDecimal`]).
 /// - Create it from a string.
 /// - When the `ryu` feature is enabled, create it from a floating point value using [`SignedFixedDecimal::try_from_f64`].
-///
-/// # Magnitude and Position
-///
-/// Each digit in a `SignedFixedDecimal` is indexed by a *magnitude*, or the digit's power of 10.
-/// Illustration for the number "12.34":
-///
-/// | Magnitude | Digit | Description      |
-/// |-----------|-------|------------------|
-/// | 1         | 1     | Tens place       |
-/// | 0         | 2     | Ones place       |
-/// | -1        | 3     | Tenths place     |
-/// | -2        | 4     | Hundredths place |
-///
-/// Some functions deal with a *position* for the purpose of padding, truncating, or rounding a
-/// number. In these cases, the position sits between the corresponding magnitude of that position
-/// and the next lower significant digit.
-/// Illustration:
-///
-/// ```text
-/// Position:   2   0  -2
-/// Number:     |1|2.3|4|
-/// Position:     1  -1
-/// ```
-///
-/// Expected output of various operations, all with input "12.34":
-///
-/// | Operation                | Position  | Expected Result |
-/// |--------------------------|-----------|-----------------|
-/// | Truncate to tens         |         1 |   10            |
-/// | Truncate to tenths       |        -1 |   12.3          |
-/// | Pad to ten thousands     |         4 | 0012.34         |
-/// | Pad to ten thousandths   |        -4 |   12.3400       |
 ///
 /// # Examples
 ///
