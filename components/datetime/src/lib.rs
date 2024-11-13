@@ -100,7 +100,6 @@ mod neo_marker;
 pub mod neo_pattern;
 #[cfg(feature = "serde")]
 mod neo_serde;
-pub mod neo_skeleton;
 pub mod options;
 pub mod provider;
 pub(crate) mod raw;
