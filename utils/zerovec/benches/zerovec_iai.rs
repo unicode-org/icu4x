@@ -8,7 +8,6 @@ use iai::black_box;
 mod samples;
 use samples::*;
 
-use zerovec::ule::VarULE;
 use zerovec::VarZeroSlice;
 use zerovec::ZeroVec;
 
