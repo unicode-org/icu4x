@@ -188,3 +188,27 @@ impl<'data> DecimalSymbolsV1<'data> {
         &self.strings.grouping_separator()
     }
 }
+
+impl DecimalSymbolsV1<'static> {
+    #[cfg(test)]
+    /// Create a new en-US format for use in testing
+    pub(crate) fn new_en_for_testing() -> Self {
+        let strings = DecimalSymbolsV1Strings {
+            minus_sign_prefix: Cow::Borrowed("-"),
+            minus_sign_suffix: Cow::Borrowed(""),
+            plus_sign_prefix: Cow::Borrowed("+"),
+            plus_sign_suffix: Cow::Borrowed(""),
+            decimal_separator: ".".into(),
+            grouping_separator: ",".into(),
+        };
+        Self {
+            strings: VarZeroCow::from_encodeable(&strings),
+            grouping_sizes: GroupingSizesV1 {
+                primary: 3,
+                secondary: 3,
+                min_grouping: 1,
+            },
+            digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        }
+    }
+}

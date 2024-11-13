@@ -157,7 +157,7 @@ fn test_grouper() {
             let provider = FixedProvider::<DecimalSymbolsV1Marker>::from_owned(
                 crate::provider::DecimalSymbolsV1 {
                     grouping_sizes: cas.sizes,
-                    ..Default::default()
+                    ..DecimalSymbolsV1::new_en_for_testing()
                 },
             );
             let options = options::FixedDecimalFormatterOptions {
