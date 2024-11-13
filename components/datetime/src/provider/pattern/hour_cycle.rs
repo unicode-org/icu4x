@@ -8,6 +8,7 @@ use super::{reference, PatternItem};
 use crate::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{self, skeleton};
+#[cfg(feature = "datagen")]
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
