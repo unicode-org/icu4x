@@ -548,12 +548,12 @@ mod test {
         let rov = RangeOrValue::Value(1);
         let ule = rov.to_unaligned();
         let ref_bytes = &[1, 0, 0, 0, 1, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::as_bytes(&[ule]), *ref_bytes);
 
         let rov = RangeOrValue::Range(2, 4);
         let ule = rov.to_unaligned();
         let ref_bytes = &[2, 0, 0, 0, 4, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::as_bytes(&[ule]), *ref_bytes);
     }
 
     #[test]

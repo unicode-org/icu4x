@@ -683,7 +683,7 @@ where
             assert!(idx <= F::Index::MAX_VALUE as usize);
             #[allow(clippy::expect_used)] // this function is explicitly panicky
             let bytes_to_write = F::Index::iule_from_usize(idx).expect(F::Index::TOO_LARGE_ERROR);
-            idx_slice.copy_from_slice(ULE::as_byte_slice(&[bytes_to_write]));
+            idx_slice.copy_from_slice(ULE::as_bytes(&[bytes_to_write]));
 
             idx_offset = idx_limit;
         }
@@ -720,7 +720,7 @@ where
     #[allow(clippy::expect_used)] // This function is explicitly panicky
     let num_elements_ule = F::Len::iule_from_usize(elements.len()).expect(F::Len::TOO_LARGE_ERROR);
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    output[0..F::Len::SIZE].copy_from_slice(ULE::as_byte_slice(&[num_elements_ule]));
+    output[0..F::Len::SIZE].copy_from_slice(ULE::as_bytes(&[num_elements_ule]));
 
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[F::Len::SIZE..]);

@@ -64,7 +64,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[
             &[self.andor_polarity_operand],
-            ule::ULE::as_byte_slice(&[self.modulo.to_unaligned()]),
+            ule::ULE::as_bytes(&[self.modulo.to_unaligned()]),
             self.range_list.as_bytes(),
         ])
     }

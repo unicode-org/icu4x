@@ -26,7 +26,7 @@ use core::mem;
 /// it is not possible to implement [`Self::encode_var_ule_as_slices()`] but the other methods still work.
 ///
 /// A typical implementation will take each field in the order found in the [`VarULE`] type,
-/// convert it to ULE, call [`ULE::as_byte_slice()`] on them, and pass the slices to `cb` in order.
+/// convert it to ULE, call [`ULE::as_bytes()`] on them, and pass the slices to `cb` in order.
 /// A trailing [`ZeroVec`](crate::ZeroVec) or [`VarZeroVec`](crate::VarZeroVec) can have their underlying
 /// byte representation passed through.
 ///
@@ -98,19 +98,19 @@ pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for T {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self)])
+        cb(&[T::as_bytes(self)])
     }
 }
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ T {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self)])
+        cb(&[T::as_bytes(self)])
     }
 }
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ &'_ T {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self)])
+        cb(&[T::as_bytes(self)])
     }
 }
 
@@ -119,19 +119,19 @@ where
     T: ToOwned,
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self.as_ref())])
+        cb(&[T::as_bytes(self.as_ref())])
     }
 }
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self)])
+        cb(&[T::as_bytes(self)])
     }
 }
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(self)])
+        cb(&[T::as_bytes(self)])
     }
 }
 
@@ -154,7 +154,7 @@ where
     T: ULE,
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<[T] as VarULE>::as_byte_slice(self)])
+        cb(&[<[T] as VarULE>::as_bytes(self)])
     }
 }
 
@@ -178,7 +178,7 @@ where
         debug_assert_eq!(self.len() * S, dst.len());
         for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
             let ule = item.to_unaligned();
-            chunk.copy_from_slice(ULE::as_byte_slice(core::slice::from_ref(&ule)));
+            chunk.copy_from_slice(ULE::as_bytes(core::slice::from_ref(&ule)));
         }
     }
 }

@@ -179,7 +179,7 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         // TODO: use split_first_chunk_mut in 1.77
         let (sized_chunk, variable_chunk) = dst.split_at_mut(size_of::<A::ULE>());
-        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_byte_slice());
+        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_bytes());
         self.variable.encode_var_ule_write(variable_chunk);
     }
 }
@@ -228,7 +228,7 @@ where
             };
             this.serialize(serializer)
         } else {
-            serializer.serialize_bytes(self.as_byte_slice())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }

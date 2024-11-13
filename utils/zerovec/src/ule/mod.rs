@@ -67,7 +67,7 @@ use core::{any, fmt, mem, slice};
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, the it *must* be logically
-/// equivalent to byte equality on [`Self::as_byte_slice()`].
+/// equivalent to byte equality on [`Self::as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
 /// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
@@ -149,7 +149,7 @@ where
     /// Keep in mind that `&[Self]` and `&[u8]` may have different lengths.
     #[inline]
     #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
-    fn as_byte_slice(slice: &[Self]) -> &[u8] {
+    fn as_bytes(slice: &[Self]) -> &[u8] {
         unsafe {
             slice::from_raw_parts(slice as *const [Self] as *const u8, mem::size_of_val(slice))
         }
@@ -279,7 +279,7 @@ where
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, the it *must* be logically
-/// equivalent to byte equality on [`Self::as_byte_slice()`].
+/// equivalent to byte equality on [`Self::as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
 /// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
@@ -352,14 +352,14 @@ pub unsafe trait VarULE: 'static {
     /// Implementations of this method should call potentially unsafe functions to cast the
     /// pointer to the correct type.
     #[inline]
-    fn as_byte_slice(&self) -> &[u8] {
+    fn as_bytes(&self) -> &[u8] {
         unsafe { slice::from_raw_parts(self as *const Self as *const u8, mem::size_of_val(self)) }
     }
 
     /// Allocate on the heap as a `Box<T>`
     #[inline]
     fn to_boxed(&self) -> Box<Self> {
-        let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
+        let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
         let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation

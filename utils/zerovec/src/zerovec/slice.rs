@@ -113,7 +113,7 @@ where
     /// ```
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
-        T::ULE::as_byte_slice(self.as_ule_slice())
+        T::ULE::as_bytes(self.as_ule_slice())
     }
 
     /// Dereferences this slice as `&[T::ULE]`.
@@ -468,7 +468,7 @@ where
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
-//  6. `as_byte_slice()` and `parse_byte_slice()` are defaulted
+//  6. `as_bytes()` and `parse_byte_slice()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]

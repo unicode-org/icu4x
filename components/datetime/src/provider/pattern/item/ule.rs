@@ -343,7 +343,7 @@ mod test {
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
+            assert_eq!(ULE::as_bytes(&[ule]), ref_bytes);
             let pattern = PatternItem::from_unaligned(ule);
             assert_eq!(pattern, ref_pattern);
         }
@@ -376,7 +376,7 @@ mod test {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_pattern.iter() {
                 let ule = item.to_unaligned();
-                bytes.extend(ULE::as_byte_slice(&[ule]));
+                bytes.extend(ULE::as_bytes(&[ule]));
             }
 
             let mut bytes2: Vec<u8> = vec![];
@@ -399,7 +399,7 @@ mod test {
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
+            assert_eq!(ULE::as_bytes(&[ule]), ref_bytes);
             let pattern = GenericPatternItem::from_unaligned(ule);
             assert_eq!(pattern, ref_pattern);
         }

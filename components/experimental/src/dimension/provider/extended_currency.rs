@@ -71,8 +71,8 @@ impl databake::Bake for CurrencyExtendedDataV1<'_> {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         use zerovec::ule::VarULE;
         ctx.insert("icu_experimental::dimension::provider::extended_currency");
-        let bytes = self.display_names.elements.as_byte_slice().bake(ctx);
-        // Safety: The bytes are returned by `PluralElementsPackedULE::as_byte_slice`.
+        let bytes = self.display_names.elements.as_bytes().bake(ctx);
+        // Safety: The bytes are returned by `PluralElementsPackedULE::as_bytes`.
         databake::quote! { unsafe {
             icu_experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1::from_byte_slice_unchecked(#bytes)
         }}

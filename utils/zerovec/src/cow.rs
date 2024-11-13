@@ -144,14 +144,14 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     pub fn new_borrowed(val: &'a V) -> Self {
         unsafe {
             // Safety: val is a valid V, by type
-            Self::from_byte_slice_unchecked(val.as_byte_slice())
+            Self::from_byte_slice_unchecked(val.as_bytes())
         }
     }
 
     /// Construct a new borrowed version of this
     pub fn new_owned(val: Box<V>) -> Self {
         let val = ManuallyDrop::new(val);
-        let buf: NonNull<[u8]> = val.as_byte_slice().into();
+        let buf: NonNull<[u8]> = val.as_bytes().into();
         Self {
             // Invariants upheld:
             // 1 & 2: The bytes came from `val` so they're a valid value and byte slice

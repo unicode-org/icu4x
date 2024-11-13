@@ -940,7 +940,7 @@ where
                 PluralElementsInner::from_packed(self);
             plural_elements.serialize(serializer)
         } else {
-            serializer.serialize_bytes(self.as_byte_slice())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }

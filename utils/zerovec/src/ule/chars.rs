@@ -24,7 +24,7 @@ use core::convert::TryFrom;
 ///
 /// let c1 = '𑄃';
 /// let ule = c1.to_unaligned();
-/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01]);
+/// assert_eq!(CharULE::as_bytes(&[ule]), &[0x03, 0x11, 0x01]);
 /// let c2 = char::from_unaligned(ule);
 /// assert_eq!(c1, c2);
 /// ```
@@ -128,7 +128,7 @@ mod test {
         const CHARS: [char; 2] = ['a', '🙃'];
         const CHARS_ULE: [CharULE; 2] = CharULE::from_array(CHARS);
         assert_eq!(
-            CharULE::as_byte_slice(&CHARS_ULE),
+            CharULE::as_bytes(&CHARS_ULE),
             &[0x61, 0x00, 0x00, 0x43, 0xF6, 0x01]
         );
     }
@@ -137,7 +137,7 @@ mod test {
     fn test_from_array_zst() {
         const CHARS: [char; 0] = [];
         const CHARS_ULE: [CharULE; 0] = CharULE::from_array(CHARS);
-        let bytes = CharULE::as_byte_slice(&CHARS_ULE);
+        let bytes = CharULE::as_bytes(&CHARS_ULE);
         let empty: &[u8] = &[];
         assert_eq!(bytes, empty);
     }
@@ -147,7 +147,7 @@ mod test {
         // 1-byte, 2-byte, 3-byte, and two 4-byte character in UTF-8 (not as relevant in UTF-32)
         let chars = ['w', 'ω', '文', '𑄃', '🙃'];
         let char_ules: Vec<CharULE> = chars.iter().copied().map(char::to_unaligned).collect();
-        let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
+        let char_bytes: &[u8] = CharULE::as_bytes(&char_ules);
 
         // Check parsing
         let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
@@ -175,7 +175,7 @@ mod test {
             .copied()
             .map(<u32 as AsULE>::to_unaligned)
             .collect();
-        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_bytes(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(parsed_ules_result.is_err());
 
@@ -186,7 +186,7 @@ mod test {
             .copied()
             .map(<u32 as AsULE>::to_unaligned)
             .collect();
-        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_bytes(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(parsed_ules_result.is_err());
     }

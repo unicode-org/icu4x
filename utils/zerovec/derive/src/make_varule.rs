@@ -156,8 +156,8 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
             fn eq(&self, other: &Self) -> bool {
                 // The VarULE invariants allow us to assume that equality is byte equality
                 // in non-safety-critical contexts
-                <Self as zerovec::ule::VarULE>::as_byte_slice(&self)
-                == <Self as zerovec::ule::VarULE>::as_byte_slice(&other)
+                <Self as zerovec::ule::VarULE>::as_bytes(&self)
+                == <Self as zerovec::ule::VarULE>::as_bytes(&other)
             }
         }
 
@@ -236,7 +236,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
                         let this = #zerofrom_fq_path::zero_from(self);
                         <#name as #serde_path::Serialize>::serialize(&this, serializer)
                     } else {
-                        serializer.serialize_bytes(zerovec::ule::VarULE::as_byte_slice(self))
+                        serializer.serialize_bytes(zerovec::ule::VarULE::as_bytes(self))
                     }
                 }
             }
@@ -281,7 +281,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
             #[allow(clippy::derive_hash_xor_eq)]
             impl core::hash::Hash for #ule_name {
                 fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
-                    state.write(<#ule_name as zerovec::ule::VarULE>::as_byte_slice(&self));
+                    state.write(<#ule_name as zerovec::ule::VarULE>::as_bytes(&self));
                 }
             }
         )
@@ -401,7 +401,7 @@ fn make_encode_impl(
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
-                let src = <<#ty as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::as_byte_slice(unaligned_slice);
+                let src = <<#ty as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::as_bytes(unaligned_slice);
                 out.copy_from_slice(src);
             )
         },

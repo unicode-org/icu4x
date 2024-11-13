@@ -351,7 +351,7 @@ fn make_ule_struct_impl(
             #[allow(clippy::derive_hash_xor_eq)]
             impl core::hash::Hash for #ule_name {
                 fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
-                    state.write(<#ule_name as zerovec::ule::ULE>::as_byte_slice(&[*self]));
+                    state.write(<#ule_name as zerovec::ule::ULE>::as_bytes(&[*self]));
                 }
             }
         )
