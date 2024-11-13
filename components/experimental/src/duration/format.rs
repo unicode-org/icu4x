@@ -69,7 +69,7 @@ pub struct FormattedDuration<'l> {
 }
 
 /// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
-/// The (Unit, FixedDecimal) pair is used to crerate [`FormattedUnit`]s.
+/// The (Unit, SignedFixedDecimal) pair is used to crerate [`FormattedUnit`]s.
 type HeterogenousToFormatter = Either<DigitalDuration, (Unit, SignedFixedDecimal)>;
 
 /// Describes a formatted duration.
