@@ -86,7 +86,7 @@ impl SourceDataProvider {
             NeoSkeletonLength::Medium,
             NeoSkeletonLength::Short,
         ]
-        .map(|length| to_components_bag(length, &attributes, &date_lengths_v1))
+        .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
         .map(|bag| {
             let pattern = expand_pp_to_pe(bag.select_pattern(
                 &skeleton_patterns,
@@ -235,7 +235,7 @@ impl SourceDataProvider {
 
 /// An internal function that checks if the attributes contain a field.
 fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
-    let f0 = field.as_bytes().get(0).unwrap();
+    let f0 = field.as_bytes().first().unwrap();
     let f1 = field.as_bytes().get(1);
     let mut it = attributes.as_bytes().iter().peekable();
     while let Some(b) = it.next() {
