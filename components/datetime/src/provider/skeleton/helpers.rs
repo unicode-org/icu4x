@@ -10,9 +10,8 @@ use super::plural::PatternPlurals;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    options::{components, length, DateTimeFormatterOptions},
-    provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
-    provider::pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
+    options::{components, DateTimeFormatterOptions},
+    provider::{calendar::{patterns::{FullLongMediumShort, GenericLengthPatternsV1}, DateSkeletonPatternsV1}, pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity}},
 };
 
 #[cfg(feature = "datagen")]
@@ -215,23 +214,23 @@ pub fn create_best_pattern_for_fields<'data>(
                             .find(|f| matches!(f.symbol, FieldSymbol::Weekday(_)));
 
                         if weekday.is_some() {
-                            length::Date::Full
+                            FullLongMediumShort::Full
                         } else {
-                            length::Date::Long
+                            FullLongMediumShort::Long
                         }
                     }
-                    FieldLength::Three => length::Date::Medium,
-                    _ => length::Date::Short,
+                    FieldLength::Three => FullLongMediumShort::Medium,
+                    _ => FullLongMediumShort::Short,
                 },
-                None => length::Date::Short,
+                None => FullLongMediumShort::Short,
             };
 
             use crate::provider::pattern::runtime::GenericPattern;
             let dt_pattern: &GenericPattern<'data> = match length {
-                length::Date::Full => &length_patterns.full,
-                length::Date::Long => &length_patterns.long,
-                length::Date::Medium => &length_patterns.medium,
-                length::Date::Short => &length_patterns.short,
+                FullLongMediumShort::Full => &length_patterns.full,
+                FullLongMediumShort::Long => &length_patterns.long,
+                FullLongMediumShort::Medium => &length_patterns.medium,
+                FullLongMediumShort::Short => &length_patterns.short,
             };
 
             date_patterns.for_each_mut(|pattern| {
@@ -571,43 +570,6 @@ impl DateTimeFormatterOptions {
                     }
                 }
             }
-            Self::Length(length::Bag {
-                date: Some(date_length),
-                time: None,
-            }) => match date_length {
-                length::Date::Full => {
-                    PatternPlurals::SinglePattern(date_patterns.date.full.clone())
-                }
-                length::Date::Long => {
-                    PatternPlurals::SinglePattern(date_patterns.date.long.clone())
-                }
-                length::Date::Medium => {
-                    PatternPlurals::SinglePattern(date_patterns.date.medium.clone())
-                }
-                length::Date::Short => {
-                    PatternPlurals::SinglePattern(date_patterns.date.short.clone())
-                }
-            },
-            Self::Length(length::Bag {
-                date: None,
-                time: Some(time_length),
-            }) => {
-                let time_patterns = match time_patterns.preferred_hour_cycle {
-                    CoarseHourCycle::H11H12 => &time_patterns.time_h11_h12,
-                    CoarseHourCycle::H23H24 => &time_patterns.time_h23_h24,
-                };
-                match time_length {
-                    length::Time::Full => PatternPlurals::SinglePattern(time_patterns.full.clone()),
-                    length::Time::Long => PatternPlurals::SinglePattern(time_patterns.long.clone()),
-                    length::Time::Medium => {
-                        PatternPlurals::SinglePattern(time_patterns.medium.clone())
-                    }
-                    length::Time::Short => {
-                        PatternPlurals::SinglePattern(time_patterns.short.clone())
-                    }
-                }
-            }
-            _ => unimplemented!(),
         }
     }
 }

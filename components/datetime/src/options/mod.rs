@@ -29,8 +29,8 @@
 
 #[cfg(feature = "datagen")]
 pub mod components;
-#[cfg(feature = "datagen")]
-pub mod length;
+// #[cfg(feature = "datagen")]
+// pub mod length;
 
 #[cfg(feature = "datagen")]
 pub mod preferences;
@@ -61,8 +61,6 @@ pub(crate) mod preferences;
 #[cfg(feature = "datagen")]
 #[non_exhaustive]
 pub enum DateTimeFormatterOptions {
-    /// Bag of lengths for date and time.
-    Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
     ///
     /// ✨ *Enabled with the `experimental` Cargo feature.*
@@ -75,20 +73,6 @@ pub enum DateTimeFormatterOptions {
     /// </div>
     #[cfg(feature = "datagen")]
     Components(components::Bag),
-}
-
-#[cfg(feature = "datagen")]
-impl Default for DateTimeFormatterOptions {
-    fn default() -> Self {
-        Self::Length(length::Bag::default())
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl From<length::Bag> for DateTimeFormatterOptions {
-    fn from(input: length::Bag) -> Self {
-        Self::Length(input)
-    }
 }
 
 #[cfg(feature = "datagen")]

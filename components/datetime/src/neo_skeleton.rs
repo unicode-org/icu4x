@@ -6,8 +6,6 @@
 
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-#[cfg(feature = "datagen")]
-use crate::options::{self, length};
 use icu_timezone::scaffold::IntoOption;
 
 /// A specification for the length of a date or component of a date.
@@ -34,33 +32,6 @@ impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
-    }
-}
-
-impl NeoSkeletonLength {
-    /// All values of this enum.
-    pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
-
-    /// Returns the date style corresponding to this length.
-    #[cfg(feature = "datagen")]
-    pub fn to_date_style(self) -> options::length::Date {
-        match self {
-            Self::Long => options::length::Date::Long,
-            Self::Medium => options::length::Date::Medium,
-            Self::Short => options::length::Date::Short,
-        }
-    }
-
-    /// Returns the time style corresponding to this length.
-    #[cfg(feature = "datagen")]
-    pub fn to_time_style(self) -> options::length::Time {
-        // Note: For now, make "long" and "medium" both map to "medium".
-        // This could be improved in light of additional data.
-        match self {
-            Self::Long => options::length::Time::Medium,
-            Self::Medium => options::length::Time::Medium,
-            Self::Short => options::length::Time::Short,
-        }
     }
 }
 
@@ -213,20 +184,6 @@ impl IntoOption<TimePrecision> for TimePrecision {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
-    }
-}
-
-impl TimePrecision {
-    /// Converts a [`length::Time`] to its nearest [`TimePrecision`].
-    #[doc(hidden)] // the types involved in this mapping may change
-    #[cfg(feature = "datagen")]
-    pub fn from_time_length(time_length: length::Time) -> Self {
-        match time_length {
-            length::Time::Full => todo!(),
-            length::Time::Long => todo!(),
-            length::Time::Medium => Self::SecondPlus,
-            length::Time::Short => Self::MinuteExact,
-        }
     }
 }
 
