@@ -61,7 +61,7 @@ macro_rules! __enum_keyword {
         }
     ) => {
         #[non_exhaustive]
-        #[derive(Debug, Clone, Eq, PartialEq, Copy)]
+        #[derive(Debug, Clone, Eq, PartialEq, Copy, Hash)]
         $(#[$doc])*
         pub enum $name {
             $(
