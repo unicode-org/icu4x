@@ -37,9 +37,9 @@ impl IncrementLike for NoIncrement {
     const MULTIPLES_OF_25: Option<Self> = None;
 }
 
-/// Mode used in a rounding operation.
+/// Mode used in a unsigned rounding operations.
 ///
-/// # Comparative table of rounding modes
+/// # Comparative table of all the rounding modes, including the signed and unsigned ones.
 ///
 /// | Value | Ceil | Expand | Floor | Trunc | HalfCeil | HalfExpand | HalfFloor | HalfTrunc | HalfEven |
 /// |:-----:|:----:|:------:|:-----:|:-----:|:--------:|:----------:|:---------:|:---------:|:--------:|
@@ -55,6 +55,9 @@ impl IncrementLike for NoIncrement {
 /// |  -1.2 |  -1  |   -2   |   -2  |   -1  |     "    |      "     |     "     |     "     |     "    |
 /// |  -1.5 |   "  |    "   |   "   |   "   |     "    |     -2     |     -2    |     "     |    -2    |
 /// |  -1.8 |   "  |    "   |   "   |   "   |    -2    |      "     |     "     |     -2    |     "    |
+///
+/// NOTE:
+///   - Ceil, Floor, HalfCeil and HalfFloor are part of the [`SignedRoundingMode`] enum.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum UnsignedRoundingMode {
@@ -65,6 +68,10 @@ pub enum UnsignedRoundingMode {
     HalfEven,
 }
 
+/// Mode used in a signed rounding operations.
+///
+/// NOTE:
+///   - You can find the comparative table of all the rounding modes in the [`UnsignedRoundingMode`] documentation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum SignedRoundingMode {
