@@ -435,13 +435,13 @@ where
 //     `[u8]` slice which satisfies this invariant)
 //  2. VarZeroSlice is aligned to 1 byte (achieved by `#[repr(transparent)]` on a
 //     `[u8]` slice which satisfies this invariant)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `as_bytes()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let _: VarZeroVecComponents<T, F> =
             VarZeroVecComponents::parse_bytes(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())

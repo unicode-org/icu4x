@@ -39,7 +39,7 @@ use core::mem;
 /// The safety invariants of [`Self::encode_var_ule_as_slices()`] are:
 /// - It must call `cb` (only once)
 /// - The slices passed to `cb`, if concatenated, should be a valid instance of the `T` [`VarULE`] type
-///   (i.e. if fed to [`VarULE::validate_byte_slice()`] they must produce a successful result)
+///   (i.e. if fed to [`VarULE::validate_bytes()`] they must produce a successful result)
 /// - It must return the return value of `cb` to the caller
 ///
 /// One or more of [`Self::encode_var_ule_len()`] and [`Self::encode_var_ule_write()`] may be provided.

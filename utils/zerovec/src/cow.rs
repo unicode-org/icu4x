@@ -98,7 +98,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
 
     /// Construct from an owned slice. Errors if the slice doesn't represent a valid `V`
     pub fn parse_owned_bytes(bytes: Box<[u8]>) -> Result<Self, UleError> {
-        V::validate_byte_slice(&bytes)?;
+        V::validate_bytes(&bytes)?;
         let bytes = ManuallyDrop::new(bytes);
         let buf: NonNull<[u8]> = (&**bytes).into();
         Ok(Self {
@@ -116,7 +116,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// # Safety
     ///
     /// `bytes` must be a valid `V`, i.e. it must successfully pass through
-    /// `V::parse_bytes()` or `V::validate_byte_slice()`.
+    /// `V::parse_bytes()` or `V::validate_bytes()`.
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         unsafe {
             // Safety: bytes is an &T which is always non-null

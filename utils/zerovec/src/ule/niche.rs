@@ -122,13 +122,13 @@ impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {
 ///    In both cases the data is initialized.
 /// 2. NichedOptionULE is aligned to 1 byte due to `#[repr(C, packed)]` on a struct containing only
 ///    ULE fields.
-/// 3. validate_byte_slice impl returns an error if invalid bytes are encountered.
-/// 4. validate_byte_slice impl returns an error there are extra bytes.
+/// 3. validate_bytes impl returns an error if invalid bytes are encountered.
+/// 4. validate_bytes impl returns an error there are extra bytes.
 /// 5. The other ULE methods are left to their default impl.
 /// 6. NichedOptionULE equality is based on ULE equality of the subfield, assuming that NicheBytes
 ///    has been implemented correctly (this is a correctness but not a safety guarantee).
 unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), crate::ule::UleError> {
         let size = size_of::<Self>();
         // The implemention is only correct if NICHE_BIT_PATTERN has same number of bytes as the
         // type.
@@ -144,7 +144,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
             if chunk == <U as NicheBytes<N>>::NICHE_BIT_PATTERN {
                 Ok(())
             } else {
-                U::validate_byte_slice(chunk)
+                U::validate_bytes(chunk)
             }
         })
     }

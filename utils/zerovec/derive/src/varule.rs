@@ -83,7 +83,7 @@ pub fn derive_impl(
     let last_field_validator = if let Some(custom_varule_validator) = custom_varule_validator {
         custom_varule_validator
     } else {
-        quote!(<#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(last_field_bytes)?;)
+        quote!(<#unsized_field as zerovec::ule::VarULE>::validate_bytes(last_field_bytes)?;)
     };
 
     // Safety (based on the safety checklist on the ULE trait):
@@ -91,8 +91,8 @@ pub fn derive_impl(
     //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  2. #name is aligned to 1 byte.
     //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
-    //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
-    //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+    //  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+    //  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
     //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
     //  6. The other VarULE methods use the default impl
     //  7. [This impl does not enforce the non-safety equality constraint, it is up to the user to do so, ideally via a custom derive]
@@ -101,7 +101,7 @@ pub fn derive_impl(
         const #ule_size: usize = 0 #(+ #sizes)*;
         unsafe impl zerovec::ule::VarULE for #name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
 
                 if bytes.len() < #ule_size {
                     return Err(zerovec::ule::UleError::parse::<Self>());

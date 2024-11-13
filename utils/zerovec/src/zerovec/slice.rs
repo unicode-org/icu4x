@@ -465,15 +465,15 @@ where
 // (`ZeroSlice<T>` is a transparent wrapper around [T::ULE])
 //  1. [T::ULE] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
 //  2. [T::ULE] is aligned to 1 byte (achieved by being a slice of a ULE type)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `as_bytes()` and `parse_bytes()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        T::ULE::validate_byte_slice(bytes)
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
+        T::ULE::validate_bytes(bytes)
     }
 
     #[inline]

@@ -29,18 +29,18 @@ where
 ///
 /// 1. `Pattern<B>` does not include any uninitialized or padding bytes.
 /// 2. `Pattern<B>` is aligned to 1 byte.
-/// 3. The implementation of `validate_byte_slice()` returns an error
+/// 3. The implementation of `validate_bytes()` returns an error
 ///    if any byte is not valid.
-/// 4. The implementation of `validate_byte_slice()` returns an error
+/// 4. The implementation of `validate_bytes()` returns an error
 ///    if the slice cannot be used to build a `Pattern<B>` in its entirety.
 /// 5. The implementation of `from_bytes_unchecked()` returns a reference to the same data.
-/// 6. `parse_bytes()` is equivalent to `validate_byte_slice()` followed by `from_bytes_unchecked()`.
+/// 6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`.
 /// 7. `Pattern<B>` byte equality is semantic equality.
 unsafe impl<B, S: ?Sized + VarULE> VarULE for Pattern<B>
 where
     B: PatternBackend<Store = S>,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let store = S::parse_bytes(bytes)?;
         B::validate_store(store).map_err(|_| UleError::parse::<Self>())
     }

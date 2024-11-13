@@ -143,8 +143,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. PotentialUtf8 does not include any uninitialized or padding bytes (transparent over a ULE)
 //  2. PotentialUtf8 is aligned to 1 byte (transparent over a ULE)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid (impossible)
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety (impossible)
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid (impossible)
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety (impossible)
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data (returns the argument directly)
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (transparent over a ULE)
@@ -152,7 +152,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     #[inline]
-    fn validate_byte_slice(_: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(_: &[u8]) -> Result<(), zerovec::ule::UleError> {
         Ok(())
     }
     #[inline]

@@ -692,7 +692,7 @@ where
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
-        debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
+        debug_assert_eq!(T::validate_bytes(dat_slice), Ok(()));
         dat_offset = dat_limit;
     }
 

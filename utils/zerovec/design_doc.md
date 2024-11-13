@@ -174,7 +174,7 @@ where
     Self: Sized + Copy + 'static, 
 {
     // Required
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError>;
 
     // Some automatically provided methods elided
 }
@@ -214,7 +214,7 @@ Unsized types use [`VarULE`]. Unlike sized types, there is no `AsVarULE` type fo
 
 ```rust
 pub unsafe trait VarULE: 'static {
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError>;
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self;
 
     // Some automatically provided methods elided
@@ -317,7 +317,7 @@ These can only be applied to structs where all fields are ULE types (for `#[deri
 
  - Apply `#[repr(C, packed)]` to the type (or perhaps `#[repr(C)]` if we can determine that that will always work)
  - Generate the appropriate `ZeroMapKV` impl (an opt-out can be provided)
- - Generate a `ULE` or `VarULE` implementation that applies offsetted `validate_byte_slice()` for each field to implement the final `validate_byte_slice()`
+ - Generate a `ULE` or `VarULE` implementation that applies offsetted `validate_bytes()` for each field to implement the final `validate_bytes()`
  - Generate `Copy`/`Clone` impls as necessary (`#[derive()]` does not work with packed types)
 
 Ideally an option can be used to request further stdlib derives on the ULE type

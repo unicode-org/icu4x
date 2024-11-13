@@ -67,13 +67,13 @@ impl<U: Copy + core::fmt::Debug> core::fmt::Debug for OptionULE<U> {
 ///    zeroed or valid-T byte sequences to fill it)
 //  2. OptionULE is aligned to 1 byte.
 //     (achieved by `#[repr(C, packed)]` on a struct containing only ULE fields, in the context of this impl)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. OptionULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
 unsafe impl<U: ULE> ULE for OptionULE<U> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let size = mem::size_of::<Self>();
         if bytes.len() % size != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
@@ -88,7 +88,7 @@ unsafe impl<U: ULE> ULE for OptionULE<U> {
                         return Err(UleError::parse::<Self>());
                     }
                 }
-                1 => U::validate_byte_slice(&chunk[1..])?,
+                1 => U::validate_bytes(&chunk[1..])?,
                 _ => return Err(UleError::parse::<Self>()),
             }
         }
@@ -168,14 +168,14 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 //  1. OptionVarULE<T> does not include any uninitialized or padding bytes
 //     (achieved by being repr(C, packed) on ULE types)
 //  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(C, packed) on ULE types)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
 unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(slice: &[u8]) -> Result<(), UleError> {
         if slice.is_empty() {
             return Err(UleError::length::<Self>(slice.len()));
         }
@@ -190,7 +190,7 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
                     Ok(())
                 }
             }
-            1 => U::validate_byte_slice(&slice[1..]),
+            1 => U::validate_bytes(&slice[1..]),
             _ => Err(UleError::parse::<Self>()),
         }
     }

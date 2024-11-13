@@ -399,7 +399,7 @@ unsafe impl<V> VarULE for PluralElementsPackedULE<V>
 where
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let unpacked_bytes =
             Self::unpack_bytes(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
         // The high bit of lead_byte was read in unpack_bytes.
@@ -409,9 +409,9 @@ where
             return Err(UleError::parse::<Self>());
         }
         // Now validate the two variable-length slices.
-        V::validate_byte_slice(unpacked_bytes.v_bytes)?;
+        V::validate_bytes(unpacked_bytes.v_bytes)?;
         if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
-            PluralElementsTupleSliceVarULE::<V>::validate_byte_slice(specials_bytes)?;
+            PluralElementsTupleSliceVarULE::<V>::validate_bytes(specials_bytes)?;
         }
         Ok(())
     }
@@ -430,7 +430,7 @@ where
     ///
     /// # Safety
     ///
-    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_byte_slice`].
+    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_bytes`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
@@ -654,12 +654,12 @@ impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
 //
 // 1. The type is a single byte, not padding.
 // 2. The type is a single byte, so it has align(1).
-// 3. `validate_byte_slice` checks the validity of every byte.
-// 4. `validate_byte_slice` checks the validity of every byte.
+// 3. `validate_bytes` checks the validity of every byte.
+// 4. `validate_bytes` checks the validity of every byte.
 // 5. All other methods are be left with their default impl.
 // 6. The represented enums implement Eq by byte equality.
 unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         bytes
             .iter()
             .all(|byte| {

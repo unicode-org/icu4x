@@ -100,8 +100,8 @@ pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
 //
 // 1. align(1): see "Representation" above.
 // 2. No padding: see "Representation" above.
-// 3. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 4. `validate_byte_slice` checks length and defers to the inner ULEs.
+// 3. `validate_bytes` checks length and defers to the inner ULEs.
+// 4. `validate_bytes` checks length and defers to the inner ULEs.
 // 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
 // 6. All other methods are left at their default impl.
 // 7. The two ULEs have byte equality, so this composition has byte equality.
@@ -110,14 +110,14 @@ where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         // TODO: use split_first_chunk_mut in 1.77
         if bytes.len() < size_of::<A::ULE>() {
             return Err(UleError::length::<Self>(bytes.len()));
         }
         let (sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
-        A::ULE::validate_byte_slice(sized_chunk)?;
-        V::validate_byte_slice(variable_chunk)?;
+        A::ULE::validate_bytes(sized_chunk)?;
+        V::validate_bytes(variable_chunk)?;
         Ok(())
     }
 

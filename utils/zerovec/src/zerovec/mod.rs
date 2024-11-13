@@ -548,7 +548,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
             }
             Cow::Owned(old_vec) => {
                 let bytes: &[u8] = T::ULE::as_bytes(&old_vec);
-                P::ULE::validate_byte_slice(bytes)?;
+                P::ULE::validate_bytes(bytes)?;
                 // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
                 let (ptr, len, cap) = {
                     // Take ownership of the pointer

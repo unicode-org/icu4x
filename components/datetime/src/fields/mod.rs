@@ -178,7 +178,7 @@ mod test {
                 bytes2.extend_from_slice(seq);
             }
 
-            assert!(FieldULE::validate_byte_slice(&bytes).is_ok());
+            assert!(FieldULE::validate_bytes(&bytes).is_ok());
             assert_eq!(bytes, bytes2);
         }
     }

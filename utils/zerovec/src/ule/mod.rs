@@ -53,9 +53,9 @@ use core::{any, fmt, mem, slice};
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
 /// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
-/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`).
 /// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
@@ -70,7 +70,7 @@ use core::{any, fmt, mem, slice};
 /// equivalent to byte equality on [`Self::as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
-/// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
+/// equal byte equality. In such a case, [`Self::validate_bytes()`] should return an error
 /// for any values that are not in canonical form. For example, the decimal strings "1.23e4" and
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
@@ -87,20 +87,20 @@ where
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid slice of `Self`, then `Ok`
     /// should be returned; otherwise, `Err` should be returned.
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
-    /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
+    /// and an error should be returned in the same cases as [`Self::validate_bytes()`].
     ///
-    /// The default implementation executes [`Self::validate_byte_slice()`] followed by
+    /// The default implementation executes [`Self::validate_bytes()`] followed by
     /// [`Self::from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
     fn parse_bytes(bytes: &[u8]) -> Result<&[Self], UleError> {
-        Self::validate_byte_slice(bytes)?;
+        Self::validate_bytes(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_bytes_unchecked(bytes) })
     }
@@ -116,7 +116,7 @@ where
     /// ## Callers
     ///
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
-    /// [`Self::validate_byte_slice()`] with success (and was not changed since then).
+    /// [`Self::validate_bytes()`] with success (and was not changed since then).
     ///
     /// ## Implementors
     ///
@@ -263,9 +263,9 @@ where
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
 /// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 3. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
-/// 4. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
 /// 5. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
 ///    underlying data assuming that the given bytes previously passed validation.
@@ -282,7 +282,7 @@ where
 /// equivalent to byte equality on [`Self::as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
-/// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
+/// equal byte equality. In such a case, [`Self::validate_bytes()`] should return an error
 /// for any values that are not in canonical form. For example, the decimal strings "1.23e4" and
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
@@ -301,21 +301,21 @@ pub unsafe trait VarULE: 'static {
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
-    /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
+    /// and an error should be returned in the same cases as [`Self::validate_bytes()`].
     ///
-    /// The default implementation executes [`Self::validate_byte_slice()`] followed by
+    /// The default implementation executes [`Self::validate_bytes()`] followed by
     /// [`Self::from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
     fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
-        Self::validate_byte_slice(bytes)?;
+        Self::validate_bytes(bytes)?;
         let result = unsafe { Self::from_bytes_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
         Ok(result)
@@ -330,7 +330,7 @@ pub unsafe trait VarULE: 'static {
     /// ## Callers
     ///
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
-    /// [`Self::validate_byte_slice()`] with success (and was not changed since then).
+    /// [`Self::validate_bytes()`] with success (and was not changed since then).
     ///
     /// ## Implementors
     ///

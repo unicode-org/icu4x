@@ -36,13 +36,13 @@ impl<const N: usize> RawBytesULE<N> {
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  2. RawBytesULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid (never).
+//  4. The impl of validate_bytes() returns an error if there are leftover bytes.
 //  5. The other ULE methods use the default impl.
 //  6. RawBytesULE byte equality is semantic equality
 unsafe impl<const N: usize> ULE for RawBytesULE<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N == 0 {
             // Safe because Self is transparent over [u8; N]
             Ok(())
@@ -182,13 +182,13 @@ impl_const_constructors!(bool, 1);
 // Safety (based on the safety checklist on the ULE trait):
 //  1. u8 does not include any uninitialized or padding bytes.
 //  2. u8 is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  3. The impl of validate_bytes() returns an error if any byte is not valid (never).
+//  4. The impl of validate_bytes() returns an error if there are leftover bytes (never).
 //  5. The other ULE methods use the default impl.
 //  6. u8 byte equality is semantic equality
 unsafe impl ULE for u8 {
     #[inline]
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError> {
         Ok(())
     }
 }
@@ -211,13 +211,13 @@ unsafe impl EqULE for u8 {}
 // Safety (based on the safety checklist on the ULE trait):
 //  1. NonZeroU8 does not include any uninitialized or padding bytes.
 //  2. NonZeroU8 is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (0x00).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  3. The impl of validate_bytes() returns an error if any byte is not valid (0x00).
+//  4. The impl of validate_bytes() returns an error if there are leftover bytes (never).
 //  5. The other ULE methods use the default impl.
 //  6. NonZeroU8 byte equality is semantic equality
 unsafe impl ULE for NonZeroU8 {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         bytes.iter().try_for_each(|b| {
             if *b == 0x00 {
                 Err(UleError::parse::<Self>())
@@ -249,13 +249,13 @@ impl NicheBytes<1> for NonZeroU8 {
 // Safety (based on the safety checklist on the ULE trait):
 //  1. i8 does not include any uninitialized or padding bytes.
 //  2. i8 is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  3. The impl of validate_bytes() returns an error if any byte is not valid (never).
+//  4. The impl of validate_bytes() returns an error if there are leftover bytes (never).
 //  5. The other ULE methods use the default impl.
 //  6. i8 byte equality is semantic equality
 unsafe impl ULE for i8 {
     #[inline]
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError> {
         Ok(())
     }
 }
@@ -332,13 +332,13 @@ unsafe impl EqULE for f64 {}
 // Safety (based on the safety checklist on the ULE trait):
 //  1. bool does not include any uninitialized or padding bytes (the remaining 7 bytes in bool are by definition zero)
 //  2. bool is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (bytes that are not 0 or 1).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  3. The impl of validate_bytes() returns an error if any byte is not valid (bytes that are not 0 or 1).
+//  4. The impl of validate_bytes() returns an error if there are leftover bytes (never).
 //  5. The other ULE methods use the default impl.
 //  6. bool byte equality is semantic equality
 unsafe impl ULE for bool {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             // https://doc.rust-lang.org/reference/types/boolean.html
             // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1

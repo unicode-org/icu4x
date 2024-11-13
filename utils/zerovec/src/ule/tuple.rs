@@ -39,13 +39,13 @@ macro_rules! tuple_ule {
         //     (achieved by `#[repr(C, packed)]` on a struct containing only ULE fields)
         //  2. TupleULE is aligned to 1 byte.
         //     (achieved by `#[repr(C, packed)]` on a struct containing only ULE fields)
-        //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-        //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+        //  3. The impl of validate_bytes() returns an error if any byte is not valid.
+        //  4. The impl of validate_bytes() returns an error if there are extra bytes.
         //  5. The other ULE methods use the default impl.
         //  6. TupleULE byte equality is semantic equality by relying on the ULE equality
         //     invariant on the subfields
         unsafe impl<$($t: ULE),+> ULE for $name<$($t),+> {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
                 // expands to: 0size + mem::size_of::<A>() + mem::size_of::<B>();
                 let ule_bytes = 0usize $(+ mem::size_of::<$t>())+;
                 if bytes.len() % ule_bytes != 0 {
@@ -57,7 +57,7 @@ macro_rules! tuple_ule {
                         let j = i;
                         i += mem::size_of::<$t>();
                         #[allow(clippy::indexing_slicing)] // length checked
-                        <$t>::validate_byte_slice(&chunk[j..i])?;
+                        <$t>::validate_bytes(&chunk[j..i])?;
                     )+
                 }
                 Ok(())
