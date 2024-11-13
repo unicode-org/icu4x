@@ -79,7 +79,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
         let minus_sign_affixes = parsed_pattern.localize_sign(&symbols.minus_sign);
         let plus_sign_affixes = parsed_pattern.localize_sign(&symbols.plus_sign);
-        let strings = DecimalSymbolsV1Strings {
+        let strings = DecimalSymbolsV1StrsBuilder {
             minus_sign_prefix: minus_sign_affixes.0.into(),
             minus_sign_suffix: minus_sign_affixes.1.into(),
             plus_sign_prefix: plus_sign_affixes.0.into(),

@@ -85,12 +85,12 @@ pub struct GroupingSizesV1 {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[zerovec::make_varule(DecimalSymbolsV1StringsULE)]
+#[zerovec::make_varule(DecimalSymbolsV1Strs)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
-pub struct DecimalSymbolsV1Strings<'data> {
+pub struct DecimalSymbolsV1StrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub minus_sign_prefix: Cow<'data, str>,
@@ -131,7 +131,7 @@ pub struct DecimalSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV1: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
-    pub strings: VarZeroCow<'data, DecimalSymbolsV1StringsULE>,
+    pub strings: VarZeroCow<'data, DecimalSymbolsV1Strs>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
@@ -170,7 +170,7 @@ impl DecimalSymbolsV1<'static> {
     #[cfg(test)]
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
-        let strings = DecimalSymbolsV1Strings {
+        let strings = DecimalSymbolsV1StrsBuilder {
             minus_sign_prefix: Cow::Borrowed("-"),
             minus_sign_suffix: Cow::Borrowed(""),
             plus_sign_prefix: Cow::Borrowed("+"),

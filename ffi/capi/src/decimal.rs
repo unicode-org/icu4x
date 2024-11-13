@@ -83,7 +83,7 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalSymbolsV1, DecimalSymbolsV1Strings, GroupingSizesV1,
+                DecimalSymbolsV1, DecimalSymbolsV1StrsBuilder, GroupingSizesV1,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -95,7 +95,7 @@ pub mod ffi {
                 *new = char::from_u32(old).unwrap_or(char::REPLACEMENT_CHARACTER);
             }
             let digits = new_digits;
-            let strings = DecimalSymbolsV1Strings {
+            let strings = DecimalSymbolsV1StrsBuilder {
                 plus_sign_prefix: str_to_cow(plus_sign_prefix),
                 plus_sign_suffix: str_to_cow(plus_sign_suffix),
                 minus_sign_prefix: str_to_cow(minus_sign_prefix),
