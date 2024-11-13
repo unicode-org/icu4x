@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
+use crate::{format::neo::*, provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
@@ -24,11 +24,10 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let field_set: Combo<ET, L> = ET::short().hm().l();
-///
-/// let formatter = DateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     field_set,
+///     ET::short().hm().l(),
 /// )
 /// .unwrap();
 ///
@@ -53,11 +52,10 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let field_set: Combo<ET, L> = ET::short().hm().l();
-///
-/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     field_set,
+///     ET::short().hm().l(),
 /// )
 /// .unwrap();
 ///
@@ -77,13 +75,14 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{YMD, dynamic::DateFieldSet};
+/// use icu::datetime::fieldset::{Combo, YMD, Vs, dynamic::DateFieldSet};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let formatter = DateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
 ///     &locale!("en-US").into(),
 ///     DateFieldSet::YMD(YMD::long()).v(),
 /// )
@@ -150,9 +149,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type LengthOption = NeoSkeletonLength; // always needed for date
-    type AlignmentOption = DT::AlignmentOption;
-    type YearStyleOption = DT::YearStyleOption;
-    type TimePrecisionOption = DT::TimePrecisionOption;
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

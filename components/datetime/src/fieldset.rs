@@ -427,10 +427,6 @@ macro_rules! impl_date_or_calendar_period_marker {
             type D = Self;
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
-            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
-            type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
-            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
     };
@@ -589,10 +585,6 @@ macro_rules! impl_date_marker {
             type D = Self;
             type T = Self;
             type Z = NeoNeverMarker;
-            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
-            type YearStyleOption = datetime_marker_helper!(@option/yearstyle, $($year_yes)?);
-            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
         }
         impl_composite!($type_time, DateTime, DateAndTimeFieldSet);
@@ -763,10 +755,6 @@ macro_rules! impl_time_marker {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
-            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision, yes);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Time, TimeFieldSet);
@@ -924,10 +912,6 @@ macro_rules! impl_zone_marker {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
-            type LengthOption = datetime_marker_helper!(@option/length, yes);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment,);
-            type YearStyleOption = datetime_marker_helper!(@option/yearstyle,);
-            type TimePrecisionOption = datetime_marker_helper!(@option/timeprecision,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         $(
