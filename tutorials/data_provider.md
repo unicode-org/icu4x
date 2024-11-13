@@ -226,8 +226,20 @@ where
     }
 }
 
+// Load some en-US data as a base. Baked is the provider for icu::decimal's builtin
+// "compiled data" that it ships by default.
+let data = icu::decimal::provider::Baked
+    .load(DataRequest {
+        id: DataIdentifierBorrowed::for_locale(&locale!("en-US").into()),
+        ..Default::default()
+    })
+    .unwrap()
+    .payload;
+
+// Make a wrapped provider that modifies Swiss data requests
 let provider = CustomDecimalSymbolsProvider(
-    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
+    // Make a simple data provider that provides the loaded en-US data unconditionally
+    FixedProvider::<DecimalSymbolsV1Marker>::from_payload(data)
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
