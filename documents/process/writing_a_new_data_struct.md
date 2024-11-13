@@ -95,7 +95,7 @@ use icu_provider::prelude::*;
 use icu::decimal::provider::GroupingSizesV1;
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@1")]
+#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@2")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]

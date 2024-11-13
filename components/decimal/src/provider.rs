@@ -121,7 +121,7 @@ pub struct DecimalSymbolsV2StrsBuilder<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@1")]
+#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@2")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
