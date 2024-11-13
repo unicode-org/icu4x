@@ -156,7 +156,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`NeoSkeletonLength`]: crate::neo_skeleton::NeoSkeletonLength
+    /// [`NeoSkeletonLength`]: crate::options::NeoSkeletonLength
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
         Long,

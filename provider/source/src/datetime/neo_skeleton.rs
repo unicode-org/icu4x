@@ -7,7 +7,7 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::fieldset::dynamic::*;
-use icu::datetime::neo_skeleton::NeoSkeletonLength;
+use icu::datetime::options::NeoSkeletonLength;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::runtime;
 use icu::datetime::provider::skeleton::components;

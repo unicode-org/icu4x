@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
         fieldset::{T, YMD, YMDT},
-        neo_skeleton::NeoSkeletonLength,
+        options::NeoSkeletonLength,
     };
 
     use crate::{
@@ -28,8 +28,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct TimeFormatter(pub icu_datetime::FixedCalendarDateTimeFormatter<(), T>);
 
-    #[diplomat::enum_convert(icu_datetime::neo_skeleton::NeoSkeletonLength, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::neo_skeleton::NeoSkeletonLength, Enum)]
+    #[diplomat::enum_convert(icu_datetime::options::NeoSkeletonLength, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::NeoSkeletonLength, Enum)]
     pub enum DateTimeLength {
         Long,
         Medium,

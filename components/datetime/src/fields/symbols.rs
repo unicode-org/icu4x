@@ -4,7 +4,7 @@
 
 #[cfg(feature = "datagen")]
 use crate::fields::FieldLength;
-use crate::neo_skeleton::FractionalSecondDigits;
+use crate::options::FractionalSecondDigits;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;

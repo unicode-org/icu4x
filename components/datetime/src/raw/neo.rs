@@ -6,7 +6,7 @@ use crate::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::*;
+use crate::options::*;
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,

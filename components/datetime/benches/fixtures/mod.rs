@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{neo_skeleton, provider::skeleton::components};
+use icu_datetime::{options, provider::skeleton::components};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -59,7 +59,7 @@ pub struct TestComponentsBag {
     pub hour: Option<components::Numeric>,
     pub minute: Option<components::Numeric>,
     pub second: Option<components::Numeric>,
-    pub fractional_second: Option<neo_skeleton::FractionalSecondDigits>,
+    pub fractional_second: Option<options::FractionalSecondDigits>,
 
     pub time_zone_name: Option<components::TimeZoneName>,
 }

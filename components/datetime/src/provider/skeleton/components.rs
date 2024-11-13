@@ -31,7 +31,7 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    neo_skeleton::FractionalSecondDigits,
+    options::FractionalSecondDigits,
     provider::pattern::{runtime::Pattern, PatternItem},
     provider::skeleton::PatternPlurals,
 };

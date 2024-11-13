@@ -10,7 +10,7 @@ use super::components;
 use super::plural::PatternPlurals;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    neo_skeleton::FractionalSecondDigits,
+    options::FractionalSecondDigits,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatternsV1},

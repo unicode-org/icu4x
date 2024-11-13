@@ -8,7 +8,7 @@ use icu_datetime::{
         self,
         dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
     },
-    neo_skeleton::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
+    options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
     provider::skeleton::components,
     FixedCalendarDateTimeFormatter,
 };
