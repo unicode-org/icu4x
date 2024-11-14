@@ -19,7 +19,7 @@
                     "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -77,7 +77,7 @@
                     "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -107,7 +107,7 @@
                     "timePrecision": "secondPlus",
                     "yearStyle": "always"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -132,7 +132,7 @@
                     "length": "short",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -156,7 +156,7 @@
                     "length": "short",
                     "timePrecision": "secondF9"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {

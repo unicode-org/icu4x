@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldset::YMDTV, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::{fieldset::YMDTV, options::NeoSkeletonLength};
     use icu_timezone::ZoneVariant;
 
     use crate::{

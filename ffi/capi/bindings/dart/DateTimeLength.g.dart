@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `NeoSkeletonLength`](https://docs.rs/icu/latest/icu/datetime/neo_skeleton/enum.NeoSkeletonLength.html) for more information.
+/// See the [Rust documentation for `NeoSkeletonLength`](https://docs.rs/icu/latest/icu/datetime/options/enum.NeoSkeletonLength.html) for more information.
 enum DateTimeLength {
   long,
 

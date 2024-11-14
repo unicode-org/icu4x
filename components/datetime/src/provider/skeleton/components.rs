@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Options for constructing DateTimeFormatter objects by each component style.
-//!
-//! ✨ *Enabled with the `experimental` Cargo feature.*
+//! Types for specifying fields in a classical datetime skeleton.
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -13,50 +11,10 @@
 //! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 //! </div>
 //!
-//! # Implementation status
-//!
-//! This module is available by enabling the `"experimental"` Cargo feature.
-//! It may change in breaking ways, including across minor releases.
-//!
-//! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
-//!
-//! | Algorithm step | Status |
-//! |----------------|--------|
-//! | Match skeleton fields according to a ranking             | Implemented |
-//! | Adjust the matched pattern to have certain widths        | Implemented |
-//! | Match date and times separately, and them combine them   | Implemented |
-//! | Use appendItems to fill in a pattern with missing fields | Not yet, and may not be fully implemented. See [issue #586](https://github.com/unicode-org/icu4x/issues/586) |
-//!
-//! # Description
-//!
-//! A [`components::Bag`](struct.Bag.html) is a model of encoding information on how to format date
-//! and time by specifying a list of components the user wants to be visible in the formatted string
-//! and how each field should be displayed.
-//!
-//! This model closely corresponds to `ECMA402` API and allows for high level of customization
-//! compared to `Length` model.
-//!
-//! Additionally, the bag contains an optional set of `Preferences` which represent user
-//! preferred adjustments that can be applied onto the pattern right before formatting.
-//!
-//! ## Pattern Selection
-//!
-//! The [`components::Bag`](struct.Bag.html) is a way for the developer to describe which components
-//! should be included in in a datetime, and how they should be displayed. There is not a strict
-//! guarantee in how the final date will be displayed to the end user. The user's preferences and
-//! locale information can override the developer preferences.
-//!
-//! The fields in the [`components::Bag`](struct.Bag.html) are matched against available patterns in
-//! the `CLDR` locale data. A best fit is found, and presented to the user. This means that in
-//! certain situations, and component combinations, fields will not have a match, or the match will
-//! have a different type of presentation for a given locale.
-//!
-//!
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::options::components;
-//! use icu::datetime::options::DateTimeFormatterOptions;
+//! use icu::datetime::provider::skeleton::components;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -65,17 +23,6 @@
 //!
 //! bag.hour = Some(components::Numeric::TwoDigit);
 //! bag.minute = Some(components::Numeric::TwoDigit);
-//!
-//! // The options can be created manually.
-//! let options = DateTimeFormatterOptions::Components(bag);
-//! ```
-//!
-//! Or the options can be inferred through the `.into()` trait.
-//!
-//! ```
-//! use icu::datetime::options::components;
-//! use icu::datetime::options::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact formatted result is a subject to change over
@@ -84,13 +31,13 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    neo_skeleton::FractionalSecondDigits,
+    options::FractionalSecondDigits,
     provider::pattern::{runtime::Pattern, PatternItem},
     provider::skeleton::PatternPlurals,
 };
 
-use super::preferences;
 use crate::neo_pattern::DateTimePattern;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -130,8 +77,8 @@ pub struct Bag {
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
 
-    /// Adjust the preferences for the date, such as setting the hour cycle.
-    pub preferences: Option<preferences::Bag>,
+    /// An override of the hour cycle.
+    pub hour_cycle: Option<HourCycle>,
 }
 
 impl Bag {
@@ -156,7 +103,7 @@ impl Bag {
             second: other.second.or(self.second),
             fractional_second: other.fractional_second.or(self.fractional_second),
             time_zone_name: other.time_zone_name.or(self.time_zone_name),
-            preferences: other.preferences.or(self.preferences),
+            hour_cycle: other.hour_cycle.or(self.hour_cycle),
         }
     }
 
@@ -170,10 +117,7 @@ impl Bag {
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
     #[cfg(feature = "datagen")]
-    pub fn to_vec_fields(
-        &self,
-        default_hour_cycle: preferences::HourCycle,
-    ) -> alloc::vec::Vec<Field> {
+    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
@@ -309,12 +253,7 @@ impl Bag {
             // fields::Hour::H23
             // fields::Hour::H24
 
-            let hour_cycle = match self.preferences {
-                Some(preferences::Bag {
-                    hour_cycle: Some(hour_cycle),
-                }) => hour_cycle,
-                _ => default_hour_cycle,
-            };
+            let hour_cycle = self.hour_cycle.unwrap_or(default_hour_cycle);
 
             // When used in skeleton data or in a skeleton passed in an API for flexible date
             // pattern generation, it should match the 12-hour-cycle format preferred by the
@@ -323,16 +262,17 @@ impl Bag {
                 symbol: FieldSymbol::Hour(match hour_cycle {
                     // Skeletons only contain the h12, not h11. The pattern that is matched
                     // is free to use h11 or h12.
-                    preferences::HourCycle::H11 | preferences::HourCycle::H12 => {
+                    HourCycle::H11 | HourCycle::H12 => {
                         // h - symbol
                         fields::Hour::H12
                     }
                     // Skeletons only contain the h23, not h24. The pattern that is matched
                     // is free to use h23 or h24.
-                    preferences::HourCycle::H24 | preferences::HourCycle::H23 => {
+                    HourCycle::H24 | HourCycle::H23 => {
                         // H - symbol
                         fields::Hour::H23
                     }
+                    _ => unreachable!(),
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -774,13 +714,11 @@ impl From<&Pattern<'_>> for Bag {
                         FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
-                    bag.preferences = Some(preferences::Bag {
-                        hour_cycle: Some(match hour {
-                            fields::Hour::H11 => preferences::HourCycle::H11,
-                            fields::Hour::H12 => preferences::HourCycle::H12,
-                            fields::Hour::H23 => preferences::HourCycle::H23,
-                            fields::Hour::H24 => preferences::HourCycle::H24,
-                        }),
+                    bag.hour_cycle = Some(match hour {
+                        fields::Hour::H11 => HourCycle::H11,
+                        fields::Hour::H12 => HourCycle::H12,
+                        fields::Hour::H23 => HourCycle::H23,
+                        fields::Hour::H24 => HourCycle::H24,
                     });
                 }
                 FieldSymbol::Minute => {
@@ -867,7 +805,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(preferences::HourCycle::H23),
+            bag.to_vec_fields(HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Four).into(),
@@ -892,7 +830,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(preferences::HourCycle::H23),
+            bag.to_vec_fields(HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Two).into(),

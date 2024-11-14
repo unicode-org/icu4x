@@ -253,7 +253,7 @@
                         "length": "medium",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -270,7 +270,7 @@
                         "length": "medium",
                         "timePrecision": "secondPlus"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -286,7 +286,7 @@
                         "length": "medium",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -303,7 +303,7 @@
                         "length": "medium",
                         "timePrecision": "secondPlus"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -317,7 +317,7 @@
                         "length": "medium",
                         "timePrecision": "hourExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -332,7 +332,7 @@
                         "length": "medium",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -348,7 +348,7 @@
                         "length": "medium",
                         "timePrecision": "secondPlus"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -362,7 +362,7 @@
                         "length": "medium",
                         "timePrecision": "hourExact"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -377,7 +377,7 @@
                         "length": "medium",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -393,7 +393,7 @@
                         "length": "medium",
                         "timePrecision": "secondPlus"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -454,7 +454,7 @@
                         "length": "medium",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -474,7 +474,7 @@
                         "length": "long",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -489,7 +489,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h11" }
+                    "hourCycle": "h11"
                 }
             },
             {
@@ -504,7 +504,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h24" }
+                    "hourCycle": "h24"
                 }
             },
             {
@@ -519,7 +519,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h11" }
+                    "hourCycle": "h11"
                 }
             },
             {
@@ -534,7 +534,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h12" }
+                    "hourCycle": "h12"
                 }
             },
             {
@@ -549,7 +549,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h23" }
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -564,7 +564,7 @@
                         "length": "short",
                         "timePrecision": "minuteExact"
                     },
-                    "preferences": { "hourCycle": "h24" }
+                    "hourCycle": "h24"
                 }
             }
         ],

@@ -144,7 +144,6 @@ Now we can write the Rust code:
 ```rust
 // At the top of the file:
 use icu::calendar::{Date, Iso};
-use icu::datetime::options::length;
 use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
 
 let locale = icu::locale::Locale::default(); // to make this example compile
