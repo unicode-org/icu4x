@@ -196,7 +196,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::DecimalSymbolsV1Marker;
+use icu::decimal::provider::DecimalSymbolsV2Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -215,10 +215,10 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
         if req.id.locale.region == Some(region!("CH")) {
-            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV1Marker>() {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2Marker>() {
                 decimal_payload.with_mut(|data| {
-                    // Change the grouping separator for all Swiss locales to '🐮'
-                    data.grouping_separator = Cow::Borrowed("🐮");
+                    // Change the digit 0 for all Swiss locales to '🐮'
+                    data.digits[0] = '🐮';
                 });
             }
         }
@@ -226,8 +226,11 @@ where
     }
 }
 
+// Make a wrapped provider that modifies Swiss data requests
 let provider = CustomDecimalSymbolsProvider(
-    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
+    // Base our provider off of the default  builtin
+    // "compiled data" shipped by icu::decimal by default.
+    icu::decimal::provider::Baked
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
@@ -246,7 +249,7 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 )
 .unwrap();
 
-assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
+assert_eq!(formatter.format_to_string(&100007i64.into()), "1🐮🐮,🐮🐮7");
 ```
 
 ## Forking Data Providers

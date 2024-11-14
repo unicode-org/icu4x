@@ -104,7 +104,7 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 208);
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 88);
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -122,7 +122,7 @@ size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 208);
 #[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
-    symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
+    symbols: DataPayload<provider::DecimalSymbolsV2Marker>,
 }
 
 impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
@@ -138,7 +138,7 @@ impl FixedDecimalFormatter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV2Marker> + ?Sized>(
         provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,

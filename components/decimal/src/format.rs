@@ -17,15 +17,16 @@ use writeable::Writeable;
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
-    pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
+    pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
 }
 
 impl FormattedFixedDecimal<'_> {
-    fn get_affixes(&self) -> Option<&AffixesV1> {
+    /// Returns the affixes needed for the current sign, as (prefix, suffix)
+    fn get_affixes(&self) -> Option<(&str, &str)> {
         match self.value.sign() {
             Sign::None => None,
-            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
-            Sign::Positive => Some(&self.symbols.plus_sign_affixes),
+            Sign::Negative => Some(self.symbols.minus_sign_affixes()),
+            Sign::Positive => Some(self.symbols.plus_sign_affixes()),
         }
     }
 }
@@ -37,13 +38,13 @@ impl Writeable for FormattedFixedDecimal<'_> {
     {
         let affixes = self.get_affixes();
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.prefix)?;
+            sink.write_str(affixes.0)?;
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
         for m in range.rev() {
             if m == -1 {
-                sink.write_str(&self.symbols.decimal_separator)?;
+                sink.write_str(self.symbols.decimal_separator())?;
             }
             #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
             sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
@@ -53,11 +54,11 @@ impl Writeable for FormattedFixedDecimal<'_> {
                 self.options.grouping_strategy,
                 &self.symbols.grouping_sizes,
             ) {
-                sink.write_str(&self.symbols.grouping_separator)?;
+                sink.write_str(self.symbols.grouping_separator())?;
             }
         }
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.suffix)?;
+            sink.write_str(affixes.1)?;
         }
         Ok(())
     }

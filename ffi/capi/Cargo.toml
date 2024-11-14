@@ -150,6 +150,7 @@ icu_provider_blob = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
+zerovec = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging uses diplomat_runtime bindings in wasm, we only need this for native
