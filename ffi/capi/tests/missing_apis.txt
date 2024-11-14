@@ -33,8 +33,6 @@ icu::datetime::FormattedNeoDateTime::try_write_to_parts#FnInStruct
 icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::NeoSkeletonLength#Enum
 icu::datetime::NeoSkeletonLength::into_option#FnInEnum
-icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
-icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
 icu::datetime::fieldset::Combo#Struct
 icu::datetime::fieldset::Combo::long#FnInStruct
 icu::datetime::fieldset::Combo::medium#FnInStruct
@@ -292,8 +290,15 @@ icu::datetime::fieldset::dynamic::TimeFieldSet::v#FnInEnum
 icu::datetime::fieldset::dynamic::TimeFieldSet::z#FnInEnum
 icu::datetime::fieldset::dynamic::ZoneFieldSet#Enum
 icu::datetime::fieldset::dynamic::ZoneStyle#Enum
-icu::datetime::options::length::Date#Enum
-icu::datetime::options::length::Time#Enum
+icu::datetime::options::Alignment#Enum
+icu::datetime::options::Alignment::into_option#FnInEnum
+icu::datetime::options::FractionalSecondDigits#Enum
+icu::datetime::options::FractionalSecondError#Enum
+icu::datetime::options::NeoSkeletonLength::into_option#FnInEnum
+icu::datetime::options::TimePrecision#Enum
+icu::datetime::options::TimePrecision::into_option#FnInEnum
+icu::datetime::options::YearStyle#Enum
+icu::datetime::options::YearStyle::into_option#FnInEnum
 icu::list::ListFormatterOptions#Struct
 icu::list::ListFormatterOptions::default#FnInStruct
 icu::list::ListFormatterOptions::with_length#FnInStruct
