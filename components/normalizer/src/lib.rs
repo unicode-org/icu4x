@@ -723,7 +723,7 @@ where
     fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
             let c = c_and_trie_val.character;
-            /// See trie-value-format.md
+            // See trie-value-format.md
             let decomposition = c_and_trie_val.trie_val;
             // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
             // and that flag needs to be ignored here.
