@@ -14,8 +14,10 @@ use crate::compactdecimal::{
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
-use icu_decimal::FixedDecimalFormatter;
-use icu_locale_core::preferences::define_preferences;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem,
+};
 use icu_plurals::PluralRules;
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
@@ -24,7 +26,9 @@ use zerovec::maps::ZeroMap2dCursor;
 define_preferences!(
     /// The preferences for compact decimal formatting.
     CompactDecimalFormatterPreferences,
-    {}
+    {
+        numbering_system: NumberingSystem
+    }
 );
 
 /// A formatter that renders locale-sensitive compact numbers.
@@ -99,7 +103,7 @@ impl CompactDecimalFormatter {
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal(prefs.locale_prefs.into())?,
@@ -144,7 +148,7 @@ impl CompactDecimalFormatter {
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(
@@ -192,7 +196,7 @@ impl CompactDecimalFormatter {
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal(prefs.locale_prefs.into())?,
@@ -237,7 +241,7 @@ impl CompactDecimalFormatter {
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(
@@ -681,6 +685,15 @@ impl CompactDecimalFormatter {
             })
             .unwrap_or(0);
         (plural_map, exponent)
+    }
+}
+
+impl From<&CompactDecimalFormatterPreferences> for FixedDecimalFormatterPreferences {
+    fn from(value: &CompactDecimalFormatterPreferences) -> Self {
+        Self {
+            locale_prefs: value.locale_prefs,
+            numbering_system: value.numbering_system,
+        }
     }
 }
 
