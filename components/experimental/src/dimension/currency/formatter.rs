@@ -5,8 +5,13 @@
 //! Experimental.
 
 use fixed_decimal::FixedDecimal;
-use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
-use icu_locale_core::preferences::define_preferences;
+use icu_decimal::{
+    options::FixedDecimalFormatterOptions, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
+};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
+use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 
 use super::super::provider::currency::CurrencyEssentialsV1Marker;
@@ -19,8 +24,17 @@ extern crate alloc;
 define_preferences!(
     /// The preferences for currency formatting.
     CurrencyFormatterPreferences,
-    {}
+    {
+        numbering_system: NumberingSystem
+    }
 );
+
+prefs_convert!(
+    CurrencyFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for monetary values.
 ///
@@ -66,7 +80,7 @@ impl CurrencyFormatter {
         let locale =
             DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
         let essential = crate::provider::Baked
@@ -98,7 +112,7 @@ impl CurrencyFormatter {
             DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
         let essential = provider

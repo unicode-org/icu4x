@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
-use crate::dimension::units::formatter::UnitsFormatter;
+use crate::dimension::units::formatter::{UnitsFormatter, UnitsFormatterPreferences};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 use crate::duration::options::FieldStyle;
 
@@ -14,16 +14,32 @@ use super::{provider, Duration};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
 use icu_decimal::provider::DecimalSymbolsV2Marker;
-use icu_decimal::FixedDecimalFormatter;
-use icu_list::{ListFormatter, ListLength};
-use icu_locale_core::preferences::define_preferences;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
 use icu_provider::prelude::*;
 
 define_preferences!(
     /// The preferences for duration formatting.
     DurationFormatterPreferences,
-    {}
+    {
+        numbering_system: NumberingSystem
+    }
 );
+
+impl Copy for DurationFormatterPreferences {}
+
+prefs_convert!(DurationFormatterPreferences, UnitsFormatterPreferences, {
+    numbering_system
+});
+prefs_convert!(
+    DurationFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 
 /// A formatter for [`Duration`](crate::duration::Duration)s.
 ///
@@ -100,11 +116,7 @@ impl DurationUnitFormatter {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            UnitsFormatter::try_new(
-                prefs.locale_prefs.into(),
-                unit.as_unit_formatter_name(),
-                options,
-            )
+            UnitsFormatter::try_new((&prefs).into(), unit.as_unit_formatter_name(), options)
         };
 
         Ok(DurationUnitFormatter {
@@ -137,7 +149,7 @@ impl DurationUnitFormatter {
 
             UnitsFormatter::try_new_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 unit.as_unit_formatter_name(),
                 options,
             )
@@ -212,9 +224,9 @@ impl DurationFormatter {
         Ok(Self {
             digital,
             options,
-            unit: DurationUnitFormatter::try_new(prefs.locale_prefs.into(), options)?,
-            list: ListFormatter::try_new_unit(prefs.locale_prefs.into(), options.base.into())?,
-            fdf: FixedDecimalFormatter::try_new(prefs.locale_prefs.into(), Default::default())?,
+            unit: DurationUnitFormatter::try_new(prefs, options)?,
+            list: ListFormatter::try_new_unit((&prefs).into(), options.base.into())?,
+            fdf: FixedDecimalFormatter::try_new((&prefs).into(), Default::default())?,
         })
     }
 
@@ -244,19 +256,15 @@ impl DurationFormatter {
         Ok(Self {
             digital,
             options,
-            unit: DurationUnitFormatter::try_new_unstable(
-                provider,
-                prefs.locale_prefs.into(),
-                options,
-            )?,
+            unit: DurationUnitFormatter::try_new_unstable(provider, prefs, options)?,
             list: ListFormatter::try_new_unit_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 options.base.into(),
             )?,
             fdf: FixedDecimalFormatter::try_new_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 Default::default(),
             )?,
         })

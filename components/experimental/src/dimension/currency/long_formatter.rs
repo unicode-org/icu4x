@@ -66,7 +66,7 @@ impl LongCurrencyFormatter {
         let locale =
             DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
@@ -89,7 +89,7 @@ impl LongCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal(prefs.locale_prefs.into())?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
             extended,
@@ -116,7 +116,7 @@ impl LongCurrencyFormatter {
             DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
@@ -138,8 +138,7 @@ impl LongCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let plural_rules =
-            PluralRules::try_new_cardinal_unstable(provider, prefs.locale_prefs.into())?;
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         Ok(Self {
             extended,

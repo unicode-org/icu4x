@@ -5,8 +5,10 @@
 use fixed_decimal::{FixedDecimal, Sign};
 use icu_decimal::{
     options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV2Marker, FixedDecimalFormatter,
+    FixedDecimalFormatterPreferences,
 };
-use icu_locale_core::preferences::define_preferences;
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
+use icu_plurals::PluralRulesPreferences;
 use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -20,6 +22,11 @@ define_preferences!(
     RelativeTimeFormatterPreferences,
     {}
 );
+prefs_convert!(
+    RelativeTimeFormatterPreferences,
+    FixedDecimalFormatterPreferences
+);
+prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter to render locale-sensitive relative time.
 ///
@@ -131,10 +138,10 @@ macro_rules! constructor {
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError> {
             let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
-            let plural_rules = PluralRules::try_new_cardinal(prefs.locale_prefs.into())?;
+            let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
@@ -176,11 +183,11 @@ macro_rules! constructor {
                 + ?Sized,
         {
             let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
-            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, prefs.locale_prefs.into())?;
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
                 provider,
-                prefs.locale_prefs.into(),
+                (&prefs).into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = provider

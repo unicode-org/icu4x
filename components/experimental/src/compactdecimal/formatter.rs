@@ -16,9 +16,9 @@ use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem,
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
-use icu_plurals::PluralRules;
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
 use zerovec::maps::ZeroMap2dCursor;
@@ -30,6 +30,13 @@ define_preferences!(
         numbering_system: NumberingSystem
     }
 );
+
+prefs_convert!(
+    CompactDecimalFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter that renders locale-sensitive compact numbers.
 ///
@@ -106,7 +113,7 @@ impl CompactDecimalFormatter {
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(prefs.locale_prefs.into())?,
+            plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
@@ -151,10 +158,7 @@ impl CompactDecimalFormatter {
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(
-                provider,
-                prefs.locale_prefs.into(),
-            )?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
@@ -199,7 +203,7 @@ impl CompactDecimalFormatter {
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(prefs.locale_prefs.into())?,
+            plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
@@ -244,10 +248,7 @@ impl CompactDecimalFormatter {
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(
-                provider,
-                prefs.locale_prefs.into(),
-            )?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
@@ -685,15 +686,6 @@ impl CompactDecimalFormatter {
             })
             .unwrap_or(0);
         (plural_map, exponent)
-    }
-}
-
-impl From<&CompactDecimalFormatterPreferences> for FixedDecimalFormatterPreferences {
-    fn from(value: &CompactDecimalFormatterPreferences) -> Self {
-        Self {
-            locale_prefs: value.locale_prefs,
-            numbering_system: value.numbering_system,
-        }
     }
 }
 

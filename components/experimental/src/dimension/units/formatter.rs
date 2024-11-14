@@ -6,9 +6,11 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::FixedDecimalFormatter;
-use icu_locale_core::preferences::define_preferences;
-use icu_plurals::PluralRules;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
@@ -22,8 +24,16 @@ extern crate alloc;
 define_preferences!(
     /// The preferences for units formatting.
     UnitsFormatterPreferences,
-    {}
+    {
+        numbering_system: NumberingSystem
+    }
 );
+prefs_convert!(
+    UnitsFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for measurement unit values.
 ///
@@ -89,11 +99,11 @@ impl UnitsFormatter {
         let locale =
             DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
-        let plural_rules = PluralRules::try_new_cardinal(prefs.locale_prefs.into())?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);
@@ -135,12 +145,11 @@ impl UnitsFormatter {
             DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
-        let plural_rules =
-            PluralRules::try_new_cardinal_unstable(provider, prefs.locale_prefs.into())?;
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, unit);

@@ -529,18 +529,6 @@ macro_rules! __define_preferences {
             }
         }
 
-        impl From<$crate::preferences::LocalePreferences> for $name {
-            fn from(locale_prefs: $crate::preferences::LocalePreferences) -> Self {
-                Self {
-                    locale_prefs,
-
-                    $(
-                        $key: None,
-                    )*
-                }
-            }
-        }
-
         impl From<$name> for $crate::Locale {
             fn from(other: $name) -> Self {
                 use $crate::preferences::PreferenceKey;
@@ -570,5 +558,46 @@ macro_rules! __define_preferences {
         }
     )
 }
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __prefs_convert {
+    (
+        $name1:ident,
+        $name2:ident
+    ) => {
+        impl From<&$name1> for $name2 {
+            fn from(other: &$name1) -> Self {
+                let mut result = Self::default();
+                result.locale_prefs = other.locale_prefs;
+                result
+            }
+        }
+    };
+    (
+        $name1:ident,
+        $name2:ident,
+        {
+            $(
+                $key:ident
+            ),*
+        }
+    ) => {
+        impl From<&$name1> for $name2 {
+            fn from(other: &$name1) -> Self {
+                let mut result = Self::default();
+                result.locale_prefs = other.locale_prefs;
+                $(
+                    result.$key = other.$key;
+                )*
+                result
+            }
+        }
+    };
+}
+
 #[doc(inline)]
 pub use __define_preferences as define_preferences;
+
+#[doc(inline)]
+pub use __prefs_convert as prefs_convert;

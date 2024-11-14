@@ -23,3 +23,5 @@ struct_keyword!(
         crate::extensions::unicode::Value::from_subtag(Some(input.0))
     }
 );
+
+impl Copy for NumberingSystem {}

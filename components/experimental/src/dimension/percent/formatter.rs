@@ -6,8 +6,10 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::FixedDecimalFormatter;
-use icu_locale_core::preferences::define_preferences;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
 use icu_provider::{
     DataError, DataIdentifierBorrowed, DataLocale, DataPayload, DataProvider, DataRequest,
 };
@@ -21,7 +23,15 @@ extern crate alloc;
 define_preferences!(
     /// The preferences for percent formatting.
     PercentFormatterPreferences,
-    {}
+    {
+        numbering_system: NumberingSystem
+    }
+);
+
+prefs_convert!(
+    PercentFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
 );
 
 /// A formatter for percent values.
@@ -62,7 +72,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
@@ -86,7 +96,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            prefs.locale_prefs.into(),
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
