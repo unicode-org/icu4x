@@ -32,48 +32,61 @@ use zerovec::{zeroslice, ZeroSlice};
 use crate::provider::CollationDataV1;
 
 /// Marker that the decomposition does not round trip via NFC.
+///
+/// See components/normalizer/trie-value-format.md
 const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
 /// Marker that the first character of the decomposition
 /// can combine backwards.
+///
+/// See components/normalizer/trie-value-format.md
 const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
 /// Mask for the bits have to be zero for this to be a BMP
 /// singleton decomposition, or value baked into the surrogate
 /// range.
+///
+/// See components/normalizer/trie-value-format.md
 const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
 
 /// Mask for the bits have to be zero for this to be a complex
 /// decomposition.
+///
+/// See components/normalizer/trie-value-format.md
 const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
 /// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
 /// but they differ by `NON_ROUND_TRIP_MARKER`.)
+///
+/// See components/normalizer/trie-value-format.md
 const FDFA_MARKER: u16 = 1;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
+///
+/// See components/normalizer/trie-value-format.md
 fn trie_value_has_ccc(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFE00) == 0xD800
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
+///
+/// See components/normalizer/trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFF00) == 0xD900
 }
 
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
+///
+/// See components/normalizer/trie-value-format.md
 fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
     trie_value_has_ccc(trie_value)
 }
 
 /// Extracts a canonical combining class (possibly zero) from a trie value.
 ///
-/// # Panics
-///
-/// The trie value must not be one that signifies a special non-starter
-/// decomposition. (Debug-only)
+/// See components/normalizer/trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
         CanonicalCombiningClass(trie_value as u8)
@@ -795,6 +808,8 @@ where
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data ZeroSlice<u16>,
     /// NFD main trie.
+    ///
+    /// See components/normalizer/trie-value-format.md
     trie: &'data CodePointTrie<'data, u32>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
@@ -1026,6 +1041,8 @@ where
         // Hangul syllables in lookahead, because Hangul isn't allowed to
         // participate in contractions, and the trie default is that a character
         // is its own decomposition.
+
+        // See components/normalizer/trie-value-format.md
         let decomposition = c.trie_val;
         if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) <= 1 {
             // The character is its own decomposition (or Hangul syllable)
@@ -1261,6 +1278,7 @@ where
             // optimize based on that bet.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
+                // See components/normalizer/trie-value-format.md
                 let decomposition = c_c_tv.trie_val;
                 if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                     // The character is its own decomposition

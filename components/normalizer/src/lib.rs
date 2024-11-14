@@ -134,42 +134,60 @@ enum IgnorableBehavior {
 }
 
 /// Marker for UTS 46 ignorables.
+///
+/// See trie-value-format.md
 const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
 
 /// Marker that the decomposition does not round trip via NFC.
+///
+/// See trie-value-format.md
 const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
 /// Marker that the first character of the decomposition
 /// can combine backwards.
+///
+/// See trie-value-format.md
 const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
 /// Mask for the bits have to be zero for this to be a BMP
 /// singleton decomposition, or value baked into the surrogate
 /// range.
+///
+/// See trie-value-format.md
 const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
 
 /// Mask for the bits have to be zero for this to be a complex
 /// decomposition.
+///
+/// See trie-value-format.md
 const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
+///
+/// See trie-value-format.md
 fn trie_value_has_ccc(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFE00) == 0xD800
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
+///
+/// See trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFF00) == 0xD900
 }
 
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
+///
+/// See trie-value-format.md
 fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
     trie_value_has_ccc(trie_value)
 }
 
 /// Extracts a canonical combining class (possibly zero) from a trie value.
+///
+/// See trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
         CanonicalCombiningClass(trie_value as u8)
@@ -187,6 +205,8 @@ static FDFA_NFKD: [u16; 17] = [
 
 /// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
 /// but they differ by `NON_ROUND_TRIP_MARKER`.)
+///
+/// See trie-value-format.md
 const FDFA_MARKER: u16 = 1;
 
 // These constants originate from page 143 of Unicode 14.0
@@ -318,6 +338,7 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
     }
 }
 
+/// See trie-value-format.md
 #[inline(always)]
 fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
     // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
@@ -325,6 +346,7 @@ fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
     (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0
 }
 
+/// See trie-value-format.md
 #[inline(always)]
 fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
     (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
@@ -337,6 +359,7 @@ fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> boo
 #[derive(Debug, PartialEq, Eq)]
 struct CharacterAndTrieValue {
     character: char,
+    /// See trie-value-format.md
     trie_val: u32,
 }
 
@@ -354,6 +377,7 @@ impl CharacterAndTrieValue {
         starter_and_decomposes_to_self_impl(self.trie_val)
     }
 
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
         // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
@@ -363,14 +387,17 @@ impl CharacterAndTrieValue {
         (self.trie_val & !BACKWARD_COMBINING_MARKER) == 0
     }
 
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
         (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
     }
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
         (self.trie_val & NON_ROUND_TRIP_MARKER) == 0
     }
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
         potential_passthrough_and_cannot_combine_backwards_impl(self.trie_val)
@@ -696,6 +723,7 @@ where
     fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
             let c = c_and_trie_val.character;
+            /// See trie-value-format.md
             let decomposition = c_and_trie_val.trie_val;
             // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
             // and that flag needs to be ignored here.
