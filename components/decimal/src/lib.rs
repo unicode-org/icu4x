@@ -151,17 +151,20 @@ impl FixedDecimalFormatter {
     ) -> Result<Self, DataError> {
         let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(
+                        locale.get_single_unicode_ext("nu").unwrap_or_default(),
+                    ),
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload;
-        let numsys = locale
-            .get_single_unicode_ext("nu")
-            .unwrap_or(&symbols.get().numsys);
+
         let digits = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(numsys),
+                    DataMarkerAttributes::from_str_or_panic(&symbols.get().numsys),
                     &locale!("und").into(),
                 ),
                 ..Default::default()

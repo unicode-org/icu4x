@@ -45,12 +45,7 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
 
 impl IterableDataProviderCached<DecimalSymbolsV2Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .numbers()
-            .list_locales()?
-            .map(|loc| DataIdentifierCow::from_locale(loc.clone()))
-            .collect())
+        self.iter_ids_for_numbers_with_locales()
     }
 }
 
