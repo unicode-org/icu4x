@@ -29,14 +29,12 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let mut result =
+        let result =
             DecimalSymbolsV2::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
                 DataError::custom("Could not create decimal symbols")
                     .with_display_context(&s)
                     .with_display_context(nsname)
             })?;
-
-        result.digits = self.get_digits_for_numbering_system(nsname)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -47,7 +45,12 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
 
 impl IterableDataProviderCached<DecimalSymbolsV2Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers()
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_locales()?
+            .map(|loc| DataIdentifierCow::from_locale(loc.clone()))
+            .collect())
     }
 }
 
@@ -87,6 +90,10 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
             decimal_separator: Cow::Owned(symbols.decimal.clone()),
             grouping_separator: Cow::Owned(symbols.group.clone()),
         };
+        let numsys = nsname
+            .parse()
+            .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
+
         Ok(Self {
             strings: VarZeroCow::from_encodeable(&strings),
             grouping_sizes: GroupingSizesV1 {
@@ -94,7 +101,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,
             },
-            digits: Default::default(), // to be filled in
+            numsys,
         })
     }
 }
@@ -111,7 +118,6 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap();
-
     assert_eq!(ar_decimal.payload.get().decimal_separator(), "٫");
-    assert_eq!(ar_decimal.payload.get().digits[0], '٠');
+    assert_eq!(ar_decimal.payload.get().numsys, "arab");
 }

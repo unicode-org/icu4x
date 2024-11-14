@@ -81,7 +81,8 @@ impl CurrencyFormatter {
     where
         D: ?Sized
             + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>,
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,

@@ -29,6 +29,7 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_decimal_data = { workspace = true, optional = true }
+tinystr = { workspace = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -46,8 +47,8 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
-serde = ["dep:serde", "icu_provider/serde", "zerovec/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake"]
+serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
 bench = ["serde"]
 compiled_data = ["dep:icu_decimal_data"]
 

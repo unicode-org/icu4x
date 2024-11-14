@@ -4,7 +4,8 @@
 
 use fixed_decimal::{FixedDecimal, Sign};
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV2Marker, FixedDecimalFormatter,
+    options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1Marker,
+    provider::DecimalSymbolsV2Marker, FixedDecimalFormatter,
 };
 use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::marker::ErasedMarker;
@@ -165,7 +166,7 @@ macro_rules! constructor {
         where
             D: DataProvider<CardinalV1Marker>
                 + DataProvider<$marker>
-                + DataProvider<DecimalSymbolsV2Marker>
+                + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
                 + ?Sized,
         {
             let temp_loc = locale.clone().into_locale();

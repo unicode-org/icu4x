@@ -126,6 +126,7 @@ impl CompactDecimalFormatter {
     where
         D: DataProvider<ShortCompactDecimalFormatDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
@@ -212,6 +213,7 @@ impl CompactDecimalFormatter {
     where
         D: DataProvider<LongCompactDecimalFormatDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
