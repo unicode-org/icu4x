@@ -7,13 +7,13 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldset::YMDHMSV, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::{fieldset::YMDTV, neo_skeleton::NeoSkeletonLength};
     use icu_timezone::ZoneVariant;
 
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
         datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::Error,
+        errors::ffi::{DateTimeFormatError, PatternLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZoneInfo,
@@ -25,7 +25,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDHMSV>,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDTV>,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -39,9 +39,9 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
+        ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -61,7 +61,7 @@ pub mod ffi {
             datetime: &IsoDateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: greg.date,
@@ -72,7 +72,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _infallible = self.0.format(&zdt).try_write_to(write);
+            let _lossy = self.0.format(&zdt).try_write_to(write);
             Ok(())
         }
     }
@@ -80,7 +80,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDHMSV>);
+    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDTV>);
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
@@ -93,9 +93,9 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
             let locale = locale.to_datalocale();
-            let options = YMDHMSV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
@@ -113,7 +113,7 @@ pub mod ffi {
             datetime: &DateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
@@ -124,10 +124,10 @@ pub mod ffi {
                     .with_zone_variant(
                         time_zone
                             .zone_variant
-                            .ok_or(Error::DateTimeZoneInfoMissingFieldsError)?,
+                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
 
@@ -137,7 +137,7 @@ pub mod ffi {
             datetime: &IsoDateTime,
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::CustomZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
@@ -147,7 +147,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
     }

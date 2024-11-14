@@ -20,8 +20,11 @@ mod niche;
 mod option;
 mod plain;
 mod slices;
+#[cfg(test)]
+pub mod test_utils;
 
 pub mod tuple;
+pub mod tuplevar;
 pub mod vartuple;
 pub use chars::CharULE;
 pub use encode::{encode_varule_to_box, EncodeAsVarULE};

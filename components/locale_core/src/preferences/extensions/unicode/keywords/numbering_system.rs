@@ -7,7 +7,9 @@ use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{extensions::unicode::Value, subtags::Subtag};
 
 struct_keyword!(
-    /// TODO
+    /// A Unicode Number System Identifier defines a type of number system.
+    ///
+    /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeNumberSystemIdentifier).
     NumberingSystem,
     "nu",
     Subtag,

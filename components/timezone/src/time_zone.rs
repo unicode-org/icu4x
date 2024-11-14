@@ -121,6 +121,16 @@ impl TimeZoneBcp47Id {
             zone_variant: (),
         }
     }
+
+    /// Converts this [`TimeZoneBcp47Id`] into a [`TimeZoneInfo`] without an offset.
+    pub const fn without_offset(self) -> TimeZoneInfo<models::Base> {
+        TimeZoneInfo {
+            offset: None,
+            time_zone_id: self,
+            local_time: (),
+            zone_variant: (),
+        }
+    }
 }
 
 impl TimeZoneInfo<models::Base> {

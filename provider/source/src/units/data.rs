@@ -134,8 +134,7 @@ fn test_basic() {
 
     let units_us = us_locale_long_meter.get().to_owned();
 
-    let en_rules =
-        PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
     let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
@@ -169,8 +168,7 @@ fn test_basic() {
         .payload;
 
     let ar_eg_units = ar_eg_locale.get().to_owned();
-    let ar_rules =
-        PluralRules::try_new_cardinal_unstable(&provider, &langid!("ar").into()).unwrap();
+    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
     let long = ar_eg_units
         .patterns
         .get(1.into(), &ar_rules)
@@ -189,8 +187,7 @@ fn test_basic() {
         .payload;
 
     let fr_units = fr_locale.get().to_owned();
-    let fr_rules =
-        PluralRules::try_new_cardinal_unstable(&provider, &langid!("fr").into()).unwrap();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
     let short = fr_units.patterns.get(5.into(), &fr_rules).interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 }

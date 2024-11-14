@@ -99,8 +99,7 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let en_rules =
-        PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
     assert_eq!(en.get().display_names.get(1.into(), &en_rules), "US dollar");
     assert_eq!(
         en.get().display_names.get(10.into(), &en_rules),
@@ -117,8 +116,7 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let fr_rules =
-        PluralRules::try_new_cardinal_unstable(&provider, &langid!("fr").into()).unwrap();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
 
     assert_eq!(
         fr.get().display_names.get(0.into(), &fr_rules),

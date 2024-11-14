@@ -4,12 +4,11 @@
 
 use crate::scaffold::*;
 use icu_calendar::{
-    any_calendar::IntoAnyCalendar,
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Iso, Time,
+    AsCalendar, Calendar, Date, DateTime, Iso, Time,
 };
 use icu_timezone::{
     CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
@@ -49,10 +48,10 @@ macro_rules! impl_get_field {
             }
         }
     };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, fractional_second_digits, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<FractionalSecondDigits>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<FractionalSecondDigits> {
-                self.fractional_second_digits
+    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, time_precision, yes) => {
+        impl $(<$($generics0),+>)? GetField<Option<TimePrecision>> for $type $(<$($generics1),+>)? {
+            fn get_field(&self) -> Option<TimePrecision> {
+                self.time_precision
             }
         }
     };
@@ -101,13 +100,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.day_of_year_info()
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind> for Date<A> {
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.calendar().kind()
     }
 }
 
@@ -171,13 +163,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for DateT
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> GetField<AnyCalendarKind> for DateTime<A> {
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.date.calendar().kind()
     }
 }
 
@@ -249,15 +234,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYearInfo>
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
         self.date.day_of_year_info()
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z> GetField<AnyCalendarKind>
-    for CustomZonedDateTime<A, Z>
-{
-    #[inline]
-    fn get_field(&self) -> AnyCalendarKind {
-        self.date.calendar().kind()
     }
 }
 

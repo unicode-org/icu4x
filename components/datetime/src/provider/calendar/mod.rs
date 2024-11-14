@@ -9,6 +9,7 @@ mod skeletons;
 mod symbols;
 
 use crate::provider::pattern;
+use crate::size_test_macro::size_test;
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 pub use skeletons::*;

@@ -324,20 +324,6 @@
     ],
     [
       [
-        "azer",
-        "Standard"
-      ],
-      "hora estándar de Azerbaiyán"
-    ],
-    [
-      [
-        "azer",
-        "Daylight"
-      ],
-      "hora de verano de Azerbaiyán"
-    ],
-    [
-      [
         "azor",
         "Standard"
       ],
@@ -349,20 +335,6 @@
         "Daylight"
       ],
       "hora de verano de las Azores"
-    ],
-    [
-      [
-        "bang",
-        "Standard"
-      ],
-      "hora estándar de Bangladés"
-    ],
-    [
-      [
-        "bang",
-        "Daylight"
-      ],
-      "hora de verano de Bangladés"
     ],
     [
       [
@@ -398,20 +370,6 @@
         "Standard"
       ],
       "hora de Brunéi"
-    ],
-    [
-      [
-        "cave",
-        "Standard"
-      ],
-      "hora estándar de Cabo Verde"
-    ],
-    [
-      [
-        "cave",
-        "Daylight"
-      ],
-      "hora de verano de Cabo Verde"
     ],
     [
       [
@@ -535,13 +493,6 @@
     [
       [
         "east",
-        "Standard"
-      ],
-      "hora estándar de Isla de Pascua"
-    ],
-    [
-      [
-        "east",
         "Daylight"
       ],
       "hora de verano de la Isla de Pascua"
@@ -622,20 +573,6 @@
         "Daylight"
       ],
       "hora de verano de las Islas Malvinas"
-    ],
-    [
-      [
-        "fiji",
-        "Standard"
-      ],
-      "hora estándar de Fiyi"
-    ],
-    [
-      [
-        "fiji",
-        "Daylight"
-      ],
-      "hora de verano de Fiyi"
     ],
     [
       [
@@ -821,20 +758,6 @@
     ],
     [
       [
-        "iran",
-        "Standard"
-      ],
-      "hora estándar de Irán"
-    ],
-    [
-      [
-        "iran",
-        "Daylight"
-      ],
-      "hora de verano de Irán"
-    ],
-    [
-      [
         "irku",
         "Standard"
       ],
@@ -860,20 +783,6 @@
         "Daylight"
       ],
       "hora de verano de Israel"
-    ],
-    [
-      [
-        "japa",
-        "Standard"
-      ],
-      "hora estándar de Japón"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "hora de verano de Japón"
     ],
     [
       [
@@ -1038,20 +947,6 @@
     ],
     [
       [
-        "maur",
-        "Standard"
-      ],
-      "hora estándar de Mauricio"
-    ],
-    [
-      [
-        "maur",
-        "Daylight"
-      ],
-      "hora de verano de Mauricio"
-    ],
-    [
-      [
         "maws",
         "Standard"
       ],
@@ -1080,20 +975,6 @@
     ],
     [
       [
-        "mong",
-        "Standard"
-      ],
-      "hora estándar de Ulán Bator"
-    ],
-    [
-      [
-        "mong",
-        "Daylight"
-      ],
-      "hora de verano de Ulán Bator"
-    ],
-    [
-      [
         "mosc",
         "Standard"
       ],
@@ -1119,20 +1000,6 @@
         "Standard"
       ],
       "hora de Nauru"
-    ],
-    [
-      [
-        "neca",
-        "Standard"
-      ],
-      "hora estándar de Nueva Caledonia"
-    ],
-    [
-      [
-        "neca",
-        "Daylight"
-      ],
-      "hora de verano de Nueva Caledonia"
     ],
     [
       [
@@ -1241,20 +1108,6 @@
     ],
     [
       [
-        "paki",
-        "Standard"
-      ],
-      "hora estándar de Pakistán"
-    ],
-    [
-      [
-        "paki",
-        "Daylight"
-      ],
-      "hora de verano de Pakistán"
-    ],
-    [
-      [
         "pala",
         "Standard"
       ],
@@ -1297,38 +1150,10 @@
     ],
     [
       [
-        "phil",
-        "Standard"
-      ],
-      "hora estándar de Filipinas"
-    ],
-    [
-      [
-        "phil",
-        "Daylight"
-      ],
-      "hora de verano de Filipinas"
-    ],
-    [
-      [
         "phis",
         "Standard"
       ],
       "hora de las Islas Fénix"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "hora estándar de San Pedro y Miquelón"
-    ],
-    [
-      [
-        "pimi",
-        "Daylight"
-      ],
-      "hora de verano de San Pedro y Miquelón"
     ],
     [
       [
@@ -1378,20 +1203,6 @@
         "Standard"
       ],
       "hora de Rothera"
-    ],
-    [
-      [
-        "sakh",
-        "Standard"
-      ],
-      "hora estándar de Sajalín"
-    ],
-    [
-      [
-        "sakh",
-        "Daylight"
-      ],
-      "hora de verano de Sajalín"
     ],
     [
       [
@@ -1521,20 +1332,6 @@
     ],
     [
       [
-        "turk",
-        "Standard"
-      ],
-      "hora estándar de Turkmenistán"
-    ],
-    [
-      [
-        "turk",
-        "Daylight"
-      ],
-      "hora de verano de Turkmenistán"
-    ],
-    [
-      [
         "tuva",
         "Standard"
       ],
@@ -1605,20 +1402,6 @@
     ],
     [
       [
-        "volg",
-        "Standard"
-      ],
-      "hora estándar de Volgogrado"
-    ],
-    [
-      [
-        "volg",
-        "Daylight"
-      ],
-      "hora de verano de Volgogrado"
-    ],
-    [
-      [
         "vost",
         "Standard"
       ],
@@ -1651,20 +1434,6 @@
         "Daylight"
       ],
       "hora de verano de Yakutsk"
-    ],
-    [
-      [
-        "yeka",
-        "Standard"
-      ],
-      "hora estándar de Ekaterimburgo"
-    ],
-    [
-      [
-        "yeka",
-        "Daylight"
-      ],
-      "hora de verano de Ekaterimburgo"
     ],
     [
       [

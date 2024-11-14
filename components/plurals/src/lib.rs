@@ -28,7 +28,7 @@
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
 //! let pr =
-//!     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+//!     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
 //!         .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -81,6 +81,7 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
@@ -139,7 +140,7 @@ pub enum PluralRuleType {
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -261,6 +262,12 @@ impl PluralCategory {
     }
 }
 
+define_preferences!(
+    /// The preferences for plural rules.
+    PluralRulesPreferences,
+    {}
+);
+
 /// A struct which provides an ability to retrieve an appropriate
 /// [`Plural Category`] for a given number.
 ///
@@ -271,7 +278,7 @@ impl PluralCategory {
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -291,12 +298,8 @@ impl AsRef<PluralRules> for PluralRules {
 
 impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, rule_type: PluralRuleType) -> error: DataError,
+        (prefs: PluralRulesPreferences, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -305,7 +308,7 @@ impl PluralRules {
         /// use icu::plurals::{PluralRuleType, PluralRules};
         ///
         /// let _ = PluralRules::try_new(
-        ///     &locale!("en").into(),
+        ///     locale!("en").into(),
         ///     PluralRuleType::Cardinal,
         /// ).expect("locale should be present");
         /// ```
@@ -317,17 +320,17 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
         rule_type: PluralRuleType,
     ) -> Result<Self, DataError> {
         match rule_type {
-            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
-            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
+            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, prefs),
+            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, prefs),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
         /// Cardinal plural forms express quantities of units such as time, currency or distance,
@@ -338,17 +341,13 @@ impl PluralRules {
         /// * [`One`]: `1 day`
         /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
-        /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into()).expect("locale should be present");
+        /// let rules = PluralRules::try_new_cardinal(locale!("ru").into()).expect("locale should be present");
         ///
         /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
         /// ```
@@ -367,12 +366,13 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
+        let locale = DataLocale::from_preferences_locale::<CardinalV1Marker>(prefs.locale_prefs);
         Ok(Self(
             provider
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?
                 .payload
@@ -381,7 +381,7 @@ impl PluralRules {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
         /// Ordinal plural forms denote the order of items in a set and are always integers.
@@ -393,10 +393,6 @@ impl PluralRules {
         /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
         /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
         /// # Examples
         ///
         /// ```
@@ -404,7 +400,7 @@ impl PluralRules {
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
         /// let rules = PluralRules::try_new_ordinal(
-        ///     &locale!("ru").into(),
+        ///     locale!("ru").into(),
         /// )
         /// .expect("locale should be present");
         ///
@@ -427,12 +423,13 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
+        let locale = DataLocale::from_preferences_locale::<OrdinalV1Marker>(prefs.locale_prefs);
         Ok(Self(
             provider
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?
                 .payload
@@ -449,7 +446,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
     ///         .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
@@ -474,7 +471,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
     /// #
-    /// # let pr = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
     /// #     .expect("locale should be present");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
@@ -521,7 +518,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(&locale!("fr").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(locale!("fr").into(), PluralRuleType::Cardinal)
     ///         .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
@@ -573,7 +570,7 @@ impl PluralRules {
 /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
-///     &locale!("ar").into(),
+///     locale!("ar").into(),
 ///     PluralRuleType::Cardinal,
 /// )
 /// .expect("locale should be present");
@@ -600,12 +597,8 @@ pub struct PluralRulesWithRanges<R> {
 impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
 
-        (locale, rule_type: PluralRuleType) -> error: DataError,
+        (prefs: PluralRulesPreferences, rule_type: PluralRuleType) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -614,7 +607,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
         ///
         /// let _ = PluralRulesWithRanges::try_new(
-        ///     &locale!("en").into(),
+        ///     locale!("en").into(),
         ///     PluralRuleType::Cardinal,
         /// ).expect("locale should be present");
         /// ```
@@ -626,25 +619,21 @@ impl PluralRulesWithRanges<PluralRules> {
               + DataProvider<CardinalV1Marker>
               + DataProvider<OrdinalV1Marker>
               + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
         rule_type: PluralRuleType,
     ) -> Result<Self, DataError> {
         match rule_type {
-            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
-            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
+            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, prefs),
+            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, prefs),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for cardinal numbers using
         /// compiled data.
         ///
         /// See [`PluralRules::try_new_cardinal`] for more information.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -652,7 +641,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
-        /// let rules = PluralRulesWithRanges::try_new_cardinal(&locale!("ru").into())
+        /// let rules = PluralRulesWithRanges::try_new_cardinal(locale!("ru").into())
         ///     .expect("locale should be present");
         ///
         /// assert_eq!(rules.category_for_range(0_usize, 2_usize), PluralCategory::Few);
@@ -669,23 +658,19 @@ impl PluralRulesWithRanges<PluralRules> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+        let rules = PluralRules::try_new_cardinal_unstable(provider, prefs.clone())?;
 
-        PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
+        PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for ordinal numbers using
         /// compiled data.
         ///
         /// See [`PluralRules::try_new_ordinal`] for more information.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -694,7 +679,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
         /// let rules = PluralRulesWithRanges::try_new_ordinal(
-        ///     &locale!("ru").into(),
+        ///     locale!("ru").into(),
         /// )
         /// .expect("locale should be present");
         ///
@@ -712,11 +697,11 @@ impl PluralRulesWithRanges<PluralRules> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let rules = PluralRules::try_new_ordinal_unstable(provider, locale)?;
+        let rules = PluralRules::try_new_ordinal_unstable(provider, prefs.clone())?;
 
-        PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
+        PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
     }
 }
 
@@ -726,7 +711,7 @@ where
     R: AsRef<PluralRules>,
 {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, rules: R) -> error: DataError,
+        (prefs: PluralRulesPreferences, rules: R) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale from an existing
         /// `PluralRules` (either owned or as a reference) and compiled data.
         ///
@@ -735,21 +720,17 @@ where
         /// The provided `locale` **MUST** be the same as the locale provided to the constructor
         /// of `rules`. Otherwise, [`Self::category_for_range`] will return incorrect results.
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges, PluralRules};
         ///
-        /// let rules = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+        /// let rules = PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
         ///     .expect("locale should be present");
         ///
         /// let _ =
-        ///     PluralRulesWithRanges::try_new_with_rules(&locale!("en").into(), rules)
+        ///     PluralRulesWithRanges::try_new_with_rules(locale!("en").into(), rules)
         ///         .expect("locale should be present");
         /// ```
         functions: [
@@ -764,12 +745,14 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
     pub fn try_new_with_rules_unstable(
         provider: &(impl DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PluralRulesPreferences,
         rules: R,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<PluralRangesV1Marker>(prefs.locale_prefs);
         let ranges = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -785,7 +768,7 @@ where
     /// use icu::locale::locale;
     /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
     ///
-    /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
+    /// let ranges = PluralRulesWithRanges::try_new_cardinal(locale!("en").into())
     ///     .expect("locale should be present");
     ///
     /// let rules = ranges.rules();
@@ -811,7 +794,7 @@ where
     /// };
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
-    ///     &locale!("ro").into(),
+    ///     locale!("ro").into(),
     ///     PluralRuleType::Cardinal,
     /// )
     /// .expect("locale should be present");
@@ -852,7 +835,7 @@ where
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
-    ///     &locale!("sl").into(),
+    ///     locale!("sl").into(),
     ///     PluralRuleType::Ordinal,
     /// )
     /// .expect("locale should be present");

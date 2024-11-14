@@ -311,30 +311,30 @@ mod test {
     fn test_pattern_item_as_ule() {
         let samples = [
             (
-                PatternItem::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                PatternItem::from((FieldSymbol::Minute, FieldLength::Two)),
+                [0x80, FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Four)),
                 [
                     0x80,
-                    FieldSymbol::Year(Year::WeekOf).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldSymbol::Year(Year::Cyclic).idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
                 [
                     0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ),
@@ -353,20 +353,20 @@ mod test {
     fn test_pattern_item_ule() {
         let samples = [(
             [
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 PatternItem::from('z'),
-                PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
+                PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
             [
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
                 [0x00, 0x00, 0x7a],
                 [
                     0x80,
-                    FieldSymbol::Second(Second::Millisecond).idx(),
+                    FieldSymbol::Second(Second::MillisInDay).idx(),
                     FieldLength::One.idx(),
                 ],
             ],

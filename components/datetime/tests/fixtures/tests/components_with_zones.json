@@ -15,8 +15,9 @@
                     "time_zone_name": "long-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGeneric"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -43,8 +44,9 @@
                     "time_zone_name": "short-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGeneric"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -71,8 +73,9 @@
                     "time_zone_name": "short-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecific"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -99,8 +102,9 @@
                     "time_zone_name": "long-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecific"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -127,8 +131,9 @@
                     "time_zone_name": "long-offset"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneOffset"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneOffset"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
                 },
                 "preferences": { "hourCycle": "h23" }
             }

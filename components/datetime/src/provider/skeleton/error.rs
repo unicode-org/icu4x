@@ -62,7 +62,13 @@ impl From<fields::SymbolError> for SkeletonError {
                     // TODO(#487) - Flexible day periods
                     'B'
                     // TODO(#501) - Quarters
-                    | 'Q'
+                    | 'Q' | 'q'
+                    // Extended year
+                    | 'u'
+                    // TODO(#5643) - Weeks
+                    | 'Y' | 'w' | 'W'
+                    // Modified Julian Day
+                    | 'g'
                     => Self::SymbolUnimplemented(ch),
                     _ => Self::SymbolUnknown(ch),
                 }

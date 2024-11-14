@@ -84,6 +84,14 @@ impl YearInfo {
         }
     }
 
+    /// Get the year ambiguity.
+    pub fn year_ambiguity(self) -> YearAmbiguity {
+        match self.kind {
+            YearKind::Cyclic(_) => YearAmbiguity::EraRequired,
+            YearKind::Era(e) => e.ambiguity,
+        }
+    }
+
     /// Get *some* year number that can be displayed
     ///
     /// Gets the eraYear for era dates, otherwise falls back to Extended Year
@@ -123,6 +131,23 @@ impl YearInfo {
     }
 }
 
+/// Defines whether the era or century is required to interpret the year.
+///
+/// For example 2024 AD can be formatted as `2024`, or even `24`, but 1931 AD
+/// should not be formatted as `31`, and 2024 BC should not be formatted as `2024`.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // logically complete
+pub enum YearAmbiguity {
+    /// The year is unambiguous without a century or era.
+    Unambiguous,
+    /// The century is required, the era may be included.
+    CenturyRequired,
+    /// The era is required, the century may be included.
+    EraRequired,
+    /// The century and era are required.
+    EraAndCenturyRequired,
+}
+
 /// Information about the era as usable for formatting
 ///
 /// This is optimized for storing datetime formatting data.
@@ -146,7 +171,7 @@ pub enum FormattingEra {
 
 impl FormattingEra {
     /// Get a fallback era name suitable for display to the user when the real era name is not availabe
-    pub fn fallback_era(self) -> TinyStr16 {
+    pub fn fallback_name(self) -> TinyStr16 {
         match self {
             Self::Index(_idx, fallback) => fallback,
             Self::Code(era) => era.0,
@@ -172,6 +197,8 @@ pub struct EraYear {
     pub standard_era: Era,
     /// The numeric year in that era
     pub era_year: i32,
+    /// The ambiguity when formatting this year
+    pub ambiguity: YearAmbiguity,
 }
 
 /// Year information for a year that is specified as a cyclic year
@@ -465,6 +492,12 @@ macro_rules! dt_unit {
             /// Returns `None` if the difference is out of bounds.
             pub fn try_sub(self, other: $storage) -> Option<Self> {
                 self.0.checked_sub(other).map(Self)
+            }
+
+            /// Returns whether the value is zero.
+            #[inline]
+            pub fn is_zero(self) -> bool {
+                self.0 == 0
             }
         }
     };

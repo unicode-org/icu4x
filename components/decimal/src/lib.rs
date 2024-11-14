@@ -94,13 +94,17 @@ mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
+pub(crate) mod size_test_macro;
 
 pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
 use icu_provider::prelude::*;
+use size_test_macro::size_test;
 use writeable::Writeable;
+
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 208);
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -113,6 +117,8 @@ use writeable::Writeable;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
+///
+#[doc = fixed_decimal_formatter_size!()]
 #[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
@@ -127,13 +133,8 @@ impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-
         (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

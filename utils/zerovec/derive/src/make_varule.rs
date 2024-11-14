@@ -105,7 +105,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         .to_compile_error();
     }
 
-    let unsized_field_info = UnsizedFields::new(unsized_fields);
+    let unsized_field_info = UnsizedFields::new(unsized_fields, attrs.vzv_format);
 
     let mut field_inits = crate::ule::make_ule_fields(&sized_fields);
     let last_field_ule = unsized_field_info.varule_ty();
@@ -200,6 +200,19 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!()
     };
 
+    let maybe_toowned = if !attrs.skip_toowned {
+        quote!(
+            impl zerovec::__zerovec_internal_reexport::borrow::ToOwned for #ule_name {
+                type Owned = zerovec::__zerovec_internal_reexport::boxed::Box<Self>;
+                fn to_owned(&self) -> Self::Owned {
+                    zerovec::ule::encode_varule_to_box(self)
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     let zmkv = if attrs.skip_kv {
         quote!()
     } else {
@@ -219,8 +232,12 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!(
             impl #serde_path::Serialize for #ule_name {
                 fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: #serde_path::Serializer {
-                    let this = #zerofrom_fq_path::zero_from(self);
-                    <#name as #serde_path::Serialize>::serialize(&this, serializer)
+                    if serializer.is_human_readable() {
+                        let this = #zerofrom_fq_path::zero_from(self);
+                        <#name as #serde_path::Serialize>::serialize(&this, serializer)
+                    } else {
+                        serializer.serialize_bytes(zerovec::ule::VarULE::as_byte_slice(self))
+                    }
                 }
             }
         )
@@ -228,12 +245,30 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!()
     };
 
+    let deserialize_error = format!("&{ule_name} can only deserialize in zero-copy ways");
+
     let maybe_de = if attrs.deserialize {
         quote!(
             impl<'de> #serde_path::Deserialize<'de> for zerovec::__zerovec_internal_reexport::boxed::Box<#ule_name> {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
-                    let this = <#name as #serde_path::Deserialize>::deserialize(deserializer)?;
-                    Ok(zerovec::ule::encode_varule_to_box(&this))
+                    if deserializer.is_human_readable() {
+                        let this = <#name as #serde_path::Deserialize>::deserialize(deserializer)?;
+                        Ok(zerovec::ule::encode_varule_to_box(&this))
+                    } else {
+                        // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a ULEType instead.
+                        let deserialized = <& #ule_name>::deserialize(deserializer)?;
+                        Ok(zerovec::ule::VarULE::to_boxed(deserialized))
+                    }
+                }
+            }
+            impl<'a, 'de: 'a> #serde_path::Deserialize<'de> for &'a #ule_name {
+                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
+                    if !deserializer.is_human_readable() {
+                        let bytes = <&[u8]>::deserialize(deserializer)?;
+                        <#ule_name as zerovec::ule::VarULE>::parse_byte_slice(bytes).map_err(#serde_path::de::Error::custom)
+                    } else {
+                        Err(#serde_path::de::Error::custom(#deserialize_error))
+                    }
                 }
             }
         )
@@ -288,6 +323,8 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         #maybe_de
 
         #maybe_debug
+
+        #maybe_toowned
 
         #maybe_hash
     )
@@ -451,21 +488,29 @@ struct UnsizedField<'a> {
 
 struct UnsizedFields<'a> {
     fields: Vec<UnsizedField<'a>>,
+    format_param: TokenStream2,
 }
 
 impl<'a> UnsizedFields<'a> {
-    fn new(fields: Vec<UnsizedField<'a>>) -> Self {
+    /// The format_param is an optional tokenstream describing a VZVFormat argument needed by MultiFieldsULE
+    fn new(fields: Vec<UnsizedField<'a>>, format_param: Option<TokenStream2>) -> Self {
         assert!(!fields.is_empty(), "Must have at least one unsized field");
-        Self { fields }
+
+        let format_param = format_param.unwrap_or_else(|| quote!(zerovec::vecs::Index16));
+        Self {
+            fields,
+            format_param,
+        }
     }
 
     // Get the corresponding VarULE type that can store all of these
     fn varule_ty(&self) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].kind.varule_ty()
         } else {
-            quote!(zerovec::ule::MultiFieldsULE::<#len>)
+            quote!(zerovec::ule::MultiFieldsULE::<#len, #format_param>)
         }
     }
 
@@ -509,6 +554,7 @@ impl<'a> UnsizedFields<'a> {
     // Takes all unsized fields on self and encodes them into a byte slice `out`
     fn encode_write(&self, out: TokenStream2) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(#out))
         } else {
@@ -525,7 +571,7 @@ impl<'a> UnsizedFields<'a> {
             quote!(
                 let lengths = [#(#lengths),*];
                 // Todo: index type should be settable by attribute
-                let mut multi = zerovec::ule::MultiFieldsULE::<#len, zerovec::vecs::Index32>::new_from_lengths_partially_initialized(lengths, #out);
+                let mut multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::new_from_lengths_partially_initialized(lengths, #out);
                 unsafe {
                     #(#writers;)*
                 }
@@ -536,6 +582,7 @@ impl<'a> UnsizedFields<'a> {
     // Takes all unsized fields on self and returns the length needed for encoding into a byte slice
     fn encode_len(&self) -> TokenStream2 {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             self.fields[0].encode_func(quote!(encode_var_ule_len), quote!())
         } else {
@@ -544,7 +591,7 @@ impl<'a> UnsizedFields<'a> {
                 lengths.push(field.encode_func(quote!(encode_var_ule_len), quote!()));
             }
             // Todo: index type should be settable by attribute
-            quote!(zerovec::ule::MultiFieldsULE::<#len, zerovec::vecs::Index32>::compute_encoded_len_for([#(#lengths),*]))
+            quote!(zerovec::ule::MultiFieldsULE::<#len, #format_param>::compute_encoded_len_for([#(#lengths),*]))
         }
     }
 
@@ -601,6 +648,7 @@ impl<'a> UnsizedFields<'a> {
     /// The code will validate a variable known as `last_field_bytes`
     fn varule_validator(&self) -> Option<TokenStream2> {
         let len = self.fields.len();
+        let format_param = &self.format_param;
         if len == 1 {
             None
         } else {
@@ -611,7 +659,7 @@ impl<'a> UnsizedFields<'a> {
             }
 
             Some(quote!(
-                let multi = zerovec::ule::MultiFieldsULE::<#len>::parse_byte_slice(last_field_bytes)?;
+                let multi = zerovec::ule::MultiFieldsULE::<#len, #format_param>::parse_byte_slice(last_field_bytes)?;
                 unsafe {
                     #(#validators)*
                 }

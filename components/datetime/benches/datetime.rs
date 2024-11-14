@@ -50,7 +50,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
-                            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
+                            FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                                 &locale.into(),
                                 skeleton,
                             )

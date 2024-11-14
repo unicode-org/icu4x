@@ -237,7 +237,7 @@ impl Keywords {
     ///
     /// Returns the old Unicode extension keywords.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locale::Locale;

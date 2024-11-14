@@ -107,7 +107,7 @@ which is exposed through constructors such as `try_new`.
 ```rust
 use icu::locale::{Locale, locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDHMS};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDT};
 
 const LOCALE: Locale = locale!("ja"); // let's try some other language
 
@@ -115,7 +115,7 @@ fn main() {
 
     let dtf = DateTimeFormatter::try_new(
         &LOCALE.into(),
-        YMDHMS::medium(),
+        YMDT::medium(),
     )
     .expect("ja data should be available");
 

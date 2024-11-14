@@ -1158,13 +1158,6 @@
     [
       [
         "neca",
-        "Standard"
-      ],
-      "New Caledonia Standard Time"
-    ],
-    [
-      [
-        "neca",
         "Daylight"
       ],
       "New Caledonia Summer Time"
@@ -1319,13 +1312,6 @@
     [
       [
         "peru",
-        "Standard"
-      ],
-      "Peru Standard Time"
-    ],
-    [
-      [
-        "peru",
         "Daylight"
       ],
       "Peru Summer Time"
@@ -1350,20 +1336,6 @@
         "Standard"
       ],
       "Phoenix Islands Time"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "St Pierre & Miquelon Standard Time"
-    ],
-    [
-      [
-        "pimi",
-        "Daylight"
-      ],
-      "St Pierre & Miquelon Daylight Time"
     ],
     [
       [
