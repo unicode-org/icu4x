@@ -9,8 +9,10 @@ use rand_pcg::Lcg64Xsh32;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use fixed_decimal::FixedDecimal;
-use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_decimal::provider::{Baked, DecimalSymbolsV2Marker};
 use icu_decimal::FixedDecimalFormatter;
+use icu_locale_core::locale;
+use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
@@ -26,7 +28,14 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e9);
-    let provider = FixedProvider::<DecimalSymbolsV1Marker>::new_default();
+    let data = Baked
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&locale!("en-US").into()),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+    let provider = FixedProvider::<DecimalSymbolsV2Marker>::from_payload(data);
     c.bench_function("icu_decimal/overview", |b| {
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers

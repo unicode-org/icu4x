@@ -186,7 +186,7 @@ The output will be much shorter:
 INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datelengths@1
 INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datesymbols@1
 INFO  [icu_provider_export::export_impl] Generating marker datetime/week_data@1
-INFO  [icu_provider_export::export_impl] Generating marker decimal/symbols@1
+INFO  [icu_provider_export::export_impl] Generating marker decimal/symbols@2
 INFO  [icu_provider_export::export_impl] Generating marker plurals/ordinal@1
 ```
 

@@ -101,7 +101,7 @@ impl LongCurrencyFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(

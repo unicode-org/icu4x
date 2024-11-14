@@ -113,7 +113,7 @@ pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+    P: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>,
 {
     #[inline]
     fn load(
