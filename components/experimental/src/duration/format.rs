@@ -640,7 +640,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("und").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("und").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_eq!(formatted.write_to_string().into_owned(), "12:01:32.13");
     }
@@ -668,7 +668,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_eq!(
             formatted.write_to_string().into_owned(),
@@ -698,7 +698,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_writeable_parts_eq!(
             &formatted,
@@ -741,7 +741,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
 
         assert_eq!(
             formatter

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::Deref;
-
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{
@@ -30,14 +28,6 @@ struct_keyword!(
         Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );
-
-impl Deref for RegionalSubdivision {
-    type Target = SubdivisionId;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
 
 #[cfg(test)]
 mod test {

@@ -12,7 +12,7 @@ pub mod ffi {
         errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal, locale_core::ffi::Locale,
         provider::ffi::DataProvider,
     };
-    use icu_decimal::options::FixedDecimalFormatterOptions;
+    use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatterPreferences};
 
     use writeable::Writeable;
 
@@ -41,7 +41,7 @@ pub mod ffi {
             locale: &Locale,
             grouping_strategy: Option<FixedDecimalGroupingStrategy>,
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = FixedDecimalFormatterPreferences::from(&locale.0);
 
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy
@@ -52,7 +52,7 @@ pub mod ffi {
                 icu_decimal::FixedDecimalFormatter::try_new_with_any_provider,
                 icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options,
             )?)))
         }
@@ -133,7 +133,7 @@ pub mod ffi {
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(
                     &provider.as_downcasting(),
-                    &Default::default(),
+                    Default::default(),
                     options,
                 )?,
             )))
