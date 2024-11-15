@@ -288,13 +288,13 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 /// 2. AndOrPolarityOperandULE is aligned to 1 byte
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes
 //     (impossible since it is of size 1 byte)
 //  5 The other ULE methods use the default impl.
 //  6. AndOrPolarityOperandULE byte equality is semantic equality.
 unsafe impl ULE for AndOrPolarityOperandULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(UleError::parse::<Self>)?;
         }
@@ -419,7 +419,7 @@ mod serde {
         where
             E: de::Error,
         {
-            let rule = VarZeroVec::parse_byte_slice(rule_bytes).map_err(|err| {
+            let rule = VarZeroVec::parse_bytes(rule_bytes).map_err(|err| {
                 de::Error::invalid_value(
                     de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule byte slice",
@@ -548,12 +548,12 @@ mod test {
         let rov = RangeOrValue::Value(1);
         let ule = rov.to_unaligned();
         let ref_bytes = &[1, 0, 0, 0, 1, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::slice_as_bytes(&[ule]), *ref_bytes);
 
         let rov = RangeOrValue::Range(2, 4);
         let ule = rov.to_unaligned();
         let ref_bytes = &[2, 0, 0, 0, 4, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::slice_as_bytes(&[ule]), *ref_bytes);
     }
 
     #[test]

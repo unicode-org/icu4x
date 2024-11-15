@@ -100,9 +100,9 @@ pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
 //
 // 1. align(1): see "Representation" above.
 // 2. No padding: see "Representation" above.
-// 3. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 4. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
+// 3. `validate_bytes` checks length and defers to the inner ULEs.
+// 4. `validate_bytes` checks length and defers to the inner ULEs.
+// 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
 // 6. All other methods are left at their default impl.
 // 7. The two ULEs have byte equality, so this composition has byte equality.
 unsafe impl<A, V> VarULE for VarTupleULE<A, V>
@@ -110,26 +110,26 @@ where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         // TODO: use split_first_chunk_mut in 1.77
         if bytes.len() < size_of::<A::ULE>() {
             return Err(UleError::length::<Self>(bytes.len()));
         }
         let (sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
-        A::ULE::validate_byte_slice(sized_chunk)?;
-        V::validate_byte_slice(variable_chunk)?;
+        A::ULE::validate_bytes(sized_chunk)?;
+        V::validate_bytes(variable_chunk)?;
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         #[allow(clippy::panic)] // panic is documented in function contract
         if bytes.len() < size_of::<A::ULE>() {
-            panic!("from_byte_slice_unchecked called with short slice")
+            panic!("from_bytes_unchecked called with short slice")
         }
         let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
         // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
         // and a valid Self contains a valid V after the space needed for A::ULE.
-        let variable_ref = V::from_byte_slice_unchecked(variable_chunk);
+        let variable_ref = V::from_bytes_unchecked(variable_chunk);
         let variable_ptr: *const V = variable_ref;
 
         // Safety: The DST of VarTupleULE is a pointer to the `sized` element and has a metadata
@@ -179,7 +179,7 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         // TODO: use split_first_chunk_mut in 1.77
         let (sized_chunk, variable_chunk) = dst.split_at_mut(size_of::<A::ULE>());
-        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_byte_slice());
+        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_bytes());
         self.variable.encode_var_ule_write(variable_chunk);
     }
 }
@@ -228,7 +228,7 @@ where
             };
             this.serialize(serializer)
         } else {
-            serializer.serialize_bytes(self.as_byte_slice())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }
@@ -246,7 +246,7 @@ where
     {
         if !deserializer.is_human_readable() {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            VarTupleULE::<A, V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            VarTupleULE::<A, V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
         } else {
             Err(serde::de::Error::custom(
                 "&VarTupleULE can only deserialize in zero-copy ways",

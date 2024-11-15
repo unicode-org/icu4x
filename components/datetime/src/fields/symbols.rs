@@ -238,13 +238,13 @@ impl FieldSymbolULE {
 //
 // 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
 // 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+// 3. ULE::validate_bytes() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_bytes() checks that the given byte slice has a valid length
 //    (true since transparent over a type of size 1).
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldSymbolULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }

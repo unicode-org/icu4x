@@ -91,14 +91,14 @@ impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V> {
 
 impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// Construct from a slice. Errors if the slice doesn't represent a valid `V`
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
-        let val = V::parse_byte_slice(bytes)?;
+    pub fn parse_bytes(bytes: &'a [u8]) -> Result<Self, UleError> {
+        let val = V::parse_bytes(bytes)?;
         Ok(Self::new_borrowed(val))
     }
 
     /// Construct from an owned slice. Errors if the slice doesn't represent a valid `V`
-    pub fn parse_owned_byte_slice(bytes: Box<[u8]>) -> Result<Self, UleError> {
-        V::validate_byte_slice(&bytes)?;
+    pub fn parse_owned_bytes(bytes: Box<[u8]>) -> Result<Self, UleError> {
+        V::validate_bytes(&bytes)?;
         let bytes = ManuallyDrop::new(bytes);
         let buf: NonNull<[u8]> = (&**bytes).into();
         Ok(Self {
@@ -116,8 +116,8 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// # Safety
     ///
     /// `bytes` must be a valid `V`, i.e. it must successfully pass through
-    /// `V::parse_byte_slice()` or `V::validate_byte_slice()`.
-    pub const unsafe fn from_byte_slice_unchecked(bytes: &'a [u8]) -> Self {
+    /// `V::parse_bytes()` or `V::validate_bytes()`.
+    pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         unsafe {
             // Safety: bytes is an &T which is always non-null
             let buf: NonNull<[u8]> = NonNull::new_unchecked(bytes as *const [u8] as *mut [u8]);
@@ -144,14 +144,14 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     pub fn new_borrowed(val: &'a V) -> Self {
         unsafe {
             // Safety: val is a valid V, by type
-            Self::from_byte_slice_unchecked(val.as_byte_slice())
+            Self::from_bytes_unchecked(val.as_bytes())
         }
     }
 
     /// Construct a new borrowed version of this
     pub fn new_owned(val: Box<V>) -> Self {
         let val = ManuallyDrop::new(val);
-        let buf: NonNull<[u8]> = val.as_byte_slice().into();
+        let buf: NonNull<[u8]> = val.as_bytes().into();
         Self {
             // Invariants upheld:
             // 1 & 2: The bytes came from `val` so they're a valid value and byte slice
@@ -172,7 +172,7 @@ impl<'a, V: ?Sized> VarZeroCow<'a, V> {
     /// Get the byte representation of this type
     ///
     /// Is also always a valid `V` and can be passed to
-    /// `V::from_byte_slice_unchecked()`
+    /// `V::from_bytes_unchecked()`
     pub fn as_bytes(&self) -> &[u8] {
         // Safety: Invariant 1 on self.buf
         // The valid V invariant comes from Invariant 2
@@ -184,7 +184,7 @@ impl<'a, V: VarULE + ?Sized> Deref for VarZeroCow<'a, V> {
     type Target = V;
     fn deref(&self) -> &V {
         // Safety: From invariant 2 on self.buf
-        unsafe { V::from_byte_slice_unchecked(self.as_bytes()) }
+        unsafe { V::from_bytes_unchecked(self.as_bytes()) }
     }
 }
 
@@ -277,7 +277,7 @@ where
             Ok(Self::new_owned(b))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            Self::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            Self::parse_bytes(bytes).map_err(serde::de::Error::custom)
         }
     }
 }
@@ -290,7 +290,7 @@ impl<'a, V: VarULE + ?Sized> databake::Bake for VarZeroCow<'a, V> {
         databake::quote! {
             // Safety: Known to come from a valid V since self.as_bytes() is always a valid V
             unsafe {
-                zerovec::VarZeroCow::from_byte_slice_unchecked(#bytes)
+                zerovec::VarZeroCow::from_bytes_unchecked(#bytes)
             }
         }
     }

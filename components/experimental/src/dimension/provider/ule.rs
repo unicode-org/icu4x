@@ -39,12 +39,12 @@ pub struct CurrencyPatternConfigULE([u8; 3]);
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  2. CurrencyPatternConfigULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. CurrencyPatternConfigULE byte equality is semantic equality.
 unsafe impl ULE for CurrencyPatternConfigULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
