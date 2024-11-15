@@ -176,7 +176,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
     unsafe fn index_data(&self, index: usize) -> Option<&F::Index> {
         let index_range = Self::index_range(index)?;
-        Some(&F::Index::from_bytes_unchecked(&self.entire_slice[index_range])[0])
+        Some(&F::Index::slice_from_bytes_unchecked(&self.entire_slice[index_range])[0])
     }
 
     /// Return the mutable slice representing the given `index`. Returns None when given index 0
@@ -415,7 +415,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             }
         }
         let len = unsafe {
-            <F::Len as ULE>::from_bytes_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
+            <F::Len as ULE>::slice_from_bytes_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
                 .iule_to_usize()
         };
         if len == 0 {
@@ -432,7 +432,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // Test index validity.
         let indices = unsafe {
-            F::Index::from_bytes_unchecked(
+            F::Index::slice_from_bytes_unchecked(
                 &self.entire_slice[F::Len::SIZE..F::Len::SIZE + (len - 1) * F::Index::SIZE],
             )
         };

@@ -102,7 +102,7 @@ where
     fn parse_bytes_to_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
         Self::validate_bytes(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
-        Ok(unsafe { Self::from_bytes_unchecked(bytes) })
+        Ok(unsafe { Self::slice_from_bytes_unchecked(bytes) })
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming
@@ -130,7 +130,7 @@ where
     /// 1. This method *must* return the same result as [`Self::parse_bytes()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
-    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
+    unsafe fn slice_from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
         let data = bytes.as_ptr();
         let len = bytes.len() / mem::size_of::<Self>();
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);

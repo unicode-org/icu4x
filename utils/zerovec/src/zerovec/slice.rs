@@ -478,7 +478,7 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
 
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        Self::from_ule_slice(T::ULE::from_bytes_unchecked(bytes))
+        Self::from_ule_slice(T::ULE::slice_from_bytes_unchecked(bytes))
     }
 }
 

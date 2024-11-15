@@ -97,6 +97,6 @@ where
 
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        T::from_bytes_unchecked(bytes)
+        T::slice_from_bytes_unchecked(bytes)
     }
 }

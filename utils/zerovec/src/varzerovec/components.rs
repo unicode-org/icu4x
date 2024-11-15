@@ -319,7 +319,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // MSRV Rust 1.79: Use split_at_unchecked
         let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
         // Safety: F::Len allows all byte sequences
-        let len_ule = F::Len::from_bytes_unchecked(len_bytes);
+        let len_ule = F::Len::slice_from_bytes_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).iule_to_usize();
         let len_u32 = len as u32;
@@ -508,7 +508,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     #[inline]
     fn indices_slice(&self) -> &'a [F::Index] {
-        unsafe { F::Index::from_bytes_unchecked(self.indices) }
+        unsafe { F::Index::slice_from_bytes_unchecked(self.indices) }
     }
 
     // Dump a debuggable representation of this type
