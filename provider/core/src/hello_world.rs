@@ -13,6 +13,7 @@ use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
 use core::fmt::Debug;
+use icu_locale_core::preferences::define_preferences;
 use writeable::Writeable;
 use yoke::*;
 use zerofrom::*;
@@ -249,6 +250,12 @@ impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 #[cfg(feature = "export")]
 icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
+define_preferences!(
+    /// Hello World Preferences.
+    HelloWorldFormatterPreferences, {});
+
+impl Copy for HelloWorldFormatterPreferences {}
+
 /// A type that formats localized "hello world" strings.
 ///
 /// This type is intended to take the shape of a typical ICU4X formatter API.
@@ -262,7 +269,7 @@ icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV
 ///
 /// let fmt = HelloWorldFormatter::try_new_unstable(
 ///     &HelloWorldProvider,
-///     &locale!("eo").into(),
+///     locale!("eo").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -285,11 +292,11 @@ impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
-        Self::try_new_unstable(&HelloWorldProvider, locale)
+    pub fn try_new(prefs: HelloWorldFormatterPreferences) -> Result<Self, DataError> {
+        Self::try_new_unstable(&HelloWorldProvider, prefs)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
+    icu_provider::gen_any_buffer_data_constructors!((prefs: HelloWorldFormatterPreferences) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -299,13 +306,17 @@ impl HelloWorldFormatter {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(
+        provider: &P,
+        prefs: HelloWorldFormatterPreferences,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,
     {
+        let locale = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
         let data = provider
             .load(DataRequest {
-                id: crate::request::DataIdentifierBorrowed::for_locale(locale),
+                id: crate::request::DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;

@@ -798,7 +798,7 @@ where
     /// };
     ///
     /// let formatter =
-    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///     HelloWorldFormatter::try_new_unstable(&provider, locale!("de").into())
     ///         .unwrap();
     ///
     /// // This succeeds because the data was loaded from HelloWorldProvider
@@ -866,7 +866,7 @@ where
     ///     inner: HelloWorldProvider,
     /// };
     /// let formatter =
-    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///     HelloWorldFormatter::try_new_unstable(&provider, locale!("de").into())
     ///         .unwrap();
     ///
     /// assert_eq!(formatter.format_to_string(), "✨ Hallo Welt");
