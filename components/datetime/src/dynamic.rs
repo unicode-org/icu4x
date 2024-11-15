@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serde")]
-use crate::neo_serde::*;
 use crate::raw::neo::RawNeoOptions;
 use crate::scaffold::GetField;
 use crate::{fields, fieldset, NeoSkeletonLength};
@@ -211,11 +209,6 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
 
 /// An enum supporting all possible field sets and options.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
-)]
 #[non_exhaustive]
 pub enum CompositeFieldSet {
     /// Field set for a date.
@@ -365,7 +358,7 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
-            #[cfg(feature = "serde")]
+            #[cfg(all(feature = "serde", feature = "experimental"))]
             pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawNeoOptions) -> Self {
                 match date_field_set {
                     $(

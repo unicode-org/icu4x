@@ -42,7 +42,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldset::YMD;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::provider::skeleton::components;
+/// use icu::datetime::fields::components;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;

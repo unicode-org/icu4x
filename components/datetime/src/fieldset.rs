@@ -30,6 +30,19 @@ pub mod dynamic {
     pub use crate::dynamic::*;
 }
 
+/// 🚧 \[Experimental\] Types for dealing with serialization of semantic skeletons.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/5825">#5825</a>
+/// </div>
+#[cfg(all(feature = "experimental", feature = "serde"))]
+pub mod serde {
+    pub use crate::neo_serde::CompositeFieldSetSerde;
+    pub use crate::neo_serde::CompositeFieldSetSerdeError;
+}
+
 #[cfg(doc)]
 use icu_timezone::TimeZoneInfo;
 
@@ -1147,6 +1160,88 @@ impl_calendar_period_marker!(
 );
 
 impl_time_marker!(
+    /// Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
+    ///
+    /// ```
+    /// use icu::calendar::Time;
+    /// use icu::datetime::fieldset::T;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
+    /// // but we can set overrides.
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("en-US-u-hc-h12").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     "4:12 PM"
+    /// );
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("en-US-u-hc-h23").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     "16:12"
+    /// );
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("fr-FR-u-hc-h12").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     "4:12 PM"
+    /// );
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("fr-FR-u-hc-h23").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     "16:12"
+    /// );
+    /// ```
+    ///
+    /// Hour cycles `h11` and `h24` are supported, too:
+    ///
+    /// ```
+    /// use icu::calendar::Time;
+    /// use icu::datetime::fieldset::T;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("und-u-hc-h11").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+    ///     "0:00 AM"
+    /// );
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("und-u-hc-h24").into(),
+    ///     T::short().hm(),
+    /// )
+    /// .unwrap();
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+    ///     "24:00"
+    /// );
+    /// ```
     T,
     NeoTimeComponents::Time,
     description = "time (locale-dependent hour cycle)",
@@ -1378,6 +1473,56 @@ impl_zone_marker!(
     /// assert_try_writeable_eq!(
     ///     fmt.format(&zone),
     ///     "Türkiye Time"
+    /// );
+    /// ```
+    ///
+    /// Can also fall back to the UTC offset:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldset::V;
+    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// // Set up the formatter
+    /// let mut tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(
+    ///     &locale!("en").into(),
+    ///     V::short(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // "uschi" - has symbol data for short generic non-location
+    /// let time_zone = TimeZoneIdMapper::new()
+    ///     .iana_to_bcp47("America/Chicago")
+    ///     .with_offset("-05".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+    /// assert_try_writeable_eq!(
+    ///     tzf.format(&time_zone),
+    ///     "CT"
+    /// );
+    ///
+    /// // "ushnl" - has time zone override symbol data for short generic non-location
+    /// let time_zone = TimeZoneIdMapper::new()
+    ///     .iana_to_bcp47("Pacific/Honolulu")
+    ///     .with_offset("-10".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+    /// assert_try_writeable_eq!(
+    ///     tzf.format(&time_zone),
+    ///     "HST"
+    /// );
+    ///
+    /// // Mis-spelling of "America/Chicago" results in a fallback to offset format
+    /// let time_zone = TimeZoneIdMapper::new()
+    ///     .iana_to_bcp47("America/Chigagou")
+    ///     .with_offset("-05".parse().ok())
+    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+    /// assert_try_writeable_eq!(
+    ///     tzf.format(&time_zone),
+    ///     "GMT-5"
     /// );
     /// ```
     ///

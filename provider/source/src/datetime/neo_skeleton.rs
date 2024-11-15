@@ -6,11 +6,11 @@ use std::collections::HashSet;
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
+use icu::datetime::fields::components;
 use icu::datetime::fieldset::dynamic::*;
 use icu::datetime::options::NeoSkeletonLength;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::runtime;
-use icu::datetime::provider::skeleton::components;
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};

@@ -96,9 +96,8 @@ pub mod fieldset;
 mod format;
 pub mod input;
 mod neo;
-mod neo_marker;
 pub mod neo_pattern;
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "experimental", feature = "serde"))]
 mod neo_serde;
 pub mod options;
 pub mod provider;

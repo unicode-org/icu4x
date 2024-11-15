@@ -23,7 +23,7 @@
 //!
 //! # Description
 //!
-//! A [`components::Bag`](struct.Bag.html) is a model of encoding information on how to format date
+//! A [`components::Bag`] is a model of encoding information on how to format date
 //! and time by specifying a list of components the user wants to be visible in the formatted string
 //! and how each field should be displayed.
 //!
@@ -35,12 +35,12 @@
 //!
 //! ## Pattern Selection
 //!
-//! The [`components::Bag`](struct.Bag.html) is a way for the developer to describe which components
+//! The [`components::Bag`] is a way for the developer to describe which components
 //! should be included in in a datetime, and how they should be displayed. There is not a strict
 //! guarantee in how the final date will be displayed to the end user. The user's preferences and
 //! locale information can override the developer preferences.
 //!
-//! The fields in the [`components::Bag`](struct.Bag.html) are matched against available patterns in
+//! The fields in the [`components::Bag`] are matched against available patterns in
 //! the `CLDR` locale data. A best fit is found, and presented to the user. This means that in
 //! certain situations, and component combinations, fields will not have a match, or the match will
 //! have a different type of presentation for a given locale.
@@ -51,7 +51,9 @@
 //! to be stable, their Rust representation might not be. Use with caution.
 //! </div>
 
-pub mod components;
+#[cfg(doc)]
+use crate::fields::components;
+
 mod error;
 mod helpers;
 mod plural;

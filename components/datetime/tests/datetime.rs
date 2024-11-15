@@ -61,6 +61,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
             Some(semantic) => {
+                let semantic = CompositeFieldSet::try_from(semantic).unwrap();
                 match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
                     Some(v) => v,
                     None => {
@@ -342,7 +343,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .0
     {
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => semantic,
+            Some(semantic) => CompositeFieldSet::try_from(semantic).unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;

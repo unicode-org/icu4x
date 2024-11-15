@@ -13,6 +13,9 @@ use displaydoc::Display;
 pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 
+#[cfg(any(feature = "experimental", feature = "datagen"))]
+pub mod components;
+
 use core::{
     cmp::{Ord, PartialOrd},
     convert::TryFrom,

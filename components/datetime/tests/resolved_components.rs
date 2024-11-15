@@ -4,12 +4,12 @@
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
+    fields::components,
     fieldset::{
         self,
         dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
     },
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
-    provider::skeleton::components,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;
