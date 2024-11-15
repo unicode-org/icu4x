@@ -19,7 +19,7 @@
                     "length": "long",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -48,7 +48,7 @@
                     "length": "long",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -77,7 +77,7 @@
                     "length": "long",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -106,7 +106,7 @@
                     "length": "long",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -135,7 +135,7 @@
                     "length": "long",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {

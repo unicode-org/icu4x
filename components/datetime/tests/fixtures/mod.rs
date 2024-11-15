@@ -4,7 +4,9 @@
 
 #![cfg(feature = "serde")]
 
-use icu_datetime::{neo_skeleton, options::components};
+use icu_datetime::options;
+use icu_datetime::provider::skeleton::components;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -29,7 +31,8 @@ pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
     pub semantic: Option<icu_datetime::fieldset::dynamic::CompositeFieldSet>,
-    pub preferences: Option<icu_datetime::options::preferences::Bag>,
+    #[serde(rename = "hourCycle")]
+    pub hour_cycle: Option<TestHourCycle>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -62,20 +65,29 @@ pub struct TestComponentsBag {
     pub hour: Option<components::Numeric>,
     pub minute: Option<components::Numeric>,
     pub second: Option<components::Numeric>,
-    pub fractional_second: Option<neo_skeleton::FractionalSecondDigits>,
+    pub fractional_second: Option<options::FractionalSecondDigits>,
 
     pub time_zone_name: Option<components::TimeZoneName>,
-
-    pub hour_cycle: Option<TestHourCycle>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum TestHourCycle {
     H11,
     H12,
     H23,
     H24,
+}
+
+impl From<TestHourCycle> for HourCycle {
+    fn from(value: TestHourCycle) -> Self {
+        match value {
+            TestHourCycle::H11 => HourCycle::H11,
+            TestHourCycle::H12 => HourCycle::H12,
+            TestHourCycle::H23 => HourCycle::H23,
+            TestHourCycle::H24 => HourCycle::H24,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

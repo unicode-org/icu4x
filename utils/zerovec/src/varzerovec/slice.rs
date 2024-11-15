@@ -73,7 +73,7 @@ use core::ops::Range;
 ///
 /// let bytes = vzv_all.as_bytes();
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
-///     VarZeroVec::parse_byte_slice(bytes).unwrap();
+///     VarZeroVec::parse_bytes(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 ///
@@ -237,7 +237,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
 
     /// Get a reference to the entire encoded backing buffer of this slice
     ///
-    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    /// The bytes can be passed back to [`Self::parse_bytes()`].
     ///
     /// To take the bytes as a vector, see [`VarZeroVec::into_bytes()`].
     ///
@@ -249,7 +249,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// let strings = vec!["foo", "bar", "baz"];
     /// let vzv = VarZeroVec::<str>::from(&strings);
     ///
-    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
+    /// assert_eq!(vzv, VarZeroVec::parse_bytes(vzv.as_bytes()).unwrap());
     /// ```
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
@@ -267,8 +267,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Parse a VarZeroSlice from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
-    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
-        <Self as VarULE>::parse_byte_slice(slice)
+    pub fn parse_bytes<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
+        <Self as VarULE>::parse_bytes(slice)
     }
 }
 
@@ -435,24 +435,24 @@ where
 //     `[u8]` slice which satisfies this invariant)
 //  2. VarZeroSlice is aligned to 1 byte (achieved by `#[repr(transparent)]` on a
 //     `[u8]` slice which satisfies this invariant)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
-//  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+//  6. `as_bytes()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let _: VarZeroVecComponents<T, F> =
-            VarZeroVecComponents::parse_byte_slice(bytes).map_err(|_| UleError::parse::<Self>())?;
+            VarZeroVecComponents::parse_bytes(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // self is really just a wrapper around a byte slice
         mem::transmute(bytes)
     }
 
-    fn as_byte_slice(&self) -> &[u8] {
+    fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
     }
 }

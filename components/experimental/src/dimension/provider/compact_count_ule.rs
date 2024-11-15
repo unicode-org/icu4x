@@ -33,12 +33,12 @@ pub struct CompactCountULE(u8);
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  2. CompactCountULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. CompactCountULE byte equality is semantic equality.
 unsafe impl ULE for CompactCountULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             if byte & 0b0111_1000 != 0 {
                 return Err(UleError::parse::<Self>());

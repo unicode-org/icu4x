@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 // Base enumerator definition
-/** See the [Rust documentation for `NeoSkeletonLength`](https://docs.rs/icu/latest/icu/datetime/neo_skeleton/enum.NeoSkeletonLength.html) for more information.
+/** See the [Rust documentation for `NeoSkeletonLength`](https://docs.rs/icu/latest/icu/datetime/options/enum.NeoSkeletonLength.html) for more information.
 */
 export class DateTimeLength {
     #value = undefined;

@@ -5,12 +5,11 @@
 #[cfg(feature = "datagen")]
 use super::runtime;
 use super::{reference, PatternItem};
-use crate::{fields, options::preferences::HourCycle};
+use crate::fields;
 #[cfg(feature = "datagen")]
-use crate::{
-    options::preferences,
-    provider::{self, skeleton},
-};
+use crate::provider::{self, skeleton};
+#[cfg(feature = "datagen")]
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
@@ -32,17 +31,6 @@ pub enum CoarseHourCycle {
 impl Default for CoarseHourCycle {
     fn default() -> Self {
         CoarseHourCycle::H23H24
-    }
-}
-
-impl From<HourCycle> for CoarseHourCycle {
-    fn from(value: HourCycle) -> Self {
-        match value {
-            HourCycle::H11 => CoarseHourCycle::H11H12,
-            HourCycle::H12 => CoarseHourCycle::H11H12,
-            HourCycle::H23 => CoarseHourCycle::H23H24,
-            HourCycle::H24 => CoarseHourCycle::H23H24,
-        }
     }
 }
 
@@ -141,22 +129,20 @@ impl CoarseHourCycle {
 #[cfg(feature = "datagen")]
 pub(crate) fn naively_apply_preferences(
     pattern: &mut runtime::Pattern,
-    preferences: &Option<preferences::Bag>,
+    hour_cycle: Option<HourCycle>,
 ) {
     // If there is a preference overriding the hour cycle, apply it now.
-    if let Some(preferences::Bag {
-        hour_cycle: Some(hour_cycle),
-    }) = preferences
-    {
+    if let Some(hour_cycle) = hour_cycle {
         runtime::helpers::maybe_replace_first(pattern, |item| {
             if let PatternItem::Field(fields::Field {
                 symbol: fields::FieldSymbol::Hour(current_hour),
                 length,
             }) = item
             {
-                if *current_hour != hour_cycle.field() {
+                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle);
+                if *current_hour != candidate_field {
                     Some(PatternItem::from((
-                        fields::FieldSymbol::Hour(hour_cycle.field()),
+                        fields::FieldSymbol::Hour(candidate_field),
                         *length,
                     )))
                 } else {

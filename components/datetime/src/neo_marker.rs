@@ -16,7 +16,7 @@
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::fieldset::YMD;
-//! use icu::datetime::neo_skeleton::Alignment;
+//! use icu::datetime::options::Alignment;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -56,7 +56,7 @@
 //! use icu::calendar::Date;
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::fieldset::YMD;
-//! use icu::datetime::neo_skeleton::YearStyle;
+//! use icu::datetime::options::YearStyle;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -233,8 +233,8 @@
 //! ```
 //! use icu::calendar::Time;
 //! use icu::datetime::fieldset::T;
-//! use icu::datetime::neo_skeleton::FractionalSecondDigits;
-//! use icu::datetime::neo_skeleton::TimePrecision;
+//! use icu::datetime::options::FractionalSecondDigits;
+//! use icu::datetime::options::TimePrecision;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
@@ -291,8 +291,8 @@
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
 //! use icu::datetime::fieldset::T;
-//! use icu::datetime::neo_skeleton::FractionalSecondDigits;
-//! use icu::datetime::neo_skeleton::TimePrecision;
+//! use icu::datetime::options::FractionalSecondDigits;
+//! use icu::datetime::options::TimePrecision;
 //! use icu::datetime::FixedCalendarDateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;

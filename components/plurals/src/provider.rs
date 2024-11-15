@@ -399,7 +399,7 @@ unsafe impl<V> VarULE for PluralElementsPackedULE<V>
 where
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let unpacked_bytes =
             Self::unpack_bytes(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
         // The high bit of lead_byte was read in unpack_bytes.
@@ -409,14 +409,14 @@ where
             return Err(UleError::parse::<Self>());
         }
         // Now validate the two variable-length slices.
-        V::validate_byte_slice(unpacked_bytes.v_bytes)?;
+        V::validate_bytes(unpacked_bytes.v_bytes)?;
         if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
-            PluralElementsTupleSliceVarULE::<V>::validate_byte_slice(specials_bytes)?;
+            PluralElementsTupleSliceVarULE::<V>::validate_bytes(specials_bytes)?;
         }
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -430,8 +430,8 @@ where
     ///
     /// # Safety
     ///
-    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_byte_slice`].
-    pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_bytes`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -471,12 +471,12 @@ where
         let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
         // Safety: the bytes are valid by invariant
-        let default = unsafe { V::from_byte_slice_unchecked(unpacked_bytes.v_bytes) };
+        let default = unsafe { V::from_bytes_unchecked(unpacked_bytes.v_bytes) };
         #[allow(clippy::manual_map)] // more explicit with the unsafe code
         let specials = if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             // Safety: the bytes are valid by invariant
             Some(unsafe {
-                PluralElementsTupleSliceVarULE::<V>::from_byte_slice_unchecked(specials_bytes)
+                PluralElementsTupleSliceVarULE::<V>::from_bytes_unchecked(specials_bytes)
             })
         } else {
             None
@@ -654,12 +654,12 @@ impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
 //
 // 1. The type is a single byte, not padding.
 // 2. The type is a single byte, so it has align(1).
-// 3. `validate_byte_slice` checks the validity of every byte.
-// 4. `validate_byte_slice` checks the validity of every byte.
+// 3. `validate_bytes` checks the validity of every byte.
+// 4. `validate_bytes` checks the validity of every byte.
 // 5. All other methods are be left with their default impl.
 // 6. The represented enums implement Eq by byte equality.
 unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         bytes
             .iter()
             .all(|byte| {
@@ -898,7 +898,7 @@ where
             ))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
         }
     }
 }
@@ -919,7 +919,7 @@ where
             Ok(plural_elements.into_packed())
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes)
                 .map(|ule| ule.to_owned())
                 .map_err(serde::de::Error::custom)
         }
@@ -940,7 +940,7 @@ where
                 PluralElementsInner::from_packed(self);
             plural_elements.serialize(serializer)
         } else {
-            serializer.serialize_bytes(self.as_byte_slice())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }
@@ -956,7 +956,7 @@ where
         let bytes = (&self.bytes).bake(ctx);
         databake::quote! {
             // Safety: the bytes came directly from self.bytes on the previous line.
-            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(#bytes) }
+            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(#bytes) }
         }
     }
 }

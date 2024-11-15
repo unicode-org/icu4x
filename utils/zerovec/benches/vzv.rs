@@ -42,7 +42,7 @@ fn overview_bench(c: &mut Criterion) {
     let seed = 42;
     let (string_vec, _) = random_alphanums(2..=10, 100, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
-    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let vzv = VarZeroVec::<str>::parse_bytes(black_box(bytes.as_slice())).unwrap();
 
     c.bench_function("vzv/overview", |b| {
         b.iter(|| {
@@ -70,7 +70,7 @@ fn char_count_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
-    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let vzv = VarZeroVec::<str>::parse_bytes(black_box(bytes.as_slice())).unwrap();
 
     // *** Count chars in vec of 100 strings ***
     c.bench_function("vzv/char_count/slice", |b| {
@@ -97,7 +97,7 @@ fn binary_search_benches(c: &mut Criterion) {
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
-    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let vzv = VarZeroVec::<str>::parse_bytes(black_box(bytes.as_slice())).unwrap();
     let single_needle = "lmnop".to_owned();
 
     // *** Binary search vec of 500 strings 10 times ***
@@ -162,7 +162,7 @@ fn vzv_precompute_bench(c: &mut Criterion) {
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
-    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let vzv = VarZeroVec::<str>::parse_bytes(black_box(bytes.as_slice())).unwrap();
     let borrowed = vzv.as_components();
     let slice = vzv.as_slice();
     let single_needle = "lmnop";
