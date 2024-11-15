@@ -149,7 +149,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         &ule_name,
         lt,
         input_span,
-        attrs.skip_from
+        attrs.skip_from,
     );
 
     let eq_impl = quote!(
@@ -331,6 +331,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
     )
 }
 
+#[allow(clippy::too_many_arguments)] // Internal function. Could refactor later to use some kind of context type.
 fn make_zf_and_from_impl(
     sized_fields: &[FieldInfo],
     unsized_field_info: &UnsizedFields,
