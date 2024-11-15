@@ -10,7 +10,6 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use zerovec::VarZeroCow;
 
 impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2Marker>, DataError> {
@@ -90,7 +89,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
             .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
 
         Ok(Self {
-            strings: VarZeroCow::from_encodeable(&strings),
+            strings: strings.build(),
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,

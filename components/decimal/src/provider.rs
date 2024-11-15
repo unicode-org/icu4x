@@ -77,7 +77,9 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// The strings used in DecimalSymbolsV2
+/// A stack representation of the strings used in [`DecimalSymbolsV2`], i.e. a builder type
+/// for [`DecimalSymbolsStrs`]. This type can be obtained from a [`DecimalSymbolsStrs`]
+/// the `From`/`Into` traits.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -114,6 +116,19 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     /// Character used to separate groups in the integer part of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub grouping_separator: Cow<'data, str>,
+}
+
+impl<'data> DecimalSymbolStrsBuilder<'data> {
+    /// Build a [`DecimalSymbolsStrs`]
+    pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
+        VarZeroCow::from_encodeable(self)
+    }
+}
+
+impl<'data> From<&'data DecimalSymbolsStrs> for DecimalSymbolStrsBuilder<'data> {
+    fn from(other: &'data DecimalSymbolsStrs) -> Self {
+        zerofrom::ZeroFrom::zero_from(other)
+    }
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).

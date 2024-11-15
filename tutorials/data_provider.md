@@ -196,7 +196,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::DecimalSymbolsV2Marker;
+use icu::decimal::provider::{DecimalSymbolsV2Marker, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -217,8 +217,10 @@ where
         if req.id.locale.region == Some(region!("CH")) {
             if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2Marker>() {
                 decimal_payload.with_mut(|data| {
-                    // Change the digit 0 for all Swiss locales to '🐮'
-                    data.digits[0] = '🐮';
+                    let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
+                    // Change grouping separator for all Swiss locales to '🐮'
+                    builder.grouping_separator = "🐮".into();
+                    data.strings = builder.build();
                 });
             }
         }
@@ -249,7 +251,7 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 )
 .unwrap();
 
-assert_eq!(formatter.format_to_string(&100007i64.into()), "1🐮🐮,🐮🐮7");
+assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
 
 ## Forking Data Providers
