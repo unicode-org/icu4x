@@ -146,6 +146,7 @@ pub mod ffi {
         }
         /// Returns a string representation of [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::to_string, FnInStruct, hidden)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);

@@ -8,7 +8,6 @@ use crate::{
     extensions::unicode::{SubdivisionId, Value},
     subtags::Subtag,
 };
-use alloc::string::ToString;
 
 struct_keyword!(
     /// A Unicode Subdivision Identifier defines a regional subdivision used for locales.

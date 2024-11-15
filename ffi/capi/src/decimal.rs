@@ -148,6 +148,7 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal, Struct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal::write_to, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal::to_string, FnInStruct, hidden)]
         pub fn format(&self, value: &FixedDecimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
