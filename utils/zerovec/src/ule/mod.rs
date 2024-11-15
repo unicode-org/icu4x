@@ -95,7 +95,7 @@ where
     /// and an error should be returned in the same cases as [`Self::validate_bytes()`].
     ///
     /// The default implementation executes [`Self::validate_bytes()`] followed by
-    /// [`Self::from_bytes_unchecked`].
+    /// [`Self::slice_from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
@@ -106,7 +106,7 @@ where
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming
-    /// that this byte slice has previously been run through [`Self::parse_bytes()`] with
+    /// that this byte slice has previously been run through [`Self::parse_bytes_to_slice()`] with
     /// success.
     ///
     /// The default implementation performs a pointer cast to the same region of memory.
@@ -127,7 +127,7 @@ where
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* return the same result as [`Self::parse_bytes()`].
+    /// 1. This method *must* return the same result as [`Self::parse_bytes_to_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
     unsafe fn slice_from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
