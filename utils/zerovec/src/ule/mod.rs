@@ -99,7 +99,7 @@ where
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_bytes(bytes: &[u8]) -> Result<&[Self], UleError> {
+    fn parse_bytes_to_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
         Self::validate_bytes(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_bytes_unchecked(bytes) })

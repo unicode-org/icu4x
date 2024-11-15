@@ -80,14 +80,14 @@ fn main() {
     test_zerovec(TEST_SLICE_TUPLESTRUCT);
     test_zerovec(TEST_SLICE_ENUM);
 
-    assert!(EnumULE::parse_bytes(&[0]).is_ok());
-    assert!(EnumULE::parse_bytes(&[1]).is_ok());
-    assert!(EnumULE::parse_bytes(&[5]).is_ok());
-    assert!(EnumULE::parse_bytes(&[6]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[0]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[1]).is_ok());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[5]).is_ok());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes(&[6]).is_err());
+    assert!(EnumULE::parse_bytes_to_slice(&[0]).is_ok());
+    assert!(EnumULE::parse_bytes_to_slice(&[1]).is_ok());
+    assert!(EnumULE::parse_bytes_to_slice(&[5]).is_ok());
+    assert!(EnumULE::parse_bytes_to_slice(&[6]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes_to_slice(&[0]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes_to_slice(&[1]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes_to_slice(&[5]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_bytes_to_slice(&[6]).is_err());
 }
 
 const TEST_SLICE_STRUCT: &[Struct] = &[

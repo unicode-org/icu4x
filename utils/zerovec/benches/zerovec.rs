@@ -77,8 +77,10 @@ fn overview_bench(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn sum_benches(c: &mut Criterion) {
     let normal_slice = &TEST_SLICE[0..19];
-    let aligned_ule_slice = <u32 as AsULE>::ULE::parse_bytes(&TEST_BUFFER_LE[0..76]).unwrap();
-    let unalign_ule_slice = <u32 as AsULE>::ULE::parse_bytes(&TEST_BUFFER_LE[1..77]).unwrap();
+    let aligned_ule_slice =
+        <u32 as AsULE>::ULE::parse_bytes_to_slice(&TEST_BUFFER_LE[0..76]).unwrap();
+    let unalign_ule_slice =
+        <u32 as AsULE>::ULE::parse_bytes_to_slice(&TEST_BUFFER_LE[1..77]).unwrap();
 
     assert_eq!(normal_slice.len(), aligned_ule_slice.len());
     assert_eq!(normal_slice.len(), unalign_ule_slice.len());

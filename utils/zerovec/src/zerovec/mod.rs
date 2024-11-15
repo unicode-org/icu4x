@@ -344,7 +344,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// Parses a `&[u8]` buffer into a `ZeroVec<T>`.
     ///
     /// This function is infallible for built-in integer types, but fallible for other types,
-    /// such as `char`. For more information, see [`ULE::parse_bytes`].
+    /// such as `char`. For more information, see [`ULE::parse_bytes_to_slice`].
     ///
     /// The bytes within the byte buffer must remain constant for the life of the ZeroVec.
     ///
@@ -366,7 +366,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
     pub fn parse_bytes(bytes: &'a [u8]) -> Result<Self, UleError> {
-        let slice: &'a [T::ULE] = T::ULE::parse_bytes(bytes)?;
+        let slice: &'a [T::ULE] = T::ULE::parse_bytes_to_slice(bytes)?;
         Ok(Self::new_borrowed(slice))
     }
 
@@ -543,7 +543,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         match self.into_cow() {
             Cow::Borrowed(old_slice) => {
                 let bytes: &'a [u8] = T::ULE::slice_as_bytes(old_slice);
-                let new_slice = P::ULE::parse_bytes(bytes)?;
+                let new_slice = P::ULE::parse_bytes_to_slice(bytes)?;
                 Ok(ZeroVec::new_borrowed(new_slice))
             }
             Cow::Owned(old_vec) => {
@@ -657,11 +657,11 @@ impl<'a> ZeroVec<'a, u8> {
     pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, UleError> {
         match self.into_cow() {
             Cow::Borrowed(bytes) => {
-                let slice: &'a [T::ULE] = T::ULE::parse_bytes(bytes)?;
+                let slice: &'a [T::ULE] = T::ULE::parse_bytes_to_slice(bytes)?;
                 Ok(ZeroVec::new_borrowed(slice))
             }
             Cow::Owned(vec) => {
-                let slice = Vec::from(T::ULE::parse_bytes(&vec)?);
+                let slice = Vec::from(T::ULE::parse_bytes_to_slice(&vec)?);
                 Ok(ZeroVec::new_owned(slice))
             }
         }

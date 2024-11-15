@@ -57,7 +57,7 @@ where
     /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
     /// if it's not a valid byte sequence
     pub fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
-        T::ULE::parse_bytes(bytes).map(Self::from_ule_slice)
+        T::ULE::parse_bytes_to_slice(bytes).map(Self::from_ule_slice)
     }
 
     /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
@@ -305,7 +305,7 @@ where
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, UleError> {
-        let new_slice = P::ULE::parse_bytes(self.as_bytes())?;
+        let new_slice = P::ULE::parse_bytes_to_slice(self.as_bytes())?;
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
 

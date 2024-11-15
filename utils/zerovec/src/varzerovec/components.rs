@@ -240,7 +240,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .get(0..F::Len::SIZE)
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_ule =
-            F::Len::parse_bytes(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
+            F::Len::parse_bytes_to_slice(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
 
         let len = len_ule
             .first()
