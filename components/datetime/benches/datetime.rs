@@ -47,7 +47,8 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
-                        let skeleton = CompositeFieldSet::try_from(setup.options.semantic.unwrap()).unwrap();
+                        let skeleton =
+                            CompositeFieldSet::try_from(setup.options.semantic.unwrap()).unwrap();
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
