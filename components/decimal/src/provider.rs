@@ -93,6 +93,10 @@ pub struct GroupingSizesV1 {
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
+// Each affix/separator is at most three characters, which tends to be around 3-12 bytes each
+// and the numbering system is at most 8 ascii bytes, All put together the indexing is extremely
+// unlikely to have to go past 256.
+#[zerovec::format(zerovec::vecs::Index8)]
 pub struct DecimalSymbolStrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
