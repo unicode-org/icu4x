@@ -264,6 +264,7 @@ impl PluralCategory {
 
 define_preferences!(
     /// The preferences for plural rules.
+    [Copy]
     PluralRulesPreferences,
     {}
 );

@@ -22,6 +22,7 @@ extern crate alloc;
 
 define_preferences!(
     /// The preferences for percent formatting.
+    [Copy]
     PercentFormatterPreferences,
     {
         numbering_system: NumberingSystem

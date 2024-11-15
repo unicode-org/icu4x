@@ -25,6 +25,7 @@ use zerovec::maps::ZeroMap2dCursor;
 
 define_preferences!(
     /// The preferences for compact decimal formatting.
+    [Copy]
     CompactDecimalFormatterPreferences,
     {
         numbering_system: NumberingSystem

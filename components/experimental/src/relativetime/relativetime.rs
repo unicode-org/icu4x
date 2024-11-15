@@ -19,6 +19,7 @@ use crate::relativetime::provider::*;
 
 define_preferences!(
     /// The preferences for relative time formatting.
+    [Copy]
     RelativeTimeFormatterPreferences,
     {}
 );

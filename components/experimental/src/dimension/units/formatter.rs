@@ -23,6 +23,7 @@ extern crate alloc;
 
 define_preferences!(
     /// The preferences for units formatting.
+    [Copy]
     UnitsFormatterPreferences,
     {
         numbering_system: NumberingSystem

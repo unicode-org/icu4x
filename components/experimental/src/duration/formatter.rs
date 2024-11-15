@@ -23,13 +23,12 @@ use icu_provider::prelude::*;
 
 define_preferences!(
     /// The preferences for duration formatting.
+    [Copy]
     DurationFormatterPreferences,
     {
         numbering_system: NumberingSystem
     }
 );
-
-impl Copy for DurationFormatterPreferences {}
 
 prefs_convert!(DurationFormatterPreferences, UnitsFormatterPreferences, {
     numbering_system
