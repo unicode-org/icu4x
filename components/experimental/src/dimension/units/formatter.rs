@@ -139,6 +139,7 @@ impl UnitsFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
         let locale =

@@ -102,13 +102,13 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
 
 impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers()
+        self.iter_ids_for_numbers_with_locales()
     }
 }
 
 impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers()
+        self.iter_ids_for_numbers_with_locales()
     }
 }
 

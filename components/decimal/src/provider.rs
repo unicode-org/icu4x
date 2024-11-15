@@ -18,6 +18,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
+use tinystr::TinyStr8;
 use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
@@ -41,11 +42,12 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_decimal_symbols_v2_marker!(Baked);
+    impl_decimal_digits_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDigitsV1Marker::INFO];
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -75,7 +77,9 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// The strings used in DecimalSymbolsV2
+/// A stack representation of the strings used in [`DecimalSymbolsV2`], i.e. a builder type
+/// for [`DecimalSymbolsStrs`]. This type can be obtained from a [`DecimalSymbolsStrs`]
+/// the `From`/`Into` traits.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -114,6 +118,13 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     pub grouping_separator: Cow<'data, str>,
 }
 
+impl<'data> DecimalSymbolStrsBuilder<'data> {
+    /// Build a [`DecimalSymbolsStrs`]
+    pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
+        VarZeroCow::from_encodeable(self)
+    }
+}
+
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 ///
 /// <div class="stab unstable">
@@ -136,6 +147,24 @@ pub struct DecimalSymbolsV2<'data> {
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
 
+    /// The numbering system to use.
+    pub numsys: TinyStr8,
+}
+
+/// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
+/// set to the numbering system code.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(DecimalDigitsV1Marker = "decimal/digits@1")]
+#[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
+pub struct DecimalDigitsV1 {
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
     pub digits: [char; 10],
@@ -185,7 +214,7 @@ impl DecimalSymbolsV2<'static> {
                 secondary: 3,
                 min_grouping: 1,
             },
-            digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+            numsys: tinystr::tinystr!(8, "latn"),
         }
     }
 }

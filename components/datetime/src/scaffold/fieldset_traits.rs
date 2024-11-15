@@ -18,7 +18,7 @@ use icu_calendar::{
     },
     Date, Iso, Time,
 };
-use icu_decimal::provider::DecimalSymbolsV2Marker;
+use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -368,10 +368,13 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
-pub trait AllFixedCalendarExternalDataMarkers: DataProvider<DecimalSymbolsV2Marker> {}
+pub trait AllFixedCalendarExternalDataMarkers:
+    DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
+{
+}
 
 impl<T> AllFixedCalendarExternalDataMarkers for T where
-    T: ?Sized + DataProvider<DecimalSymbolsV2Marker>
+    T: ?Sized + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -385,6 +388,7 @@ pub trait AllAnyCalendarExternalDataMarkers:
     + DataProvider<JapaneseErasV1Marker>
     + DataProvider<JapaneseExtendedErasV1Marker>
     + DataProvider<DecimalSymbolsV2Marker>
+    + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -397,6 +401,7 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
         + DataProvider<JapaneseErasV1Marker>
         + DataProvider<JapaneseExtendedErasV1Marker>
         + DataProvider<DecimalSymbolsV2Marker>
+        + DataProvider<DecimalDigitsV1Marker>
 {
 }
 

@@ -18,6 +18,7 @@ pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
+    pub(crate) digits: &'l DecimalDigitsV1,
 }
 
 impl FormattedFixedDecimal<'_> {
@@ -47,7 +48,7 @@ impl Writeable for FormattedFixedDecimal<'_> {
                 sink.write_str(self.symbols.decimal_separator())?;
             }
             #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-            sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
+            sink.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
             if grouper::check(
                 upper_magnitude,
                 m,

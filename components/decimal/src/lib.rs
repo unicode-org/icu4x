@@ -100,6 +100,7 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
+use icu_locale_core::locale;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem,
 };
@@ -107,7 +108,7 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 88);
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 104);
 
 define_preferences!(
     /// The preferences for fixed decimal formatting.
@@ -135,6 +136,7 @@ define_preferences!(
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2Marker>,
+    digits: DataPayload<provider::DecimalDigitsV1Marker>,
 }
 
 impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
@@ -150,7 +152,11 @@ impl FixedDecimalFormatter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV2Marker> + ?Sized>(
+    pub fn try_new_unstable<
+        D: DataProvider<provider::DecimalSymbolsV2Marker>
+            + DataProvider<provider::DecimalDigitsV1Marker>
+            + ?Sized,
+    >(
         provider: &D,
         prefs: FixedDecimalFormatterPreferences,
         options: options::FixedDecimalFormatterOptions,
@@ -163,7 +169,7 @@ impl FixedDecimalFormatter {
             .as_ref()
             .map(|s| s.as_str())
             .unwrap_or("");
-        let symbols = provider
+        let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic(nu),
@@ -172,7 +178,22 @@ impl FixedDecimalFormatter {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self { options, symbols })
+
+        let digits = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(&symbols.get().numsys),
+                    &locale!("und").into(),
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        Ok(Self {
+            options,
+            symbols,
+            digits,
+        })
     }
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
@@ -181,6 +202,7 @@ impl FixedDecimalFormatter {
             value,
             options: &self.options,
             symbols: self.symbols.get(),
+            digits: self.digits.get(),
         }
     }
 
