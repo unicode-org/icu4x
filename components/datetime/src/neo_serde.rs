@@ -20,6 +20,7 @@ use FieldSetField::*;
 /// <a href="https://github.com/unicode-org/icu4x/issues/5825">#5825</a>
 /// </div>
 #[derive(Debug, displaydoc::Display)]
+#[non_exhaustive]
 pub enum CompositeFieldSetSerdeError {
     /// The deserialized field set contains no fields.
     #[displaydoc("at least one field is required")]
