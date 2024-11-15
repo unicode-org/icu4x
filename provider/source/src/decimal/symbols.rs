@@ -76,6 +76,10 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
 
         let minus_sign_affixes = parsed_pattern.localize_sign(&symbols.minus_sign);
         let plus_sign_affixes = parsed_pattern.localize_sign(&symbols.plus_sign);
+        let numsys = nsname
+            .parse()
+            .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
+
         let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: minus_sign_affixes.0.into(),
             minus_sign_suffix: minus_sign_affixes.1.into(),
@@ -83,10 +87,8 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
             plus_sign_suffix: plus_sign_affixes.1.into(),
             decimal_separator: Cow::Owned(symbols.decimal.clone()),
             grouping_separator: Cow::Owned(symbols.group.clone()),
+            numsys: Cow::Owned(numsys),
         };
-        let numsys = nsname
-            .parse()
-            .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
 
         Ok(Self {
             strings: strings.build(),
@@ -95,7 +97,6 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,
             },
-            numsys,
         })
     }
 }
@@ -113,5 +114,5 @@ fn test_basic() {
         })
         .unwrap();
     assert_eq!(ar_decimal.payload.get().decimal_separator(), "٫");
-    assert_eq!(ar_decimal.payload.get().numsys, "arab");
+    assert_eq!(ar_decimal.payload.get().numsys(), "arab");
 }

@@ -76,8 +76,8 @@ pub mod ffi {
             use alloc::borrow::Cow;
             use icu_provider::any::AsDowncastingAnyProvider;
             use icu_provider_adapters::{fixed::FixedProvider, fork::ForkByMarkerProvider};
-            use tinystr::tinystr;
             use zerovec::VarZeroCow;
+
             fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> Cow<'_, str> {
                 if s.is_empty() {
                     Cow::default()
@@ -109,6 +109,7 @@ pub mod ffi {
                 minus_sign_suffix: str_to_cow(minus_sign_suffix),
                 decimal_separator: str_to_cow(decimal_separator),
                 grouping_separator: str_to_cow(grouping_separator),
+                numsys: "zyyy".into(),
             };
 
             let grouping_sizes = GroupingSizesV1 {
@@ -125,7 +126,6 @@ pub mod ffi {
                 FixedProvider::<DecimalSymbolsV2Marker>::from_owned(DecimalSymbolsV2 {
                     strings: VarZeroCow::from_encodeable(&strings),
                     grouping_sizes,
-                    numsys: tinystr!(8, "zyyy"),
                 });
             let provider_digits =
                 FixedProvider::<DecimalDigitsV1Marker>::from_owned(DecimalDigitsV1 { digits });
