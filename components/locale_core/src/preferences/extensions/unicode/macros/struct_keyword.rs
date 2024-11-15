@@ -72,6 +72,14 @@ macro_rules! __struct_keyword {
                 Some(self.clone().into())
             }
         }
+
+        impl core::ops::Deref for $name {
+            type Target = $value;
+
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
     };
 }
 pub use __struct_keyword as struct_keyword;
