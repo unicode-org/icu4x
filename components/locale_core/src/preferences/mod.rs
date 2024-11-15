@@ -340,7 +340,7 @@ pub use locale::*;
 /// pub enum EmojiPresentationStyle {
 ///     Emoji,
 ///     Text,
-///     [default]
+///     #[default]
 ///     Default,
 /// }
 ///
@@ -385,7 +385,6 @@ pub use locale::*;
 /// impl PreferenceKey for CustomFormat {}
 ///
 /// define_preferences!(
-///     [Copy]
 ///     MyFormatterPreferences,
 ///     {
 ///         emoji: EmojiPresentationStyle,
