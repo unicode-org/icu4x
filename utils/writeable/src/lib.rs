@@ -81,7 +81,7 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
-pub use cmp::cmp_bytes;
+pub use cmp::{cmp_str, cmp_utf8};
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
 
@@ -362,7 +362,6 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// # Examples
 ///

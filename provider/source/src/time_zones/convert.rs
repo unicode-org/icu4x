@@ -558,7 +558,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
                     let Some(location) = locations.get(tz) else {
                         return true;
                     };
-                    writeable::cmp_bytes(
+                    writeable::cmp_utf8(
                         &time_zone_names_resource
                             .region_format
                             .interpolate([location]),
@@ -627,12 +627,12 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
                         return true;
                     };
                     if zv == ZoneVariant::Daylight {
-                        writeable::cmp_bytes(
+                        writeable::cmp_utf8(
                             &locations.get().pattern_daylight.interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal
                     } else if zv == ZoneVariant::Standard {
-                        writeable::cmp_bytes(
+                        writeable::cmp_utf8(
                             &locations.get().pattern_standard.interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal

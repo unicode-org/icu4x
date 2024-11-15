@@ -231,7 +231,7 @@ fn test_string_impls() {
         assert_writeable_eq!(&chars[i], s);
         for j in 0..chars.len() {
             assert_eq!(
-                crate::cmp_bytes(&chars[j], s.as_bytes()),
+                crate::cmp_str(&chars[j], &s),
                 chars[j].cmp(&chars[i]),
                 "{:?} vs {:?}",
                 chars[j],
