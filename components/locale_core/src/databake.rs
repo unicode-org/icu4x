@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::LanguageIdentifier;
-use alloc::string::ToString;
 use databake::*;
 
 impl Bake for LanguageIdentifier {
