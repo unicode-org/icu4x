@@ -18,7 +18,6 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use tinystr::TinyStr8;
 use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
@@ -94,6 +93,10 @@ pub struct GroupingSizesV1 {
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
+// Each affix/separator is at most three characters, which tends to be around 3-12 bytes each
+// and the numbering system is at most 8 ascii bytes, All put together the indexing is extremely
+// unlikely to have to go past 256.
+#[zerovec::format(zerovec::vecs::Index8)]
 pub struct DecimalSymbolStrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -116,6 +119,10 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     /// Character used to separate groups in the integer part of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub grouping_separator: Cow<'data, str>,
+
+    /// The numbering system to use.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub numsys: Cow<'data, str>,
 }
 
 impl<'data> DecimalSymbolStrsBuilder<'data> {
@@ -146,9 +153,6 @@ pub struct DecimalSymbolsV2<'data> {
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
-
-    /// The numbering system to use.
-    pub numsys: TinyStr8,
 }
 
 /// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
@@ -193,6 +197,11 @@ impl<'data> DecimalSymbolsV2<'data> {
     pub fn grouping_separator(&self) -> &str {
         self.strings.grouping_separator()
     }
+
+    /// Return the numbering system
+    pub fn numsys(&self) -> &str {
+        self.strings.numsys()
+    }
 }
 
 impl DecimalSymbolsV2<'static> {
@@ -206,6 +215,7 @@ impl DecimalSymbolsV2<'static> {
             plus_sign_suffix: Cow::Borrowed(""),
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
+            numsys: Cow::Borrowed("latn"),
         };
         Self {
             strings: VarZeroCow::from_encodeable(&strings),
@@ -214,7 +224,6 @@ impl DecimalSymbolsV2<'static> {
                 secondary: 3,
                 min_grouping: 1,
             },
-            numsys: tinystr::tinystr!(8, "latn"),
         }
     }
 }

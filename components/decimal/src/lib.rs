@@ -108,7 +108,7 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 104);
+size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 96);
 
 define_preferences!(
     /// The preferences for fixed decimal formatting.
@@ -182,7 +182,7 @@ impl FixedDecimalFormatter {
         let digits = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(&symbols.get().numsys),
+                    DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
                     &locale!("und").into(),
                 ),
                 ..Default::default()
