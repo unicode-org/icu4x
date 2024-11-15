@@ -125,12 +125,6 @@ impl<'data> DecimalSymbolStrsBuilder<'data> {
     }
 }
 
-impl<'data> From<&'data DecimalSymbolsStrs> for DecimalSymbolStrsBuilder<'data> {
-    fn from(other: &'data DecimalSymbolsStrs) -> Self {
-        zerofrom::ZeroFrom::zero_from(other)
-    }
-}
-
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 ///
 /// <div class="stab unstable">
