@@ -552,7 +552,7 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
+        writeable::cmp_utf8(self, other)
     }
 
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.

@@ -249,7 +249,7 @@ impl LanguageIdentifier {
     /// assert_eq!(expected_ordering, strict_cmp_strings);
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
+        writeable::cmp_utf8(self, other)
     }
 
     pub(crate) fn as_tuple(
