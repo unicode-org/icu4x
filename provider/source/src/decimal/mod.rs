@@ -122,7 +122,7 @@ impl SourceDataProvider {
     }
 
     /// Produce DataIdentifier's for all digit-based numbering systems in the form und/<numsys>
-    #[allow(unused)] // TODO we should support using this, https://github.com/unicode-org/icu4x/issues/5824
+    #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
     fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         use cldr_serde::numbering_systems::NumberingSystemType;
         let resource: &cldr_serde::numbering_systems::Resource = self
