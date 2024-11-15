@@ -141,7 +141,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         &maybe_lt_bound,
     );
 
-    let zf_impl = make_zf_impl(
+    let zf_and_from_impl = make_zf_and_from_impl(
         &sized_fields,
         &unsized_field_info,
         fields,
@@ -149,6 +149,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         &ule_name,
         lt,
         input_span,
+        attrs.skip_from,
     );
 
     let eq_impl = quote!(
@@ -308,7 +309,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
 
         #encode_impl
 
-        #zf_impl
+        #zf_and_from_impl
 
         #derived
 
@@ -330,7 +331,8 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
     )
 }
 
-fn make_zf_impl(
+#[allow(clippy::too_many_arguments)] // Internal function. Could refactor later to use some kind of context type.
+fn make_zf_and_from_impl(
     sized_fields: &[FieldInfo],
     unsized_field_info: &UnsizedFields,
     fields: &Fields,
@@ -338,6 +340,7 @@ fn make_zf_impl(
     ule_name: &Ident,
     maybe_lt: Option<&Lifetime>,
     span: Span,
+    skip_from: bool,
 ) -> TokenStream2 {
     if !unsized_field_info.has_zf() {
         return quote!();
@@ -367,12 +370,26 @@ fn make_zf_impl(
 
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
+
+    let maybe_from = if skip_from {
+        quote!()
+    } else {
+        quote!(
+            impl<#lt> From<&#lt #ule_name> for #name<#lt> {
+                fn from(other: &#lt #ule_name) -> Self {
+                    <Self as #zerofrom_trait<#lt, #ule_name>>::zero_from(other)
+                }
+            }
+        )
+    };
     quote!(
         impl <#lt> #zerofrom_trait <#lt, #ule_name> for #name <#lt> {
             fn zero_from(other: &#lt #ule_name) -> Self {
                 Self #field_inits
             }
         }
+
+        #maybe_from
     )
 }
 
