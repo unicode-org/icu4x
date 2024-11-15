@@ -21,7 +21,7 @@ use crate::{
 };
 
 #[cfg(feature = "datagen")]
-use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
+use crate::provider::pattern::CoarseHourCycle;
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
@@ -535,21 +535,20 @@ impl components::Bag {
     pub fn select_pattern<'data>(
         self,
         skeletons: &DateSkeletonPatternsV1<'data>,
-        date_patterns: &DateLengthsV1<'data>,
-        time_patterns: &TimeLengthsV1<'data>,
+        preferred_hour_cycle: CoarseHourCycle,
+        length_patterns: &GenericLengthPatternsV1<'data>,
     ) -> PatternPlurals<'data> {
         use crate::provider::pattern::runtime::Pattern;
-        use crate::provider::pattern::CoarseHourCycle;
         use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
-        let default_hour_cycle = match time_patterns.preferred_hour_cycle {
+        let default_hour_cycle = match preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,
             CoarseHourCycle::H23H24 => HourCycle::H23,
         };
         let fields = self.to_vec_fields(default_hour_cycle);
         match create_best_pattern_for_fields(
             skeletons,
-            &date_patterns.length_combinations,
+            length_patterns,
             &fields,
             &self,
             false,

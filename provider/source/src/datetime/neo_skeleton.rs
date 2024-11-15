@@ -5,10 +5,11 @@
 use std::collections::HashSet;
 
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
+use calendar::patterns::GenericLengthPatternsV1;
 use either::Either;
 use icu::datetime::fieldset::dynamic::*;
 use icu::datetime::options::NeoSkeletonLength;
-use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::provider::calendar::{DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::components;
 use icu::datetime::provider::skeleton::PatternPlurals;
@@ -63,9 +64,10 @@ impl SourceDataProvider {
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
-        let date_lengths_v1 = DateLengthsV1::from(&data);
+        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
         let time_lengths_v1 = TimeLengthsV1::from(&data);
-        let skeleton_patterns = DateSkeletonPatternsV1::from(&data);
+        let skeleton_patterns =
+            DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
 
         fn expand_pp_to_pe(
             pp: PatternPlurals,
@@ -90,8 +92,8 @@ impl SourceDataProvider {
         .map(|components| {
             let pattern = expand_pp_to_pe(components.select_pattern(
                 &skeleton_patterns,
-                &date_lengths_v1,
-                &time_lengths_v1,
+                time_lengths_v1.preferred_hour_cycle,
+                &length_combinations_v1,
             ));
             match components {
                 components::Bag {
@@ -110,13 +112,13 @@ impl SourceDataProvider {
                         pattern,
                         Some(expand_pp_to_pe(components_with_full_year.select_pattern(
                             &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
+                            time_lengths_v1.preferred_hour_cycle,
+                            &length_combinations_v1,
                         ))),
                         Some(expand_pp_to_pe(components_with_era.select_pattern(
                             &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
+                            time_lengths_v1.preferred_hour_cycle,
+                            &length_combinations_v1,
                         ))),
                     )
                 }
@@ -130,13 +132,13 @@ impl SourceDataProvider {
                         pattern,
                         Some(expand_pp_to_pe(components_with_minute.select_pattern(
                             &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
+                            time_lengths_v1.preferred_hour_cycle,
+                            &length_combinations_v1,
                         ))),
                         Some(expand_pp_to_pe(components_with_second.select_pattern(
                             &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
+                            time_lengths_v1.preferred_hour_cycle,
+                            &length_combinations_v1,
                         ))),
                     )
                 }
@@ -549,4 +551,120 @@ fn test_en_overlap_patterns() {
   ]
 }"#
     );
+}
+
+/// This is a test that should eventually be moved to CLDR.
+///
+/// See: https://unicode-org.atlassian.net/browse/CLDR-14993
+#[cfg(feature = "networking")]
+#[test]
+fn test_date_skeleton_consistency() {
+    use crate::CoverageLevel;
+    use pattern::CoarseHourCycle;
+
+    // NOTE: This test is intended to run over all modern locales
+    let provider = SourceDataProvider::new_latest_tested();
+
+    #[derive(Copy, Clone)]
+    struct TestCaseFixedArgs<'a> {
+        skeleton_patterns: &'a DateSkeletonPatternsV1<'a>,
+        preferred_hour_cycle: CoarseHourCycle,
+        length_combinations_v1: &'a GenericLengthPatternsV1<'a>,
+        cldr_cal: &'a str,
+        locale: &'a DataLocale,
+    }
+
+    struct TestCaseInfo<'a> {
+        pattern: &'a str,
+        skeleton: &'a str,
+        length: &'a str,
+    }
+
+    /// Returns whether the check was successful.
+    fn check(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
+        let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
+        let components = components::Bag::from(&parsed_skeleton);
+        let PatternPlurals::SinglePattern(selected_pattern) = components.select_pattern(
+            data.skeleton_patterns,
+            data.preferred_hour_cycle,
+            data.length_combinations_v1,
+        );
+
+        // Canonicalize the two patterns to make comparison easier
+        let mut selected_pattern = reference::Pattern::from(&selected_pattern);
+        selected_pattern.canonicalize();
+        let selected_pattern = runtime::Pattern::from(&selected_pattern).to_string();
+        let mut expected_pattern: reference::Pattern = info.pattern.parse().unwrap();
+        expected_pattern.canonicalize();
+        let expected_pattern = runtime::Pattern::from(&expected_pattern).to_string();
+
+        if expected_pattern != selected_pattern {
+            let locale = data.locale;
+            let cal = data.cldr_cal;
+            let length = info.length;
+            println!("{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}");
+            false
+        } else {
+            true
+        }
+    }
+
+    let mut num_problems = 0;
+    for (_calendar, cldr_cal) in supported_cals().iter() {
+        for locale in provider
+            .locales_for_coverage_levels([CoverageLevel::Modern])
+            .unwrap()
+        {
+            let data = provider
+                .get_datetime_resources(&locale, Either::Right(cldr_cal))
+                .unwrap();
+            let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
+            let time_lengths_v1 = TimeLengthsV1::from(&data);
+            let skeleton_patterns =
+                DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+            let test_case_data = TestCaseFixedArgs {
+                skeleton_patterns: &skeleton_patterns,
+                preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
+                length_combinations_v1: &length_combinations_v1,
+                cldr_cal,
+                locale: &locale,
+            };
+            num_problems += !check(
+                test_case_data,
+                TestCaseInfo {
+                    pattern: &data.date_formats.short.get_pattern(),
+                    skeleton: &data.date_skeletons.short.get_pattern(),
+                    length: "date-short",
+                },
+            ) as usize;
+            num_problems += !check(
+                test_case_data,
+                TestCaseInfo {
+                    pattern: &data.date_formats.medium.get_pattern(),
+                    skeleton: &data.date_skeletons.medium.get_pattern(),
+                    length: "date-medum",
+                },
+            ) as usize;
+            num_problems += !check(
+                test_case_data,
+                TestCaseInfo {
+                    pattern: &data.date_formats.long.get_pattern(),
+                    skeleton: &data.date_skeletons.long.get_pattern(),
+                    length: "date-long",
+                },
+            ) as usize;
+            num_problems += !check(
+                test_case_data,
+                TestCaseInfo {
+                    pattern: &data.date_formats.full.get_pattern(),
+                    skeleton: &data.date_skeletons.full.get_pattern(),
+                    length: "date-full",
+                },
+            ) as usize;
+            // TODO: Also check time? Date seems more impactful in the short term
+        }
+    }
+    if num_problems != 0 {
+        panic!("{num_problems} problems");
+    }
 }

@@ -11,13 +11,13 @@ use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
-impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
-    fn from(other: &cldr_serde::ca::Dates) -> Self {
+impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::AvailableFormats) -> Self {
         let mut patterns: HashMap<String, HashMap<String, String>> = HashMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
-        for (skeleton_str, pattern_str) in other.datetime_formats.available_formats.0.iter() {
+        for (skeleton_str, pattern_str) in other.0.iter() {
             let (skeleton_str, plural_form_str) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, v),
                 None => (skeleton_str.as_ref(), "other"),
@@ -100,7 +100,7 @@ mod test {
             .get_datetime_resources(&locale, Either::Right("gregorian"))
             .unwrap();
         let patterns = DateLengthsV1::from(&data);
-        let skeletons = DateSkeletonPatternsV1::from(&data);
+        let skeletons = DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
         (patterns, skeletons)
     }
 

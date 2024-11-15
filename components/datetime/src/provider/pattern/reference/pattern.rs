@@ -39,6 +39,26 @@ impl Pattern {
     pub(crate) fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
         runtime::Pattern::from(self)
     }
+
+    /// Replace fields with their equivalent canonical forms.
+    ///
+    /// For example, replace "GGG" with "G".
+    #[cfg(feature = "datagen")]
+    pub fn canonicalize(&mut self) {
+        use crate::fields::{Field, FieldLength, FieldSymbol};
+
+        for item in self.items.iter_mut() {
+            match item {
+                PatternItem::Field(ref mut field @ Field {
+                    symbol: FieldSymbol::Era,
+                    length: FieldLength::Three
+                }) => {
+                    field.length = FieldLength::One;
+                }
+                _ => {}
+            }
+        }
+    }
 }
 
 impl From<Vec<PatternItem>> for Pattern {
