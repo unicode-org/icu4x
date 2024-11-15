@@ -254,6 +254,8 @@ define_preferences!(
     /// Hello World Preferences.
     HelloWorldFormatterPreferences, {});
 
+impl Copy for HelloWorldFormatterPreferences {}
+
 /// A type that formats localized "hello world" strings.
 ///
 /// This type is intended to take the shape of a typical ICU4X formatter API.

@@ -63,7 +63,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -84,7 +84,7 @@
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =
-//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
+//!     HelloWorldFormatter::try_new(locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
