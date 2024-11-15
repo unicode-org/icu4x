@@ -14,7 +14,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::provider::skeleton::components;
+//! use icu::datetime::fields::components;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -33,7 +33,6 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
     provider::pattern::{runtime::Pattern, PatternItem},
-    provider::skeleton::PatternPlurals,
 };
 
 use crate::neo_pattern::DateTimePattern;
@@ -116,7 +115,6 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(feature = "datagen")]
     pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
@@ -576,18 +574,6 @@ impl From<TimeZoneName> for Field {
                 length: FieldLength::Four,
             },
         }
-    }
-}
-
-/// Get the resolved components for a FixedCalendarDateTimeFormatter, via the PatternPlurals. In the case of
-/// plurals resolve off of the required `other` pattern.
-impl From<&PatternPlurals<'_>> for Bag {
-    fn from(other: &PatternPlurals) -> Self {
-        let pattern = match other {
-            PatternPlurals::SinglePattern(pattern) => pattern,
-            PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
-        };
-        Self::from(pattern)
     }
 }
 

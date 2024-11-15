@@ -114,16 +114,16 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["compiled_data"]
+required-features = ["compiled_data", "serde", "experimental"]
 
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["bench"]
+required-features = ["bench", "serde", "experimental"]
 
 [[test]]
 name = "datetime"
-required-features = ["experimental", "compiled_data"]
+required-features = ["experimental", "compiled_data", "serde"]
 
 [[test]]
 name = "resolved_components"

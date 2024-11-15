@@ -30,6 +30,19 @@ pub mod dynamic {
     pub use crate::dynamic::*;
 }
 
+/// 🚧 \[Experimental\] Types for dealing with serialization of semantic skeletons.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/5825">#5825</a>
+/// </div>
+#[cfg(all(feature = "experimental", feature = "serde"))]
+pub mod serde {
+    pub use crate::neo_serde::CompositeFieldSetSerde;
+    pub use crate::neo_serde::CompositeFieldSetSerdeError;
+}
+
 #[cfg(doc)]
 use icu_timezone::TimeZoneInfo;
 

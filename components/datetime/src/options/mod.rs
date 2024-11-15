@@ -4,9 +4,10 @@
 
 //! Options types for date/time formatting.
 
-#[cfg(feature = "serde")]
-use crate::neo_serde::*;
 use icu_timezone::scaffold::IntoOption;
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+use crate::neo_serde::TimePrecisionSerde;
 
 /// The length of a formatted date/time string.
 ///
@@ -61,8 +62,8 @@ use icu_timezone::scaffold::IntoOption;
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), serde(rename_all = "lowercase"))]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
@@ -125,8 +126,8 @@ impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), serde(rename_all = "lowercase"))]
 #[non_exhaustive]
 pub enum Alignment {
     /// Align fields as the locale specifies them to be aligned.
@@ -245,8 +246,8 @@ impl IntoOption<Alignment> for Alignment {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), serde(rename_all = "lowercase"))]
 #[non_exhaustive]
 pub enum YearStyle {
     /// Display the century and/or era when needed to disambiguate the year,
@@ -356,9 +357,9 @@ impl IntoOption<YearStyle> for YearStyle {
 /// }
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(
-    feature = "serde",
+    all(feature = "serde", feature = "experimental"),
     serde(from = "TimePrecisionSerde", into = "TimePrecisionSerde")
 )]
 #[non_exhaustive]
@@ -456,8 +457,8 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "u8", into = "u8"))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(all(feature = "serde", feature = "experimental"), serde(try_from = "u8", into = "u8"))]
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
     /// Zero fractional digits. This is the default.

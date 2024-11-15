@@ -9,7 +9,7 @@ use icu_datetime::{
         dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
     },
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
-    provider::skeleton::components,
+    fields::components,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;
