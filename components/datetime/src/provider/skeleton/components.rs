@@ -32,7 +32,7 @@
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
-    provider::pattern::{runtime::Pattern, PatternItem},
+    provider::pattern::{reference, runtime::Pattern, PatternItem},
     provider::skeleton::PatternPlurals,
 };
 
@@ -599,11 +599,23 @@ impl From<&DateTimePattern> for Bag {
 
 impl From<&Pattern<'_>> for Bag {
     fn from(pattern: &Pattern) -> Self {
+        Self::from_pattern_items(pattern.items.iter())
+    }
+}
+
+impl From<&reference::Pattern> for Bag {
+    fn from(pattern: &reference::Pattern) -> Self {
+        Self::from_pattern_items(pattern.items.iter().copied())
+    }
+}
+
+impl Bag {
+    fn from_pattern_items(pattern_items: impl Iterator<Item = PatternItem>) -> Self {
         let mut bag: Bag = Default::default();
 
         // Transform the fields into components per:
         // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-        for item in pattern.items.iter() {
+        for item in pattern_items {
             let field = match item {
                 PatternItem::Field(ref field) => field,
                 PatternItem::Literal(_) => continue,

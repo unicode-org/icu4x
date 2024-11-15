@@ -4,12 +4,12 @@
 
 use std::collections::HashSet;
 
-use crate::{IterableDataProviderCached, SourceDataProvider};
+use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::fieldset::dynamic::*;
 use icu::datetime::options::NeoSkeletonLength;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::pattern::runtime;
+use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::components;
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
@@ -28,7 +28,7 @@ impl SourceDataProvider {
         to_components_bag: impl Fn(
             NeoSkeletonLength,
             &DataMarkerAttributes,
-            &DateLengthsV1,
+            &cldr_serde::ca::Dates,
         ) -> components::Bag,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -58,7 +58,7 @@ impl SourceDataProvider {
         to_components_bag: impl Fn(
             NeoSkeletonLength,
             &DataMarkerAttributes,
-            &DateLengthsV1,
+            &cldr_serde::ca::Dates,
         ) -> components::Bag,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
@@ -86,7 +86,7 @@ impl SourceDataProvider {
             NeoSkeletonLength::Medium,
             NeoSkeletonLength::Short,
         ]
-        .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
+        .map(|length| to_components_bag(length, attributes, &data))
         .map(|components| {
             let pattern = expand_pp_to_pe(components.select_pattern(
                 &skeleton_patterns,
@@ -289,7 +289,7 @@ fn test_check_for_field() {
 fn gen_time_components(
     _: NeoSkeletonLength,
     attributes: &DataMarkerAttributes,
-    _: &DateLengthsV1<'_>,
+    _: &cldr_serde::ca::Dates,
 ) -> components::Bag {
     // TODO: Should this use timeSkeletons?
     // "full": "ahmmsszzzz",
@@ -315,7 +315,7 @@ fn gen_time_components(
 fn gen_date_components(
     length: NeoSkeletonLength,
     attributes: &DataMarkerAttributes,
-    date_lengths_v1: &DateLengthsV1<'_>,
+    data: &cldr_serde::ca::Dates,
 ) -> components::Bag {
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
@@ -328,13 +328,14 @@ fn gen_date_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    let date_pattern = match length {
-        NeoSkeletonLength::Long => &date_lengths_v1.date.long,
-        NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
-        NeoSkeletonLength::Short => &date_lengths_v1.date.short,
+    // TODO(#308): Utilize the numbering system pattern variations.
+    let date_pattern: reference::Pattern = match length {
+        NeoSkeletonLength::Long => data.date_formats.long.get_pattern().parse().unwrap(),
+        NeoSkeletonLength::Medium => data.date_formats.medium.get_pattern().parse().unwrap(),
+        NeoSkeletonLength::Short => data.date_formats.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
-    let date_bag = components::Bag::from(date_pattern);
+    let date_bag = components::Bag::from(&date_pattern);
     let mut filtered_components = components::Bag::empty();
     if check_for_field(attributes, "y") {
         filtered_components.era = date_bag.era;
