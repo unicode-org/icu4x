@@ -35,7 +35,6 @@ pub use fieldset_traits::TimeMarkers;
 pub use fieldset_traits::TypedDateDataMarkers;
 pub use fieldset_traits::ZoneMarkers;
 
-pub(crate) use get_field::impl_get_field;
 pub use get_field::GetField;
 
 /// Trait marking other traits that are considered unstable and should not generally be

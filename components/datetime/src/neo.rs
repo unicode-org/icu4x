@@ -4,8 +4,8 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::dynamic::CompositeFieldSet;
 use crate::external_loaders::*;
+use crate::fieldset::dynamic::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
@@ -764,6 +764,35 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
         })
     }
 }
+
+/// A formatter optimized for time and time zone formatting.
+///
+/// # Examples
+///
+/// A [`TimeFormatter`] cannot be constructed with a fieldset that involves dates:
+///
+/// ```
+/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::fieldset::Y;
+/// use icu::locale::locale;
+///
+/// assert!(TimeFormatter::try_new(&locale!("und").into(), Y::medium()).is_err());
+/// ```
+///
+/// Furthermore, it is a compile error in the format function:
+///
+/// ```compile_fail,E0271
+/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::fieldset::Y;
+/// use icu::locale::locale;
+///
+/// let date: icu::calendar::Date<icu::calendar::Gregorian> = unimplemented!();
+/// let formatter = TimeFormatter::try_new(&locale!("und").into(), Y::medium()).unwrap();
+///
+/// // error[E0271]: type mismatch resolving `<Gregorian as AsCalendar>::Calendar == ()`
+/// formatter.format(&date);
+/// ```
+pub type TimeFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 
 /// An intermediate type during a datetime formatting operation.
 ///
