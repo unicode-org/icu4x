@@ -3,36 +3,18 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::names::RawDateTimeNamesBorrowed;
-use super::pattern::{DateTimePattern, DateTimePatternBorrowed};
-use crate::external_loaders::*;
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::fieldset::dynamic::CompositeDateTimeFieldSet;
+use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
-use crate::input;
 use crate::input::ExtractedInput;
-use crate::provider::neo::*;
-use crate::provider::pattern::PatternItem;
-use crate::provider::time_zones::tz;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::size_test_macro::size_test;
 use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
-use core::num::NonZeroU8;
-use icu_calendar::types::FormattingEra;
-use icu_calendar::types::MonthCode;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::options::GroupingStrategy;
-use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
-use icu_decimal::FixedDecimalFormatter;
-use icu_provider::marker::NeverMarker;
-use icu_provider::prelude::*;
 use writeable::TryWriteable;
-use yoke::Yokeable;
 
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar, R> {
@@ -302,7 +284,7 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::super::*;
-    use super::*;
+    use crate::fields::{self, FieldLength};
     use icu_calendar::{DateTime, Gregorian};
     use icu_locale_core::locale;
     use writeable::assert_try_writeable_eq;
