@@ -4,7 +4,11 @@
 
 //! Serde definitions for semantic skeleta
 
-use crate::{dynamic::*, fieldset, options::*, raw::neo::RawNeoOptions};
+use crate::{
+    fieldset::{self, dynamic::*},
+    options::*,
+    raw::neo::RawNeoOptions,
+};
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 

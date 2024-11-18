@@ -4,7 +4,7 @@
 
 use super::*;
 use crate::provider::{neo::*, time_zones::tz, *};
-use crate::{dynamic::*, format::neo::DateTimeNamesMarker};
+use crate::{fieldset::dynamic::*, format::neo::DateTimeNamesMarker};
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,

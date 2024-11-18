@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::fieldset::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::options::*;

@@ -10,10 +10,18 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 ///
 /// This struct produces "composite field sets" as defined in UTS 35.
 ///
-/// This struct does not have its own constructor, but it can be produced via
-/// factory functions on the other field sets.
-///
 /// # Examples
+///
+/// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
+///
+/// ```
+/// use icu::datetime::fieldset::{Combo, E, L};
+///
+/// let field_set_1 = E::long().zone_l();
+/// let field_set_2 = Combo::<E, L>::long();
+///
+/// assert_eq!(field_set_1, field_set_2);
+/// ```
 ///
 /// Format the weekday, hour, and location-based zone:
 ///
@@ -27,7 +35,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     ET::short().hm().l(),
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
@@ -55,7 +63,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     ET::short().hm().l(),
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
@@ -84,7 +92,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
 ///     &locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).v(),
+///     DateFieldSet::YMD(YMD::long()).zone_v(),
 /// )
 /// .unwrap();
 ///

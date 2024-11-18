@@ -7,9 +7,9 @@ use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
     GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::dynamic::CompositeDateTimeFieldSet;
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::fieldset::dynamic::CompositeDateTimeFieldSet;
 use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
