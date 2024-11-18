@@ -35,7 +35,7 @@ pub trait DateTimeNamesMarker: UnstableSealed {
 /// Helper trait for [`DateTimeNamesMarker`].
 #[allow(missing_docs)]
 pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker>: UnstableSealed {
-    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload2<M, Variables>
+    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload<M, Variables>
         + fmt::Debug;
 }
 
@@ -48,7 +48,7 @@ macro_rules! impl_holder_trait {
         impl UnstableSealed for $marker {}
         impl DateTimeNamesHolderTrait<$marker> for $marker {
             type Container<Variables: PartialEq + Copy + fmt::Debug> =
-                DateTimeNamesData2<$marker, Variables>;
+                DataPayloadWithVariables<$marker, Variables>;
         }
     };
 }
@@ -65,16 +65,16 @@ impl_holder_trait!(tz::MzSpecificLongV1Marker);
 impl_holder_trait!(tz::MzSpecificShortV1Marker);
 impl_holder_trait!(tz::MzPeriodV1Marker);
 
-/// Helper enum for [`DateTimeNamesMarker`].
+/// An error returned by [`MaybePayload`].
 #[allow(missing_docs)]
 #[derive(Debug)]
 #[non_exhaustive]
-pub enum MaybePayloadError2 {
+pub enum MaybePayloadError {
     TypeTooSpecific,
     ConflictingField,
 }
 
-impl MaybePayloadError2 {
+impl MaybePayloadError {
     pub(crate) fn into_load_error(self, field: Field) -> PatternLoadError {
         match self {
             Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(field),
@@ -83,31 +83,34 @@ impl MaybePayloadError2 {
     }
 }
 
+/// A type that may or may not be a [`DataPayload`] and may or may not contain
+/// a value depending on the type parameter `Variables`.
+/// 
 /// Helper trait for [`DateTimeNamesMarker`].
 #[allow(missing_docs)]
-pub trait MaybePayload2<M: DynamicDataMarker, Variables>: UnstableSealed {
+pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
     fn new_empty() -> Self;
     fn load_put<P>(
         &mut self,
         provider: &P,
         req: DataRequest,
         variables: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError2>
+    ) -> Result<Result<(), DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
-    fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables>;
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables>;
 }
 
-/// Helper struct for [`DateTimeNamesMarker`].
-#[allow(missing_docs)]
-pub struct DateTimeNamesData2<M: DynamicDataMarker, Variables> {
+/// An implementation of [`MaybePayload`] that wraps a [`DataPayload`],
+/// parameterized by `Variables`.
+pub struct DataPayloadWithVariables<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
 }
 
-impl<M: DynamicDataMarker, Variables> UnstableSealed for DateTimeNamesData2<M, Variables> {}
+impl<M: DynamicDataMarker, Variables> UnstableSealed for DataPayloadWithVariables<M, Variables> {}
 
-impl<M: DynamicDataMarker, Variables> fmt::Debug for DateTimeNamesData2<M, Variables>
+impl<M: DynamicDataMarker, Variables> fmt::Debug for DataPayloadWithVariables<M, Variables>
 where
     Variables: fmt::Debug,
     DataPayload<M>: fmt::Debug,
@@ -117,14 +120,14 @@ where
     }
 }
 
-/// Helper struct for [`DateTimeNamesMarker`].
+/// Borrowed version of [`DataPayloadWithVariables`].
 #[allow(missing_docs)]
-pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
+pub struct DataPayloadWithVariablesBorrowed<'data, M: DynamicDataMarker, Variables> {
     pub(crate) inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
 }
 
 impl<'data, M: DynamicDataMarker, Variables> fmt::Debug
-    for DateTimeNamesData2Borrowed<'data, M, Variables>
+    for DataPayloadWithVariablesBorrowed<'data, M, Variables>
 where
     <M::DataStruct as Yokeable<'data>>::Output: fmt::Debug,
     Variables: fmt::Debug,
@@ -136,8 +139,8 @@ where
     }
 }
 
-impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
-    for DateTimeNamesData2<M, Variables>
+impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables>
+    for DataPayloadWithVariables<M, Variables>
 where
     Variables: PartialEq + Copy,
 {
@@ -152,7 +155,7 @@ where
         provider: &P,
         req: DataRequest,
         variables: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError2>
+    ) -> Result<Result<(), DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
@@ -163,7 +166,7 @@ where
                 return Ok(Ok(()));
             }
             OptionalNames::SingleLength { .. } => {
-                return Err(MaybePayloadError2::ConflictingField);
+                return Err(MaybePayloadError::ConflictingField);
             }
             OptionalNames::None => (),
         };
@@ -179,14 +182,14 @@ where
         }
     }
     #[inline]
-    fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables> {
-        DateTimeNamesData2Borrowed {
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables> {
+        DataPayloadWithVariablesBorrowed {
             inner: self.inner.as_borrowed(),
         }
     }
 }
 
-impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for () {
+impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
     #[inline]
     fn new_empty() -> Self {}
     #[inline]
@@ -195,17 +198,17 @@ impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables> for () {
         _: &P,
         _: DataRequest,
         _: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError2>
+    ) -> Result<Result<(), DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
-        Err(MaybePayloadError2::TypeTooSpecific)
+        Err(MaybePayloadError::TypeTooSpecific)
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
-    fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables> {
-        DateTimeNamesData2Borrowed {
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables> {
+        DataPayloadWithVariablesBorrowed {
             inner: OptionalNames::None,
         }
     }

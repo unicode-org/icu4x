@@ -1310,7 +1310,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.year_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1350,7 +1350,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.month_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1389,7 +1389,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.dayperiod_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1440,7 +1440,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.weekday_names
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1464,7 +1464,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.zone_essentials
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1488,11 +1488,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.locations_root
             .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         self.locations
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1514,11 +1514,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_generic_long
             .load_put(mz_generic_long_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1540,11 +1540,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_generic_short
             .load_put(mz_generic_short_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1566,11 +1566,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_specific_long
             .load_put(mz_specific_long_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
@@ -1592,11 +1592,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         self.mz_specific_short
             .load_put(mz_specific_short_provider, req, variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         self.mz_periods
             .load_put(mz_period_provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError2::into_load_error(e, field))?
+            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
             .map_err(PatternLoadError::Data)?;
         Ok(())
     }
