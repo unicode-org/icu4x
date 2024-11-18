@@ -99,13 +99,13 @@ pub mod neo_pattern;
 #[cfg(all(feature = "experimental", feature = "serde"))]
 mod neo_serde;
 pub mod options;
+pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
 
 pub use error::{DateTimeWriteError, MismatchedCalendarError};
-pub use format::neo::{FormattedDateTimePattern, PatternLoadError, TypedDateTimeNames};
 
 pub use neo::DateTimeFormatter;
 pub use neo::FixedCalendarDateTimeFormatter;

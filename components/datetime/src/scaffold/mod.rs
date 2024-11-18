@@ -11,6 +11,7 @@ mod calendar;
 mod dynamic_impls;
 mod fieldset_traits;
 mod get_field;
+mod names_storage;
 
 pub(crate) use calendar::AnyCalendarProvider;
 pub use calendar::CalMarkers;
@@ -36,6 +37,13 @@ pub use fieldset_traits::TypedDateDataMarkers;
 pub use fieldset_traits::ZoneMarkers;
 
 pub use get_field::GetField;
+
+pub(crate) use names_storage::DateTimeNamesData2;
+pub(crate) use names_storage::DateTimeNamesHolderTrait;
+pub use names_storage::DateTimeNamesMarker;
+pub(crate) use names_storage::MaybePayload2;
+pub(crate) use names_storage::MaybePayloadError2;
+pub(crate) use names_storage::OptionalNames;
 
 /// Trait marking other traits that are considered unstable and should not generally be
 /// implemented outside of the datetime crate.

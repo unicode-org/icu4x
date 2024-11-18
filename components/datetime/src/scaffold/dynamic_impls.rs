@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::fieldset::dynamic::*;
 use crate::provider::{neo::*, time_zones::tz, *};
-use crate::{fieldset::dynamic::*, format::neo::DateTimeNamesMarker};
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,

@@ -7,9 +7,8 @@
 use crate::external_loaders::*;
 use crate::fieldset::dynamic::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
-use crate::format::neo::*;
 use crate::input::ExtractedInput;
-use crate::neo_pattern::DateTimePattern;
+use crate::pattern::*;
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{

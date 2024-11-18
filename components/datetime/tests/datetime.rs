@@ -18,8 +18,8 @@ use icu_calendar::{
 use icu_datetime::fieldset::dynamic::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
-    neo_pattern::DateTimePattern, DateTimeFormatter, FixedCalendarDateTimeFormatter,
-    TypedDateTimeNames,
+    pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
+    FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},

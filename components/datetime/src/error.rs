@@ -10,7 +10,7 @@ use icu_calendar::{
 };
 
 #[cfg(doc)]
-use crate::TypedDateTimeNames;
+use crate::pattern::TypedDateTimeNames;
 #[cfg(doc)]
 use icu_calendar::types::YearInfo;
 #[cfg(doc)]

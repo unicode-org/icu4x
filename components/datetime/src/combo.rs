@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, provider::neo::*, scaffold::*};
+use crate::{provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
