@@ -181,6 +181,8 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = Composit
 #[derive(Debug)]
 pub struct DateMarker {}
 
+impl UnstableSealed for DateMarker {}
+
 impl DateTimeNamesMarker for DateMarker {
     type YearNames = YearNamesV1Marker;
     type MonthNames = MonthNamesV1Marker;
@@ -197,6 +199,8 @@ impl DateTimeNamesMarker for DateMarker {
 
 #[derive(Debug)]
 pub struct TimeMarker {}
+
+impl UnstableSealed for TimeMarker {}
 
 impl DateTimeNamesMarker for TimeMarker {
     type YearNames = NeverMarker<()>;
@@ -215,6 +219,8 @@ impl DateTimeNamesMarker for TimeMarker {
 #[derive(Debug)]
 pub struct DateTimeMarker {}
 
+impl UnstableSealed for DateTimeMarker {}
+
 impl DateTimeNamesMarker for DateTimeMarker {
     type YearNames = YearNamesV1Marker;
     type MonthNames = MonthNamesV1Marker;
@@ -231,6 +237,8 @@ impl DateTimeNamesMarker for DateTimeMarker {
 
 #[derive(Debug)]
 pub struct ZonedDateTimeMarker {}
+
+impl UnstableSealed for ZonedDateTimeMarker {}
 
 impl DateTimeNamesMarker for ZonedDateTimeMarker {
     type YearNames = YearNamesV1Marker;

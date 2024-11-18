@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{Field};
+use crate::fields::Field;
 use crate::pattern::PatternLoadError;
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
@@ -11,7 +11,15 @@ use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 
-pub trait DateTimeNamesMarker {
+use super::UnstableSealed;
+
+/// Trait for a type that owns datetime names data, usually in the form of data payloads.
+///
+/// This trait allows for types that contain data for some but not all types of datetime names,
+/// allowing for reduced stack size. For example, a type could contain year and month names but
+/// not weekday, day period, or time zone names.
+#[allow(missing_docs)]
+pub trait DateTimeNamesMarker: UnstableSealed {
     type YearNames: DateTimeNamesHolderTrait<YearNamesV1Marker>;
     type MonthNames: DateTimeNamesHolderTrait<MonthNamesV1Marker>;
     type WeekdayNames: DateTimeNamesHolderTrait<WeekdayNamesV1Marker>;
@@ -25,10 +33,14 @@ pub trait DateTimeNamesMarker {
     type MetazoneLookup: DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>;
 }
 
-pub(crate) trait DateTimeNamesHolderTrait<M: DynamicDataMarker> {
+/// Helper trait for [`DateTimeNamesMarker`].
+#[allow(missing_docs)]
+pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker>: UnstableSealed {
     type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload2<M, Variables>
         + fmt::Debug;
 }
+
+impl UnstableSealed for NeverMarker<()> {}
 
 impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for NeverMarker<()> {
     type Container<Variables: PartialEq + Copy + fmt::Debug> = ();
@@ -36,6 +48,7 @@ impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for NeverMarker<()> {
 
 macro_rules! impl_holder_trait {
     ($marker:path) => {
+        impl UnstableSealed for $marker {}
         impl DateTimeNamesHolderTrait<$marker> for $marker {
             type Container<Variables: PartialEq + Copy + fmt::Debug> =
                 DateTimeNamesData2<$marker, Variables>;
@@ -55,8 +68,11 @@ impl_holder_trait!(tz::MzSpecificLongV1Marker);
 impl_holder_trait!(tz::MzSpecificShortV1Marker);
 impl_holder_trait!(tz::MzPeriodV1Marker);
 
+/// Helper enum for [`DateTimeNamesMarker`].
+#[allow(missing_docs)]
+#[derive(Debug)]
 #[non_exhaustive]
-pub(crate) enum MaybePayloadError2 {
+pub enum MaybePayloadError2 {
     TypeTooSpecific,
     ConflictingField,
 }
@@ -70,7 +86,9 @@ impl MaybePayloadError2 {
     }
 }
 
-pub(crate) trait MaybePayload2<M: DynamicDataMarker, Variables> {
+/// Helper trait for [`DateTimeNamesMarker`].
+#[allow(missing_docs)]
+pub trait MaybePayload2<M: DynamicDataMarker, Variables>: UnstableSealed {
     fn new_empty() -> Self;
     fn load_put<P>(
         &mut self,
@@ -84,9 +102,13 @@ pub(crate) trait MaybePayload2<M: DynamicDataMarker, Variables> {
     fn get(&self) -> DateTimeNamesData2Borrowed<M, Variables>;
 }
 
-pub(crate) struct DateTimeNamesData2<M: DynamicDataMarker, Variables> {
+/// Helper struct for [`DateTimeNamesMarker`].
+#[allow(missing_docs)]
+pub struct DateTimeNamesData2<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
 }
+
+impl<M: DynamicDataMarker, Variables> UnstableSealed for DateTimeNamesData2<M, Variables> {}
 
 impl<M: DynamicDataMarker, Variables> fmt::Debug for DateTimeNamesData2<M, Variables>
 where
@@ -107,8 +129,23 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
     }
 }
 
-pub(crate) struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
+/// Helper struct for [`DateTimeNamesMarker`].
+#[allow(missing_docs)]
+pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
     pub(crate) inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
+}
+
+impl<'data, M: DynamicDataMarker, Variables> fmt::Debug
+    for DateTimeNamesData2Borrowed<'data, M, Variables>
+where
+    <M::DataStruct as Yokeable<'data>>::Output: fmt::Debug,
+    Variables: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct(core::any::type_name::<Self>())
+            .field("inner", &self.inner)
+            .finish()
+    }
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>

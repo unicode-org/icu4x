@@ -16,6 +16,12 @@ use core::fmt;
 use core::marker::PhantomData;
 use writeable::TryWriteable;
 
+/// A formatter for a specific [`DateTimePattern`].
+///
+/// Create one of these via factory methods on [`TypedDateTimeNames`].
+///
+/// [`DateTimePattern`]: super::DateTimePattern
+/// [`TypedDateTimeNames`]: super::TypedDateTimeNames
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar, R> {
     inner: RawDateTimePatternFormatter<'a>,
