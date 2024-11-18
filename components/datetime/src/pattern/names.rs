@@ -25,11 +25,10 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_decimal::FixedDecimalFormatter;
-use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 
 size_test!(
-    TypedDateTimeNames<icu_calendar::Gregorian, DateTimeMarker>,
+    TypedDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
     344
 );
@@ -176,124 +175,6 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = Composit
     locale: DataLocale,
     inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
-}
-
-#[derive(Debug)]
-pub struct DateMarker {}
-
-impl UnstableSealed for DateMarker {}
-
-impl DateTimeNamesMarker for DateMarker {
-    type YearNames = YearNamesV1Marker;
-    type MonthNames = MonthNamesV1Marker;
-    type WeekdayNames = WeekdayNamesV1Marker;
-    type DayPeriodNames = NeverMarker<()>;
-    type ZoneEssentials = NeverMarker<()>;
-    type ZoneLocations = NeverMarker<()>;
-    type ZoneGenericLong = NeverMarker<()>;
-    type ZoneGenericShort = NeverMarker<()>;
-    type ZoneSpecificLong = NeverMarker<()>;
-    type ZoneSpecificShort = NeverMarker<()>;
-    type MetazoneLookup = NeverMarker<()>;
-}
-
-#[derive(Debug)]
-pub struct TimeMarker {}
-
-impl UnstableSealed for TimeMarker {}
-
-impl DateTimeNamesMarker for TimeMarker {
-    type YearNames = NeverMarker<()>;
-    type MonthNames = NeverMarker<()>;
-    type WeekdayNames = NeverMarker<()>;
-    type DayPeriodNames = DayPeriodNamesV1Marker;
-    type ZoneEssentials = NeverMarker<()>;
-    type ZoneLocations = NeverMarker<()>;
-    type ZoneGenericLong = NeverMarker<()>;
-    type ZoneGenericShort = NeverMarker<()>;
-    type ZoneSpecificLong = NeverMarker<()>;
-    type ZoneSpecificShort = NeverMarker<()>;
-    type MetazoneLookup = NeverMarker<()>;
-}
-
-#[derive(Debug)]
-pub struct DateTimeMarker {}
-
-impl UnstableSealed for DateTimeMarker {}
-
-impl DateTimeNamesMarker for DateTimeMarker {
-    type YearNames = YearNamesV1Marker;
-    type MonthNames = MonthNamesV1Marker;
-    type WeekdayNames = WeekdayNamesV1Marker;
-    type DayPeriodNames = DayPeriodNamesV1Marker;
-    type ZoneEssentials = NeverMarker<()>;
-    type ZoneLocations = NeverMarker<()>;
-    type ZoneGenericLong = NeverMarker<()>;
-    type ZoneGenericShort = NeverMarker<()>;
-    type ZoneSpecificLong = NeverMarker<()>;
-    type ZoneSpecificShort = NeverMarker<()>;
-    type MetazoneLookup = NeverMarker<()>;
-}
-
-#[derive(Debug)]
-pub struct ZonedDateTimeMarker {}
-
-impl UnstableSealed for ZonedDateTimeMarker {}
-
-impl DateTimeNamesMarker for ZonedDateTimeMarker {
-    type YearNames = YearNamesV1Marker;
-    type MonthNames = MonthNamesV1Marker;
-    type WeekdayNames = WeekdayNamesV1Marker;
-    type DayPeriodNames = DayPeriodNamesV1Marker;
-    type ZoneEssentials = tz::EssentialsV1Marker;
-    type ZoneLocations = tz::LocationsV1Marker;
-    type ZoneGenericLong = tz::MzGenericLongV1Marker;
-    type ZoneGenericShort = tz::MzGenericShortV1Marker;
-    type ZoneSpecificLong = tz::MzSpecificLongV1Marker;
-    type ZoneSpecificShort = tz::MzSpecificShortV1Marker;
-    type MetazoneLookup = tz::MzPeriodV1Marker;
-}
-
-impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
-    fn from(other: RawDateTimeNames<DateMarker>) -> Self {
-        Self {
-            year_names: other.year_names,
-            month_names: other.month_names,
-            weekday_names: other.weekday_names,
-            dayperiod_names: DateTimeNamesData2::none(),
-            zone_essentials: (),
-            locations_root: (),
-            locations: (),
-            mz_generic_long: (),
-            mz_generic_short: (),
-            mz_specific_long: (),
-            mz_specific_short: (),
-            mz_periods: (),
-            fixed_decimal_formatter: other.fixed_decimal_formatter,
-            _marker: PhantomData,
-        }
-    }
-}
-
-impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
-    fn from(other: RawDateTimeNames<TimeMarker>) -> Self {
-        Self {
-            year_names: DateTimeNamesData2::none(),
-            month_names: DateTimeNamesData2::none(),
-            weekday_names: DateTimeNamesData2::none(),
-            dayperiod_names: other.dayperiod_names,
-            zone_essentials: (),
-            locations_root: (),
-            locations: (),
-            mz_generic_long: (),
-            mz_generic_short: (),
-            mz_specific_long: (),
-            mz_specific_short: (),
-            mz_periods: (),
-            fixed_decimal_formatter: other.fixed_decimal_formatter,
-            _marker: PhantomData,
-        }
-    }
 }
 
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {

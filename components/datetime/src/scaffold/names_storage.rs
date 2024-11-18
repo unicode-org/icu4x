@@ -120,15 +120,6 @@ where
     }
 }
 
-impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
-    #[inline]
-    pub(crate) fn none() -> Self {
-        Self {
-            inner: OptionalNames::None,
-        }
-    }
-}
-
 /// Helper struct for [`DateTimeNamesMarker`].
 #[allow(missing_docs)]
 pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
