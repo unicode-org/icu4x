@@ -89,8 +89,8 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -148,8 +148,8 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -211,9 +211,9 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;

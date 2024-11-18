@@ -68,10 +68,10 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
-/// use icu::datetime::TypedDateTimeNames;
+/// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::FieldLength;
 /// use icu::datetime::fields;
-/// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::datetime::pattern::DateTimePattern;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
@@ -100,9 +100,10 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::{Date, Time};
-/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+/// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
-/// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldset::dynamic::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
@@ -141,9 +142,10 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
-/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+/// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
-/// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldset::O;
 /// use icu::locale::locale;
 /// use icu::timezone::TimeZoneInfo;
@@ -410,9 +412,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
-    /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::DateFieldSet;
     /// use icu::locale::locale;
     /// use writeable::{Part, assert_try_writeable_parts_eq};
@@ -479,8 +482,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -540,8 +543,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -608,8 +611,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -669,8 +672,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::PatternLoadError;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -733,9 +736,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -836,9 +839,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -903,9 +906,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -979,9 +982,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -1055,9 +1058,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -1131,9 +1134,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
@@ -1196,9 +1199,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldset::dynamic::TimeFieldSet;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1296,8 +1299,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo_pattern::DateTimePattern;
-    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///

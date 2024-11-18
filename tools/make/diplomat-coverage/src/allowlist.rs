@@ -196,7 +196,7 @@ lazy_static::lazy_static! {
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeWriteError",
         "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::TypedDateTimeNames",
+        "icu::datetime::pattern::TypedDateTimeNames",
 
         // experimental
         "icu::experimental",
