@@ -8,8 +8,8 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar,
-    TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, TimeMarkers,
+    TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
 use core::fmt;
@@ -56,7 +56,7 @@ where
 {
     /// Formats a date and time of day.
     ///
-    /// For an example, see [`TypedDateTimeNames`].
+    /// For an example, see [`TypedDateTimeNames`](super::TypedDateTimeNames).
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
@@ -121,9 +121,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, (), (), I>(
-                datetime,
-            ),
+            input: ExtractedInput::extract_from_neo_input::<R::D, (), (), I>(datetime),
             names: self.inner.names,
         }
     }
@@ -186,9 +184,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), R::T, (), I>(
-                datetime,
-            ),
+            input: ExtractedInput::extract_from_neo_input::<(), R::T, (), I>(datetime),
             names: self.inner.names,
         }
     }
@@ -251,9 +247,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), (), R::Z, I>(
-                datetime,
-            ),
+            input: ExtractedInput::extract_from_neo_input::<(), (), R::Z, I>(datetime),
             names: self.inner.names,
         }
     }

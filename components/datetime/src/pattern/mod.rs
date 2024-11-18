@@ -7,6 +7,8 @@
 //! This module forgoes most internationalization functionality of the datetime crate.
 //! It assumes that the pattern is already localized for the customer's locale. Most clients
 //! should use [`DateTimeFormatter`] instead of directly formatting with patterns.
+//!
+//! [`DateTimeFormatter`]: crate::DateTimeFormatter
 
 mod formatter;
 mod names;
@@ -73,6 +75,6 @@ pub enum PatternLoadError {
     /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
     #[displaydoc("The specific type does not support this field.")]
     TypeTooSpecific(Field),
-    /// An error arising from the [`DataProvider`].
+    /// An error arising from the [`data provider`](icu_provider).
     Data(icu_provider::DataError),
 }

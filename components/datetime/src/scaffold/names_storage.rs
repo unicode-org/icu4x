@@ -85,7 +85,7 @@ impl MaybePayloadError {
 
 /// A type that may or may not be a [`DataPayload`] and may or may not contain
 /// a value depending on the type parameter `Variables`.
-/// 
+///
 /// Helper trait for [`DateTimeNamesMarker`].
 #[allow(missing_docs)]
 pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
