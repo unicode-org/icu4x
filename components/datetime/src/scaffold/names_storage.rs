@@ -7,7 +7,6 @@ use crate::pattern::PatternLoadError;
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use core::fmt;
-use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 
@@ -40,9 +39,7 @@ pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker>: UnstableSealed {
         + fmt::Debug;
 }
 
-impl UnstableSealed for NeverMarker<()> {}
-
-impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for NeverMarker<()> {
+impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for () {
     type Container<Variables: PartialEq + Copy + fmt::Debug> = ();
 }
 

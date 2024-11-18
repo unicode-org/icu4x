@@ -404,14 +404,7 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
 {
 }
 
-/// A struct implementing traits for never loading data.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty marker enum
-pub enum NeoNeverMarker {}
-
-impl UnstableSealed for NeoNeverMarker {}
-
-impl DateInputMarkers for NeoNeverMarker {
+impl DateInputMarkers for () {
     type YearInput = ();
     type MonthInput = ();
     type DayOfMonthInput = ();
@@ -419,21 +412,21 @@ impl DateInputMarkers for NeoNeverMarker {
     type DayOfWeekInput = ();
 }
 
-impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
+impl<C> TypedDateDataMarkers<C> for () {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl DateDataMarkers for NeoNeverMarker {
+impl DateDataMarkers for () {
     type Skel = NoDataCalMarkers;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl TimeMarkers for NeoNeverMarker {
+impl TimeMarkers for () {
     type HourInput = ();
     type MinuteInput = ();
     type SecondInput = ();
@@ -442,7 +435,7 @@ impl TimeMarkers for NeoNeverMarker {
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl ZoneMarkers for NeoNeverMarker {
+impl ZoneMarkers for () {
     type TimeZoneIdInput = ();
     type TimeZoneOffsetInput = ();
     type TimeZoneVariantInput = ();
@@ -650,13 +643,10 @@ macro_rules! datetime_marker_helper {
         tz::MzPeriodV1Marker
     };
     (@names/$any:ident,) => {
-        NeverMarker<()>
-    };
-    (@names/$any:ident,) => {
-        NeverMarker<()>
+        ()
     };
     (@names/zone/$any:ident,) => {
-        NeverMarker<()>
+        ()
     };
     () => {
         unreachable!() // prevent bugs

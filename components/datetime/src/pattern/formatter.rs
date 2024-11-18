@@ -8,7 +8,7 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, NeoNeverMarker,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar,
     TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
@@ -121,7 +121,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, NeoNeverMarker, NeoNeverMarker, I>(
+            input: ExtractedInput::extract_from_neo_input::<R::D, (), (), I>(
                 datetime,
             ),
             names: self.inner.names,
@@ -186,7 +186,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, R::T, NeoNeverMarker, I>(
+            input: ExtractedInput::extract_from_neo_input::<(), R::T, (), I>(
                 datetime,
             ),
             names: self.inner.names,
@@ -251,7 +251,7 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, NeoNeverMarker, R::Z, I>(
+            input: ExtractedInput::extract_from_neo_input::<(), (), R::Z, I>(
                 datetime,
             ),
             names: self.inner.names,
