@@ -112,6 +112,7 @@ size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 96);
 
 define_preferences!(
     /// The preferences for fixed decimal formatting.
+    [Copy]
     FixedDecimalFormatterPreferences,
     {
         /// Numbering System. Corresponds to the `-u-nu` in Unicode Locale Identifier.

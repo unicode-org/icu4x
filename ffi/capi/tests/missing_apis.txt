@@ -318,6 +318,16 @@ icu::locale::preferences::extensions::unicode::keywords::CalendarAlgorithm::as_s
 icu::locale::preferences::extensions::unicode::keywords::CalendarAlgorithm::try_from_key_value#FnInEnum
 icu::locale::preferences::extensions::unicode::keywords::CalendarAlgorithm::unicode_extension_key#FnInEnum
 icu::locale::preferences::extensions::unicode::keywords::CalendarAlgorithm::unicode_extension_value#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationCaseFirst#Enum
+icu::locale::preferences::extensions::unicode::keywords::CollationCaseFirst::as_str#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationCaseFirst::try_from_key_value#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationCaseFirst::unicode_extension_key#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationCaseFirst::unicode_extension_value#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationNumericOrdering#Enum
+icu::locale::preferences::extensions::unicode::keywords::CollationNumericOrdering::as_str#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationNumericOrdering::try_from_key_value#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationNumericOrdering::unicode_extension_key#FnInEnum
+icu::locale::preferences::extensions::unicode::keywords::CollationNumericOrdering::unicode_extension_value#FnInEnum
 icu::locale::preferences::extensions::unicode::keywords::CollationType#Enum
 icu::locale::preferences::extensions::unicode::keywords::CollationType::as_str#FnInEnum
 icu::locale::preferences::extensions::unicode::keywords::CollationType::try_from_key_value#FnInEnum

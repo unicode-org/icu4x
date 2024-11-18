@@ -10,6 +10,7 @@ struct_keyword!(
     /// A Region Override specifies an alternate region to use for obtaining certain region-specific default values.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#RegionOverride).
+    [Copy]
     RegionOverride,
     "rg",
     SubdivisionId,

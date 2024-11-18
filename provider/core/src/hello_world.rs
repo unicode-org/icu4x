@@ -252,9 +252,9 @@ icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV
 
 define_preferences!(
     /// Hello World Preferences.
-    HelloWorldFormatterPreferences, {});
-
-impl Copy for HelloWorldFormatterPreferences {}
+    [Copy]
+    HelloWorldFormatterPreferences, {}
+);
 
 /// A type that formats localized "hello world" strings.
 ///

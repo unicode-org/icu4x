@@ -13,6 +13,7 @@ struct_keyword!(
     /// A Unicode Subdivision Identifier defines a regional subdivision used for locales.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeSubdivisionIdentifier).
+    [Copy]
     RegionalSubdivision,
     "sd",
     SubdivisionId,

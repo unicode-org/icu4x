@@ -23,6 +23,7 @@ extern crate alloc;
 
 define_preferences!(
     /// The preferences for currency formatting.
+    [Copy]
     CurrencyFormatterPreferences,
     {
         numbering_system: NumberingSystem

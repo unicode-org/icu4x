@@ -95,10 +95,11 @@
 //! # fn load_data(locale: ()) -> MyData { MyData {} }
 //! # struct MyData {}
 //! define_preferences!(
-//!     // Name of the preferences struct
+//!     /// Name of the preferences struct
+//!     [Copy]
 //!     ExampleComponentPreferences,
 //!     {
-//!         // A preference relevant to the component
+//!         /// A preference relevant to the component
 //!         hour_cycle: HourCycle
 //!     }
 //! );
@@ -130,10 +131,11 @@
 //! # fn load_data(locale: ()) -> MyData { MyData {} }
 //! # struct MyData {}
 //! # define_preferences!(
-//! #     // Name of the preferences struct
+//! #     /// Name of the preferences struct
+//! #     [Copy]
 //! #     ExampleComponentPreferences,
 //! #     {
-//! #         // A preference relevant to the component
+//! #         /// A preference relevant to the component
 //! #         hour_cycle: HourCycle
 //! #     }
 //! # );
@@ -164,10 +166,11 @@
 //! # fn load_data(locale: ()) -> MyData { MyData {} }
 //! # struct MyData {}
 //! # define_preferences!(
-//! #     // Name of the preferences struct
+//! #     /// Name of the preferences struct
+//! #     [Copy]
 //! #     ExampleComponentPreferences,
 //! #     {
-//! #         // A preference relevant to the component
+//! #         /// A preference relevant to the component
 //! #         hour_cycle: HourCycle
 //! #     }
 //! # );
@@ -209,10 +212,11 @@
 //! # fn load_data(locale: ()) -> MyData { MyData {} }
 //! # struct MyData {}
 //! # define_preferences!(
-//! #     // Name of the preferences struct
+//! #     /// Name of the preferences struct
+//! #     [Copy]
 //! #     ExampleComponentPreferences,
 //! #     {
-//! #         // A preference relevant to the component
+//! #         /// A preference relevant to the component
 //! #         hour_cycle: HourCycle
 //! #     }
 //! # );
@@ -263,10 +267,11 @@
 //! # fn load_data(locale: ()) -> MyData { MyData {} }
 //! # struct MyData {}
 //! # define_preferences!(
-//! #     // Name of the preferences struct
+//! #     /// Name of the preferences struct
+//! #     [Copy]
 //! #     ExampleComponentPreferences,
 //! #     {
-//! #         // A preference relevant to the component
+//! #         /// A preference relevant to the component
 //! #         hour_cycle: HourCycle
 //! #     }
 //! # );
@@ -331,10 +336,11 @@ pub use locale::*;
 /// };
 ///
 /// #[non_exhaustive]
-/// #[derive(Debug, Clone, Eq, PartialEq, Copy)]
+/// #[derive(Debug, Clone, Eq, PartialEq, Copy, Hash, Default)]
 /// pub enum EmojiPresentationStyle {
 ///     Emoji,
 ///     Text,
+///     #[default]
 ///     Default,
 /// }
 ///
@@ -371,7 +377,7 @@ pub use locale::*;
 /// }
 ///
 /// #[non_exhaustive]
-/// #[derive(Debug, Clone, Eq, PartialEq)]
+/// #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 /// pub struct CustomFormat {
 ///     value: String
 /// }
@@ -431,6 +437,7 @@ pub trait PreferenceKey: Sized {
 /// };
 ///
 /// define_preferences!(
+///     [Copy]
 ///     TimeFormatterPreferences,
 ///     {
 ///         hour_cycle: HourCycle
@@ -457,6 +464,7 @@ pub trait PreferenceKey: Sized {
 macro_rules! __define_preferences {
     (
         $(#[$doc:meta])*
+        $([$derive_attrs:ty])?
         $name:ident,
         {
             $(
@@ -466,7 +474,8 @@ macro_rules! __define_preferences {
         }
      ) => (
         $(#[$doc])*
-        #[derive(Default, Debug, Clone)]
+        #[derive(Default, Debug, Clone, PartialEq, Eq, Hash)]
+        $(#[derive($derive_attrs)])?
         #[non_exhaustive]
         pub struct $name {
             /// Locale Preferences for the Preferences structure.

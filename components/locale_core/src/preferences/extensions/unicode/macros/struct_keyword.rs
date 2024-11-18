@@ -27,10 +27,11 @@
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __struct_keyword {
-    ($(#[$doc:meta])* $name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
-        #[derive(Debug, Clone, Eq, PartialEq)]
-        #[allow(clippy::exhaustive_structs)] // TODO
+    ($(#[$doc:meta])* $([$derive_attrs:ty])? $name:ident, $ext_key:literal, $value:ty, $try_from:expr, $into:expr) => {
         $(#[$doc])*
+        #[derive(Debug, Clone, Eq, PartialEq, Hash)]
+        $(#[derive($derive_attrs)])?
+        #[allow(clippy::exhaustive_structs)] // TODO
         pub struct $name($value);
 
         impl TryFrom<$crate::extensions::unicode::Value> for $name {
