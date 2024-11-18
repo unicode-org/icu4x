@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serde")]
-use crate::neo_serde::*;
-use crate::options::preferences::HourCycle;
 use crate::raw::neo::RawNeoOptions;
 use crate::scaffold::GetField;
 use crate::{fields, fieldset, NeoSkeletonLength};
@@ -212,11 +209,6 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
 
 /// An enum supporting all possible field sets and options.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
-)]
 #[non_exhaustive]
 pub enum CompositeFieldSet {
     /// Field set for a date.
@@ -366,7 +358,7 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
-            #[cfg(feature = "serde")]
+            #[cfg(all(feature = "serde", feature = "experimental"))]
             pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawNeoOptions) -> Self {
                 match date_field_set {
                     $(
@@ -415,9 +407,9 @@ impl_attrs! {
 impl TimeFieldSet {
     pub(crate) const fn id_str_for_hour_cycle(
         self,
-        hour_cycle: Option<HourCycle>,
+        hour_cycle: Option<fields::Hour>,
     ) -> &'static DataMarkerAttributes {
-        use HourCycle::*;
+        use fields::Hour::*;
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,

@@ -10,6 +10,7 @@ struct_keyword!(
     /// A Unicode Timezone Identifier defines a timezone.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeTimezoneIdentifier).
+    [Copy]
     TimeZoneShortId,
     "tz",
     Subtag,

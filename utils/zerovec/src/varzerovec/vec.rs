@@ -236,8 +236,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert_eq!(&vec[2], "baz");
     /// assert_eq!(&vec[3], "quux");
     /// ```
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, UleError> {
-        let borrowed = VarZeroSlice::<T, F>::parse_byte_slice(slice)?;
+    pub fn parse_bytes(slice: &'a [u8]) -> Result<Self, UleError> {
+        let borrowed = VarZeroSlice::<T, F>::parse_bytes(slice)?;
 
         Ok(Self(VarZeroVecInner::Borrowed(borrowed)))
     }
@@ -322,7 +322,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// Takes the byte vector representing the encoded data of this VarZeroVec. If borrowed,
     /// this function allocates a byte vector and copies the borrowed bytes into it.
     ///
-    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    /// The bytes can be passed back to [`Self::parse_bytes()`].
     ///
     /// To get a reference to the bytes without moving, see [`VarZeroSlice::as_bytes()`].
     ///
@@ -334,7 +334,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// let strings = vec!["foo", "bar", "baz"];
     /// let bytes = VarZeroVec::<str>::from(&strings).into_bytes();
     ///
-    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes).unwrap();
+    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_bytes(&bytes).unwrap();
     /// assert_eq!(borrowed, &*strings);
     /// ```
     pub fn into_bytes(self) -> Vec<u8> {
@@ -495,7 +495,7 @@ fn assert_single_empty_representation() {
 #[test]
 fn weird_empty_representation_equality() {
     assert_eq!(
-        VarZeroVec::<str>::parse_byte_slice(&[0, 0, 0, 0]).unwrap(),
-        VarZeroVec::<str>::parse_byte_slice(&[]).unwrap()
+        VarZeroVec::<str>::parse_bytes(&[0, 0, 0, 0]).unwrap(),
+        VarZeroVec::<str>::parse_bytes(&[]).unwrap()
     );
 }

@@ -4,9 +4,10 @@
 
 #[cfg(feature = "datagen")]
 use crate::fields::FieldLength;
-use crate::neo_skeleton::FractionalSecondDigits;
+use crate::options::FractionalSecondDigits;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -237,13 +238,13 @@ impl FieldSymbolULE {
 //
 // 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
 // 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+// 3. ULE::validate_bytes() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_bytes() checks that the given byte slice has a valid length
 //    (true since transparent over a type of size 1).
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldSymbolULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }
@@ -592,6 +593,18 @@ field_type!(
     Numeric;
     HourULE
 );
+
+impl Hour {
+    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle) -> Self {
+        match hour_cycle {
+            HourCycle::H11 => Self::H11,
+            HourCycle::H12 => Self::H12,
+            HourCycle::H23 => Self::H23,
+            HourCycle::H24 => Self::H24,
+            _ => unreachable!(),
+        }
+    }
+}
 
 // NOTE: 'S' FractionalSecond is represented via DecimalSecond,
 // so it is not included in the Second enum.

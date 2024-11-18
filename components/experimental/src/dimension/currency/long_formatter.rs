@@ -14,7 +14,9 @@ use crate::dimension::provider::{
     extended_currency::CurrencyExtendedDataV1Marker,
 };
 
-use super::{long_format::LongFormattedCurrency, CurrencyCode};
+use super::{
+    formatter::CurrencyFormatterPreferences, long_format::LongFormattedCurrency, CurrencyCode,
+};
 
 extern crate alloc;
 
@@ -41,7 +43,7 @@ pub struct LongCurrencyFormatter {
 
 impl LongCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale: &DataLocale, currency_code: &CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -57,9 +59,16 @@ impl LongCurrencyFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, currency_code: &CurrencyCode) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+    pub fn try_new(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
+            (&prefs).into(),
+            FixedDecimalFormatterOptions::default(),
+        )?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
@@ -72,7 +81,7 @@ impl LongCurrencyFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?
@@ -80,8 +89,7 @@ impl LongCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let temp_loc = locale.clone().into_locale();
-        let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
             extended,
@@ -94,7 +102,7 @@ impl LongCurrencyFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: CurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError>
     where
@@ -102,11 +110,14 @@ impl LongCurrencyFormatter {
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
+        let locale =
+            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            locale,
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
@@ -120,7 +131,7 @@ impl LongCurrencyFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?
@@ -128,8 +139,7 @@ impl LongCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let temp_loc = locale.clone().into_locale();
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         Ok(Self {
             extended,
@@ -151,7 +161,7 @@ impl LongCurrencyFormatter {
     ///
     /// let locale = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let fmt = LongCurrencyFormatter::try_new(locale, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();

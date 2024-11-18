@@ -6,7 +6,10 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
 use icu_provider::{
     DataError, DataIdentifierBorrowed, DataLocale, DataPayload, DataProvider, DataRequest,
 };
@@ -16,6 +19,21 @@ use super::format::FormattedPercent;
 use super::options::PercentFormatterOptions;
 
 extern crate alloc;
+
+define_preferences!(
+    /// The preferences for percent formatting.
+    [Copy]
+    PercentFormatterPreferences,
+    {
+        numbering_system: NumberingSystem
+    }
+);
+
+prefs_convert!(
+    PercentFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
 
 /// A formatter for percent values.
 ///
@@ -34,7 +52,7 @@ pub struct PercentFormatter<R> {
 
 impl PercentFormatter<FixedDecimalFormatter> {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: PercentFormatterOptions) -> error: DataError,
+        (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -51,14 +69,16 @@ impl PercentFormatter<FixedDecimalFormatter> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
+            (&prefs).into(),
+            FixedDecimalFormatterOptions::default(),
+        )?;
 
         PercentFormatter::try_new_with_fixed_decimal_formatter(
-            locale,
+            prefs,
             fixed_decimal_formatter,
             options,
         )
@@ -67,23 +87,24 @@ impl PercentFormatter<FixedDecimalFormatter> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>,
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
-            locale,
+            (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
         )?;
 
         PercentFormatter::try_new_with_fixed_decimal_formatter_unstable(
             provider,
-            locale,
+            prefs,
             fixed_decimal_formatter,
             options,
         )
@@ -100,7 +121,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
     /// use writeable::Writeable;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+    /// let fmt = PercentFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_percent = fmt.format(&value);
     /// let mut sink = String::new();
@@ -128,13 +149,15 @@ where
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_fixed_decimal_formatter(
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
         let essential = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -149,13 +172,15 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_fixed_decimal_formatter_unstable(
         provider: &(impl DataProvider<PercentEssentialsV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
         let essential = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;

@@ -41,7 +41,7 @@ where
     where
         E: de::Error,
     {
-        VarZeroVec::parse_byte_slice(bytes).map_err(de::Error::custom)
+        VarZeroVec::parse_bytes(bytes).map_err(de::Error::custom)
     }
 
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
@@ -98,7 +98,7 @@ where
             ))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            VarZeroSlice::<T, F>::parse_byte_slice(bytes).map_err(de::Error::custom)
+            VarZeroSlice::<T, F>::parse_bytes(bytes).map_err(de::Error::custom)
         }
     }
 }
@@ -199,7 +199,7 @@ mod test {
     ];
     #[test]
     fn test_serde_json() {
-        let zerovec_orig: VarZeroVec<str> = VarZeroVec::parse_byte_slice(BYTES).expect("parse");
+        let zerovec_orig: VarZeroVec<str> = VarZeroVec::parse_bytes(BYTES).expect("parse");
         let json_str = serde_json::to_string(&zerovec_orig).expect("serialize");
         assert_eq!(JSON_STR, json_str);
         // VarZeroVec should deserialize from JSON to either Vec or VarZeroVec
@@ -214,7 +214,7 @@ mod test {
 
     #[test]
     fn test_serde_bincode() {
-        let zerovec_orig: VarZeroVec<str> = VarZeroVec::parse_byte_slice(BYTES).expect("parse");
+        let zerovec_orig: VarZeroVec<str> = VarZeroVec::parse_bytes(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
         let zerovec_new: VarZeroVec<str> =
@@ -225,8 +225,7 @@ mod test {
 
     #[test]
     fn test_vzv_borrowed() {
-        let zerovec_orig: &VarZeroSlice<str> =
-            VarZeroSlice::parse_byte_slice(BYTES).expect("parse");
+        let zerovec_orig: &VarZeroSlice<str> = VarZeroSlice::parse_bytes(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
         let zerovec_new: &VarZeroSlice<str> =
@@ -241,8 +240,7 @@ mod test {
             .copied()
             .map(Box::<str>::from)
             .collect::<Vec<_>>();
-        let mut zerovec: VarZeroVec<str> =
-            VarZeroVec::parse_byte_slice(NONASCII_BYTES).expect("parse");
+        let mut zerovec: VarZeroVec<str> = VarZeroVec::parse_bytes(NONASCII_BYTES).expect("parse");
         assert_eq!(zerovec.to_vec(), src_vec);
         let bincode_buf = bincode::serialize(&zerovec).expect("serialize");
         let zerovec_result =

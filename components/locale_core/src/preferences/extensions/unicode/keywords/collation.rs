@@ -40,3 +40,36 @@ enum_keyword!(
         /// Pinyin ordering for Latin, zhuyin order for Bopomofo and CJK characters (used in Chinese)
         ("zhuyin" => Zhuyin),
 }, "co");
+
+enum_keyword!(
+    /// Collation parameter key for ordering by case.
+    ///
+    /// If set to upper, causes upper case to sort before lower case. If set to lower, causes lower case to sort before upper case.
+    /// Useful for locales that have already supported ordering but require different order of cases. Affects case and tertiary levels.
+    ///
+    /// The defails see [LDML](https://unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
+    [Default]
+    CollationCaseFirst {
+        /// Upper case to be sorted before lower case
+        ("upper" => Upper),
+        /// Lower case to be sorted before upper case
+        ("lower" => Lower),
+        /// No special case ordering
+        [default]
+        ("false" => False),
+}, "kf");
+
+enum_keyword!(
+    /// Collation parameter key for numeric handling.
+    ///
+    /// If set to on, any sequence of Decimal Digits (General_Category = Nd in the UAX44) is sorted at a primary level with
+    /// its numeric value. For example, "1" < "2" < "10". The computed primary weights are all at the start of the digit
+    /// reordering group.
+    [Default]
+    CollationNumericOrdering {
+        /// A sequence of decimal digits is sorted at primary level with its numeric value
+        ("true" => True),
+        /// No special handling for numeric ordering
+        [default]
+        ("false" => False),
+}, "kn");

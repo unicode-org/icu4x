@@ -39,7 +39,8 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new(locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new(temp_loc.into(), options)
     }
 }
 
@@ -64,7 +65,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_with_any_provider(self.0, temp_loc.into(), options)
     }
 }
 
@@ -93,7 +95,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, temp_loc.into(), options)
     }
 }
 
@@ -113,7 +116,9 @@ pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>,
+    P: ?Sized
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+        + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
 {
     #[inline]
     fn load(
@@ -121,7 +126,8 @@ where
         locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
+        let temp_loc = locale.clone().into_locale();
+        FixedDecimalFormatter::try_new_unstable(self.0, temp_loc.into(), options)
     }
 }
 

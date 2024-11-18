@@ -84,7 +84,7 @@ mod tests {
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -101,7 +101,7 @@ mod tests {
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -118,7 +118,7 @@ mod tests {
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();

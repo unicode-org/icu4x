@@ -9,8 +9,10 @@ enum_keyword!(
     /// sentence breaks that would otherwise be found by UAX #14 rules.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeSentenceBreakSuppressionsIdentifier).
+    [Default]
     SentenceBreakSupressions {
         /// Don’t use sentence break suppressions data (the default)
+        [default]
         ("none" => None),
         /// Use sentence break suppressions data of type "standard"
         ("standard" => Standard),

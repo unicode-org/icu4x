@@ -18,13 +18,14 @@ use icu_calendar::{
 use icu_datetime::fieldset::dynamic::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
-    neo_pattern::DateTimePattern,
-    options::preferences::{self, HourCycle},
-    DateTimeFormatter, FixedCalendarDateTimeFormatter, TypedDateTimeNames,
+    neo_pattern::DateTimePattern, DateTimeFormatter, FixedCalendarDateTimeFormatter,
+    TypedDateTimeNames,
 };
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
-    locale, Locale,
+    locale,
+    preferences::extensions::unicode::keywords::HourCycle,
+    Locale,
 };
 use icu_provider::prelude::*;
 use icu_timezone::{CustomZonedDateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
@@ -36,20 +37,19 @@ use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
 
-fn apply_preference_bag_to_locale(preferences: preferences::Bag, locale: &mut Locale) {
+fn apply_preference_bag_to_locale(hour_cycle: HourCycle, locale: &mut Locale) {
     const H11: Value = value!("h11");
     const H12: Value = value!("h12");
     const H23: Value = value!("h23");
     const H24: Value = value!("h24");
-    if let Some(hour_cycle) = preferences.hour_cycle {
-        let value = match hour_cycle {
-            HourCycle::H11 => H11,
-            HourCycle::H12 => H12,
-            HourCycle::H23 => H23,
-            HourCycle::H24 => H24,
-        };
-        locale.extensions.unicode.keywords.set(key!("hc"), value);
-    }
+    let value = match hour_cycle {
+        HourCycle::H11 => H11,
+        HourCycle::H12 => H12,
+        HourCycle::H23 => H23,
+        HourCycle::H24 => H24,
+        _ => unreachable!(),
+    };
+    locale.extensions.unicode.keywords.set(key!("hc"), value);
 }
 
 fn test_fixture(fixture_name: &str, file: &str) {
@@ -61,6 +61,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
             Some(semantic) => {
+                let semantic = CompositeFieldSet::try_from(semantic).unwrap();
                 match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
                     Some(v) => v,
                     None => {
@@ -104,8 +105,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
         for (locale, output_value) in fx.output.values {
             let mut locale =
                 Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Some(preferences) = fx.input.options.preferences {
-                apply_preference_bag_to_locale(preferences, &mut locale);
+            if let Some(hour_cycle) = fx.input.options.hour_cycle {
+                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
@@ -342,7 +343,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .0
     {
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => semantic,
+            Some(semantic) => CompositeFieldSet::try_from(semantic).unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -359,8 +360,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         };
         for (locale, output_value) in fx.output.values {
             let mut locale: Locale = locale.parse().unwrap();
-            if let Some(preferences) = fx.input.options.preferences {
-                apply_preference_bag_to_locale(preferences, &mut locale);
+            if let Some(hour_cycle) = fx.input.options.hour_cycle {
+                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
             let dtf = {
                 FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&locale.into(), skeleton)

@@ -6,8 +6,7 @@ use crate::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::*;
-use crate::options::preferences::HourCycle;
+use crate::options::*;
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
@@ -28,7 +27,7 @@ pub(crate) struct RawNeoOptions {
 }
 
 impl RawNeoOptions {
-    #[cfg(feature = "serde")]
+    #[cfg(all(feature = "serde", feature = "experimental"))]
     pub(crate) fn merge(self, other: RawNeoOptions) -> Self {
         Self {
             length: self.length,
@@ -41,7 +40,7 @@ impl RawNeoOptions {
 
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct RawPreferences {
-    pub(crate) hour_cycle: Option<HourCycle>,
+    pub(crate) hour_cycle: Option<fields::Hour>,
 }
 
 #[derive(Debug)]
@@ -85,7 +84,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
     Resolved(
         runtime::PatternBorrowed<'a>,
         Option<Alignment>,
-        Option<HourCycle>,
+        Option<fields::Hour>,
         Option<FractionalSecondDigits>,
     ),
 }
@@ -104,7 +103,7 @@ pub(crate) enum ZonePatternDataBorrowed<'a> {
 pub(crate) struct ItemsAndOptions<'a> {
     pub(crate) items: &'a ZeroSlice<PatternItem>,
     pub(crate) alignment: Option<Alignment>,
-    pub(crate) hour_cycle: Option<HourCycle>,
+    pub(crate) hour_cycle: Option<fields::Hour>,
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
@@ -893,7 +892,7 @@ impl<'a> ItemsAndOptions<'a> {
                     }
                     if let Some(hour_cycle) = self.hour_cycle {
                         if let FieldSymbol::Hour(_) = field.symbol {
-                            field.symbol = FieldSymbol::Hour(hour_cycle.field());
+                            field.symbol = FieldSymbol::Hour(hour_cycle);
                         }
                     }
                     if let Some(fractional_second_digits) = self.fractional_second_digits {

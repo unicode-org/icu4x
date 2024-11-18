@@ -4,7 +4,7 @@
 
 use icu_datetime::{
     fieldset::{self, dynamic::ZoneFieldSet},
-    neo_skeleton::NeoSkeletonLength,
+    options::NeoSkeletonLength,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

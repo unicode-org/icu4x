@@ -80,15 +80,16 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use either::Either;
+    use icu::datetime::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
         fields::{Day, Field, FieldLength, Month, Weekday},
-        options::{components, preferences},
         provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
         provider::pattern::{reference, runtime},
     };
     use icu::locale::locale;
+    use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
 
     use crate::SourceDataProvider;
@@ -117,7 +118,7 @@ mod test {
         components.minute = Some(components::Numeric::Numeric);
         components.second = Some(components::Numeric::Numeric);
 
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
@@ -142,7 +143,7 @@ mod test {
         let mut components = components::Bag::empty();
         components.time_zone_name = Some(components::TimeZoneName::LongOffset);
         components.weekday = Some(components::Text::Short);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
@@ -171,7 +172,7 @@ mod test {
         components.day = Some(components::Day::NumericDayOfMonth);
         // This will be appended.
         components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
@@ -198,7 +199,7 @@ mod test {
     #[test]
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         assert_eq!(
@@ -213,7 +214,7 @@ mod test {
         let mut components = components::Bag::empty();
         components.hour = Some(components::Numeric::Numeric);
         components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
@@ -370,7 +371,7 @@ mod test {
     fn test_skeleton_matching_weekday_short() {
         let mut components = components::Bag::empty();
         components.weekday = Some(components::Text::Short);
-        let default_hour_cycle = preferences::HourCycle::H23;
+        let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
@@ -393,7 +394,7 @@ mod test {
     fn test_skeleton_matching_weekday_long() {
         let mut components = components::Bag::empty();
         components.weekday = Some(components::Text::Long);
-        let default_hour_cycle = preferences::HourCycle::H23;
+        let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
