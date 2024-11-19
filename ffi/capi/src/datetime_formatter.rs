@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
-        errors::ffi::{DateTimeFormatError, PatternLoadError},
+        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         time::ffi::Time,
@@ -44,7 +44,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<TimeFormatter>, PatternLoadError> {
+        ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = T::with_length(NeoSkeletonLength::from(length)).hm();
 
@@ -98,7 +98,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianDateFormatter>, PatternLoadError> {
+        ) -> Result<Box<GregorianDateFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
@@ -148,7 +148,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianDateTimeFormatter>, PatternLoadError> {
+        ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 
@@ -187,7 +187,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<DateFormatter>, PatternLoadError> {
+        ) -> Result<Box<DateFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
@@ -262,7 +262,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<DateTimeFormatter>, PatternLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 

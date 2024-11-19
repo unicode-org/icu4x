@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::Field;
+use crate::{fields::Field, pattern::PatternLoadError};
 use displaydoc::Display;
 use icu_calendar::{
     any_calendar::AnyCalendarKind,
     types::{FormattingEra, MonthCode},
 };
+use icu_provider::DataError;
 
 #[cfg(doc)]
 use crate::pattern::TypedDateTimeNames;
@@ -15,6 +16,19 @@ use crate::pattern::TypedDateTimeNames;
 use icu_calendar::types::YearInfo;
 #[cfg(doc)]
 use icu_decimal::FixedDecimalFormatter;
+
+/// An error from constructing a formatter.
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[non_exhaustive]
+pub enum DateTimeFormatterLoadError {
+    /// An error while loading display names for a field.
+    #[displaydoc("{0}")]
+    Names(PatternLoadError),
+    /// An error while loading some other required data,
+    /// such as skeleton patterns or calendar conversions.
+    #[displaydoc("{0}")]
+    Data(DataError),
+}
 
 /// An error from mixing calendar types in a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]

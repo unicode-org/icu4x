@@ -4,6 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
@@ -34,7 +35,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             field_set: $fset,
-        ) -> Result<Self, PatternLoadError>
+        ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: AnyProvider + ?Sized,
         {
@@ -51,7 +52,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             field_set: $fset,
-        ) -> Result<Self, PatternLoadError>
+        ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: BufferProvider + ?Sized,
         {
@@ -69,7 +70,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             field_set: $fset,
-        ) -> Result<Self, PatternLoadError>
+        ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: AnyProvider + ?Sized,
         {
@@ -86,7 +87,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             field_set: $fset,
-        ) -> Result<Self, PatternLoadError>
+        ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: BufferProvider + ?Sized,
         {
@@ -185,7 +186,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, PatternLoadError>
+    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
@@ -211,7 +212,7 @@ where
         provider: &P,
         locale: &DataLocale,
         field_set: FSet,
-    ) -> Result<Self, PatternLoadError>
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized
             + AllFixedCalendarFormattingDataMarkers<C, FSet>
@@ -237,7 +238,7 @@ where
         loader: &L,
         locale: &DataLocale,
         field_set: CompositeFieldSet,
-    ) -> Result<Self, PatternLoadError>
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
@@ -260,24 +261,26 @@ where
             field_set,
             prefs,
         )
-        .map_err(PatternLoadError::Data)?;
+        .map_err(DateTimeFormatterLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
-        names.load_for_pattern(
-            &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
-            &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
-            &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
-            &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
-            loader, // fixed decimal formatter
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
+        names
+            .load_for_pattern(
+                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+                loader, // fixed decimal formatter
+                locale,
+                selection.pattern_items_for_data_loading(),
+            )
+            .map_err(DateTimeFormatterLoadError::Names)?;
         Ok(Self {
             selection,
             names,
@@ -418,7 +421,7 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, PatternLoadError>
+    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
@@ -444,7 +447,7 @@ where
         provider: &P,
         locale: &DataLocale,
         field_set: FSet,
-    ) -> Result<Self, PatternLoadError>
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet> + AllAnyCalendarExternalDataMarkers,
     {
@@ -468,7 +471,7 @@ where
         loader: &L,
         locale: &DataLocale,
         field_set: CompositeFieldSet,
-    ) -> Result<Self, PatternLoadError>
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
@@ -483,7 +486,8 @@ where
         };
         // END TODO
 
-        let calendar = AnyCalendarLoader::load(loader, locale).map_err(PatternLoadError::Data)?;
+        let calendar =
+            AnyCalendarLoader::load(loader, locale).map_err(DateTimeFormatterLoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),
@@ -493,24 +497,26 @@ where
             field_set,
             prefs,
         )
-        .map_err(PatternLoadError::Data)?;
+        .map_err(DateTimeFormatterLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
-        names.load_for_pattern(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
-            &<FSet::D as DateDataMarkers>::WeekdayNamesV1Marker::bind(provider),
-            &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
-            loader, // fixed decimal formatter
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
+        names
+            .load_for_pattern(
+                &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
+                &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
+                &<FSet::D as DateDataMarkers>::WeekdayNamesV1Marker::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+                loader, // fixed decimal formatter
+                locale,
+                selection.pattern_items_for_data_loading(),
+            )
+            .map_err(DateTimeFormatterLoadError::Names)?;
         Ok(Self {
             selection,
             names,

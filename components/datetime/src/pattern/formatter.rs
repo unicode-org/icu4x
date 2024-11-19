@@ -93,11 +93,11 @@ where
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&date_bce),
+    ///     names.with_pattern_unchecked(&pattern).format(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&date_ce),
+    ///     names.with_pattern_unchecked(&pattern).format(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
@@ -131,19 +131,19 @@ where
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&time_am),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&time_pm),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&time_noon),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&time_midnight),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -184,11 +184,11 @@ where
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&london_winter),
+    ///     names.with_pattern_unchecked(&pattern).format(&london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&london_summer),
+    ///     names.with_pattern_unchecked(&pattern).format(&london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```
@@ -266,7 +266,7 @@ mod tests {
             .parse()
             .unwrap();
         let datetime = DateTime::try_new_gregorian(2023, 10, 25, 15, 0, 55).unwrap();
-        let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+        let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
         assert_try_writeable_eq!(
             formatted_pattern,
@@ -324,7 +324,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -395,7 +395,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -513,7 +513,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -595,7 +595,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
