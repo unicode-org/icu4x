@@ -2678,6 +2678,14 @@ fn test_syntax_error() {
     }
     let cases = [
         TestCase {
+            input_str: "+1234567890",
+            expected_err: Some(ParseError::Syntax),
+        },
+        TestCase {
+            input_str: "-1234567890",
+            expected_err: Some(ParseError::Syntax),
+        },
+        TestCase {
             input_str: "-12a34",
             expected_err: Some(ParseError::Syntax),
         },
