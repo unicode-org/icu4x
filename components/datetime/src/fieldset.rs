@@ -35,7 +35,6 @@ pub use crate::combo::Combo;
 
 use crate::{
     fields,
-    format::neo::*,
     options::*,
     provider::{neo::*, time_zones::tz, *},
     raw::neo::RawNeoOptions,
@@ -454,8 +453,8 @@ macro_rules! impl_date_or_calendar_period_marker {
         }
         impl DateTimeMarkers for $type {
             type D = Self;
-            type T = NeoNeverMarker;
-            type Z = NeoNeverMarker;
+            type T = ();
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
     };
@@ -614,7 +613,7 @@ macro_rules! impl_date_marker {
         impl DateTimeMarkers for $type_time {
             type D = Self;
             type T = Self;
-            type Z = NeoNeverMarker;
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
         }
         impl_composite!($type_time, DateTime, DateAndTimeFieldSet);
@@ -757,9 +756,9 @@ macro_rules! impl_time_marker {
             type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $($nanosecond_yes)?);
         }
         impl DateTimeMarkers for $type {
-            type D = NeoNeverMarker;
+            type D = ();
             type T = Self;
-            type Z = NeoNeverMarker;
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Time, TimeFieldSet);
@@ -882,8 +881,8 @@ macro_rules! impl_zone_marker {
             type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
         }
         impl DateTimeMarkers for $type {
-            type D = NeoNeverMarker;
-            type T = NeoNeverMarker;
+            type D = ();
+            type T = ();
             type Z = Self;
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }

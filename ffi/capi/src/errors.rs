@@ -80,7 +80,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::PatternLoadError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum PatternLoadError {
@@ -170,13 +170,15 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::PatternLoadError> for PatternLoadError {
-    fn from(e: icu_datetime::PatternLoadError) -> Self {
+impl From<icu_datetime::pattern::PatternLoadError> for PatternLoadError {
+    fn from(e: icu_datetime::pattern::PatternLoadError) -> Self {
         match e {
-            icu_datetime::PatternLoadError::ConflictingField(_) => Self::DuplicateField,
-            icu_datetime::PatternLoadError::UnsupportedLength(_) => Self::UnsupportedLength,
-            icu_datetime::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
-            icu_datetime::PatternLoadError::Data(data_error) => data_error.into(),
+            icu_datetime::pattern::PatternLoadError::ConflictingField(_) => Self::DuplicateField,
+            icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
+                Self::UnsupportedLength
+            }
+            icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
+            icu_datetime::pattern::PatternLoadError::Data(data_error) => data_error.into(),
             _ => Self::Unknown,
         }
     }

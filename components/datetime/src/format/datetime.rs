@@ -2,15 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::neo::RawDateTimeNamesBorrowed;
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
-use super::{
-    GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
-    GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
-};
 use crate::error::DateTimeWriteError;
 use crate::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::input::ExtractedInput;
+use crate::pattern::*;
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
 

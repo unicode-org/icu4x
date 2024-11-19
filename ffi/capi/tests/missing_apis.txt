@@ -300,6 +300,16 @@ icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::TimePrecision::into_option#FnInEnum
 icu::datetime::options::YearStyle#Enum
 icu::datetime::options::YearStyle::into_option#FnInEnum
+icu::datetime::pattern::DateTimePattern#Struct
+icu::datetime::pattern::DateTimePattern::from_str#FnInStruct
+icu::datetime::pattern::DateTimePattern::to_string#FnInStruct
+icu::datetime::pattern::DateTimePattern::try_from_pattern_str#FnInStruct
+icu::datetime::pattern::DateTimePattern::write_to#FnInStruct
+icu::datetime::pattern::DateTimePatternFormatter#Struct
+icu::datetime::pattern::DateTimePatternFormatter::format#FnInStruct
+icu::datetime::pattern::DateTimePatternFormatter::format_date#FnInStruct
+icu::datetime::pattern::DateTimePatternFormatter::format_time#FnInStruct
+icu::datetime::pattern::DateTimePatternFormatter::format_timezone#FnInStruct
 icu::decimal::FixedDecimalFormatterPreferences#Struct
 icu::decimal::FixedDecimalFormatterPreferences::extend#FnInStruct
 icu::list::ListFormatterOptions#Struct
