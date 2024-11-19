@@ -61,7 +61,6 @@ icu::datetime::fieldsets::DE::zone_v#FnInStruct
 icu::datetime::fieldsets::DE::zone_z#FnInStruct
 icu::datetime::fieldsets::DET#Struct
 icu::datetime::fieldsets::DET::hm#FnInStruct
-icu::datetime::fieldsets::DET::hms#FnInStruct
 icu::datetime::fieldsets::DET::long#FnInStruct
 icu::datetime::fieldsets::DET::medium#FnInStruct
 icu::datetime::fieldsets::DET::short#FnInStruct
@@ -74,7 +73,6 @@ icu::datetime::fieldsets::DET::zone_v#FnInStruct
 icu::datetime::fieldsets::DET::zone_z#FnInStruct
 icu::datetime::fieldsets::DT#Struct
 icu::datetime::fieldsets::DT::hm#FnInStruct
-icu::datetime::fieldsets::DT::hms#FnInStruct
 icu::datetime::fieldsets::DT::long#FnInStruct
 icu::datetime::fieldsets::DT::medium#FnInStruct
 icu::datetime::fieldsets::DT::short#FnInStruct
@@ -96,7 +94,6 @@ icu::datetime::fieldsets::E::zone_v#FnInStruct
 icu::datetime::fieldsets::E::zone_z#FnInStruct
 icu::datetime::fieldsets::ET#Struct
 icu::datetime::fieldsets::ET::hm#FnInStruct
-icu::datetime::fieldsets::ET::hms#FnInStruct
 icu::datetime::fieldsets::ET::long#FnInStruct
 icu::datetime::fieldsets::ET::medium#FnInStruct
 icu::datetime::fieldsets::ET::short#FnInStruct
@@ -140,7 +137,6 @@ icu::datetime::fieldsets::MDE::zone_v#FnInStruct
 icu::datetime::fieldsets::MDE::zone_z#FnInStruct
 icu::datetime::fieldsets::MDET#Struct
 icu::datetime::fieldsets::MDET::hm#FnInStruct
-icu::datetime::fieldsets::MDET::hms#FnInStruct
 icu::datetime::fieldsets::MDET::long#FnInStruct
 icu::datetime::fieldsets::MDET::medium#FnInStruct
 icu::datetime::fieldsets::MDET::short#FnInStruct
@@ -153,7 +149,6 @@ icu::datetime::fieldsets::MDET::zone_v#FnInStruct
 icu::datetime::fieldsets::MDET::zone_z#FnInStruct
 icu::datetime::fieldsets::MDT#Struct
 icu::datetime::fieldsets::MDT::hm#FnInStruct
-icu::datetime::fieldsets::MDT::hms#FnInStruct
 icu::datetime::fieldsets::MDT::long#FnInStruct
 icu::datetime::fieldsets::MDT::medium#FnInStruct
 icu::datetime::fieldsets::MDT::short#FnInStruct
@@ -171,7 +166,6 @@ icu::datetime::fieldsets::O::short#FnInStruct
 icu::datetime::fieldsets::O::with_length#FnInStruct
 icu::datetime::fieldsets::T#Struct
 icu::datetime::fieldsets::T::hm#FnInStruct
-icu::datetime::fieldsets::T::hms#FnInStruct
 icu::datetime::fieldsets::T::long#FnInStruct
 icu::datetime::fieldsets::T::medium#FnInStruct
 icu::datetime::fieldsets::T::short#FnInStruct
@@ -230,7 +224,6 @@ icu::datetime::fieldsets::YMDE::zone_v#FnInStruct
 icu::datetime::fieldsets::YMDE::zone_z#FnInStruct
 icu::datetime::fieldsets::YMDET#Struct
 icu::datetime::fieldsets::YMDET::hm#FnInStruct
-icu::datetime::fieldsets::YMDET::hms#FnInStruct
 icu::datetime::fieldsets::YMDET::long#FnInStruct
 icu::datetime::fieldsets::YMDET::medium#FnInStruct
 icu::datetime::fieldsets::YMDET::short#FnInStruct
@@ -244,7 +237,6 @@ icu::datetime::fieldsets::YMDET::zone_v#FnInStruct
 icu::datetime::fieldsets::YMDET::zone_z#FnInStruct
 icu::datetime::fieldsets::YMDT#Struct
 icu::datetime::fieldsets::YMDT::hm#FnInStruct
-icu::datetime::fieldsets::YMDT::hms#FnInStruct
 icu::datetime::fieldsets::YMDT::long#FnInStruct
 icu::datetime::fieldsets::YMDT::medium#FnInStruct
 icu::datetime::fieldsets::YMDT::short#FnInStruct
