@@ -26,6 +26,7 @@ use writeable::TryWriteable;
 ///
 /// [`DateTimePattern`]: super::DateTimePattern
 /// [`TypedDateTimeNames`]: super::TypedDateTimeNames
+/// [`DateTimeFormatter`]: crate::DateTimeFormatter
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar, FSet> {
     inner: RawDateTimePatternFormatter<'a>,
