@@ -9,10 +9,10 @@
 
 #include "DataProvider.d.h"
 #include "DateTimeFormatError.d.h"
+#include "DateTimeFormatterLoadError.d.h"
 #include "DateTimeLength.d.h"
 #include "IsoDateTime.d.h"
 #include "Locale.d.h"
-#include "PatternLoadError.d.h"
 #include "TimeZoneInfo.d.h"
 
 #include "GregorianZonedDateTimeFormatter.d.h"
@@ -22,7 +22,7 @@
 
 
 
-typedef struct icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result {union {GregorianZonedDateTimeFormatter* ok; PatternLoadError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result;
+typedef struct icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result {union {GregorianZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result;
 icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 typedef struct icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { DateTimeFormatError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;

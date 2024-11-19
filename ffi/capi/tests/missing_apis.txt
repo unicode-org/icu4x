@@ -22,6 +22,7 @@ icu::datetime::DateTimeFormatter::convert_and_format#FnInStruct
 icu::datetime::DateTimeFormatter::strict_format#FnInStruct
 icu::datetime::DateTimeFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::DateTimeFormatter::try_new#FnInStruct
+icu::datetime::DateTimeFormatterLoadError#Enum
 icu::datetime::FixedCalendarDateTimeFormatter#Struct
 icu::datetime::FixedCalendarDateTimeFormatter::format#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::into_formatter#FnInStruct
@@ -299,9 +300,8 @@ icu::datetime::pattern::DateTimePattern::try_from_pattern_str#FnInStruct
 icu::datetime::pattern::DateTimePattern::write_to#FnInStruct
 icu::datetime::pattern::DateTimePatternFormatter#Struct
 icu::datetime::pattern::DateTimePatternFormatter::format#FnInStruct
-icu::datetime::pattern::DateTimePatternFormatter::format_date#FnInStruct
-icu::datetime::pattern::DateTimePatternFormatter::format_time#FnInStruct
-icu::datetime::pattern::DateTimePatternFormatter::format_timezone#FnInStruct
+icu::datetime::pattern::FormattedDateTimePattern#Struct
+icu::datetime::pattern::FormattedDateTimePattern::try_write_to_parts#FnInStruct
 icu::decimal::FixedDecimalFormatterPreferences#Struct
 icu::decimal::FixedDecimalFormatterPreferences::extend#FnInStruct
 icu::list::ListFormatterOptions#Struct

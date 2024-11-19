@@ -26,11 +26,11 @@ final class TimeFormatter implements ffi.Finalizable {
 
   /// Creates a new [`TimeFormatter`] from locale data.
   ///
-  /// Throws [PatternLoadError] on failure.
+  /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_TimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw PatternLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return TimeFormatter._fromFfi(result.union.ok, []);
   }
