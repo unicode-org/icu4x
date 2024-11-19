@@ -31,6 +31,7 @@ fixed_decimal::Signed::rounded_with_mode#FnInStruct
 fixed_decimal::Signed::rounded_with_mode_and_increment#FnInStruct
 fixed_decimal::Signed::set_sign#FnInStruct
 fixed_decimal::Signed::sign#FnInStruct
+fixed_decimal::Signed::to_string#FnInStruct
 fixed_decimal::Signed::trunc#FnInStruct
 fixed_decimal::Signed::trunced#FnInStruct
 fixed_decimal::Signed::try_from_f64#FnInStruct
@@ -58,6 +59,7 @@ fixed_decimal::UnsignedFixedDecimal::rounded#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::rounded_with_mode#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::rounded_with_mode_and_increment#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::set_max_position#FnInStruct
+fixed_decimal::UnsignedFixedDecimal::to_string#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::trim_end#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::trim_start#FnInStruct
 fixed_decimal::UnsignedFixedDecimal::trimmed_end#FnInStruct
