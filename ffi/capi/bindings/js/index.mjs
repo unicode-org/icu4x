@@ -224,11 +224,11 @@ export { DataError } from "./DataError.mjs"
 
 export { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 
+export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
+
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
-
-export { PatternLoadError } from "./PatternLoadError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 

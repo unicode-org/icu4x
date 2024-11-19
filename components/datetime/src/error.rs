@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::Field;
+use crate::{fields::Field, pattern::PatternLoadError};
 use displaydoc::Display;
 use icu_calendar::{
     any_calendar::AnyCalendarKind,
     types::{FormattingEra, MonthCode},
 };
+use icu_provider::DataError;
 
 #[cfg(doc)]
 use crate::pattern::TypedDateTimeNames;
@@ -15,6 +16,19 @@ use crate::pattern::TypedDateTimeNames;
 use icu_calendar::types::YearInfo;
 #[cfg(doc)]
 use icu_decimal::FixedDecimalFormatter;
+
+/// An error from constructing a formatter.
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[non_exhaustive]
+pub enum DateTimeFormatterLoadError {
+    /// An error while loading display names for a field.
+    #[displaydoc("{0}")]
+    Names(PatternLoadError),
+    /// An error while loading some other required data,
+    /// such as skeleton patterns or calendar conversions.
+    #[displaydoc("{0}")]
+    Data(DataError),
+}
 
 /// An error from mixing calendar types in a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -62,7 +76,7 @@ pub enum DateTimeWriteError {
     /// The [`FixedDecimalFormatter`] has not been loaded.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], the pattern requires decimal
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], the pattern requires decimal
     /// formatting, and the decimal formatter was not loaded.
     ///
     /// The output will contain fallback values using Latin numerals.
@@ -71,7 +85,7 @@ pub enum DateTimeWriteError {
     /// The localized names for a field have not been loaded.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires names
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern requires names
     /// that were not loaded.
     ///
     /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
@@ -81,7 +95,7 @@ pub enum DateTimeWriteError {
     /// An input field (such as "hour" or "month") is missing.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires fields
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern requires fields
     /// that are not returned by the input type.
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
@@ -90,7 +104,7 @@ pub enum DateTimeWriteError {
     /// Unsupported field
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern contains unsupported fields.
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern contains unsupported fields.
     ///
     /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
     #[displaydoc("Unsupported field {0:?}")]

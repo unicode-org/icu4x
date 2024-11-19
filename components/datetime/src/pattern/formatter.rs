@@ -8,7 +8,7 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, TimeMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
@@ -18,15 +18,20 @@ use writeable::TryWriteable;
 
 /// A formatter for a specific [`DateTimePattern`].
 ///
+/// ❗ This type forgoes most internationalization functionality of the datetime crate.
+/// It assumes that the pattern is already localized for the customer's locale. Most clients
+/// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
+///
 /// Create one of these via factory methods on [`TypedDateTimeNames`].
 ///
 /// [`DateTimePattern`]: super::DateTimePattern
 /// [`TypedDateTimeNames`]: super::TypedDateTimeNames
+/// [`DateTimeFormatter`]: crate::DateTimeFormatter
 #[derive(Debug, Copy, Clone)]
-pub struct DateTimePatternFormatter<'a, C: CldrCalendar, R> {
+pub struct DateTimePatternFormatter<'a, C: CldrCalendar, FSet> {
     inner: RawDateTimePatternFormatter<'a>,
     _calendar: PhantomData<C>,
-    _marker: PhantomData<R>,
+    _marker: PhantomData<FSet>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -35,7 +40,7 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar, R> DateTimePatternFormatter<'a, C, R> {
+impl<'a, C: CldrCalendar, FSet> DateTimePatternFormatter<'a, C, FSet> {
     pub(crate) fn new(
         pattern: DateTimePatternBorrowed<'a>,
         names: RawDateTimeNamesBorrowed<'a>,
@@ -48,42 +53,31 @@ impl<'a, C: CldrCalendar, R> DateTimePatternFormatter<'a, C, R> {
     }
 }
 
-impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
+impl<'a, C: CldrCalendar, FSet: DateTimeMarkers> DateTimePatternFormatter<'a, C, FSet>
 where
-    R::D: TypedDateDataMarkers<C> + DateInputMarkers,
-    R::T: TimeMarkers,
-    R::Z: ZoneMarkers,
+    FSet::D: TypedDateDataMarkers<C> + DateInputMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
 {
-    /// Formats a date and time of day.
-    ///
-    /// For an example, see [`TypedDateTimeNames`](super::TypedDateTimeNames).
-    pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a date without a time of day.
+    /// Formats a date and time of day with a custom date/time pattern.
     ///
     /// # Examples
+    ///
+    /// Format a date:
     ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields;
     /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
+    /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Four)
@@ -100,47 +94,29 @@ where
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_date(&date_bce),
+    ///     names.with_pattern_unchecked(&pattern).format(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_date(&date_ce),
+    ///     names.with_pattern_unchecked(&pattern).format(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<R::D as DateInputMarkers>::YearInput>
-            + GetField<<R::D as DateInputMarkers>::MonthInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
-            + GetField<()>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, (), (), I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a time of day without a date.
     ///
-    /// # Examples
+    /// Format a time:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
     /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
+    /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
     ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Three)
@@ -156,42 +132,24 @@ where
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_am),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_pm),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_noon),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_midnight),
+    ///     names.with_pattern_unchecked(&pattern).format(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<R::T as TimeMarkers>::HourInput>
-            + GetField<<R::T as TimeMarkers>::MinuteInput>
-            + GetField<<R::T as TimeMarkers>::SecondInput>
-            + GetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + GetField<()>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), R::T, (), I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a timezone without a date or time.
     ///
-    /// # Examples
+    /// Format a time zone:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
@@ -227,27 +185,21 @@ where
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_timezone(&london_winter),
+    ///     names.with_pattern_unchecked(&pattern).format(&london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_timezone(&london_summer),
+    ///     names.with_pattern_unchecked(&pattern).format(&london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```
-    pub fn format_timezone<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
+    pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
-            + GetField<()>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<FSet>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), (), R::Z, I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -315,7 +267,7 @@ mod tests {
             .parse()
             .unwrap();
         let datetime = DateTime::try_new_gregorian(2023, 10, 25, 15, 0, 55).unwrap();
-        let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+        let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
         assert_try_writeable_eq!(
             formatted_pattern,
@@ -373,7 +325,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -444,7 +396,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -562,7 +514,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
@@ -644,7 +596,7 @@ mod tests {
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
             let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
+            let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }

@@ -226,11 +226,11 @@ export { DataError } from "./DataError"
 
 export { DateTimeFormatError } from "./DateTimeFormatError"
 
+export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
+
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
-
-export { PatternLoadError } from "./PatternLoadError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 

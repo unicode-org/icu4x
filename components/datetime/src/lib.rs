@@ -105,10 +105,10 @@ pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
 
-pub use error::{DateTimeWriteError, MismatchedCalendarError};
+pub use error::{DateTimeFormatterLoadError, DateTimeWriteError, MismatchedCalendarError};
 
 pub use neo::DateTimeFormatter;
 pub use neo::FixedCalendarDateTimeFormatter;
-pub use neo::FormattedNeoDateTime;
+pub use neo::FormattedDateTime;
 pub use neo::TimeFormatter;
 pub use options::NeoSkeletonLength;
