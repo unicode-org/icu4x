@@ -138,7 +138,7 @@ macro_rules! impl_marker_with_options {
             $(
                 /// The desired length of the formatted string.
                 ///
-                /// See: [`NeoSkeletonLength`]
+                /// See: [`Length`]
                 pub length: datetime_marker_helper!(@option/length, $sample_length),
             )?
             $(
@@ -162,7 +162,7 @@ macro_rules! impl_marker_with_options {
         }
         impl $type {
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
-            pub const fn with_length(length: NeoSkeletonLength) -> Self {
+            pub const fn with_length(length: Length) -> Self {
                 Self {
                     length,
                     $(
@@ -178,15 +178,15 @@ macro_rules! impl_marker_with_options {
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length.")]
             pub const fn long() -> Self {
-                Self::with_length(NeoSkeletonLength::Long)
+                Self::with_length(Length::Long)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length.")]
             pub const fn medium() -> Self {
-                Self::with_length(NeoSkeletonLength::Medium)
+                Self::with_length(Length::Medium)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
             pub const fn short() -> Self {
-                Self::with_length(NeoSkeletonLength::Short)
+                Self::with_length(Length::Short)
             }
         }
         #[allow(dead_code)]
@@ -266,7 +266,7 @@ macro_rules! impl_combo_generic_fns {
     ($type:ident) => {
         impl<Z> Combo<$type, Z> {
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length and a time zone.")]
-            pub fn with_length(length: NeoSkeletonLength) -> Self {
+            pub fn with_length(length: Length) -> Self {
                 Self::new($type::with_length(length))
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length and a time zone.")]
@@ -881,8 +881,8 @@ macro_rules! impl_zone_marker {
             impl $type {
                 pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                     match self.length {
-                        NeoSkeletonLength::Short | NeoSkeletonLength::Medium => $field_short,
-                        NeoSkeletonLength::Long => $field_long,
+                        Length::Short | Length::Medium => $field_short,
+                        Length::Long => $field_long,
                     }
                 }
             }

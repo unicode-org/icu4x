@@ -38,8 +38,8 @@ icu::datetime::FormattedDateTime::pattern#FnInStruct
 icu::datetime::FormattedDateTime::to_string_lossy#FnInStruct
 icu::datetime::FormattedDateTime::try_write_to_parts#FnInStruct
 icu::datetime::MismatchedCalendarError#Struct
-icu::datetime::NeoSkeletonLength#Enum
-icu::datetime::NeoSkeletonLength::into_option#FnInEnum
+icu::datetime::Length#Enum
+icu::datetime::Length::into_option#FnInEnum
 icu::datetime::TimeFormatter#Typedef
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::long#FnInStruct
@@ -294,7 +294,7 @@ icu::datetime::options::Alignment#Enum
 icu::datetime::options::Alignment::into_option#FnInEnum
 icu::datetime::options::FractionalSecondDigits#Enum
 icu::datetime::options::FractionalSecondError#Enum
-icu::datetime::options::NeoSkeletonLength::into_option#FnInEnum
+icu::datetime::options::Length::into_option#FnInEnum
 icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::TimePrecision::into_option#FnInEnum
 icu::datetime::options::YearStyle#Enum

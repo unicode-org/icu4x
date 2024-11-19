@@ -499,16 +499,16 @@ macro_rules! datetime_marker_helper {
         NeverMarker<GluePatternV1<'static>>
     };
     (@option/length, yes) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, long) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, medium) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, short) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/yearstyle, yes) => {
         Option<YearStyle>

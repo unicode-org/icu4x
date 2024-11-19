@@ -112,4 +112,4 @@ pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
 pub use neo::TimeFormatter;
-pub use options::NeoSkeletonLength;
+pub use options::Length;
