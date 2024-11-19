@@ -76,7 +76,7 @@ pub enum DateTimeWriteError {
     /// The [`FixedDecimalFormatter`] has not been loaded.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], the pattern requires decimal
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], the pattern requires decimal
     /// formatting, and the decimal formatter was not loaded.
     ///
     /// The output will contain fallback values using Latin numerals.
@@ -85,7 +85,7 @@ pub enum DateTimeWriteError {
     /// The localized names for a field have not been loaded.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires names
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern requires names
     /// that were not loaded.
     ///
     /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
@@ -95,7 +95,7 @@ pub enum DateTimeWriteError {
     /// An input field (such as "hour" or "month") is missing.
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern requires fields
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern requires fields
     /// that are not returned by the input type.
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
@@ -104,7 +104,7 @@ pub enum DateTimeWriteError {
     /// Unsupported field
     ///
     /// This *only* happens if the formatter has been created using
-    /// [`TypedDateTimeNames::with_pattern`], and the pattern contains unsupported fields.
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern contains unsupported fields.
     ///
     /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
     #[displaydoc("Unsupported field {0:?}")]
