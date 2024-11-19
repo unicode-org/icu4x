@@ -246,11 +246,6 @@ macro_rules! impl_marker_with_options {
                     self.time_precision = Some(TimePrecision::MinuteExact);
                     self
                 }
-                /// Sets the time precision to [`TimePrecision::SecondPlus`]
-                pub fn hms(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::SecondPlus);
-                    self
-                }
             }
         )?
     };

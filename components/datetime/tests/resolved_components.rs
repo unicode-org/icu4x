@@ -41,7 +41,7 @@ fn test_length_date() {
 
 #[test]
 fn test_length_time() {
-    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium().hms()));
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
@@ -59,9 +59,7 @@ fn test_length_time() {
 #[test]
 fn test_length_time_preferences() {
     let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
-        fieldsets::T::medium()
-            .hms()
-            .with_alignment(Alignment::Column),
+        fieldsets::T::medium().with_alignment(Alignment::Column),
     ));
 
     let mut components_bag = components::Bag::default();
