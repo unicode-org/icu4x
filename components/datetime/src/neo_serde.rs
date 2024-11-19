@@ -7,7 +7,7 @@
 use crate::{
     fieldsets::{self, enums::*},
     options::*,
-    raw::neo::RawNeoOptions,
+    raw::neo::RawOptions,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -155,7 +155,7 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
         let date = value.field_set.date_only();
         let time = value.field_set.time_only();
         let zone = value.field_set.zone_only();
-        let options = RawNeoOptions {
+        let options = RawOptions {
             length: value.length,
             alignment: value.alignment,
             year_style: value.year_style,
@@ -465,7 +465,7 @@ impl<'de> Deserialize<'de> for FieldSetSerde {
 }
 
 impl FieldSetSerde {
-    fn from_date_field_set(value: DateFieldSet) -> (Self, RawNeoOptions) {
+    fn from_date_field_set(value: DateFieldSet) -> (Self, RawOptions) {
         match value {
             DateFieldSet::D(v) => (Self::DAY, v.to_raw_options()),
             DateFieldSet::MD(v) => (Self::MONTH_DAY, v.to_raw_options()),
@@ -477,7 +477,7 @@ impl FieldSetSerde {
         }
     }
 
-    fn to_date_field_set(self, options: RawNeoOptions) -> Option<DateFieldSet> {
+    fn to_date_field_set(self, options: RawOptions) -> Option<DateFieldSet> {
         use DateFieldSet::*;
         match self {
             Self::DAY => Some(D(fieldsets::D::from_raw_options(options))),
@@ -491,7 +491,7 @@ impl FieldSetSerde {
         }
     }
 
-    fn from_calendar_period_field_set(value: CalendarPeriodFieldSet) -> (Self, RawNeoOptions) {
+    fn from_calendar_period_field_set(value: CalendarPeriodFieldSet) -> (Self, RawOptions) {
         match value {
             CalendarPeriodFieldSet::M(v) => (Self::MONTH, v.to_raw_options()),
             CalendarPeriodFieldSet::YM(v) => (Self::YEAR_MONTH, v.to_raw_options()),
@@ -499,10 +499,7 @@ impl FieldSetSerde {
         }
     }
 
-    fn to_calendar_period_field_set(
-        self,
-        options: RawNeoOptions,
-    ) -> Option<CalendarPeriodFieldSet> {
+    fn to_calendar_period_field_set(self, options: RawOptions) -> Option<CalendarPeriodFieldSet> {
         use CalendarPeriodFieldSet::*;
         match self {
             Self::MONTH => Some(M(fieldsets::M::from_raw_options(options))),
@@ -512,13 +509,13 @@ impl FieldSetSerde {
         }
     }
 
-    fn from_time_field_set(value: TimeFieldSet) -> (Self, RawNeoOptions) {
+    fn from_time_field_set(value: TimeFieldSet) -> (Self, RawOptions) {
         match value {
             TimeFieldSet::T(v) => (Self::TIME, v.to_raw_options()),
         }
     }
 
-    fn to_time_field_set(self, options: RawNeoOptions) -> Option<TimeFieldSet> {
+    fn to_time_field_set(self, options: RawOptions) -> Option<TimeFieldSet> {
         use TimeFieldSet::*;
         match self {
             Self::TIME => Some(T(fieldsets::T::from_raw_options(options))),
@@ -545,7 +542,7 @@ impl FieldSetSerde {
         }
     }
 
-    fn from_zone_field_set(value: ZoneFieldSet) -> (Self, RawNeoOptions) {
+    fn from_zone_field_set(value: ZoneFieldSet) -> (Self, RawOptions) {
         match value {
             ZoneFieldSet::Z(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
             ZoneFieldSet::O(v) => (Self::ZONE_OFFSET, v.to_raw_options()),
@@ -554,7 +551,7 @@ impl FieldSetSerde {
         }
     }
 
-    fn to_zone_field_set(self, options: RawNeoOptions) -> Option<ZoneFieldSet> {
+    fn to_zone_field_set(self, options: RawOptions) -> Option<ZoneFieldSet> {
         use ZoneFieldSet::*;
         match self {
             Self::ZONE_SPECIFIC => Some(Z(fieldsets::Z::from_raw_options(options))),

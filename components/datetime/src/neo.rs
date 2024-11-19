@@ -100,7 +100,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
-// impl RawNeoOptions {
+// impl RawOptions {
 //     pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
 //     where
 //         FSet: DateTimeMarkers,

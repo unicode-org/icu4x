@@ -37,7 +37,7 @@ use crate::{
     fields,
     options::*,
     provider::{neo::*, time_zones::tz, *},
-    raw::neo::RawNeoOptions,
+    raw::neo::RawOptions,
     scaffold::*,
 };
 use enums::*;
@@ -195,8 +195,8 @@ macro_rules! impl_marker_with_options {
                 const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
                 #[warn(dead_code)]
             )?
-            pub(crate) fn to_raw_options(self) -> RawNeoOptions {
-                RawNeoOptions {
+            pub(crate) fn to_raw_options(self) -> RawOptions {
+                RawOptions {
                     length: self.length,
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
@@ -207,7 +207,7 @@ macro_rules! impl_marker_with_options {
                 const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
                 #[warn(dead_code)]
             )?
-            pub(crate) fn from_raw_options(options: RawNeoOptions) -> Self {
+            pub(crate) fn from_raw_options(options: RawOptions) -> Self {
                 Self {
                     length: options.length,
                     $(alignment: yes_to!(options.alignment, $alignment_yes),)?

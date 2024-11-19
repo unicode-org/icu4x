@@ -57,7 +57,7 @@
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
 
-use crate::raw::neo::RawNeoOptions;
+use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fields, fieldsets, NeoSkeletonLength};
 use icu_provider::prelude::*;
@@ -324,7 +324,7 @@ macro_rules! impl_attrs {
     };
     (@to_raw_options, $type:path, [$($variant:ident),+,]) => {
         impl $type {
-            pub(crate) fn to_raw_options(self) -> RawNeoOptions {
+            pub(crate) fn to_raw_options(self) -> RawOptions {
                 match self {
                     $(
                         Self::$variant(variant) => variant.to_raw_options(),
@@ -400,7 +400,7 @@ macro_rules! impl_attrs {
                 })
             }
             #[cfg(all(feature = "serde", feature = "experimental"))]
-            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawNeoOptions) -> Self {
+            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawOptions) -> Self {
                 match date_field_set {
                     $(
                         DateFieldSet::$d_variant(_) => Self::$variant(fieldsets::$variant::from_raw_options(options)),
