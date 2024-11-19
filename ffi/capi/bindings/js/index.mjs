@@ -248,6 +248,30 @@ export { LocaleDirection } from "./LocaleDirection.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 
+export { BidiClass } from "./BidiClass.mjs"
+
+export { CanonicalCombiningClass } from "./CanonicalCombiningClass.mjs"
+
+export { EastAsianWidth } from "./EastAsianWidth.mjs"
+
+export { GeneralCategory } from "./GeneralCategory.mjs"
+
+export { GraphemeClusterBreak } from "./GraphemeClusterBreak.mjs"
+
+export { HangulSyllableType } from "./HangulSyllableType.mjs"
+
+export { IndicSyllabicCategory } from "./IndicSyllabicCategory.mjs"
+
+export { JoiningType } from "./JoiningType.mjs"
+
+export { LineBreak } from "./LineBreak.mjs"
+
+export { Script } from "./Script.mjs"
+
+export { SentenceBreak } from "./SentenceBreak.mjs"
+
+export { WordBreak } from "./WordBreak.mjs"
+
 export { LineBreakStrictness } from "./LineBreakStrictness.mjs"
 
 export { LineBreakWordOption } from "./LineBreakWordOption.mjs"
