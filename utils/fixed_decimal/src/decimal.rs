@@ -2413,7 +2413,7 @@ fn test_from_str() {
     }
     let cases = [
         TestCase {
-            input_str: "+00123400",
+            input_str: "00123400",
             output_str: None,
             magnitudes: [7, 5, 2, 0],
         },
@@ -2463,11 +2463,6 @@ fn test_from_str() {
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
-            input_str: "+0",
-            output_str: None,
-            magnitudes: [0, 0, 0, 0],
-        },
-        TestCase {
             input_str: "000",
             output_str: None,
             magnitudes: [2, 0, 0, 0],
@@ -2485,6 +2480,7 @@ fn test_from_str() {
         },
     ];
     for cas in &cases {
+        println!("cas: {:?}", cas);
         let fd = UnsignedFixedDecimal::from_str(cas.input_str).unwrap();
         assert_eq!(
             fd.magnitude_range(),
