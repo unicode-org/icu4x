@@ -277,6 +277,42 @@ pub(crate) mod gc {
 
 pub use gc::GeneralCategory;
 
+impl GeneralCategory {
+    /// All possible values of this enum
+    pub const ALL_VALUES: &'static [GeneralCategory] = &[
+        GeneralCategory::Unassigned,
+        GeneralCategory::UppercaseLetter,
+        GeneralCategory::LowercaseLetter,
+        GeneralCategory::TitlecaseLetter,
+        GeneralCategory::ModifierLetter,
+        GeneralCategory::OtherLetter,
+        GeneralCategory::NonspacingMark,
+        GeneralCategory::SpacingMark,
+        GeneralCategory::EnclosingMark,
+        GeneralCategory::DecimalNumber,
+        GeneralCategory::LetterNumber,
+        GeneralCategory::OtherNumber,
+        GeneralCategory::SpaceSeparator,
+        GeneralCategory::LineSeparator,
+        GeneralCategory::ParagraphSeparator,
+        GeneralCategory::Control,
+        GeneralCategory::Format,
+        GeneralCategory::PrivateUse,
+        GeneralCategory::Surrogate,
+        GeneralCategory::DashPunctuation,
+        GeneralCategory::OpenPunctuation,
+        GeneralCategory::ClosePunctuation,
+        GeneralCategory::ConnectorPunctuation,
+        GeneralCategory::InitialPunctuation,
+        GeneralCategory::FinalPunctuation,
+        GeneralCategory::OtherPunctuation,
+        GeneralCategory::MathSymbol,
+        GeneralCategory::CurrencySymbol,
+        GeneralCategory::ModifierSymbol,
+        GeneralCategory::OtherSymbol,
+    ];
+}
+
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
 /// Error value for `impl TryFrom<u8> for GeneralCategory`.
 #[non_exhaustive]
@@ -628,6 +664,7 @@ impl From<GeneralCategoryGroup> for u32 {
 #[repr(transparent)]
 pub struct Script(pub u16);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl Script {
@@ -797,6 +834,7 @@ impl Script {
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
 }
+}
 
 make_enumerated_property! {
     name: "Script";
@@ -941,6 +979,7 @@ make_enumerated_property! {
 #[repr(transparent)]
 pub struct LineBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl LineBreak {
@@ -995,6 +1034,7 @@ impl LineBreak {
     pub const ViramaFinal: LineBreak = LineBreak(46); // name=VF"
     pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
+}
 
 make_enumerated_property! {
     name: "Line_Break";
@@ -1034,6 +1074,7 @@ make_enumerated_property! {
 #[repr(transparent)]
 pub struct GraphemeClusterBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl GraphemeClusterBreak {
@@ -1059,6 +1100,7 @@ impl GraphemeClusterBreak {
     /// This value is obsolete and unused.
     pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); // name="GAZ"
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
+}
 }
 
 make_enumerated_property! {
