@@ -53,26 +53,31 @@ macro_rules! __enum_keyword_inner {
 macro_rules! __enum_keyword {
     (
         $(#[$doc:meta])*
+        $([$derive_attrs:ty])?
         $name:ident {
             $(
                 $(#[$variant_doc:meta])*
+                $([$variant_attr:ty])?
                 $variant:ident $($v2:ident)?
             ),*
         }
     ) => {
         #[non_exhaustive]
-        #[derive(Debug, Clone, Eq, PartialEq, Copy)]
+        #[derive(Debug, Clone, Eq, PartialEq, Copy, Hash)]
+        $(#[derive($derive_attrs)])?
         $(#[$doc])*
         pub enum $name {
             $(
                 $(#[$variant_doc])*
+                $(#[$variant_attr])?
                 $variant $((Option<$v2>))?
             ),*
         }
     };
-    ($(#[$doc:meta])* $name:ident {
+    ($(#[$doc:meta])* $([$derive_attrs:ty])? $name:ident {
         $(
             $(#[$variant_doc:meta])*
+            $([$variant_attr:ty])?
             ($key:expr => $variant:ident $(($v2:ident) {
                 $(
                     ($subk:expr => $subv:ident)
@@ -82,9 +87,11 @@ macro_rules! __enum_keyword {
     }, $ext_key:literal) => {
         $crate::__enum_keyword!(
             $(#[$doc])*
+            $([$derive_attrs])?
             $name {
                 $(
                     $(#[$variant_doc])*
+                    $([$variant_attr])?
                     $variant $($v2)?
                 ),*
             }
@@ -100,7 +107,7 @@ macro_rules! __enum_keyword {
                 value: &$crate::extensions::unicode::Value,
             ) -> Result<Option<Self>, $crate::preferences::extensions::unicode::errors::PreferencesParseError> {
                 if Self::unicode_extension_key() == Some(*key) {
-                    Self::try_from(value.clone()).map(Some)
+                    Self::try_from(value).map(Some)
                 } else {
                     Ok(None)
                 }
@@ -111,10 +118,10 @@ macro_rules! __enum_keyword {
             }
         }
 
-        impl TryFrom<$crate::extensions::unicode::Value> for $name {
+        impl TryFrom<&$crate::extensions::unicode::Value> for $name {
             type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
 
-            fn try_from(s: $crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
+            fn try_from(s: &$crate::extensions::unicode::Value) -> Result<Self, Self::Error> {
                 let subtag = s.get_subtag(0)
                                 .ok_or(Self::Error::InvalidKeywordValue)?;
                 Ok(match subtag.as_str() {
@@ -207,17 +214,17 @@ mod tests {
         }, "dk");
 
         let v = unicode::Value::from_str("standard").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Standard);
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("rare").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Rare);
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("foo").unwrap();
-        let dk = DummyKeyword::try_from(v);
+        let dk = DummyKeyword::try_from(&v);
         assert!(dk.is_err());
 
         assert_eq!(DummyKeyword::Standard.as_str(), "standard");
@@ -236,31 +243,31 @@ mod tests {
         }, "dk");
 
         let v = unicode::Value::from_str("default").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Default);
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("sub").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Sub(None));
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("foo").unwrap();
-        let dk = DummyKeyword::try_from(v);
+        let dk = DummyKeyword::try_from(&v);
         assert!(dk.is_err());
 
         let v = unicode::Value::from_str("sub-standard").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Sub(Some(DummySubKeyword::Standard)));
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("sub-rare").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Sub(Some(DummySubKeyword::Rare)));
         assert_eq!(unicode::Value::from(dk), v);
 
         let v = unicode::Value::from_str("sub-foo").unwrap();
-        let dk = DummyKeyword::try_from(v.clone()).unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
         assert_eq!(dk, DummyKeyword::Sub(None));
         assert_eq!(unicode::Value::from(dk), unicode::value!("sub"));
 

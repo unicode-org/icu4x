@@ -73,7 +73,7 @@ impl_tinystr_subtag!(
 ///
 /// assert_eq!(si.to_string(), "gbzzzz");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
 pub struct SubdivisionId {
     /// A region field of a Subdivision Id.

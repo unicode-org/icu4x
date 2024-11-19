@@ -305,7 +305,7 @@ impl FromStr for Value {
 
 impl PartialEq<&str> for Value {
     fn eq(&self, other: &&str) -> bool {
-        writeable::cmp_bytes(self, other.as_bytes()).is_eq()
+        writeable::cmp_utf8(self, other.as_bytes()).is_eq()
     }
 }
 

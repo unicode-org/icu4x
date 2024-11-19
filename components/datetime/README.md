@@ -2,72 +2,72 @@
 
 <!-- cargo-rdme start -->
 
-Formatting date and time.
+Localized formatting of dates, times, and time zones.
 
 This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-[`FixedCalendarDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
-allow it to collect necessary data from the [data provider], and once instantiated, can be
-used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
+ICU4X datetime formatting follows the Unicode UTS 35 standard for [Semantic Skeletons](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Skeletons).
+First you choose a _field set_, then you configure the formatting _options_ to your desired context.
 
-These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
-and [`timezone::TimeZoneInfo`], however other types may be used provided they implement the traits from the [`input`] module.
+1. Field Sets: [`icu::datetime::fieldset`](fieldset)
+2. Options: [`icu::datetime::options`](options)
 
-Each instance of a date-related formatter is associated with a particular [`Calendar`].
-The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
-will only be formatting Gregorian dates, you can use [`FixedCalendarDateTimeFormatter<Gregorian>`](FixedCalendarDateTimeFormatter) and the
-APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
-the calendar at runtime, you can use [`neo::DateTimeFormatter`] with the calendar specified in the locale, and use it with
-[`DateTime<AnyCalendar>`](icu_calendar::DateTime) (see [`AnyCalendar`]). These formatters still require dates associated
-with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
-programmer to pick the calendar at compile time.
+ICU4X supports formatting in over one dozen _calendar systems_, including Gregorian, Buddhist,
+Islamic, and more. The calendar system is usually derived from the locale, but it can also be
+specified explicitly.
 
+The main formatter in this crate is [`DateTimeFormatter`], which supports all field sets,
+options, and calendar systems. Additional formatter types are available to developers in
+resource-constrained environments.
+
+The formatters accept input types from the [`calendar`](icu_calendar) and
+[`timezone`](icu_timezone) crates:
+
+1. [`Date`](icu_calendar::Date)
+2. [`DateTime`](icu_calendar::DateTime)
+3. [`Time`](icu_calendar::Time)
+4. [`UtcOffset`](icu_timezone::UtcOffset)
+5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+6. [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+
+Not all inputs are valid for all field sets.
+
+## Binary Size Tradeoffs
+
+The datetime crate has been engineered with a focus on giving developers the ability to
+tune binary size to their needs. The table illustrates the two main tradeoffs, field sets
+and calendar systems:
+
+| Factor | Static (Lower Binary Size) | Dynamic (Greater Binary Size) |
+|---|---|---|
+| Field Sets | Specific [`fieldset`] types | Enumerations from [`fieldset::dynamic`] |
+| Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
+
+If formatting times and time zones without dates, consider using [`TimeFormatter`].
 
 ## Examples
 
 ```rust
-use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::fieldset::YMDT;
-use icu::datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter};
+use icu::calendar::DateTime;
+use icu::datetime::fieldset;
+use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};
 use writeable::assert_try_writeable_eq;
 
-// You can work with a formatter that can select the calendar at runtime:
-let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-let dtf = DateTimeFormatter::try_new(&locale.into(), YMDT::medium().hm())
-    .expect("should successfully create DateTimeFormatter instance");
+// Field set for year, month, day, hour, and minute with a medium length:
+let field_set = fieldset::YMDT::medium().hm();
 
-// Or one that selects a calendar at compile time:
-let typed_dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    &locale!("en").into(),
-    YMDT::medium().hm(),
-)
-.expect(
-    "should successfully create FixedCalendarDateTimeFormatter instance",
-);
+// Create a formatter for Argentinian Spanish:
+let locale = locale!("es-AR");
+let dtf = DateTimeFormatter::try_new(&locale.into(), field_set).unwrap();
 
-let typed_date =
-    DateTime::try_new_gregorian(2020, 9, 12, 12, 34, 28).unwrap();
-// prefer using ISO dates with DateTimeFormatter
-let date = typed_date.to_iso();
+// Format something:
+let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
+let formatted_date = dtf.convert_and_format(&datetime);
 
-let formatted_date = dtf.convert_and_format(&date);
-let typed_formatted_date = typed_dtf.format(&typed_date);
-
-assert_try_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
-assert_try_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
+assert_try_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 ```
-
-[data provider]: icu_provider
-[`ICU4X`]: ../icu/index.html
-[`Length`]: options::length
-[`DateTime`]: calendar::{DateTime}
-[`Date`]: calendar::{Date}
-[`Time`]: calendar::types::{Time}
-[`Calendar`]: calendar::{Calendar}
-[`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
-[`timezone::TimeZoneInfo`]: icu::timezone::{TimeZoneInfo}
 
 <!-- cargo-rdme end -->
 

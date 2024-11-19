@@ -1080,6 +1080,7 @@ dependencies = [
  "tinystr",
  "unicode-bidi",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1234,7 +1235,9 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
+ "tinystr",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]

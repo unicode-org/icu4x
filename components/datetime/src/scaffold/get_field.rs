@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::*;
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
@@ -19,44 +18,6 @@ pub trait GetField<T> {
     /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
 }
-
-/// Generates an impl of [`GetField`]
-macro_rules! impl_get_field {
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, never) => {
-        impl $(<$($generics0),+>)? GetField<()> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) {}
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, length, yes) => {
-        impl $(<$($generics0),+>)? GetField<NeoSkeletonLength> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> NeoSkeletonLength {
-                self.length
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, alignment, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<Alignment>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<Alignment> {
-                self.alignment
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, year_style, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<YearStyle>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<YearStyle> {
-                self.year_style
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, time_precision, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<TimePrecision>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<TimePrecision> {
-                self.time_precision
-            }
-        }
-    };
-}
-pub(crate) use impl_get_field;
 
 impl<T> GetField<T> for T
 where

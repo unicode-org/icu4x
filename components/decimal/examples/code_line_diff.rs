@@ -21,7 +21,7 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
 ];
 
 fn main() {
-    let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), Default::default())
+    let fdf = FixedDecimalFormatter::try_new(locale!("bn").into(), Default::default())
         .expect("locale should be present");
 
     for (removed, added) in LINES_REMOVED_ADDED {

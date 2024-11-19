@@ -2,19 +2,67 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serde")]
-use crate::neo_serde::*;
-use crate::options::preferences::HourCycle;
+//! Enumerations over field sets.
+//!
+//! These enumerations can be used when the field set is not known at compile time. However,
+//! they may contribute negatively to the binary size of the formatters.
+//!
+//! The most general type is [`CompositeFieldSet`], which supports all field
+//! sets in a single enumeration. [`CompositeDateTimeFieldSet`] is a good
+//! choice when you don't need to format time zones.
+//!
+//! Summary of all the types:
+//!
+//! | Type | Supported Field Sets |
+//! |---|---|
+//! | [`DateFieldSet`] | Date |
+//! | [`CalendarPeriodFieldSet`] | Calendar Period |
+//! | [`TimeFieldSet`] | Time |
+//! | [`ZoneFieldSet`] | Zone |
+//! | [`DateAndTimeFieldSet`] | Date + Time |
+//! | [`CompositeDateTimeFieldSet`] | Date, Calendar Period, Time, Date + Time |
+//! | [`CompositeFieldSet`] | All |
+//!
+//! # Examples
+//!
+//! Format with the time display depending on a runtime boolean:
+//!
+//! ```
+//! use icu::calendar::DateTime;
+//! use icu::datetime::fieldset;
+//! use icu::datetime::fieldset::dynamic::CompositeDateTimeFieldSet;
+//! use icu::datetime::DateTimeFormatter;
+//! use icu::locale::locale;
+//! use writeable::TryWriteable;
+//!
+//! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
+//!     if should_display_time {
+//!         let field_set = fieldset::MDT::medium().hm();
+//!         CompositeDateTimeFieldSet::DateTime(fieldset::dynamic::DateAndTimeFieldSet::MDT(field_set))
+//!     } else {
+//!         let field_set = fieldset::MD::medium();
+//!         CompositeDateTimeFieldSet::Date(fieldset::dynamic::DateFieldSet::MD(field_set))
+//!     }
+//! }
+//!
+//! let locale = locale!("en-US").into();
+//! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
+//!
+//! let results = [true, false].map(get_field_set).map(|field_set| {
+//!     DateTimeFormatter::try_new(&locale, field_set).unwrap()
+//! }).map(|formatter| {
+//!     formatter.convert_and_format(&datetime).try_write_to_string().unwrap().into_owned()
+//! });
+//!
+//! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
+//! ```
+
 use crate::raw::neo::RawNeoOptions;
 use crate::scaffold::GetField;
 use crate::{fields, fieldset, NeoSkeletonLength};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
-///
-/// 📏 Note: This enum can be used as the field set parameter of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
-/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -42,10 +90,6 @@ pub enum DateFieldSet {
 }
 
 /// An enumeration over all possible calendar period field sets.
-///
-/// 📏 Note: This enum can be used as the field set parameter of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
-/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -74,10 +118,6 @@ pub enum TimeFieldSet {
 }
 
 /// An enumeration over all possible zone field sets.
-///
-/// 📏 Note: This enum can be used as the field set parameter of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
-/// more formatting data compared to the individual field set structs.
 ///
 /// Note: [`fieldset::Zs`] and [`fieldset::Vs`] are not included in this enum
 /// because they are data size optimizations only.
@@ -128,10 +168,6 @@ pub enum ZoneStyle {
 }
 
 /// An enumeration over all possible date+time composite field sets.
-///
-/// 📏 Note: This enum can be used as the field set parameter of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter), but doing so may link
-/// more formatting data compared to the individual field set structs.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
@@ -159,7 +195,9 @@ pub enum DateAndTimeFieldSet {
 }
 
 /// An enum supporting date, calendar period, time, and date+time field sets
-/// and options. Time zones are not supported with this enum.
+/// and options.
+///
+/// Time zones are not supported with this enum.
 ///
 /// This enum is useful when formatting a type that does not contain a
 /// time zone or to avoid storing time zone data.
@@ -212,11 +250,6 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
 
 /// An enum supporting all possible field sets and options.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(
-    feature = "serde",
-    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
-)]
 #[non_exhaustive]
 pub enum CompositeFieldSet {
     /// Field set for a date.
@@ -366,7 +399,7 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
-            #[cfg(feature = "serde")]
+            #[cfg(all(feature = "serde", feature = "experimental"))]
             pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawNeoOptions) -> Self {
                 match date_field_set {
                     $(
@@ -415,9 +448,9 @@ impl_attrs! {
 impl TimeFieldSet {
     pub(crate) const fn id_str_for_hour_cycle(
         self,
-        hour_cycle: Option<HourCycle>,
+        hour_cycle: Option<fields::Hour>,
     ) -> &'static DataMarkerAttributes {
-        use HourCycle::*;
+        use fields::Hour::*;
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,

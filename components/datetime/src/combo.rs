@@ -4,16 +4,24 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
+use crate::{format::neo::*, provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
 /// This struct produces "composite field sets" as defined in UTS 35.
 ///
-/// This struct does not have its own constructor, but it can be produced via
-/// factory functions on the other field sets.
-///
 /// # Examples
+///
+/// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
+///
+/// ```
+/// use icu::datetime::fieldset::{Combo, E, L};
+///
+/// let field_set_1 = E::long().zone_l();
+/// let field_set_2 = Combo::<E, L>::long();
+///
+/// assert_eq!(field_set_1, field_set_2);
+/// ```
 ///
 /// Format the weekday, hour, and location-based zone:
 ///
@@ -24,11 +32,10 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let field_set: Combo<ET, L> = ET::short().hm().l();
-///
-/// let formatter = DateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     field_set,
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
@@ -53,11 +60,10 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let field_set: Combo<ET, L> = ET::short().hm().l();
-///
-/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
 ///     &locale!("en-US").into(),
-///     field_set,
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
@@ -77,15 +83,16 @@ use crate::{format::neo::*, neo_skeleton::*, provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{YMD, dynamic::DateFieldSet};
+/// use icu::datetime::fieldset::{Combo, YMD, Vs, dynamic::DateFieldSet};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
 /// use writeable::assert_try_writeable_eq;
 ///
-/// let formatter = DateTimeFormatter::try_new(
+/// // Note: Combo type can be elided, but it is shown here for demonstration
+/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
 ///     &locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).v(),
+///     DateFieldSet::YMD(YMD::long()).zone_v(),
 /// )
 /// .unwrap();
 ///
@@ -150,9 +157,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type LengthOption = NeoSkeletonLength; // always needed for date
-    type AlignmentOption = DT::AlignmentOption;
-    type YearStyleOption = DT::YearStyleOption;
-    type TimePrecisionOption = DT::TimePrecisionOption;
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

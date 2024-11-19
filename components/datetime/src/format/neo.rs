@@ -7,9 +7,9 @@ use super::{
     GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
     GetSymbolForCyclicYearError, GetSymbolForEraError, MonthPlaceholderValue,
 };
-use crate::dynamic::CompositeDateTimeFieldSet;
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::fieldset::dynamic::CompositeDateTimeFieldSet;
 use crate::input;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
@@ -30,7 +30,7 @@ use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
-use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -262,7 +262,7 @@ where
 size_test!(
     TypedDateTimeNames<icu_calendar::Gregorian, DateTimeMarker>,
     typed_date_time_names_size,
-    456
+    344
 );
 
 /// A low-level type that formats datetime patterns with localized names.
@@ -625,7 +625,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker> + ?Sized,
     {
         let mut names = Self {
             locale: locale.clone(),
@@ -1418,7 +1418,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     #[inline]
     pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker> + ?Sized,
     {
         self.inner
             .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider), &self.locale)?;
@@ -1497,7 +1497,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<tz::MzSpecificLongV1Marker>
             + DataProvider<tz::MzSpecificShortV1Marker>
             + DataProvider<tz::MzPeriodV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV2Marker>
+            + DataProvider<DecimalDigitsV1Marker>
             + ?Sized,
     {
         let locale = &self.locale;

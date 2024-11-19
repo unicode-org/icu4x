@@ -46,6 +46,15 @@ impl<'a> WriteComparator<'a> {
     }
 }
 
+/// Compares the contents of a [`Writeable`] to the given UTF-8 bytes without allocating memory.
+///
+/// For more details, see: [`cmp_str`]
+pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
+    let mut wc = WriteComparator::new(other);
+    let _ = writeable.write_to(&mut wc);
+    wc.finish().reverse()
+}
+
 /// Compares the contents of a `Writeable` to the given bytes
 /// without allocating a String to hold the `Writeable` contents.
 ///
@@ -78,18 +87,17 @@ impl<'a> WriteComparator<'a> {
 /// let message = WelcomeMessage { name: "Alice" };
 /// let message_str = message.write_to_string();
 ///
-/// assert_eq!(Ordering::Equal, writeable::cmp_bytes(&message, b"Hello, Alice!"));
+/// assert_eq!(Ordering::Equal, writeable::cmp_str(&message, "Hello, Alice!"));
 ///
-/// assert_eq!(Ordering::Greater, writeable::cmp_bytes(&message, b"Alice!"));
+/// assert_eq!(Ordering::Greater, writeable::cmp_str(&message, "Alice!"));
 /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
 ///
-/// assert_eq!(Ordering::Less, writeable::cmp_bytes(&message, b"Hello, Bob!"));
+/// assert_eq!(Ordering::Less, writeable::cmp_str(&message, "Hello, Bob!"));
 /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
 /// ```
-pub fn cmp_bytes(writeable: &impl Writeable, other: &[u8]) -> Ordering {
-    let mut wc = WriteComparator::new(other);
-    let _ = writeable.write_to(&mut wc);
-    wc.finish().reverse()
+#[inline]
+pub fn cmp_str(writeable: &impl Writeable, other: &str) -> Ordering {
+    cmp_utf8(writeable, other.as_bytes())
 }
 
 #[cfg(test)]

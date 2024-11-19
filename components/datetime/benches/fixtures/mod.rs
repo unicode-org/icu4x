@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options::DateTimeFormatterOptions;
+use icu_datetime::{fields::components, fieldset::serde::CompositeFieldSetSerde, options};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -22,10 +22,11 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    pub length: Option<icu_datetime::options::length::Bag>,
-    pub components: Option<icu_datetime::options::components::Bag>,
-    pub semantic: Option<icu_datetime::fieldset::dynamic::CompositeFieldSet>,
-    pub preferences: Option<icu_datetime::options::preferences::Bag>,
+    pub length: Option<TestOptionsLength>,
+    pub components: Option<TestComponentsBag>,
+    pub semantic: Option<CompositeFieldSetSerde>,
+    #[serde(rename = "hourCycle")]
+    pub hour_cycle: Option<TestHourCycle>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -47,15 +48,30 @@ pub enum TestLength {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PatternsFixture(pub Vec<String>);
+pub struct TestComponentsBag {
+    pub era: Option<components::Text>,
+    pub year: Option<components::Year>,
+    pub month: Option<components::Month>,
+    pub week: Option<components::Week>,
+    pub day: Option<components::Day>,
+    pub weekday: Option<components::Text>,
 
-#[allow(dead_code)]
-pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    if let Some(bag) = input.length {
-        return Some(bag.into());
-    }
-    if let Some(bag) = input.components {
-        return Some(bag.into());
-    }
-    None
+    pub hour: Option<components::Numeric>,
+    pub minute: Option<components::Numeric>,
+    pub second: Option<components::Numeric>,
+    pub fractional_second: Option<options::FractionalSecondDigits>,
+
+    pub time_zone_name: Option<components::TimeZoneName>,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TestHourCycle {
+    H11,
+    H12,
+    H23,
+    H24,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PatternsFixture(pub Vec<String>);

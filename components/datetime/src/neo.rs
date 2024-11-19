@@ -4,13 +4,12 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::dynamic::CompositeFieldSet;
 use crate::external_loaders::*;
+use crate::fieldset::dynamic::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::neo::*;
 use crate::input::ExtractedInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::options::preferences::HourCycle;
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -24,6 +23,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::AnyCalendar;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
 
@@ -132,7 +132,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
 //     }
 // }
 
-size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 456);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 344);
 
 /// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -243,12 +243,13 @@ where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
-        // TODO: Remove this when NeoOptions is gone
+        // TODO: Fix this when we have DateTimePreferences
         let prefs = RawPreferences {
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(HourCycle::from_locale_value),
+                .and_then(|v| HourCycle::try_from(v).ok())
+                .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO
 
@@ -352,7 +353,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldset::YMD>,
     neo_year_month_day_formatter_size,
-    512
+    400
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
@@ -473,12 +474,13 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
-        // TODO: Remove this when NeoOptions is gone
+        // TODO: Fix this when we have DateTimePreferences
         let prefs = RawPreferences {
             hour_cycle: locale
                 .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
                 .as_ref()
-                .and_then(HourCycle::from_locale_value),
+                .and_then(|v| HourCycle::try_from(v).ok())
+                .map(crate::fields::Hour::from_hour_cycle),
         };
         // END TODO
 
@@ -762,6 +764,35 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
         })
     }
 }
+
+/// A formatter optimized for time and time zone formatting.
+///
+/// # Examples
+///
+/// A [`TimeFormatter`] cannot be constructed with a fieldset that involves dates:
+///
+/// ```
+/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::fieldset::Y;
+/// use icu::locale::locale;
+///
+/// assert!(TimeFormatter::try_new(&locale!("und").into(), Y::medium()).is_err());
+/// ```
+///
+/// Furthermore, it is a compile error in the format function:
+///
+/// ```compile_fail,E0271
+/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::fieldset::Y;
+/// use icu::locale::locale;
+///
+/// let date: icu::calendar::Date<icu::calendar::Gregorian> = unimplemented!();
+/// let formatter = TimeFormatter::try_new(&locale!("und").into(), Y::medium()).unwrap();
+///
+/// // error[E0271]: type mismatch resolving `<Gregorian as AsCalendar>::Calendar == ()`
+/// formatter.format(&date);
+/// ```
+pub type TimeFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 
 /// An intermediate type during a datetime formatting operation.
 ///

@@ -605,12 +605,12 @@ macro_rules! impl_zerotrie_subtype {
             Store: zerovec::ule::VarULE,
         {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
-                Store::validate_byte_slice(bytes)
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+                Store::validate_bytes(bytes)
             }
             #[inline]
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+                core::mem::transmute(Store::from_bytes_unchecked(bytes))
             }
         }
         #[cfg(feature = "zerofrom")]

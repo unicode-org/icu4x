@@ -63,17 +63,17 @@ macro_rules! tuple_varule {
         //
         // 1. align(1): repr(transparent) around an align(1) VarULE type: MultiFieldsULE
         // 2. No padding: see previous point
-        // 3. `validate_byte_slice` validates that this type is a valid MultiFieldsULE, and that each field is the correct type from the tuple.
-        // 4. `validate_byte_slice` checks length by deferring to the inner ULEs
-        // 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
+        // 3. `validate_bytes` validates that this type is a valid MultiFieldsULE, and that each field is the correct type from the tuple.
+        // 4. `validate_bytes` checks length by deferring to the inner ULEs
+        // 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
         // 6. All other methods are left at their default impl.
         // 7. The inner ULEs have byte equality, so this composition has byte equality.
         unsafe impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> VarULE for $name<$($T,)+ Format>
         {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
                 // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
                 // as in the type def
-                let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_byte_slice(bytes)?;
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::parse_bytes(bytes)?;
                 $(
                     // Safety invariant: $i < $len, from the macro invocation
                     unsafe {
@@ -83,13 +83,13 @@ macro_rules! tuple_varule {
                 Ok(())
             }
 
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
                  // Safety: We validate that this type is the same kind of MultiFieldsULE (with $len, Format)
                 // as in the type def
-                let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_byte_slice_unchecked(bytes);
+                let multi = <MultiFieldsULE<$len, Format> as VarULE>::from_bytes_unchecked(bytes);
 
                 // This type is repr(transparent) over MultiFieldsULE<$len>, so its slices can be transmuted
-                // Field invariant upheld here: validate_byte_slice above validates every field for being the right type
+                // Field invariant upheld here: validate_bytes above validates every field for being the right type
                 mem::transmute::<&MultiFieldsULE<$len, Format>, &Self>(multi)
             }
         }
@@ -230,7 +230,7 @@ macro_rules! tuple_varule {
                     ))
                 } else {
                     let bytes = <&[u8]>::deserialize(deserializer)?;
-                    $name::<$($T,)+ Format>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+                    $name::<$($T,)+ Format>::parse_bytes(bytes).map_err(serde::de::Error::custom)
                 }
             }
         }
@@ -255,12 +255,12 @@ mod tests {
         let vec: Vec<(&str, &[u8])> = vec![("a", b"b"), ("foo", b"bar"), ("lorem", b"ipsum\xFF")];
         let zerovec: VarZeroVec<Tuple2VarULE<str, [u8]>> = (&vec).into();
         let bytes = zerovec.as_bytes();
-        let zerovec2 = VarZeroVec::parse_byte_slice(bytes).unwrap();
+        let zerovec2 = VarZeroVec::parse_bytes(bytes).unwrap();
         assert_eq!(zerovec, zerovec2);
 
         // Test failed validation with a correctly sized but differently constrained tuple
         // Note: ipsum\xFF is not a valid str
-        let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_byte_slice(bytes);
+        let zerovec3 = VarZeroVec::<Tuple2VarULE<str, str>>::parse_bytes(bytes);
         assert!(zerovec3.is_err());
 
         #[cfg(feature = "serde")]
@@ -281,12 +281,12 @@ mod tests {
         ];
         let zerovec: VarZeroVec<Tuple3VarULE<str, [u8], VarZeroSlice<str>, Format>> = (&vec).into();
         let bytes = zerovec.as_bytes();
-        let zerovec2 = VarZeroVec::parse_byte_slice(bytes).unwrap();
+        let zerovec2 = VarZeroVec::parse_bytes(bytes).unwrap();
         assert_eq!(zerovec, zerovec2);
 
         // Test failed validation with a correctly sized but differently constrained tuple
         // Note: the str is unlikely to be a valid varzerovec
-        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>, Format>>::parse_byte_slice(bytes);
+        let zerovec3 = VarZeroVec::<Tuple3VarULE<VarZeroSlice<str>, [u8], VarZeroSlice<str>, Format>>::parse_bytes(bytes);
         assert!(zerovec3.is_err());
 
         #[cfg(feature = "serde")]

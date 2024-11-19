@@ -264,6 +264,7 @@ impl PluralCategory {
 
 define_preferences!(
     /// The preferences for plural rules.
+    [Copy]
     PluralRulesPreferences,
     {}
 );
@@ -660,7 +661,7 @@ impl PluralRulesWithRanges<PluralRules> {
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let rules = PluralRules::try_new_cardinal_unstable(provider, prefs.clone())?;
+        let rules = PluralRules::try_new_cardinal_unstable(provider, prefs)?;
 
         PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
     }
@@ -699,7 +700,7 @@ impl PluralRulesWithRanges<PluralRules> {
         provider: &(impl DataProvider<OrdinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let rules = PluralRules::try_new_ordinal_unstable(provider, prefs.clone())?;
+        let rules = PluralRules::try_new_ordinal_unstable(provider, prefs)?;
 
         PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
     }

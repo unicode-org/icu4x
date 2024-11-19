@@ -271,7 +271,7 @@ impl CaseMapData {
     #[cfg(any(feature = "datagen", test))]
     pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, UleError> {
         let raw = int.to_unaligned();
-        CaseMapDataULE::validate_byte_slice(raw.as_bytes())?;
+        CaseMapDataULE::validate_bytes(raw.as_bytes())?;
 
         let this = Self::from_unaligned(CaseMapDataULE(raw));
         Ok(this)
@@ -357,17 +357,17 @@ impl CaseMapDataULE {
 /// 1. The type *must not* include any uninitialized or padding bytes: repr(transparent)
 ///    wrapper around ULE type
 /// 2. The type must have an alignment of 1 byte: repr(transparent) wrapper around ULE type
-/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type: It does
-/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`):
 ///    it does, due to the RawBytesULE parse call
 /// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines: They have been
 /// 6. The equality invariant is satisfied
 unsafe impl ULE for CaseMapDataULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
+        let sixteens = RawBytesULE::<2>::parse_bytes_to_slice(bytes)?;
 
         for sixteen in sixteens {
             let sixteen = sixteen.as_unsigned_int();

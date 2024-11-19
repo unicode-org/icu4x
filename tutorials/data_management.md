@@ -98,7 +98,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, neo_skeleton::YMDHMS, NeoSkeletonLength};
+use icu::datetime::{DateTimeFormatter, options::YMDHMS, NeoSkeletonLength};
 
 const LOCALE: Locale = locale!("ja");
 

@@ -31,7 +31,7 @@ use yoke::Yokeable;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_any_provider(
 ///     &provider,
-///     &Default::default(),
+///     Default::default(),
 /// )
 /// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::LanguageIdentifier;
-use alloc::string::ToString;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 impl Serialize for LanguageIdentifier {

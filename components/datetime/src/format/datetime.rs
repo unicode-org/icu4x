@@ -516,7 +516,7 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locale_core::locale!("en").into(),
+            icu_locale_core::locale!("en").into(),
             fixed_decimal_format_options,
         )
         .unwrap();

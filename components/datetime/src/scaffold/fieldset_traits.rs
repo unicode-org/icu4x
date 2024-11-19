@@ -4,7 +4,6 @@
 
 use crate::{
     format::neo::*,
-    neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
     scaffold::*,
 };
@@ -19,7 +18,7 @@ use icu_calendar::{
     },
     Date, Iso, Time,
 };
-use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
@@ -126,14 +125,6 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     ///
     /// Should implement [`ZoneMarkers`].
     type Z;
-    /// Type of the length option in the constructor.
-    type LengthOption: IntoOption<NeoSkeletonLength>;
-    /// Type of the alignment option in the constructor.
-    type AlignmentOption: IntoOption<Alignment>;
-    /// Type of the year style option in the constructor.
-    type YearStyleOption: IntoOption<YearStyle>;
-    /// Type of the time precision option in the constructor.
-    type TimePrecisionOption: IntoOption<TimePrecision>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
@@ -377,10 +368,13 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
-pub trait AllFixedCalendarExternalDataMarkers: DataProvider<DecimalSymbolsV1Marker> {}
+pub trait AllFixedCalendarExternalDataMarkers:
+    DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
+{
+}
 
 impl<T> AllFixedCalendarExternalDataMarkers for T where
-    T: ?Sized + DataProvider<DecimalSymbolsV1Marker>
+    T: ?Sized + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -393,7 +387,8 @@ pub trait AllAnyCalendarExternalDataMarkers:
     + DataProvider<IslamicUmmAlQuraCacheV1Marker>
     + DataProvider<JapaneseErasV1Marker>
     + DataProvider<JapaneseExtendedErasV1Marker>
-    + DataProvider<DecimalSymbolsV1Marker>
+    + DataProvider<DecimalSymbolsV2Marker>
+    + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -405,7 +400,8 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
         + DataProvider<IslamicUmmAlQuraCacheV1Marker>
         + DataProvider<JapaneseErasV1Marker>
         + DataProvider<JapaneseExtendedErasV1Marker>
-        + DataProvider<DecimalSymbolsV1Marker>
+        + DataProvider<DecimalSymbolsV2Marker>
+        + DataProvider<DecimalDigitsV1Marker>
 {
 }
 

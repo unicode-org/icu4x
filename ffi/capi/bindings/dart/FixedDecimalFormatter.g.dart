@@ -39,7 +39,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
 
   /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data.
   ///
-  /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
+  /// See the [Rust documentation for `DecimalSymbolsV2`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV2.html) for more information.
   ///
   /// Throws [DataError] on failure.
   static FixedDecimalFormatter createWithManualData(String plusSignPrefix, String plusSignSuffix, String minusSignPrefix, String minusSignSuffix, String decimalSeparator, String groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, core.List<Rune> digits, FixedDecimalGroupingStrategy? groupingStrategy) {

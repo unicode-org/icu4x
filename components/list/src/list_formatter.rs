@@ -15,6 +15,7 @@ extern crate writeable;
 
 define_preferences!(
     /// The preferences for list formatting.
+    [Copy]
     ListFormatterPreferences,
     {}
 );

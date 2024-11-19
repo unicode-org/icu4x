@@ -110,7 +110,7 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// making the header int suitable for varint packing, such as that used by
 /// postcard and other size-optimized serialization formats.
 ///
-/// [`YearStyle::Auto`]: crate::neo_skeleton::YearStyle::Auto
+/// [`YearStyle::Auto`]: crate::options::YearStyle::Auto
 #[icu_provider::data_struct(
     // Date patterns
     marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),

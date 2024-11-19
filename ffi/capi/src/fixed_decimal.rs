@@ -379,6 +379,7 @@ pub mod ffi {
 
         /// Format the [`SignedFixedDecimal`] as a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::write_to, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::to_string, FnInStruct, hidden)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);

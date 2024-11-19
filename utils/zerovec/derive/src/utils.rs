@@ -313,6 +313,7 @@ pub struct ZeroVecAttrs {
     pub skip_kv: bool,
     pub skip_ord: bool,
     pub skip_toowned: bool,
+    pub skip_from: bool,
     pub serialize: bool,
     pub deserialize: bool,
     pub debug: bool,
@@ -369,6 +370,8 @@ pub fn extract_attributes_common(
             attrs.skip_ord = true;
         } else if ident == "ToOwned" && is_var {
             attrs.skip_toowned = true;
+        } else if ident == "From" && is_var {
+            attrs.skip_from = true;
         } else {
             return Err(Error::new(
                 ident.span(),
