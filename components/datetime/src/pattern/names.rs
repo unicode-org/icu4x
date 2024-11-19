@@ -171,46 +171,54 @@ size_test!(
 /// );
 /// ```
 #[derive(Debug)]
-pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
+pub struct TypedDateTimeNames<
+    C: CldrCalendar,
+    FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet,
+> {
     locale: DataLocale,
-    inner: RawDateTimeNames<R>,
+    inner: RawDateTimeNames<FSet>,
     _calendar: PhantomData<C>,
 }
 
-pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
+pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     year_names:
-        <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
-    month_names: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
+        <FSet::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
+    month_names: <FSet::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
         fields::Month,
         FieldLength,
     )>,
-    weekday_names: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<
-        (fields::Weekday, FieldLength),
-    >,
+    weekday_names:
+        <FSet::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<(
+            fields::Weekday,
+            FieldLength,
+        )>,
     dayperiod_names:
-        <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
+        <FSet::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
             FieldLength,
         >,
     zone_essentials:
-        <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
+        <FSet::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
     locations_root:
-        <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    locations: <R::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    mz_generic_long:
-        <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container<()>,
-    mz_generic_short: <R::ZoneGenericShort as DateTimeNamesHolderTrait<
+        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
+    locations:
+        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
+    mz_generic_long: <FSet::ZoneGenericLong as DateTimeNamesHolderTrait<
+        tz::MzGenericLongV1Marker,
+    >>::Container<()>,
+    mz_generic_short: <FSet::ZoneGenericShort as DateTimeNamesHolderTrait<
         tz::MzGenericShortV1Marker,
     >>::Container<()>,
-    mz_specific_long: <R::ZoneSpecificLong as DateTimeNamesHolderTrait<
+    mz_specific_long: <FSet::ZoneSpecificLong as DateTimeNamesHolderTrait<
         tz::MzSpecificLongV1Marker,
     >>::Container<()>,
-    mz_specific_short: <R::ZoneSpecificShort as DateTimeNamesHolderTrait<
+    mz_specific_short: <FSet::ZoneSpecificShort as DateTimeNamesHolderTrait<
         tz::MzSpecificShortV1Marker,
     >>::Container<()>,
-    mz_periods: <R::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container<()>,
+    mz_periods:
+        <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container<()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
-    _marker: PhantomData<R>,
+    _marker: PhantomData<FSet>,
 }
 
 // Need a custom impl because not all of the associated types impl Debug
@@ -249,7 +257,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
 }
 
-impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// Constructor that takes a selected locale and creates an empty instance.
     ///
     /// For an example, see [`TypedDateTimeNames`].
@@ -1115,7 +1123,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn with_pattern<'l>(
         &'l self,
         pattern: &'l DateTimePattern,
-    ) -> DateTimePatternFormatter<'l, C, R> {
+    ) -> DateTimePatternFormatter<'l, C, FSet> {
         DateTimePatternFormatter::new(pattern.as_borrowed(), self.inner.as_borrowed())
     }
 
@@ -1127,7 +1135,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
         &'l mut self,
         provider: &P,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C, R>, PatternLoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
         P: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -1206,7 +1214,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     pub fn include_for_pattern<'l>(
         &'l mut self,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C, R>, PatternLoadError>
+    ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>

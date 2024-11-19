@@ -23,10 +23,10 @@ use writeable::TryWriteable;
 /// [`DateTimePattern`]: super::DateTimePattern
 /// [`TypedDateTimeNames`]: super::TypedDateTimeNames
 #[derive(Debug, Copy, Clone)]
-pub struct DateTimePatternFormatter<'a, C: CldrCalendar, R> {
+pub struct DateTimePatternFormatter<'a, C: CldrCalendar, FSet> {
     inner: RawDateTimePatternFormatter<'a>,
     _calendar: PhantomData<C>,
-    _marker: PhantomData<R>,
+    _marker: PhantomData<FSet>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -35,7 +35,7 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar, R> DateTimePatternFormatter<'a, C, R> {
+impl<'a, C: CldrCalendar, FSet> DateTimePatternFormatter<'a, C, FSet> {
     pub(crate) fn new(
         pattern: DateTimePatternBorrowed<'a>,
         names: RawDateTimeNamesBorrowed<'a>,
@@ -48,22 +48,22 @@ impl<'a, C: CldrCalendar, R> DateTimePatternFormatter<'a, C, R> {
     }
 }
 
-impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
+impl<'a, C: CldrCalendar, FSet: DateTimeMarkers> DateTimePatternFormatter<'a, C, FSet>
 where
-    R::D: TypedDateDataMarkers<C> + DateInputMarkers,
-    R::T: TimeMarkers,
-    R::Z: ZoneMarkers,
+    FSet::D: TypedDateDataMarkers<C> + DateInputMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
 {
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimeNames`](super::TypedDateTimeNames).
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<FSet>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -112,16 +112,16 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + GetField<<R::D as DateInputMarkers>::YearInput>
-            + GetField<<R::D as DateInputMarkers>::MonthInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
-            + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+            + GetField<<FSet::D as DateInputMarkers>::YearInput>
+            + GetField<<FSet::D as DateInputMarkers>::MonthInput>
+            + GetField<<FSet::D as DateInputMarkers>::DayOfMonthInput>
+            + GetField<<FSet::D as DateInputMarkers>::DayOfWeekInput>
+            + GetField<<FSet::D as DateInputMarkers>::DayOfYearInput>
             + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<R::D, (), (), I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<FSet::D, (), (), I>(datetime),
             names: self.inner.names,
         }
     }
@@ -176,15 +176,15 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + GetField<<R::T as TimeMarkers>::HourInput>
-            + GetField<<R::T as TimeMarkers>::MinuteInput>
-            + GetField<<R::T as TimeMarkers>::SecondInput>
-            + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + GetField<<FSet::T as TimeMarkers>::HourInput>
+            + GetField<<FSet::T as TimeMarkers>::MinuteInput>
+            + GetField<<FSet::T as TimeMarkers>::SecondInput>
+            + GetField<<FSet::T as TimeMarkers>::NanoSecondInput>
             + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), R::T, (), I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<(), FSet::T, (), I>(datetime),
             names: self.inner.names,
         }
     }
@@ -239,15 +239,15 @@ where
     where
         I: ?Sized
             + IsInCalendar<C>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-            + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
+            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneIdInput>
+            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneOffsetInput>
+            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneVariantInput>
+            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
             + GetField<()>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), (), R::Z, I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<(), (), FSet::Z, I>(datetime),
             names: self.inner.names,
         }
     }
