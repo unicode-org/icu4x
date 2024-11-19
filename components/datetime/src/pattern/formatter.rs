@@ -8,7 +8,7 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, GetField, IsInCalendar, TimeMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
@@ -17,6 +17,10 @@ use core::marker::PhantomData;
 use writeable::TryWriteable;
 
 /// A formatter for a specific [`DateTimePattern`].
+///
+/// ❗ This type forgoes most internationalization functionality of the datetime crate.
+/// It assumes that the pattern is already localized for the customer's locale. Most clients
+/// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
 /// Create one of these via factory methods on [`TypedDateTimeNames`].
 ///
@@ -54,36 +58,25 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
 {
-    /// Formats a date and time of day.
-    ///
-    /// For an example, see [`TypedDateTimeNames`](super::TypedDateTimeNames).
-    pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized + IsInCalendar<C> + AllInputMarkers<FSet>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a date without a time of day.
+    /// Formats a date and time of day with a custom date/time pattern.
     ///
     /// # Examples
+    ///
+    /// Format a date:
     ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields;
     /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
+    /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Four)
@@ -100,47 +93,29 @@ where
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_date(&date_bce),
+    ///     names.with_pattern(&pattern).format(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_date(&date_ce),
+    ///     names.with_pattern(&pattern).format(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<FSet::D as DateInputMarkers>::YearInput>
-            + GetField<<FSet::D as DateInputMarkers>::MonthInput>
-            + GetField<<FSet::D as DateInputMarkers>::DayOfMonthInput>
-            + GetField<<FSet::D as DateInputMarkers>::DayOfWeekInput>
-            + GetField<<FSet::D as DateInputMarkers>::DayOfYearInput>
-            + GetField<()>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<FSet::D, (), (), I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a time of day without a date.
     ///
-    /// # Examples
+    /// Format a time:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
     /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
+    /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
     ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Three)
@@ -156,42 +131,24 @@ where
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_am),
+    ///     names.with_pattern(&pattern).format(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_pm),
+    ///     names.with_pattern(&pattern).format(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_noon),
+    ///     names.with_pattern(&pattern).format(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_time(&time_midnight),
+    ///     names.with_pattern(&pattern).format(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
-    where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<FSet::T as TimeMarkers>::HourInput>
-            + GetField<<FSet::T as TimeMarkers>::MinuteInput>
-            + GetField<<FSet::T as TimeMarkers>::SecondInput>
-            + GetField<<FSet::T as TimeMarkers>::NanoSecondInput>
-            + GetField<()>,
-    {
-        FormattedDateTimePattern {
-            pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), FSet::T, (), I>(datetime),
-            names: self.inner.names,
-        }
-    }
-
-    /// Formats a timezone without a date or time.
     ///
-    /// # Examples
+    /// Format a time zone:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
@@ -227,27 +184,21 @@ where
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_timezone(&london_winter),
+    ///     names.with_pattern(&pattern).format(&london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format_timezone(&london_summer),
+    ///     names.with_pattern(&pattern).format(&london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```
-    pub fn format_timezone<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
+    pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized
-            + IsInCalendar<C>
-            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneIdInput>
-            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneOffsetInput>
-            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneVariantInput>
-            + GetField<<FSet::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
-            + GetField<()>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<FSet>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<(), (), FSet::Z, I>(datetime),
+            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
             names: self.inner.names,
         }
     }

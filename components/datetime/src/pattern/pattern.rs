@@ -13,7 +13,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
-/// [`DateTimePattern`] forgoes most internationalization functionality of the datetime crate.
+/// ❗ This type forgoes most internationalization functionality of the datetime crate.
 /// It assumes that the pattern is already localized for the customer's locale. Most clients
 /// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///

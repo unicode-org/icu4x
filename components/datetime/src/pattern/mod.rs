@@ -4,7 +4,7 @@
 
 //! Lower-level, power-user APIs for formatting datetimes with pattern strings.
 //!
-//! This module forgoes most internationalization functionality of the datetime crate.
+//! ❗ This module forgoes most internationalization functionality of the datetime crate.
 //! It assumes that the pattern is already localized for the customer's locale. Most clients
 //! should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 //!
