@@ -467,7 +467,6 @@ macro_rules! impl_date_marker {
         $(#[$attr:meta])*
         $type:ident,
         $type_time:ident,
-        $components:expr,
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
@@ -635,7 +634,6 @@ macro_rules! impl_calendar_period_marker {
     (
         $(#[$attr:meta])*
         $type:ident,
-        $components:expr,
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
@@ -677,8 +675,6 @@ macro_rules! impl_time_marker {
         $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -772,8 +768,6 @@ macro_rules! impl_zone_marker {
         $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -968,7 +962,6 @@ impl_date_marker!(
     /// in the future. See CLDR-18040.
     D,
     DT,
-    NeoDateComponents::Day,
     description = "day of month (standalone)",
     sample_length = short,
     sample = "17",
@@ -981,7 +974,6 @@ impl_date_marker!(
 impl_date_marker!(
     E,
     ET,
-    NeoDateComponents::Weekday,
     description = "weekday (standalone)",
     sample_length = long,
     sample = "Friday",
@@ -995,7 +987,6 @@ impl_date_marker!(
     /// in the future. See CLDR-18040.
     DE,
     DET,
-    NeoDateComponents::DayWeekday,
     description = "day of month and weekday",
     sample_length = long,
     sample = "17 Friday",
@@ -1009,7 +1000,6 @@ impl_date_marker!(
 impl_date_marker!(
     MD,
     MDT,
-    NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = medium,
     sample = "May 17",
@@ -1025,7 +1015,6 @@ impl_date_marker!(
     /// See CLDR-18040 for progress on improving this format.
     MDE,
     MDET,
-    NeoDateComponents::MonthDayWeekday,
     description = "month, day, and weekday",
     sample_length = medium,
     sample = "Fri, May 17",
@@ -1042,7 +1031,6 @@ impl_date_marker!(
 impl_date_marker!(
     YMD,
     YMDT,
-    NeoDateComponents::YearMonthDay,
     description = "year, month, and day",
     sample_length = short,
     sample = "5/17/24",
@@ -1059,7 +1047,6 @@ impl_date_marker!(
 impl_date_marker!(
     YMDE,
     YMDET,
-    NeoDateComponents::YearMonthDayWeekday,
     description = "year, month, day, and weekday",
     sample_length = short,
     sample = "Fri, 5/17/24",
@@ -1077,7 +1064,6 @@ impl_date_marker!(
 
 impl_calendar_period_marker!(
     Y,
-    NeoCalendarPeriodComponents::Year,
     description = "year (standalone)",
     sample_length = medium,
     sample = "2024",
@@ -1089,7 +1075,6 @@ impl_calendar_period_marker!(
 
 impl_calendar_period_marker!(
     M,
-    NeoCalendarPeriodComponents::Month,
     description = "month (standalone)",
     sample_length = long,
     sample = "May",
@@ -1101,7 +1086,6 @@ impl_calendar_period_marker!(
 
 impl_calendar_period_marker!(
     YM,
-    NeoCalendarPeriodComponents::YearMonth,
     description = "year and month",
     sample_length = medium,
     sample = "May 2024",
@@ -1199,7 +1183,6 @@ impl_time_marker!(
     /// );
     /// ```
     T,
-    NeoTimeComponents::Time,
     description = "time (locale-dependent hour cycle)",
     sample_length = medium,
     sample = "3:47:50 PM",
@@ -1280,7 +1263,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Z,
-    NeoTimeZoneStyle::Specific,
     description = "time zone in specific non-location format",
     sample_length = long,
     sample = "Central Daylight Time",
@@ -1327,7 +1309,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Zs,
-    NeoTimeZoneStyle::Specific,
     description = "time zone in specific non-location format (only short)",
     sample_length = short,
     sample = "CDT",
@@ -1391,7 +1372,6 @@ impl_zone_marker!(
     /// );
     /// ```
     O,
-    NeoTimeZoneStyle::Offset,
     description = "UTC offset",
     sample_length = medium,
     sample = "GMT-5",
@@ -1507,7 +1487,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     V,
-    NeoTimeZoneStyle::Generic,
     description = "time zone in generic non-location format",
     sample_length = long,
     sample = "Central Time",
@@ -1550,7 +1529,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     Vs,
-    NeoTimeZoneStyle::Generic,
     description = "time zone in generic non-location format (only short)",
     sample_length = short,
     sample = "CT",
@@ -1592,7 +1570,6 @@ impl_zone_marker!(
     /// formatter.format(&utc_offset);
     /// ```
     L,
-    NeoTimeZoneStyle::Location,
     description = "time zone in location format",
     sample_length = long,
     sample = "Chicago Time",
