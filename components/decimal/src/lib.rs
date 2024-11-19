@@ -103,7 +103,7 @@ pub(crate) mod size_test_macro;
 pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem,
