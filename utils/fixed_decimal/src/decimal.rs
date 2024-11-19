@@ -1844,34 +1844,21 @@ impl UnsignedFixedDecimal {
     /// let decimal = UnsignedFixedDecimal::try_from_utf8(b"1234567890");
     /// assert_eq!(decimal, Ok(UnsignedFixedDecimal::from(1234567890u32)));
     ///
-    /// // In case of adding sign, the function will return an error.
+    /// // In case of adding `+`, the function will return an error.
+    /// let decimal = UnsignedFixedDecimal::try_from_utf8(b"+1234567890");
+    /// assert_eq!(decimal, Err(ParseError::Syntax));
+    ///
+    /// // In case of adding `-`, the function will return error
     /// let decimal = UnsignedFixedDecimal::try_from_utf8(b"-1234567890");
     /// assert_eq!(decimal, Err(ParseError::Syntax));
     /// ```
     pub fn try_from_utf8(input_str: &[u8]) -> Result<Self, ParseError> {
-        // input_str: the input string
-        // no_sign_str: the input string when the sign is removed from it
         if input_str.is_empty() {
             return Err(ParseError::Syntax);
         }
-        #[allow(clippy::indexing_slicing)] // The string is not empty.
-        let skip_first_char = match input_str[0] {
-            b'-' => return Err(ParseError::Syntax),
-            b'+' => true,
-            _ => false,
-        };
 
-        #[allow(clippy::indexing_slicing)] // The string is not empty.
-        let no_sign_str = if !skip_first_char {
-            input_str
-        } else {
-            &input_str[1..]
-        };
-        if no_sign_str.is_empty() {
-            return Err(ParseError::Syntax);
-        }
-
-        Self::try_from_no_sign_utf8(no_sign_str)
+        // NOTE: this function assumes that the input string has no sign, this means if the string starts with `-` or `+`, it will be treated as a syntax error.
+        Self::try_from_no_sign_utf8(input_str)
     }
 
     pub(crate) fn try_from_no_sign_utf8(no_sign_str: &[u8]) -> Result<Self, ParseError> {
