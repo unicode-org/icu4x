@@ -30,7 +30,7 @@ pub use crate::bidi::{BidiMirroringGlyph, BidiPairedBracketType};
 ///     ...
 /// }
 /// ```
-/// Produces `const ALL_CONSTS = &[("Neutral", 0u16), ...];` by
+/// Produces `const ALL_VALUES = &[("Neutral", 0u16), ...];` by
 /// explicitly casting first field of the struct to u16.
 macro_rules! create_const_array {
     (
@@ -46,10 +46,18 @@ macro_rules! create_const_array {
                 $v const $i: $t = $e;
             )*
 
-            #[cfg(test)]
-            const ALL_CONSTS: &'static [(&'static str, u16)] = &[
-                $((stringify!($i), $enum_ty::$i.0 as u16)),*
+            /// All possible values of this enum in the Unicode version
+            /// from this ICU4X release.
+            pub const ALL_VALUES: &'static [$enum_ty] = &[
+                $($enum_ty::$i),*
             ];
+        }
+
+
+        impl From<$enum_ty> for u16  {
+            fn from(other: $enum_ty) -> Self {
+                other.0 as u16
+            }
         }
     }
 }
@@ -2956,19 +2964,28 @@ mod test_enumerated_property_completeness {
     use super::*;
     use alloc::collections::BTreeMap;
 
-    fn check_enum<'a>(
+    fn check_enum<'a, T: NamedEnumeratedProperty>(
         lookup: &crate::provider::names::PropertyValueNameToEnumMapV1<'static>,
-        consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
-    ) {
+        consts: impl IntoIterator<Item = &'a T>,
+    ) where
+        u16: From<T>,
+    {
         let mut data: BTreeMap<_, _> = lookup
             .map
             .iter()
             .map(|(name, value)| (value, (name, "Data")))
             .collect();
 
-        let consts = consts
-            .into_iter()
-            .map(|(name, value)| (*value as usize, (name.to_string(), "Consts")));
+        let names = crate::PropertyNamesLong::<T>::new();
+        let consts = consts.into_iter().map(|value| {
+            (
+                u16::from(*value) as usize,
+                (
+                    names.get(*value).unwrap_or("<unknown>").to_string(),
+                    "Consts",
+                ),
+            )
+        });
 
         let mut diff = Vec::new();
         for t @ (value, _) in consts {
@@ -2994,7 +3011,7 @@ mod test_enumerated_property_completeness {
     fn test_ea() {
         check_enum(
             crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER,
-            EastAsianWidth::ALL_CONSTS,
+            EastAsianWidth::ALL_VALUES,
         );
     }
 
@@ -3002,7 +3019,7 @@ mod test_enumerated_property_completeness {
     fn test_ccc() {
         check_enum(
             crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2_MARKER,
-            CanonicalCombiningClass::ALL_CONSTS,
+            CanonicalCombiningClass::ALL_VALUES,
         );
     }
 
@@ -3010,7 +3027,7 @@ mod test_enumerated_property_completeness {
     fn test_jt() {
         check_enum(
             crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER,
-            JoiningType::ALL_CONSTS,
+            JoiningType::ALL_VALUES,
         );
     }
 
@@ -3018,7 +3035,7 @@ mod test_enumerated_property_completeness {
     fn test_insc() {
         check_enum(
             crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2_MARKER,
-            IndicSyllabicCategory::ALL_CONSTS,
+            IndicSyllabicCategory::ALL_VALUES,
         );
     }
 
@@ -3026,7 +3043,7 @@ mod test_enumerated_property_completeness {
     fn test_sb() {
         check_enum(
             crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2_MARKER,
-            SentenceBreak::ALL_CONSTS,
+            SentenceBreak::ALL_VALUES,
         );
     }
 
@@ -3034,7 +3051,7 @@ mod test_enumerated_property_completeness {
     fn test_wb() {
         check_enum(
             crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER,
-            WordBreak::ALL_CONSTS,
+            WordBreak::ALL_VALUES,
         );
     }
 
@@ -3042,7 +3059,7 @@ mod test_enumerated_property_completeness {
     fn test_bc() {
         check_enum(
             crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2_MARKER,
-            BidiClass::ALL_CONSTS,
+            BidiClass::ALL_VALUES,
         );
     }
 
@@ -3050,7 +3067,7 @@ mod test_enumerated_property_completeness {
     fn test_hst() {
         check_enum(
             crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER,
-            HangulSyllableType::ALL_CONSTS,
+            HangulSyllableType::ALL_VALUES,
         );
     }
 }
