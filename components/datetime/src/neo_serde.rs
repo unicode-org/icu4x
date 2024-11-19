@@ -5,7 +5,7 @@
 //! Serde definitions for semantic skeleta
 
 use crate::{
-    fieldsets::{self, dynamic::*},
+    fieldsets::{self, enums::*},
     options::*,
     raw::neo::RawNeoOptions,
 };
@@ -49,8 +49,8 @@ pub enum CompositeFieldSetSerdeError {
 ///
 /// ```
 /// use icu::datetime::fieldsets;
-/// use icu::datetime::fieldsets::dynamic::CompositeFieldSet;
-/// use icu::datetime::fieldsets::dynamic::DateFieldSet;
+/// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+/// use icu::datetime::fieldsets::enums::DateFieldSet;
 /// use icu::datetime::fieldsets::serde::CompositeFieldSetSerde;
 ///
 /// let field_set = CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::short()));
@@ -71,7 +71,7 @@ pub enum CompositeFieldSetSerdeError {
 /// If the field set is invalid, an error will occur:
 ///
 /// ```
-/// use icu::datetime::fieldsets::dynamic::CompositeFieldSet;
+/// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::datetime::fieldsets::serde::CompositeFieldSetSerde;
 /// use icu::datetime::fieldsets::serde::CompositeFieldSetSerdeError;
 ///

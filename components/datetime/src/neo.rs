@@ -5,7 +5,7 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::external_loaders::*;
-use crate::fieldsets::dynamic::CompositeFieldSet;
+use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::pattern::*;

@@ -29,7 +29,7 @@
 //! ```
 
 #[path = "dynamic.rs"]
-pub mod dynamic;
+pub mod enums;
 
 pub use crate::combo::Combo;
 
@@ -40,7 +40,7 @@ use crate::{
     raw::neo::RawNeoOptions,
     scaffold::*,
 };
-use dynamic::*;
+use enums::*;
 use icu_calendar::{
     types::{
         DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,

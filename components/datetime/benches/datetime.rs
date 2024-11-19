@@ -5,7 +5,7 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldsets::dynamic::CompositeFieldSet, FixedCalendarDateTimeFormatter};
+use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;

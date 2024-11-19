@@ -4,7 +4,7 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::fieldsets::dynamic::{
+use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldsets::{self, YMD};

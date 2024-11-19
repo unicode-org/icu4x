@@ -79,11 +79,11 @@ use crate::{provider::neo::*, scaffold::*};
 /// );
 /// ```
 ///
-/// Mix a dynamic [`DateFieldSet`](crate::fieldsets::dynamic::DateFieldSet)
+/// Mix a dynamic [`DateFieldSet`](crate::fieldsets::enums::DateFieldSet)
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, YMD, Vs, dynamic::DateFieldSet};
+/// use icu::datetime::fieldsets::{Combo, YMD, Vs, enums::DateFieldSet};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;

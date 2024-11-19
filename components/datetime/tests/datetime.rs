@@ -15,7 +15,7 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     AsCalendar, Calendar, DateTime,
 };
-use icu_datetime::fieldsets::dynamic::*;
+use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
     pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,

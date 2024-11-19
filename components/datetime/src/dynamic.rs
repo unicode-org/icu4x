@@ -30,7 +30,7 @@
 //! ```
 //! use icu::calendar::DateTime;
 //! use icu::datetime::fieldsets;
-//! use icu::datetime::fieldsets::dynamic::CompositeDateTimeFieldSet;
+//! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::TryWriteable;
@@ -38,10 +38,10 @@
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
 //!         let field_set = fieldsets::MDT::medium().hm();
-//!         CompositeDateTimeFieldSet::DateTime(fieldsets::dynamic::DateAndTimeFieldSet::MDT(field_set))
+//!         CompositeDateTimeFieldSet::DateTime(fieldsets::enums::DateAndTimeFieldSet::MDT(field_set))
 //!     } else {
 //!         let field_set = fieldsets::MD::medium();
-//!         CompositeDateTimeFieldSet::Date(fieldsets::dynamic::DateFieldSet::MD(field_set))
+//!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(field_set))
 //!     }
 //! }
 //!
@@ -296,7 +296,7 @@ macro_rules! impl_attrs {
             /// # Examples
             ///
             /// ```
-            #[doc = concat!("use icu::datetime::fieldsets::dynamic::", stringify!($type), " as FS;")]
+            #[doc = concat!("use icu::datetime::fieldsets::enums::", stringify!($type), " as FS;")]
             /// use icu_provider::DataMarkerAttributes;
             ///
             /// assert!(FS::ALL_DATA_MARKER_ATTRIBUTES.contains(

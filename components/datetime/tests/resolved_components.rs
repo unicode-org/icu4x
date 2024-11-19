@@ -5,10 +5,7 @@
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
     fields::components,
-    fieldsets::{
-        self,
-        dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
-    },
+    fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
     FixedCalendarDateTimeFormatter,
 };

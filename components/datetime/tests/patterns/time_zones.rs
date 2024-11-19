@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::{
-    fieldsets::{self, dynamic::ZoneFieldSet},
+    fieldsets::{self, enums::ZoneFieldSet},
     options::NeoSkeletonLength,
 };
 use serde::{Deserialize, Serialize};

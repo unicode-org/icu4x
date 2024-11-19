@@ -41,7 +41,7 @@ and calendar systems:
 
 | Factor | Static (Lower Binary Size) | Dynamic (Greater Binary Size) |
 |---|---|---|
-| Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::dynamic`] |
+| Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 
 If formatting times and time zones without dates, consider using [`TimeFormatter`].
