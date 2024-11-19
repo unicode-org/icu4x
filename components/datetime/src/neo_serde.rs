@@ -5,7 +5,7 @@
 //! Serde definitions for semantic skeleta
 
 use crate::{
-    fieldset::{self, dynamic::*},
+    fieldsets::{self, dynamic::*},
     options::*,
     raw::neo::RawNeoOptions,
 };
@@ -48,12 +48,12 @@ pub enum CompositeFieldSetSerdeError {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::fieldset;
-/// use icu::datetime::fieldset::dynamic::CompositeFieldSet;
-/// use icu::datetime::fieldset::dynamic::DateFieldSet;
-/// use icu::datetime::fieldset::serde::CompositeFieldSetSerde;
+/// use icu::datetime::fieldsets;
+/// use icu::datetime::fieldsets::dynamic::CompositeFieldSet;
+/// use icu::datetime::fieldsets::dynamic::DateFieldSet;
+/// use icu::datetime::fieldsets::serde::CompositeFieldSetSerde;
 ///
-/// let field_set = CompositeFieldSet::Date(DateFieldSet::YMD(fieldset::YMD::short()));
+/// let field_set = CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::short()));
 /// let serde_input = CompositeFieldSetSerde::from(field_set);
 ///
 /// let json_string = serde_json::to_string(&serde_input).unwrap();
@@ -71,9 +71,9 @@ pub enum CompositeFieldSetSerdeError {
 /// If the field set is invalid, an error will occur:
 ///
 /// ```
-/// use icu::datetime::fieldset::dynamic::CompositeFieldSet;
-/// use icu::datetime::fieldset::serde::CompositeFieldSetSerde;
-/// use icu::datetime::fieldset::serde::CompositeFieldSetSerdeError;
+/// use icu::datetime::fieldsets::dynamic::CompositeFieldSet;
+/// use icu::datetime::fieldsets::serde::CompositeFieldSetSerde;
+/// use icu::datetime::fieldsets::serde::CompositeFieldSetSerdeError;
 ///
 /// let json_string = r#"{"fieldSet":["year","time"],"length":"short"}"#;
 /// let serde_output = serde_json::from_str::<CompositeFieldSetSerde>(&json_string).unwrap();
@@ -480,13 +480,13 @@ impl FieldSetSerde {
     fn to_date_field_set(self, options: RawNeoOptions) -> Option<DateFieldSet> {
         use DateFieldSet::*;
         match self {
-            Self::DAY => Some(D(fieldset::D::from_raw_options(options))),
-            Self::MONTH_DAY => Some(MD(fieldset::MD::from_raw_options(options))),
-            Self::YEAR_MONTH_DAY => Some(YMD(fieldset::YMD::from_raw_options(options))),
-            Self::DAY_WEEKDAY => Some(DE(fieldset::DE::from_raw_options(options))),
-            Self::MONTH_DAY_WEEKDAY => Some(MDE(fieldset::MDE::from_raw_options(options))),
-            Self::YEAR_MONTH_DAY_WEEKDAY => Some(YMDE(fieldset::YMDE::from_raw_options(options))),
-            Self::WEEKDAY => Some(E(fieldset::E::from_raw_options(options))),
+            Self::DAY => Some(D(fieldsets::D::from_raw_options(options))),
+            Self::MONTH_DAY => Some(MD(fieldsets::MD::from_raw_options(options))),
+            Self::YEAR_MONTH_DAY => Some(YMD(fieldsets::YMD::from_raw_options(options))),
+            Self::DAY_WEEKDAY => Some(DE(fieldsets::DE::from_raw_options(options))),
+            Self::MONTH_DAY_WEEKDAY => Some(MDE(fieldsets::MDE::from_raw_options(options))),
+            Self::YEAR_MONTH_DAY_WEEKDAY => Some(YMDE(fieldsets::YMDE::from_raw_options(options))),
+            Self::WEEKDAY => Some(E(fieldsets::E::from_raw_options(options))),
             _ => None,
         }
     }
@@ -505,9 +505,9 @@ impl FieldSetSerde {
     ) -> Option<CalendarPeriodFieldSet> {
         use CalendarPeriodFieldSet::*;
         match self {
-            Self::MONTH => Some(M(fieldset::M::from_raw_options(options))),
-            Self::YEAR_MONTH => Some(YM(fieldset::YM::from_raw_options(options))),
-            Self::YEAR => Some(Y(fieldset::Y::from_raw_options(options))),
+            Self::MONTH => Some(M(fieldsets::M::from_raw_options(options))),
+            Self::YEAR_MONTH => Some(YM(fieldsets::YM::from_raw_options(options))),
+            Self::YEAR => Some(Y(fieldsets::Y::from_raw_options(options))),
             _ => None,
         }
     }
@@ -521,7 +521,7 @@ impl FieldSetSerde {
     fn to_time_field_set(self, options: RawNeoOptions) -> Option<TimeFieldSet> {
         use TimeFieldSet::*;
         match self {
-            Self::TIME => Some(T(fieldset::T::from_raw_options(options))),
+            Self::TIME => Some(T(fieldsets::T::from_raw_options(options))),
             _ => None,
         }
     }
@@ -557,10 +557,10 @@ impl FieldSetSerde {
     fn to_zone_field_set(self, options: RawNeoOptions) -> Option<ZoneFieldSet> {
         use ZoneFieldSet::*;
         match self {
-            Self::ZONE_SPECIFIC => Some(Z(fieldset::Z::from_raw_options(options))),
-            Self::ZONE_OFFSET => Some(O(fieldset::O::from_raw_options(options))),
-            Self::ZONE_GENERIC => Some(V(fieldset::V::from_raw_options(options))),
-            Self::ZONE_LOCATION => Some(L(fieldset::L::from_raw_options(options))),
+            Self::ZONE_SPECIFIC => Some(Z(fieldsets::Z::from_raw_options(options))),
+            Self::ZONE_OFFSET => Some(O(fieldsets::O::from_raw_options(options))),
+            Self::ZONE_GENERIC => Some(V(fieldsets::V::from_raw_options(options))),
+            Self::ZONE_LOCATION => Some(L(fieldsets::L::from_raw_options(options))),
             _ => None,
         }
     }
@@ -569,7 +569,7 @@ impl FieldSetSerde {
 #[test]
 fn test_basic() {
     let skeleton = CompositeFieldSet::DateTimeZone(
-        DateAndTimeFieldSet::YMDET(fieldset::YMDET {
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET {
             length: NeoSkeletonLength::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),

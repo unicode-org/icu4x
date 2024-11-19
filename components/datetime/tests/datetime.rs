@@ -15,7 +15,7 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     AsCalendar, Calendar, DateTime,
 };
-use icu_datetime::fieldset::dynamic::*;
+use icu_datetime::fieldsets::dynamic::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
     pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
@@ -455,7 +455,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::fieldset::O;
+    use icu_datetime::fieldsets::O;
 
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
         .unwrap();
@@ -467,7 +467,7 @@ fn test_time_zone_format_offset_seconds() {
 
 #[test]
 fn test_time_zone_format_offset_fallback() {
-    use icu_datetime::fieldset::O;
+    use icu_datetime::fieldsets::O;
 
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
         .unwrap();

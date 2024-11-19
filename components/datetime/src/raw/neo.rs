@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
-use crate::fieldset::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
+use crate::fieldsets::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;

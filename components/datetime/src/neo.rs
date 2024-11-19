@@ -5,7 +5,7 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::external_loaders::*;
-use crate::fieldset::dynamic::CompositeFieldSet;
+use crate::fieldsets::dynamic::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::pattern::*;
@@ -131,7 +131,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
 //     }
 // }
 
-size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldset::YMD>, typed_neo_year_month_day_formatter_size, 344);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 344);
 
 /// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -168,7 +168,7 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -302,7 +302,7 @@ where
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Buddhist;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter =
@@ -322,7 +322,7 @@ where
     /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter =
@@ -350,7 +350,7 @@ where
 }
 
 size_test!(
-    DateTimeFormatter<crate::fieldset::YMD>,
+    DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
     400
 );
@@ -396,7 +396,7 @@ where
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use std::str::FromStr;
@@ -536,7 +536,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -560,7 +560,7 @@ where
     /// ```compile_fail
     /// use icu::calendar::Time;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
@@ -599,7 +599,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -624,7 +624,7 @@ where
     /// ```compile_fail
     /// use icu::calendar::Time;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
@@ -666,7 +666,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// ```
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::Date;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -707,7 +707,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::Date;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -730,7 +730,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     /// use icu::calendar::cal::Hebrew;
     /// use icu::calendar::Date;
-    /// use icu::datetime::fieldset::YMD;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -772,7 +772,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 ///
 /// ```
 /// use icu::datetime::TimeFormatter;
-/// use icu::datetime::fieldset::Y;
+/// use icu::datetime::fieldsets::Y;
 /// use icu::locale::locale;
 ///
 /// assert!(TimeFormatter::try_new(&locale!("und").into(), Y::medium()).is_err());
@@ -782,7 +782,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 ///
 /// ```compile_fail,E0271
 /// use icu::datetime::TimeFormatter;
-/// use icu::datetime::fieldset::Y;
+/// use icu::datetime::fieldsets::Y;
 /// use icu::locale::locale;
 ///
 /// let date: icu::calendar::Date<icu::calendar::Gregorian> = unimplemented!();

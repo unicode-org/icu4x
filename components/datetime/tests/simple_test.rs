@@ -4,10 +4,10 @@
 
 use icu_calendar::cal::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
-use icu_datetime::fieldset::dynamic::{
+use icu_datetime::fieldsets::dynamic::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
-use icu_datetime::fieldset::{self, YMD};
+use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_locale_core::{locale, Locale};
 use writeable::assert_try_writeable_eq;
@@ -71,14 +71,14 @@ fn neo_datetime_lengths() {
     let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATETIME.iter();
     for field_set in [
-        DateAndTimeFieldSet::YMDET(fieldset::YMDET::long()),
-        DateAndTimeFieldSet::YMDET(fieldset::YMDET::long().hm()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::long()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::long().hm()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::medium()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::medium().hm()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::short()),
-        DateAndTimeFieldSet::YMDT(fieldset::YMDT::short().hm()),
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long()),
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().hm()),
     ] {
         for locale in [
             locale!("en").into(),
@@ -100,10 +100,10 @@ fn neo_date_lengths() {
     let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
     let mut expected_iter = EXPECTED_DATE.iter();
     for field_set in [
-        DateFieldSet::YMDE(fieldset::YMDE::long()),
-        DateFieldSet::YMD(fieldset::YMD::long()),
-        DateFieldSet::YMD(fieldset::YMD::medium()),
-        DateFieldSet::YMD(fieldset::YMD::short()),
+        DateFieldSet::YMDE(fieldsets::YMDE::long()),
+        DateFieldSet::YMD(fieldsets::YMD::long()),
+        DateFieldSet::YMD(fieldsets::YMD::medium()),
+        DateFieldSet::YMD(fieldsets::YMD::short()),
     ] {
         let date_skeleton = CompositeDateTimeFieldSet::Date(field_set);
         for locale in [
@@ -137,14 +137,14 @@ fn overlap_patterns() {
         TestCase {
             locale: locale!("en-US"),
             skeleton: CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(
-                fieldset::ET::medium(),
+                fieldsets::ET::medium(),
             )),
             expected: "Fri 8:40:07\u{202f}PM",
         },
         TestCase {
             locale: locale!("en-US"),
             skeleton: CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::MDET(
-                fieldset::MDET::medium(),
+                fieldsets::MDET::medium(),
             )),
             expected: "Fri, Aug 9, 8:40:07\u{202f}PM",
         },
@@ -153,13 +153,13 @@ fn overlap_patterns() {
         TestCase {
             locale: locale!("ru"),
             skeleton: CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(
-                fieldset::ET::medium(),
+                fieldsets::ET::medium(),
             )),
             expected: "пт 20:40:07",
         },
         TestCase {
             locale: locale!("ru"),
-            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::E(fieldset::E::medium())),
+            skeleton: CompositeDateTimeFieldSet::Date(DateFieldSet::E(fieldsets::E::medium())),
             expected: "пт",
         },
     ];
@@ -193,17 +193,17 @@ fn test_5387() {
     let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
     let formatter_auto = FixedCalendarDateTimeFormatter::try_new(
         &locale!("en").into(),
-        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldset::ET::medium())),
+        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
     let formatter_h12 = FixedCalendarDateTimeFormatter::try_new(
         &locale!("en-u-hc-h12").into(),
-        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldset::ET::medium())),
+        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
     let formatter_h24 = FixedCalendarDateTimeFormatter::try_new(
         &locale!("en-u-hc-h23").into(),
-        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldset::ET::medium())),
+        CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
 

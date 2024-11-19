@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
-        fieldset::{T, YMD, YMDT},
+        fieldsets::{T, YMD, YMDT},
         options::NeoSkeletonLength,
     };
 

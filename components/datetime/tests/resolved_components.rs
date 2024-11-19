@@ -5,7 +5,7 @@
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
     fields::components,
-    fieldset::{
+    fieldsets::{
         self,
         dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
     },
@@ -32,7 +32,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldset::YMD::medium()));
+    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
@@ -44,7 +44,7 @@ fn test_length_date() {
 
 #[test]
 fn test_length_time() {
-    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldset::T::medium().hms()));
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium().hms()));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
@@ -62,7 +62,7 @@ fn test_length_time() {
 #[test]
 fn test_length_time_preferences() {
     let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
-        fieldset::T::medium()
+        fieldsets::T::medium()
             .hms()
             .with_alignment(Alignment::Column),
     ));
@@ -83,7 +83,7 @@ fn test_length_time_preferences() {
 #[test]
 fn test_date_and_time() {
     let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
-        fieldset::YMDET::medium()
+        fieldsets::YMDET::medium()
             .with_year_style(YearStyle::Always)
             .with_alignment(Alignment::Column)
             .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),
