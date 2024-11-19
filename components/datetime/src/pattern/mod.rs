@@ -16,6 +16,7 @@ mod names;
 mod pattern;
 
 pub use formatter::DateTimePatternFormatter;
+pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
 pub(crate) use names::RawDateTimeNames;
 pub(crate) use names::RawDateTimeNamesBorrowed;

@@ -20,7 +20,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// There are two ways to make one of these:
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
-/// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
+/// 2. From a formatted datetime: [`FormattedDateTime::pattern`]
 ///
 /// Things you can do with one of these:
 ///
@@ -73,7 +73,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
-/// [`FormattedNeoDateTime::pattern`]: crate::FormattedNeoDateTime::pattern
+/// [`FormattedDateTime::pattern`]: crate::FormattedDateTime::pattern
 /// [`TypedDateTimeNames`]: crate::pattern::TypedDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {

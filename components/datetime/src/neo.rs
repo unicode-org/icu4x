@@ -336,12 +336,12 @@ where
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn format<I>(&self, input: &I) -> FormattedNeoDateTime
+    pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<FSet>,
     {
         let input = ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
-        FormattedNeoDateTime {
+        FormattedDateTime {
             pattern: self.selection.select(&input),
             input,
             names: self.names.as_borrowed(),
@@ -576,14 +576,14 @@ where
     pub fn strict_format<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
     where
         I: ?Sized + IsAnyCalendarKind + AllInputMarkers<FSet>,
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =
             ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
-        Ok(FormattedNeoDateTime {
+        Ok(FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
@@ -637,7 +637,7 @@ where
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.convert_and_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime<'a>
+    pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
@@ -647,7 +647,7 @@ where
             ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
                 &datetime,
             );
-        FormattedNeoDateTime {
+        FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
@@ -797,13 +797,13 @@ pub type TimeFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 ///
 /// Not intended to be stored: convert to a string first.
 #[derive(Debug)]
-pub struct FormattedNeoDateTime<'a> {
+pub struct FormattedDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
     input: ExtractedInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl TryWriteable for FormattedNeoDateTime<'_> {
+impl TryWriteable for FormattedDateTime<'_> {
     type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
@@ -823,7 +823,7 @@ impl TryWriteable for FormattedNeoDateTime<'_> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl FormattedNeoDateTime<'_> {
+impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
