@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 // Base enumerator definition
-/** Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.PatternLoadError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
 */
 export class PatternLoadError {
     #value = undefined;
