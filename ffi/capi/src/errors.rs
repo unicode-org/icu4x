@@ -173,12 +173,18 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
     fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
         match e {
-            icu_datetime::DateTimeFormatterLoadError::Names(icu_datetime::pattern::PatternLoadError::ConflictingField(_)) => Self::DuplicateField,
-            icu_datetime::DateTimeFormatterLoadError::Names(icu_datetime::pattern::PatternLoadError::UnsupportedLength(_)) => {
-                Self::UnsupportedLength
-            }
-            icu_datetime::DateTimeFormatterLoadError::Names(icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_)) => Self::TypeTooSpecific,
-            icu_datetime::DateTimeFormatterLoadError::Names(icu_datetime::pattern::PatternLoadError::Data(data_error, _)) => data_error.into(),
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::ConflictingField(_),
+            ) => Self::DuplicateField,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
+            ) => Self::UnsupportedLength,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_),
+            ) => Self::TypeTooSpecific,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::Data(data_error, _),
+            ) => data_error.into(),
             icu_datetime::DateTimeFormatterLoadError::Data(data_error) => data_error.into(),
             _ => Self::Unknown,
         }
