@@ -196,7 +196,7 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;

@@ -189,7 +189,7 @@ lazy_static::lazy_static! {
 
         // experimental
         "icu::datetime::fields::components",
-        "icu::datetime::fieldset::serde",
+        "icu::datetime::fieldsets::serde",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",

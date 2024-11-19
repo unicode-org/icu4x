@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
-use crate::fieldset::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
+use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
@@ -19,16 +19,16 @@ use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
-pub(crate) struct RawNeoOptions {
+pub(crate) struct RawOptions {
     pub(crate) length: NeoSkeletonLength,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
-impl RawNeoOptions {
+impl RawOptions {
     #[cfg(all(feature = "serde", feature = "experimental"))]
-    pub(crate) fn merge(self, other: RawNeoOptions) -> Self {
+    pub(crate) fn merge(self, other: RawOptions) -> Self {
         Self {
             length: self.length,
             alignment: self.alignment.or(other.alignment),
@@ -46,7 +46,7 @@ pub(crate) struct RawPreferences {
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
-        options: RawNeoOptions,
+        options: RawOptions,
         payload: DataPayload<ErasedPackedPatterns>,
     },
     // TODO(#4478): add support for optional eras
@@ -64,7 +64,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 #[derive(Debug)]
 pub(crate) enum OverlapPatternSelectionData {
     SkeletonDateTime {
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
         payload: DataPayload<ErasedPackedPatterns>,
     },
@@ -73,7 +73,7 @@ pub(crate) enum OverlapPatternSelectionData {
 #[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
         payload: DataPayload<ErasedPackedPatterns>,
     },
@@ -183,7 +183,7 @@ impl DatePatternSelectionData {
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         attributes: &DataMarkerAttributes,
-        options: RawNeoOptions,
+        options: RawOptions,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
@@ -285,7 +285,7 @@ impl OverlapPatternSelectionData {
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         attributes: &DataMarkerAttributes,
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
     ) -> Result<Self, DataError> {
         let payload = provider
@@ -351,7 +351,7 @@ impl TimePatternSelectionData {
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         locale: &DataLocale,
         components: TimeFieldSet,
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
     ) -> Result<Self, DataError> {
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
@@ -628,7 +628,7 @@ impl DateTimeZonePatternSelectionData {
     fn load_glue(
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
-        options: RawNeoOptions,
+        options: RawOptions,
         glue_type: GlueType,
     ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
         glue_provider

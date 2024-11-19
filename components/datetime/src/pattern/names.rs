@@ -9,7 +9,7 @@ use super::{
 };
 use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::fieldset::dynamic::CompositeDateTimeFieldSet;
+use crate::fieldsets::enums::CompositeDateTimeFieldSet;
 use crate::input;
 use crate::provider::neo::*;
 use crate::provider::pattern::PatternItem;
@@ -49,8 +49,8 @@ size_test!(
 ///
 /// To support all fields including time zones, use [`CompositeFieldSet`].
 ///
-/// [`CompositeFieldSet`]: crate::fieldset::dynamic::CompositeFieldSet
-/// [`CompositeDateTimeFieldSet`]: crate::fieldset::dynamic::CompositeDateTimeFieldSet
+/// [`CompositeFieldSet`]: crate::fieldsets::enums::CompositeFieldSet
+/// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
 ///
 /// # Examples
 ///
@@ -93,7 +93,7 @@ size_test!(
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::fieldset::dynamic::CompositeFieldSet;
+/// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
@@ -135,7 +135,7 @@ size_test!(
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::fieldset::O;
+/// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
 /// use icu::timezone::TimeZoneInfo;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
@@ -295,7 +295,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::DateFieldSet;
+    /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::locale::locale;
     /// use writeable::{Part, assert_try_writeable_parts_eq};
     ///
@@ -616,7 +616,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -719,7 +719,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -786,7 +786,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -862,7 +862,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -938,7 +938,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1014,7 +1014,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::ZoneFieldSet;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
@@ -1079,7 +1079,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::fieldset::dynamic::TimeFieldSet;
+    /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;

@@ -154,7 +154,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDT};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldsets::YMDT};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -207,7 +207,7 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldset::YMDT, NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 

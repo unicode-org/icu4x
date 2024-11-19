@@ -10,7 +10,7 @@
 //! ICU4X datetime formatting follows the Unicode UTS 35 standard for [Semantic Skeletons](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Skeletons).
 //! First you choose a _field set_, then you configure the formatting _options_ to your desired context.
 //!
-//! 1. Field Sets: [`icu::datetime::fieldset`](fieldset)
+//! 1. Field Sets: [`icu::datetime::fieldsets`](fieldsets)
 //! 2. Options: [`icu::datetime::options`](options)
 //!
 //! ICU4X supports formatting in over one dozen _calendar systems_, including Gregorian, Buddhist,
@@ -41,7 +41,7 @@
 //!
 //! | Factor | Static (Lower Binary Size) | Dynamic (Greater Binary Size) |
 //! |---|---|---|
-//! | Field Sets | Specific [`fieldset`] types | Enumerations from [`fieldset::dynamic`] |
+//! | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 //! | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 //!
 //! If formatting times and time zones without dates, consider using [`TimeFormatter`].
@@ -50,13 +50,13 @@
 //!
 //! ```
 //! use icu::calendar::DateTime;
-//! use icu::datetime::fieldset;
+//! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
 //! use writeable::assert_try_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
-//! let field_set = fieldset::YMDT::medium().hm();
+//! let field_set = fieldsets::YMDT::medium().hm();
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
@@ -91,7 +91,7 @@ mod combo;
 mod error;
 mod external_loaders;
 pub mod fields;
-pub mod fieldset;
+pub mod fieldsets;
 mod format;
 pub mod input;
 mod neo;

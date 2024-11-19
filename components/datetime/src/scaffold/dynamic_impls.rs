@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::fieldset::dynamic::*;
+use crate::fieldsets::enums::*;
 use crate::provider::{neo::*, time_zones::tz, *};
 use icu_calendar::{
     types::{

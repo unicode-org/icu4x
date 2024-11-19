@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{fields::components, fieldset::serde::CompositeFieldSetSerde, options};
+use icu_datetime::{fields::components, fieldsets::serde::CompositeFieldSetSerde, options};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
