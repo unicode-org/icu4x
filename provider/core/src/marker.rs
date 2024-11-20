@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fallback::LocaleFallbackConfig;
-use crate::{DataError, DataErrorKind, DataProvider, DataProviderWithMarker};
+use crate::{DataError, DataErrorKind, DataLocale, DataProvider, DataProviderWithMarker};
 use core::fmt;
 use core::marker::PhantomData;
 use yoke::Yokeable;
@@ -602,6 +602,11 @@ impl DataMarkerInfo {
         } else {
             Err(DataErrorKind::MarkerNotFound.with_marker(marker))
         }
+    }
+
+    /// Constructs a [`DataLocale`] for this [`DataMarkerInfo`].
+    pub fn make_locale(self, locale: icu_locale_core::preferences::LocalePreferences) -> DataLocale {
+        DataLocale::from_preferences_with_info(locale, self)
     }
 }
 

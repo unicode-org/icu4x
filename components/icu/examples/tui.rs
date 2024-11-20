@@ -22,7 +22,7 @@ fn main() {
     let locale = args
         .get(1)
         .map(|s| s.parse().expect("Failed to parse locale"))
-        .unwrap_or_else(|| locale!("en").into());
+        .unwrap_or_else(|| locale!("en"));
 
     let user_name = args.as_slice().get(2).map(String::as_str).unwrap_or("John");
 
@@ -40,7 +40,7 @@ fn main() {
 
     {
         let dtf =
-            FixedCalendarDateTimeFormatter::<Gregorian, YMDTO>::try_new(&locale, YMDTO::medium())
+            FixedCalendarDateTimeFormatter::<Gregorian, YMDTO>::try_new(locale.into(), YMDTO::medium())
                 .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();

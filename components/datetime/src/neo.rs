@@ -22,10 +22,38 @@ use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::AnyCalendar;
-use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
+use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
+use icu_locale_core::preferences::extensions::unicode::keywords::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
+
+define_preferences!(
+    /// The prefs for datetime formatting.
+    [Copy]
+    DateTimeFormatterPreferences,
+    {
+        /// The user's preferred numbering system
+        numbering_system: NumberingSystem,
+        /// The user's preferred hour cycle
+        hour_cycle: HourCycle,
+        /// The user's preferred calendar system
+        calendar: CalendarAlgorithm
+    }
+);
+
+prefs_convert!(
+    DateTimeFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+
+prefs_convert!(
+    DateTimeFormatterPreferences,
+    AnyCalendarPreferences,
+    { calendar }
+);
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
@@ -33,7 +61,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            prefs: DateTimeFormatterPreferences,
             field_set: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
@@ -42,7 +70,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             Self::$internal_fn(
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
-                locale,
+                prefs,
                 field_set.get_field(),
             )
         }
@@ -50,7 +78,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            prefs: DateTimeFormatterPreferences,
             field_set: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
@@ -59,7 +87,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             Self::$internal_fn(
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
-                locale,
+                prefs,
                 field_set.get_field(),
             )
         }
@@ -68,7 +96,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            prefs: DateTimeFormatterPreferences,
             field_set: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
@@ -77,7 +105,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             Self::$internal_fn(
                 &provider.as_downcasting(),
                 &ExternalLoaderAny(provider),
-                locale,
+                prefs,
                 field_set.get_field(),
             )
         }
@@ -85,7 +113,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            prefs: DateTimeFormatterPreferences,
             field_set: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
@@ -94,43 +122,12 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             Self::$internal_fn(
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
-                locale,
+                prefs,
                 field_set.get_field(),
             )
         }
     };
 }
-
-// impl RawOptions {
-//     pub(crate) fn from_field_set_and_locale<FSet>(field_set: &FSet, locale: &DataLocale) -> Self
-//     where
-//         FSet: DateTimeMarkers,
-//         FSet: GetField<FSet::LengthOption>,
-//         FSet: GetField<FSet::AlignmentOption>,
-//         FSet: GetField<FSet::YearStyleOption>,
-//         FSet: GetField<FSet::TimePrecisionOption>,
-//     {
-//         // TODO: Return an error if there are more options than field set
-//         let hour_cycle = locale
-//             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-//             .as_ref()
-//             .and_then(HourCycle::from_locale_value);
-//         Self {
-//             length: match GetField::<FSet::LengthOption>::get_field(field_set).into_option() {
-//                 Some(length) => length,
-//                 None => {
-//                     debug_assert!(false, "unreachable");
-//                     NeoSkeletonLength::Medium
-//                 }
-//             },
-//             alignment: GetField::<FSet::AlignmentOption>::get_field(field_set).into_option(),
-//             year_style: GetField::<FSet::YearStyleOption>::get_field(field_set).into_option(),
-//             time_precision: GetField::<FSet::TimePrecisionOption>::get_field(field_set)
-//                 .into_option(),
-//             hour_cycle,
-//         }
-//     }
-// }
 
 size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 344);
 
@@ -186,14 +183,14 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
+    pub fn try_new(prefs: DateTimeFormatterPreferences, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
-            locale,
+            prefs,
             field_set.get_field(),
         )
     }
@@ -210,7 +207,7 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         field_set: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
@@ -221,7 +218,7 @@ where
         Self::try_new_internal(
             provider,
             &ExternalLoaderUnstable(provider),
-            locale,
+            prefs,
             field_set.get_field(),
         )
     }
@@ -236,30 +233,19 @@ where
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         field_set: CompositeFieldSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: FixedDecimalFormatterLoader,
     {
-        // TODO: Fix this when we have DateTimePreferences
-        let prefs = RawPreferences {
-            hour_cycle: locale
-                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-                .as_ref()
-                .and_then(|v| HourCycle::try_from(v).ok())
-                .map(crate::fields::Hour::from_hour_cycle),
-        };
-        // END TODO
-
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
-            locale,
-            field_set,
             prefs,
+            field_set,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
@@ -277,7 +263,7 @@ where
                 &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
                 &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
                 loader, // fixed decimal formatter
-                locale,
+                prefs,
                 selection.pattern_items_for_data_loading(),
             )
             .map_err(DateTimeFormatterLoadError::Names)?;
@@ -421,14 +407,14 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
+    pub fn try_new(prefs: DateTimeFormatterPreferences, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
         Self::try_new_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
-            locale,
+            prefs,
             field_set.get_field(),
         )
     }
@@ -445,7 +431,7 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         field_set: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
@@ -454,7 +440,7 @@ where
         Self::try_new_internal(
             provider,
             &ExternalLoaderUnstable(provider),
-            locale,
+            prefs,
             field_set.get_field(),
         )
     }
@@ -469,33 +455,22 @@ where
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         field_set: CompositeFieldSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
-        // TODO: Fix this when we have DateTimePreferences
-        let prefs = RawPreferences {
-            hour_cycle: locale
-                .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-                .as_ref()
-                .and_then(|v| HourCycle::try_from(v).ok())
-                .map(crate::fields::Hour::from_hour_cycle),
-        };
-        // END TODO
-
         let calendar =
-            AnyCalendarLoader::load(loader, locale).map_err(DateTimeFormatterLoadError::Data)?;
+            AnyCalendarLoader::load(loader, (&prefs).into()).map_err(DateTimeFormatterLoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &FSet::GluePatternV1Marker::bind(provider),
-            locale,
-            field_set,
             prefs,
+            field_set,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_number_formatting();
@@ -513,7 +488,7 @@ where
                 &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
                 &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
                 loader, // fixed decimal formatter
-                locale,
+                prefs,
                 selection.pattern_items_for_data_loading(),
             )
             .map_err(DateTimeFormatterLoadError::Names)?;

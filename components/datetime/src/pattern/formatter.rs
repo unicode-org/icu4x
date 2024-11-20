@@ -245,7 +245,7 @@ mod tests {
     fn test_basic_pattern_formatting() {
         let locale = locale!("en").into();
         let mut names: TypedDateTimeNames<Gregorian> =
-            TypedDateTimeNames::try_new(&locale).unwrap();
+            TypedDateTimeNames::try_new(locale).unwrap();
         names
             .load_month_names(
                 &crate::provider::Baked,
@@ -319,7 +319,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_year_names(&crate::provider::Baked, field_length)
                 .unwrap();
@@ -390,7 +390,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_month_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
@@ -508,7 +508,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
@@ -590,7 +590,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_day_period_names(&crate::provider::Baked, field_length)
                 .unwrap();

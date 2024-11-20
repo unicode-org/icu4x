@@ -8,7 +8,7 @@ use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldsets::{self, YMD};
-use icu_datetime::FixedCalendarDateTimeFormatter;
+use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
 use writeable::assert_try_writeable_eq;
 
@@ -81,13 +81,14 @@ fn neo_datetime_lengths() {
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().hm()),
     ] {
         for locale in [
-            locale!("en").into(),
-            locale!("fr").into(),
-            locale!("zh").into(),
-            locale!("hi").into(),
+            locale!("en"),
+            locale!("fr"),
+            locale!("zh"),
+            locale!("hi"),
         ] {
+            let prefs = DateTimeFormatterPreferences::from(&locale);
             let skeleton = CompositeDateTimeFieldSet::DateTime(field_set);
-            let formatter = FixedCalendarDateTimeFormatter::try_new(&locale, skeleton).unwrap();
+            let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{skeleton:?} {locale:?}");
@@ -107,13 +108,14 @@ fn neo_date_lengths() {
     ] {
         let date_skeleton = CompositeDateTimeFieldSet::Date(field_set);
         for locale in [
-            locale!("en").into(),
-            locale!("fr").into(),
-            locale!("zh").into(),
-            locale!("hi").into(),
+            locale!("en"),
+            locale!("fr"),
+            locale!("zh"),
+            locale!("hi"),
         ] {
+            let prefs = DateTimeFormatterPreferences::from(&locale);
             let formatter =
-                FixedCalendarDateTimeFormatter::try_new(&locale, date_skeleton).unwrap();
+                FixedCalendarDateTimeFormatter::try_new(prefs, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
@@ -169,8 +171,9 @@ fn overlap_patterns() {
         expected,
     } in cases
     {
+        let prefs = DateTimeFormatterPreferences::from(&locale);
         let formatter =
-            FixedCalendarDateTimeFormatter::try_new(&(&locale).into(), skeleton).unwrap();
+            FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(formatted, expected, Ok(()), "{locale:?} {skeleton:?}");
     }
@@ -181,7 +184,7 @@ fn hebrew_months() {
     let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
     let datetime = datetime.to_calendar(Hebrew);
     let formatter =
-        FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMD::medium()).unwrap();
+        FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMD::medium()).unwrap();
 
     let formatted_datetime = formatter.format(&datetime);
 
@@ -192,17 +195,17 @@ fn hebrew_months() {
 fn test_5387() {
     let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
     let formatter_auto = FixedCalendarDateTimeFormatter::try_new(
-        &locale!("en").into(),
+        locale!("en").into(),
         CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
     let formatter_h12 = FixedCalendarDateTimeFormatter::try_new(
-        &locale!("en-u-hc-h12").into(),
+        locale!("en-u-hc-h12").into(),
         CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
     let formatter_h24 = FixedCalendarDateTimeFormatter::try_new(
-        &locale!("en-u-hc-h23").into(),
+        locale!("en-u-hc-h23").into(),
         CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),
     )
     .unwrap();
