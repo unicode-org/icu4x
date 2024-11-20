@@ -310,7 +310,7 @@ fn assert_fixture_element<A>(
         description
     );
 
-    let actual2 = any_dtf.strict_format(&any_input).unwrap();
+    let actual2 = any_dtf.format_same_calendar(&any_input).unwrap();
     assert_try_writeable_eq!(
         actual2,
         output_value.expectation(),

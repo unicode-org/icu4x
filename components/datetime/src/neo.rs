@@ -535,7 +535,7 @@ where
     /// let date = Date::try_new_gregorian(2023, 12, 20).unwrap();
     ///
     /// assert!(matches!(
-    ///     formatter.strict_format(&date),
+    ///     formatter.format_same_calendar(&date),
     ///     Err(MismatchedCalendarError { .. })
     /// ));
     /// ```
@@ -556,9 +556,9 @@ where
     ///
     /// // the trait `GetField<AnyCalendarKind>`
     /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.strict_format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// formatter.format_same_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn strict_format<I>(
+    pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
     ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
