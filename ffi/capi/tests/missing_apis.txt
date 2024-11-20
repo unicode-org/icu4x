@@ -37,9 +37,9 @@ icu::datetime::FormattedDateTime#Struct
 icu::datetime::FormattedDateTime::pattern#FnInStruct
 icu::datetime::FormattedDateTime::to_string_lossy#FnInStruct
 icu::datetime::FormattedDateTime::try_write_to_parts#FnInStruct
-icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::Length#Enum
 icu::datetime::Length::into_option#FnInEnum
+icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::TimeFormatter#Typedef
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::long#FnInStruct

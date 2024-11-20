@@ -25,11 +25,7 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        to_components_bag: impl Fn(
-            Length,
-            &DataMarkerAttributes,
-            &DateLengthsV1,
-        ) -> components::Bag,
+        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
@@ -55,11 +51,7 @@ impl SourceDataProvider {
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
         attributes: &DataMarkerAttributes,
-        to_components_bag: impl Fn(
-            Length,
-            &DataMarkerAttributes,
-            &DateLengthsV1,
-        ) -> components::Bag,
+        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -81,68 +73,64 @@ impl SourceDataProvider {
             }
         }
 
-        let [long, medium, short] = [
-            Length::Long,
-            Length::Medium,
-            Length::Short,
-        ]
-        .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
-        .map(|components| {
-            let pattern = expand_pp_to_pe(components.select_pattern(
-                &skeleton_patterns,
-                &date_lengths_v1,
-                &time_lengths_v1,
-            ));
-            match components {
-                components::Bag {
-                    era: None,
-                    year: Some(_),
-                    ..
-                } => {
-                    // TODO(#4478): Use CLDR data when it becomes available
-                    // TODO: Set the length to Length? Or not, because
-                    // the era should normally be displayed as short?
-                    let mut components_with_full_year = components;
-                    components_with_full_year.year = Some(components::Year::Numeric);
-                    let mut components_with_era = components_with_full_year;
-                    components_with_era.era = Some(components::Text::Short);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_full_year.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_era.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                    )
+        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
+            .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
+            .map(|components| {
+                let pattern = expand_pp_to_pe(components.select_pattern(
+                    &skeleton_patterns,
+                    &date_lengths_v1,
+                    &time_lengths_v1,
+                ));
+                match components {
+                    components::Bag {
+                        era: None,
+                        year: Some(_),
+                        ..
+                    } => {
+                        // TODO(#4478): Use CLDR data when it becomes available
+                        // TODO: Set the length to Length? Or not, because
+                        // the era should normally be displayed as short?
+                        let mut components_with_full_year = components;
+                        components_with_full_year.year = Some(components::Year::Numeric);
+                        let mut components_with_era = components_with_full_year;
+                        components_with_era.era = Some(components::Text::Short);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_full_year.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_era.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                        )
+                    }
+                    components::Bag { hour: Some(_), .. } => {
+                        let mut components_with_minute = components;
+                        components_with_minute.minute = Some(components::Numeric::Numeric);
+                        let mut components_with_second = components;
+                        components_with_second.minute = Some(components::Numeric::Numeric);
+                        components_with_second.second = Some(components::Numeric::Numeric);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_minute.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_second.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                        )
+                    }
+                    _ => (pattern, None, None),
                 }
-                components::Bag { hour: Some(_), .. } => {
-                    let mut components_with_minute = components;
-                    components_with_minute.minute = Some(components::Numeric::Numeric);
-                    let mut components_with_second = components;
-                    components_with_second.minute = Some(components::Numeric::Numeric);
-                    components_with_second.second = Some(components::Numeric::Numeric);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_minute.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_second.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                    )
-                }
-                _ => (pattern, None, None),
-            }
-        });
+            });
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
                 long: long.0.as_ref().map(runtime::Pattern::as_ref),
