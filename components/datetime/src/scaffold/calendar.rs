@@ -520,10 +520,7 @@ impl<C> InFixedCalendar<C> for Time {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C>
-    for CustomZonedDateTime<A, Z>
-{
-}
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for CustomZonedDateTime<A, Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}
 
