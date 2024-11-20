@@ -80,12 +80,7 @@ fn neo_datetime_lengths() {
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().hm()),
     ] {
-        for locale in [
-            locale!("en"),
-            locale!("fr"),
-            locale!("zh"),
-            locale!("hi"),
-        ] {
+        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);
             let skeleton = CompositeDateTimeFieldSet::DateTime(field_set);
             let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
@@ -107,15 +102,9 @@ fn neo_date_lengths() {
         DateFieldSet::YMD(fieldsets::YMD::short()),
     ] {
         let date_skeleton = CompositeDateTimeFieldSet::Date(field_set);
-        for locale in [
-            locale!("en"),
-            locale!("fr"),
-            locale!("zh"),
-            locale!("hi"),
-        ] {
+        for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);
-            let formatter =
-                FixedCalendarDateTimeFormatter::try_new(prefs, date_skeleton).unwrap();
+            let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
             assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
@@ -172,8 +161,7 @@ fn overlap_patterns() {
     } in cases
     {
         let prefs = DateTimeFormatterPreferences::from(&locale);
-        let formatter =
-            FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
+        let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
         let formatted = formatter.format(&datetime);
         assert_try_writeable_eq!(formatted, expected, Ok(()), "{locale:?} {skeleton:?}");
     }

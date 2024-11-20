@@ -22,7 +22,9 @@ use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, D
 
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{CalendarAlgorithm, IslamicCalendarAlgorithm};
+use icu_locale_core::preferences::extensions::unicode::keywords::{
+    CalendarAlgorithm, IslamicCalendarAlgorithm,
+};
 use icu_locale_core::subtags::language;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;
@@ -1061,7 +1063,7 @@ impl AnyCalendarKind {
                 _ => {
                     debug_assert!(false, "unknown calendar algorithm {pcal:?}");
                     None
-                },
+                }
             },
             CalendarAlgorithm::Iso8601 => Some(Self::Iso),
             CalendarAlgorithm::Japanese => Some(Self::Japanese),
@@ -1070,7 +1072,7 @@ impl AnyCalendarKind {
             _ => {
                 debug_assert!(false, "unknown calendar algorithm {pcal:?}");
                 None
-            },
+            }
         }
     }
 
@@ -1112,8 +1114,7 @@ impl AnyCalendarKind {
     ///
     /// Returns `None` if the calendar is not specified or unknown.
     fn get_for_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
-        prefs.calendar
-            .and_then(Self::get_for_preferences_calendar)
+        prefs.calendar.and_then(Self::get_for_preferences_calendar)
     }
 
     // Do not make public, this will eventually need fallback

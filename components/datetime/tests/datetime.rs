@@ -15,8 +15,8 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     AsCalendar, Calendar, DateTime,
 };
-use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::scaffold::CldrCalendar;
+use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::{
     pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
     FixedCalendarDateTimeFormatter,
@@ -435,8 +435,7 @@ fn test_time_zone_format_configs() {
                 continue;
             };
             let tzf =
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, skeleton)
-                    .unwrap();
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, skeleton).unwrap();
             assert_writeable_eq!(
                 writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
                 *expect,

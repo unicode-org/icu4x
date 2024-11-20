@@ -244,8 +244,7 @@ mod tests {
     #[test]
     fn test_basic_pattern_formatting() {
         let locale = locale!("en").into();
-        let mut names: TypedDateTimeNames<Gregorian> =
-            TypedDateTimeNames::try_new(locale).unwrap();
+        let mut names: TypedDateTimeNames<Gregorian> = TypedDateTimeNames::try_new(locale).unwrap();
         names
             .load_month_names(
                 &crate::provider::Baked,

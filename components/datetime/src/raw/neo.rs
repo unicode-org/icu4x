@@ -5,7 +5,6 @@
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
-use crate::DateTimeFormatterPreferences;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::pattern::{
@@ -13,6 +12,7 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
@@ -47,7 +47,7 @@ pub(crate) struct RawPreferences {
 impl RawPreferences {
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
-            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle)
+            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
         }
     }
 }

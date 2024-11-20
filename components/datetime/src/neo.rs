@@ -24,8 +24,10 @@ use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_locale_core::preferences::extensions::unicode::keywords::{
+    CalendarAlgorithm, HourCycle, NumberingSystem,
+};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
-use icu_locale_core::preferences::extensions::unicode::keywords::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
 
@@ -49,11 +51,9 @@ prefs_convert!(
     { numbering_system }
 );
 
-prefs_convert!(
-    DateTimeFormatterPreferences,
-    AnyCalendarPreferences,
-    { calendar }
-);
+prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
+    calendar
+});
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
@@ -183,7 +183,10 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(prefs: DateTimeFormatterPreferences, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
+    pub fn try_new(
+        prefs: DateTimeFormatterPreferences,
+        field_set: FSet,
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
     {
@@ -407,7 +410,10 @@ where
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(prefs: DateTimeFormatterPreferences, field_set: FSet) -> Result<Self, DateTimeFormatterLoadError>
+    pub fn try_new(
+        prefs: DateTimeFormatterPreferences,
+        field_set: FSet,
+    ) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
     {
@@ -462,8 +468,8 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
-        let calendar =
-            AnyCalendarLoader::load(loader, (&prefs).into()).map_err(DateTimeFormatterLoadError::Data)?;
+        let calendar = AnyCalendarLoader::load(loader, (&prefs).into())
+            .map_err(DateTimeFormatterLoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),

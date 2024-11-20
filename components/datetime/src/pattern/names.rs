@@ -7,7 +7,6 @@ use super::{
     GetNameForWeekdayError, GetSymbolForCyclicYearError, GetSymbolForEraError,
     MonthPlaceholderValue, PatternLoadError,
 };
-use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::fieldsets::enums::CompositeDateTimeFieldSet;
 use crate::input;
@@ -16,6 +15,7 @@ use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::scaffold::*;
 use crate::size_test_macro::size_test;
+use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use core::fmt;
 use core::marker::PhantomData;
 use core::num::NonZeroU8;
@@ -296,7 +296,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, prefs: DateTimeFormatterPreferences) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(
+        provider: &P,
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker> + ?Sized,
     {
@@ -1530,7 +1533,14 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    fn load_mz_periods<P>(&mut self, provider: &P, field: fields::Field) -> Result<(), PatternLoadError> where P: BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized {
+    fn load_mz_periods<P>(
+        &mut self,
+        provider: &P,
+        field: fields::Field,
+    ) -> Result<(), PatternLoadError>
+    where
+        P: BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized,
+    {
         let variables = ();
         self.mz_periods
             .load_put(provider, Default::default(), variables)
@@ -1645,8 +1655,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         }
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter =
-            Some(FixedDecimalFormatterLoader::load(loader, (&prefs).into(), options)?);
+        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(
+            loader,
+            (&prefs).into(),
+            options,
+        )?);
         Ok(())
     }
 

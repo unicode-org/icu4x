@@ -288,7 +288,10 @@ impl DataLocale {
         Self::from_preferences_with_info(locale, M::INFO)
     }
 
-    pub(crate) const fn from_preferences_with_info(locale: icu_locale_core::preferences::LocalePreferences, info: DataMarkerInfo) -> Self {
+    pub(crate) const fn from_preferences_with_info(
+        locale: icu_locale_core::preferences::LocalePreferences,
+        info: DataMarkerInfo,
+    ) -> Self {
         Self {
             language: locale.language,
             script: locale.script,

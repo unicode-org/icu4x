@@ -605,7 +605,10 @@ impl DataMarkerInfo {
     }
 
     /// Constructs a [`DataLocale`] for this [`DataMarkerInfo`].
-    pub fn make_locale(self, locale: icu_locale_core::preferences::LocalePreferences) -> DataLocale {
+    pub fn make_locale(
+        self,
+        locale: icu_locale_core::preferences::LocalePreferences,
+    ) -> DataLocale {
         DataLocale::from_preferences_with_info(locale, self)
     }
 }
