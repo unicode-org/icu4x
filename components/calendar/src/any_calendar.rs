@@ -60,7 +60,7 @@ define_preferences!(
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::new_for_locale(&locale.into());
+/// let calendar = AnyCalendar::new_for_locale(locale.into());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
