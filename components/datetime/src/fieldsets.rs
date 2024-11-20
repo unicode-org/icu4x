@@ -380,7 +380,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
             ///
             /// assert_try_writeable_eq!(
-            ///     fmt.format_converted(&dt),
+            ///     fmt.format_any_calendar(&dt),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
@@ -526,7 +526,7 @@ macro_rules! impl_date_marker {
             /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
             ///
             /// assert_try_writeable_eq!(
-            ///     fmt.format_converted(&dt),
+            ///     fmt.format_any_calendar(&dt),
             #[doc = concat!("    \"", $sample_time, "\"")]
             /// );
             /// ```
@@ -922,7 +922,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
         ///
         /// assert_try_writeable_eq!(
-        ///     fmt.format_converted(&dtz),
+        ///     fmt.format_any_calendar(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
         /// ```

@@ -64,7 +64,7 @@
 //!
 //! // Format something:
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
-//! let formatted_date = dtf.format_converted(&datetime);
+//! let formatted_date = dtf.format_any_calendar(&datetime);
 //!
 //! assert_try_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 //! ```

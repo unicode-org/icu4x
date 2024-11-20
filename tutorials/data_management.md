@@ -116,7 +116,7 @@ fn main() {
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_converted(&date).to_string_lossy();
+    let formatted_date = dtf.format_any_calendar(&date).to_string_lossy();
 
     println!("📅: {}", formatted_date);
 }
@@ -182,7 +182,7 @@ fn main() {
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_converted(&date).to_string_lossy();
+    let formatted_date = dtf.format_any_calendar(&date).to_string_lossy();
 
     println!("📅: {}", formatted_date);
 }

@@ -171,7 +171,7 @@ let date_formatter = DateTimeFormatter::try_new(
 println!(
     "Date: {}",
     date_formatter
-        .format_converted(&iso_date.to_any()).to_string_lossy()
+        .format_any_calendar(&iso_date.to_any()).to_string_lossy()
 );
 ```
 

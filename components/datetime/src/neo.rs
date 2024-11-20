@@ -400,7 +400,7 @@ where
     /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format_converted(&datetime),
+    ///     formatter.format_any_calendar(&datetime),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -599,7 +599,7 @@ where
     /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format_converted(&date),
+    ///     formatter.format_any_calendar(&date),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -620,9 +620,9 @@ where
     ///
     /// // the trait `GetField<AnyCalendarKind>`
     /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_converted(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// formatter.format_any_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn format_converted<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
+    pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
@@ -666,7 +666,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format_converted(&date),
+    ///     formatter.format_any_calendar(&date),
     ///     "12 Tishri 5785"
     /// );
     /// ```
