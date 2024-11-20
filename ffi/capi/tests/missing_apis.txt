@@ -14,6 +14,10 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::AnyCalendarPreferences#Struct
+icu::calendar::AnyCalendarPreferences::extend#FnInStruct
+icu::calendar::any_calendar::AnyCalendarPreferences#Struct
+icu::calendar::any_calendar::AnyCalendarPreferences::extend#FnInStruct
 icu::calendar::types::YearAmbiguity#Enum
 icu::calendar::types::YearInfo::year_ambiguity#FnInStruct
 icu::collator::CollatorPreferences::extend#FnInStruct
@@ -23,6 +27,8 @@ icu::datetime::DateTimeFormatter::strict_format#FnInStruct
 icu::datetime::DateTimeFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::DateTimeFormatter::try_new#FnInStruct
 icu::datetime::DateTimeFormatterLoadError#Enum
+icu::datetime::DateTimeFormatterPreferences#Struct
+icu::datetime::DateTimeFormatterPreferences::extend#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter#Struct
 icu::datetime::FixedCalendarDateTimeFormatter::format#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::into_formatter#FnInStruct
