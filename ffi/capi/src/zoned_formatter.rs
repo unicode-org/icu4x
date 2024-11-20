@@ -127,7 +127,7 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.format_converted(&zdt).try_write_to(write);
             Ok(())
         }
 
@@ -147,7 +147,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _lossy = self.0.format_converted(&zdt).try_write_to(write);
             Ok(())
         }
     }

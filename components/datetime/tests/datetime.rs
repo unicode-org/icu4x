@@ -319,7 +319,7 @@ fn assert_fixture_element<A>(
         description
     );
 
-    let actual3 = any_dtf.convert_and_format(&iso_any_input);
+    let actual3 = any_dtf.format_converted(&iso_any_input);
     assert_try_writeable_eq!(
         actual3,
         output_value.expectation(),
