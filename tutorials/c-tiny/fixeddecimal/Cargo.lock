@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -16,18 +16,18 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "proc-macro2",
  "quote",
  "serde",
  "smallvec",
- "strck",
+ "strck_ident",
  "syn",
 ]
 
@@ -44,45 +44,31 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
- "potential_utf",
  "tinystr",
  "writeable",
 ]
 
 [[package]]
-name = "icu_collections"
-version = "2.0.0-dev"
-dependencies = [
- "displaydoc",
- "potential_utf",
- "yoke",
- "zerofrom",
- "zerovec",
-]
-
-[[package]]
 name = "icu_locale"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "displaydoc",
- "icu_collections",
  "icu_locale_core",
  "icu_provider",
- "potential_utf",
  "tinystr",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_locale_core"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -93,7 +79,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -108,7 +94,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider",
@@ -118,7 +104,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "2.0.0-dev"
+version = "1.5.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -128,15 +114,6 @@ dependencies = [
 [[package]]
 name = "litemap"
 version = "0.7.3"
-
-[[package]]
-name = "potential_utf"
-version = "0.1.0-dev"
-dependencies = [
- "serde",
- "writeable",
- "zerovec",
-]
 
 [[package]]
 name = "proc-macro2"
@@ -190,10 +167,17 @@ checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "strck"
-version = "1.0.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42316e70da376f3d113a68d138a60d8a9883c604fe97942721ec2068dab13a9f"
+checksum = "be91090ded9d8f979d9fe921777342d37e769e0b6b7296843a7a38247240e917"
+
+[[package]]
+name = "strck_ident"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1c3802b169b3858a44667f221c9a0b3136e6019936ea926fc97fbad8af77202"
 dependencies = [
+ "strck",
  "unicode-ident",
 ]
 
@@ -221,7 +205,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.0-dev"
+version = "0.7.6"
 dependencies = [
  "displaydoc",
  "zerovec",
@@ -242,11 +226,11 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.5.6-dev"
+version = "0.5.5"
 
 [[package]]
 name = "yoke"
-version = "0.7.5-dev"
+version = "0.7.4"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -283,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.0-dev"
+version = "0.10.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -292,7 +276,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.0-dev"
+version = "0.10.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -309,7 +293,7 @@ version = "1.0.4"
 
 [[patch.unused]]
 name = "databake"
-version = "0.1.9-dev"
+version = "0.1.8"
 
 [[patch.unused]]
 name = "databake-derive"
@@ -321,19 +305,19 @@ version = "0.1.6"
 
 [[patch.unused]]
 name = "fixed_decimal"
-version = "0.6.0-dev"
+version = "0.5.6"
 
 [[patch.unused]]
 name = "icu"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu4x-datagen"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
-version = "0.9.0-dev"
+version = "0.8.2"
 
 [[patch.unused]]
 name = "icu_benchmark_macros"
@@ -341,59 +325,63 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_calendar_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_casemap"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_casemap_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.4.0-dev"
+version = "0.3.8"
 
 [[patch.unused]]
 name = "icu_collator"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_collator_data"
-version = "2.0.0-dev"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_collections"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_datetime"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_datetime_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_decimal"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_decimal_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.2.0-dev"
+version = "0.1.0"
 
 [[patch.unused]]
 name = "icu_experimental_data"
-version = "0.2.0-dev"
+version = "0.1.0"
 
 [[patch.unused]]
 name = "icu_freertos"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
@@ -401,92 +389,92 @@ version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_list"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_list_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_locale_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_normalizer"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_normalizer_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_pattern"
-version = "0.3.0-dev"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_plurals"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_plurals_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_properties"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_properties_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_baked"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_blob"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_export"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_fs"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_registry"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_segmenter"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_segmenter_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_timezone"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_timezone_data"
-version = "2.0.0-dev"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.3.0-dev"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.3.0-dev"
+version = "0.2.3"
 
 [[patch.unused]]
 name = "zerotrie"
-version = "0.2.0-dev"
+version = "0.1.3"
