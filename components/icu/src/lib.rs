@@ -32,7 +32,7 @@
 //! use icu::locale::locale;
 //!
 //! let dtf = DateTimeFormatter::try_new(
-//!     &locale!("es-US").into(),
+//!     locale!("es-US").into(),
 //!     YMD::medium(),
 //! )
 //! .expect("compiled data should include 'es-US'");
@@ -69,7 +69,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
 //!     &provider,
-//!     &locale!("es-US").into(),
+//!     locale!("es-US").into(),
 //!     YMD::medium(),
 //! )
 //! .expect("data should include 'es-US', 'es', or 'und'");

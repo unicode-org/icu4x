@@ -41,7 +41,7 @@ use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldsets::YMDT};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
-    &locale!("es").into(),
+    locale!("es").into(),
     YMDT::long()
 )
 .expect("locale should be present in compiled data");
