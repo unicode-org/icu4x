@@ -373,7 +373,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             #[doc = concat!("let fmt = DateTimeFormatter::<", stringify!($type), ">::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -396,7 +396,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use writeable::assert_try_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -519,7 +519,7 @@ macro_rules! impl_date_marker {
             /// use writeable::assert_try_writeable_eq;
             ///
             #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -542,7 +542,7 @@ macro_rules! impl_date_marker {
             /// use writeable::assert_try_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -705,7 +705,7 @@ macro_rules! impl_time_marker {
             /// use writeable::assert_try_writeable_eq;
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -822,7 +822,7 @@ macro_rules! impl_zone_marker {
             /// use writeable::assert_try_writeable_eq;
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
-            ///     &locale!("en").into(),
+            ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
             /// .unwrap();
@@ -914,7 +914,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
-        ///     &locale!("en-GB").into(),
+        ///     locale!("en-GB").into(),
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
@@ -939,7 +939,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en-GB").into(),
+        ///     locale!("en-GB").into(),
         #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
         /// )
         /// .unwrap();
@@ -1111,7 +1111,7 @@ impl_time_marker!(
     /// // but we can set overrides.
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("en-US-u-hc-h12").into(),
+    ///     locale!("en-US-u-hc-h12").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1121,7 +1121,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("en-US-u-hc-h23").into(),
+    ///     locale!("en-US-u-hc-h23").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1131,7 +1131,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("fr-FR-u-hc-h12").into(),
+    ///     locale!("fr-FR-u-hc-h12").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1141,7 +1141,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("fr-FR-u-hc-h23").into(),
+    ///     locale!("fr-FR-u-hc-h23").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1161,7 +1161,7 @@ impl_time_marker!(
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("und-u-hc-h11").into(),
+    ///     locale!("und-u-hc-h11").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1172,7 +1172,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("und-u-hc-h24").into(),
+    ///     locale!("und-u-hc-h24").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
@@ -1214,7 +1214,7 @@ impl_zone_marker!(
     ///     .with_zone_variant(ZoneVariant::Standard);
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Z::short(),
     /// )
     /// .unwrap();
@@ -1225,7 +1225,7 @@ impl_zone_marker!(
     /// );
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Z::long(),
     /// )
     /// .unwrap();
@@ -1254,7 +1254,7 @@ impl_zone_marker!(
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     Z::medium(),
     /// )
     /// .unwrap();
@@ -1299,7 +1299,7 @@ impl_zone_marker!(
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     Combo::<T, Zs>::medium(),
     /// )
     /// .unwrap();
@@ -1346,7 +1346,7 @@ impl_zone_marker!(
     /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     O::medium(),
     /// )
     /// .unwrap();
@@ -1401,7 +1401,7 @@ impl_zone_marker!(
     ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     V::short(),
     /// )
     /// .unwrap();
@@ -1426,7 +1426,7 @@ impl_zone_marker!(
     ///
     /// // Set up the formatter
     /// let mut tzf = TimeFormatter::try_new(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     V::short(),
     /// )
     /// .unwrap();
@@ -1477,7 +1477,7 @@ impl_zone_marker!(
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).without_offset();
     ///
     /// let formatter = TimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     V::medium(),
     /// )
     /// .unwrap();
@@ -1519,7 +1519,7 @@ impl_zone_marker!(
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());1
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     Vs::medium(),
     /// )
     /// .unwrap();
@@ -1560,7 +1560,7 @@ impl_zone_marker!(
     /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("en-US").into(),
+    ///     locale!("en-US").into(),
     ///     L::medium(),
     /// )
     /// .unwrap();

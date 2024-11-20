@@ -60,7 +60,7 @@
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
-//! let dtf = DateTimeFormatter::try_new(&locale.into(), field_set).unwrap();
+//! let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 //!
 //! // Format something:
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
@@ -108,6 +108,7 @@ pub(crate) mod size_test_macro;
 pub use error::{DateTimeFormatterLoadError, DateTimeWriteError, MismatchedCalendarError};
 
 pub use neo::DateTimeFormatter;
+pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
 pub use neo::TimeFormatter;

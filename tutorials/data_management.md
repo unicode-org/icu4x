@@ -173,7 +173,7 @@ fn main() {
 
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
-        &LOCALE.into(),
+        LOCALE.into(),
         YMDT::medium()
     )
     .expect("blob should contain required markers and `ja` data");
@@ -226,7 +226,7 @@ fn main() {
 
     let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
-        &LOCALE.into(),
+        LOCALE.into(),
         YMDT::medium(),
     )
     .expect("blob should contain required data");

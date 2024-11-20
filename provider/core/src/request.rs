@@ -20,6 +20,7 @@ use zerovec::ule::VarULE;
 
 use crate::fallback::LocaleFallbackPriority;
 use crate::DataMarker;
+use crate::DataMarkerInfo;
 
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
@@ -284,13 +285,20 @@ impl DataLocale {
     pub const fn from_preferences_locale<M: DataMarker>(
         locale: icu_locale_core::preferences::LocalePreferences,
     ) -> Self {
+        Self::from_preferences_with_info(locale, M::INFO)
+    }
+
+    pub(crate) const fn from_preferences_with_info(
+        locale: icu_locale_core::preferences::LocalePreferences,
+        info: DataMarkerInfo,
+    ) -> Self {
         Self {
             language: locale.language,
             script: locale.script,
             region: match (locale.region, locale.ue_region) {
                 (Some(_), Some(r))
                     if matches!(
-                        M::INFO.fallback_config.priority,
+                        info.fallback_config.priority,
                         LocaleFallbackPriority::Region
                     ) =>
                 {

@@ -14,7 +14,7 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT, options::NeoSkeletonLength};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT};
 use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
@@ -27,7 +27,7 @@ fn main() {
 
     let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &provider,
-        &locale!("my").into(),
+        locale!("my").into(),
         YMDT::medium(),
     )
     .expect("locale 'my' should be present in compiled data");

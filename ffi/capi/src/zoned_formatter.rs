@@ -40,7 +40,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
@@ -49,7 +49,7 @@ pub mod ffi {
                     icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                     icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
-                    &locale,
+                    prefs,
                     options
                 )?,
             )))
@@ -94,7 +94,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
@@ -102,7 +102,7 @@ pub mod ffi {
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options,
             )?)))
         }

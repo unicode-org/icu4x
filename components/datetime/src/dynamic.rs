@@ -45,11 +45,10 @@
 //!     }
 //! }
 //!
-//! let locale = locale!("en-US").into();
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
 //!
 //! let results = [true, false].map(get_field_set).map(|field_set| {
-//!     DateTimeFormatter::try_new(&locale, field_set).unwrap()
+//!     DateTimeFormatter::try_new(locale!("en-US").into(), field_set).unwrap()
 //! }).map(|formatter| {
 //!     formatter.convert_and_format(&datetime).try_write_to_string().unwrap().into_owned()
 //! });

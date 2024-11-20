@@ -78,7 +78,7 @@ where
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Four)
     ///     .unwrap()
@@ -117,7 +117,7 @@ where
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Three)
     ///     .unwrap();
@@ -173,7 +173,7 @@ where
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -244,8 +244,7 @@ mod tests {
     #[test]
     fn test_basic_pattern_formatting() {
         let locale = locale!("en").into();
-        let mut names: TypedDateTimeNames<Gregorian> =
-            TypedDateTimeNames::try_new(&locale).unwrap();
+        let mut names: TypedDateTimeNames<Gregorian> = TypedDateTimeNames::try_new(locale).unwrap();
         names
             .load_month_names(
                 &crate::provider::Baked,
@@ -319,7 +318,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_year_names(&crate::provider::Baked, field_length)
                 .unwrap();
@@ -390,7 +389,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_month_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
@@ -508,7 +507,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
                 .unwrap();
@@ -590,7 +589,7 @@ mod tests {
                 expected,
             } = cas;
             let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(&locale).unwrap();
+                TypedDateTimeNames::try_new(locale).unwrap();
             names
                 .load_day_period_names(&crate::provider::Baked, field_length)
                 .unwrap();

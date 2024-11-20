@@ -108,14 +108,14 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<Calendar>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
 
             Ok(Box::new(Calendar(Arc::new(call_constructor!(
                 icu_calendar::AnyCalendar::new_for_locale [r => Ok(r)],
                 icu_calendar::AnyCalendar::try_new_for_locale_with_any_provider,
                 icu_calendar::AnyCalendar::try_new_for_locale_with_buffer_provider,
                 provider,
-                &locale
+                prefs
             )?))))
         }
 

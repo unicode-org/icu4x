@@ -18,7 +18,7 @@ fn assert_resolved_components(
     locale: Locale,
 ) {
     let dtf =
-        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&locale.into(), skeleton).unwrap();
+        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
         time: Time::midnight(),

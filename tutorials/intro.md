@@ -114,7 +114,7 @@ const LOCALE: Locale = locale!("ja"); // let's try some other language
 fn main() {
 
     let dtf = DateTimeFormatter::try_new(
-        &LOCALE.into(),
+        LOCALE.into(),
         YMDT::medium(),
     )
     .expect("ja data should be available");

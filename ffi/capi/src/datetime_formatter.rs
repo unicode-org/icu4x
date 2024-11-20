@@ -45,7 +45,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = T::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(TimeFormatter(call_constructor!(
@@ -53,7 +53,7 @@ pub mod ffi {
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -99,7 +99,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
@@ -107,7 +107,7 @@ pub mod ffi {
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -149,7 +149,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
@@ -157,7 +157,7 @@ pub mod ffi {
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -188,7 +188,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<DateFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMD::with_length(NeoSkeletonLength::from(length));
 
             Ok(Box::new(DateFormatter(call_constructor!(
@@ -196,7 +196,7 @@ pub mod ffi {
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -263,7 +263,7 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
@@ -271,7 +271,7 @@ pub mod ffi {
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options,
             )?)))
         }

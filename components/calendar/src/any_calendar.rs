@@ -21,11 +21,25 @@ use crate::roc::Roc;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
 
 use icu_locale_core::extensions::unicode::{key, value, Value};
+use icu_locale_core::preferences::define_preferences;
+use icu_locale_core::preferences::extensions::unicode::keywords::{
+    CalendarAlgorithm, IslamicCalendarAlgorithm,
+};
 use icu_locale_core::subtags::language;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
+
+define_preferences!(
+    /// The prefs for datetime formatting.
+    [Copy]
+    AnyCalendarPreferences,
+    {
+        /// The user's preferred calendar system.
+        calendar_algorithm: CalendarAlgorithm
+    }
+);
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
@@ -46,7 +60,7 @@ use core::fmt;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::new_for_locale(&locale.into());
+/// let calendar = AnyCalendar::new_for_locale(locale.into());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
@@ -748,13 +762,13 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_for_locale(locale: &DataLocale) -> Self {
-        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
+    pub fn new_for_locale(prefs: AnyCalendarPreferences) -> Self {
+        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
         Self::new(kind)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
             new_for_locale: skip,
             try_new_for_locale_with_any_provider,
@@ -767,7 +781,7 @@ impl AnyCalendar {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_locale)]
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        prefs: AnyCalendarPreferences,
     ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
@@ -778,7 +792,7 @@ impl AnyCalendar {
             + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
             + ?Sized,
     {
-        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
+        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
         Self::try_new_unstable(provider, kind)
     }
 
@@ -1028,6 +1042,40 @@ impl AnyCalendarKind {
         }
     }
 
+    fn get_for_preferences_calendar(pcal: CalendarAlgorithm) -> Option<Self> {
+        match pcal {
+            CalendarAlgorithm::Buddhist => Some(Self::Buddhist),
+            CalendarAlgorithm::Chinese => Some(Self::Chinese),
+            CalendarAlgorithm::Coptic => Some(Self::Coptic),
+            CalendarAlgorithm::Dangi => Some(Self::Dangi),
+            CalendarAlgorithm::Ethioaa => Some(Self::EthiopianAmeteAlem),
+            CalendarAlgorithm::Ethiopic => Some(Self::Ethiopian),
+            CalendarAlgorithm::Gregory => Some(Self::Gregorian),
+            CalendarAlgorithm::Hebrew => Some(Self::Hebrew),
+            CalendarAlgorithm::Indian => Some(Self::Indian),
+            CalendarAlgorithm::Islamic(None) => Some(Self::IslamicObservational),
+            CalendarAlgorithm::Islamic(Some(islamic)) => match islamic {
+                IslamicCalendarAlgorithm::Umalqura => Some(Self::IslamicUmmAlQura),
+                IslamicCalendarAlgorithm::Tbla => Some(Self::IslamicTabular),
+                IslamicCalendarAlgorithm::Civil => Some(Self::IslamicCivil),
+                // Rgsa is not supported
+                IslamicCalendarAlgorithm::Rgsa => None,
+                _ => {
+                    debug_assert!(false, "unknown calendar algorithm {pcal:?}");
+                    None
+                }
+            },
+            CalendarAlgorithm::Iso8601 => Some(Self::Iso),
+            CalendarAlgorithm::Japanese => Some(Self::Japanese),
+            CalendarAlgorithm::Persian => Some(Self::Persian),
+            CalendarAlgorithm::Roc => Some(Self::Roc),
+            _ => {
+                debug_assert!(false, "unknown calendar algorithm {pcal:?}");
+                None
+            }
+        }
+    }
+
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),
@@ -1062,21 +1110,22 @@ impl AnyCalendarKind {
             .and_then(Self::get_for_bcp47_value)
     }
 
-    /// Extract the calendar component from a [`DataLocale`]
+    /// Extract the calendar component from a [`AnyCalendarPreferences`]
     ///
     /// Returns `None` if the calendar is not specified or unknown.
-    fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
-        l.get_unicode_ext(&key!("ca"))
-            .and_then(|v| Self::get_for_bcp47_value(&v))
+    fn get_for_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
+        prefs
+            .calendar_algorithm
+            .and_then(Self::get_for_preferences_calendar)
     }
 
     // Do not make public, this will eventually need fallback
     // data from the provider
-    fn from_data_locale_with_fallback(l: &DataLocale) -> Self {
-        if let Some(kind) = Self::get_for_data_locale(l) {
+    fn from_prefs_with_fallback(prefs: AnyCalendarPreferences) -> Self {
+        if let Some(kind) = Self::get_for_prefs(prefs) {
             kind
         } else {
-            let lang = l.language;
+            let lang = prefs.locale_prefs.language;
             if lang == language!("th") {
                 Self::Buddhist
             } else if lang == language!("sa") {

@@ -52,7 +52,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-                                &locale.into(),
+                                locale.into(),
                                 skeleton,
                             )
                             .expect("Failed to create FixedCalendarDateTimeFormatter.")

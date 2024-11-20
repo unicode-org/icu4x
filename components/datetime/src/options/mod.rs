@@ -27,21 +27,21 @@ use crate::neo_serde::TimePrecisionSerde;
 ///
 /// let short_formatter =
 ///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::short(),
 ///     )
 ///     .unwrap();
 ///
 /// let medium_formatter =
 ///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::medium(),
 ///     )
 ///     .unwrap();
 ///
 /// let long_formatter =
 ///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::long(),
 ///     )
 ///     .unwrap();
@@ -107,14 +107,14 @@ impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
 ///
 /// let plain_formatter =
 ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::short(),
 ///     )
 ///     .unwrap();
 ///
 /// let column_formatter =
 ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::short().with_alignment(Alignment::Column),
 ///     )
 ///     .unwrap();
@@ -180,7 +180,7 @@ impl IntoOption<Alignment> for Alignment {
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Auto),
 /// )
 /// .unwrap();
@@ -207,7 +207,7 @@ impl IntoOption<Alignment> for Alignment {
 /// );
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Full),
 /// )
 /// .unwrap();
@@ -233,7 +233,7 @@ impl IntoOption<Alignment> for Alignment {
 /// );
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Always),
 /// )
 /// .unwrap();
@@ -340,7 +340,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::SecondExact(FractionalSecondDigits::F0),
 /// ].map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         T::short().with_time_precision(time_precision),
 ///     )
 ///     .unwrap()
@@ -467,7 +467,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     T::short().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)),
 /// )
 /// .unwrap();
