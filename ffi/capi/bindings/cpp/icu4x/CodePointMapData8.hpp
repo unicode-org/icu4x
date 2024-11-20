@@ -62,6 +62,9 @@ namespace capi {
     typedef struct icu4x_CodePointMapData8_load_joining_type_mv1_result {union {icu4x::capi::CodePointMapData8* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData8_load_joining_type_mv1_result;
     icu4x_CodePointMapData8_load_joining_type_mv1_result icu4x_CodePointMapData8_load_joining_type_mv1(const icu4x::capi::DataProvider* provider);
     
+    typedef struct icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result {union {icu4x::capi::CodePointMapData8* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result;
+    icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result icu4x_CodePointMapData8_load_canonical_combining_class_mv1(const icu4x::capi::DataProvider* provider);
+    
     
     void icu4x_CodePointMapData8_destroy_mv1(CodePointMapData8* self);
     
@@ -151,6 +154,11 @@ inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataEr
 
 inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::load_joining_type(const icu4x::DataProvider& provider) {
   auto result = icu4x::capi::icu4x_CodePointMapData8_load_joining_type_mv1(provider.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::load_canonical_combining_class(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_CodePointMapData8_load_canonical_combining_class_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

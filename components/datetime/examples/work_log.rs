@@ -10,7 +10,7 @@ icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
 use icu_calendar::DateTime;
-use icu_datetime::{fieldset::YMDT, FixedCalendarDateTimeFormatter};
+use icu_datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu_locale_core::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[

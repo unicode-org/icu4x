@@ -7,13 +7,13 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldset::YMDTV, options::NeoSkeletonLength};
+    use icu_datetime::{fieldsets::YMDTV, options::NeoSkeletonLength};
     use icu_timezone::ZoneVariant;
 
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
         datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::{DateTimeFormatError, PatternLoadError},
+        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZoneInfo,
@@ -39,7 +39,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
+        ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 
@@ -93,7 +93,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let locale = locale.to_datalocale();
             let options = YMDTV::with_length(NeoSkeletonLength::from(length));
 

@@ -12,7 +12,7 @@
 //! Two ways to configure the same field set:
 //!
 //! ```
-//! use icu::datetime::fieldset::YMDT;
+//! use icu::datetime::fieldsets::YMDT;
 //! use icu::datetime::options::{Alignment, TimePrecision, YearStyle};
 //!
 //! let field_set_1 = YMDT::long()
@@ -29,19 +29,18 @@
 //! ```
 
 #[path = "dynamic.rs"]
-pub mod dynamic;
+pub mod enums;
 
 pub use crate::combo::Combo;
 
 use crate::{
     fields,
-    format::neo::*,
     options::*,
     provider::{neo::*, time_zones::tz, *},
-    raw::neo::RawNeoOptions,
+    raw::neo::RawOptions,
     scaffold::*,
 };
-use dynamic::*;
+use enums::*;
 use icu_calendar::{
     types::{
         DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
@@ -196,8 +195,8 @@ macro_rules! impl_marker_with_options {
                 const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
                 #[warn(dead_code)]
             )?
-            pub(crate) fn to_raw_options(self) -> RawNeoOptions {
-                RawNeoOptions {
+            pub(crate) fn to_raw_options(self) -> RawOptions {
+                RawOptions {
                     length: self.length,
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
@@ -208,7 +207,7 @@ macro_rules! impl_marker_with_options {
                 const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
                 #[warn(dead_code)]
             )?
-            pub(crate) fn from_raw_options(options: RawNeoOptions) -> Self {
+            pub(crate) fn from_raw_options(options: RawOptions) -> Self {
                 Self {
                     length: options.length,
                     $(alignment: yes_to!(options.alignment, $alignment_yes),)?
@@ -245,11 +244,6 @@ macro_rules! impl_marker_with_options {
                 /// Sets the time precision to [`TimePrecision::MinuteExact`]
                 pub fn hm(mut self) -> Self {
                     self.time_precision = Some(TimePrecision::MinuteExact);
-                    self
-                }
-                /// Sets the time precision to [`TimePrecision::SecondPlus`]
-                pub fn hms(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::SecondPlus);
                     self
                 }
             }
@@ -375,7 +369,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// ```
             /// use icu::calendar::Date;
             /// use icu::datetime::DateTimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             #[doc = concat!("let fmt = DateTimeFormatter::<", stringify!($type), ">::try_new(")]
@@ -397,7 +391,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use icu::calendar::Date;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             ///
@@ -454,8 +448,8 @@ macro_rules! impl_date_or_calendar_period_marker {
         }
         impl DateTimeMarkers for $type {
             type D = Self;
-            type T = NeoNeverMarker;
-            type Z = NeoNeverMarker;
+            type T = ();
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
     };
@@ -473,7 +467,6 @@ macro_rules! impl_date_marker {
         $(#[$attr:meta])*
         $type:ident,
         $type_time:ident,
-        $components:expr,
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
@@ -521,7 +514,7 @@ macro_rules! impl_date_marker {
             /// ```
             /// use icu::calendar::DateTime;
             /// use icu::datetime::DateTimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             ///
@@ -544,7 +537,7 @@ macro_rules! impl_date_marker {
             /// use icu::calendar::DateTime;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type_time), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             ///
@@ -614,7 +607,7 @@ macro_rules! impl_date_marker {
         impl DateTimeMarkers for $type_time {
             type D = Self;
             type T = Self;
-            type Z = NeoNeverMarker;
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
         }
         impl_composite!($type_time, DateTime, DateAndTimeFieldSet);
@@ -641,7 +634,6 @@ macro_rules! impl_calendar_period_marker {
     (
         $(#[$attr:meta])*
         $type:ident,
-        $components:expr,
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
@@ -683,8 +675,6 @@ macro_rules! impl_time_marker {
         $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -710,7 +700,7 @@ macro_rules! impl_time_marker {
             /// ```
             /// use icu::calendar::Time;
             /// use icu::datetime::TimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_try_writeable_eq;
             ///
@@ -757,9 +747,9 @@ macro_rules! impl_time_marker {
             type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $($nanosecond_yes)?);
         }
         impl DateTimeMarkers for $type {
-            type D = NeoNeverMarker;
+            type D = ();
             type T = Self;
-            type Z = NeoNeverMarker;
+            type Z = ();
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Time, TimeFieldSet);
@@ -778,8 +768,6 @@ macro_rules! impl_zone_marker {
         $(#[$attr:meta])*
         // The name of the type being created.
         $type:ident,
-        // An expression for the field set.
-        $components:expr,
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
@@ -828,7 +816,7 @@ macro_rules! impl_zone_marker {
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::TimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use tinystr::tinystr;
             /// use writeable::assert_try_writeable_eq;
@@ -882,8 +870,8 @@ macro_rules! impl_zone_marker {
             type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
         }
         impl DateTimeMarkers for $type {
-            type D = NeoNeverMarker;
-            type T = NeoNeverMarker;
+            type D = ();
+            type T = ();
             type Z = Self;
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
@@ -921,7 +909,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use icu::calendar::{Date, Time};
         /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
         /// use icu::datetime::DateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+        #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
         /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         ///
@@ -946,7 +934,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldset::", stringify!($type), ";")]
+        #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
         /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         ///
@@ -974,7 +962,6 @@ impl_date_marker!(
     /// in the future. See CLDR-18040.
     D,
     DT,
-    NeoDateComponents::Day,
     description = "day of month (standalone)",
     sample_length = short,
     sample = "17",
@@ -987,7 +974,6 @@ impl_date_marker!(
 impl_date_marker!(
     E,
     ET,
-    NeoDateComponents::Weekday,
     description = "weekday (standalone)",
     sample_length = long,
     sample = "Friday",
@@ -1001,7 +987,6 @@ impl_date_marker!(
     /// in the future. See CLDR-18040.
     DE,
     DET,
-    NeoDateComponents::DayWeekday,
     description = "day of month and weekday",
     sample_length = long,
     sample = "17 Friday",
@@ -1015,7 +1000,6 @@ impl_date_marker!(
 impl_date_marker!(
     MD,
     MDT,
-    NeoDateComponents::MonthDay,
     description = "month and day",
     sample_length = medium,
     sample = "May 17",
@@ -1031,7 +1015,6 @@ impl_date_marker!(
     /// See CLDR-18040 for progress on improving this format.
     MDE,
     MDET,
-    NeoDateComponents::MonthDayWeekday,
     description = "month, day, and weekday",
     sample_length = medium,
     sample = "Fri, May 17",
@@ -1048,7 +1031,6 @@ impl_date_marker!(
 impl_date_marker!(
     YMD,
     YMDT,
-    NeoDateComponents::YearMonthDay,
     description = "year, month, and day",
     sample_length = short,
     sample = "5/17/24",
@@ -1065,7 +1047,6 @@ impl_date_marker!(
 impl_date_marker!(
     YMDE,
     YMDET,
-    NeoDateComponents::YearMonthDayWeekday,
     description = "year, month, day, and weekday",
     sample_length = short,
     sample = "Fri, 5/17/24",
@@ -1083,7 +1064,6 @@ impl_date_marker!(
 
 impl_calendar_period_marker!(
     Y,
-    NeoCalendarPeriodComponents::Year,
     description = "year (standalone)",
     sample_length = medium,
     sample = "2024",
@@ -1095,7 +1075,6 @@ impl_calendar_period_marker!(
 
 impl_calendar_period_marker!(
     M,
-    NeoCalendarPeriodComponents::Month,
     description = "month (standalone)",
     sample_length = long,
     sample = "May",
@@ -1107,7 +1086,6 @@ impl_calendar_period_marker!(
 
 impl_calendar_period_marker!(
     YM,
-    NeoCalendarPeriodComponents::YearMonth,
     description = "year and month",
     sample_length = medium,
     sample = "May 2024",
@@ -1124,7 +1102,7 @@ impl_time_marker!(
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::fieldset::T;
+    /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -1177,7 +1155,7 @@ impl_time_marker!(
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::fieldset::T;
+    /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -1205,7 +1183,6 @@ impl_time_marker!(
     /// );
     /// ```
     T,
-    NeoTimeComponents::Time,
     description = "time (locale-dependent hour cycle)",
     sample_length = medium,
     sample = "3:47:50 PM",
@@ -1225,7 +1202,7 @@ impl_zone_marker!(
     /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Z;
+    /// use icu::datetime::fieldsets::Z;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
@@ -1266,7 +1243,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Z;
+    /// use icu::datetime::fieldsets::Z;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1286,7 +1263,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Z,
-    NeoTimeZoneStyle::Specific,
     description = "time zone in specific non-location format",
     sample_length = long,
     sample = "Central Daylight Time",
@@ -1312,7 +1288,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::{Combo, T, Zs};
+    /// use icu::datetime::fieldsets::{Combo, T, Zs};
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1333,7 +1309,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Zs,
-    NeoTimeZoneStyle::Specific,
     description = "time zone in specific non-location format (only short)",
     sample_length = short,
     sample = "CDT",
@@ -1355,7 +1330,7 @@ impl_zone_marker!(
     /// ```
     /// use icu::calendar::{Date, Time};
     /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldset::O;
+    /// use icu::datetime::fieldsets::O;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1397,7 +1372,6 @@ impl_zone_marker!(
     /// );
     /// ```
     O,
-    NeoTimeZoneStyle::Offset,
     description = "UTC offset",
     sample_length = medium,
     sample = "GMT-5",
@@ -1416,7 +1390,7 @@ impl_zone_marker!(
     /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::V;
+    /// use icu::datetime::fieldsets::V;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
@@ -1444,7 +1418,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
     /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldset::V;
+    /// use icu::datetime::fieldsets::V;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -1494,7 +1468,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldset::V;
+    /// use icu::datetime::fieldsets::V;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1513,7 +1487,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     V,
-    NeoTimeZoneStyle::Generic,
     description = "time zone in generic non-location format",
     sample_length = long,
     sample = "Central Time",
@@ -1537,7 +1510,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::Vs;
+    /// use icu::datetime::fieldsets::Vs;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1556,7 +1529,6 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     Vs,
-    NeoTimeZoneStyle::Generic,
     description = "time zone in generic non-location format (only short)",
     sample_length = short,
     sample = "CT",
@@ -1579,7 +1551,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0277
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldset::L;
+    /// use icu::datetime::fieldsets::L;
     /// use icu::timezone::UtcOffset;
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1598,7 +1570,6 @@ impl_zone_marker!(
     /// formatter.format(&utc_offset);
     /// ```
     L,
-    NeoTimeZoneStyle::Location,
     description = "time zone in location format",
     sample_length = long,
     sample = "Chicago Time",

@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::fieldset::YMDTO;
+use icu_datetime::fieldsets::YMDTO;
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_timezone::CustomZonedDateTime;
 use std::env;

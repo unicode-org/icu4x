@@ -37,7 +37,7 @@ icu = "1.5.0"
 
 ```rust
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMDT};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldsets::YMDT};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(

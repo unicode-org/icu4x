@@ -8,8 +8,9 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::props::{
-        BidiClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, HangulSyllableType,
-        IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak, WordBreak,
+        BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
+        HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
+        WordBreak,
     };
 
     use crate::errors::ffi::DataError;
@@ -242,6 +243,18 @@ pub mod ffi {
             Ok(convert_8(call_constructor_unstable!(
                 icu_properties::CodePointMapData::<JoiningType>::new [r => Ok(r.static_to_owned())],
                 icu_properties::CodePointMapData::<JoiningType>::try_new_unstable,
+                provider,
+            )?))
+        }
+
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "canonical_combining_class")]
+        pub fn load_canonical_combining_class(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointMapData8>, DataError> {
+            Ok(convert_8(call_constructor_unstable!(
+                icu_properties::CodePointMapData::<CanonicalCombiningClass>::new [r => Ok(r.static_to_owned())],
+                icu_properties::CodePointMapData::<CanonicalCombiningClass>::try_new_unstable,
                 provider,
             )?))
         }

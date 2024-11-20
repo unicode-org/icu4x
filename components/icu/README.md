@@ -28,7 +28,7 @@ provide data explicitly using [`DataProvider`]s.
 Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 
 ```rust
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldsets::YMD};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
@@ -51,7 +51,7 @@ Powerful data management is possible with [`DataProvider`]s, which are passed to
 special constructors:
 
 ```rust
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
+use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldsets::YMD};
 use icu::locale::locale;
 use icu::locale::fallback::LocaleFallbacker;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;

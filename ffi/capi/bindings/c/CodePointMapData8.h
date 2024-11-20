@@ -61,6 +61,9 @@ icu4x_CodePointMapData8_load_sentence_break_mv1_result icu4x_CodePointMapData8_l
 typedef struct icu4x_CodePointMapData8_load_joining_type_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_load_joining_type_mv1_result;
 icu4x_CodePointMapData8_load_joining_type_mv1_result icu4x_CodePointMapData8_load_joining_type_mv1(const DataProvider* provider);
 
+typedef struct icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result;
+icu4x_CodePointMapData8_load_canonical_combining_class_mv1_result icu4x_CodePointMapData8_load_canonical_combining_class_mv1(const DataProvider* provider);
+
 
 void icu4x_CodePointMapData8_destroy_mv1(CodePointMapData8* self);
 

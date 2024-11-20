@@ -5,7 +5,7 @@
 #![cfg(feature = "serde")]
 
 use icu_datetime::fields::components;
-use icu_datetime::{fieldset::serde::CompositeFieldSetSerde, options};
+use icu_datetime::{fieldsets::serde::CompositeFieldSetSerde, options};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

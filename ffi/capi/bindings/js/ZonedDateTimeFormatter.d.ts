@@ -2,10 +2,10 @@
 import type { DataProvider } from "./DataProvider"
 import type { DateTime } from "./DateTime"
 import type { DateTimeFormatError } from "./DateTimeFormatError"
+import type { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 import type { DateTimeLength } from "./DateTimeLength"
 import type { IsoDateTime } from "./IsoDateTime"
 import type { Locale } from "./Locale"
-import type { PatternLoadError } from "./PatternLoadError"
 import type { TimeZoneInfo } from "./TimeZoneInfo"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 

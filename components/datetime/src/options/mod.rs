@@ -20,7 +20,7 @@ use crate::neo_serde::TimePrecisionSerde;
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::YMD;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
@@ -99,7 +99,7 @@ impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::YMD;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::Alignment;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -173,7 +173,7 @@ impl IntoOption<Alignment> for Alignment {
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::YMD;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::YearStyle;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -324,7 +324,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///
 /// ```
 /// use icu::calendar::Time;
-/// use icu::datetime::fieldset::T;
+/// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -459,7 +459,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::Time;
-/// use icu::datetime::fieldset::T;
+/// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;

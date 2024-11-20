@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, provider::neo::*, scaffold::*};
+use crate::{provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
@@ -15,7 +15,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, E, L};
+/// use icu::datetime::fieldsets::{Combo, E, L};
 ///
 /// let field_set_1 = E::long().zone_l();
 /// let field_set_2 = Combo::<E, L>::long();
@@ -26,7 +26,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -54,7 +54,7 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -79,11 +79,11 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 /// );
 /// ```
 ///
-/// Mix a dynamic [`DateFieldSet`](crate::fieldset::dynamic::DateFieldSet)
+/// Mix a dynamic [`DateFieldSet`](crate::fieldsets::enums::DateFieldSet)
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, YMD, Vs, dynamic::DateFieldSet};
+/// use icu::datetime::fieldsets::{Combo, YMD, Vs, enums::DateFieldSet};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
