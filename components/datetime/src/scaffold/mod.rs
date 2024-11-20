@@ -18,8 +18,8 @@ pub use calendar::CalMarkers;
 pub use calendar::CldrCalendar;
 pub use calendar::ConvertCalendar;
 pub use calendar::FullDataCalMarkers;
-pub use calendar::IsInCalendar;
-pub use calendar::IsInFixedCalendar;
+pub use calendar::InCalendar;
+pub use calendar::InFixedCalendar;
 pub use calendar::NoDataCalMarkers;
 
 pub(crate) use fieldset_traits::datetime_marker_helper;
