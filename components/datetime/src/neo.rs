@@ -17,7 +17,6 @@ use crate::scaffold::{
     InFixedCalendar, InSameCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
-use crate::DateTimeWriteError;
 use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
@@ -29,7 +28,7 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
-use writeable::TryWriteable;
+use writeable::{impl_display_with_writeable, Writeable};
 
 define_preferences!(
     /// The prefs for datetime formatting.
@@ -788,36 +787,38 @@ pub struct FormattedDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl TryWriteable for FormattedDateTime<'_> {
-    type Error = DateTimeWriteError;
-
-    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+impl Writeable for FormattedDateTime<'_> {
+    fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
-    ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        try_write_pattern_items(
+    ) -> Result<(), fmt::Error> {
+        let result = try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
             &self.input,
             &self.names,
             self.names.fixed_decimal_formatter,
             sink,
-        )
+        );
+        // There should not be an error. If there is, return the lossy string.
+        match result {
+            Ok(Ok(())) => Ok(()),
+            Err(fmt::Error) => Err(fmt::Error),
+            Ok(Err(e)) => {
+                debug_assert!(false, "unexpected error in FormattedDateTime: {e:?}");
+                Ok(())
+            }
+        }
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
 
+impl_display_with_writeable!(FormattedDateTime<'_>);
+
 impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
-    }
-
-    /// Gets the formatted result as a string.
-    pub fn to_string_lossy(&self) -> alloc::string::String {
-        match self.try_write_to_string() {
-            Err((_, s)) | Ok(s) => s.into_owned(),
-        }
     }
 }

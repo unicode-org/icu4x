@@ -36,6 +36,6 @@ fn main() {
         let date = DateTime::try_new_gregorian(year, month, day, hour, minute, second)
             .expect("datetime should parse");
         let fdt = dtf.format(&date);
-        println!("{idx}) {}", writeable::adapters::LossyWrap(fdt));
+        println!("{idx}) {}", fdt);
     }
 }

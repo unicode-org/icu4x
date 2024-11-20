@@ -14,7 +14,6 @@ use icu_datetime::fieldsets::YMDTO;
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_timezone::CustomZonedDateTime;
 use std::env;
-use writeable::adapters::LossyWrap;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -50,7 +49,7 @@ fn main() {
 
         let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
 
-        println!("Today is: {}", LossyWrap(formatted_dt));
+        println!("Today is: {}", formatted_dt);
     }
 
     {
