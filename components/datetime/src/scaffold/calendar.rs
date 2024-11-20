@@ -438,10 +438,8 @@ impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
     }
 }
 
-/// A type that might be compatible with a specific calendar system.
-///
-/// All formattable types should implement this trait.
-pub trait IsAnyCalendarKind {
+/// An input that may be associated with a specific runtime calendar.
+pub trait IsInCalendar {
     /// Checks whether this type is compatible with the given calendar.
     ///
     /// Types that are agnostic to calendar systems should return `Ok(())`.
@@ -451,7 +449,7 @@ pub trait IsAnyCalendarKind {
     ) -> Result<(), MismatchedCalendarError>;
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar for Date<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -468,14 +466,14 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
     }
 }
 
-impl IsAnyCalendarKind for Time {
+impl IsInCalendar for Time {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar for DateTime<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -492,38 +490,41 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsAnyCalendarKind for CustomZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInCalendar for CustomZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl IsAnyCalendarKind for UtcOffset {
+impl IsInCalendar for UtcOffset {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl<O: TimeZoneModel> IsAnyCalendarKind for TimeZoneInfo<O> {
+impl<O: TimeZoneModel> IsInCalendar for TimeZoneInfo<O> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-/// An input associated with a specific calendar.
-pub trait IsInCalendar<C> {}
+/// An input associated with a fixed, static calendar.
+pub trait IsInFixedCalendar<C> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInFixedCalendar<C> for Date<A> {}
 
-impl<C> IsInCalendar<C> for Time {}
+impl<C> IsInFixedCalendar<C> for Time {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInFixedCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInCalendar<C> for CustomZonedDateTime<A, Z> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInFixedCalendar<C>
+    for CustomZonedDateTime<A, Z>
+{
+}
 
-impl<C> IsInCalendar<C> for UtcOffset {}
+impl<C> IsInFixedCalendar<C> for UtcOffset {}
 
-impl<C, O: TimeZoneModel> IsInCalendar<C> for TimeZoneInfo<O> {}
+impl<C, O: TimeZoneModel> IsInFixedCalendar<C> for TimeZoneInfo<O> {}
