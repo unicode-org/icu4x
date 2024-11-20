@@ -41,7 +41,7 @@ define_preferences!(
         /// The user's preferred hour cycle
         hour_cycle: HourCycle,
         /// The user's preferred calendar system
-        calendar: CalendarAlgorithm
+        calendar_algorithm: CalendarAlgorithm
     }
 );
 
@@ -52,7 +52,7 @@ prefs_convert!(
 );
 
 prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
-    calendar
+    calendar_algorithm
 });
 
 /// Helper macro for generating any/buffer constructors in this file.
