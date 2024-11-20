@@ -1114,7 +1114,9 @@ impl AnyCalendarKind {
     ///
     /// Returns `None` if the calendar is not specified or unknown.
     fn get_for_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
-        prefs.calendar_algorithm.and_then(Self::get_for_preferences_calendar)
+        prefs
+            .calendar_algorithm
+            .and_then(Self::get_for_preferences_calendar)
     }
 
     // Do not make public, this will eventually need fallback
