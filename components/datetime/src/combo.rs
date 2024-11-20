@@ -34,7 +34,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
@@ -62,7 +62,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
@@ -91,7 +91,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     DateFieldSet::YMD(YMD::long()).zone_v(),
 /// )
 /// .unwrap();

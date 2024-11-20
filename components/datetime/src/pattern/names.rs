@@ -77,7 +77,7 @@ size_test!(
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("uk").into()).unwrap();
+///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
 /// names
 ///     .include_month_names(fields::Month::Format, FieldLength::Three)
 ///     .unwrap()
@@ -112,7 +112,7 @@ size_test!(
 ///
 /// // Create an instance that can format all fields (CompositeFieldSet):
 /// let mut names: TypedDateTimeNames<Gregorian, CompositeFieldSet> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///     TypedDateTimeNames::try_new(locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a zzzz";
@@ -161,7 +161,7 @@ size_test!(
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian, O> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///     TypedDateTimeNames::try_new(locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a zzzz";
@@ -331,7 +331,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// // Create an instance that can format only date fields:
     /// let names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::new_without_number_formatting(&locale!("en").into());
+    ///     TypedDateTimeNames::new_without_number_formatting(locale!("en").into());
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'It is:' y-MM-dd";
@@ -396,7 +396,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -457,7 +457,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
@@ -525,7 +525,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -586,7 +586,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
@@ -665,7 +665,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -763,7 +763,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -835,7 +835,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -911,7 +911,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -987,7 +987,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -1063,7 +1063,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///
@@ -1114,10 +1114,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let locale = &locale!("bn").into();
-    ///
     /// let mut names =
-    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(&locale).unwrap();
+    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into()).unwrap();
     /// names.include_fixed_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
@@ -1214,7 +1212,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("en").into())
     ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:

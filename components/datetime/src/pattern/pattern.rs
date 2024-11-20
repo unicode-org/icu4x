@@ -53,7 +53,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// // Load data that resolves to the same pattern:
 /// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("es-MX").into(),
+///     locale!("es-MX").into(),
 ///     YMD::medium(),
 /// )
 /// .unwrap()

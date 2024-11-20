@@ -78,7 +78,7 @@ where
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Four)
     ///     .unwrap()
@@ -117,7 +117,7 @@ where
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Three)
     ///     .unwrap();
@@ -173,7 +173,7 @@ where
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         &locale!("en-GB").into(),
+    ///         locale!("en-GB").into(),
     ///     )
     ///     .unwrap();
     ///

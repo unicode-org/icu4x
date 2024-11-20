@@ -172,7 +172,7 @@ where
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("es-MX").into(),
+    ///     locale!("es-MX").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap();
@@ -299,7 +299,7 @@ where
     ///
     /// let formatter =
     ///     FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
-    ///         &locale!("es-MX").into(),
+    ///         locale!("es-MX").into(),
     ///         YMD::long(),
     ///     )
     ///     .unwrap();
@@ -319,7 +319,7 @@ where
     ///
     /// let formatter =
     ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///         &locale!("es-MX").into(),
+    ///         locale!("es-MX").into(),
     ///         YMD::long(),
     ///     )
     ///     .unwrap();
@@ -394,10 +394,8 @@ where
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let locale = locale!("en-u-ca-hebrew");
-    ///
     /// let formatter =
-    ///     DateTimeFormatter::try_new(&locale.into(), YMD::medium()).unwrap();
+    ///     DateTimeFormatter::try_new(locale!("en-u-ca-hebrew").into(), YMD::medium()).unwrap();
     ///
     /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
@@ -529,7 +527,7 @@ where
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     locale!("en-u-ca-hebrew").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap();
@@ -551,7 +549,7 @@ where
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale!("es-MX").into(),
+    ///     locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )
     /// .unwrap();
@@ -593,7 +591,7 @@ where
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     locale!("en-u-ca-hebrew").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap();
@@ -615,7 +613,7 @@ where
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale!("es-MX").into(),
+    ///     locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long.into(),
     /// )
     /// .unwrap();
@@ -659,7 +657,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
@@ -700,7 +698,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     locale!("en-u-ca-hebrew").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
@@ -723,7 +721,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use icu::locale::locale;
     ///
     /// let result = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-buddhist").into(),
+    ///     locale!("en-u-ca-buddhist").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
@@ -762,7 +760,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 /// use icu::datetime::fieldsets::Y;
 /// use icu::locale::locale;
 ///
-/// assert!(TimeFormatter::try_new(&locale!("und").into(), Y::medium()).is_err());
+/// assert!(TimeFormatter::try_new(locale!("und").into(), Y::medium()).is_err());
 /// ```
 ///
 /// Furthermore, it is a compile error in the format function:
@@ -773,7 +771,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 /// use icu::locale::locale;
 ///
 /// let date: icu::calendar::Date<icu::calendar::Gregorian> = unimplemented!();
-/// let formatter = TimeFormatter::try_new(&locale!("und").into(), Y::medium()).unwrap();
+/// let formatter = TimeFormatter::try_new(locale!("und").into(), Y::medium()).unwrap();
 ///
 /// // error[E0271]: type mismatch resolving `<Gregorian as AsCalendar>::Calendar == ()`
 /// formatter.format(&date);
