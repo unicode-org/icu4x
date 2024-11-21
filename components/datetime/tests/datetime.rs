@@ -302,28 +302,20 @@ fn assert_fixture_element<A>(
     let any_dtf = DateTimeFormatter::try_new(locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
-    assert_try_writeable_eq!(
-        actual1,
-        output_value.expectation(),
-        Ok(()),
-        "{}",
-        description
-    );
+    assert_writeable_eq!(actual1, output_value.expectation(), "{}", description);
 
     let actual2 = any_dtf.format_same_calendar(&any_input).unwrap();
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         actual2,
         output_value.expectation(),
-        Ok(()),
         "(DateTimeFormatter) {}",
         description
     );
 
     let actual3 = any_dtf.format_any_calendar(&iso_any_input);
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         actual3,
         output_value.expectation(),
-        Ok(()),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
@@ -368,7 +360,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                     .unwrap()
             };
             assert_writeable_eq!(
-                writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
+                dtf.format(&zoned_datetime),
                 output_value.expectation(),
                 "{}",
                 description
@@ -437,7 +429,7 @@ fn test_time_zone_format_configs() {
             let tzf =
                 FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, skeleton).unwrap();
             assert_writeable_eq!(
-                writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
+                tzf.format(&zoned_datetime.zone),
                 *expect,
                 "\n\
                     prefs:  `{:?}`,\n\
@@ -458,7 +450,7 @@ fn test_time_zone_format_offset_seconds() {
 
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
         "GMT+0:00:12",
     );
@@ -470,7 +462,7 @@ fn test_time_zone_format_offset_fallback() {
 
     let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         tzf.format(
             &TimeZoneIdMapper::new()
                 .iana_to_bcp47("America/Los_Angeles")

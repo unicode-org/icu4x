@@ -10,7 +10,7 @@ use icu_datetime::fieldsets::enums::{
 use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
-use writeable::assert_try_writeable_eq;
+use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023, 9:22:53 PM",
@@ -86,7 +86,7 @@ fn neo_datetime_lengths() {
             let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{skeleton:?} {locale:?}");
+            assert_writeable_eq!(formatted, *expected, "{skeleton:?} {locale:?}");
         }
     }
 }
@@ -107,7 +107,7 @@ fn neo_date_lengths() {
             let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, date_skeleton).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_skeleton:?} {locale:?}");
+            assert_writeable_eq!(formatted, *expected, "{date_skeleton:?} {locale:?}");
         }
     }
 }
@@ -163,7 +163,7 @@ fn overlap_patterns() {
         let prefs = DateTimeFormatterPreferences::from(&locale);
         let formatter = FixedCalendarDateTimeFormatter::try_new(prefs, skeleton).unwrap();
         let formatted = formatter.format(&datetime);
-        assert_try_writeable_eq!(formatted, expected, Ok(()), "{locale:?} {skeleton:?}");
+        assert_writeable_eq!(formatted, expected, "{locale:?} {skeleton:?}");
     }
 }
 
@@ -176,7 +176,7 @@ fn hebrew_months() {
 
     let formatted_datetime = formatter.format(&datetime);
 
-    assert_try_writeable_eq!(formatted_datetime, "28 Adar II 5771");
+    assert_writeable_eq!(formatted_datetime, "28 Adar II 5771");
 }
 
 #[test]
@@ -199,7 +199,7 @@ fn test_5387() {
     .unwrap();
 
     // TODO(#5387): All of these should resolve to a pattern without a comma
-    assert_try_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15:16\u{202f}PM");
-    assert_try_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15:16\u{202f}PM");
-    assert_try_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15:16");
+    assert_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15:16\u{202f}PM");
+    assert_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15:16\u{202f}PM");
+    assert_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15:16");
 }
