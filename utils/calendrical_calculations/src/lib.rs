@@ -59,3 +59,6 @@ pub mod persian;
 /// Representation of Rata Die (R.D.) dates, which are
 /// represented as the number of days since ISO date 0001-01-01.
 pub mod rata_die;
+
+#[cfg(test)]
+mod tests;
