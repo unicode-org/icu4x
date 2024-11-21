@@ -30,7 +30,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
@@ -44,7 +44,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format_any_calendar(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
@@ -58,7 +58,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
@@ -73,7 +73,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap()
 /// .to_calendar(Gregorian);
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
@@ -87,7 +87,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
@@ -101,7 +101,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format_any_calendar(&zdt),
 ///     "October 18, 2024 PT"
 /// );

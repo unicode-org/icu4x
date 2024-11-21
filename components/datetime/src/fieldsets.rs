@@ -371,7 +371,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             #[doc = concat!("let fmt = DateTimeFormatter::<", stringify!($type), ">::try_new(")]
             ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
@@ -379,7 +379,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// .unwrap();
             /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format_any_calendar(&dt),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
@@ -393,7 +393,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
             ///     locale!("en").into(),
@@ -402,7 +402,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// .unwrap();
             /// let dt = Date::try_new_gregorian(2024, 5, 17).unwrap();
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
@@ -516,7 +516,7 @@ macro_rules! impl_date_marker {
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
             ///     locale!("en").into(),
@@ -525,7 +525,7 @@ macro_rules! impl_date_marker {
             /// .unwrap();
             /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format_any_calendar(&dt),
             #[doc = concat!("    \"", $sample_time, "\"")]
             /// );
@@ -539,7 +539,7 @@ macro_rules! impl_date_marker {
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::try_new(")]
             ///     locale!("en").into(),
@@ -548,7 +548,7 @@ macro_rules! impl_date_marker {
             /// .unwrap();
             /// let dt = DateTime::try_new_gregorian(2024, 5, 17, 15, 47, 50).unwrap();
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample_time, "\"")]
             /// );
@@ -702,7 +702,7 @@ macro_rules! impl_time_marker {
             /// use icu::datetime::TimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
             ///     locale!("en").into(),
@@ -711,7 +711,7 @@ macro_rules! impl_time_marker {
             /// .unwrap();
             /// let time = Time::try_new(15, 47, 50, 0).unwrap();
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format(&time),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
@@ -819,7 +819,7 @@ macro_rules! impl_zone_marker {
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use tinystr::tinystr;
-            /// use writeable::assert_try_writeable_eq;
+            /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
             ///     locale!("en").into(),
@@ -833,7 +833,7 @@ macro_rules! impl_zone_marker {
             ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
             ///     .with_zone_variant(ZoneVariant::Daylight);
             ///
-            /// assert_try_writeable_eq!(
+            /// assert_writeable_eq!(
             ///     fmt.format(&zone),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
@@ -911,7 +911,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use icu::datetime::DateTimeFormatter;
         #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
         /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
+        /// use writeable::assert_writeable_eq;
         ///
         #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
         ///     locale!("en-GB").into(),
@@ -921,7 +921,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
         ///
-        /// assert_try_writeable_eq!(
+        /// assert_writeable_eq!(
         ///     fmt.format_any_calendar(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
@@ -936,7 +936,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
         /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
+        /// use writeable::assert_writeable_eq;
         ///
         #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     locale!("en-GB").into(),
@@ -948,7 +948,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///     .unwrap()
         ///     .to_calendar(Gregorian);
         ///
-        /// assert_try_writeable_eq!(
+        /// assert_writeable_eq!(
         ///     fmt.format(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
         /// );
@@ -1105,7 +1105,7 @@ impl_time_marker!(
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
     /// // but we can set overrides.
@@ -1115,7 +1115,7 @@ impl_time_marker!(
     ///     T::short().hm(),
     /// )
     /// .unwrap();
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
     ///     "4:12 PM"
     /// );
@@ -1125,7 +1125,7 @@ impl_time_marker!(
     ///     T::short().hm(),
     /// )
     /// .unwrap();
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
     ///     "16:12"
     /// );
@@ -1135,7 +1135,7 @@ impl_time_marker!(
     ///     T::short().hm(),
     /// )
     /// .unwrap();
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
     ///     "4:12 PM"
     /// );
@@ -1145,7 +1145,7 @@ impl_time_marker!(
     ///     T::short().hm(),
     /// )
     /// .unwrap();
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
     ///     "16:12"
     /// );
@@ -1158,7 +1158,7 @@ impl_time_marker!(
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TimeFormatter::try_new(
     ///     locale!("und-u-hc-h11").into(),
@@ -1166,7 +1166,7 @@ impl_time_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "0:00 AM"
     /// );
@@ -1177,7 +1177,7 @@ impl_time_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "24:00"
     /// );
@@ -1205,7 +1205,7 @@ impl_zone_marker!(
     /// use icu::datetime::fieldsets::Z;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// // Time zone info for Europe/Istanbul in the winter
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
@@ -1219,7 +1219,7 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     fmt.format(&zone),
     ///     "GMT+2"
     /// );
@@ -1230,7 +1230,7 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     fmt.format(&zone),
     ///     "Türkiye Standard Time"
     /// );
@@ -1247,7 +1247,7 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
@@ -1292,7 +1292,7 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
@@ -1334,7 +1334,7 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let utc_offset = "-06".parse().unwrap();
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset(Some(utc_offset));
@@ -1351,22 +1351,22 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&utc_offset),
     ///     "GMT-6"
     /// );
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_basic),
     ///     "GMT-6"
     /// );
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_at_time),
     ///     "GMT-6"
     /// );
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_full),
     ///     "GMT-6"
     /// );
@@ -1393,7 +1393,7 @@ impl_zone_marker!(
     /// use icu::datetime::fieldsets::V;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// // Time zone info for Europe/Istanbul
     /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
@@ -1406,7 +1406,7 @@ impl_zone_marker!(
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     fmt.format(&zone),
     ///     "Türkiye Time"
     /// );
@@ -1422,7 +1422,7 @@ impl_zone_marker!(
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// // Set up the formatter
     /// let mut tzf = TimeFormatter::try_new(
@@ -1436,7 +1436,7 @@ impl_zone_marker!(
     ///     .iana_to_bcp47("America/Chicago")
     ///     .with_offset("-05".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     tzf.format(&time_zone),
     ///     "CT"
     /// );
@@ -1446,7 +1446,7 @@ impl_zone_marker!(
     ///     .iana_to_bcp47("Pacific/Honolulu")
     ///     .with_offset("-10".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     tzf.format(&time_zone),
     ///     "HST"
     /// );
@@ -1456,7 +1456,7 @@ impl_zone_marker!(
     ///     .iana_to_bcp47("America/Chigagou")
     ///     .with_offset("-05".parse().ok())
     ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     tzf.format(&time_zone),
     ///     "GMT-5"
     /// );
@@ -1472,7 +1472,7 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).without_offset();
     ///
@@ -1514,7 +1514,7 @@ impl_zone_marker!(
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());1
     ///
@@ -1555,7 +1555,7 @@ impl_zone_marker!(
     /// use icu::timezone::UtcOffset;
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
     ///
