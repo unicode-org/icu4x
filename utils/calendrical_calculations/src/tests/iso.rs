@@ -1,5 +1,7 @@
+use super::iso_old_algos as alg_old;
 use super::iso_old_file as iso_old;
-use crate::{iso as iso_new, rata_die::RataDie};
+use crate::iso as iso_new;
+use crate::rata_die::RataDie;
 use core::ops::{Range, RangeInclusive};
 
 const N_YEAR_BOUND: i32 = 1234; // more than one cycle (400 years)
@@ -143,4 +145,28 @@ fn test_from_fixed_eq() {
             "{rata_die:?}"
         );
     }
+}
+
+// New algos in the `iso` and prev. algos from others files:
+
+#[test]
+fn test_day_of_week_the_same() {
+    const N_YEAR: i32 = 2_999;
+    const N_RANGE: RangeInclusive<i32> = (-N_YEAR)..=N_YEAR;
+
+    fn the_same_in_year(year: i32) {
+        for month in 1..=12u8 {
+            for day in 1..=calc_last_month_day(year, month) {
+                assert_eq!(
+                    alg_old::day_of_week(year, month, day),
+                    iso_new::day_of_week(year, month, day),
+                    "YMD: {year} {month} {day}"
+                );
+            }
+        }
+    }
+
+    N_RANGE.for_each(the_same_in_year);
+    MIN_YEAR_BOUND_RANGE.for_each(the_same_in_year);
+    MAX_YEAR_BOUND_RANGE.for_each(the_same_in_year);
 }

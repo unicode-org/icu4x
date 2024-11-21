@@ -12,6 +12,9 @@
 use crate::helpers::I32CastError;
 use crate::rata_die::RataDie;
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// [+] const's
+
 /// Days in 4 years (there is 1 leap day):
 const FOUR_YEARS_TO_D: u64 = 365 * 4 + 1;
 
@@ -45,6 +48,9 @@ const SHIFT: i64 = 305 + ONE_PERIOD_TO_DAYS * AMOUNT_OF_PERIODS;
 ///
 /// How many years in `AMOUNT_OF_PERIODS` periods.
 const SHIFT_TO_YEARS: i64 = 400 * AMOUNT_OF_PERIODS;
+
+// [-] const's
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /// Whether or not `year` is a leap year
 #[inline] // real call will be more complex operation than inner code
@@ -85,6 +91,9 @@ pub const fn is_leap_year(year: i32) -> bool {
     (year & divisor_sub_1) == 0
 }
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// [+] `fixed_from_iso` & `day_of_week`
+
 // Returns years passed from Jan 1st of year 1.
 //
 // Fixed is day count representation of calendars starting from Jan 1st of year 1.
@@ -94,10 +103,26 @@ pub const fn is_leap_year(year: i32) -> bool {
 pub const fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     // There is no branching.
 
+    // [[SECTION]]  Map to the pseudo calendar:
+    let day = day - 1;
+
+    // [[SECTION]]  Calc shifted `RataDie`:
+    let shifted_rata_die = calc_shifted_rata_die_wo_days(year, month) as i64 + (day as i64);
+
+    // [[SECTION]]  Shift `RataDie`:
+    RataDie::new(shifted_rata_die - SHIFT)
+}
+
+/// C/C++ code reference (except for line 89):
+/// <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L71-L95C44>
+#[inline(always)]
+const fn calc_shifted_rata_die_wo_days(year: i32, month: u8) -> u64 {
+    // There is no branching.
+
     // ↴
     // [[SECTION]]  Map to the pseudo calendar:
     let need_to_shift_months = month <= 2;
-    let day = day - 1;
+    // let day = day - 1; // ⚠️ deal with `day` separately
 
     // Always more than 0:
     // `SHIFT_TO_YEARS` > any `i32` (see comment to `AMOUNT_OF_PERIODS`).
@@ -145,14 +170,25 @@ pub const fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     //
     // Instead of `2919` there can be any number in `2918..=2922`;
     // `2919` choosed because of `month * 9X9 - X9X9` (＾▽＾)
-    let days_before_month = (979 * (month as i64) - 2919) >> 5;
+    let days_before_month = (979 * (month as u64) - 2919) >> 5;
 
-    let shifted_rata_die = (days_before_year as i64) + days_before_month + (day as i64);
-
-    // ↴
-    // [[SECTION]]  Shift `RataDie`:
-    RataDie::new(shifted_rata_die - SHIFT)
+    // shifted_rata_die (without days)
+    days_before_year + days_before_month
 }
+
+/// Returns IsoWeekday(as `u8`) for the Gregorian date.
+/// IsoWeekday: Monday=1 .. Sunday=7
+pub const fn day_of_week(year: i32, month: u8, day: u8) -> u8 {
+    // Because in the Gregorian calendar everythings repeated each 400 years
+    // there also repeated day of weeks. So we should only find the shift
+    // within weeks and add it to `shifted_rata_die` before `(x) % 7 + 1`
+    // transformation. In our case it's the shift is `1`.
+    let shifted_rata_die = calc_shifted_rata_die_wo_days(year, month) + (day as u64);
+    ((shifted_rata_die + 1) % 7) as u8 + 1
+}
+
+// [-] `fixed_from_iso` & `day_of_week`
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // Returns (years, months, days) passed from Jan 1st of year 1.
 //

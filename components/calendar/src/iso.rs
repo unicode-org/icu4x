@@ -61,12 +61,34 @@ pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 impl CalendarArithmetic for Iso {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn month_days(year: i32, month: u8, data: ()) -> u8 {
+        // Binary representation of `30` is `0b__11110`
+        // Month in 1..=12 represented as `0b__00001`..=`0b__01100`
+        // So:
+        // A. For any x in 0..31: `30 | x` = `30 + is_odd(x)`
+        //  | so `30 | (month ^ (month >> 3))` = `30 + is_odd(month ^ (month >> 3))`
+        // B. `month >> 3` is:
+        //  |  * `0` for months in 1..=7,
+        //  |  * `1` for months in 8..=12,
+        // C. From [B] => `is_odd(month ^ (month >> 3))` is
+        //  |  * `is_odd(month)`  for months in 1..=7,
+        //  |  * `!is_odd(month)` for months in 8..=12,
+        //
+        // days:  | 31 | 28 | 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 |
+        // month: |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 |
+        // B:     |  0 |  0 |  0 |  0 |  0 |  0 |  0 |  1 |  1 |  1 |  1 |  1 |
+        // C:     |  1 |  0 |  1 |  0 |  1 |  0 |  1 |  1 |  0 |  1 |  0 |  1 |
+        // A:     | 31 |=30=| 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 |
+        //
+        //
+        // Avg. speed is ~the same as full matching because of
+        // computation time for `30 | (month ^ (month >> 3))`,
+        // but there will be less jump and therefore it can be
+        // helpful for branch predictor.
+        // Also it use less memory space (fewer generated code).
         match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
-            2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+            2 => 28 | (Self::is_leap_year(year, data) as u8),
+            1..=12 => 30 | (month ^ (month >> 3)),
             _ => 0,
         }
     }
@@ -83,12 +105,8 @@ impl CalendarArithmetic for Iso {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
+    fn days_in_provided_year(year: i32, data: ()) -> u16 {
+        365 + (Self::is_leap_year(year, data) as u16)
     }
 }
 
@@ -132,51 +150,9 @@ impl Calendar for Iso {
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
-        // For the purposes of the calculation here, Monday is 0, Sunday is 6
-        // ISO has Monday=1, Sunday=7, which we transform in the last step
-
-        // The days of the week are the same every 400 years
-        // so we normalize to the nearest multiple of 400
-        let years_since_400 = date.0.year.rem_euclid(400);
-        debug_assert!(years_since_400 >= 0); // rem_euclid returns positive numbers
-        let years_since_400 = years_since_400 as u32;
-        let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
-        // The number of days to the current year
-        // Can never cause an overflow because years_since_400 has a maximum value of 399.
-        let days_to_current_year = 365 * years_since_400 + leap_years_since_400;
-        // The weekday offset from January 1 this year and January 1 2000
-        let year_offset = days_to_current_year % 7;
-
-        // Corresponding months from
-        // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Corresponding_months
-        let month_offset = if Self::is_leap_year(date.0.year, ()) {
-            match date.0.month {
-                10 => 0,
-                5 => 1,
-                2 | 8 => 2,
-                3 | 11 => 3,
-                6 => 4,
-                9 | 12 => 5,
-                1 | 4 | 7 => 6,
-                _ => unreachable!(),
-            }
-        } else {
-            match date.0.month {
-                1 | 10 => 0,
-                5 => 1,
-                8 => 2,
-                2 | 3 | 11 => 3,
-                6 => 4,
-                9 | 12 => 5,
-                4 | 7 => 6,
-                _ => unreachable!(),
-            }
-        };
-        let january_1_2000 = 5; // Saturday
-        let day_offset = (january_1_2000 + year_offset + month_offset + date.0.day as u32) % 7;
-
-        // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
-        types::IsoWeekday::from((day_offset + 1) as usize)
+        let day_of_week =
+            calendrical_calculations::iso::day_of_week(date.0.year, date.0.month, date.0.day);
+        types::IsoWeekday::from(day_of_week as usize)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
