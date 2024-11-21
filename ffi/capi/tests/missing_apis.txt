@@ -22,8 +22,8 @@ icu::calendar::types::YearAmbiguity#Enum
 icu::calendar::types::YearInfo::year_ambiguity#FnInStruct
 icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
-icu::datetime::DateTimeFormatter::convert_and_format#FnInStruct
-icu::datetime::DateTimeFormatter::strict_format#FnInStruct
+icu::datetime::DateTimeFormatter::format_any_calendar#FnInStruct
+icu::datetime::DateTimeFormatter::format_same_calendar#FnInStruct
 icu::datetime::DateTimeFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::DateTimeFormatter::try_new#FnInStruct
 icu::datetime::DateTimeFormatterLoadError#Enum

@@ -50,7 +50,7 @@
 //! let results = [true, false].map(get_field_set).map(|field_set| {
 //!     DateTimeFormatter::try_new(locale!("en-US").into(), field_set).unwrap()
 //! }).map(|formatter| {
-//!     formatter.convert_and_format(&datetime).try_write_to_string().unwrap().into_owned()
+//!     formatter.format_any_calendar(&datetime).try_write_to_string().unwrap().into_owned()
 //! });
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])

@@ -207,7 +207,7 @@ pub mod ffi {
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -220,7 +220,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
             Ok(())
         }
 
@@ -230,7 +230,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -243,7 +243,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
             Ok(())
         }
     }
@@ -282,7 +282,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
             Ok(())
         }
 
@@ -295,7 +295,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
             Ok(())
         }
     }

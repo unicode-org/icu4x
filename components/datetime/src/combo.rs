@@ -45,7 +45,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// assert_try_writeable_eq!(
-///     formatter.convert_and_format(&zdt),
+///     formatter.format_any_calendar(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
@@ -102,7 +102,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// assert_try_writeable_eq!(
-///     formatter.convert_and_format(&zdt),
+///     formatter.format_any_calendar(&zdt),
 ///     "October 18, 2024 PT"
 /// );
 /// ```
