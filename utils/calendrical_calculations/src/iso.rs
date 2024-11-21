@@ -17,7 +17,7 @@ const FOUR_YEARS_TO_D: u64 = 365 * 4 + 1;
 
 /// In Gregorian calendar each 400 years sequence of leap days repeated.\
 /// In Gregorian calendar 400 years have 146097 days.
-const ONE_PERIOD_TO_DAYS: i64 = 365 * 400 + 1 * 100 - 4 + 1; // 146097
+const ONE_PERIOD_TO_DAYS: i64 = 365 * 400 + 400 / 4 - 4 + 1; // 146097
 
 /// In plain language, this is a reference point (in 4 centuries).
 ///
@@ -297,9 +297,8 @@ pub(crate) fn iso_year_from_fixed(date: RataDie) -> i64 {
 
     // [[Section]]  Map year from the pseudo calendar to the Gregorian:
     let need_to_shift_months = day_of_year >= 306;
-    let year = (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64);
 
-    year
+    (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64)
 }
 
 #[inline(always)]
