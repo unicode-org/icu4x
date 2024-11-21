@@ -21,7 +21,7 @@ use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {
-    pub(crate) length: NeoSkeletonLength,
+    pub(crate) length: Length,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
@@ -575,10 +575,8 @@ impl DateTimeZonePatternSelectionData {
                     options,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Date)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
@@ -592,10 +590,8 @@ impl DateTimeZonePatternSelectionData {
                     options,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Time)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
@@ -615,10 +611,8 @@ impl DateTimeZonePatternSelectionData {
                     options,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Date + Time)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
@@ -645,9 +639,9 @@ impl DateTimeZonePatternSelectionData {
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
                         match options.length {
-                            NeoSkeletonLength::Long => marker_attrs::PatternLength::Long,
-                            NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
-                            NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,
+                            Length::Long => marker_attrs::PatternLength::Long,
+                            Length::Medium => marker_attrs::PatternLength::Medium,
+                            Length::Short => marker_attrs::PatternLength::Short,
                         },
                         glue_type,
                     ),

@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
         fieldsets::{T, YMD, YMDT},
-        options::NeoSkeletonLength,
+        options::Length,
     };
 
     use crate::{
@@ -28,8 +28,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct TimeFormatter(pub icu_datetime::FixedCalendarDateTimeFormatter<(), T>);
 
-    #[diplomat::enum_convert(icu_datetime::options::NeoSkeletonLength, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::options::NeoSkeletonLength, Enum)]
+    #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
     pub enum DateTimeLength {
         Long,
         Medium,
@@ -46,7 +46,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = T::with_length(NeoSkeletonLength::from(length)).hm();
+            let options = T::with_length(Length::from(length)).hm();
 
             Ok(Box::new(TimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -100,7 +100,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMD::with_length(NeoSkeletonLength::from(length));
+            let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -150,7 +150,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
+            let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
@@ -189,7 +189,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMD::with_length(NeoSkeletonLength::from(length));
+            let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(DateFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
@@ -264,7 +264,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
+            let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,

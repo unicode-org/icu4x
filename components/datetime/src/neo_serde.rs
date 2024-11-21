@@ -87,7 +87,7 @@ pub enum CompositeFieldSetSerdeError {
 pub struct CompositeFieldSetSerde {
     #[serde(rename = "fieldSet")]
     pub(crate) field_set: FieldSetSerde,
-    pub(crate) length: NeoSkeletonLength,
+    pub(crate) length: Length,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) alignment: Option<Alignment>,
     #[serde(rename = "yearStyle")]
@@ -567,7 +567,7 @@ impl FieldSetSerde {
 fn test_basic() {
     let skeleton = CompositeFieldSet::DateTimeZone(
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET {
-            length: NeoSkeletonLength::Medium,
+            length: Length::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),
             time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),

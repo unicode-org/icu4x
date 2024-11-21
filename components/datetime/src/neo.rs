@@ -550,7 +550,7 @@ where
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     Length::Long.into(),
     /// )
     /// .unwrap();
     ///
@@ -614,7 +614,7 @@ where
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Long.into(),
+    ///     Length::Long.into(),
     /// )
     /// .unwrap();
     ///

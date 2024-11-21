@@ -72,7 +72,7 @@ use crate::neo_serde::TimePrecisionSerde;
 )]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
-pub enum NeoSkeletonLength {
+pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
     Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
@@ -81,7 +81,7 @@ pub enum NeoSkeletonLength {
     Short = 1,
 }
 
-impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
+impl IntoOption<Length> for Length {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

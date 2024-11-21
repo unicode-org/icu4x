@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldsets::YMDTV, options::NeoSkeletonLength};
+    use icu_datetime::{fieldsets::YMDTV, options::Length};
     use icu_timezone::ZoneVariant;
 
     use crate::{
@@ -41,7 +41,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -95,7 +95,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length));
+            let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,

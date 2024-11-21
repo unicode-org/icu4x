@@ -58,7 +58,7 @@
 
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fields, fieldsets, NeoSkeletonLength};
+use crate::{fields, fieldsets, Length};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -470,10 +470,7 @@ impl_attrs! {
 }
 
 impl ZoneFieldSet {
-    pub(crate) fn from_time_zone_style_and_length(
-        style: ZoneStyle,
-        length: NeoSkeletonLength,
-    ) -> Self {
+    pub(crate) fn from_time_zone_style_and_length(style: ZoneStyle, length: Length) -> Self {
         match style {
             ZoneStyle::Z => Self::Z(fieldsets::Z::with_length(length)),
             ZoneStyle::O => Self::O(fieldsets::O::with_length(length)),

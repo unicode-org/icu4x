@@ -8,7 +8,7 @@ use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::fields::components;
 use icu::datetime::fieldsets::enums::*;
-use icu::datetime::options::NeoSkeletonLength;
+use icu::datetime::options::Length;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::runtime;
 use icu::datetime::provider::skeleton::PatternPlurals;
@@ -25,11 +25,7 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        to_components_bag: impl Fn(
-            NeoSkeletonLength,
-            &DataMarkerAttributes,
-            &DateLengthsV1,
-        ) -> components::Bag,
+        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
@@ -55,11 +51,7 @@ impl SourceDataProvider {
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
         attributes: &DataMarkerAttributes,
-        to_components_bag: impl Fn(
-            NeoSkeletonLength,
-            &DataMarkerAttributes,
-            &DateLengthsV1,
-        ) -> components::Bag,
+        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
     ) -> Result<PackedPatternsV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -81,68 +73,64 @@ impl SourceDataProvider {
             }
         }
 
-        let [long, medium, short] = [
-            NeoSkeletonLength::Long,
-            NeoSkeletonLength::Medium,
-            NeoSkeletonLength::Short,
-        ]
-        .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
-        .map(|components| {
-            let pattern = expand_pp_to_pe(components.select_pattern(
-                &skeleton_patterns,
-                &date_lengths_v1,
-                &time_lengths_v1,
-            ));
-            match components {
-                components::Bag {
-                    era: None,
-                    year: Some(_),
-                    ..
-                } => {
-                    // TODO(#4478): Use CLDR data when it becomes available
-                    // TODO: Set the length to NeoSkeletonLength? Or not, because
-                    // the era should normally be displayed as short?
-                    let mut components_with_full_year = components;
-                    components_with_full_year.year = Some(components::Year::Numeric);
-                    let mut components_with_era = components_with_full_year;
-                    components_with_era.era = Some(components::Text::Short);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_full_year.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_era.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                    )
+        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
+            .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
+            .map(|components| {
+                let pattern = expand_pp_to_pe(components.select_pattern(
+                    &skeleton_patterns,
+                    &date_lengths_v1,
+                    &time_lengths_v1,
+                ));
+                match components {
+                    components::Bag {
+                        era: None,
+                        year: Some(_),
+                        ..
+                    } => {
+                        // TODO(#4478): Use CLDR data when it becomes available
+                        // TODO: Set the length to Length? Or not, because
+                        // the era should normally be displayed as short?
+                        let mut components_with_full_year = components;
+                        components_with_full_year.year = Some(components::Year::Numeric);
+                        let mut components_with_era = components_with_full_year;
+                        components_with_era.era = Some(components::Text::Short);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_full_year.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_era.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                        )
+                    }
+                    components::Bag { hour: Some(_), .. } => {
+                        let mut components_with_minute = components;
+                        components_with_minute.minute = Some(components::Numeric::Numeric);
+                        let mut components_with_second = components;
+                        components_with_second.minute = Some(components::Numeric::Numeric);
+                        components_with_second.second = Some(components::Numeric::Numeric);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_minute.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_second.select_pattern(
+                                &skeleton_patterns,
+                                &date_lengths_v1,
+                                &time_lengths_v1,
+                            ))),
+                        )
+                    }
+                    _ => (pattern, None, None),
                 }
-                components::Bag { hour: Some(_), .. } => {
-                    let mut components_with_minute = components;
-                    components_with_minute.minute = Some(components::Numeric::Numeric);
-                    let mut components_with_second = components;
-                    components_with_second.minute = Some(components::Numeric::Numeric);
-                    components_with_second.second = Some(components::Numeric::Numeric);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_minute.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_second.select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ))),
-                    )
-                }
-                _ => (pattern, None, None),
-            }
-        });
+            });
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
                 long: long.0.as_ref().map(runtime::Pattern::as_ref),
@@ -287,7 +275,7 @@ fn test_check_for_field() {
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
 fn gen_time_components(
-    _: NeoSkeletonLength,
+    _: Length,
     attributes: &DataMarkerAttributes,
     _: &DateLengthsV1<'_>,
 ) -> components::Bag {
@@ -313,7 +301,7 @@ fn gen_time_components(
 
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
 fn gen_date_components(
-    length: NeoSkeletonLength,
+    length: Length,
     attributes: &DataMarkerAttributes,
     date_lengths_v1: &DateLengthsV1<'_>,
 ) -> components::Bag {
@@ -329,9 +317,9 @@ fn gen_date_components(
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
     let date_pattern = match length {
-        NeoSkeletonLength::Long => &date_lengths_v1.date.long,
-        NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
-        NeoSkeletonLength::Short => &date_lengths_v1.date.short,
+        Length::Long => &date_lengths_v1.date.long,
+        Length::Medium => &date_lengths_v1.date.medium,
+        Length::Short => &date_lengths_v1.date.short,
         _ => unreachable!(),
     };
     let date_bag = components::Bag::from(date_pattern);
@@ -349,9 +337,9 @@ fn gen_date_components(
     {
         // standalone month: use the skeleton length
         filtered_components.month = match length {
-            NeoSkeletonLength::Long => Some(components::Month::Long),
-            NeoSkeletonLength::Medium => Some(components::Month::Short),
-            NeoSkeletonLength::Short => Some(components::Month::Numeric),
+            Length::Long => Some(components::Month::Long),
+            Length::Medium => Some(components::Month::Short),
+            Length::Short => Some(components::Month::Numeric),
             _ => unreachable!(),
         };
     }
@@ -365,9 +353,9 @@ fn gen_date_components(
     if check_for_field(attributes, "e") {
         // Not all length patterns have the weekday
         filtered_components.weekday = match length {
-            NeoSkeletonLength::Long => Some(components::Text::Long),
-            NeoSkeletonLength::Medium => Some(components::Text::Short),
-            NeoSkeletonLength::Short => Some(components::Text::Short),
+            Length::Long => Some(components::Text::Long),
+            Length::Medium => Some(components::Text::Short),
+            Length::Short => Some(components::Text::Short),
             _ => unreachable!(),
         };
     }
