@@ -14,7 +14,7 @@ use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
-    InCalendar, InFixedCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
+    InFixedCalendar, InSameCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
 use crate::DateTimeWriteError;
@@ -563,7 +563,7 @@ where
         datetime: &I,
     ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
     where
-        I: ?Sized + InCalendar + AllInputMarkers<FSet>,
+        I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =

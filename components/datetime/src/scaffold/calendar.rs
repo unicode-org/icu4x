@@ -439,7 +439,7 @@ impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
 }
 
 /// An input that may be associated with a specific runtime calendar.
-pub trait InCalendar {
+pub trait InSameCalendar {
     /// Checks whether this type is compatible with the given calendar.
     ///
     /// Types that are agnostic to calendar systems should return `Ok(())`.
@@ -449,7 +449,7 @@ pub trait InCalendar {
     ) -> Result<(), MismatchedCalendarError>;
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InCalendar for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -466,14 +466,14 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InCalendar for Date<A> {
     }
 }
 
-impl InCalendar for Time {
+impl InSameCalendar for Time {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InCalendar for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -490,21 +490,21 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InCalendar for DateTime<A> {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InCalendar for CustomZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for CustomZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl InCalendar for UtcOffset {
+impl InSameCalendar for UtcOffset {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
     }
 }
 
-impl<O: TimeZoneModel> InCalendar for TimeZoneInfo<O> {
+impl<O: TimeZoneModel> InSameCalendar for TimeZoneInfo<O> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
