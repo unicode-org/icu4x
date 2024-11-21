@@ -5,7 +5,7 @@
 // by Cassio Neri, Lorenz Schneider (Feb. 2021), DOI: 10.48550/arXiv.2102.06959
 // which have been released as C/C++ code at
 // <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp>
-// under the MIT license. Accordingly, this file is released under
+// under the MIT/GNU license. Accordingly, this file is released under
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
@@ -160,7 +160,7 @@ pub const fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 // The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
 //
 /// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L40-L69>
-pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
+pub const fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     if let Some(err) = check_rata_die_have_i32_year(date) {
         return Err(err);
     }
@@ -231,7 +231,7 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     // let year_of_century = approx_prepared >> 32;
     // ```
     //
-    // See `test_approx_1`.
+    // See `test_approx_1` below.
     const APPROX_NUM_C: u64 = 2939745;
     let approx_prepared = APPROX_NUM_C * prepared_days_to_year;
     let year_of_century = approx_prepared >> 32;
@@ -249,6 +249,8 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     // prep_b = (2141 * day_of_year + 197913)
     // `prep_a / 153     == prep_b >> 16`
     // `prep_a % 153 / 5 == prep_b % (1 << 16) / 2141`
+    //
+    // See `test_approx_2` below.
     const APPROX_NUM_A: u32 = 2141;
     const APPROX_NUM_B: u32 = 197913;
     const DIV_MASK_02: u32 = (1 << 16) - 1;
@@ -277,7 +279,7 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
 // The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
 //
 /// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L40-L64>
-pub(crate) fn iso_year_from_fixed(date: RataDie) -> i64 {
+pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     // ⚠️ To understand this code please see `iso_from_fixed`.
 
     let shifted_rata_die = (date.to_i64_date() + SHIFT) as u64;
@@ -346,6 +348,25 @@ mod tests {
 
             assert_eq!(day_of_year_a, day_of_year_b);
             assert_eq!(year_of_century_a, year_of_century_b);
+        }
+    }
+
+    #[test]
+    fn test_approx_2() {
+        for day_of_year in 0..734 {
+            let prep = 5 * day_of_year + 461;
+            let month_must = (prep / 153) as u8;
+            let day_must = (prep % 153 / 5) as u8;
+
+            const APPROX_NUM_A: u32 = 2141;
+            const APPROX_NUM_B: u32 = 197913;
+            const DIV_MASK_02: u32 = (1 << 16) - 1;
+            let approx_day = APPROX_NUM_A * day_of_year + APPROX_NUM_B;
+            let month = (approx_day >> 16) as u8;
+            let day = ((approx_day & DIV_MASK_02) as u16 / APPROX_NUM_A as u16) as u8;
+
+            assert_eq!(month_must, month);
+            assert_eq!(day_must, day);
         }
     }
 }

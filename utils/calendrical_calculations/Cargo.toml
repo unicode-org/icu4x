@@ -23,7 +23,7 @@ rust-version.workspace = true
 
 # This is a special exception: The algorithms in this crate are based on "Calendrical Calculations" by Reingold and Dershowitz
 # which has its lisp code published at https://github.com/EdReingold/calendar-code2/
-license = "Apache-2.0"
+license = "Apache-2.0" # TODO: Need to add `MIT`/`GNU`?
 
 [package.metadata.workspaces]
 independent = true

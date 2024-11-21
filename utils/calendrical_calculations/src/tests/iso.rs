@@ -2,7 +2,7 @@ use super::iso_old_file as iso_old;
 use crate::{iso as iso_new, rata_die::RataDie};
 use core::ops::{Range, RangeInclusive};
 
-const N_YEAR_BOUND: i32 = 1234; // more than one one cycle (400 years)
+const N_YEAR_BOUND: i32 = 1234; // more than one cycle (400 years)
 const MIN_YEAR_BOUND_RANGE: Range<i32> = i32::MIN..(i32::MIN + N_YEAR_BOUND);
 const MAX_YEAR_BOUND_RANGE: RangeInclusive<i32> = (i32::MAX - N_YEAR_BOUND)..=i32::MAX;
 
