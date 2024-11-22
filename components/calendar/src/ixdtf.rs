@@ -41,7 +41,7 @@ impl AnyCalendar {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
             .ok_or(ParseError::UnknownCalendar)?;
-        let calendar = AnyCalendar::new(calendar_kind);
+        let calendar = AnyCalendar::new_for_kind(calendar_kind);
         Ok(calendar)
     }
 }

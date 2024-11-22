@@ -46,7 +46,7 @@ define_preferences!(
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 ///
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
-/// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
+/// compile time. When the type is known at runtime, the [`AnyCalendar::new_for_kind()`] and sibling methods may be used.
 ///
 /// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
@@ -60,7 +60,7 @@ define_preferences!(
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::new_for_locale(locale.into());
+/// let calendar = AnyCalendar::try_new(locale.into()).unwrap();
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
@@ -576,13 +576,13 @@ impl AnyCalendar {
     /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
     /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
-    /// fallbacking. If this is desired, use [`Self::new_for_locale()`].
+    /// fallbacking. If this is desired, use [`Self::try_new()`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new(kind: AnyCalendarKind) -> Self {
+    pub const fn new_for_kind(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
@@ -615,8 +615,8 @@ impl AnyCalendar {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
-    pub fn try_new_with_any_provider<P>(
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_for_kind)]
+    pub fn try_new_for_kind_with_any_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
@@ -662,8 +662,8 @@ impl AnyCalendar {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
-    pub fn try_new_with_buffer_provider<P>(
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
+    pub fn try_new_for_kind_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
@@ -708,8 +708,11 @@ impl AnyCalendar {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
+    pub fn try_new_for_kind_unstable<P>(
+        provider: &P,
+        kind: AnyCalendarKind,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -753,7 +756,7 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
+    /// Constructs an AnyCalendar for a given preference bag from compiled data.
     ///
     /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
     /// calendar for the locale, falling back to gregorian.
@@ -762,24 +765,25 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_for_locale(prefs: AnyCalendarPreferences) -> Self {
+    pub fn try_new(prefs: AnyCalendarPreferences) -> Result<Self, DataError> {
+        // NOTE: This returns DataError because this operation should become data-driven
         let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
-        Self::new(kind)
+        Ok(Self::new_for_kind(kind))
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
-            new_for_locale: skip,
-            try_new_for_locale_with_any_provider,
-            try_new_for_locale_with_buffer_provider,
-            try_new_for_locale_unstable,
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_locale)]
-    pub fn try_new_for_locale_unstable<P>(
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<P>(
         provider: &P,
         prefs: AnyCalendarPreferences,
     ) -> Result<Self, DataError>
@@ -793,7 +797,7 @@ impl AnyCalendar {
             + ?Sized,
     {
         let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
-        Self::try_new_unstable(provider, kind)
+        Self::try_new_for_kind_unstable(provider, kind)
     }
 
     /// The [`AnyCalendarKind`] corresponding to the calendar this contains
@@ -1974,24 +1978,26 @@ mod tests {
 
     #[test]
     fn test_any_construction() {
-        let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
-        let chinese = AnyCalendar::new(AnyCalendarKind::Chinese);
-        let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
-        let dangi = AnyCalendar::new(AnyCalendarKind::Dangi);
-        let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
-        let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
-        let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
-        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
-        let indian = AnyCalendar::new(AnyCalendarKind::Indian);
-        let islamic_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::IslamicCivil);
+        let buddhist = AnyCalendar::new_for_kind(AnyCalendarKind::Buddhist);
+        let chinese = AnyCalendar::new_for_kind(AnyCalendarKind::Chinese);
+        let coptic = AnyCalendar::new_for_kind(AnyCalendarKind::Coptic);
+        let dangi = AnyCalendar::new_for_kind(AnyCalendarKind::Dangi);
+        let ethioaa = AnyCalendar::new_for_kind(AnyCalendarKind::EthiopianAmeteAlem);
+        let ethiopian = AnyCalendar::new_for_kind(AnyCalendarKind::Ethiopian);
+        let gregorian = AnyCalendar::new_for_kind(AnyCalendarKind::Gregorian);
+        let hebrew = AnyCalendar::new_for_kind(AnyCalendarKind::Hebrew);
+        let indian = AnyCalendar::new_for_kind(AnyCalendarKind::Indian);
+        let islamic_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::IslamicCivil);
         let islamic_observational: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::IslamicObservational);
-        let islamic_tabular: AnyCalendar = AnyCalendar::new(AnyCalendarKind::IslamicTabular);
-        let islamic_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::IslamicUmmAlQura);
-        let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
-        let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
-        let persian = AnyCalendar::new(AnyCalendarKind::Persian);
-        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
+            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicObservational);
+        let islamic_tabular: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicTabular);
+        let islamic_umm_al_qura: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicUmmAlQura);
+        let japanese = AnyCalendar::new_for_kind(AnyCalendarKind::Japanese);
+        let japanext = AnyCalendar::new_for_kind(AnyCalendarKind::JapaneseExtended);
+        let persian = AnyCalendar::new_for_kind(AnyCalendarKind::Persian);
+        let roc = AnyCalendar::new_for_kind(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
         let chinese = Ref(&chinese);
         let coptic = Ref(&coptic);
