@@ -774,7 +774,7 @@ impl AnyCalendar {
     icu_provider::gen_any_buffer_data_constructors!(
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
-            new: skip,
+            try_new: skip,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
@@ -782,7 +782,7 @@ impl AnyCalendar {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: AnyCalendarPreferences,
