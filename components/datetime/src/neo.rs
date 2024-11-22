@@ -800,7 +800,10 @@ impl Writeable for FormattedDateTime<'_> {
             self.names.fixed_decimal_formatter,
             sink,
         );
-        // There should not be an error. If there is, return the lossy string.
+        // A DateTimeWriteError should not occur in normal usage because DateTimeFormatter
+        // guarantees that all names for the pattern have been loaded and that the input type
+        // is compatible with the pattern. However, this code path might be reachable with
+        // invalid data. In that case, debug-panic and return the fallback string.
         match result {
             Ok(Ok(())) => Ok(()),
             Err(fmt::Error) => Err(fmt::Error),
