@@ -92,7 +92,7 @@ pub const fn is_leap_year(year: i32) -> bool {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// [+] `fixed_from_iso` & `day_of_week`
+// [+] `fixed_from_iso` & `day_of_week` & `day_of_year`
 
 /// Returns years passed from Jan 1st of year 1.
 ///
@@ -124,10 +124,31 @@ const fn calc_shifted_rata_die_wo_days(year: i32, month: u8) -> u64 {
     let need_to_shift_months = month <= 2;
     // let day = day - 1; // ⚠️ deal with `day` separately
 
+    let days_before_month = calc_day_before_month_in_pseudo_year(month, need_to_shift_months);
+
     // Always more than 0:
     // `SHIFT_TO_YEARS` > any `i32` (see comment to `AMOUNT_OF_PERIODS`).
     let year = (((year as i64) + SHIFT_TO_YEARS) - (need_to_shift_months as i64)) as u64;
 
+    // always more than 0. (see comment to `AMOUNT_OF_PERIODS` & `year`).
+    let century = year / 100;
+
+    // ↴
+    // [[SECTION]]  Calc shifted `RataDie`:
+    // Leap years every 4 year: `365 * year + year / 4` = `1461 * year / 4`
+    // Except for each century: `- century`
+    // But not for each 4th: `+ (century / 4)`
+    let days_before_year = ((FOUR_YEARS_TO_D * year) >> 2) - century + (century >> 2);
+
+    // shifted_rata_die (without days)
+    days_before_year + (days_before_month as u64)
+}
+
+/// C/C++ code reference:
+/// <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L88>
+/// <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L94>
+#[inline(always)]
+const fn calc_day_before_month_in_pseudo_year(month: u8, need_to_shift_months: bool) -> u32 {
     // We move the leap month (February) to the end of our pseud year.
     // And we start our month from 3rd month. So:
     //
@@ -145,16 +166,6 @@ const fn calc_shifted_rata_die_wo_days(year: i32, month: u8) -> u64 {
     let mask = -(need_to_shift_months as i8);
     let month = month | ((mask as u8) & 12);
 
-    // always more than 0. (see comment to `AMOUNT_OF_PERIODS` & `year`).
-    let century = year / 100;
-
-    // ↴
-    // [[SECTION]]  Calc shifted `RataDie`:
-    // Leap years every 4 year: `365 * year + year / 4` = `1461 * year / 4`
-    // Except for each century: `- century`
-    // But not for each 4th: `+ (century / 4)`
-    let days_before_year = ((FOUR_YEARS_TO_D * year) >> 2) - century + (century >> 2);
-
     // Our months in `3..=14` with next days amount in it:
     // month: |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 |
     // days:  | 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 | 31 | 28 |
@@ -170,10 +181,7 @@ const fn calc_shifted_rata_die_wo_days(year: i32, month: u8) -> u64 {
     //
     // Instead of `2919` there can be any number in `2918..=2922`;
     // `2919` choosed because of `month * 9X9 - X9X9` (＾▽＾)
-    let days_before_month = (979 * (month as u64) - 2919) >> 5;
-
-    // shifted_rata_die (without days)
-    days_before_year + days_before_month
+    (979 * (month as u32) - 2919) >> 5
 }
 
 /// Returns IsoWeekday(as `u8`) for the Gregorian date.
@@ -187,7 +195,24 @@ pub const fn day_of_week(year: i32, month: u8, day: u8) -> u8 {
     ((shifted_rata_die + 1) % 7) as u8 + 1
 }
 
-// [-] `fixed_from_iso` & `day_of_week`
+/// # Returns
+/// day of the year in the Grigorian calendar:
+/// + `1..=365` for a non leap year
+/// + `1..=366` for a leap year
+pub fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
+    #[allow(clippy::comparison_chain)]
+    if month > 2 {
+        let days_before_month = calc_day_before_month_in_pseudo_year(month, false);
+        let leap = is_leap_year(year) as u16 + 59; // shift back from pseudo calendar
+        days_before_month as u16 + day as u16 + leap
+    } else if month == 2 {
+        (day + 31) as u16
+    } else {
+        day as u16
+    }
+}
+
+// [-] `fixed_from_iso` & `day_of_week` & `day_of_year`
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

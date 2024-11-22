@@ -82,3 +82,21 @@ pub fn iso_from_year_day(year: i32, year_day: u16) -> (u8, u8) {
 
     (month, day)
 }
+
+/// Prev algo from: `components\calendar\src\iso.rs::Iso`
+///
+/// Return `day_of_the_year` (`1..=365`/`1..=366`)
+pub fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
+    // Cumulatively how much are dates in each month
+    // offset from "30 days in each month" (in non leap years)
+    let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+    #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
+    let mut offset = month_offset[month as usize - 1];
+    if is_leap_year(year) && month > 2 {
+        // Months after February in a leap year are offset by one less
+        offset += 1;
+    }
+    let prev_month_days = (30 * (month as i32 - 1) + offset) as u16;
+
+    prev_month_days + day as u16
+}

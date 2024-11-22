@@ -33,7 +33,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
-use calendrical_calculations::iso::{is_leap_year, iso_from_year_day};
+use calendrical_calculations::iso::{day_of_year, is_leap_year, iso_from_year_day};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -312,18 +312,7 @@ impl Iso {
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
-        // Cumulatively how much are dates in each month
-        // offset from "30 days in each month" (in non leap years)
-        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
-        let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::is_leap_year(date.0.year, ()) && date.0.month > 2 {
-            // Months after February in a leap year are offset by one less
-            offset += 1;
-        }
-        let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u16;
-
-        prev_month_days + date.0.day as u16
+        day_of_year(date.0.year, date.0.month, date.0.day)
     }
 
     /// Wrap the year in the appropriate era code

@@ -191,3 +191,25 @@ fn test_from_year_day_the_same() {
     MIN_YEAR_BOUND_RANGE.for_each(the_same_in_year);
     MAX_YEAR_BOUND_RANGE.for_each(the_same_in_year);
 }
+
+#[test]
+fn test_day_of_year_the_same() {
+    const N_YEAR: i32 = 2_999;
+    const N_RANGE: RangeInclusive<i32> = (-N_YEAR)..=N_YEAR;
+
+    fn the_same_in_year(year: i32) {
+        for month in 1..=12u8 {
+            for day in 1..=calc_last_month_day(year, month) {
+                assert_eq!(
+                    alg_old::day_of_year(year, month, day),
+                    iso_new::day_of_year(year, month, day),
+                    "YMD: {year} {month} {day}"
+                );
+            }
+        }
+    }
+
+    N_RANGE.for_each(the_same_in_year);
+    MIN_YEAR_BOUND_RANGE.for_each(the_same_in_year);
+    MAX_YEAR_BOUND_RANGE.for_each(the_same_in_year);
+}
