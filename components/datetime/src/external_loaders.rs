@@ -47,7 +47,7 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
-        Ok(AnyCalendar::new_for_locale(prefs))
+        AnyCalendar::try_new(prefs)
     }
 }
 
@@ -74,7 +74,7 @@ where
 {
     #[inline]
     fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_any_provider(self.0, prefs)
+        AnyCalendar::try_new_with_any_provider(self.0, prefs)
     }
 }
 
@@ -104,7 +104,7 @@ where
 {
     #[inline]
     fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_buffer_provider(self.0, prefs)
+        AnyCalendar::try_new_with_buffer_provider(self.0, prefs)
     }
 }
 
@@ -139,6 +139,6 @@ where
 {
     #[inline]
     fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_unstable(self.0, prefs)
+        AnyCalendar::try_new_unstable(self.0, prefs)
     }
 }

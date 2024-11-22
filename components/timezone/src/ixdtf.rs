@@ -758,7 +758,7 @@ impl IxdtfParser {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = icu_calendar::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
             .ok_or(ParseError::UnknownCalendar)?;
-        let calendar = AnyCalendar::new(calendar_kind);
+        let calendar = AnyCalendar::new_for_kind(calendar_kind);
 
         Ok(CustomZonedDateTime {
             date: iso_zdt.date.to_any().to_calendar(calendar),
