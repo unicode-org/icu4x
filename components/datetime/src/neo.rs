@@ -17,7 +17,6 @@ use crate::scaffold::{
     InFixedCalendar, InSameCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
-use crate::DateTimeWriteError;
 use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
@@ -29,7 +28,7 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
-use writeable::TryWriteable;
+use writeable::{impl_display_with_writeable, Writeable};
 
 define_preferences!(
     /// The prefs for datetime formatting.
@@ -169,7 +168,7 @@ where
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
@@ -177,7 +176,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap()),
     ///     "20 de diciembre de 2023"
     /// );
@@ -392,14 +391,14 @@ where
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use std::str::FromStr;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter =
     ///     DateTimeFormatter::try_new(locale!("en-u-ca-hebrew").into(), YMD::medium()).unwrap();
     ///
     /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format_any_calendar(&datetime),
     ///     "30 Nisan 5784"
     /// );
@@ -588,7 +587,7 @@ where
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("en-u-ca-hebrew").into(),
@@ -598,7 +597,7 @@ where
     ///
     /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format_any_calendar(&date),
     ///     "30 Nisan 5784"
     /// );
@@ -654,7 +653,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en").into(),
@@ -665,7 +664,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
-    /// assert_try_writeable_eq!(
+    /// assert_writeable_eq!(
     ///     formatter.format_any_calendar(&date),
     ///     "12 Tishri 5785"
     /// );
@@ -695,7 +694,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("en-u-ca-hebrew").into(),
@@ -707,7 +706,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// let date = Date::try_new_hebrew(5785, 1, 12).unwrap();
     ///
-    /// assert_try_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
+    /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
     ///
     /// An error occurs if the calendars don't match:
@@ -788,36 +787,41 @@ pub struct FormattedDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl TryWriteable for FormattedDateTime<'_> {
-    type Error = DateTimeWriteError;
-
-    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+impl Writeable for FormattedDateTime<'_> {
+    fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
-    ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        try_write_pattern_items(
+    ) -> Result<(), fmt::Error> {
+        let result = try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
             &self.input,
             &self.names,
             self.names.fixed_decimal_formatter,
             sink,
-        )
+        );
+        // A DateTimeWriteError should not occur in normal usage because DateTimeFormatter
+        // guarantees that all names for the pattern have been loaded and that the input type
+        // is compatible with the pattern. However, this code path might be reachable with
+        // invalid data. In that case, debug-panic and return the fallback string.
+        match result {
+            Ok(Ok(())) => Ok(()),
+            Err(fmt::Error) => Err(fmt::Error),
+            Ok(Err(e)) => {
+                debug_assert!(false, "unexpected error in FormattedDateTime: {e:?}");
+                Ok(())
+            }
+        }
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
 
+impl_display_with_writeable!(FormattedDateTime<'_>);
+
 impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
-    }
-
-    /// Gets the formatted result as a string.
-    pub fn to_string_lossy(&self) -> alloc::string::String {
-        match self.try_write_to_string() {
-            Err((_, s)) | Ok(s) => s.into_owned(),
-        }
     }
 }

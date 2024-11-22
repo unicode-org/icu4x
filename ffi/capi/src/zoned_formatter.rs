@@ -19,7 +19,7 @@ pub mod ffi {
         timezone::ffi::TimeZoneInfo,
     };
 
-    use writeable::TryWriteable;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
@@ -72,7 +72,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _lossy = self.0.format(&zdt).try_write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
     }
@@ -127,7 +127,7 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _lossy = self.0.format_any_calendar(&zdt).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
             Ok(())
         }
 
@@ -147,7 +147,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _lossy = self.0.format_any_calendar(&zdt).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
             Ok(())
         }
     }

@@ -33,7 +33,7 @@
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use writeable::TryWriteable;
+//! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
@@ -50,7 +50,7 @@
 //! let results = [true, false].map(get_field_set).map(|field_set| {
 //!     DateTimeFormatter::try_new(locale!("en-US").into(), field_set).unwrap()
 //! }).map(|formatter| {
-//!     formatter.format_any_calendar(&datetime).try_write_to_string().unwrap().into_owned()
+//!     formatter.format_any_calendar(&datetime).to_string()
 //! });
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])

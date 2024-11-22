@@ -35,7 +35,7 @@ fn main() {
     let datetime = DateTime::try_new_gregorian(2022, 12, 23, 12, 54, 29)
         .expect("constant should be valid datetime");
 
-    let result = formatter.format(&datetime).to_string_lossy();
+    let result = formatter.format(&datetime).to_string();
 
     assert_eq!(result, "၂၀၂၂ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{result}");

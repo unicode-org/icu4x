@@ -53,7 +53,7 @@
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
-//! use writeable::assert_try_writeable_eq;
+//! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
 //! let field_set = fieldsets::YMDT::medium().hm();
@@ -66,7 +66,7 @@
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
 //! let formatted_date = dtf.format_any_calendar(&datetime);
 //!
-//! assert_try_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
+//! assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations

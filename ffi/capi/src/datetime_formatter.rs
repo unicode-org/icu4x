@@ -21,7 +21,7 @@ pub mod ffi {
         time::ffi::Time,
     };
 
-    use writeable::TryWriteable;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
@@ -60,7 +60,7 @@ pub mod ffi {
 
         /// Formats a [`Time`] to a string.
         pub fn format_time(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _lossy = self.0.format(&value.0).try_write_to(write);
+            let _infallible = self.0.format(&value.0).write_to(write);
         }
 
         /// Formats a [`DateTime`] to a string.
@@ -69,7 +69,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _lossy = self.0.format(&value.0.time).try_write_to(write);
+            let _infallible = self.0.format(&value.0.time).write_to(write);
         }
 
         /// Formats a [`IsoDateTime`] to a string.
@@ -78,7 +78,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _lossy = self.0.format(&value.0.time).try_write_to(write);
+            let _infallible = self.0.format(&value.0.time).write_to(write);
         }
     }
 
@@ -119,7 +119,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
         /// Formats a [`IsoDateTime`] to a string.
         pub fn format_iso_datetime(
@@ -128,7 +128,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
@@ -169,7 +169,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
@@ -207,7 +207,7 @@ pub mod ffi {
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -220,7 +220,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
 
@@ -230,7 +230,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -243,7 +243,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
     }
@@ -282,7 +282,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.format_any_calendar(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -295,7 +295,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.format_any_calendar(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
     }

@@ -116,7 +116,7 @@ fn main() {
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_any_calendar(&date).to_string_lossy();
+    let formatted_date = dtf.format_any_calendar(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }
@@ -182,7 +182,7 @@ fn main() {
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_any_calendar(&date).to_string_lossy();
+    let formatted_date = dtf.format_any_calendar(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }
@@ -234,7 +234,7 @@ fn main() {
     let date = DateTime::try_new_gregorian(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
-    let formatted_date = dtf.format(&date).to_string_lossy();
+    let formatted_date = dtf.format(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }
