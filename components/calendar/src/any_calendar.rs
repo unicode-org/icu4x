@@ -46,7 +46,7 @@ define_preferences!(
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 ///
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
-/// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
+/// compile time. When the type is known at runtime, the [`AnyCalendar::new_for_kind()`] and sibling methods may be used.
 ///
 /// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
@@ -709,7 +709,10 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
-    pub fn try_new_for_kind_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
+    pub fn try_new_for_kind_unstable<P>(
+        provider: &P,
+        kind: AnyCalendarKind,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -1987,8 +1990,10 @@ mod tests {
         let islamic_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::IslamicCivil);
         let islamic_observational: AnyCalendar =
             AnyCalendar::new_for_kind(AnyCalendarKind::IslamicObservational);
-        let islamic_tabular: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::IslamicTabular);
-        let islamic_umm_al_qura: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::IslamicUmmAlQura);
+        let islamic_tabular: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicTabular);
+        let islamic_umm_al_qura: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicUmmAlQura);
         let japanese = AnyCalendar::new_for_kind(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new_for_kind(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new_for_kind(AnyCalendarKind::Persian);
