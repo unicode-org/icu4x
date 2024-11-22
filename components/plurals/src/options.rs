@@ -46,6 +46,8 @@ impl From<PluralRuleType> for PluralRulesOptions {
 }
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
+///
+/// [`PluralRules`]: crate::PluralRules
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Default)]
 #[non_exhaustive]
 pub enum PluralRuleType {
@@ -57,8 +59,8 @@ pub enum PluralRuleType {
     /// * [`One`]: `1 day`
     /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
     ///
-    /// [`One`]: PluralCategory::One
-    /// [`Other`]: PluralCategory::Other
+    /// [`One`]: crate::PluralCategory::One
+    /// [`Other`]: crate::PluralCategory::Other
     #[default]
     Cardinal,
     /// Ordinal plural forms denote the order of items in a set and are always integers.
@@ -70,9 +72,9 @@ pub enum PluralRuleType {
     /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
     /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
     ///
-    /// [`One`]: PluralCategory::One
-    /// [`Two`]: PluralCategory::Two
-    /// [`Few`]: PluralCategory::Few
-    /// [`Other`]: PluralCategory::Other
+    /// [`One`]: crate::PluralCategory::One
+    /// [`Two`]: crate::PluralCategory::Two
+    /// [`Few`]: crate::PluralCategory::Few
+    /// [`Other`]: crate::PluralCategory::Other
     Ordinal,
 }

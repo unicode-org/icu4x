@@ -251,7 +251,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        let rep = ipr::PluralRules::try_new(prefs, rule_type)?;
+        let rep = ipr::PluralRules::try_new(prefs, rule_type.into())?;
         Ok(Self { opts, rep })
     }
 
