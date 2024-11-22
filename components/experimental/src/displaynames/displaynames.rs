@@ -8,12 +8,20 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
+use icu_locale_core::preferences::define_preferences;
 use icu_locale_core::{
     subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
     Locale,
 };
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
+
+define_preferences!(
+    /// The preferences for list formatting.
+    [Copy]
+    DisplayNamesPreferences,
+    {}
+);
 
 /// Lookup of the locale-specific display names by region code.
 ///
@@ -27,7 +35,7 @@ use potential_utf::PotentialUtf8;
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = RegionDisplayNames::try_new(&locale, options)
+/// let display_name = RegionDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
@@ -40,7 +48,7 @@ pub struct RegionDisplayNames {
 
 impl RegionDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: DisplayNamesOptions) -> error: DataError,
+        (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
         functions: [
             try_new,
@@ -54,12 +62,14 @@ impl RegionDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<RegionDisplayNamesV1Marker>(prefs.locale_prefs);
         let region_data = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -94,7 +104,7 @@ impl RegionDisplayNames {
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = ScriptDisplayNames::try_new(&locale, options)
+/// let display_name = ScriptDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
@@ -107,7 +117,7 @@ pub struct ScriptDisplayNames {
 
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: DisplayNamesOptions) -> error: DataError,
+        (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
         functions: [
             try_new,
@@ -121,12 +131,14 @@ impl ScriptDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<ScriptDisplayNamesV1Marker>(prefs.locale_prefs);
         let script_data = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -161,7 +173,7 @@ impl ScriptDisplayNames {
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = VariantDisplayNames::try_new(&locale, options)
+/// let display_name = VariantDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
@@ -175,7 +187,7 @@ pub struct VariantDisplayNames {
 
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: DisplayNamesOptions) -> error: DataError,
+        (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
         functions: [
             try_new,
@@ -189,12 +201,14 @@ impl VariantDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<VariantDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<VariantDisplayNamesV1Marker>(prefs.locale_prefs);
         let variant_data = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -225,7 +239,7 @@ impl VariantDisplayNames {
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LanguageDisplayNames::try_new(&locale, options)
+/// let display_name = LanguageDisplayNames::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
@@ -238,7 +252,7 @@ pub struct LanguageDisplayNames {
 
 impl LanguageDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: DisplayNamesOptions) -> error: DataError,
+        (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
         functions: [
             try_new,
@@ -252,12 +266,14 @@ impl LanguageDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
+        let locale =
+            DataLocale::from_preferences_locale::<LanguageDisplayNamesV1Marker>(prefs.locale_prefs);
         let language_data = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -296,7 +312,7 @@ impl LanguageDisplayNames {
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LocaleDisplayNamesFormatter::try_new(&locale, options)
+/// let display_name = LocaleDisplayNamesFormatter::try_new(locale, options)
 ///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
@@ -322,7 +338,7 @@ pub struct LocaleDisplayNamesFormatter {
 
 impl LocaleDisplayNamesFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: DisplayNamesOptions) -> error: DataError,
+        (prefs: DisplayNamesPreferences, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
         functions: [
             try_new,
@@ -336,7 +352,7 @@ impl LocaleDisplayNamesFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
     where
@@ -347,8 +363,10 @@ impl LocaleDisplayNamesFormatter {
             + DataProvider<VariantDisplayNamesV1Marker>
             + ?Sized,
     {
+        let locale =
+            DataLocale::from_preferences_locale::<LocaleDisplayNamesV1Marker>(prefs.locale_prefs);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
+            id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
 
@@ -503,7 +521,7 @@ fn test_language_display() {
     use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
-        &locale!("en").into(),
+        locale!("en").into(),
         DisplayNamesOptions {
             language_display: LanguageDisplay::Dialect,
             ..Default::default()
@@ -511,7 +529,7 @@ fn test_language_display() {
     )
     .unwrap();
     let standard = LocaleDisplayNamesFormatter::try_new(
-        &locale!("en").into(),
+        locale!("en").into(),
         DisplayNamesOptions {
             language_display: LanguageDisplay::Standard,
             ..Default::default()

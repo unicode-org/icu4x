@@ -25,10 +25,10 @@
 //!
 //! ```
 //! use icu::locale::locale;
-//! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+//! use icu::plurals::{PluralCategory, PluralRules};
 //!
 //! let pr =
-//!     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+//!     PluralRules::try_new(locale!("en").into(), Default::default())
 //!         .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -77,6 +77,7 @@
 extern crate alloc;
 
 mod operands;
+mod options;
 pub mod provider;
 pub mod rules;
 
@@ -85,6 +86,7 @@ use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
+pub use options::*;
 use provider::CardinalV1Marker;
 use provider::OrdinalV1Marker;
 use provider::PluralRulesV1;
@@ -94,37 +96,6 @@ use rules::runtime::test_rule;
 use provider::PluralRangesV1Marker;
 #[cfg(feature = "experimental")]
 use provider::UnvalidatedPluralRange;
-
-/// A type of a plural rule which can be associated with the [`PluralRules`] struct.
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-#[non_exhaustive]
-pub enum PluralRuleType {
-    /// Cardinal plural forms express quantities of units such as time, currency or distance,
-    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
-    ///
-    /// For example, English has two forms for cardinals:
-    ///
-    /// * [`One`]: `1 day`
-    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
-    ///
-    /// [`One`]: PluralCategory::One
-    /// [`Other`]: PluralCategory::Other
-    Cardinal,
-    /// Ordinal plural forms denote the order of items in a set and are always integers.
-    ///
-    /// For example, English has four forms for ordinals:
-    ///
-    /// * [`One`]: `1st floor`, `21st floor`, `101st floor`
-    /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
-    /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
-    /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
-    ///
-    /// [`One`]: PluralCategory::One
-    /// [`Two`]: PluralCategory::Two
-    /// [`Few`]: PluralCategory::Few
-    /// [`Other`]: PluralCategory::Other
-    Ordinal,
-}
 
 /// The plural categories are used to format messages with numeric placeholders, expressed as decimal numbers.
 ///
@@ -137,10 +108,10 @@ pub enum PluralRuleType {
 ///
 /// ```
 /// use icu::locale::locale;
-/// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+/// use icu::plurals::{PluralCategory, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(locale!("en").into(), Default::default())
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -276,10 +247,10 @@ define_preferences!(
 ///
 /// ```
 /// use icu::locale::locale;
-/// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+/// use icu::plurals::{PluralCategory, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(locale!("en").into(), Default::default())
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -299,22 +270,21 @@ impl AsRef<PluralRules> for PluralRules {
 
 impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
-        (prefs: PluralRulesPreferences, rule_type: PluralRuleType) -> error: DataError,
+        (prefs: PluralRulesPreferences, options: PluralRulesOptions) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::locale;
-        /// use icu::plurals::{PluralRuleType, PluralRules};
+        /// use icu::plurals::PluralRules;
         ///
         /// let _ = PluralRules::try_new(
         ///     locale!("en").into(),
-        ///     PluralRuleType::Cardinal,
+        ///     Default::default(),
         /// ).expect("locale should be present");
         /// ```
         ///
-        /// [`type`]: PluralRuleType
         /// [`data provider`]: icu_provider
     );
 
@@ -322,9 +292,9 @@ impl PluralRules {
     pub fn try_new_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
-        rule_type: PluralRuleType,
+        options: PluralRulesOptions,
     ) -> Result<Self, DataError> {
-        match rule_type {
+        match options.rule_type.unwrap_or_default() {
             PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, prefs),
             PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, prefs),
         }
@@ -444,10 +414,10 @@ impl PluralRules {
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+    /// use icu::plurals::{PluralCategory, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(locale!("en").into(), Default::default())
     ///         .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
@@ -469,10 +439,9 @@ impl PluralRules {
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralOperands};
-    /// use icu::plurals::{PluralRuleType, PluralRules};
+    /// use icu::plurals::{PluralRules, PluralCategory, PluralOperands};
     /// #
-    /// # let pr = PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(locale!("en").into(), Default::default())
     /// #     .expect("locale should be present");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
@@ -516,10 +485,10 @@ impl PluralRules {
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+    /// use icu::plurals::{PluralCategory, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(locale!("fr").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(locale!("fr").into(), Default::default())
     ///         .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
@@ -567,12 +536,11 @@ impl PluralRules {
 ///
 /// ```
 /// use icu::locale::locale;
-/// use icu::plurals::{PluralCategory, PluralOperands};
-/// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
+/// use icu::plurals::{PluralRulesWithRanges, PluralCategory, PluralOperands};
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
 ///     locale!("ar").into(),
-///     PluralRuleType::Cardinal,
+///     Default::default(),
 /// )
 /// .expect("locale should be present");
 ///
@@ -598,18 +566,18 @@ pub struct PluralRulesWithRanges<R> {
 impl PluralRulesWithRanges<PluralRules> {
     icu_provider::gen_any_buffer_data_constructors!(
 
-        (prefs: PluralRulesPreferences, rule_type: PluralRuleType) -> error: DataError,
+        (prefs: PluralRulesPreferences, options: PluralRulesOptions) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::locale;
-        /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
+        /// use icu::plurals::PluralRulesWithRanges;
         ///
         /// let _ = PluralRulesWithRanges::try_new(
         ///     locale!("en").into(),
-        ///     PluralRuleType::Cardinal,
+        ///     Default::default(),
         /// ).expect("locale should be present");
         /// ```
     );
@@ -621,9 +589,9 @@ impl PluralRulesWithRanges<PluralRules> {
               + DataProvider<OrdinalV1Marker>
               + ?Sized),
         prefs: PluralRulesPreferences,
-        rule_type: PluralRuleType,
+        options: PluralRulesOptions,
     ) -> Result<Self, DataError> {
-        match rule_type {
+        match options.rule_type.unwrap_or_default() {
             PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, prefs),
             PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, prefs),
         }
@@ -725,9 +693,9 @@ where
         ///
         /// ```
         /// use icu::locale::locale;
-        /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges, PluralRules};
+        /// use icu::plurals::{PluralRulesWithRanges, PluralRules};
         ///
-        /// let rules = PluralRules::try_new(locale!("en").into(), PluralRuleType::Cardinal)
+        /// let rules = PluralRules::try_new(locale!("en").into(), Default::default())
         ///     .expect("locale should be present");
         ///
         /// let _ =
@@ -791,12 +759,12 @@ where
     /// ```
     /// use icu::locale::locale;
     /// use icu::plurals::{
-    ///     PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges,
+    ///     PluralCategory, PluralOperands, PluralRulesWithRanges,
     /// };
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
     ///     locale!("ro").into(),
-    ///     PluralRuleType::Cardinal,
+    ///     Default::default(),
     /// )
     /// .expect("locale should be present");
     /// let operands: PluralOperands =
@@ -833,11 +801,12 @@ where
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesWithRanges};
+    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesOptions, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
     ///     locale!("sl").into(),
-    ///     PluralRuleType::Ordinal,
+    ///     PluralRulesOptions::default()
+    ///         .with_type(PluralRuleType::Ordinal),
     /// )
     /// .expect("locale should be present");
     ///

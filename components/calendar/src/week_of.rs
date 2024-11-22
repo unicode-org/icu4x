@@ -7,10 +7,18 @@ use crate::{
     provider::*,
     types::{DayOfMonth, DayOfYearInfo, IsoWeekday, WeekOfMonth},
 };
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
 pub const MIN_UNIT_DAYS: u16 = 14;
+
+define_preferences!(
+    /// The preferences for list formatting.
+    [Copy]
+    WeekPreferences,
+    {}
+);
 
 /// Calculator for week-of-month and week-of-year based on locale-specific configurations.
 ///
@@ -32,18 +40,19 @@ pub struct WeekCalculator {
 
 impl WeekCalculator {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (prefs: WeekPreferences) -> error: DataError,
         /// Creates a new [`WeekCalculator`] from compiled data.
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {
+        let locale = DataLocale::from_preferences_locale::<WeekDataV2Marker>(prefs.locale_prefs);
         provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
             .map(|response| WeekCalculator {
@@ -68,7 +77,7 @@ impl WeekCalculator {
     /// use icu::calendar::week::WeekCalculator;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locale::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
     ///         .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
@@ -97,7 +106,7 @@ impl WeekCalculator {
     /// use icu::calendar::Date;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locale::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
     ///         .expect("locale should be present");
     ///
     /// let iso_date = Date::try_new_iso(2022, 8, 26).unwrap();
@@ -668,7 +677,7 @@ fn test_weekend() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und").into())
+        WeekCalculator::try_new(locale!("und").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -676,7 +685,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-FR").into())
+        WeekCalculator::try_new(locale!("und-FR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -684,7 +693,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IQ").into())
+        WeekCalculator::try_new(locale!("und-IQ").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -692,7 +701,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IR").into())
+        WeekCalculator::try_new(locale!("und-IR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),

@@ -62,7 +62,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (wprefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (prefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
