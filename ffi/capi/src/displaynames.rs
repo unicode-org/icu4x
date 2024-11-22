@@ -70,7 +70,7 @@ pub mod ffi {
             locale: &Locale,
             options: DisplayNamesOptionsV1,
         ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
@@ -79,7 +79,7 @@ pub mod ffi {
                     icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_any_provider,
                     icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
                     provider,
-                    &locale,
+                    prefs,
                     options,
                 )?,
             )))
@@ -102,13 +102,13 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<RegionDisplayNames>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             Ok(Box::new(RegionDisplayNames(call_constructor!(
                 icu_experimental::displaynames::RegionDisplayNames::try_new,
                 icu_experimental::displaynames::RegionDisplayNames::try_new_with_any_provider,
                 icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 Default::default()
             )?)))
         }

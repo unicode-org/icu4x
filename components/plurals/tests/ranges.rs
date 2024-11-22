@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::locale;
-use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges};
+use icu_plurals::{PluralCategory, PluralOperands, PluralRulesWithRanges};
 
 #[test]
 fn test_plural_ranges_raw() {
@@ -37,8 +37,7 @@ fn test_plural_ranges_missing_data_fallback() {
 
 #[test]
 fn test_plural_ranges_full() {
-    let ranges =
-        PluralRulesWithRanges::try_new(locale!("sl").into(), PluralRuleType::Cardinal).unwrap();
+    let ranges = PluralRulesWithRanges::try_new(locale!("sl").into(), Default::default()).unwrap();
     let start: PluralOperands = "0.5".parse().unwrap(); // PluralCategory::Other
     let end: PluralOperands = PluralOperands::from(1); // PluralCategory::One
 
