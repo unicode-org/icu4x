@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 pub const MIN_UNIT_DAYS: u16 = 14;
 
 define_preferences!(
-    /// The preferences for list formatting.
+    /// The preferences for the week calculator.
     [Copy]
     WeekPreferences,
     {}
