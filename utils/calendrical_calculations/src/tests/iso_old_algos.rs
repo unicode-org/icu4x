@@ -2,7 +2,7 @@ use crate::iso::is_leap_year;
 
 type IsoWeekday = u8;
 
-// Prev algo from: `components\calendar\src\iso.rs`
+/// Prev algo from: `components\calendar\src\iso.rs`
 // In the code removed: `date.0.`
 // Next line WAS: `fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {`
 pub fn day_of_week(year: i32, month: u8, day: u8) -> IsoWeekday {
@@ -51,4 +51,34 @@ pub fn day_of_week(year: i32, month: u8, day: u8) -> IsoWeekday {
 
     // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
     (day_offset + 1) as u8
+}
+
+/// Count the number of days in a given month/year combo
+const fn days_in_month(year: i32, month: u8) -> u8 {
+    // see comment to `<impl CalendarArithmetic for Iso>::month_days`
+    match month {
+        2 => 28 | (is_leap_year(year) as u8),
+        _ => 30 | (month ^ (month >> 3)),
+    }
+}
+
+/// Prev algo from: `components\calendar\src\iso.rs::Iso`
+///
+/// Return `(day, month)` for the given `year & `day_of_year`
+pub fn iso_from_year_day(year: i32, year_day: u16) -> (u8, u8) {
+    let mut month = 1;
+    let mut day = year_day as i32;
+    while month <= 12 {
+        let month_days = days_in_month(year, month) as i32;
+        if day <= month_days {
+            break;
+        } else {
+            debug_assert!(month < 12); // don't try going to month 13
+            day -= month_days;
+            month += 1;
+        }
+    }
+    let day = day as u8; // day <= month_days < u8::MAX
+
+    (month, day)
 }

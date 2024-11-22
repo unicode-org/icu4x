@@ -2,10 +2,10 @@ use super::iso_old_algos as alg_old;
 use super::iso_old_file as iso_old;
 use crate::iso as iso_new;
 use crate::rata_die::RataDie;
-use core::ops::{Range, RangeInclusive};
+use core::ops::RangeInclusive;
 
 const N_YEAR_BOUND: i32 = 1234; // more than one cycle (400 years)
-const MIN_YEAR_BOUND_RANGE: Range<i32> = i32::MIN..(i32::MIN + N_YEAR_BOUND);
+const MIN_YEAR_BOUND_RANGE: RangeInclusive<i32> = i32::MIN..=(i32::MIN + N_YEAR_BOUND);
 const MAX_YEAR_BOUND_RANGE: RangeInclusive<i32> = (i32::MAX - N_YEAR_BOUND)..=i32::MAX;
 
 const MONTH_DAYS: [u8; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -163,6 +163,27 @@ fn test_day_of_week_the_same() {
                     "YMD: {year} {month} {day}"
                 );
             }
+        }
+    }
+
+    N_RANGE.for_each(the_same_in_year);
+    MIN_YEAR_BOUND_RANGE.for_each(the_same_in_year);
+    MAX_YEAR_BOUND_RANGE.for_each(the_same_in_year);
+}
+
+#[test]
+fn test_from_year_day_the_same() {
+    const N_YEAR: i32 = 2_999;
+    const N_RANGE: RangeInclusive<i32> = (-N_YEAR)..=N_YEAR;
+
+    fn the_same_in_year(year: i32) {
+        let days = 365 + iso_new::is_leap_year(year) as u16;
+        for day_of_year in 1..=days {
+            assert_eq!(
+                alg_old::iso_from_year_day(year, day_of_year),
+                iso_new::iso_from_year_day(year, day_of_year),
+                "Y & DofY: {year} {day_of_year}"
+            );
         }
     }
 

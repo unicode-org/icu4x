@@ -94,11 +94,11 @@ pub const fn is_leap_year(year: i32) -> bool {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // [+] `fixed_from_iso` & `day_of_week`
 
-// Returns years passed from Jan 1st of year 1.
-//
-// Fixed is day count representation of calendars starting from Jan 1st of year 1.
-// The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
-//
+/// Returns years passed from Jan 1st of year 1.
+///
+/// Fixed is day count representation of calendars starting from Jan 1st of year 1.
+/// The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
+///
 /// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L71-L101>
 pub const fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     // There is no branching.
@@ -190,11 +190,14 @@ pub const fn day_of_week(year: i32, month: u8, day: u8) -> u8 {
 // [-] `fixed_from_iso` & `day_of_week`
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-// Returns (years, months, days) passed from Jan 1st of year 1.
-//
-// Fixed is day count representation of calendars starting from Jan 1st of year 1.
-// The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
-//
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// [+] `iso_from_fixed` & `iso_from_year_day`
+
+/// Returns (years, months, days) passed from Jan 1st of year 1.
+///
+/// Fixed is day count representation of calendars starting from Jan 1st of year 1.
+/// The calculation algorithm is from Cassio Neri & Lorenz Schneider article.
+///
 /// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L40-L69>
 pub const fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     if let Some(err) = check_rata_die_have_i32_year(date) {
@@ -276,9 +279,42 @@ pub const fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError
     let day_of_year = (approx_prepared as u32) / (APPROX_NUM_C as u32) / 4;
     let year = (100 * century + year_of_century) as i64;
 
-    // ↴
     // [[Section]]  Month & Day:
+    let (month, day) = calc_md_for_pseudo_year(day_of_year);
+
+    // ↴
+    // [[Section]]  Map from the pseudo calendar to the Gregorian:
+    let need_to_shift_months = day_of_year >= 306;
+    let year = (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64);
+
+    // `let month = if need_to_shift_months { month & 0b11 } else { month };`
+    // mask = if need_to_shift_months { 0x03 } else { 0xFF }:
+    let mask = (!(-(need_to_shift_months as i8) as u8)) | 0b11;
+    let month = month & mask;
+
+    // let day = day + 1; // ⚠️ Done in `calc_md_for_pseudo_year`
+
+    Ok((year as i32, month, day))
+}
+
+/// # Input
+/// `day_of_year` for the pseudo year:
+/// month: |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 |
+/// days:  | 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 | 31 | 28 |
+/// `day_of_year`:
+///        |  0 | 31 | 61 | 92 | 122| 153| 184| 214| 245| 275| 306| 337|
+///
+/// # Return:
+/// `(month, day)` in the pseudo year:
+/// * `month` in `3..=14`
+/// * `day` in `1..=31`
+///
+/// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L58-L60>
+#[inline(always)]
+const fn calc_md_for_pseudo_year(day_of_year: u32) -> (u8, u8) {
+    // See [formulas 1]:
     // [X = months] [N = days]  :  a = 5, b = 461, d = 153;
+    //
     // [approx comment 2]:
     // for any `day_of_year` in `0..734`:
     // prep_a = (5 * day_of_year + 461)
@@ -295,19 +331,43 @@ pub const fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError
     let month = (approx_day >> 16) as u8;
     // Day of the month: see [formulas 1] & [approx comment 2].
     let day = ((approx_day & DIV_MASK_02) as u16 / APPROX_NUM_A as u16) as u8;
-
-    // ↴
-    // [[Section]]  Map from the pseudo calendar to the Gregorian:
-    let need_to_shift_months = day_of_year >= 306;
-    let year = (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64);
-    let day = day + 1;
-    // `let month = if need_to_shift_months { month & 0b11 } else { month };`
-    // mask = if need_to_shift_months { 0x03 } else { 0xFF }:
-    let mask = (!(-(need_to_shift_months as i8) as u8)) | 0b11;
-    let month = month & mask;
-
-    Ok((year as i32, month, day))
+    (month, day + 1)
 }
+
+/// # Input
+/// * `year` in the Gregorian calendar
+/// * `day_of_year` for the Gregorian calendar\
+///   Valid values is:
+///   + `1..=365` for a non leap year
+///   + `1..=366` for a leap year
+///
+/// # Return:
+/// `(month, day)` in
+/// * `month` in `3..=14`
+/// * `day` in `1..=31`
+pub const fn iso_from_year_day(year: i32, day_of_year: u16) -> (u8, u8) {
+    const DAYS_BEFORE_FEB: u8 = 31;
+    const DAYS_BEFORE_MAR: u32 = DAYS_BEFORE_FEB as u32 + 28;
+    let day_of_year = day_of_year as u32;
+    let shift = is_leap_year(year) as u32 + DAYS_BEFORE_MAR;
+
+    if day_of_year > shift {
+        let day_of_year = day_of_year - shift - 1;
+        calc_md_for_pseudo_year(day_of_year)
+    } else {
+        // FEB have days in `32..=60` whish is `0b10_0000..=0b11_1100`
+        // So `second_month` is:
+        // * `0` for JAN
+        // * `1` for FEB
+        let second_month = ((day_of_year as u8) & (1 << 5)) >> 5;
+        let month = 1 + second_month;
+        let day = (day_of_year as u8) - (DAYS_BEFORE_FEB * second_month);
+        (month, day)
+    }
+}
+
+// [-] `iso_from_fixed` & `iso_from_year_day`
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // Returns years passed from Jan 1st of year 1.
 //
