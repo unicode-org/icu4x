@@ -51,7 +51,7 @@
     - `icu_decimal`
         - Reduce stack size of DecimalSymbolsV1 (unicode-org#5804)
         - Split numbering systems out of decimal data (unicode-org#5822, unicode-org#5830)
-    - `icu_experimental`
+    - `icu_experimental`: `0.1.0 -> 0.2.0`
         - New experimental DurationFormatter component (unicode-org#801)
         - Implement `UnitsFormatter` (unicode-org#5000)
         - Implement Short Compact Currency Formatter Provider and Populate Associated Data (unicode-org#5361)
@@ -77,6 +77,9 @@
         - Removed `Ord` and `PartialOrd` impl from `extensions::unicode::Unicode` (unicode-org#5617)
         - Move generic Subtag to subtags; use it in Value (unicode-org#4932, unicode-org#4941)
         - Remove AsRef and instead introduce Cow-returning canonicalize methods on locale/langid (unicode-org#5727)
+    - `icu_pattern`: `0.2.0 -> 0.3.0`
+        - Changes to bytes constructors (unicode-org#5034, unicode-org#5072)
+        - Bake, zerovec integration (unicode-org#5030)
     - `icu_plurals`
         - Add PluralElements for algorithmic plural selection (unicode-org#5622)
     - `icu_properties`
@@ -155,36 +158,49 @@
     - C++
     - `icu_harfbuzz`
 - Utilities
-    - `calendrical_calculations`:
-    - `databake`
-    - `env_preferences`
+    - `bies`: `0.2.2 -> 0.2.3`
+        - Minor cleanups
+    - `calendrical_calculations`: `0.1.2 -> 0.1.3`
+        - Minor cleanups
+    - `crlify`: No change (`1.0.4`)
+    - `databake`, `databake_derive`: `0.1.8 -> 0.2.0`
+        - Breaking: Introduce `BakeSize`, allowing for the calculation of the size of baked. (#5169)
+            - This is automatically required by `#[derive(Bake)]`, making it a breaking change
+        - Fix `test_bake!` (unicode-org#5092, unicode-org#5559)
+    - `deduplicating_array`: `0.1.6 -> 0.1.7`
+        - Minor cleanups
+    - `env_preferences`: New crate `0.1.0`
         - Add `env_preferences` crate (unicode-org#5081)
-    - `fixed_decimal`
+        - This crate does not itself get used by ICU4X, but can potentially be used with ICU4X.
+    - `fixed_decimal`: `0.5.6 -> 0.6.0`
         - `FloatPrecision::Floating` renamed to `FloatPrecision::RoundTrip` (unicode-org#5616)
         - `FixedDecimal::concatenated_end()` now returns both `self` and `other` in the error case. (unicode-org#5623)
         - Simplify FixedDecimal's rounding APIs (unicode-org#5028)
         - fix: `pad_end` function does not accept the 0 position (unicode-org#5319)
         - Return `Err((self, other))` in FixedDecimal::concatenated_end (unicode-org#5623)
         - Rename FloatPrecision::Floating to FloatPrecision::RoundTrip (unicode-org#5616)
-    - `icu_pattern`
-        - Changes to bytes constructors (unicode-org#5034, unicode-org#5072)
-        - Bake, zerovec integration (unicode-org#5030)
-    - `ixdtf`
+    - `ixdtf`: `0.2.0 -> 0.3.0`
         - Changed to `&[u8]` parsing (unicode-org#4918)
-    - `litemap`
+    - `litemap`: `0.7.3 -> 0.7.4`
         - Fix integer overflow for `LiteMap` by using correct `Store` trait method (unicode-org#5113)
-    - `potential_utf`
+    - `potential_utf`: New crate `0.1.0`
         - New crate with unvalidated types split from `zerovec` (unicode-org#5364)
-    - `tinystr`
+    - `resb`: New crate `0.1.0`
+        - New crate of utilities for reading and writing ICU resource bundle files (unicode-org#4058)
+    - `tinystr`: `0.7.6 -> 0.8.0`
         - Add UTF-16 constructors
         - Rename `TinyStrError` to `ParseError` (unicode-org#5405)
         - Add TinyAsciiStr::concat (unicode-org#5772)
-    - `yoke`
+        - Various breaking changes to APIs from "General" section above
+    - `yoke`, `yoke_derive`: `0.7.4 -> 0.7.5`
         - Unsafe review feedback (unicode-org#5046, unicode-org#5104)
-    - `zerofrom`
-    - `zerotrie`
+    - `zerofrom`, `zerofrom_derive: `0.1.4 -> 0.1.5`
+        - Minor cleanups
+    - `zerotrie`: `0.1.3 -> 0.2.0`
         - Minor improvement to zerotrie hash function (unicode-org#5106)
-    - `zerovec`
+        - New bytes representation, downstream of `zerovec`'s new optimizations'
+        - Various breaking changes to APIs from "General" section above
+    - `zerovec`, `zerovec_derive`: `0.10.4, 0.10.3 -> 0.11.0`
         - This release has multiple changes that affect the bit representation of various types. Do not update to this release if you wish to retain stable data formats.
             - Change the `VarZeroVecFormat` values shipped by default to use the same index and length width. This breaks data layout for all `VarZeroVec`s. (unicode-org#5594)
             - Change the `VarZeroVec` format to not store a superfluous 0 index at the beginning of the index array. This breaks data layout for all `VarZeroVec`s (unicode-org#5601)
@@ -199,7 +215,7 @@
         - Add VarZeroVecFormat support to VarTuple and make_var (unicode-org#5808)
         - Consistently use `bytes` not `byte_slice` (unicode-org#5816)
         - Implement `Bake` for VZV types of different formats (unicode-org#5719)
-    - `writeable`
+    - `writeable`: `0.5.5` -> `0.6.0`
         - Make `Writeable::writeable_cmp_bytes` a free function `writeable::cmp_bytes` (unicode-org#5737)
         - Add `writeable::to_string_or_borrow` for writing with reference bytes (unicode-org#5738)
         - Add Writeable WithPart helper (unicode-org#5328)

@@ -226,7 +226,7 @@ dependencies = [
 
 [[package]]
 name = "bies"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "itertools",
  "partial-min-max",
@@ -312,7 +312,7 @@ checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -548,7 +548,7 @@ checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 
 [[package]]
 name = "databake"
-version = "0.1.9-dev"
+version = "0.2.0"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -557,7 +557,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.8"
+version = "0.2.0"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -568,7 +568,7 @@ dependencies = [
 
 [[package]]
 name = "deduplicating_array"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "postcard",
  "serde",
@@ -772,7 +772,7 @@ checksum = "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d"
 
 [[package]]
 name = "env_preferences"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "core-foundation-sys",
  "icu_locale",
@@ -801,7 +801,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.6.0-dev"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1250,7 +1250,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1423,7 +1423,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.3.0-dev"
+version = "0.3.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1787,7 +1787,7 @@ checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
 
 [[package]]
 name = "ixdtf"
-version = "0.3.0-dev"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1836,7 +1836,7 @@ checksum = "4ec2a862134d2a7d32d7983ddcdd1c4923530833c9f2ea1a44fc5fa473989058"
 
 [[package]]
 name = "litemap"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -2175,7 +2175,7 @@ dependencies = [
 
 [[package]]
 name = "potential_utf"
-version = "0.1.0-dev"
+version = "0.1.0"
 dependencies = [
  "bincode",
  "databake",
@@ -2387,7 +2387,7 @@ dependencies = [
 
 [[package]]
 name = "resb"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "indexmap",
  "log",
@@ -2816,7 +2816,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.0-dev"
+version = "0.8.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -3395,7 +3395,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.5.6-dev"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "either",
@@ -3414,7 +3414,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.7.5-dev"
+version = "0.7.5"
 dependencies = [
  "bincode",
  "postcard",
@@ -3426,7 +3426,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.4"
+version = "0.7.5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3459,14 +3459,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3484,7 +3484,7 @@ checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
 
 [[package]]
 name = "zerotrie"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -3507,7 +3507,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.0-dev"
+version = "0.11.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -3531,7 +3531,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.0-dev"
+version = "0.11.0"
 dependencies = [
  "bincode",
  "proc-macro2",
