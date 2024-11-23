@@ -4,6 +4,7 @@
 
 [package]
 name = "potential_utf"
+description = "Unvalidated string and character types"
 version = "0.1.0"
 rust-version.workspace = true
 authors.workspace = true
