@@ -13,21 +13,27 @@ use icu_timezone::{
     CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
 };
 
+use super::UnstableSealed;
+
 /// A type that can return a certain field `T`.
-pub trait GetField<T> {
+///
+/// This is used as a bound on various datetime functions.
+pub trait GetField<T>: UnstableSealed {
     /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
 }
 
 impl<T> GetField<T> for T
 where
-    T: Copy,
+    T: Copy + UnstableSealed,
 {
     #[inline]
     fn get_field(&self) -> T {
         *self
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for Date<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for Date<A> {
     #[inline]
@@ -64,6 +70,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
     }
 }
 
+impl UnstableSealed for Time {}
+
 impl GetField<IsoHour> for Time {
     #[inline]
     fn get_field(&self) -> IsoHour {
@@ -91,6 +99,8 @@ impl GetField<NanoSecond> for Time {
         self.nanosecond
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for DateTime<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for DateTime<A> {
     #[inline]
@@ -154,6 +164,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime
         self.time.nanosecond
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> UnstableSealed for CustomZonedDateTime<A, Z> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<YearInfo> for CustomZonedDateTime<A, Z> {
     #[inline]
@@ -276,12 +288,16 @@ where
     }
 }
 
+impl UnstableSealed for UtcOffset {}
+
 impl GetField<Option<UtcOffset>> for UtcOffset {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         Some(*self)
     }
 }
+
+impl<O: TimeZoneModel> UnstableSealed for TimeZoneInfo<O> {}
 
 impl<O> GetField<TimeZoneBcp47Id> for TimeZoneInfo<O>
 where
