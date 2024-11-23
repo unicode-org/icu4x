@@ -185,8 +185,8 @@
         - Fix integer overflow for `LiteMap` by using correct `Store` trait method (unicode-org#5113)
     - `potential_utf`: New crate `0.1.0`
         - New crate with unvalidated types split from `zerovec` (unicode-org#5364)
-    - `resb`: New crate `0.1.0`
-        - New crate of utilities for reading and writing ICU resource bundle files (unicode-org#4058)
+    - `tzif`: New crate `0.2.3 -> 0.3.0`
+        - Various breaking changes to APIs from "General" section above
     - `tinystr`: `0.7.6 -> 0.8.0`
         - Add UTF-16 constructors
         - Rename `TinyStrError` to `ParseError` (unicode-org#5405)
