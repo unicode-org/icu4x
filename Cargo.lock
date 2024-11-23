@@ -606,8 +606,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef0c3a613b09df83bdd42393cd532830a795053102f87461fca1726999829c60"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -636,16 +637,18 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc1708f176e12755d6d6571ad9b0ebbd3b428223b5cdf63a38eecf1479c13e70"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat-tool"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "398313c0138ba1cd8ffc514f16b356ed17ed924c4efcfe3bc726ed631f6642bf"
 dependencies = [
  "askama",
  "clap",
@@ -664,8 +667,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat_core"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58e5ba87fee6b8b9dcc575cfbc84ae97b8b9f891fa27f670996a4684e20bd178"
 dependencies = [
  "displaydoc",
  "either",
@@ -696,7 +700,7 @@ checksum = "d9b5e0d321d61de16390ed273b647ce51605b575916d3c25e6ddf27a1e140035"
 dependencies = [
  "cfg-if",
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3292,7 +3296,7 @@ version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
 dependencies = [
- "windows-sys 0.48.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
