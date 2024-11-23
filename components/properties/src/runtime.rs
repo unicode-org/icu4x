@@ -245,7 +245,8 @@ impl CodePointSetData {
     /// ```
     /// use icu::properties::CodePointSetData;
     ///
-    /// let emoji = CodePointSetData::new_for_ecma262(b"Emoji").expect("is an ECMA-262 property");
+    /// let emoji = CodePointSetData::new_for_ecma262(b"Emoji")
+    ///     .expect("is an ECMA-262 property");
     ///
     /// assert!(emoji.contains('🔥')); // U+1F525 FIRE
     /// assert!(!emoji.contains('V'));

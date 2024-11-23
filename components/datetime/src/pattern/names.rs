@@ -46,7 +46,6 @@ size_test!(
 
 /// A low-level type that formats datetime patterns with localized names.
 /// The calendar should be chosen at compile time.
-///
 #[doc = typed_date_time_names_size!()]
 ///
 /// Type parameters:
@@ -645,29 +644,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
-    /// let mut zone_london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
+    /// let mut zone_london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     ///
@@ -676,11 +672,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: GMT+01:00",
     /// );
     ///
@@ -689,7 +689,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: gblon",
     /// );
     ///
@@ -698,7 +700,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: +0000",
     /// );
     ///
@@ -707,11 +711,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: Z",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: +01:00",
     /// );
     /// ```
@@ -748,24 +756,22 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_location_names().unwrap();
@@ -775,7 +781,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: UK Time",
     /// );
     /// ```
@@ -815,29 +823,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
-    /// let mut zone_london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
+    /// let mut zone_london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_long_names().unwrap();
@@ -847,11 +852,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: Greenwich Mean Time", // TODO
     /// );
     /// ```
@@ -891,29 +900,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
-    /// let mut zone_london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
+    /// let mut zone_london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_short_names().unwrap();
@@ -923,11 +929,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: GMT", // TODO
     /// );
     /// ```
@@ -967,29 +977,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
-    /// let mut zone_london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
+    /// let mut zone_london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_long_names().unwrap();
@@ -999,11 +1006,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: British Summer Time",
     /// );
     /// ```
@@ -1043,29 +1054,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
-    /// let mut zone_london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .zone;
+    /// let mut zone_london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
+    /// let mut zone_london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .zone;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -1075,11 +1083,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&zone_london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```
@@ -1108,14 +1120,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Time;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into()).unwrap();
+    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into())
+    ///         .unwrap();
     /// names.include_fixed_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
@@ -1212,8 +1225,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("en").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("en").into()).unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "MMM d (EEEE) 'of year' y G 'at' h:mm a";

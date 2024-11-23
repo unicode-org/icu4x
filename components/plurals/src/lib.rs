@@ -27,9 +27,8 @@
 //! use icu::locale::locale;
 //! use icu::plurals::{PluralCategory, PluralRules};
 //!
-//! let pr =
-//!     PluralRules::try_new(locale!("en").into(), Default::default())
-//!         .expect("locale should be present");
+//! let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+//!     .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
@@ -110,9 +109,8 @@ use provider::UnvalidatedPluralRange;
 /// use icu::locale::locale;
 /// use icu::plurals::{PluralCategory, PluralRules};
 ///
-/// let pr =
-///     PluralRules::try_new(locale!("en").into(), Default::default())
-///         .expect("locale should be present");
+/// let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+///     .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -249,9 +247,8 @@ define_preferences!(
 /// use icu::locale::locale;
 /// use icu::plurals::{PluralCategory, PluralRules};
 ///
-/// let pr =
-///     PluralRules::try_new(locale!("en").into(), Default::default())
-///         .expect("locale should be present");
+/// let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+///     .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -416,9 +413,8 @@ impl PluralRules {
     /// use icu::locale::locale;
     /// use icu::plurals::{PluralCategory, PluralRules};
     ///
-    /// let pr =
-    ///     PluralRules::try_new(locale!("en").into(), Default::default())
-    ///         .expect("locale should be present");
+    /// let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+    ///     .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
@@ -487,9 +483,8 @@ impl PluralRules {
     /// use icu::locale::locale;
     /// use icu::plurals::{PluralCategory, PluralRules};
     ///
-    /// let pr =
-    ///     PluralRules::try_new(locale!("fr").into(), Default::default())
-    ///         .expect("locale should be present");
+    /// let pr = PluralRules::try_new(locale!("fr").into(), Default::default())
+    ///     .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
     /// assert_eq!(categories.next(), Some(PluralCategory::One));
@@ -536,7 +531,7 @@ impl PluralRules {
 ///
 /// ```
 /// use icu::locale::locale;
-/// use icu::plurals::{PluralRulesWithRanges, PluralCategory, PluralOperands};
+/// use icu::plurals::{PluralCategory, PluralOperands, PluralRulesWithRanges};
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
 ///     locale!("ar").into(),
@@ -758,9 +753,7 @@ where
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{
-    ///     PluralCategory, PluralOperands, PluralRulesWithRanges,
-    /// };
+    /// use icu::plurals::{PluralCategory, PluralOperands, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
     ///     locale!("ro").into(),
@@ -801,12 +794,14 @@ where
     ///
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesOptions, PluralRulesWithRanges};
+    /// use icu::plurals::{
+    ///     PluralCategory, PluralRuleType, PluralRulesOptions,
+    ///     PluralRulesWithRanges,
+    /// };
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
     ///     locale!("sl").into(),
-    ///     PluralRulesOptions::default()
-    ///         .with_type(PluralRuleType::Ordinal),
+    ///     PluralRulesOptions::default().with_type(PluralRuleType::Ordinal),
     /// )
     /// .expect("locale should be present");
     ///

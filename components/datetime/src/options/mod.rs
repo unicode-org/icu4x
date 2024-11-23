@@ -25,26 +25,23 @@ use crate::neo_serde::TimePrecisionSerde;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let short_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         locale!("en-US").into(),
-///         YMD::short(),
-///     )
-///     .unwrap();
+/// let short_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::short(),
+/// )
+/// .unwrap();
 ///
-/// let medium_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         locale!("en-US").into(),
-///         YMD::medium(),
-///     )
-///     .unwrap();
+/// let medium_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::medium(),
+/// )
+/// .unwrap();
 ///
-/// let long_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         locale!("en-US").into(),
-///         YMD::long(),
-///     )
-///     .unwrap();
+/// let long_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::long(),
+/// )
+/// .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     short_formatter.format(&Date::try_new_gregorian(2000, 1, 1).unwrap()),
@@ -338,7 +335,8 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::MinuteExact,
 ///     TimePrecision::SecondPlus,
 ///     TimePrecision::SecondExact(FractionalSecondDigits::F0),
-/// ].map(|time_precision| {
+/// ]
+/// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///         locale!("en-US").into(),
 ///         T::short().with_time_precision(time_precision),
@@ -356,15 +354,19 @@ impl IntoOption<YearStyle> for YearStyle {
 /// let expected_value_table = [
 ///     // 7:00:00, 7:00:10, 7:12:20.5432
 ///     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
-///     ["7 AM", "7 AM", "7 AM"], // HourExact
+///     ["7 AM", "7 AM", "7 AM"],             // HourExact
 ///     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
-///     ["7:00 AM", "7:00 AM", "7:12 AM"], // MinuteExact
+///     ["7:00 AM", "7:00 AM", "7:12 AM"],    // MinuteExact
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
 /// ];
 ///
-/// for (expected_value_row, formatter) in expected_value_table.iter().zip(formatters.iter()) {
-///     for (expected_value, time) in expected_value_row.iter().zip(times.iter()) {
+/// for (expected_value_row, formatter) in
+///     expected_value_table.iter().zip(formatters.iter())
+/// {
+///     for (expected_value, time) in
+///         expected_value_row.iter().zip(times.iter())
+///     {
 ///         assert_writeable_eq!(
 ///             formatter.format(time),
 ///             *expected_value,
@@ -467,7 +469,9 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)),
+///     T::short().with_time_precision(TimePrecision::SecondExact(
+///         FractionalSecondDigits::F2,
+///     )),
 /// )
 /// .unwrap();
 ///

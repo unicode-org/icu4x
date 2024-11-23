@@ -234,8 +234,15 @@ impl DateTime<Roc> {
     /// let datetime_roc = DateTime::try_new_roc(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
-    /// assert_eq!(datetime_roc.date.year().standard_era().unwrap().0, tinystr!(16, "roc"));
-    /// assert_eq!(datetime_roc.date.year().era_year_or_extended(), 1, "ROC year check failed!");
+    /// assert_eq!(
+    ///     datetime_roc.date.year().standard_era().unwrap().0,
+    ///     tinystr!(16, "roc")
+    /// );
+    /// assert_eq!(
+    ///     datetime_roc.date.year().era_year_or_extended(),
+    ///     1,
+    ///     "ROC year check failed!"
+    /// );
     /// assert_eq!(
     ///     datetime_roc.date.month().ordinal,
     ///     2,

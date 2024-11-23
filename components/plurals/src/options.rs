@@ -6,10 +6,10 @@
 ///
 /// # Examples
 /// ```
-/// use icu::plurals::{PluralRulesOptions, PluralRuleType};
+/// use icu::plurals::{PluralRuleType, PluralRulesOptions};
 ///
-/// let options = PluralRulesOptions::default()
-///     .with_type(PluralRuleType::Cardinal);
+/// let options =
+///     PluralRulesOptions::default().with_type(PluralRuleType::Cardinal);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]

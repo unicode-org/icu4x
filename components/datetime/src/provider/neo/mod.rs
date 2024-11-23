@@ -317,7 +317,6 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -490,7 +489,6 @@ impl LinearNamesV1<'_> {
 size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
-///
 #[doc = glue_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">

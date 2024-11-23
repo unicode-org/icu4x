@@ -487,8 +487,8 @@ impl GeneralCategoryGroup {
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///

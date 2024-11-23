@@ -19,7 +19,7 @@ use quote::quote;
 /// This requires that the crate using the generated data needs a different struct.
 ///
 /// ```
-/// use databake::{Bake, converter::AsStaticStr};
+/// use databake::{converter::AsStaticStr, Bake};
 ///
 /// #[derive(Bake)]
 /// #[databake(path = my_crate)]
@@ -30,7 +30,7 @@ use quote::quote;
 ///
 /// let data = Data {
 ///     number: 6,
-///     string: 6.to_string().into()
+///     string: 6.to_string().into(),
 /// };
 ///
 /// assert_eq!(

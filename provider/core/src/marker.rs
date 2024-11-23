@@ -109,8 +109,8 @@ pub trait DataMarker: DynamicDataMarker {
 /// ```
 /// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::prelude::*;
 /// use icu_provider::marker::NeverMarker;
+/// use icu_provider::prelude::*;
 ///
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
@@ -156,8 +156,8 @@ where
 /// ```
 /// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::prelude::*;
 /// use icu_provider::marker::NeverMarker;
+/// use icu_provider::prelude::*;
 ///
 /// struct MyProvider;
 ///
@@ -345,7 +345,8 @@ unsafe impl EqULE for DataMarkerPathHash {}
 ///
 /// ```
 /// # use icu_provider::marker::DataMarkerPath;
-/// const K: DataMarkerPath = icu_provider::marker::data_marker_path!("foo/bar@1");
+/// const K: DataMarkerPath =
+///     icu_provider::marker::data_marker_path!("foo/bar@1");
 /// ```
 ///
 /// The human-readable path string ends with `@` followed by one or more digits (the version
@@ -505,7 +506,8 @@ impl DataMarkerPath {
     /// use icu_provider::marker::DataMarkerPath;
     /// use icu_provider::marker::DataMarkerPathHash;
     ///
-    /// const PATH: DataMarkerPath = icu_provider::marker::data_marker_path!("foo@1");
+    /// const PATH: DataMarkerPath =
+    ///     icu_provider::marker::data_marker_path!("foo@1");
     /// const PATH_HASH: DataMarkerPathHash = PATH.hashed();
     ///
     /// assert_eq!(PATH_HASH.to_bytes(), [0xe2, 0xb6, 0x17, 0x71]);

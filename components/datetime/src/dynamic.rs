@@ -38,20 +38,26 @@
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
 //!         let field_set = fieldsets::MDT::medium().hm();
-//!         CompositeDateTimeFieldSet::DateTime(fieldsets::enums::DateAndTimeFieldSet::MDT(field_set))
+//!         CompositeDateTimeFieldSet::DateTime(
+//!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
+//!         )
 //!     } else {
 //!         let field_set = fieldsets::MD::medium();
-//!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(field_set))
+//!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(
+//!             field_set,
+//!         ))
 //!     }
 //! }
 //!
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
 //!
-//! let results = [true, false].map(get_field_set).map(|field_set| {
-//!     DateTimeFormatter::try_new(locale!("en-US").into(), field_set).unwrap()
-//! }).map(|formatter| {
-//!     formatter.format_any_calendar(&datetime).to_string()
-//! });
+//! let results = [true, false]
+//!     .map(get_field_set)
+//!     .map(|field_set| {
+//!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
+//!             .unwrap()
+//!     })
+//!     .map(|formatter| formatter.format_any_calendar(&datetime).to_string());
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```

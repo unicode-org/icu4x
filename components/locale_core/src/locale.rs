@@ -214,12 +214,18 @@ impl Locale {
     ///     "ar-SA",
     /// ];
     ///
-    /// let mut locales = bcp47_strings.iter().map(|s| s.parse().unwrap()).collect::<Vec<Locale>>();
+    /// let mut locales = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<Locale>>();
     /// locales.sort_by(|a, b| {
     ///     let b = b.write_to_string();
     ///     a.strict_cmp(b.as_bytes())
     /// });
-    /// let strict_cmp_strings = locales.iter().map(|l| l.to_string()).collect::<Vec<String>>();
+    /// let strict_cmp_strings = locales
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
     ///
     /// // Output ordering, sorted alphabetically
     /// let expected_ordering: &[&str] = &[
@@ -294,9 +300,15 @@ impl Locale {
     /// ];
     /// assert!(bcp47_strings.windows(2).all(|w| w[0] < w[1]));
     ///
-    /// let mut locales = bcp47_strings.iter().map(|s| s.parse().unwrap()).collect::<Vec<Locale>>();
+    /// let mut locales = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<Locale>>();
     /// locales.sort_by(Locale::total_cmp);
-    /// let total_cmp_strings = locales.iter().map(|l| l.to_string()).collect::<Vec<String>>();
+    /// let total_cmp_strings = locales
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
     ///
     /// // Output ordering, sorted arbitrarily
     /// let expected_ordering: &[&str] = &[

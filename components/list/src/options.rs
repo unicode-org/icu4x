@@ -8,8 +8,7 @@
 /// ```
 /// use icu::list::{ListFormatterOptions, ListLength};
 ///
-/// let options = ListFormatterOptions::default()
-///     .with_length(ListLength::Wide);
+/// let options = ListFormatterOptions::default().with_length(ListLength::Wide);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]

@@ -157,8 +157,7 @@ where
     ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_empty());
     ///
-    /// let emptyvec: ZeroVec<u16> =
-    ///     ZeroVec::parse_bytes(&[]).expect("infallible");
+    /// let emptyvec: ZeroVec<u16> = ZeroVec::parse_bytes(&[]).expect("infallible");
     /// assert!(emptyvec.is_empty());
     /// ```
     #[inline]

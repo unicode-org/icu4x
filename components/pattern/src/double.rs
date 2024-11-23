@@ -28,8 +28,11 @@ use alloc::{boxed::Box, string::String};
 /// use icu_pattern::PatternItem;
 ///
 /// // Parse the string syntax
-/// let pattern =
-///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
+/// let pattern = DoublePlaceholderPattern::try_from_str(
+///     "Hello, {0} and {1}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -204,9 +207,11 @@ impl DoublePlaceholderInfo {
 /// use icu_pattern::Pattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern =
-///     Pattern::<DoublePlaceholder>::try_from_str("Hello, {0} and {1}!", Default::default())
-///         .unwrap();
+/// let pattern = Pattern::<DoublePlaceholder>::try_from_str(
+///     "Hello, {0} and {1}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// assert_eq!("\x10\x1BHello,  and !", &pattern.store);
 /// ```
@@ -226,41 +231,56 @@ impl DoublePlaceholderInfo {
 ///
 /// // Single numeric placeholder (note, "5" is used):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder>::try_from_str("{0} days ago", Default::default())
-///         .unwrap()
-///         .interpolate_to_string([5, 7]),
+///     Pattern::<DoublePlaceholder>::try_from_str(
+///         "{0} days ago",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string([5, 7]),
 ///     "5 days ago",
 /// );
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder>::try_from_str("yesterday", Default::default())
-///         .unwrap()
-///         .interpolate_to_string(["foo", "bar"]),
+///     Pattern::<DoublePlaceholder>::try_from_str(
+///         "yesterday",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(["foo", "bar"]),
 ///     "yesterday",
 /// );
 ///
 /// // Escaped placeholder and a placeholder value 1 (note, "bar" is used):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder>::try_from_str("'{0}' {1}", QuoteMode::QuotingSupported.into())
-///         .unwrap()
-///         .interpolate_to_string(("foo", "bar")),
+///     Pattern::<DoublePlaceholder>::try_from_str(
+///         "'{0}' {1}",
+///         QuoteMode::QuotingSupported.into()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(("foo", "bar")),
 ///     "{0} bar",
 /// );
 ///
 /// // Pattern with the placeholders in the opposite order:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder>::try_from_str("A {1} B {0} C", Default::default())
-///         .unwrap()
-///         .interpolate_to_string(("D", "E")),
+///     Pattern::<DoublePlaceholder>::try_from_str(
+///         "A {1} B {0} C",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(("D", "E")),
 ///     "A E B D C",
 /// );
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder>::try_from_str("{1}{0}", Default::default())
-///         .unwrap()
-///         .interpolate_to_string((1, "A")),
+///     Pattern::<DoublePlaceholder>::try_from_str(
+///         "{1}{0}",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string((1, "A")),
 ///     "A1",
 /// );
 /// ```

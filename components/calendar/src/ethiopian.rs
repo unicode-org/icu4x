@@ -342,13 +342,9 @@ impl Date<Ethiopian> {
     /// use icu::calendar::cal::EthiopianEraStyle;
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopian = Date::try_new_ethiopian(
-    ///     EthiopianEraStyle::AmeteMihret,
-    ///     2014,
-    ///     8,
-    ///     25,
-    /// )
-    /// .expect("Failed to initialize Ethopic Date instance.");
+    /// let date_ethiopian =
+    ///     Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
+    ///         .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopian.year().era_year_or_extended(), 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);

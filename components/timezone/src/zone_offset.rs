@@ -66,26 +66,39 @@ impl ZoneOffsetCalculator {
     /// ```
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::TimeZoneBcp47Id;
-    /// use icu::timezone::ZoneOffsetCalculator;
     /// use icu::timezone::UtcOffset;
+    /// use icu::timezone::ZoneOffsetCalculator;
     /// use tinystr::tinystr;
     ///
     /// let zoc = ZoneOffsetCalculator::new();
     ///
     /// // America/Denver observes DST
-    /// let offsets = zoc.compute_offsets_from_time_zone(
-    ///     TimeZoneBcp47Id(tinystr!(8, "usden")),
-    ///     (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
-    /// ).unwrap();
-    /// assert_eq!(offsets.standard, UtcOffset::try_from_seconds(-7 * 3600).unwrap());
-    /// assert_eq!(offsets.daylight, Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap()));
+    /// let offsets = zoc
+    ///     .compute_offsets_from_time_zone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "usden")),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///     )
+    ///     .unwrap();
+    /// assert_eq!(
+    ///     offsets.standard,
+    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    /// );
+    /// assert_eq!(
+    ///     offsets.daylight,
+    ///     Some(UtcOffset::try_from_seconds(-6 * 3600).unwrap())
+    /// );
     ///
     /// // America/Phoenix does not
-    /// let offsets = zoc.compute_offsets_from_time_zone(
-    ///     TimeZoneBcp47Id(tinystr!(8, "usphx")),
-    ///     (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
-    /// ).unwrap();
-    /// assert_eq!(offsets.standard, UtcOffset::try_from_seconds(-7 * 3600).unwrap());
+    /// let offsets = zoc
+    ///     .compute_offsets_from_time_zone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "usphx")),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///     )
+    ///     .unwrap();
+    /// assert_eq!(
+    ///     offsets.standard,
+    ///     UtcOffset::try_from_seconds(-7 * 3600).unwrap()
+    /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```
     pub fn compute_offsets_from_time_zone(
