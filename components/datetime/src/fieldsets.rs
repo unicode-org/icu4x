@@ -383,6 +383,8 @@ macro_rules! impl_date_or_calendar_period_marker {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
             ///
+            /// This is a field set marker. For more information, see [`fieldsets`](crate::fieldsets).
+            ///
             /// # Examples
             ///
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):

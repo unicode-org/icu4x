@@ -9,6 +9,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// Struct for combining date/time fields with zone fields.
 ///
 /// This struct produces "composite field sets" as defined in UTS 35.
+/// See [`fieldsets`](crate::fieldsets).
 ///
 /// # Examples
 ///

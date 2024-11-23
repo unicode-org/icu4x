@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Enumerations over field sets.
+//! Enumerations over [field sets](crate::fieldsets).
 //!
 //! These enumerations can be used when the field set is not known at compile time. However,
 //! they may contribute negatively to the binary size of the formatters.
@@ -62,6 +62,8 @@ use crate::{fields, fieldsets, Length};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -89,6 +91,8 @@ pub enum DateFieldSet {
 }
 
 /// An enumeration over all possible calendar period field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -109,6 +113,8 @@ pub enum CalendarPeriodFieldSet {
 }
 
 /// An enumeration over all possible time field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum TimeFieldSet {
@@ -117,6 +123,8 @@ pub enum TimeFieldSet {
 }
 
 /// An enumeration over all possible zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 ///
 /// Note: [`fieldsets::Zs`] and [`fieldsets::Vs`] are not included in this enum
 /// because they are data size optimizations only.
@@ -167,6 +175,8 @@ pub enum ZoneStyle {
 }
 
 /// An enumeration over all possible date+time composite field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
@@ -200,6 +210,8 @@ pub enum DateAndTimeFieldSet {
 ///
 /// This enum is useful when formatting a type that does not contain a
 /// time zone or to avoid storing time zone data.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CompositeDateTimeFieldSet {
@@ -248,6 +260,8 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
 }
 
 /// An enum supporting all possible field sets and options.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CompositeFieldSet {
