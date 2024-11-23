@@ -31,7 +31,28 @@ use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, Writeable};
 
 define_preferences!(
-    /// The prefs for datetime formatting.
+    /// The user locale preferences for datetime formatting.
+    ///
+    /// # Examples
+    ///
+    /// Two ways to build a preferences bag with a custom hour cycle and calendar system:
+    ///
+    /// ```
+    /// use icu::datetime::DateTimeFormatterPreferences;
+    /// use icu::locale::Locale;
+    /// use icu::locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+    /// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
+    /// use icu::locale::subtags::Language;
+    ///
+    /// let prefs1: DateTimeFormatterPreferences = Locale::try_from_str("fr-u-ca-buddhist-hc-h12").unwrap().into();
+    ///
+    /// let mut prefs2 = DateTimeFormatterPreferences::default();
+    /// prefs2.locale_prefs.language = Language::try_from_str("fr").unwrap();
+    /// prefs2.hour_cycle = Some(HourCycle::H12);
+    /// prefs2.calendar_algorithm = Some(CalendarAlgorithm::Buddhist);
+    ///
+    /// assert_eq!(prefs1, prefs2);
+    /// ```
     [Copy]
     DateTimeFormatterPreferences,
     {

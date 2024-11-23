@@ -26,6 +26,8 @@ use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
@@ -41,6 +43,8 @@ pub trait DateInputMarkers: UnstableSealed {
 
 /// A trait associating types for date formatting in a specific calendar
 /// (data markers only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
@@ -54,6 +58,8 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 
 /// A trait associating types for date formatting in any calendar
 /// (data markers only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
@@ -67,6 +73,8 @@ pub trait DateDataMarkers: UnstableSealed {
 
 /// A trait associating types for time formatting
 /// (input types and data markers).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
@@ -84,6 +92,8 @@ pub trait TimeMarkers: UnstableSealed {
 
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
@@ -111,6 +121,8 @@ pub trait ZoneMarkers: UnstableSealed {
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting.
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
@@ -128,7 +140,22 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
 
-/// Trait to consolidate input markers.
+/// Trait implemented on formattable datetime types.
+///
+/// This trait allows for only those types compatible with a particular field set to be passed
+/// as arguments to the formatting function for that field set. For example, this trait prevents
+/// [`Time`] from being passed to a formatter parameterized with [`fieldsets::YMD`].
+///
+/// The following types implement this trait:
+///
+/// - [`Date`](icu_calendar::Date)
+/// - [`Time`](icu_calendar::Time)
+/// - [`DateTime`](icu_calendar::DateTime)
+/// - [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+/// - [`UtcOffset`](icu_timezone::UtcOffset)
+/// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+///
+/// [`fieldsets::YMD`]: crate::fieldsets::YMD
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
@@ -174,6 +201,9 @@ where
 
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with a fixed calendar.
+///
+/// This trait is implemented on all providers that support datetime formatting,
+/// including [`crate::provider::Baked`].
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
@@ -223,6 +253,9 @@ where
 
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with any calendar.
+///
+/// This trait is implemented on all providers that support datetime formatting,
+/// including [`crate::provider::Baked`].
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>

@@ -22,7 +22,7 @@ use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
 
-/// A calendar that can be found in CLDR
+/// A calendar that can be found in CLDR.
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
 /// in the CLDR transformer to support any new era maps.

@@ -7,6 +7,27 @@
 //! Each field set is a struct containing options specified to that field set.
 //! The fields can either be set directly or via helper functions.
 //!
+//! This module contains _static_ field sets, which deliver the smallest binary size.
+//! If the field set is not known until runtime, use a _dynamic_ field set: [`enums`]
+//!
+//! # What is a Field Set?
+//!
+//! A field set determines what datetime fields should be printed in the localized output.
+//!
+//! Examples of field sets include:
+//!
+//! 1. Year, month, and day ([`YMD`])
+//! 2. Weekday and time ([`ET`])
+//!
+//! Field sets fit into four categories:
+//!
+//! 1. Date: fields that specify a particular day in time.
+//! 2. Calendar period: fields that specify a span of time greater than a day.
+//! 3. Time: fields that specify a time within a day.
+//! 4. Zone: fields that specify a time zone or offset from UTC.
+//!
+//! Certain combinations of field sets are allowed, too. See [`Combo`].
+//!
 //! # Examples
 //!
 //! Two ways to configure the same field set:
@@ -1098,7 +1119,8 @@ impl_calendar_period_marker!(
 );
 
 impl_time_marker!(
-    /// Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
+    /// Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword
+    /// or [`DateTimeFormatterPreferences`].
     ///
     /// ```
     /// use icu::calendar::Time;
@@ -1182,6 +1204,8 @@ impl_time_marker!(
     ///     "24:00"
     /// );
     /// ```
+    ///
+    /// [`DateTimeFormatterPreferences`]: crate::DateTimeFormatterPreferences
     T,
     description = "time (locale-dependent hour cycle)",
     sample_length = medium,

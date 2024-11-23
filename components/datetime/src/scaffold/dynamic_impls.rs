@@ -137,6 +137,8 @@ impl DateTimeMarkers for TimeFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
+impl UnstableSealed for DateAndTimeFieldSet {}
+
 impl UnstableSealed for ZoneFieldSet {}
 
 impl DateTimeNamesMarker for ZoneFieldSet {
