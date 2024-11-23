@@ -11,6 +11,16 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
+type CollatorOptions_Obj = {
+    strength: CollatorStrength | null;
+    alternateHandling: CollatorAlternateHandling | null;
+    caseFirst: CollatorCaseFirst | null;
+    maxVariable: CollatorMaxVariable | null;
+    caseLevel: CollatorCaseLevel | null;
+    numeric: CollatorNumeric | null;
+    backwardSecondLevel: CollatorBackwardSecondLevel | null;
+};
+
 export class CollatorOptions {
 
     get strength() : CollatorStrength | null;
@@ -33,5 +43,5 @@ export class CollatorOptions {
 
     get backwardSecondLevel() : CollatorBackwardSecondLevel | null;
     set backwardSecondLevel(value: CollatorBackwardSecondLevel | null); 
-    constructor(strength: CollatorStrength | null, alternateHandling: CollatorAlternateHandling | null, caseFirst: CollatorCaseFirst | null, maxVariable: CollatorMaxVariable | null, caseLevel: CollatorCaseLevel | null, numeric: CollatorNumeric | null, backwardSecondLevel: CollatorBackwardSecondLevel | null);
+    constructor(structObj : CollatorOptions_Obj);
 }
