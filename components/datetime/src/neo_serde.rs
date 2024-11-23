@@ -53,7 +53,8 @@ pub enum CompositeFieldSetSerdeError {
 /// use icu::datetime::fieldsets::enums::DateFieldSet;
 /// use icu::datetime::fieldsets::serde::CompositeFieldSetSerde;
 ///
-/// let field_set = CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::short()));
+/// let field_set =
+///     CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::short()));
 /// let serde_input = CompositeFieldSetSerde::from(field_set);
 ///
 /// let json_string = serde_json::to_string(&serde_input).unwrap();
@@ -62,7 +63,8 @@ pub enum CompositeFieldSetSerdeError {
 ///     r#"{"fieldSet":["year","month","day"],"length":"short"}"#
 /// );
 ///
-/// let serde_output = serde_json::from_str::<CompositeFieldSetSerde>(&json_string).unwrap();
+/// let serde_output =
+///     serde_json::from_str::<CompositeFieldSetSerde>(&json_string).unwrap();
 /// let deserialized = CompositeFieldSet::try_from(serde_output).unwrap();
 ///
 /// assert_eq!(field_set, deserialized);
@@ -76,7 +78,8 @@ pub enum CompositeFieldSetSerdeError {
 /// use icu::datetime::fieldsets::serde::CompositeFieldSetSerdeError;
 ///
 /// let json_string = r#"{"fieldSet":["year","time"],"length":"short"}"#;
-/// let serde_output = serde_json::from_str::<CompositeFieldSetSerde>(&json_string).unwrap();
+/// let serde_output =
+///     serde_json::from_str::<CompositeFieldSetSerde>(&json_string).unwrap();
 ///
 /// assert!(matches!(
 ///     CompositeFieldSet::try_from(serde_output),

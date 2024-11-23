@@ -84,10 +84,10 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// Create and use DataPayloadOr:
 ///
 /// ```
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
-/// use icu_locale_core::langid;
 ///
 /// let response: DataResponse<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
@@ -760,12 +760,12 @@ where
     /// a result from a different data provider:
     ///
     /// ```
-    /// use std::any::TypeId;
-    /// use std::borrow::Cow;
     /// use icu_locale_core::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::empty::EmptyDataProvider;
+    /// use std::any::TypeId;
+    /// use std::borrow::Cow;
     ///
     /// struct MyForkingProvider<P0, P1> {
     ///     fallback_provider: P0,
@@ -781,7 +781,10 @@ where
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         if TypeId::of::<HelloWorldV1Marker>() == TypeId::of::<M>() {
-    ///             let response = DataProvider::<HelloWorldV1Marker>::load(&self.hello_world_provider, req)?;
+    ///             let response = DataProvider::<HelloWorldV1Marker>::load(
+    ///                 &self.hello_world_provider,
+    ///                 req,
+    ///             )?;
     ///             Ok(DataResponse {
     ///                 metadata: response.metadata,
     ///                 payload: response.payload.dynamic_cast()?,
@@ -851,7 +854,8 @@ where
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         let mut res = self.inner.load(req)?;
-    ///         let mut cast_result = res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///         let mut cast_result =
+    ///             res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
     ///         if let Ok(ref mut concrete_payload) = cast_result {
     ///             // Add an emoji to the hello world message
     ///             concrete_payload.with_mut(|data| {

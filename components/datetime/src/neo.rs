@@ -155,7 +155,6 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
-///
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
@@ -371,7 +370,6 @@ size_test!(
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
-///
 #[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
@@ -414,8 +412,11 @@ where
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter =
-    ///     DateTimeFormatter::try_new(locale!("en-u-ca-hebrew").into(), YMD::medium()).unwrap();
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("en-u-ca-hebrew").into(),
+    ///     YMD::medium(),
+    /// )
+    /// .unwrap();
     ///
     /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
     ///
@@ -618,10 +619,7 @@ where
     ///
     /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&date),
-    ///     "30 Nisan 5784"
-    /// );
+    /// assert_writeable_eq!(formatter.format_any_calendar(&date), "30 Nisan 5784");
     /// ```
     ///
     /// A time cannot be passed into the formatter when a date is expected:

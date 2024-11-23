@@ -206,7 +206,8 @@ impl DateTime<Iso> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
+    /// let datetime =
+    ///     DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
@@ -258,7 +259,8 @@ impl DateTime<AnyCalendar> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
+    /// let datetime =
+    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(

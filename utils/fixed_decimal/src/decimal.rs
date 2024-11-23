@@ -1142,7 +1142,6 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("123.000").unwrap();
     /// dec.pad_end(0);
     /// assert_eq!("123", dec.to_string());
-    ///
     /// ```
     pub fn pad_end(&mut self, position: i16) {
         if position > 0 {

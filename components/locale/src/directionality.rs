@@ -169,7 +169,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     ///
     /// ```
     /// use icu::locale::subtags::script;
-    /// use icu::locale::{LanguageIdentifier, Direction, LocaleDirectionality};
+    /// use icu::locale::{Direction, LanguageIdentifier, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///

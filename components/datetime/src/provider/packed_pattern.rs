@@ -42,7 +42,6 @@ pub struct PackedPatternsBuilder<'a> {
 size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 
 /// Main data struct for packed datetime patterns.
-///
 #[doc = packed_skeleton_data_size!()]
 ///
 /// ## Variants

@@ -118,9 +118,7 @@ where
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
     ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
-    /// names
-    ///     .include_day_period_names(FieldLength::Three)
-    ///     .unwrap();
+    /// names.include_day_period_names(FieldLength::Three).unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
@@ -144,7 +142,9 @@ where
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_midnight),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -153,29 +153,26 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::timezone::IxdtfParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = IxdtfParser::new().try_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .to_calendar(Gregorian);
-    /// let mut london_summer = IxdtfParser::new().try_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
-    /// )
-    /// .unwrap()
-    /// .to_calendar(Gregorian);
+    /// let mut london_winter = IxdtfParser::new()
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .unwrap()
+    ///     .to_calendar(Gregorian);
+    /// let mut london_summer = IxdtfParser::new()
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .unwrap()
+    ///     .to_calendar(Gregorian);
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///         locale!("en-GB").into(),
-    ///     )
-    ///     .unwrap();
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -185,11 +182,15 @@ where
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&london_winter),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&london_summer),
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```

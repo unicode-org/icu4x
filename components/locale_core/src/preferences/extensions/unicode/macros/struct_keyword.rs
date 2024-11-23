@@ -8,19 +8,20 @@
 ///
 /// ```
 /// use icu::locale::{
-///     preferences::extensions::unicode::struct_keyword,
 ///     extensions::unicode::{Key, Value},
+///     preferences::extensions::unicode::struct_keyword,
 /// };
 ///
 /// struct_keyword!(
 ///     CurrencyType,
 ///     "cu",
 ///     String,
-///     |input: Value| {
-///         Ok(Self(input.to_string()))
-///     },
+///     |input: Value| { Ok(Self(input.to_string())) },
 ///     |input: CurrencyType| {
-///         icu::locale::extensions::unicode::Value::try_from_str(input.0.as_str()).unwrap()
+///         icu::locale::extensions::unicode::Value::try_from_str(
+///             input.0.as_str(),
+///         )
+///         .unwrap()
 ///     }
 /// );
 /// ```

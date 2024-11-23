@@ -242,7 +242,10 @@ impl Default for DataIdentifierCow<'_> {
 ///     .parse::<Locale>()
 ///     .unwrap();
 ///
-/// assert_eq!(DataLocale::from(locale), DataLocale::from(locale!("hi-IN-u-sd-inas")));
+/// assert_eq!(
+///     DataLocale::from(locale),
+///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
+/// );
 /// ```
 #[derive(Clone, Default, Eq)]
 pub struct DataLocale {

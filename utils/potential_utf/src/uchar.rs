@@ -18,10 +18,16 @@ use core::fmt;
 ///
 /// assert_eq!(PotentialCodePoint::from_u24(0x68).try_to_char(), Ok('h'));
 /// assert_eq!(PotentialCodePoint::from_char('i').try_to_char(), Ok('i'));
-/// assert_eq!(PotentialCodePoint::from_u24(0x1F44B).try_to_char(), Ok('👋'));
+/// assert_eq!(
+///     PotentialCodePoint::from_u24(0x1F44B).try_to_char(),
+///     Ok('👋')
+/// );
 ///
 /// assert!(PotentialCodePoint::from_u24(0xDE01).try_to_char().is_err());
-/// assert_eq!(PotentialCodePoint::from_u24(0xDE01).to_char_lossy(), char::REPLACEMENT_CHARACTER);
+/// assert_eq!(
+///     PotentialCodePoint::from_u24(0xDE01).to_char_lossy(),
+///     char::REPLACEMENT_CHARACTER
+/// );
 /// ```
 #[repr(transparent)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype

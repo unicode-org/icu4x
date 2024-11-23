@@ -114,9 +114,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::percent::formatter::{
-    ///     PercentFormatter,
-    /// };
+    /// use icu::experimental::dimension::percent::formatter::PercentFormatter;
     /// use icu::locale::locale;
     /// use writeable::Writeable;
     ///

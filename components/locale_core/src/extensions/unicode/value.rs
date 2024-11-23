@@ -73,13 +73,11 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::extensions::unicode::Value;
     /// use core::str::FromStr;
+    /// use icu::locale::extensions::unicode::Value;
     ///
-    /// let value1 = Value::from_str("foo")
-    ///     .expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar")
-    ///     .expect("failed to parse a Value");
+    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
     /// assert!(value1.as_single_subtag().is_some());
     /// assert!(value2.as_single_subtag().is_none());
@@ -94,13 +92,11 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::extensions::unicode::Value;
     /// use core::str::FromStr;
+    /// use icu::locale::extensions::unicode::Value;
     ///
-    /// let value1 = Value::from_str("foo")
-    ///     .expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar")
-    ///     .expect("failed to parse a Value");
+    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
     /// assert!(value1.into_single_subtag().is_some());
     /// assert!(value2.into_single_subtag().is_none());
@@ -119,10 +115,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
@@ -138,10 +131,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// assert_eq!(v.subtag_count(), 0);
@@ -157,10 +147,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// assert_eq!(v.is_empty(), true);
@@ -175,10 +162,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
     /// v.push_subtag(subtag!("bar"));
@@ -201,10 +185,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
     /// v.push_subtag(subtag!("bar"));

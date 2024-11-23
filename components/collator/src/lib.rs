@@ -45,7 +45,8 @@
 //!
 //! let mut options = CollatorOptions::default();
 //! options.strength = Some(Strength::Primary);
-//! let collator_es = Collator::try_new(locale!("es-u-co-trad").into(), options).unwrap();
+//! let collator_es =
+//!     Collator::try_new(locale!("es-u-co-trad").into(), options).unwrap();
 //!
 //! // "pollo" > "polvo" in traditional Spanish
 //! assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);

@@ -40,10 +40,9 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap();
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format_any_calendar(&zdt),
@@ -68,11 +67,10 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_iso_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap()
-/// .to_calendar(Gregorian);
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap()
+///     .to_calendar(Gregorian);
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -84,7 +82,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, YMD, Vs, enums::DateFieldSet};
+/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, Vs, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
@@ -97,10 +95,9 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap();
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format_any_calendar(&zdt),

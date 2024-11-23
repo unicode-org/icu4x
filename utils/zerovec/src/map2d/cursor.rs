@@ -171,13 +171,10 @@ where
     /// ```
     /// use zerovec::ZeroMap2d;
     ///
-    /// let zm2d: ZeroMap2d<str, u8, u16> = [
-    ///     ("a", 0u8, 1u16),
-    ///     ("b", 1u8, 1000u16),
-    ///     ("b", 2u8, 2000u16),
-    /// ]
-    /// .into_iter()
-    /// .collect();
+    /// let zm2d: ZeroMap2d<str, u8, u16> =
+    ///     [("a", 0u8, 1u16), ("b", 1u8, 1000u16), ("b", 2u8, 2000u16)]
+    ///         .into_iter()
+    ///         .collect();
     ///
     /// let mut total_value = 0;
     ///

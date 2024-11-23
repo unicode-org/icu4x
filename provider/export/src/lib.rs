@@ -19,15 +19,19 @@
 //!
 //! let provider = SourceDataProvider::new_latest_tested();
 //!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-//!     .with_markers([icu::list::provider::AndListV2Marker::INFO])
-//!     .export(
-//!         &provider,
-//!         BlobExporter::new_with_sink(Box::new(
-//!             File::create("data.postcard").unwrap(),
-//!         )),
-//!     )
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::None.into(),
+//!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+//! )
+//! .with_markers([icu::list::provider::AndListV2Marker::INFO])
+//! .export(
+//!     &provider,
+//!     BlobExporter::new_with_sink(Box::new(
+//!         File::create("data.postcard").unwrap(),
+//!     )),
+//! )
+//! .unwrap();
 //! ```
 //!
 //! # Cargo features
@@ -103,13 +107,17 @@ use std::sync::Arc;
 ///
 /// let provider = SourceDataProvider::new_latest_tested();
 ///
-/// ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-///     .with_markers([icu::list::provider::AndListV2Marker::INFO])
-///     .export(
-///         &provider,
-///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
-///     )
-///     .unwrap();
+/// ExportDriver::new(
+///     [DataLocaleFamily::FULL],
+///     DeduplicationStrategy::None.into(),
+///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+/// )
+/// .with_markers([icu::list::provider::AndListV2Marker::INFO])
+/// .export(
+///     &provider,
+///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+/// )
+/// .unwrap();
 /// ```
 #[derive(Clone)]
 pub struct ExportDriver {

@@ -185,8 +185,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// let swe = ScriptWithExtensions::new();
     ///
     /// assert!(swe
@@ -202,8 +202,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// let swe = ScriptWithExtensions::new();
     ///
     /// assert_eq!(
@@ -566,12 +566,13 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
+    /// use icu::properties::script::ScriptWithExtensions;
     ///
     /// let swe = ScriptWithExtensions::new();
     ///
-    /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
+    /// let syriac_script_extensions_ranges =
+    ///     swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = [
     ///     0x060C..=0x060C, // ARABIC COMMA
@@ -588,7 +589,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
     /// ];
     ///
-    /// assert_eq!(syriac_script_extensions_ranges.collect::<Vec<_>>(), exp_ranges);
+    /// assert_eq!(
+    ///     syriac_script_extensions_ranges.collect::<Vec<_>>(),
+    ///     exp_ranges
+    /// );
     /// ```
     pub fn get_script_extensions_ranges(
         self,

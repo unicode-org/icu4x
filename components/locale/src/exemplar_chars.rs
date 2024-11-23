@@ -16,8 +16,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::locale;
 //! use icu::locale::exemplar_chars::ExemplarCharacters;
+//! use icu::locale::locale;
 //!
 //! let locale = locale!("en-001").into();
 //! let exemplars_main = ExemplarCharacters::try_new_main(&locale)

@@ -305,26 +305,36 @@ impl Transliterator {
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```
-    /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu::locale::Locale;
     /// use core::ops::Range;
+    /// use icu::experimental::transliterate::{
+    ///     CustomTransliterator, Transliterator,
+    /// };
+    /// use icu::locale::Locale;
     ///
     /// #[derive(Debug)]
     /// struct FunkyGermanToAscii;
     /// impl CustomTransliterator for FunkyGermanToAscii {
-    ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
+    ///     fn transliterate(
+    ///         &self,
+    ///         input: &str,
+    ///         allowed_range: Range<usize>,
+    ///     ) -> String {
     ///         input[allowed_range].replace("oeverride", "overridden")
     ///     }
     /// }
     ///
     /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
     /// let locale = "de-t-de-d0-ascii".parse().unwrap();
-    /// let t = Transliterator::try_new_with_override(&locale, |locale| override_locale.eq(locale).then_some(Ok(Box::new(FunkyGermanToAscii)))).unwrap();
+    /// let t = Transliterator::try_new_with_override(&locale, |locale| {
+    ///     override_locale
+    ///         .eq(locale)
+    ///         .then_some(Ok(Box::new(FunkyGermanToAscii)))
+    /// })
+    /// .unwrap();
     /// let output = t.transliterate("This is an överride example".to_string());
     ///
     /// assert_eq!(output, "This is an overridden example");
     /// ```
-    ///
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_override<F>(locale: &Locale, lookup: F) -> Result<Self, DataError>
     where

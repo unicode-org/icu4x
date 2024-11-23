@@ -334,7 +334,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// let strings = vec!["foo", "bar", "baz"];
     /// let bytes = VarZeroVec::<str>::from(&strings).into_bytes();
     ///
-    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_bytes(&bytes).unwrap();
+    /// let mut borrowed: VarZeroVec<str> =
+    ///     VarZeroVec::parse_bytes(&bytes).unwrap();
     /// assert_eq!(borrowed, &*strings);
     /// ```
     pub fn into_bytes(self) -> Vec<u8> {

@@ -62,8 +62,8 @@ impl_tinystr_subtag!(
 ///
 /// ```
 /// use icu::locale::{
-///   subtags::region,
-///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+///     subtags::region,
 /// };
 ///
 /// let ss = subdivision_suffix!("zzzz");
@@ -89,8 +89,8 @@ impl SubdivisionId {
     ///
     /// ```
     /// use icu::locale::{
-    ///   subtags::region,
-    ///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+    ///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+    ///     subtags::region,
     /// };
     ///
     /// let ss = subdivision_suffix!("zzzz");
