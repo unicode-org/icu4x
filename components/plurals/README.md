@@ -27,9 +27,8 @@ appropriate [`PluralCategory`].
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 
-let pr =
-    PluralRules::try_new(locale!("en").into(), Default::default())
-        .expect("locale should be present");
+let pr = PluralRules::try_new(locale!("en").into(), Default::default())
+    .expect("locale should be present");
 
 assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ```
