@@ -1,8 +1,8 @@
 // This file is part of ICU4X.
 //
-// The contents of this file implement algorithms from
+// The contents of this file implement algorithms from the article:
 // "Euclidean Affine Functions and Applications to Calendar Algorithms"
-// by Cassio Neri, Lorenz Schneider (Feb. 2021), DOI: 10.48550/arXiv.2102.06959
+// by Cassio Neri & Lorenz Schneider (Feb. 2021), DOI: 10.48550/arXiv.2102.06959
 // which have been released as C/C++ code at
 // <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp>
 // under the MIT/GNU license. Accordingly, this file is released under
@@ -148,7 +148,7 @@ const fn calc_shifted_rata_die_wo_days(year: i32, month: u8) -> u64 {
 /// <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L88>
 /// <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L94>
 #[inline(always)]
-const fn calc_day_before_month_in_pseudo_year(month: u8, need_to_shift_months: bool) -> u32 {
+pub(super) const fn calc_day_before_month_in_pseudo_year(month: u8, shift_months: bool) -> u32 {
     // We move the leap month (February) to the end of our pseud year.
     // And we start our month from 3rd month. So:
     //
@@ -163,7 +163,7 @@ const fn calc_day_before_month_in_pseudo_year(month: u8, need_to_shift_months: b
     // `let month = if need_to_shift_months { month | 12 } else { month };`
     // `mask` = `-(need_to_shift_months as i8)` = `if need_to_shift_months { 0xFF } else { 0x00 }`
     // `12 & (mask as u8)` = `if need_to_shift_months { 12 } else { 0 }`
-    let mask = -(need_to_shift_months as i8);
+    let mask = -(shift_months as i8);
     let month = month | ((mask as u8) & 12);
 
     // Our months in `3..=14` with next days amount in it:
@@ -199,14 +199,18 @@ pub const fn day_of_week(year: i32, month: u8, day: u8) -> u8 {
 /// day of the year in the Grigorian calendar:
 /// + `1..=365` for a non leap year
 /// + `1..=366` for a leap year
-pub fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
+pub const fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
+    const DAYS_BEFORE_FEB: u8 = 31;
+    const DAYS_BEFORE_MAR: u16 = DAYS_BEFORE_FEB as u16 + 28;
+
     #[allow(clippy::comparison_chain)]
     if month > 2 {
         let days_before_month = calc_day_before_month_in_pseudo_year(month, false);
-        let leap = is_leap_year(year) as u16 + 59; // shift back from pseudo calendar
+        // shift back from pseudo calendar
+        let leap = is_leap_year(year) as u16 + DAYS_BEFORE_MAR;
         days_before_month as u16 + day as u16 + leap
     } else if month == 2 {
-        (day + 31) as u16
+        (day + DAYS_BEFORE_FEB) as u16
     } else {
         day as u16
     }
@@ -304,39 +308,34 @@ pub const fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError
     let day_of_year = (approx_prepared as u32) / (APPROX_NUM_C as u32) / 4;
     let year = (100 * century + year_of_century) as i64;
 
-    // [[Section]]  Month & Day:
-    let (month, day) = calc_md_for_pseudo_year(day_of_year);
-
     // ↴
     // [[Section]]  Map from the pseudo calendar to the Gregorian:
     let need_to_shift_months = day_of_year >= 306;
     let year = (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64);
-
-    // `let month = if need_to_shift_months { month & 0b11 } else { month };`
-    // mask = if need_to_shift_months { 0x03 } else { 0xFF }:
-    let mask = (!(-(need_to_shift_months as i8) as u8)) | 0b11;
-    let month = month & mask;
-
-    // let day = day + 1; // ⚠️ Done in `calc_md_for_pseudo_year`
+    let (month, day) = calc_md_for_pseudo_year(day_of_year, need_to_shift_months);
 
     Ok((year as i32, month, day))
 }
 
 /// # Input
 /// `day_of_year` for the pseudo year:
+/// ```plain
 /// month: |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 |
 /// days:  | 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 | 31 | 28 |
 /// `day_of_year`:
 ///        |  0 | 31 | 61 | 92 | 122| 153| 184| 214| 245| 275| 306| 337|
+/// ```
 ///
 /// # Return:
 /// `(month, day)` in the pseudo year:
 /// * `month` in `3..=14`
 /// * `day` in `1..=31`
 ///
-/// C/C++ code reference: <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L58-L60>
+/// C/C++ code reference:
+/// * <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L58-L60>
+/// * <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L66>
 #[inline(always)]
-const fn calc_md_for_pseudo_year(day_of_year: u32) -> (u8, u8) {
+pub(crate) const fn calc_pseudo_md_for_pseudo_year(day_of_year: u32) -> (u8, u8) {
     // See [formulas 1]:
     // [X = months] [N = days]  :  a = 5, b = 461, d = 153;
     //
@@ -360,6 +359,37 @@ const fn calc_md_for_pseudo_year(day_of_year: u32) -> (u8, u8) {
 }
 
 /// # Input
+/// `day_of_year` for the pseudo year:
+/// ```plain
+/// month: |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 |
+/// days:  | 31 | 30 | 31 | 30 | 31 | 31 | 30 | 31 | 30 | 31 | 31 | 28 |
+/// `day_of_year`:
+///        |  0 | 31 | 61 | 92 | 122| 153| 184| 214| 245| 275| 306| 337|
+/// ```
+///
+/// # Return:
+/// `(month, day)` in the real year:
+/// * `month` in `1..=12`
+/// * `day` in `1..=31`
+///
+/// C/C++ code reference:
+/// * <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L58-L60>
+/// * <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L63>
+/// * <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp#L65-L66>
+#[inline(always)]
+pub(crate) const fn calc_md_for_pseudo_year(day_of_year: u32, shift_months: bool) -> (u8, u8) {
+    let (month, day) = calc_pseudo_md_for_pseudo_year(day_of_year);
+
+    // `let month = if shift_months { month & 0b11 } else { month };`
+    // mask = if shift_months { 0x03 } else { 0xFF }:
+    let mask = (!(-(shift_months as i8) as u8)) | 0b11;
+    let month = month & mask;
+
+    // let day = day + 1; // ⚠️ Done in `calc_md_for_pseudo_year`
+
+    (month, day)
+}
+/// # Input
 /// * `year` in the Gregorian calendar
 /// * `day_of_year` for the Gregorian calendar\
 ///   Valid values is:
@@ -378,7 +408,7 @@ pub const fn iso_from_year_day(year: i32, day_of_year: u16) -> (u8, u8) {
 
     if day_of_year > shift {
         let day_of_year = day_of_year - shift - 1;
-        calc_md_for_pseudo_year(day_of_year)
+        calc_pseudo_md_for_pseudo_year(day_of_year)
     } else {
         // FEB have days in `32..=60` whish is `0b10_0000..=0b11_1100`
         // So `second_month` is:

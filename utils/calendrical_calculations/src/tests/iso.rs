@@ -1,14 +1,9 @@
+use super::helpful_consts::*;
 use super::iso_old_algos as alg_old;
 use super::iso_old_file as iso_old;
 use crate::iso as iso_new;
 use crate::rata_die::RataDie;
 use core::ops::RangeInclusive;
-
-const N_YEAR_BOUND: i32 = 1234; // more than one cycle (400 years)
-const MIN_YEAR_BOUND_RANGE: RangeInclusive<i32> = i32::MIN..=(i32::MIN + N_YEAR_BOUND);
-const MAX_YEAR_BOUND_RANGE: RangeInclusive<i32> = (i32::MAX - N_YEAR_BOUND)..=i32::MAX;
-
-const MONTH_DAYS: [u8; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 fn calc_last_month_day(year: i32, month: u8) -> u8 {
     let to = MONTH_DAYS[(month as usize) - 1];
