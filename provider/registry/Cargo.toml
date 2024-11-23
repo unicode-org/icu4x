@@ -15,5 +15,5 @@ categories.workspace = true
 include.workspace = true
 
 [dev-dependencies]
-icu = { workspace = true, features = ["experimental"] }
+icu = { path = "../../components/icu", features = ["experimental"] }
 icu_provider = { workspace = true }
