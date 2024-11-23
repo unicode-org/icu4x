@@ -1,7 +1,6 @@
 import { DataProvider } from "icu4x"
 import { TimeZoneIdMapper } from "icu4x"
-export function ianaToBcp47() {
-    var terminusArgs = arguments;
+export function ianaToBcp47(value) {
     return (function (...args) { return args[0].ianaToBcp47(...args.slice(1)) }).apply(
         null,
         [
@@ -15,12 +14,11 @@ export function ianaToBcp47() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            value
         ]
     );
 }
-export function normalizeIana() {
-    var terminusArgs = arguments;
+export function normalizeIana(value) {
     return (function (...args) { return args[0].normalizeIana(...args.slice(1)) }).apply(
         null,
         [
@@ -34,12 +32,11 @@ export function normalizeIana() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            value
         ]
     );
 }
-export function canonicalizeIana() {
-    var terminusArgs = arguments;
+export function canonicalizeIana(value) {
     return (function (...args) { return args[0].canonicalizeIana(...args.slice(1)) }).apply(
         null,
         [
@@ -53,12 +50,11 @@ export function canonicalizeIana() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            value
         ]
     );
 }
-export function findCanonicalIanaFromBcp47() {
-    var terminusArgs = arguments;
+export function findCanonicalIanaFromBcp47(value) {
     return (function (...args) { return args[0].findCanonicalIanaFromBcp47(...args.slice(1)) }).apply(
         null,
         [
@@ -72,7 +68,7 @@ export function findCanonicalIanaFromBcp47() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            value
         ]
     );
 }

@@ -80,7 +80,7 @@ export class TimeZoneInfo {
     
         try {
             if (result !== 1) {
-                const cause = new TimeZoneInvalidOffsetError(diplomatRuntime.internalConstructor);
+                const cause = new TimeZoneInvalidOffsetError({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
@@ -105,7 +105,7 @@ export class TimeZoneInfo {
     
         try {
             if (result !== 1) {
-                const cause = new TimeZoneInvalidOffsetError(diplomatRuntime.internalConstructor);
+                const cause = new TimeZoneInvalidOffsetError({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
