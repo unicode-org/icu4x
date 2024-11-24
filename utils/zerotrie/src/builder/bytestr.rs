@@ -140,6 +140,12 @@ impl AsRef<ByteStr> for ByteStr {
     }
 }
 
+impl<'a> From<&'a str> for &'a ByteStr {
+    fn from(other: &'a str) -> Self {
+        ByteStr::from_str(other)
+    }
+}
+
 impl fmt::Debug for ByteStr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         if let Ok(s) = core::str::from_utf8(self.as_bytes()) {

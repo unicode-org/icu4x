@@ -47,11 +47,12 @@ use litemap::LiteMap;
 /// ```
 /// use litemap::LiteMap;
 /// use zerotrie::ZeroTrie;
+/// use zerotrie::ByteStr;
 ///
-/// let mut map = LiteMap::<&[u8], usize>::new_vec();
-/// map.insert("foo".as_bytes(), 1);
-/// map.insert("bar".as_bytes(), 2);
-/// map.insert("bazzoo".as_bytes(), 3);
+/// let mut map = LiteMap::<&ByteStr, usize>::new_vec();
+/// map.insert("foo".into(), 1);
+/// map.insert("bar".into(), 2);
+/// map.insert("bazzoo".into(), 3);
 ///
 /// let trie = ZeroTrie::try_from(&map)?;
 ///
@@ -82,12 +83,13 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 ///
 /// ```
 /// use litemap::LiteMap;
+/// use zerotrie::ByteStr;
 /// use zerotrie::ZeroTrieSimpleAscii;
 ///
-/// let mut map = LiteMap::new_vec();
-/// map.insert(&b"foo"[..], 1);
-/// map.insert(b"bar", 2);
-/// map.insert(b"bazzoo", 3);
+/// let mut map = LiteMap::<&ByteStr, _>::new_vec();
+/// map.insert("foo".into(), 1);
+/// map.insert("bar".into(), 2);
+/// map.insert("bazzoo".into(), 3);
 ///
 /// let trie = ZeroTrieSimpleAscii::try_from(&map)?;
 ///
@@ -134,12 +136,13 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 ///
 /// ```
 /// use litemap::LiteMap;
+/// use zerotrie::ByteStr;
 /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
 ///
-/// let mut map = LiteMap::new_vec();
-/// map.insert(&b"foo"[..], 1);
-/// map.insert(b"Bar", 2);
-/// map.insert(b"Bazzoo", 3);
+/// let mut map = LiteMap::<&ByteStr, _>::new_vec();
+/// map.insert("foo".into(), 1);
+/// map.insert("Bar".into(), 2);
+/// map.insert("Bazzoo".into(), 3);
 ///
 /// let trie = ZeroAsciiIgnoreCaseTrie::try_from(&map)?;
 ///
@@ -156,14 +159,15 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 ///
 /// ```
 /// use litemap::LiteMap;
+/// use zerotrie::ByteStr;
 /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
 ///
-/// let mut map = LiteMap::new_vec();
-/// map.insert(&b"bar"[..], 1);
+/// let mut map = LiteMap::<&ByteStr, _>::new_vec();
+/// map.insert("bar".into(), 1);
 /// // OK: 'r' and 'Z' are different letters
-/// map.insert(b"baZ", 2);
+/// map.insert("baZ".into(), 2);
 /// // Bad: we already inserted 'r' so we cannot also insert 'R' at the same position
-/// map.insert(b"baR", 2);
+/// map.insert("baR".into(), 2);
 ///
 /// ZeroAsciiIgnoreCaseTrie::try_from(&map).expect_err("mixed-case strings!");
 /// ```
@@ -187,12 +191,13 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 ///
 /// ```
 /// use litemap::LiteMap;
+/// use zerotrie::ByteStr;
 /// use zerotrie::ZeroTriePerfectHash;
 ///
-/// let mut map = LiteMap::<&[u8], usize>::new_vec();
-/// map.insert("foo".as_bytes(), 1);
-/// map.insert("bår".as_bytes(), 2);
-/// map.insert("båzzøø".as_bytes(), 3);
+/// let mut map = LiteMap::<&ByteStr, usize>::new_vec();
+/// map.insert("foo".into(), 1);
+/// map.insert("bår".into(), 2);
+/// map.insert("båzzøø".into(), 3);
 ///
 /// let trie = ZeroTriePerfectHash::try_from(&map)?;
 ///
