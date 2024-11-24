@@ -23,7 +23,7 @@ use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
-use icu_properties::CanonicalCombiningClass;
+use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
@@ -33,7 +33,19 @@ use crate::provider::CollationDataV1;
 
 /// Marker that a complex decomposition isn't round-trippable
 /// under re-composition.
-const NON_ROUND_TRIP_MARKER: u16 = 1;
+///
+/// TODO: When taking a data format break, swap this and
+/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
+/// to make backward-combiningness use the same bit in all
+/// cases.
+const NON_ROUND_TRIP_MARKER: u16 = 0b1;
+
+/// Marker that a complex decomposition starts with a starter
+/// that can combine backwards.
+const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
+
+/// Values above this are treated as a BMP character.
+const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
 
 /// Marker value for U+FDFA in NFKD
 const FDFA_MARKER: u16 = 3;
@@ -116,11 +128,11 @@ const COMMON_SEC_AND_TER_CE: u64 = COMMON_SECONDARY_CE | COMMON_TERTIARY_CE;
 
 const UNASSIGNED_IMPLICIT_BYTE: u8 = 0xFE;
 
-/// Set if there is no match for the single (no-suffix) character itself.
-/// This is only possible if there is a prefix.
-/// In this case, discontiguous contraction matching cannot add combining marks
-/// starting from an empty suffix.
-/// The default CE32 is used anyway if there is no suffix match.
+// /// Set if there is no match for the single (no-suffix) character itself.
+// /// This is only possible if there is a prefix.
+// /// In this case, discontiguous contraction matching cannot add combining marks
+// /// starting from an empty suffix.
+// /// The default CE32 is used anyway if there is no suffix match.
 // const CONTRACT_SINGLE_CP_NO_MATCH: u32 = 0x100;
 
 /// Set if the first character of every contraction suffix has lccc!=0.
@@ -1038,7 +1050,7 @@ where
         } else {
             let trail_or_complex = (decomposition >> 16) as u16;
             let lead = decomposition as u16;
-            if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
+            if lead > HIGHEST_MARKER && trail_or_complex != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(char_from_u16(
@@ -1052,7 +1064,7 @@ where
                         low_c, trie_value,
                     ),
                 );
-            } else if lead > NON_ROUND_TRIP_MARKER {
+            } else if trail_or_complex == 0 {
                 debug_assert_ne!(
                     lead, FDFA_MARKER,
                     "How come U+FDFA NFKD marker seen in NFD?"
@@ -1128,7 +1140,7 @@ where
             // There are two possible patterns:
             // BMP: starter, starter, non-starter
             // Plane 1: starter, starter.
-            // However, for forward compatility, support any combination
+            // However, for forward compatibility, support any combination
             // and search for the last starter.
             let mut i = self.upcoming.len() - 1;
             loop {
@@ -1334,7 +1346,7 @@ where
                 } else {
                     let trail_or_complex = (decomposition >> 16) as u16;
                     let lead = decomposition as u16;
-                    if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
+                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         c = char_from_u16(lead);
                         ce32 = data.ce32_for_char(c);
@@ -1397,9 +1409,11 @@ where
                         }
                         combining_characters
                             .push(CharacterAndClass::new_with_placeholder(combining));
-                    } else if lead > NON_ROUND_TRIP_MARKER {
-                        debug_assert_ne!(lead, 1, "How come U+FDFA NFKD marker seen in NFD?");
-                        debug_assert_ne!(lead, 2, "How come non-starter marker seen here?");
+                    } else if trail_or_complex == 0 {
+                        debug_assert_ne!(
+                            lead, FDFA_MARKER,
+                            "How come U+FDFA NFKD marker seen in NFD?"
+                        );
                         // Decomposition into one BMP character
                         c = char_from_u16(lead);
                         ce32 = data.ce32_for_char(c);

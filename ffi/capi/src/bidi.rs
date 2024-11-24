@@ -22,8 +22,8 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
-    // #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Struct)]
-    pub struct Bidi(pub icu_properties::maps::CodePointMapData<icu_properties::BidiClass>);
+    #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
+    pub struct Bidi(pub icu_properties::CodePointMapData<icu_properties::props::BidiClass>);
 
     impl Bidi {
         /// Creates a new [`Bidi`] from locale data.
@@ -31,20 +31,20 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
             Ok(Box::new(Bidi(call_constructor_unstable!(
-                icu_properties::maps::bidi_class [m => Ok(m.static_to_owned())],
-                icu_properties::maps::load_bidi_class,
+                icu_properties::CodePointMapData::new [m => Ok(m.static_to_owned())],
+                icu_properties::CodePointMapData::try_new_unstable,
                 provider,
             )?)))
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
         ///
-        /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
+        /// Takes in a Level for the default level, if it is an invalid value or None it will default to Auto.
         ///
         /// Returns nothing if `text` is invalid UTF-8.
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::bidi::BidiClassAdapter::bidi_class,
+            icu::properties::CodePointMapDataBorrowed::bidi_class,
             FnInStruct,
             hidden
         )]
@@ -53,18 +53,15 @@ pub mod ffi {
         pub fn for_text_utf8<'text>(
             &self,
             text: &'text DiplomatStr,
-            default_level: u8,
+            default_level: Option<u8>,
         ) -> Option<Box<BidiInfo<'text>>> {
             let text = core::str::from_utf8(text).ok()?;
 
-            let data = self.0.as_borrowed();
-            let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
-
             Some(Box::new(BidiInfo(
                 unicode_bidi::BidiInfo::new_with_data_source(
-                    &adapter,
+                    &self.0.as_borrowed(),
                     text,
-                    unicode_bidi::Level::new(default_level).ok(),
+                    default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
                 ),
             )))
         }
@@ -74,7 +71,7 @@ pub mod ffi {
         /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::bidi::BidiClassAdapter::bidi_class,
+            icu::properties::CodePointMapDataBorrowed::bidi_class,
             FnInStruct,
             hidden
         )]
@@ -84,15 +81,12 @@ pub mod ffi {
         pub fn for_text_valid_utf8<'text>(
             &self,
             text: &'text str,
-            default_level: u8,
+            default_level: Option<u8>,
         ) -> Box<BidiInfo<'text>> {
-            let data = self.0.as_borrowed();
-            let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
-
             Box::new(BidiInfo(unicode_bidi::BidiInfo::new_with_data_source(
-                &adapter,
+                &self.0.as_borrowed(),
                 text,
-                unicode_bidi::Level::new(default_level).ok(),
+                default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
             )))
         }
 

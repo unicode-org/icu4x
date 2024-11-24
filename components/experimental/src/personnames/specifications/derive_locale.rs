@@ -4,8 +4,8 @@
 
 use icu_locale_core::subtags::script;
 use icu_locale_core::{subtags, Locale};
-use icu_properties::names::PropertyScriptToIcuScriptMapperBorrowed;
-use icu_properties::script::ScriptWithExtensionsBorrowed;
+use icu_properties::props::Script;
+use icu_properties::{script::ScriptWithExtensionsBorrowed, PropertyNamesShortBorrowed};
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
@@ -45,7 +45,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
-    scripts: PropertyScriptToIcuScriptMapperBorrowed<icu_properties::Script>,
+    scripts: PropertyNamesShortBorrowed<Script>,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
@@ -54,14 +54,9 @@ where
     if found_name_script.is_none() {
         found_name_script = find_script(person_name, swe, Given);
     }
-    let name_script = found_name_script.unwrap_or(icu_properties::Script::Unknown);
+    let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
 
-    let locid_script = scripts
-        .get(name_script)
-        .unwrap()
-        .as_str()
-        .parse::<subtags::Script>()
-        .map_err(|_err| PersonNamesFormatterError::InvalidPersonName)?;
+    let locid_script = scripts.get_locale_script(name_script).unwrap();
     person_name.name_locale().map_or_else(
         || {
             let mut effective_locale = Locale::default();
@@ -80,19 +75,17 @@ fn find_script<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
     kind: NameFieldKind,
-) -> Option<icu_properties::Script>
+) -> Option<icu_properties::props::Script>
 where
     N: PersonName,
 {
-    use icu_properties::Script;
-
     person_name
         .available_name_fields()
         .iter()
         .filter(|&name_field| name_field.kind == kind)
         .find_map(|&name_field| {
             person_name.get(name_field).chars().find_map(|c| {
-                let char_script = swe.get_script_val(c as u32);
+                let char_script = swe.get_script_val(c);
                 match char_script {
                     Script::Common | Script::Unknown | Script::Inherited => None,
                     _ => Some(char_script),
@@ -117,7 +110,7 @@ mod tests {
     fn test_effective_locale_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("fr");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de_Latn_ch"), &locale),
             Ok(&locale!("de_Latn_ch"))
@@ -132,7 +125,7 @@ mod tests {
     fn test_effective_locale_non_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("de_Latn_ch"), &locale),
             Ok(&locale!("ja-Jpan-JP"))
@@ -147,7 +140,7 @@ mod tests {
     fn test_effective_locale_compatible_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
             effective_locale(&locale!("ja_Hani_JP"), &locale),
             Ok(&locale!("ja_Hani_JP"))
@@ -176,8 +169,8 @@ mod tests {
 
     #[test]
     fn test_likely_person_names_locale() {
-        let swe = icu_properties::script::script_with_extensions();
-        let scripts = icu_properties::Script::enum_to_icu_script_mapper();
+        let swe = icu_properties::script::ScriptWithExtensions::new();
+        let scripts = icu_properties::PropertyNamesShort::<icu_properties::props::Script>::new();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))

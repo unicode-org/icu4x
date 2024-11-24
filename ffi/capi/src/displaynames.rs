@@ -11,6 +11,7 @@ pub mod ffi {
     use crate::errors::ffi::{DataError, LocaleParseError};
     use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
+    use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
 
@@ -28,17 +29,17 @@ pub mod ffi {
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
     pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
-        pub style: DisplayNamesStyle,
+        pub style: DiplomatOption<DisplayNamesStyle>,
         /// The fallback return when the system does not have the
         /// requested display name, defaults to "code".
-        pub fallback: DisplayNamesFallback,
+        pub fallback: DiplomatOption<DisplayNamesFallback>,
         /// The language display kind, defaults to "dialect".
-        pub language_display: LanguageDisplay,
+        pub language_display: DiplomatOption<LanguageDisplay>,
     }
 
     #[diplomat::rust_link(icu::displaynames::options::Style, Enum)]
+    #[diplomat::enum_convert(icu_experimental::displaynames::Style, needs_wildcard)]
     pub enum DisplayNamesStyle {
-        Auto,
         Narrow,
         Short,
         Long,
@@ -69,7 +70,7 @@ pub mod ffi {
             locale: &Locale,
             options: DisplayNamesOptionsV1,
         ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
@@ -78,7 +79,7 @@ pub mod ffi {
                     icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_any_provider,
                     icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
                     provider,
-                    &locale,
+                    prefs,
                     options,
                 )?,
             )))
@@ -101,13 +102,13 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<RegionDisplayNames>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
             Ok(Box::new(RegionDisplayNames(call_constructor!(
                 icu_experimental::displaynames::RegionDisplayNames::try_new,
                 icu_experimental::displaynames::RegionDisplayNames::try_new_with_any_provider,
                 icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 Default::default()
             )?)))
         }
@@ -133,26 +134,20 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::DisplayNamesStyle> for Option<icu_experimental::displaynames::Style> {
-    fn from(style: ffi::DisplayNamesStyle) -> Option<icu_experimental::displaynames::Style> {
-        match style {
-            ffi::DisplayNamesStyle::Auto => None,
-            ffi::DisplayNamesStyle::Narrow => Some(icu_experimental::displaynames::Style::Narrow),
-            ffi::DisplayNamesStyle::Short => Some(icu_experimental::displaynames::Style::Short),
-            ffi::DisplayNamesStyle::Long => Some(icu_experimental::displaynames::Style::Long),
-            ffi::DisplayNamesStyle::Menu => Some(icu_experimental::displaynames::Style::Menu),
-        }
-    }
-}
-
 impl From<ffi::DisplayNamesOptionsV1> for icu_experimental::displaynames::DisplayNamesOptions {
     fn from(
         other: ffi::DisplayNamesOptionsV1,
     ) -> icu_experimental::displaynames::DisplayNamesOptions {
         let mut options = icu_experimental::displaynames::DisplayNamesOptions::default();
-        options.style = other.style.into();
-        options.fallback = other.fallback.into();
-        options.language_display = other.language_display.into();
+        options.style = other.style.into_converted_option();
+        options.fallback = other
+            .fallback
+            .into_converted_option()
+            .unwrap_or(options.fallback);
+        options.language_display = other
+            .language_display
+            .into_converted_option()
+            .unwrap_or(options.language_display);
         options
     }
 }

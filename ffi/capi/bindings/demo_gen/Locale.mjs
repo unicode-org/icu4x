@@ -1,93 +1,86 @@
 import { Locale } from "icu4x"
-export function basename() {
-    var terminusArgs = arguments;
+export function basename(name) {
     return (function (...args) { return args[0].basename }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             )
         ]
     );
 }
-export function getUnicodeExtension() {
-    var terminusArgs = arguments;
+export function getUnicodeExtension(name, s) {
     return (function (...args) { return args[0].getUnicodeExtension(...args.slice(1)) }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             ),
-            terminusArgs[1]
+            s
         ]
     );
 }
-export function language() {
-    var terminusArgs = arguments;
+export function language(name) {
     return (function (...args) { return args[0].language }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             )
         ]
     );
 }
-export function region() {
-    var terminusArgs = arguments;
+export function region(name) {
     return (function (...args) { return args[0].region }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             )
         ]
     );
 }
-export function script() {
-    var terminusArgs = arguments;
+export function script(name) {
     return (function (...args) { return args[0].script }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             )
         ]
     );
 }
-export function canonicalize() {
-    var terminusArgs = arguments;
-    return Locale.canonicalize.apply(
+export function normalize(s) {
+    return Locale.normalize.apply(
         null,
         [
-            terminusArgs[0]
+            s
         ]
     );
 }
-export function toString() {
-    var terminusArgs = arguments;
+export function toString(name) {
     return (function (...args) { return args[0].toString(...args.slice(1)) }).apply(
         null,
         [
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    name
                 ]
             )
         ]

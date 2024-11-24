@@ -5,16 +5,43 @@
     "1": "susunod na linggo"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 linggo ang nakalipas"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo ang nakalipas"
+        }
       ]
     ],
-    "other": "\u0001 (na) linggo ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " (na) linggo ang nakalipas"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  linggo"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo"
+        }
+      ]
+    ]
   }
 }

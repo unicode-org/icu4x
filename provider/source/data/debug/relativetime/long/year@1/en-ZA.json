@@ -5,21 +5,57 @@
     "1": "next year"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 year ago"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " year ago"
+        }
       ]
     ],
-    "other": "\u0001 years ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " years ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004in  year"
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " year"
+        }
       ]
     ],
-    "other": "\u0004in  years"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " years"
+        }
+      ]
+    ]
   }
 }

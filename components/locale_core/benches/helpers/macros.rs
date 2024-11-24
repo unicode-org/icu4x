@@ -102,7 +102,7 @@ macro_rules! canonicalize {
                     let _ = black_box(s).to_string();
                 }
                 for s in $data {
-                    let _ = $struct::canonicalize(black_box(s));
+                    let _ = $struct::normalize(black_box(s));
                 }
             })
         });

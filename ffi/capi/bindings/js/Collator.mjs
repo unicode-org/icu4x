@@ -50,7 +50,7 @@ export class Collator {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new Collator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -66,11 +66,11 @@ export class Collator {
     compare(left, right) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const leftSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, left)).splat()];
+        const leftSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, left));
         
-        const rightSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, right)).splat()];
+        const rightSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, right));
         
-        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, ...leftSlice, ...rightSlice);
+        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, ...leftSlice.splat(), ...rightSlice.splat());
     
         try {
             return result;
@@ -87,7 +87,7 @@ export class Collator {
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new CollatorResolvedOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return CollatorResolvedOptions._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

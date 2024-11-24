@@ -18,15 +18,19 @@ use std::fs::File;
 
 let provider = SourceDataProvider::new_latest_tested();
 
-ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-    .with_markers([icu::list::provider::AndListV2Marker::INFO])
-    .export(
-        &provider,
-        BlobExporter::new_v2_with_sink(Box::new(
-            File::create("data.postcard").unwrap(),
-        )),
-    )
-    .unwrap();
+ExportDriver::new(
+    [DataLocaleFamily::FULL],
+    DeduplicationStrategy::None.into(),
+    LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+)
+.with_markers([icu::list::provider::AndListV2Marker::INFO])
+.export(
+    &provider,
+    BlobExporter::new_with_sink(Box::new(
+        File::create("data.postcard").unwrap(),
+    )),
+)
+.unwrap();
 ```
 
 ## Cargo features

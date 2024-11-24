@@ -22,9 +22,13 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
-//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::Maximal.into(),
+//!     LocaleFallbacker::new().static_to_owned(),
+//! )
+//! .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
+//! .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -63,7 +67,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -83,8 +87,7 @@
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
-//! let formatter =
-//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new(locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
@@ -309,7 +312,7 @@ impl BakedExporter {
         marker: DataMarkerInfo,
         stats: Statistics,
         body: TokenStream,
-        dry_body: TokenStream,
+        dry_body: Option<TokenStream>,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
@@ -356,6 +359,28 @@ impl BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
+        let dry = if let Some(dry_body) = dry_body {
+            quote! {
+                ($provider:ty, DRY) => {
+                    #prefixed_macro_ident!($provider);
+                    #dry_body
+                };
+                ($provider:ty, DRY, ITER) => {
+                    #prefixed_macro_ident!($provider);
+                    #dry_body
+                    #iterable_body
+                };
+            }
+        } else {
+            quote! {
+                ($provider:ty, DRY) => {
+                };
+                ($provider:ty, DRY, ITER) => {
+                    #prefixed_macro_ident!($provider, ITER);
+                };
+            }
+        };
+
         self.write_to_file(
             Path::new(&format!("{ident}.rs.data")),
             quote! {
@@ -368,19 +393,11 @@ impl BakedExporter {
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     };
-                    ($provider:ty, DRY) => {
-                        #prefixed_macro_ident!($provider);
-                        #dry_body
-                    };
                     ($provider:ty, ITER) => {
                         #prefixed_macro_ident!($provider);
                         #iterable_body
                     };
-                    ($provider:ty, DRY, ITER) => {
-                        #prefixed_macro_ident!($provider);
-                        #dry_body
-                        #iterable_body
-                    };
+                    #dry
                 }
                 #[doc(inline)]
                 pub use #prefixed_macro_ident as #macro_ident;
@@ -417,6 +434,7 @@ impl DataExporter for BakedExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        _metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
@@ -469,7 +487,7 @@ impl DataExporter for BakedExporter {
                 }
             }
         },
-        quote! {
+        Some(quote! {
             #maybe_msrv
             impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                 fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -480,7 +498,7 @@ impl DataExporter for BakedExporter {
                     }
                 }
             }
-        },
+        }),
         quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
@@ -491,7 +509,7 @@ impl DataExporter for BakedExporter {
         })
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
         let marker_bake = bake_marker(marker);
@@ -518,14 +536,14 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                quote! {
+                Some(quote! {
                     #maybe_msrv
                     impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                         fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                             Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                         }
                     }
-                },
+                }),
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
@@ -633,13 +651,17 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                quote! {
-                    #maybe_msrv
-                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
-                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                            icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
+                if metadata.supports_dry_provider {
+                    Some(quote! {
+                        #maybe_msrv
+                        impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                                icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
+                            }
                         }
-                    }
+                    })
+                } else {
+                    None
                 },
                 quote! {
                     #maybe_msrv
@@ -653,7 +675,7 @@ impl DataExporter for BakedExporter {
         }
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         log::info!("Writing macros module...");
 
         let data = core::mem::take(&mut self.impl_data)
@@ -752,7 +774,7 @@ impl DataExporter for BakedExporter {
 
         self.print_deps();
 
-        Ok(())
+        Ok(Default::default())
     }
 }
 

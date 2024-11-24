@@ -50,7 +50,7 @@ export class CanonicalDecomposition {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CanonicalDecomposition(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -67,7 +67,7 @@ export class CanonicalDecomposition {
         const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomatReceive.buffer, this.ffiValue, c);
     
         try {
-            return new Decomposed(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return Decomposed._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

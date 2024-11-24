@@ -5,11 +5,35 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
+    ]
   }
 }

@@ -32,6 +32,7 @@ const _: () = {
     use icu_locale_data::*;
     pub mod icu {
         pub use crate as locale;
+        pub use icu_collections as collections;
     }
     make_provider!(Baked);
     impl_aliases_v2_marker!(Baked);
@@ -40,12 +41,23 @@ const _: () = {
     impl_likely_subtags_for_script_region_v1_marker!(Baked);
     impl_parents_v1_marker!(Baked);
     impl_script_direction_v1_marker!(Baked);
+
+    impl_exemplar_characters_auxiliary_v1_marker!(Baked);
+    impl_exemplar_characters_index_v1_marker!(Baked);
+    impl_exemplar_characters_main_v1_marker!(Baked);
+    impl_exemplar_characters_numbers_v1_marker!(Baked);
+    impl_exemplar_characters_punctuation_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     AliasesV2Marker::INFO,
+    ExemplarCharactersAuxiliaryV1Marker::INFO,
+    ExemplarCharactersIndexV1Marker::INFO,
+    ExemplarCharactersMainV1Marker::INFO,
+    ExemplarCharactersNumbersV1Marker::INFO,
+    ExemplarCharactersPunctuationV1Marker::INFO,
     LikelySubtagsExtendedV1Marker::INFO,
     LikelySubtagsForLanguageV1Marker::INFO,
     LikelySubtagsForScriptRegionV1Marker::INFO,
@@ -54,6 +66,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 ];
 
 use alloc::borrow::Cow;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
@@ -126,14 +139,13 @@ pub struct LanguageStrStrPair<'a>(
 
 #[icu_provider::data_struct(marker(AliasesV2Marker, "locale/aliases@2", singleton))]
 #[derive(PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-/// This alias data is used for locale canonicalization. Each field defines a
+/// This alias data is used for locale canonicalization.
+///
+/// Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
 /// is stored in sorted order, allowing for binary search to identify rules to
@@ -204,13 +216,11 @@ pub struct AliasesV2<'data> {
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
@@ -252,13 +262,11 @@ pub struct LikelySubtagsForLanguageV1<'data> {
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
+///
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
 /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
@@ -298,11 +306,8 @@ pub struct LikelySubtagsForScriptRegionV1<'data> {
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for full coverage of locales, including ones that
 /// don't otherwise have data in the Common Locale Data Repository (CLDR).
@@ -337,11 +342,8 @@ pub struct LikelySubtagsExtendedV1<'data> {
 /// Locale fallback rules derived from CLDR parent locales data.
 #[icu_provider::data_struct(marker(ParentsV1Marker, "locale/parents@1", singleton))]
 #[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ParentsV1<'data> {
@@ -353,11 +355,8 @@ pub struct ParentsV1<'data> {
 
 #[icu_provider::data_struct(marker(ScriptDirectionV1Marker, "locale/script_dir@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This directionality data is used to determine the script directionality of a locale.
 ///
@@ -375,3 +374,34 @@ pub struct ScriptDirectionV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ltr: ZeroVec<'data, UnvalidatedScript>,
 }
+
+/// A set of characters and strings which share a particular property value.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(
+    marker(
+        ExemplarCharactersAuxiliaryV1Marker,
+        "locale/exemplarchars/auxiliary@1"
+    ),
+    marker(ExemplarCharactersIndexV1Marker, "locale/exemplarchars/index@1"),
+    marker(ExemplarCharactersMainV1Marker, "locale/exemplarchars/main@1"),
+    marker(ExemplarCharactersNumbersV1Marker, "locale/exemplarchars/numbers@1"),
+    marker(
+        ExemplarCharactersPunctuationV1Marker,
+        "locale/exemplarchars/punctuation@1"
+    )
+)]
+#[derive(Debug, Eq, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locale::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct ExemplarCharactersV1<'data>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointInversionListAndStringList<'data>,
+);

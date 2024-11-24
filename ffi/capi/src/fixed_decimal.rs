@@ -157,12 +157,12 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
-        #[diplomat::attr(js, rename = "from_number_with_floating_precision")]
+        #[diplomat::attr(js, rename = "from_number_with_round_trip_precision")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn from_double_with_floating_precision(
+        pub fn from_double_with_round_trip_precision(
             f: f64,
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
-            let precision = fixed_decimal::DoublePrecision::Floating;
+            let precision = fixed_decimal::DoublePrecision::RoundTrip;
             Ok(Box::new(FixedDecimal(
                 fixed_decimal::FixedDecimal::try_from_f64(f, precision)?,
             )))
@@ -350,6 +350,7 @@ pub mod ffi {
 
         /// Format the [`FixedDecimal`] as a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::write_to, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::to_string, FnInStruct, hidden)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);

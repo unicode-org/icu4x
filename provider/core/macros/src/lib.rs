@@ -37,8 +37,6 @@ use syn::{Ident, LitStr, Path, Token};
 #[cfg(test)]
 mod tests;
 
-#[proc_macro_attribute]
-
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`.
 ///
@@ -68,11 +66,7 @@ mod tests;
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
-///     marker(
-///         BazV1Marker,
-///         "demo/baz@1",
-///         fallback_by = "region",
-///     )
+///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region",)
 /// )]
 /// pub struct FooV1<'data> {
 ///     message: Cow<'data, str>,
@@ -93,6 +87,7 @@ mod tests;
 ///     LocaleFallbackPriority::Region
 /// );
 /// ```
+#[proc_macro_attribute]
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
         parse_macro_input!(attr as DataStructArgs),

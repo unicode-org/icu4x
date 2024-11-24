@@ -59,6 +59,102 @@ export function enumDiscriminant(wasm, ptr) {
     return (new Int32Array(wasm.memory.buffer, ptr, 1))[0]
 }
 
+/**
+ * Return an array of paddingCount zeroes to be spread into a function call
+ * if needsPaddingFields is true, else empty
+ */
+export function maybePaddingFields(needsPaddingFields, paddingCount) {
+    if (needsPaddingFields) {
+        return Array(paddingCount).fill(0);
+    } else {
+        return [];
+    }
+}
+
+/**
+* Write a value of width `width` to a an ArrayBuffer `arrayBuffer`
+* at byte offset `offset`, treating it as a buffer of kind `typedArrayKind`
+* (which is a `TypedArray` variant like `Uint8Array` or `Int16Array`)
+*/
+export function writeToArrayBuffer(arrayBuffer, offset, value, typedArrayKind) {
+    let buffer = new typedArrayKind(arrayBuffer, offset);
+    buffer[0] = value;
+}
+
+/**
+* Take `jsValue` and write it to arrayBuffer at offset `offset` if it is non-null
+* calling `writeToArrayBufferCallback(arrayBuffer, offset, jsValue)` to write to the buffer,
+* also writing a tag bit.
+* 
+* `size` and `align` are the size and alignment of T, not of Option<T>
+*/
+export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, align, writeToArrayBufferCallback) {
+    // perform a nullish check, not a null check,
+    // we want identical behavior for undefined
+    if (jsValue != null) {
+        writeToArrayBufferCallback(arrayBuffer, offset, jsValue);
+        writeToArrayBuffer(arrayBuffer, offset + size, 1, Uint8Array);
+    }
+}
+
+/**
+* For Option<T> of given size/align (of T, not the overall option type),
+* return an array of fields suitable for passing down to a parameter list.
+* 
+* Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues
+* 
+* This array will have size<T>/align<T> elements for the actual T, then one element
+* for the is_ok bool, and then align<T> - 1 elements for padding if `needsPaddingFields`` is set.
+* 
+* See wasm_abi_quirks.md's section on Unions for understanding this ABI.
+*/
+export function optionToArgsForCalling(jsValue, size, align, needsPaddingFields, writeToArrayBufferCallback) {
+    let args;
+    // perform a nullish check, not a null check,
+    // we want identical behavior for undefined
+    if (jsValue != null) {
+        let buffer;
+        // We need our originator array to be properly aligned
+        if (align == 8) {
+            buffer = new BigUint64Array(size / align);
+        } else if (align == 4) {
+            buffer = new Uint32Array(size / align);
+        } else if (align == 2) {
+            buffer = new Uint16Array(size / align);
+        } else {
+            buffer = new Uint8Array(size / align);
+        }
+
+
+        writeToArrayBufferCallback(buffer.buffer, 0, jsValue);
+        args = Array.from(buffer);
+        args.push(1);
+    } else {
+        args = Array(size / align).fill(0);
+        args.push(0);
+    }
+
+    args = args.concat(maybePaddingFields(needsPaddingFields, size / align));
+    return args;
+}
+
+
+/**
+* Given `ptr` in Wasm memory, treat it as an Option<T> with size for type T,
+* and return the converted T (converted using `readCallback(wasm, ptr)`) if the Option is Some
+* else None.
+*/
+export function readOption(wasm, ptr, size, readCallback) {
+    // Don't need the alignment: diplomat types don't have overridden alignment,
+    // so the flag will immediately be after the inner struct.
+    let flag = resultFlag(wasm, ptr, size);
+    if (flag) {
+        return readCallback(wasm, ptr);
+    } else {
+        return null;
+    }
+}
+
 /** 
  * A wrapper around a slice of WASM memory that can be freed manually or
  * automatically by the garbage collector.
@@ -170,11 +266,19 @@ export class DiplomatBuf {
         this.size = size;
         this.free = free;
         this.leak = () => { };
-        this.garbageCollect = () => DiplomatBufferFinalizer.register(this, this.free);
+        this.releaseToGarbageCollector = () => DiplomatBufferFinalizer.register(this, this.free);
     }
 
     splat() {
         return [this.ptr, this.size];
+    }
+
+    /**
+     * Write the (ptr, len) pair to an array buffer at byte offset `offset`
+     */
+    writePtrLenToArrayBuffer(arrayBuffer, offset) {
+        writeToArrayBuffer(arrayBuffer, offset, this.ptr, Uint32Array);
+        writeToArrayBuffer(arrayBuffer, offset + 4, this.size, Uint32Array);
     }
 }
 
@@ -199,7 +303,7 @@ export class DiplomatWriteBuf {
         this.#wasm.diplomat_buffer_write_destroy(this.#buffer);
     }
 
-    garbageCollect() {
+    releaseToGarbageCollector() {
         DiplomatBufferFinalizer.register(this, this.free);
     }
 
@@ -422,8 +526,6 @@ export class DiplomatReceiveBuf {
  */
 export class CleanupArena {
     #items = [];
-
-    #edgeArray = [];
     
     constructor() {
     }
@@ -437,10 +539,35 @@ export class CleanupArena {
         this.#items.push(item);
         return item;
     }
+    /**
+     * Create a new CleanupArena, append it to any edge arrays passed down, and return it.
+     * @param {Array} edgeArrays
+     * @returns {CleanupArena}
+     */
+    createWith(...edgeArrays) {
+        let self = new CleanupArena();
+        for (edgeArray of edgeArrays) {
+            if (edgeArray != null) {
+                edgeArray.push(self);
+            }
+        }
+        DiplomatBufferFinalizer.register(self, self.free);
+        return self;
+    }
 
-    createWith(edgeArray) {
-        this.#edgeArray = edgeArray;
-        DiplomatBufferFinalizer.register(this, this.free);
+    /**
+     * If given edge arrays, create a new CleanupArena, append it to any edge arrays passed down, and return it.
+     * Else return the function-local cleanup arena
+     * @param {CleanupArena} functionCleanupArena
+     * @param {Array} edgeArrays
+     * @returns {DiplomatBuf}
+     */
+    maybeCreateWith(functionCleanupArena, ...edgeArrays) {
+        if (edgeArrays.length > 0) {
+            return CleanupArena.createWith(...edgeArrays);
+        } else {
+            return functionCleanupArena
+        }
     }
 
     free() {
@@ -453,11 +580,16 @@ export class CleanupArena {
 }
 
 /**
- * Same as {@link CleanupArena}, but for calling `garbageCollect` on {@link DiplomatBuf}s.
- * 
+ * Similar to {@link CleanupArena}, but for holding on to slices until a method is called,
+ * after which we rely on the GC to free them.
+ *
  * This is when you may want to use a slice longer than the body of the method.
+ *
+ * At first glance this seems unnecessary, since we will be holding these slices in edge arrays anyway,
+ * however, if an edge array ends up unused, then we do actually need something to hold it for the duration
+ * of the method call.
  */
-export class GarbageCollector {
+export class GarbageCollectorGrip {
     #items = [];
 
     alloc(item) {
@@ -465,9 +597,9 @@ export class GarbageCollector {
         return item;
     }
 
-    garbageCollect() {
+    releaseToGarbageCollector() {
         this.#items.forEach((i) => {
-            i.garbageCollect();
+            i.releaseToGarbageCollector();
         });
 
         this.#items.length = 0;

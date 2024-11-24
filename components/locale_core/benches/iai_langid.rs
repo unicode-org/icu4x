@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, subtags::language, subtags::region, LanguageIdentifier};
+use std::borrow::Cow;
 use writeable::Writeable;
 
 const LIDS: &[LanguageIdentifier] = &[
@@ -105,9 +106,9 @@ fn bench_langid_serialize_writeable() {
 fn bench_langid_canonicalize() {
     // Tests canonicalization of strings.
 
-    let _: Vec<String> = LIDS_STR
+    let _: Vec<Cow<str>> = LIDS_STR
         .iter()
-        .map(|l| LanguageIdentifier::canonicalize(l).expect("Canonicalization failed"))
+        .map(|l| LanguageIdentifier::normalize(l).expect("Normalization failed"))
         .collect();
 }
 

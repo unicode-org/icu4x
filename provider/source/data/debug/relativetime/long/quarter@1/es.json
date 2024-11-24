@@ -5,21 +5,63 @@
     "1": "el próximo trimestre"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0006hace  trimestre"
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
       ]
     ],
-    "other": "\u0006hace  trimestres"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u000bdentro de  trimestre"
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
       ]
     ],
-    "other": "\u000bdentro de  trimestres"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
+    ]
   }
 }

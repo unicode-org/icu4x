@@ -3,21 +3,57 @@
     "0": "this minute"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 minute ago"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute ago"
+        }
       ]
     ],
-    "other": "\u0001 minutes ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004in  minute"
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute"
+        }
       ]
     ],
-    "other": "\u0004in  minutes"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes"
+        }
+      ]
+    ]
   }
 }

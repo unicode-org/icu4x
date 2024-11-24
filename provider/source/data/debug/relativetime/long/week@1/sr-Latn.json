@@ -5,29 +5,91 @@
     "1": "sledeće nedelje"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0005pre  nedelje"
-      ],
-      [
-        "Few",
-        "\u0005pre  nedelje"
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
       ]
     ],
-    "other": "\u0005pre  nedelja"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelja"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0004za  nedelju"
-      ],
-      [
-        "Few",
-        "\u0004za  nedelje"
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelju"
+        }
       ]
     ],
-    "other": "\u0004za  nedelja"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelje"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " nedelja"
+        }
+      ]
+    ]
   }
 }

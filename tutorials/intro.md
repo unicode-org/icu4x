@@ -107,24 +107,26 @@ which is exposed through constructors such as `try_new`.
 ```rust
 use icu::locale::{Locale, locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, options::length};
+use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMDT};
 
 const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
-    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new(&LOCALE.into(), options.into())
-        .expect("ja data should be available");
+    let dtf = DateTimeFormatter::try_new(
+        LOCALE.into(),
+        YMDT::medium(),
+    )
+    .expect("ja data should be available");
 
-    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
     // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
-    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
+    // For smaller codesize you can use FixedCalendarDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
     let date = date.to_any();
 
-    let formatted_date = dtf.format(&date).expect("formatting should succeed");
+    let formatted_date = dtf.format_any_calendar(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }

@@ -5,11 +5,35 @@
     "1": "на след. нед."
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- нед."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ нед."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед."
+        }
+      ]
+    ]
   }
 }

@@ -37,6 +37,14 @@
 //! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 //! ```
 //!
+//! # Syntactic vs Semantic Extension Handling
+//!
+//! This module is useful when you need to work with Locale extensions at a syntactic level,
+//! perhaps for parsing or generating locale identifiers that include any syntactically valid
+//! extensions.
+//! For handling and validating known CLDR values with semantic meaning, see the
+//! [`crate::preferences::extensions`] module.
+//!
 //! [`LanguageIdentifier`]: super::LanguageIdentifier
 //! [`Locale`]: super::Locale
 //! [`subtags`]: super::subtags

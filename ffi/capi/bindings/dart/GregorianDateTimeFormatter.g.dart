@@ -2,10 +2,10 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X TypedDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
 /// using the Gregorian Calendar.
 ///
-/// See the [Rust documentation for `TypedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
 final class GregorianDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,20 +27,16 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
 
   /// Creates a new [`GregorianDateFormatter`] from locale data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new) for more information.
-  ///
-  /// Throws [Error] on failure.
-  factory GregorianDateTimeFormatter.withLengths(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength) {
-    final result = _icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(provider._ffi, locale._ffi, dateLength.index, timeLength.index);
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory GregorianDateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
+    final result = _icu4x_GregorianDateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return GregorianDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
   /// Formats a [`IsoDateTime`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(IsoDateTime value) {
     final write = _Write();
     _icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);
@@ -48,17 +44,17 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_GregorianDateTimeFormatter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_GregorianDateTimeFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_GregorianDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1')
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GregorianDateTimeFormatter_create_with_length_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int dateLength, int timeLength);
+external _ResultOpaqueInt32 _icu4x_GregorianDateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

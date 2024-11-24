@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "euro"
-      ]
+    "one": [
+      0,
+      "euro"
     ],
-    "other": "euros"
+    "other": [
+      0,
+      "euros"
+    ]
   }
 }

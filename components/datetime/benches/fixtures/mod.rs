@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options;
-use icu_datetime::options::DateTimeFormatterOptions;
+use icu_datetime::{fields::components, fieldsets::serde::CompositeFieldSetSerde, options};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -22,15 +21,12 @@ pub struct TestInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestOptions {
-    #[serde(rename = "length")]
-    Length(options::length::Bag),
-    #[serde(rename = "components")]
-    #[cfg(feature = "experimental")]
-    Components(options::components::Bag),
-    #[serde(rename = "components")]
-    #[cfg(not(feature = "experimental"))]
-    Components(serde_json::Value),
+pub struct TestOptions {
+    pub length: Option<TestOptionsLength>,
+    pub components: Option<TestComponentsBag>,
+    pub semantic: Option<CompositeFieldSetSerde>,
+    #[serde(rename = "hourCycle")]
+    pub hour_cycle: Option<TestHourCycle>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -52,15 +48,30 @@ pub enum TestLength {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PatternsFixture(pub Vec<String>);
+pub struct TestComponentsBag {
+    pub era: Option<components::Text>,
+    pub year: Option<components::Year>,
+    pub month: Option<components::Month>,
+    pub week: Option<components::Week>,
+    pub day: Option<components::Day>,
+    pub weekday: Option<components::Text>,
 
-#[allow(dead_code)]
-pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    match input {
-        TestOptions::Length(bag) => Some((*bag).into()),
-        #[cfg(feature = "experimental")]
-        TestOptions::Components(bag) => Some((*bag).into()),
-        #[cfg(not(feature = "experimental"))]
-        TestOptions::Components(_) => None,
-    }
+    pub hour: Option<components::Numeric>,
+    pub minute: Option<components::Numeric>,
+    pub second: Option<components::Numeric>,
+    pub fractional_second: Option<options::FractionalSecondDigits>,
+
+    pub time_zone_name: Option<components::TimeZoneName>,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TestHourCycle {
+    H11,
+    H12,
+    H23,
+    H24,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PatternsFixture(pub Vec<String>);

@@ -9,15 +9,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h11" }
+                "hourCycle": "h11"
             }
         },
         "output": {
             "values": {
-                "en": "0:25\u202fAM"
+                "en": {
+                    "formatted": "0:25\u202fAM",
+                    "pattern": "K:mm\u202fa"
+                }
             }
         }
     },
@@ -31,15 +35,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
             "values": {
-                "en": "12:25\u202fAM"
+                "en": {
+                    "formatted": "12:25\u202fAM",
+                    "pattern": "h:mm\u202fa"
+                }
             }
         }
     },
@@ -53,15 +61,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "00:25"
+                "en": {
+                    "formatted": "00:25",
+                    "pattern": "HH:mm"
+                }
             }
         }
     },
@@ -75,15 +87,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h24" }
+                "hourCycle": "h24"
             }
         },
         "output": {
             "values": {
-                "en": "24:25"
+                "en": {
+                    "formatted": "24:25",
+                    "pattern": "kk:mm"
+                }
             }
         }
     },
@@ -98,15 +114,16 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h11" }
+                "hourCycle": "h11"
             }
         },
         "output": {
             "values": {
-                "ar": "٠:٢٥ ص"
+                "ar-EG": "٠:٢٥ ص"
             }
         }
     },
@@ -120,15 +137,16 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
             "values": {
-                "ar": "١٢:٢٥ ص"
+                "ar-EG": "١٢:٢٥ ص"
             }
         }
     },
@@ -142,15 +160,16 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "ar": "٠٠:٢٥"
+                "ar-EG": "٠٠:٢٥"
             }
         }
     },
@@ -164,15 +183,16 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour", "minute"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h24" }
+                "hourCycle": "h24"
             }
         },
         "output": {
             "values": {
-                "ar": "٢٤:٢٥"
+                "ar-EG": "٢٤:٢٥"
             }
         }
     },
@@ -185,10 +205,11 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h11" }
+                "hourCycle": "h11"
             }
         },
         "output": {
@@ -206,10 +227,11 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
@@ -227,10 +249,11 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -248,10 +271,11 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["hour"],
-                    "length": "short"
+                    "fieldSet": ["time"],
+                    "length": "short",
+                    "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h24" }
+                "hourCycle": "h24"
             }
         },
         "output": {

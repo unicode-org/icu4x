@@ -7,11 +7,32 @@
     "2": "Samakalawa"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 araw ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw ang nakalipas"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  araw"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw"
+        }
+      ]
+    ]
   }
 }

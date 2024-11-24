@@ -3,11 +3,35 @@
     "0": "в этот час"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- ч"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ ч"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч"
+        }
+      ]
+    ]
   }
 }

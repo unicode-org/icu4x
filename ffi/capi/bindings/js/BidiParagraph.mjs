@@ -55,7 +55,7 @@ export class BidiParagraph {
         const result = wasm.icu4x_BidiParagraph_direction_mv1(this.ffiValue);
     
         try {
-            return BidiDirection[Array.from(BidiDirection.values.keys())[result]];
+            return new BidiDirection(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

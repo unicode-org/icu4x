@@ -5,7 +5,7 @@
 [package]
 name = "databake"
 description = "Trait that lets structs represent themselves as (const) Rust expressions"
-version = "0.1.8"
+version = "0.2.0"
 categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
 keywords = ["zerocopy", "serialization", "const", "proc"]
 

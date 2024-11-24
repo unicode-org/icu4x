@@ -8,10 +8,9 @@ use crate::parser::{
 };
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
-use alloc::string::String;
+use alloc::borrow::Cow;
 use core::cmp::Ordering;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -21,6 +20,16 @@ use writeable::Writeable;
 ///
 /// [`Locale`] exposes all of the same fields and methods as [`LanguageIdentifier`], and
 /// on top of that is able to parse, manipulate and serialize unicode extension fields.
+///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings. Depending on your use case, two orderings are available:
+///
+/// 1. A string ordering, suitable for stable serialization: [`Locale::strict_cmp`]
+/// 2. A struct ordering, suitable for use with a BTreeSet: [`Locale::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// # Parsing
 ///
@@ -33,21 +42,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed locale identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// No subtag validation or alias resolution is performed.
-///
-/// # Ordering
-///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
-///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`Locale::strict_cmp`]
-/// - [`Locale::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Examples
 ///
@@ -151,10 +149,9 @@ impl Locale {
         }
     }
 
-    /// This is a best-effort operation that performs all available levels of canonicalization.
+    /// Normalize the locale (operating on UTF-8 formatted byte slices)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -162,13 +159,31 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let locale = Self::try_from_utf8(input.as_ref())?;
-        Ok(locale.write_to_string().into_owned())
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let locale = Self::try_from_utf8(input)?;
+        Ok(writeable::to_string_or_borrow(&locale, input))
+    }
+
+    /// Normalize the locale (operating on strings)
+    ///
+    /// This operation will normalize casing and the separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::Locale;
+    ///
+    /// assert_eq!(
+    ///     Locale::normalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Ok("pl-Latn-PL-u-hc-h12")
+    /// );
+    /// ```
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.
@@ -181,31 +196,52 @@ impl Locale {
     ///
     /// # Examples
     ///
+    /// Sorting a list of locales with this method requires converting one of them to a string:
+    ///
     /// ```
     /// use icu::locale::Locale;
     /// use std::cmp::Ordering;
+    /// use writeable::Writeable;
     ///
+    /// // Random input order:
     /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-fonipa",
-    ///     "und-t-m0-true",
     ///     "und-u-ca-hebrew",
-    ///     "und-u-ca-japanese",
-    ///     "zh",
+    ///     "ar-Latn",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "ar-SA",
     /// ];
     ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_loc = a.parse::<Locale>().unwrap();
-    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
+    /// let mut locales = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<Locale>>();
+    /// locales.sort_by(|a, b| {
+    ///     let b = b.write_to_string();
+    ///     a.strict_cmp(b.as_bytes())
+    /// });
+    /// let strict_cmp_strings = locales
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted alphabetically
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "und-u-ca-hebrew",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, strict_cmp_strings);
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_utf8(self, other)
     }
 
     #[allow(clippy::type_complexity)]
@@ -246,7 +282,49 @@ impl Locale {
     ///
     /// # Examples
     ///
-    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    /// This method returns a nonsensical ordering derived from the fields of the struct:
+    ///
+    /// ```
+    /// use icu::locale::Locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// // Input strings, sorted alphabetically
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "und-u-ca-hebrew",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    /// assert!(bcp47_strings.windows(2).all(|w| w[0] < w[1]));
+    ///
+    /// let mut locales = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<Locale>>();
+    /// locales.sort_by(Locale::total_cmp);
+    /// let total_cmp_strings = locales
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted arbitrarily
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-SA",
+    ///     "ar-Latn",
+    ///     "und-u-ca-hebrew",
+    ///     "und-fonipa",
+    ///     "zh-TW",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, total_cmp_strings);
+    /// ```
+    ///
+    /// Use a wrapper to add a [`Locale`] to a [`BTreeSet`]:
     ///
     /// ```no_run
     /// use icu::locale::Locale;
@@ -394,19 +472,6 @@ impl From<LanguageIdentifier> for Locale {
 impl From<Locale> for LanguageIdentifier {
     fn from(loc: Locale) -> Self {
         loc.id
-    }
-}
-
-impl AsRef<LanguageIdentifier> for Locale {
-    #[inline(always)]
-    fn as_ref(&self) -> &LanguageIdentifier {
-        &self.id
-    }
-}
-
-impl AsMut<LanguageIdentifier> for Locale {
-    fn as_mut(&mut self) -> &mut LanguageIdentifier {
-        &mut self.id
     }
 }
 

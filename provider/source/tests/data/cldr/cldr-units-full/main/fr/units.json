@@ -2,9 +2,6 @@
   "main": {
     "fr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fr"
       },
       "units": {
@@ -236,6 +233,7 @@
             "unitPattern-count-other": "{0} carats"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
+            "gender": "masculine",
             "displayName": "milligrammes par décilitre",
             "unitPattern-count-one": "{0} milligramme par décilitre",
             "unitPattern-count-other": "{0} milligrammes par décilitre"
@@ -741,6 +739,7 @@
             "unitPattern-count-other": "{0} milles scandinaves"
           },
           "length-point": {
+            "gender": "masculine",
             "displayName": "pt typog.",
             "unitPattern-count-one": "{0} point typographique",
             "unitPattern-count-other": "{0} points typographiques"
@@ -902,6 +901,7 @@
             "unitPattern-count-other": "{0} chevaux-vapeur"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "masculine",
             "displayName": "millimètres de mercure",
             "unitPattern-count-one": "{0} millimètre de mercure",
             "unitPattern-count-other": "{0} millimètres de mercure"
@@ -1224,6 +1224,25 @@
             "displayName": "quarts impériaux",
             "unitPattern-count-one": "{0} quart impérial",
             "unitPattern-count-other": "{0} quarts impériaux"
+          },
+          "speed-light-speed": {
+            "gender": "feminine",
+            "displayName": "lumière",
+            "unitPattern-count-one": "{0} lumière",
+            "unitPattern-count-other": "{0} lumière"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "feminine",
+            "displayName": "parts par milliard",
+            "unitPattern-count-one": "{0} part par milliard",
+            "unitPattern-count-other": "{0} parts par milliard"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "nuits",
+            "unitPattern-count-one": "{0} nuit",
+            "unitPattern-count-other": "{0} nuits",
+            "perUnitPattern": "{0} par nuit"
           },
           "coordinateUnit": {
             "displayName": "direction",
@@ -2278,6 +2297,21 @@
             "displayName": "qt imp.",
             "unitPattern-count-one": "{0} qt imp.",
             "unitPattern-count-other": "{0} qt imp."
+          },
+          "speed-light-speed": {
+            "displayName": "lumière",
+            "unitPattern-count-one": "{0} lumière",
+            "unitPattern-count-other": "{0} lumière"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "nuits",
+            "unitPattern-count-one": "{0} nuit",
+            "unitPattern-count-other": "{0} nuits",
+            "perUnitPattern": "{0}/nuit"
           },
           "coordinateUnit": {
             "displayName": "direction",
@@ -3336,6 +3370,22 @@
             "displayName": "qt imp.",
             "unitPattern-count-one": "{0}qt imp.",
             "unitPattern-count-other": "{0}qt imp."
+          },
+          "speed-light-speed": {
+            "displayName": "lumière",
+            "unitPattern-count-one": "{0} lumière",
+            "unitPattern-count-other": "{0} lumière"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-one": "{0}ppb",
+            "unitPattern-count-other": "{0}ppb"
+          },
+          "duration-night": {
+            "displayName": "nuits",
+            "unitPattern-count-one": "{0}nuit",
+            "unitPattern-count-other": "{0}nuits",
+            "perUnitPattern": "{0}/nuit"
           },
           "coordinateUnit": {
             "displayName": "direction",

@@ -11,6 +11,7 @@
 use crate::elements::{CASE_MASK, TERTIARY_MASK};
 
 /// The collation strength that indicates how many levels to compare.
+///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.
@@ -29,9 +30,9 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
-    /// let collator = Collator::try_new(&Default::default(), options).unwrap();
+    /// let collator = Collator::try_new(Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "é"), core::cmp::Ordering::Equal);
     /// ```
     Primary = 0,
@@ -43,9 +44,9 @@ pub enum Strength {
     /// ```
     /// use icu::collator::*;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);
-    /// let collator = Collator::try_new(&Default::default(), options).unwrap();
+    /// let collator = Collator::try_new(Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "e"), core::cmp::Ordering::Equal);
     /// assert_eq!(collator.compare("e", "é"), core::cmp::Ordering::Less);
     /// assert_eq!(collator.compare("あ", "ア"), core::cmp::Ordering::Equal);
@@ -66,11 +67,12 @@ pub enum Strength {
     ///
     /// ```
     /// use icu::collator::*;
+    /// use icu::locale::locale;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Tertiary);
     /// let collator =
-    ///   Collator::try_new(&Default::default(),
+    ///   Collator::try_new(Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -85,9 +87,8 @@ pub enum Strength {
     /// assert_eq!(collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
-    /// let locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&locale, options).unwrap();
+    ///   Collator::try_new(locale!("ja").into(), options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
     /// assert_eq!(ja_collator.compare("e", "é"),
@@ -111,13 +112,13 @@ pub enum Strength {
     ///
     /// ```
     /// use icu::collator::*;
+    /// use icu::locale::locale;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Quaternary);
     ///
-    /// let ja_locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&ja_locale, options).unwrap();
+    ///   Collator::try_new(locale!("ja").into(), options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
     ///            core::cmp::Ordering::Less);
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
@@ -128,7 +129,7 @@ pub enum Strength {
     /// // Even this level doesn't distinguish everything,
     /// // e.g. Hebrew cantillation marks are still ignored.
     /// let collator =
-    ///   Collator::try_new(&Default::default(),
+    ///   Collator::try_new(Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
@@ -147,20 +148,20 @@ pub enum Strength {
     ///
     /// ```
     /// use icu::collator::*;
+    /// use icu::locale::locale;
     ///
-    /// let mut options = CollatorOptions::new();
+    /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Identical);
     ///
-    /// let ja_locale = icu::locale::locale!("ja").into();
     /// let ja_collator =
-    ///   Collator::try_new(&ja_locale, options).unwrap();
+    ///   Collator::try_new(locale!("ja").into(), options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
     ///            core::cmp::Ordering::Less);
     /// assert_eq!(ja_collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
     /// let collator =
-    ///   Collator::try_new(&Default::default(),
+    ///   Collator::try_new(Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Less);
@@ -374,7 +375,7 @@ pub struct CollatorOptions {
 
 impl CollatorOptions {
     /// Create a new `CollatorOptions` with the defaults.
-    pub const fn new() -> Self {
+    pub const fn default() -> Self {
         Self {
             strength: None,
             alternate_handling: None,
@@ -457,6 +458,12 @@ impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct CollatorOptionsBitField(u32);
 
+impl Default for CollatorOptionsBitField {
+    fn default() -> Self {
+        Self::default()
+    }
+}
+
 impl CollatorOptionsBitField {
     /// Bits 0..2 : Strength
     const STRENGTH_MASK: u32 = 0b111;
@@ -500,8 +507,8 @@ impl CollatorOptionsBitField {
     /// Whether numeric is explicitly set.
     const EXPLICIT_NUMERIC_MASK: u32 = 1 << 25;
 
-    /// Create a new `CollatorOptionsBitField` with the defaults.
-    pub const fn new() -> Self {
+    /// Create a new [`CollatorOptionsBitField`] with the defaults.
+    pub const fn default() -> Self {
         Self(Strength::Tertiary as u32)
     }
 
@@ -787,7 +794,7 @@ impl CollatorOptionsBitField {
 
 impl From<CollatorOptions> for CollatorOptionsBitField {
     fn from(options: CollatorOptions) -> CollatorOptionsBitField {
-        let mut result = Self::new();
+        let mut result = Self::default();
         result.set_strength(options.strength);
         result.set_max_variable(options.max_variable);
         result.set_alternate_handling(options.alternate_handling);

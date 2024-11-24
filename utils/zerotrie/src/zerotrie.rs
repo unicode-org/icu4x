@@ -111,7 +111,8 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -168,7 +169,8 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -203,7 +205,8 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -223,7 +226,8 @@ impl<Store> ZeroTriePerfectHash<Store> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -250,7 +254,7 @@ macro_rules! impl_zerotrie_subtype {
             }
             /// Takes the byte store from this trie.
             #[inline]
-            pub fn take_store(self) -> Store {
+            pub fn into_store(self) -> Store {
                 self.store
             }
             /// Converts this trie's store to a different store implementing the `From` trait.
@@ -601,12 +605,12 @@ macro_rules! impl_zerotrie_subtype {
             Store: zerovec::ule::VarULE,
         {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
-                Store::validate_byte_slice(bytes)
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+                Store::validate_bytes(bytes)
             }
             #[inline]
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+                core::mem::transmute(Store::from_bytes_unchecked(bytes))
             }
         }
         #[cfg(feature = "zerofrom")]
@@ -714,8 +718,8 @@ macro_rules! impl_dispatch {
 
 impl<Store> ZeroTrie<Store> {
     /// Takes the byte store from this trie.
-    pub fn take_store(self) -> Store {
-        impl_dispatch!(self, take_store())
+    pub fn into_store(self) -> Store {
+        impl_dispatch!(self, into_store())
     }
     /// Converts this trie's store to a different store implementing the `From` trait.
     ///

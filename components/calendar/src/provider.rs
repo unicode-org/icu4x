@@ -51,7 +51,6 @@ const _: () = {
     impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
     impl_japanese_eras_v1_marker!(Baked);
     impl_japanese_extended_eras_v1_marker!(Baked);
-    impl_week_data_v1_marker!(Baked);
     impl_week_data_v2_marker!(Baked);
 };
 
@@ -65,9 +64,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     JapaneseErasV1Marker::INFO,
     JapaneseExtendedErasV1Marker::INFO,
     WeekDataV2Marker::INFO,
-    // We include the duplicate data for now, as icu_datetime loads it directly
-    // https://github.com/unicode-org/icu4x/pull/4364#discussion_r1419877997
-    WeekDataV1Marker::INFO,
 ];
 
 /// The date at which an era started
@@ -83,11 +79,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
     /// The year the era started in
@@ -111,11 +104,8 @@ pub struct EraStartDate {
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     /// A map from era start dates to their era codes
@@ -132,40 +122,13 @@ pub struct JapaneseErasV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    WeekDataV1Marker,
-    "datetime/week_data@1",
-    fallback_by = "region"
-))]
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_structs)] // used in data provider
-pub struct WeekDataV1 {
-    /// The first day of a week.
-    pub first_weekday: IsoWeekday,
-    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
-    pub min_week_days: u8,
-}
-
-/// An ICU4X mapping to a subset of CLDR weekData.
-/// See CLDR-JSON's weekData.json for more context.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(
     WeekDataV2Marker,
     "datetime/week_data@2",
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_calendar::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV2 {

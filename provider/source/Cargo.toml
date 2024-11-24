@@ -38,7 +38,7 @@ icu = { workspace = true, features = ["datagen"] }
 calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
-icu_pattern = { workspace = true, features = ["alloc"] }
+icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
 icu_provider_registry = { workspace = true }
@@ -56,6 +56,7 @@ elsa = { workspace = true }
 itertools = { workspace = true }
 log = { workspace = true }
 ndarray = { workspace = true }
+parse-zoneinfo = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 serde-aux = { workspace = true }

@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 পাউন্ড"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " পাউন্ড"
+        }
       ]
     ],
-    "other": "\u0001 lb"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " lb"
+        }
+      ]
+    ]
   }
 }

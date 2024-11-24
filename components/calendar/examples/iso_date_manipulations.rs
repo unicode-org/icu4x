@@ -29,10 +29,10 @@ const DATES_ISO: &[(i32, u8, u8)] = &[
 
 fn main() {
     for &(year, month, day) in DATES_ISO {
-        let date = Date::try_new_iso_date(year, month, day).expect("date should parse");
+        let date = Date::try_new_iso(year, month, day).expect("date should parse");
         println!(
             "Year: {}, Month: {}, Day: {}",
-            date.year().number,
+            date.year().era_year_or_extended(),
             date.month().ordinal,
             date.day_of_month().0,
         );

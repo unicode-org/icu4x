@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 livre"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " livre"
+        }
       ]
     ],
-    "other": "\u0001 livres"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " livres"
+        }
+      ]
+    ]
   }
 }

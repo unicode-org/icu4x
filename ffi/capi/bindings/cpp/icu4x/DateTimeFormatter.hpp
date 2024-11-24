@@ -11,25 +11,25 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
-#include "DateLength.hpp"
 #include "DateTime.hpp"
-#include "Error.hpp"
+#include "DateTimeFormatError.hpp"
+#include "DateTimeFormatterLoadError.hpp"
+#include "DateTimeLength.hpp"
 #include "IsoDateTime.hpp"
 #include "Locale.hpp"
-#include "TimeLength.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_DateTimeFormatter_create_with_lengths_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_lengths_mv1_result;
-    icu4x_DateTimeFormatter_create_with_lengths_mv1_result icu4x_DateTimeFormatter_create_with_lengths_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateLength date_length, icu4x::capi::TimeLength time_length);
+    typedef struct icu4x_DateTimeFormatter_create_with_length_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_length_mv1_result;
+    icu4x_DateTimeFormatter_create_with_length_mv1_result icu4x_DateTimeFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
-    typedef struct icu4x_DateTimeFormatter_format_datetime_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_DateTimeFormatter_format_datetime_mv1_result;
+    typedef struct icu4x_DateTimeFormatter_format_datetime_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_datetime_mv1_result;
     icu4x_DateTimeFormatter_format_datetime_mv1_result icu4x_DateTimeFormatter_format_datetime_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::DateTime* value, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_DateTimeFormatter_format_iso_datetime_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_DateTimeFormatter_format_iso_datetime_mv1_result;
+    typedef struct icu4x_DateTimeFormatter_format_iso_datetime_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_iso_datetime_mv1_result;
     icu4x_DateTimeFormatter_format_iso_datetime_mv1_result icu4x_DateTimeFormatter_format_iso_datetime_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
     
@@ -39,30 +39,29 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::Error> icu4x::DateTimeFormatter::create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length) {
-  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_with_lengths_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_with_length_mv1(provider.AsFFI(),
     locale.AsFFI(),
-    date_length.AsFFI(),
-    time_length.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::Error>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
+    length.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::Error> icu4x::DateTimeFormatter::format_datetime(const icu4x::DateTime& value) const {
+inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::DateTimeFormatter::format_datetime(const icu4x::DateTime& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_DateTimeFormatter_format_datetime_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, icu4x::Error>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Err<icu4x::DateTimeFormatError>(icu4x::DateTimeFormatError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::Error> icu4x::DateTimeFormatter::format_iso_datetime(const icu4x::IsoDateTime& value) const {
+inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::DateTimeFormatter::format_iso_datetime(const icu4x::IsoDateTime& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_DateTimeFormatter_format_iso_datetime_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
-  return result.is_ok ? diplomat::result<std::string, icu4x::Error>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Err<icu4x::DateTimeFormatError>(icu4x::DateTimeFormatError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::DateTimeFormatter* icu4x::DateTimeFormatter::AsFFI() const {

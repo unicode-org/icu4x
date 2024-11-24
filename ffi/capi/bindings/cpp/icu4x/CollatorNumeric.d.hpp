@@ -13,9 +13,8 @@
 namespace icu4x {
 namespace capi {
     enum CollatorNumeric {
-      CollatorNumeric_Auto = 0,
-      CollatorNumeric_Off = 1,
-      CollatorNumeric_On = 2,
+      CollatorNumeric_Off = 0,
+      CollatorNumeric_On = 1,
     };
     
     typedef struct CollatorNumeric_option {union { CollatorNumeric ok; }; bool is_ok; } CollatorNumeric_option;
@@ -26,9 +25,8 @@ namespace icu4x {
 class CollatorNumeric {
 public:
   enum Value {
-    Auto = 0,
-    Off = 1,
-    On = 2,
+    Off = 0,
+    On = 1,
   };
 
   CollatorNumeric() = default;

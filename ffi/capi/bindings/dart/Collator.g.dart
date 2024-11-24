@@ -41,7 +41,7 @@ final class Collator implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
+  /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
   int compare(String left, String right) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_compare_utf16_mv1(_ffi, left._utf16AllocIn(temp.arena), right._utf16AllocIn(temp.arena));
@@ -52,29 +52,29 @@ final class Collator implements ffi.Finalizable {
   /// and the options from locale data were combined. None of the struct fields
   /// will have `Auto` as the value.
   ///
-  /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
+  /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
   CollatorResolvedOptions get resolvedOptions {
     final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
     return CollatorResolvedOptions._fromFfi(result);
   }
 }
 
-@meta.ResourceIdentifier('icu4x_Collator_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Collator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Collator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_Collator_create_v1_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Collator_create_v1_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@meta.ResourceIdentifier('icu4x_Collator_compare_utf16_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_compare_utf16_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 left, _SliceUtf16 right);
 
-@meta.ResourceIdentifier('icu4x_Collator_resolved_options_v1_mv1')
+@meta.RecordUse()
 @ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')
 // ignore: non_constant_identifier_names
 external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);

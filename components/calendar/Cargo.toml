@@ -69,10 +69,6 @@ name = "datetime"
 harness = false
 
 [[bench]]
-name = "iso"
-harness = false
-
-[[bench]]
 name = "convert"
 harness = false
 

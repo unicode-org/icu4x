@@ -1,11 +1,26 @@
 {
   "patterns": {
-    "specials": [
+    "few": [
+      0,
       [
-        "Few",
-        "\u0001 стопе"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " стопе"
+        }
       ]
     ],
-    "other": "\u0001 стопа"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " стопа"
+        }
+      ]
+    ]
   }
 }

@@ -27,6 +27,7 @@ use zerovec::ZeroMap2d;
 pub use crate::provider::Baked;
 
 /// Compact Decimal Pattern V1 data struct.
+///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an
 /// explicit 1) to a pattern.
@@ -57,11 +58,8 @@ pub use crate::provider::Baked;
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[yoke(prove_covariance_manually)]
 pub struct CompactDecimalPatternDataV1<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
@@ -75,11 +73,8 @@ pub struct CompactDecimalPatternDataV1<'data> {
 #[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[repr(u8)]
 pub enum Count {
     /// The CLDR keyword `zero`.
@@ -121,12 +116,9 @@ impl From<PluralCategory> for Count {
 )]
 #[zerovec::make_varule(PatternULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider),
-    zerovec::derive(Serialize),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 #[zerovec::derive(Debug)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct Pattern<'data> {
@@ -149,9 +141,4 @@ pub struct Pattern<'data> {
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
-}
-pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
-
-impl DynamicDataMarker for ErasedCompactDecimalFormatDataV1Marker {
-    type DataStruct = CompactDecimalPatternDataV1<'static>;
 }

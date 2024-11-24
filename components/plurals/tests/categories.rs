@@ -15,7 +15,7 @@ fn test_categories() {
 
     for test in test_set {
         let pr = PluralRules::try_new(
-            &LanguageIdentifier::try_from_str(&test.langid)
+            LanguageIdentifier::try_from_str(&test.langid)
                 .unwrap()
                 .into(),
             test.plural_type.into(),

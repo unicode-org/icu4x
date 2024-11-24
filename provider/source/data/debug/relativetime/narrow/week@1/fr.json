@@ -5,11 +5,35 @@
     "1": "la semaine prochaine"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
+      ]
+    ]
   }
 }

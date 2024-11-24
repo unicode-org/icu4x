@@ -12,9 +12,9 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 ### Formatting *and* lists in Spanish
 
 ```rust
-let list_formatter = ListFormatter::try_new_and_with_length(
-    &locale!("es").into(),
-    ListLength::Wide,
+let list_formatter = ListFormatter::try_new_and(
+    locale!("es").into(),
+    ListFormatterOptions::default().with_length(ListLength::Wide),
 )
 .expect("locale should be present");
 
@@ -33,9 +33,9 @@ assert_writeable_eq!(
 ### Formatting *or* lists in Thai
 
 ```rust
-let list_formatter = ListFormatter::try_new_or_with_length(
-    &locale!("th").into(),
-    ListLength::Short,
+let list_formatter = ListFormatter::try_new_or(
+    locale!("th").into(),
+    ListFormatterOptions::default().with_length(ListLength::Short),
 )
 .expect("locale should be present");
 
@@ -46,9 +46,9 @@ assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 ### Formatting unit lists in English
 
 ```rust
-let list_formatter = ListFormatter::try_new_unit_with_length(
-    &locale!("en").into(),
-    ListLength::Wide,
+let list_formatter = ListFormatter::try_new_unit(
+    locale!("en").into(),
+    ListFormatterOptions::default().with_length(ListLength::Wide),
 )
 .expect("locale should be present");
 

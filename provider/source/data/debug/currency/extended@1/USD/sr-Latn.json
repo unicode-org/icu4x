@@ -1,15 +1,16 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "američki dolar"
-      ],
-      [
-        "Few",
-        "američka dolara"
-      ]
+    "one": [
+      0,
+      "američki dolar"
     ],
-    "other": "američkih dolara"
+    "few": [
+      0,
+      "američka dolara"
+    ],
+    "other": [
+      0,
+      "američkih dolara"
+    ]
   }
 }

@@ -5,21 +5,57 @@
     "1": "в след. г."
   },
   "past": {
-    "specials": [
+    "many": [
+      0,
       [
-        "Many",
-        "\u0001 л. назад"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л. назад"
+        }
       ]
     ],
-    "other": "\u0001 г. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г. назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "many": [
+      0,
       [
-        "Many",
-        "\fчерез  л."
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л."
+        }
       ]
     ],
-    "other": "\fчерез  г."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
+      ]
+    ]
   }
 }

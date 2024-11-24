@@ -14,15 +14,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "medium"
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "length": "medium",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
             "values": {
-                "en": "Tue, Jan 7, 2020, 8:25\u202fAM"
+                "en": {
+                    "formatted": "Tue, Jan 7, 2020, 8:25\u202fAM",
+                    "pattern": "E, MMM d, y, h:mm\u202fa"
+                }
             }
         }
     },
@@ -41,15 +45,19 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "long"
+                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "length": "long",
+                    "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 7, 2020, 8:25\u202fAM"
+                "en": {
+                    "formatted": "Tuesday, January 7, 2020, 8:25\u202fAM",
+                    "pattern": "EEEE, MMMM d, y, h:mm\u202fa"
+                }
             }
         }
     }

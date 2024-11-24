@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "dates": {
@@ -500,11 +497,11 @@
             "relative-type-1": "susunod na Biy.",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} Biy.",
-              "relativeTimePattern-count-other": "sa {0} (na) Biyernes"
+              "relativeTimePattern-count-other": "sa {0} Biy"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} Biy. ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) Biyernes ang nakalipas"
+              "relativeTimePattern-count-one": "sa {0} (na) Biy ang nakalipas",
+              "relativeTimePattern-count-other": "{0} (na) Biy ang nakalipas"
             }
           },
           "sat": {

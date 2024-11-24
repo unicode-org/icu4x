@@ -8,11 +8,10 @@
 #include "diplomat_runtime.h"
 
 #include "DataProvider.d.h"
-#include "DateLength.d.h"
-#include "Error.d.h"
+#include "DateTimeFormatterLoadError.d.h"
+#include "DateTimeLength.d.h"
 #include "IsoDateTime.d.h"
 #include "Locale.d.h"
-#include "TimeLength.d.h"
 
 #include "GregorianDateTimeFormatter.d.h"
 
@@ -21,8 +20,8 @@
 
 
 
-typedef struct icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result {union {GregorianDateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result;
-icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
+typedef struct icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result {union {GregorianDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result;
+icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const GregorianDateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 

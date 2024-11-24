@@ -6,7 +6,7 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 
 use icu::locale::provider::*;
-use icu::locale::subtags::{Language, Region, Script};
+use icu::locale::subtags::{script, Language, Region, Script};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
@@ -46,6 +46,15 @@ impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
             }
             parents.insert(source.write_to_string(), target.into());
         }
+
+        parents.insert(
+            "und-Hant".into(),
+            (Language::UND, Some(script!("Hani")), None),
+        );
+        parents.insert(
+            "und-Hans".into(),
+            (Language::UND, Some(script!("Hani")), None),
+        );
 
         ParentsV1 {
             parents: parents

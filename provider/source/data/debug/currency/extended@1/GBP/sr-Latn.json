@@ -1,15 +1,16 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "britanska funta"
-      ],
-      [
-        "Few",
-        "britanske funte"
-      ]
+    "one": [
+      0,
+      "britanska funta"
     ],
-    "other": "britanskih funti"
+    "few": [
+      0,
+      "britanske funte"
+    ],
+    "other": [
+      0,
+      "britanskih funti"
+    ]
   }
 }

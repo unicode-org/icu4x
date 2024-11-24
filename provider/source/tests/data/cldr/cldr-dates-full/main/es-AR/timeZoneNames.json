@@ -2,9 +2,6 @@
   "main": {
     "es-AR": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es",
         "territory": "AR"
       },
@@ -927,13 +924,6 @@
                 "daylight": "hora de verano de China"
               }
             },
-            "Choibalsan": {
-              "long": {
-                "generic": "hora de Choibalsan",
-                "standard": "hora estándar de Choibalsan",
-                "daylight": "hora de verano de Choibalsan"
-              }
-            },
             "Christmas": {
               "long": {
                 "standard": "hora de la Isla de Navidad"
@@ -1182,6 +1172,11 @@
                 "generic": "hora de Kamchatka",
                 "standard": "hora estándar de Kamchatka",
                 "daylight": "hora de verano de Kamchatka"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "hora de Kazajistán"
               }
             },
             "Kazakhstan_Eastern": {

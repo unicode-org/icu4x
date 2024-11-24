@@ -41,7 +41,7 @@ impl AnyCalendar {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
             .ok_or(ParseError::UnknownCalendar)?;
-        let calendar = AnyCalendar::new(calendar_kind);
+        let calendar = AnyCalendar::new_for_kind(calendar_kind);
         Ok(calendar)
     }
 }
@@ -60,9 +60,9 @@ impl Date<Iso> {
     ///
     /// let date = Date::try_iso_from_str("2024-07-17").unwrap();
     ///
-    /// assert_eq!(date.year().number, 2024);
+    /// assert_eq!(date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
-    ///     date.month().code,
+    ///     date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
@@ -83,7 +83,7 @@ impl Date<Iso> {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Self::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
+        let date = Self::try_new_iso(date_record.year, date_record.month, date_record.day)?;
         Ok(date)
     }
 }
@@ -107,9 +107,9 @@ impl Date<AnyCalendar> {
     ///
     /// let date = Date::try_from_str("2024-07-17[u-ca=hebrew]").unwrap();
     ///
-    /// assert_eq!(date.year().number, 5784);
+    /// assert_eq!(date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
-    ///     date.month().code,
+    ///     date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
     /// );
     /// assert_eq!(date.day_of_month().0, 11);
@@ -206,11 +206,12 @@ impl DateTime<Iso> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
+    /// let datetime =
+    ///     DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
     ///
-    /// assert_eq!(datetime.date.year().number, 2024);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
-    ///     datetime.date.month().code,
+    ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
     /// );
     /// assert_eq!(datetime.date.day_of_month().0, 17);
@@ -258,11 +259,12 @@ impl DateTime<AnyCalendar> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
+    /// let datetime =
+    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
     ///
-    /// assert_eq!(datetime.date.year().number, 5784);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
-    ///     datetime.date.month().code,
+    ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
     /// );
     /// assert_eq!(datetime.date.day_of_month().0, 11);

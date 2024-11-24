@@ -3,11 +3,32 @@
     "0": "this hour"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 hr. ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hr. ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in  hr."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hr."
+        }
+      ]
+    ]
   }
 }

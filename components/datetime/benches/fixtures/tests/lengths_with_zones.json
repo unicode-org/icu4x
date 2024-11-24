@@ -5,44 +5,13 @@
                 "locale": "ru",
                 "options": {
                     "length": {
-                        "date": "full",
-                        "time": null
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": "long",
-                        "time": null
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": "medium",
-                        "time": null
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": "short",
-                        "time": null
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
                         "date": null,
                         "time": "full"
+                    },
+                    "semantic": {
+                        "fieldSet": ["time", "zoneSpecific"],
+                        "length": "long",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -52,24 +21,11 @@
                     "length": {
                         "date": null,
                         "time": "long"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": null,
-                        "time": "medium"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": null,
-                        "time": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["time", "zoneSpecific"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -79,6 +35,11 @@
                     "length": {
                         "date": "full",
                         "time": "full"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                        "length": "long",
+                        "timePrecision": "secondPlus"
                     }
                 }
             },
@@ -88,24 +49,11 @@
                     "length": {
                         "date": "long",
                         "time": "long"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": "medium",
-                        "time": "medium"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": "short",
-                        "time": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "time", "zoneSpecific"],
+                        "length": "medium",
+                        "timePrecision": "secondPlus"
                     }
                 }
             }

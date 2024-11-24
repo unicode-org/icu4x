@@ -26,14 +26,13 @@ cargo install icu4x-datagen
 We're ready to generate the data. We will use the blob format, and create a blob that will contain just Chakma data. At runtime we can then load it as needed.
 
 ```console
-$ icu4x-datagen --markers all --locales ccp --format blob2 --out ccp.blob
+$ icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
 ```
 
 This will generate a `ccp.blob` file containing data for Chakma.
 
 💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob).
 
-💡 Note: `--format blob2` generates version 2 of the blob format. Alternatively, `--format blob` produces an older blob format which works with ICU4X prior to 1.4 but is not as optimized.
 
 ## 3. Using the data pack
 
@@ -135,7 +134,7 @@ Note: the following steps are currently only possible in Rust. 🤷
 When we ran `icu4x-datagen`, we passed `--markers all`, which make it generate *all* data for the Chakma locale, even though we only need date formatting. We can make `icu4x-datagen` analyze our binary to figure out which markers are needed:
 
 ```console
-$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob2 --out ccp_smaller.blob
+$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smaller.blob
 ```
 
 Note: you usually want to build with the `--release` flag, and analyze that binary, but we don't have all day.
@@ -178,7 +177,7 @@ Now we can run datagen with `--markers-for-bin` again:
 
 ```console
 $ cargo build
-$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob2 --out ccp_smallest.blob
+$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smallest.blob
 ```
 
 The output will be much shorter:
@@ -187,7 +186,7 @@ The output will be much shorter:
 INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datelengths@1
 INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datesymbols@1
 INFO  [icu_provider_export::export_impl] Generating marker datetime/week_data@1
-INFO  [icu_provider_export::export_impl] Generating marker decimal/symbols@1
+INFO  [icu_provider_export::export_impl] Generating marker decimal/symbols@2
 INFO  [icu_provider_export::export_impl] Generating marker plurals/ordinal@1
 ```
 

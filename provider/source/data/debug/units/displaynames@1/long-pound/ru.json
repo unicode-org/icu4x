@@ -1,15 +1,37 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 фунт"
-      ],
-      [
-        "Many",
-        "\u0001 фунтов"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " фунт"
+        }
       ]
     ],
-    "other": "\u0001 фунта"
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " фунтов"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " фунта"
+        }
+      ]
+    ]
   }
 }

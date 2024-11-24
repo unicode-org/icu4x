@@ -99,7 +99,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc(hidden)]
-            pub const fn into_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
+            pub const fn to_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
                 self.0
             }
 
@@ -144,7 +144,7 @@ macro_rules! impl_tinystr_subtag {
 
         impl From<$name> for tinystr::TinyAsciiStr<$len_end> {
             fn from(input: $name) -> Self {
-                input.into_tinystr()
+                input.to_tinystr()
             }
         }
 
@@ -278,13 +278,13 @@ macro_rules! impl_tinystr_subtag {
         //
         // 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
         // 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-        // 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-        // 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+        // 3. ULE::validate_bytes() checks that the given byte slice represents a valid slice.
+        // 4. ULE::validate_bytes() checks that the given byte slice has a valid length.
         // 5. All other methods must be left with their default impl.
         // 6. Byte equality is semantic equality.
         #[cfg(feature = "zerovec")]
         unsafe impl zerovec::ule::ULE for $name {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 let it = bytes.chunks_exact(core::mem::size_of::<Self>());
                 if !it.remainder().is_empty() {
                     return Err(zerovec::ule::UleError::length::<Self>(bytes.len()));

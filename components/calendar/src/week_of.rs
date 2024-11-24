@@ -7,12 +7,25 @@ use crate::{
     provider::*,
     types::{DayOfMonth, DayOfYearInfo, IsoWeekday, WeekOfMonth},
 };
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
 pub const MIN_UNIT_DAYS: u16 = 14;
 
+define_preferences!(
+    /// The preferences for the week calculator.
+    [Copy]
+    WeekPreferences,
+    {}
+);
+
 /// Calculator for week-of-month and week-of-year based on locale-specific configurations.
+///
+/// Note that things get subtly tricky for weeks that straddle the boundary between two years: different locales
+/// may consider them as belonging to the preceding or succeeding year based on where exactly the week gets split.
+/// While this struct can be populated by values supplied by the programmer, we do recommend using one of the
+/// constructors to get locale data.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct WeekCalculator {
@@ -25,82 +38,21 @@ pub struct WeekCalculator {
     pub weekend: Option<WeekdaySet>,
 }
 
-impl From<WeekDataV1> for WeekCalculator {
-    fn from(other: WeekDataV1) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: None,
-        }
-    }
-}
-
-impl From<&WeekDataV1> for WeekCalculator {
-    fn from(other: &WeekDataV1) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: None,
-        }
-    }
-}
-
 impl WeekCalculator {
-    /// Creates a new [`WeekCalculator`] from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
-        Self::try_new_unstable(&crate::provider::Baked, locale)
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &DataLocale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting(), locale).or_else(|e| {
-            DataProvider::<WeekDataV1Marker>::load(
-                &provider.as_downcasting(),
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
-                    ..Default::default()
-                },
-            )
-            .map(|response| response.payload.get().into())
-            .map_err(|_| e)
-        })
-    }
-
-    #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-        locale: &DataLocale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_deserializing(), locale).or_else(|e| {
-            DataProvider::<WeekDataV1Marker>::load(
-                &provider.as_deserializing(),
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
-                    ..Default::default()
-                },
-            )
-            .map(|response| response.payload.get().into())
-            .map_err(|_| e)
-        })
-    }
+    icu_provider::gen_any_buffer_data_constructors!(
+        (prefs: WeekPreferences) -> error: DataError,
+        /// Creates a new [`WeekCalculator`] from compiled data.
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {
+        let locale = DataLocale::from_preferences_locale::<WeekDataV2Marker>(prefs.locale_prefs);
         provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
             .map(|response| WeekCalculator {
@@ -125,7 +77,7 @@ impl WeekCalculator {
     /// use icu::calendar::week::WeekCalculator;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locale::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
     ///         .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
@@ -137,7 +89,11 @@ impl WeekCalculator {
     ///
     /// [1]: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
     pub fn week_of_month(&self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
-        WeekOfMonth(simple_week_of(self.first_weekday, day_of_month.0 as u16, iso_weekday) as u32)
+        WeekOfMonth(simple_week_of(
+            self.first_weekday,
+            day_of_month.0 as u16,
+            iso_weekday,
+        ))
     }
 
     /// Returns the week of year according to the weekday and [`DayOfYearInfo`].
@@ -150,10 +106,10 @@ impl WeekCalculator {
     /// use icu::calendar::Date;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locale::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
     ///         .expect("locale should be present");
     ///
-    /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
+    /// let iso_date = Date::try_new_iso(2022, 8, 26).unwrap();
     ///
     /// // Friday August 26 is in week 34 of year 2022:
     /// assert_eq!(
@@ -222,7 +178,7 @@ enum RelativeWeek {
     /// A week that is assigned to the last week of the previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
     LastWeekOfPreviousUnit,
     /// A week that's assigned to the current year/month. The offset is 1-based. e.g. 2021-01-11 is week 2 of 2021 per the ISO calendar so would be WeekOfCurrentUnit(2).
-    WeekOfCurrentUnit(u16),
+    WeekOfCurrentUnit(u8),
     /// A week that is assigned to the first week of the next year/month. e.g. 2019-12-31 is week 1 of 2020 per the ISO calendar.
     FirstWeekOfNextUnit,
 }
@@ -266,7 +222,7 @@ impl UnitInfo {
     }
 
     /// Returns the number of weeks in this unit according to `calendar`.
-    fn num_weeks(&self, calendar: &WeekCalculator) -> u16 {
+    fn num_weeks(&self, calendar: &WeekCalculator) -> u8 {
         let first_week_offset = self.first_week_offset(calendar);
         let num_days_including_first_week =
             (self.duration_days as i32) - (first_week_offset as i32);
@@ -274,7 +230,7 @@ impl UnitInfo {
             num_days_including_first_week >= 0,
             "Unit is shorter than a week."
         );
-        ((num_days_including_first_week + 7 - (calendar.min_week_days as i32)) / 7) as u16
+        ((num_days_including_first_week + 7 - (calendar.min_week_days as i32)) / 7) as u8
     }
 
     /// Returns the week number for the given day in this unit.
@@ -285,7 +241,7 @@ impl UnitInfo {
             return RelativeWeek::LastWeekOfPreviousUnit;
         }
 
-        let week_number = (1 + days_since_first_week / 7) as u16;
+        let week_number = (1 + days_since_first_week / 7) as u8;
         if week_number > self.num_weeks(calendar) {
             return RelativeWeek::FirstWeekOfNextUnit;
         }
@@ -310,7 +266,7 @@ pub enum RelativeUnit {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct WeekOf {
     /// Week of month/year. 1 based.
-    pub week: u16,
+    pub week: u8,
     /// The month/year that this week is in, relative to the month/year of the input date.
     pub unit: RelativeUnit,
 }
@@ -369,7 +325,7 @@ pub fn week_of(
 ///  - first_weekday: The first day of a week.
 ///  - day: 1-based day of the month or year.
 ///  - week_day: The weekday of `day`.
-pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u16 {
+pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u8 {
     let calendar = WeekCalculator {
         first_weekday,
         min_week_days: 1,
@@ -604,7 +560,7 @@ mod tests {
         let month = ((yyyymmdd / 100) % 100) as u8;
         let day = (yyyymmdd % 100) as u8;
 
-        let date = Date::try_new_iso_date(year, month, day)?;
+        let date = Date::try_new_iso(year, month, day)?;
         let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
 
         week_of(
@@ -721,7 +677,7 @@ fn test_weekend() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und").into())
+        WeekCalculator::try_new(locale!("und").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -729,7 +685,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-FR").into())
+        WeekCalculator::try_new(locale!("und-FR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -737,7 +693,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IQ").into())
+        WeekCalculator::try_new(locale!("und-IQ").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -745,7 +701,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IR").into())
+        WeekCalculator::try_new(locale!("und-IR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),

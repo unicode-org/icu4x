@@ -11,7 +11,6 @@ export class CollatorCaseLevel {
 
     get ffiValue() : number;
 
-    static Auto : CollatorCaseLevel;
     static Off : CollatorCaseLevel;
     static On : CollatorCaseLevel;
 }

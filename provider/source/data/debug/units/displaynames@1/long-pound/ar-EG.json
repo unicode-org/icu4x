@@ -1,15 +1,34 @@
 {
   "patterns": {
-    "specials": [
+    "two": [
+      0,
       [
-        "Two",
-        "\u0000رطلان"
-      ],
-      [
-        "Many",
-        "\u0001 رطلًا"
+        {
+          "Literal": "رطلان"
+        }
       ]
     ],
-    "other": "\u0001 رطل"
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " رطلًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " رطل"
+        }
+      ]
+    ]
   }
 }

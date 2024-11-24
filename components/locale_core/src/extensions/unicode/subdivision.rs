@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use crate::parser::ParseError;
-use crate::subtags::Region;
+use crate::subtags::{Region, Subtag};
 
 impl_tinystr_subtag!(
     /// A subdivision suffix used in [`SubdivisionId`].
@@ -62,8 +62,8 @@ impl_tinystr_subtag!(
 ///
 /// ```
 /// use icu::locale::{
-///   subtags::region,
-///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+///     subtags::region,
 /// };
 ///
 /// let ss = subdivision_suffix!("zzzz");
@@ -73,7 +73,7 @@ impl_tinystr_subtag!(
 ///
 /// assert_eq!(si.to_string(), "gbzzzz");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
 pub struct SubdivisionId {
     /// A region field of a Subdivision Id.
@@ -89,8 +89,8 @@ impl SubdivisionId {
     ///
     /// ```
     /// use icu::locale::{
-    ///   subtags::region,
-    ///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+    ///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+    ///     subtags::region,
     /// };
     ///
     /// let ss = subdivision_suffix!("zzzz");
@@ -131,12 +131,18 @@ impl SubdivisionId {
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
     }
+
+    /// Convert to [`Subtag`]
+    pub fn into_subtag(self) -> Subtag {
+        let result = self.region.to_tinystr().concat(self.suffix.to_tinystr());
+        Subtag::from_tinystr_unvalidated(result)
+    }
 }
 
 impl writeable::Writeable for SubdivisionId {
     #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.region.into_tinystr().to_ascii_lowercase().as_str())?;
+        sink.write_str(self.region.to_tinystr().to_ascii_lowercase().as_str())?;
         sink.write_str(self.suffix.as_str())
     }
 

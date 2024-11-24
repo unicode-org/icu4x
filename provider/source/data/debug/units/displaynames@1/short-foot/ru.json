@@ -1,6 +1,15 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 фт"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " фт"
+        }
+      ]
+    ]
   }
 }

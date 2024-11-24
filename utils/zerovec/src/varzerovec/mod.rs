@@ -6,6 +6,7 @@
 
 pub(crate) mod components;
 pub(crate) mod error;
+pub(crate) mod lengthless;
 pub(crate) mod owned;
 pub(crate) mod slice;
 pub(crate) mod vec;
@@ -22,7 +23,7 @@ pub use crate::{VarZeroSlice, VarZeroVec};
 #[doc(hidden)]
 pub use components::VarZeroVecComponents;
 
-pub use components::{Index16, Index32, VarZeroVecFormat};
+pub use components::{Index16, Index32, Index8, VarZeroVecFormat};
 
 pub use owned::VarZeroVecOwned;
 

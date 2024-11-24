@@ -1,14 +1,13 @@
-import { CustomTimeZone } from "icu4x"
 import { DataProvider } from "icu4x"
 import { GregorianZonedDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
-export function formatIsoDatetimeWithCustomTimeZone() {
-    var terminusArgs = arguments;
+import { TimeZoneInfo } from "icu4x"
+export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            GregorianZonedDateTimeFormatter.createWithLengths.apply(
+            GregorianZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -19,29 +18,30 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8],
-                    terminusArgs[9]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
-                    terminusArgs[10]
+                    bcp47Id,
+                    offsetSeconds,
+                    dst
                 ]
             )
         ]

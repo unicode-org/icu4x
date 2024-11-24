@@ -24,7 +24,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new ListFormatter instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
+  /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.andWithLength(DataProvider provider, Locale locale, ListLength length) {
@@ -37,7 +37,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new ListFormatter instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
+  /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.orWithLength(DataProvider provider, Locale locale, ListLength length) {
@@ -50,7 +50,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new ListFormatter instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
+  /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.unitWithLength(DataProvider provider, Locale locale, ListLength length) {
@@ -70,27 +70,27 @@ final class ListFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_ListFormatter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ListFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ListFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_ListFormatter_create_and_with_length_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ListFormatter_create_and_with_length_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ListFormatter_create_and_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('icu4x_ListFormatter_create_or_with_length_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ListFormatter_create_or_with_length_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ListFormatter_create_or_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('icu4x_ListFormatter_create_unit_with_length_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ListFormatter_create_unit_with_length_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ListFormatter_create_unit_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('icu4x_ListFormatter_format_utf16_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceSliceUtf16, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ListFormatter_format_utf16_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ListFormatter_format_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceSliceUtf16 list, ffi.Pointer<ffi.Opaque> write);

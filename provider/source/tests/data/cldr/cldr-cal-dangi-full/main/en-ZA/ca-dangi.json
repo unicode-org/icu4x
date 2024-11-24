@@ -2,9 +2,6 @@
   "main": {
     "en-ZA": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "en",
         "territory": "ZA"
       },
@@ -1151,7 +1148,6 @@
                 "UMMM": "MMM U",
                 "UMMMd": "d MMM U",
                 "y": "r(U)",
-                "yMd": "r-MM-dd",
                 "yyyy": "r(U)",
                 "yyyyM": "MM/r",
                 "yyyyMd": "dd/MM/r",

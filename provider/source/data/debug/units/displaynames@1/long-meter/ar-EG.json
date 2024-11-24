@@ -1,19 +1,45 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000متر"
-      ],
-      [
-        "Few",
-        "\u0001 أمتار"
-      ],
-      [
-        "Many",
-        "\u0001 مترًا"
+        {
+          "Literal": "متر"
+        }
       ]
     ],
-    "other": "\u0001 متر"
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أمتار"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " مترًا"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " متر"
+        }
+      ]
+    ]
   }
 }

@@ -1,6 +1,15 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 𑄜𑄪𑄖𑄴"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 𑄜𑄪𑄖𑄴"
+        }
+      ]
+    ]
   }
 }

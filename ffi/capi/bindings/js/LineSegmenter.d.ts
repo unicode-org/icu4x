@@ -3,6 +3,7 @@ import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { LineBreakIteratorUtf16 } from "./LineBreakIteratorUtf16"
 import type { LineBreakOptions } from "./LineBreakOptions"
+import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -21,11 +22,11 @@ export class LineSegmenter {
 
     static createDictionary(provider: DataProvider): LineSegmenter;
 
-    static autoWithOptions(provider: DataProvider, options: LineBreakOptions): LineSegmenter;
+    static autoWithOptions(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
 
-    static lstmWithOptions(provider: DataProvider, options: LineBreakOptions): LineSegmenter;
+    static lstmWithOptions(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
 
-    static dictionaryWithOptions(provider: DataProvider, options: LineBreakOptions): LineSegmenter;
+    static dictionaryWithOptions(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
 
     segment(input: string): LineBreakIteratorUtf16;
 }

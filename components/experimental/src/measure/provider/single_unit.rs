@@ -10,11 +10,8 @@ use super::si_prefix::SiPrefix;
 ///    2. `second` with power -2 and prefix power equal to 0.
 #[zerovec::make_ule(SingleUnitULE)]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::single_unit))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SingleUnit {
     /// The power of the unit.

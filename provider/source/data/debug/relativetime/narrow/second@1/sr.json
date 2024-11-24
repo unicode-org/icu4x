@@ -3,11 +3,35 @@
     "0": "сада"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  с."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " с."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  с."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " с."
+        }
+      ]
+    ]
   }
 }

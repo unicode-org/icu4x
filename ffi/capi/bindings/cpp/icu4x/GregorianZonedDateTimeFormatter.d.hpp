@@ -10,8 +10,6 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct CustomTimeZone; }
-class CustomTimeZone;
 namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct GregorianZonedDateTimeFormatter; }
@@ -20,10 +18,11 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
-struct IsoTimeZoneOptions;
-class DateLength;
-class Error;
-class TimeLength;
+namespace capi { struct TimeZoneInfo; }
+class TimeZoneInfo;
+class DateTimeFormatError;
+class DateTimeFormatterLoadError;
+class DateTimeLength;
 }
 
 
@@ -37,11 +36,9 @@ namespace icu4x {
 class GregorianZonedDateTimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::Error> create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length);
+  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::Error> create_with_lengths_and_iso_8601_time_zone_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length, icu4x::IsoTimeZoneOptions zone_options);
-
-  inline std::string format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::CustomTimeZone& time_zone) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const;
 
   inline const icu4x::capi::GregorianZonedDateTimeFormatter* AsFFI() const;
   inline icu4x::capi::GregorianZonedDateTimeFormatter* AsFFI();

@@ -38,6 +38,7 @@ include!("short_quarter_relative_time_format_data_v1_marker.rs.data");
 include!("short_second_relative_time_format_data_v1_marker.rs.data");
 include!("short_week_relative_time_format_data_v1_marker.rs.data");
 include!("short_year_relative_time_format_data_v1_marker.rs.data");
+include!("transliterator_rules_v1_marker.rs.data");
 include!("units_display_name_v1_marker.rs.data");
 include!("units_essentials_v1_marker.rs.data");
 include!("units_info_v1_marker.rs.data");
@@ -57,7 +58,7 @@ include!("units_trie_v1_marker.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -110,6 +111,7 @@ macro_rules! impl_data_provider {
         impl_short_second_relative_time_format_data_v1_marker!($provider);
         impl_short_week_relative_time_format_data_v1_marker!($provider);
         impl_short_year_relative_time_format_data_v1_marker!($provider);
+        impl_transliterator_rules_v1_marker!($provider);
         impl_units_display_name_v1_marker!($provider);
         impl_units_essentials_v1_marker!($provider);
         impl_units_info_v1_marker!($provider);
@@ -119,7 +121,7 @@ macro_rules! impl_data_provider {
 #[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.path.hashed() {
@@ -162,6 +164,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::transliterate::provider::TransliteratorRulesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::units::UnitsDisplayNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::units::provider::UnitsInfoV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::units::provider::UnitsInfoV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

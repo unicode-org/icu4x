@@ -13,7 +13,7 @@
 
 
 typedef struct WeekOf {
-  uint16_t week;
+  uint8_t week;
   WeekRelativeUnit unit;
 } WeekOf;
 

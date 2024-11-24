@@ -12,11 +12,10 @@
 
 
 typedef enum DisplayNamesStyle {
-  DisplayNamesStyle_Auto = 0,
-  DisplayNamesStyle_Narrow = 1,
-  DisplayNamesStyle_Short = 2,
-  DisplayNamesStyle_Long = 3,
-  DisplayNamesStyle_Menu = 4,
+  DisplayNamesStyle_Narrow = 0,
+  DisplayNamesStyle_Short = 1,
+  DisplayNamesStyle_Long = 2,
+  DisplayNamesStyle_Menu = 3,
 } DisplayNamesStyle;
 
 typedef struct DisplayNamesStyle_option {union { DisplayNamesStyle ok; }; bool is_ok; } DisplayNamesStyle_option;

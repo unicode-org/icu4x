@@ -1,6 +1,15 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 мин"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин"
+        }
+      ]
+    ]
   }
 }

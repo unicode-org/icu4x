@@ -5,25 +5,25 @@
 //! This module contains types and implementations for the Julian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{julian::Julian, Date, DateTime};
+//! use icu::calendar::{cal::Julian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
 //!
 //! // `Date` checks
-//! assert_eq!(date_julian.year().number, 1969);
+//! assert_eq!(date_julian.year().era_year_or_extended(), 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_julian.date.year().number, 1969);
+//! assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
 //! assert_eq!(datetime_julian.date.month().ordinal, 12);
 //! assert_eq!(datetime_julian.date.day_of_month().0, 20);
 //! assert_eq!(datetime_julian.time.hour.number(), 13);
@@ -34,7 +34,6 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::gregorian::year_as_gregorian;
 use crate::iso::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
@@ -103,33 +102,37 @@ impl Calendar for Julian {
     type DateInner = JulianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ce") || era.0 == tinystr!(16, "julian") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bce") || era.0 == tinystr!(16, "julian-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)
@@ -178,8 +181,8 @@ impl Calendar for Julian {
 
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_gregorian(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_julian(date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -187,7 +190,7 @@ impl Calendar for Julian {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -202,9 +205,9 @@ impl Calendar for Julian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            prev_year: year_as_julian(prev_year),
             days_in_prev_year: Julian::days_in_year_direct(prev_year),
-            next_year: crate::gregorian::year_as_gregorian(next_year),
+            next_year: year_as_julian(next_year),
         }
     }
 
@@ -217,6 +220,29 @@ impl Calendar for Julian {
     }
 }
 
+fn year_as_julian(year: i32) -> types::YearInfo {
+    if year > 0 {
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "julian").into(),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                era_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
+    } else {
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "julian-inverse").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
+                era_year: 1_i32.saturating_sub(year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            },
+        )
+    }
+}
 impl Julian {
     /// Construct a new Julian Calendar
     pub fn new() -> Self {
@@ -256,14 +282,14 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian = Date::try_new_julian_date(1969, 12, 20)
+    /// let date_julian = Date::try_new_julian(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.year().number, 1969);
+    /// assert_eq!(date_julian.year().era_year_or_extended(), 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
-    pub fn try_new_julian_date(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
+    pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
@@ -278,18 +304,17 @@ impl DateTime<Julian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_julian =
-    ///     DateTime::try_new_julian_datetime(1969, 12, 20, 13, 1, 0)
-    ///         .expect("Failed to initialize Julian DateTime instance.");
+    /// let datetime_julian = DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
+    ///     .expect("Failed to initialize Julian DateTime instance.");
     ///
-    /// assert_eq!(datetime_julian.date.year().number, 1969);
+    /// assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
     /// assert_eq!(datetime_julian.date.month().ordinal, 12);
     /// assert_eq!(datetime_julian.date.day_of_month().0, 20);
     /// assert_eq!(datetime_julian.time.hour.number(), 13);
     /// assert_eq!(datetime_julian.time.minute.number(), 1);
     /// assert_eq!(datetime_julian.time.second.number(), 0);
     /// ```
-    pub fn try_new_julian_datetime(
+    pub fn try_new_julian(
         year: i32,
         month: u8,
         day: u8,
@@ -298,7 +323,7 @@ impl DateTime<Julian> {
         second: u8,
     ) -> Result<DateTime<Julian>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_julian_date(year, month, day)?,
+            date: Date::try_new_julian(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -312,28 +337,28 @@ mod test {
     #[test]
     fn test_day_iso_to_julian() {
         // March 1st 200 is same on both calendars
-        let iso_date = Date::try_new_iso_date(200, 3, 1).unwrap();
+        let iso_date = Date::try_new_iso(200, 3, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
         assert_eq!(julian_date.0.year, 200);
         assert_eq!(julian_date.0.month, 3);
         assert_eq!(julian_date.0.day, 1);
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
-        let iso_date = Date::try_new_iso_date(200, 2, 28).unwrap();
+        let iso_date = Date::try_new_iso(200, 2, 28).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
         assert_eq!(julian_date.0.year, 200);
         assert_eq!(julian_date.0.month, 2);
         assert_eq!(julian_date.0.day, 29);
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
-        let iso_date = Date::try_new_iso_date(400, 3, 1).unwrap();
+        let iso_date = Date::try_new_iso(400, 3, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
         assert_eq!(julian_date.0.year, 400);
         assert_eq!(julian_date.0.month, 2);
         assert_eq!(julian_date.0.day, 29);
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
-        let iso_date = Date::try_new_iso_date(2022, 1, 1).unwrap();
+        let iso_date = Date::try_new_iso(2022, 1, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
         assert_eq!(julian_date.0.year, 2021);
         assert_eq!(julian_date.0.month, 12);
@@ -343,40 +368,40 @@ mod test {
     #[test]
     fn test_day_julian_to_iso() {
         // March 1st 200 is same on both calendars
-        let julian_date = Date::try_new_julian_date(200, 3, 1).unwrap();
+        let julian_date = Date::try_new_julian(200, 3, 1).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
-        let iso_expected_date = Date::try_new_iso_date(200, 3, 1).unwrap();
+        let iso_expected_date = Date::try_new_iso(200, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
-        let julian_date = Date::try_new_julian_date(200, 2, 29).unwrap();
+        let julian_date = Date::try_new_julian(200, 2, 29).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
-        let iso_expected_date = Date::try_new_iso_date(200, 2, 28).unwrap();
+        let iso_expected_date = Date::try_new_iso(200, 2, 28).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
-        let julian_date = Date::try_new_julian_date(400, 2, 29).unwrap();
+        let julian_date = Date::try_new_julian(400, 2, 29).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
-        let iso_expected_date = Date::try_new_iso_date(400, 3, 1).unwrap();
+        let iso_expected_date = Date::try_new_iso(400, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
-        let julian_date = Date::try_new_julian_date(2021, 12, 19).unwrap();
+        let julian_date = Date::try_new_julian(2021, 12, 19).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
-        let iso_expected_date = Date::try_new_iso_date(2022, 1, 1).unwrap();
+        let iso_expected_date = Date::try_new_iso(2022, 1, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
 
         // March 1st, 2022 (iso) = Feb 16, 2022 (julian)
-        let julian_date = Date::try_new_julian_date(2022, 2, 16).unwrap();
+        let julian_date = Date::try_new_julian(2022, 2, 16).unwrap();
         let iso_date = Julian.date_to_iso(julian_date.inner());
-        let iso_expected_date = Date::try_new_iso_date(2022, 3, 1).unwrap();
+        let iso_expected_date = Date::try_new_iso(2022, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
     }
 
     #[test]
     fn test_roundtrip_negative() {
         // https://github.com/unicode-org/icu4x/issues/2254
-        let iso_date = Date::try_new_iso_date(-1000, 3, 3).unwrap();
+        let iso_date = Date::try_new_iso(-1000, 3, 3).unwrap();
         let julian = iso_date.to_calendar(Julian::new());
         let recovered_iso = julian.to_iso();
         assert_eq!(iso_date, recovered_iso);
@@ -395,8 +420,8 @@ mod test {
             iso_day: u8,
             expected_year: i32,
             expected_era: Era,
-            expected_month: u32,
-            expected_day: u32,
+            expected_month: u8,
+            expected_day: u8,
         }
 
         let cases = [
@@ -406,7 +431,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 3,
             },
@@ -416,7 +441,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 2,
             },
@@ -426,7 +451,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -436,7 +461,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -446,7 +471,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 28,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 30,
             },
@@ -456,7 +481,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -466,7 +491,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -476,7 +501,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -486,7 +511,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -495,9 +520,9 @@ mod test {
         for case in cases {
             let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(case.fixed_date));
             let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
-            assert_eq!(julian_from_fixed.year().number, case.expected_year,
+            assert_eq!(julian_from_fixed.year().era_year().unwrap(), case.expected_year,
                 "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-            assert_eq!(julian_from_fixed.year().era, case.expected_era,
+            assert_eq!(julian_from_fixed.year().standard_era().unwrap(), case.expected_era,
                 "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
             assert_eq!(julian_from_fixed.month().ordinal, case.expected_month,
                 "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
@@ -505,7 +530,7 @@ mod test {
                 "Failed day check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
 
             let iso_date_man: Date<Iso> =
-                Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day)
+                Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
                     .expect("Failed to initialize ISO date for {case:?}");
             let julian_date_man: Date<Julian> = Date::new_from_iso(iso_date_man, Julian);
             assert_eq!(iso_from_fixed, iso_date_man,
@@ -560,6 +585,6 @@ mod test {
         assert!(Julian::is_leap_year(0, ()));
         assert!(Julian::is_leap_year(-4, ()));
 
-        Date::try_new_julian_date(2020, 2, 29).unwrap();
+        Date::try_new_julian(2020, 2, 29).unwrap();
     }
 }

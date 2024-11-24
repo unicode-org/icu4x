@@ -14,11 +14,8 @@ use crate::dimension::provider::units_essentials::CompoundCount;
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::units_essentials)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
 #[repr(u8)]
 pub enum PowerValue {
     Two,
@@ -27,11 +24,8 @@ pub enum PowerValue {
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::units_essentials)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
 pub enum PatternKey {
     Binary(u8),
     Decimal(i8),
@@ -75,12 +69,12 @@ pub struct PatternKeyULE(u8);
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  2. PatternKeyULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         for &byte in bytes.iter() {
             // Ensure the first two bits (b7 & b6) are not 11.
             if (byte & 0b1100_0000) == 0b1100_0000 {
@@ -182,12 +176,12 @@ fn test_pattern_key_ule() {
 
     let binary = PatternKey::Binary(0b0000_1111);
     let binary_ule = binary.to_unaligned();
-    PatternKeyULE::validate_byte_slice(&[binary_ule.0]).unwrap();
+    PatternKeyULE::validate_bytes(&[binary_ule.0]).unwrap();
     assert_eq!(binary_ule.0, 0b0000_1111);
 
     let decimal = PatternKey::Decimal(0b0000_1111);
     let decimal_ule = decimal.to_unaligned();
-    PatternKeyULE::validate_byte_slice(&[decimal_ule.0]).unwrap();
+    PatternKeyULE::validate_bytes(&[decimal_ule.0]).unwrap();
     assert_eq!(decimal_ule.0, 0b0100_1111);
 
     let power2 = PatternKey::Power {
@@ -195,7 +189,7 @@ fn test_pattern_key_ule() {
         count: CompoundCount::Two,
     };
     let power2_ule = power2.to_unaligned();
-    PatternKeyULE::validate_byte_slice(&[power2_ule.0]).unwrap();
+    PatternKeyULE::validate_bytes(&[power2_ule.0]).unwrap();
     assert_eq!(power2_ule.0, 0b1010_0010);
 
     let power3 = PatternKey::Power {
@@ -203,7 +197,7 @@ fn test_pattern_key_ule() {
         count: CompoundCount::Two,
     };
     let power3_ule = power3.to_unaligned();
-    PatternKeyULE::validate_byte_slice(&[power3_ule.0]).unwrap();
+    PatternKeyULE::validate_bytes(&[power3_ule.0]).unwrap();
     assert_eq!(power3_ule.0, 0b1011_0010);
 
     let binary = PatternKey::from_unaligned(binary_ule);
@@ -240,13 +234,13 @@ fn test_pattern_key_ule() {
     // Test invalid bytes
     let unvalidated_bytes = [0b1100_0000];
     assert_eq!(
-        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        PatternKeyULE::validate_bytes(&unvalidated_bytes),
         Err(UleError::parse::<PatternKeyULE>())
     );
 
     let unvalidated_bytes = [0b1000_0000];
     assert_eq!(
-        PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
+        PatternKeyULE::validate_bytes(&unvalidated_bytes),
         Err(UleError::parse::<PatternKeyULE>())
     );
 }

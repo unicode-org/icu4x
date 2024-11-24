@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::CustomTimeZone;
+use icu_timezone::{models, CustomZonedDateTime, IxdtfParser, TimeZoneInfo, ZoneVariant};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -37,7 +37,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
     datetime_iso.to_calendar(Gregorian)
 }
 
-/// Parse a [`DateTime`] and [`CustomTimeZone`] from a string.
+/// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
 /// string must take a specific form of the ISO 8601 format:
@@ -55,11 +55,25 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
-pub fn parse_zoned_gregorian_from_str(input: &str) -> (DateTime<Gregorian>, CustomTimeZone) {
-    let idx = input.rfind(&['+', '-', '\u{2212}', 'Z']).unwrap();
-    #[allow(clippy::indexing_slicing)] // valid index
-    (
-        parse_gregorian_from_str(&input[..idx]),
-        input[idx..].parse().unwrap(),
-    )
+pub fn parse_zoned_gregorian_from_str(
+    input: &str,
+) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
+    let iso_zdt = match IxdtfParser::new().try_iso_from_str(input) {
+        Ok(zdt) => zdt,
+        Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
+            match IxdtfParser::new().try_loose_iso_from_str(input) {
+                Ok(zdt) => {
+                    CustomZonedDateTime {
+                        date: zdt.date,
+                        time: zdt.time,
+                        // For fixture tests, set the zone variant to standard here
+                        zone: zdt.zone.with_zone_variant(ZoneVariant::Standard),
+                    }
+                }
+                Err(e) => panic!("could not parse input: {input}: {e:?}"),
+            }
+        }
+        Err(e) => panic!("could not parse input: {input}: {e:?}"),
+    };
+    iso_zdt.to_calendar(Gregorian)
 }

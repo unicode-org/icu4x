@@ -5,11 +5,29 @@
     "1": "পরের বছর"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 বছর পূর্বে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " বছর পূর্বে"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 বছরে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " বছরে"
+        }
+      ]
+    ]
   }
 }

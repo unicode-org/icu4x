@@ -7,7 +7,6 @@ use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
 use alloc::vec::Vec;
 use core::str::FromStr;
-use writeable::Writeable;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
 ///
@@ -74,13 +73,11 @@ impl Value {
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
     ///
-    /// let value1 = Value::from_str("foo")
-    ///     .expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar")
-    ///     .expect("failed to parse a Value");
+    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
     /// assert!(value1.as_single_subtag().is_some());
     /// assert!(value2.as_single_subtag().is_none());
@@ -95,13 +92,11 @@ impl Value {
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu::locale::extensions::unicode::Value;
-    /// use std::str::FromStr;
     ///
-    /// let value1 = Value::from_str("foo")
-    ///     .expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar")
-    ///     .expect("failed to parse a Value");
+    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
     /// assert!(value1.into_single_subtag().is_some());
     /// assert!(value2.into_single_subtag().is_none());
@@ -120,10 +115,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
@@ -139,10 +131,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// assert_eq!(v.subtag_count(), 0);
@@ -158,10 +147,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
     /// assert_eq!(v.is_empty(), true);
@@ -176,10 +162,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
     /// v.push_subtag(subtag!("bar"));
@@ -202,10 +185,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{
-    ///     extensions::unicode::Value,
-    ///     subtags::subtag,
-    /// };
+    /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
     /// v.push_subtag(subtag!("bar"));
@@ -306,7 +286,7 @@ impl FromStr for Value {
 
 impl PartialEq<&str> for Value {
     fn eq(&self, other: &&str) -> bool {
-        self.writeable_cmp_bytes(other.as_bytes()).is_eq()
+        writeable::cmp_utf8(self, other.as_bytes()).is_eq()
     }
 }
 

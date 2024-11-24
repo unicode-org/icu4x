@@ -7,15 +7,21 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 */
+type DisplayNamesOptions_Obj = {
+    style: DisplayNamesStyle | null;
+    fallback: DisplayNamesFallback | null;
+    languageDisplay: LanguageDisplay | null;
+};
+
 export class DisplayNamesOptions {
 
-    get style() : DisplayNamesStyle;
-    set style(value: DisplayNamesStyle); 
+    get style() : DisplayNamesStyle | null;
+    set style(value: DisplayNamesStyle | null); 
 
-    get fallback() : DisplayNamesFallback;
-    set fallback(value: DisplayNamesFallback); 
+    get fallback() : DisplayNamesFallback | null;
+    set fallback(value: DisplayNamesFallback | null); 
 
-    get languageDisplay() : LanguageDisplay;
-    set languageDisplay(value: LanguageDisplay); 
-    constructor(style: DisplayNamesStyle, fallback: DisplayNamesFallback, languageDisplay: LanguageDisplay);
+    get languageDisplay() : LanguageDisplay | null;
+    set languageDisplay(value: LanguageDisplay | null); 
+    constructor(structObj : DisplayNamesOptions_Obj);
 }

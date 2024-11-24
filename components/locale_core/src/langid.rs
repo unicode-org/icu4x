@@ -10,10 +10,19 @@ use crate::parser::{
     ParserMode, SubtagIterator,
 };
 use crate::subtags;
-use alloc::string::String;
-use writeable::Writeable;
+use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
+///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings. Depending on your use case, two orderings are available:
+///
+/// 1. A string ordering, suitable for stable serialization: [`LanguageIdentifier::strict_cmp`]
+/// 2. A struct ordering, suitable for use with a BTreeSet: [`LanguageIdentifier::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// # Parsing
 ///
@@ -26,20 +35,10 @@ use writeable::Writeable;
 /// At the moment parsing normalizes a well-formed language identifier converting
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
-/// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation is performed.
+/// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// # Ordering
-///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
-///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`LanguageIdentifier::strict_cmp`]
-/// - [`LanguageIdentifier::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
 /// # Examples
 ///
@@ -166,10 +165,9 @@ impl LanguageIdentifier {
             && self.variants.is_empty()
     }
 
-    /// This is a best-effort operation that performs all available levels of canonicalization.
+    /// Normalize the language identifier (operating on UTF-8 formatted byte slices)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -177,13 +175,31 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let lang_id = Self::try_from_utf8(input.as_ref())?;
-        Ok(lang_id.write_to_string().into_owned())
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+        let lang_id = Self::try_from_utf8(input)?;
+        Ok(writeable::to_string_or_borrow(&lang_id, input))
+    }
+
+    /// Normalize the language identifier (operating on strings)
+    ///
+    /// This operation will normalize casing and the separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    ///
+    /// assert_eq!(
+    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
+    /// );
+    /// ```
+    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -196,31 +212,50 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
+    /// Sorting a list of langids with this method requires converting one of them to a string:
+    ///
     /// ```
     /// use icu::locale::LanguageIdentifier;
     /// use std::cmp::Ordering;
+    /// use writeable::Writeable;
     ///
+    /// // Random input order:
     /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-Adlm",
-    ///     "und-GB",
-    ///     "und-ZA",
+    ///     "ar-Latn",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
     ///     "und-fonipa",
-    ///     "zh",
+    ///     "zh-Hant",
+    ///     "ar-SA",
     /// ];
     ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
-    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(|a, b| {
+    ///     let b = b.write_to_string();
+    ///     a.strict_cmp(b.as_bytes())
+    /// });
+    /// let strict_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted alphabetically
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, strict_cmp_strings);
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_utf8(self, other)
     }
 
     pub(crate) fn as_tuple(
@@ -242,7 +277,47 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
-    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    /// This method returns a nonsensical ordering derived from the fields of the struct:
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// // Input strings, sorted alphabetically
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    /// assert!(bcp47_strings.windows(2).all(|w| w[0] < w[1]));
+    ///
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(LanguageIdentifier::total_cmp);
+    /// let total_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted arbitrarily
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-SA",
+    ///     "ar-Latn",
+    ///     "und-fonipa",
+    ///     "zh-TW",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, total_cmp_strings);
+    /// ```
+    ///
+    /// Use a wrapper to add a [`LanguageIdentifier`] to a [`BTreeSet`]:
     ///
     /// ```no_run
     /// use icu::locale::LanguageIdentifier;
@@ -347,14 +422,14 @@ impl LanguageIdentifier {
     /// Executes `f` on each subtag string of this `LanguageIdentifier`, with every string in
     /// lowercase ascii form.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -368,10 +443,10 @@ impl LanguageIdentifier {
     {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
-            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(script.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         if let Some(ref region) = self.region {
-            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(region.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         for variant in self.variants.iter() {
             f(variant.as_str())?;
@@ -382,14 +457,14 @@ impl LanguageIdentifier {
     /// Writes this `LanguageIdentifier` to a sink, replacing uppercase ascii chars with
     /// lowercase ascii chars.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -410,19 +485,6 @@ impl LanguageIdentifier {
             }
             sink.write_str(subtag)
         })
-    }
-}
-
-impl AsRef<LanguageIdentifier> for LanguageIdentifier {
-    #[inline(always)]
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-
-impl AsMut<LanguageIdentifier> for LanguageIdentifier {
-    fn as_mut(&mut self) -> &mut Self {
-        self
     }
 }
 

@@ -5,11 +5,35 @@
     "1": "next year"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- y"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " y"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ y"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " y"
+        }
+      ]
+    ]
   }
 }

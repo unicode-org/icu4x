@@ -34,11 +34,8 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemap::provider::exceptions),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::exceptions))]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMapExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -46,7 +43,7 @@ pub struct CaseMapExceptions<'data> {
     pub exceptions: VarZeroVec<'data, ExceptionULE>,
 }
 
-impl<'data> CaseMapExceptions<'data> {
+impl CaseMapExceptions<'_> {
     /// Obtain the exception at index `idx`. Will
     /// return a default value if not present (GIGO behavior),
     /// as these indices should come from a paired CaseMapData object
@@ -447,7 +444,7 @@ pub struct DecodedException<'a> {
     pub full: Option<[Cow<'a, str>; 4]>,
 }
 
-impl<'a> DecodedException<'a> {
+impl DecodedException<'_> {
     /// Convert to a wire-format encodeable (VarULE-encodeable) [`Exception`]
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;

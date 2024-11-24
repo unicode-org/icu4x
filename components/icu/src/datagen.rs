@@ -89,16 +89,20 @@ pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError
 
 #[test]
 fn test_markers_for_bin() {
+    let hashset =
+        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
+    let mut sorted = hashset.into_iter().collect::<Vec<_>>();
+    sorted.sort();
     assert_eq!(
-        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
-        Ok(HashSet::from_iter([
-            crate::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            crate::datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
-            crate::datetime::provider::calendar::TimeLengthsV1Marker::INFO,
-            crate::datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
-            crate::calendar::provider::WeekDataV1Marker::INFO,
-            crate::decimal::provider::DecimalSymbolsV1Marker::INFO,
-            crate::plurals::provider::OrdinalV1Marker::INFO,
-        ]))
+        sorted,
+        &[
+            crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
+            crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
+            crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
+            crate::datetime::provider::neo::GluePatternV1Marker::INFO,
+            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
+            crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
+            crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
+        ]
     );
 }

@@ -34,6 +34,8 @@ tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true,  features = ["yoke"] }
 
+icu_collections = { workspace = true }
+
 icu_locale_data = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -52,8 +54,8 @@ bench = false  # This option is required for Benchmark CI
 default = ["compiled_data"]
 std = []
 bench = ["serde"]
-serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake"]
+serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde", "icu_collections/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_locale_data"]
 
 [[bench]]

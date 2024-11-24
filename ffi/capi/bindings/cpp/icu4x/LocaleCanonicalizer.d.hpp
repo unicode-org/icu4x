@@ -16,7 +16,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct LocaleCanonicalizer; }
 class LocaleCanonicalizer;
-class Error;
+class DataError;
 class TransformResult;
 }
 
@@ -31,9 +31,9 @@ namespace icu4x {
 class LocaleCanonicalizer {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::Error> create(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::Error> create_extended(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create_extended(const icu4x::DataProvider& provider);
 
   inline icu4x::TransformResult canonicalize(icu4x::Locale& locale) const;
 

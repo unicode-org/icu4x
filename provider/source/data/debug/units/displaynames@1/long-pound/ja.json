@@ -1,6 +1,15 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 ポンド"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ポンド"
+        }
+      ]
+    ]
   }
 }

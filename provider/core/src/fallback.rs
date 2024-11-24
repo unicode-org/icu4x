@@ -52,9 +52,9 @@ pub struct LocaleFallbackConfig {
     /// Retain the language and script subtags until the final step:
     ///
     /// ```
-    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
+    /// use icu::locale::locale;
     /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
@@ -80,9 +80,9 @@ pub struct LocaleFallbackConfig {
     /// Retain the region subtag until the final step:
     ///
     /// ```
-    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
+    /// use icu::locale::locale;
     /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.

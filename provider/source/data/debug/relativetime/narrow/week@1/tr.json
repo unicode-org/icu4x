@@ -5,11 +5,29 @@
     "1": "gelecek hf."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 hf. önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hf. önce"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 hf. sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hf. sonra"
+        }
+      ]
+    ]
   }
 }

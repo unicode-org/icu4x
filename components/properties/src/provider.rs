@@ -16,18 +16,38 @@
 //! Read more about data providers: [`icu_provider`]
 
 pub mod names;
-pub use names::*;
 
+pub use names::{
+    BidiClassNameToValueV2Marker, BidiClassValueToLongNameV1Marker,
+    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV2Marker,
+    CanonicalCombiningClassValueToLongNameV1Marker,
+    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV2Marker,
+    EastAsianWidthValueToLongNameV1Marker, EastAsianWidthValueToShortNameV1Marker,
+    GeneralCategoryMaskNameToValueV2Marker, GeneralCategoryNameToValueV2Marker,
+    GeneralCategoryValueToLongNameV1Marker, GeneralCategoryValueToShortNameV1Marker,
+    GraphemeClusterBreakNameToValueV2Marker, GraphemeClusterBreakValueToLongNameV1Marker,
+    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV2Marker,
+    HangulSyllableTypeValueToLongNameV1Marker, HangulSyllableTypeValueToShortNameV1Marker,
+    IndicSyllabicCategoryNameToValueV2Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
+    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV2Marker,
+    JoiningTypeValueToLongNameV1Marker, JoiningTypeValueToShortNameV1Marker,
+    LineBreakNameToValueV2Marker, LineBreakValueToLongNameV1Marker,
+    LineBreakValueToShortNameV1Marker, ScriptNameToValueV2Marker, ScriptValueToLongNameV1Marker,
+    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV2Marker,
+    SentenceBreakValueToLongNameV1Marker, SentenceBreakValueToShortNameV1Marker,
+    WordBreakNameToValueV2Marker, WordBreakValueToLongNameV1Marker,
+    WordBreakValueToShortNameV1Marker,
+};
+
+use crate::bidi::BidiMirroringGlyph;
+pub use crate::props::gc::GeneralCategoryULE;
 use crate::script::ScriptWithExt;
-use crate::Script;
-
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-
 use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
@@ -48,22 +68,21 @@ const _: () = {
     pub mod icu {
         pub use crate as properties;
         pub use icu_collections as collections;
-        pub use icu_properties_data::icu_locale as locale;
     }
     make_provider!(Baked);
     impl_alnum_v1_marker!(Baked);
     impl_alphabetic_v1_marker!(Baked);
     impl_ascii_hex_digit_v1_marker!(Baked);
     impl_basic_emoji_v1_marker!(Baked);
-    impl_bidi_auxiliary_properties_v1_marker!(Baked);
-    impl_bidi_class_name_to_value_v1_marker!(Baked);
+    impl_bidi_class_name_to_value_v2_marker!(Baked);
     impl_bidi_class_v1_marker!(Baked);
     impl_bidi_class_value_to_long_name_v1_marker!(Baked);
     impl_bidi_class_value_to_short_name_v1_marker!(Baked);
     impl_bidi_control_v1_marker!(Baked);
     impl_bidi_mirrored_v1_marker!(Baked);
+    impl_bidi_mirroring_glyph_v1_marker!(Baked);
     impl_blank_v1_marker!(Baked);
-    impl_canonical_combining_class_name_to_value_v1_marker!(Baked);
+    impl_canonical_combining_class_name_to_value_v2_marker!(Baked);
     impl_canonical_combining_class_v1_marker!(Baked);
     impl_canonical_combining_class_value_to_long_name_v1_marker!(Baked);
     impl_canonical_combining_class_value_to_short_name_v1_marker!(Baked);
@@ -80,7 +99,7 @@ const _: () = {
     impl_default_ignorable_code_point_v1_marker!(Baked);
     impl_deprecated_v1_marker!(Baked);
     impl_diacritic_v1_marker!(Baked);
-    impl_east_asian_width_name_to_value_v1_marker!(Baked);
+    impl_east_asian_width_name_to_value_v2_marker!(Baked);
     impl_east_asian_width_v1_marker!(Baked);
     impl_east_asian_width_value_to_long_name_v1_marker!(Baked);
     impl_east_asian_width_value_to_short_name_v1_marker!(Baked);
@@ -89,28 +108,23 @@ const _: () = {
     impl_emoji_modifier_v1_marker!(Baked);
     impl_emoji_presentation_v1_marker!(Baked);
     impl_emoji_v1_marker!(Baked);
-    impl_exemplar_characters_auxiliary_v1_marker!(Baked);
-    impl_exemplar_characters_index_v1_marker!(Baked);
-    impl_exemplar_characters_main_v1_marker!(Baked);
-    impl_exemplar_characters_numbers_v1_marker!(Baked);
-    impl_exemplar_characters_punctuation_v1_marker!(Baked);
     impl_extended_pictographic_v1_marker!(Baked);
     impl_extender_v1_marker!(Baked);
     impl_full_composition_exclusion_v1_marker!(Baked);
-    impl_general_category_mask_name_to_value_v1_marker!(Baked);
-    impl_general_category_name_to_value_v1_marker!(Baked);
+    impl_general_category_mask_name_to_value_v2_marker!(Baked);
+    impl_general_category_name_to_value_v2_marker!(Baked);
     impl_general_category_v1_marker!(Baked);
     impl_general_category_value_to_long_name_v1_marker!(Baked);
     impl_general_category_value_to_short_name_v1_marker!(Baked);
     impl_graph_v1_marker!(Baked);
     impl_grapheme_base_v1_marker!(Baked);
-    impl_grapheme_cluster_break_name_to_value_v1_marker!(Baked);
+    impl_grapheme_cluster_break_name_to_value_v2_marker!(Baked);
     impl_grapheme_cluster_break_v1_marker!(Baked);
     impl_grapheme_cluster_break_value_to_long_name_v1_marker!(Baked);
     impl_grapheme_cluster_break_value_to_short_name_v1_marker!(Baked);
     impl_grapheme_extend_v1_marker!(Baked);
     impl_grapheme_link_v1_marker!(Baked);
-    impl_hangul_syllable_type_name_to_value_v1_marker!(Baked);
+    impl_hangul_syllable_type_name_to_value_v2_marker!(Baked);
     impl_hangul_syllable_type_v1_marker!(Baked);
     impl_hangul_syllable_type_value_to_long_name_v1_marker!(Baked);
     impl_hangul_syllable_type_value_to_short_name_v1_marker!(Baked);
@@ -121,16 +135,16 @@ const _: () = {
     impl_ideographic_v1_marker!(Baked);
     impl_ids_binary_operator_v1_marker!(Baked);
     impl_ids_trinary_operator_v1_marker!(Baked);
-    impl_indic_syllabic_category_name_to_value_v1_marker!(Baked);
+    impl_indic_syllabic_category_name_to_value_v2_marker!(Baked);
     impl_indic_syllabic_category_v1_marker!(Baked);
     impl_indic_syllabic_category_value_to_long_name_v1_marker!(Baked);
     impl_indic_syllabic_category_value_to_short_name_v1_marker!(Baked);
     impl_join_control_v1_marker!(Baked);
-    impl_joining_type_name_to_value_v1_marker!(Baked);
+    impl_joining_type_name_to_value_v2_marker!(Baked);
     impl_joining_type_v1_marker!(Baked);
     impl_joining_type_value_to_long_name_v1_marker!(Baked);
     impl_joining_type_value_to_short_name_v1_marker!(Baked);
-    impl_line_break_name_to_value_v1_marker!(Baked);
+    impl_line_break_name_to_value_v2_marker!(Baked);
     impl_line_break_v1_marker!(Baked);
     impl_line_break_value_to_long_name_v1_marker!(Baked);
     impl_line_break_value_to_short_name_v1_marker!(Baked);
@@ -149,13 +163,13 @@ const _: () = {
     impl_quotation_mark_v1_marker!(Baked);
     impl_radical_v1_marker!(Baked);
     impl_regional_indicator_v1_marker!(Baked);
-    impl_script_name_to_value_v1_marker!(Baked);
+    impl_script_name_to_value_v2_marker!(Baked);
     impl_script_v1_marker!(Baked);
     impl_script_value_to_long_name_v1_marker!(Baked);
     impl_script_value_to_short_name_v1_marker!(Baked);
     impl_script_with_extensions_property_v1_marker!(Baked);
     impl_segment_starter_v1_marker!(Baked);
-    impl_sentence_break_name_to_value_v1_marker!(Baked);
+    impl_sentence_break_name_to_value_v2_marker!(Baked);
     impl_sentence_break_v1_marker!(Baked);
     impl_sentence_break_value_to_long_name_v1_marker!(Baked);
     impl_sentence_break_value_to_short_name_v1_marker!(Baked);
@@ -166,7 +180,7 @@ const _: () = {
     impl_uppercase_v1_marker!(Baked);
     impl_variation_selector_v1_marker!(Baked);
     impl_white_space_v1_marker!(Baked);
-    impl_word_break_name_to_value_v1_marker!(Baked);
+    impl_word_break_name_to_value_v2_marker!(Baked);
     impl_word_break_v1_marker!(Baked);
     impl_word_break_value_to_long_name_v1_marker!(Baked);
     impl_word_break_value_to_short_name_v1_marker!(Baked);
@@ -181,9 +195,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     AlphabeticV1Marker::INFO,
     AsciiHexDigitV1Marker::INFO,
     BasicEmojiV1Marker::INFO,
-    bidi_data::BidiAuxiliaryPropertiesV1Marker::INFO,
     BidiControlV1Marker::INFO,
     BidiMirroredV1Marker::INFO,
+    BidiMirroringGlyphV1Marker::INFO,
     BlankV1Marker::INFO,
     CasedV1Marker::INFO,
     CaseIgnorableV1Marker::INFO,
@@ -203,11 +217,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     EmojiModifierV1Marker::INFO,
     EmojiPresentationV1Marker::INFO,
     EmojiV1Marker::INFO,
-    ExemplarCharactersAuxiliaryV1Marker::INFO,
-    ExemplarCharactersIndexV1Marker::INFO,
-    ExemplarCharactersMainV1Marker::INFO,
-    ExemplarCharactersNumbersV1Marker::INFO,
-    ExemplarCharactersPunctuationV1Marker::INFO,
     ExtendedPictographicV1Marker::INFO,
     ExtenderV1Marker::INFO,
     FullCompositionExclusionV1Marker::INFO,
@@ -251,59 +260,56 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     XdigitV1Marker::INFO,
     XidContinueV1Marker::INFO,
     XidStartV1Marker::INFO,
-    names::BidiClassNameToValueV1Marker::INFO,
+    BidiClassNameToValueV2Marker::INFO,
     BidiClassV1Marker::INFO,
-    names::BidiClassValueToLongNameV1Marker::INFO,
-    names::BidiClassValueToShortNameV1Marker::INFO,
-    names::CanonicalCombiningClassNameToValueV1Marker::INFO,
+    BidiClassValueToLongNameV1Marker::INFO,
+    BidiClassValueToShortNameV1Marker::INFO,
+    CanonicalCombiningClassNameToValueV2Marker::INFO,
     CanonicalCombiningClassV1Marker::INFO,
-    names::CanonicalCombiningClassValueToLongNameV1Marker::INFO,
-    names::CanonicalCombiningClassValueToShortNameV1Marker::INFO,
-    names::EastAsianWidthNameToValueV1Marker::INFO,
+    CanonicalCombiningClassValueToLongNameV1Marker::INFO,
+    CanonicalCombiningClassValueToShortNameV1Marker::INFO,
+    EastAsianWidthNameToValueV2Marker::INFO,
     EastAsianWidthV1Marker::INFO,
-    names::EastAsianWidthValueToLongNameV1Marker::INFO,
-    names::EastAsianWidthValueToShortNameV1Marker::INFO,
-    names::GeneralCategoryMaskNameToValueV1Marker::INFO,
-    names::GeneralCategoryNameToValueV1Marker::INFO,
+    EastAsianWidthValueToLongNameV1Marker::INFO,
+    EastAsianWidthValueToShortNameV1Marker::INFO,
+    GeneralCategoryMaskNameToValueV2Marker::INFO,
+    GeneralCategoryNameToValueV2Marker::INFO,
     GeneralCategoryV1Marker::INFO,
-    names::GeneralCategoryValueToLongNameV1Marker::INFO,
-    names::GeneralCategoryValueToShortNameV1Marker::INFO,
-    names::GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GeneralCategoryValueToLongNameV1Marker::INFO,
+    GeneralCategoryValueToShortNameV1Marker::INFO,
+    GraphemeClusterBreakNameToValueV2Marker::INFO,
     GraphemeClusterBreakV1Marker::INFO,
-    names::GraphemeClusterBreakValueToLongNameV1Marker::INFO,
-    names::GraphemeClusterBreakValueToShortNameV1Marker::INFO,
-    names::HangulSyllableTypeNameToValueV1Marker::INFO,
+    GraphemeClusterBreakValueToLongNameV1Marker::INFO,
+    GraphemeClusterBreakValueToShortNameV1Marker::INFO,
+    HangulSyllableTypeNameToValueV2Marker::INFO,
     HangulSyllableTypeV1Marker::INFO,
-    names::HangulSyllableTypeValueToLongNameV1Marker::INFO,
-    names::HangulSyllableTypeValueToShortNameV1Marker::INFO,
-    names::IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    HangulSyllableTypeValueToLongNameV1Marker::INFO,
+    HangulSyllableTypeValueToShortNameV1Marker::INFO,
+    IndicSyllabicCategoryNameToValueV2Marker::INFO,
     IndicSyllabicCategoryV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
-    names::JoiningTypeNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
+    IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
+    JoiningTypeNameToValueV2Marker::INFO,
     JoiningTypeV1Marker::INFO,
-    names::JoiningTypeValueToLongNameV1Marker::INFO,
-    names::JoiningTypeValueToShortNameV1Marker::INFO,
-    names::LineBreakNameToValueV1Marker::INFO,
+    JoiningTypeValueToLongNameV1Marker::INFO,
+    JoiningTypeValueToShortNameV1Marker::INFO,
+    LineBreakNameToValueV2Marker::INFO,
     LineBreakV1Marker::INFO,
-    names::LineBreakValueToLongNameV1Marker::INFO,
-    names::LineBreakValueToShortNameV1Marker::INFO,
-    names::ScriptNameToValueV1Marker::INFO,
+    LineBreakValueToLongNameV1Marker::INFO,
+    LineBreakValueToShortNameV1Marker::INFO,
+    ScriptNameToValueV2Marker::INFO,
     ScriptV1Marker::INFO,
-    names::ScriptValueToLongNameV1Marker::INFO,
-    names::ScriptValueToShortNameV1Marker::INFO,
-    names::SentenceBreakNameToValueV1Marker::INFO,
+    ScriptValueToLongNameV1Marker::INFO,
+    ScriptValueToShortNameV1Marker::INFO,
+    SentenceBreakNameToValueV2Marker::INFO,
     SentenceBreakV1Marker::INFO,
-    names::SentenceBreakValueToLongNameV1Marker::INFO,
-    names::SentenceBreakValueToShortNameV1Marker::INFO,
-    names::WordBreakNameToValueV1Marker::INFO,
+    SentenceBreakValueToLongNameV1Marker::INFO,
+    SentenceBreakValueToShortNameV1Marker::INFO,
+    WordBreakNameToValueV2Marker::INFO,
     WordBreakV1Marker::INFO,
-    names::WordBreakValueToLongNameV1Marker::INFO,
-    names::WordBreakValueToShortNameV1Marker::INFO,
+    WordBreakValueToLongNameV1Marker::INFO,
+    WordBreakValueToShortNameV1Marker::INFO,
 ];
-
-// include the specialized structs for the compact representation of Bidi property data
-pub mod bidi_data;
 
 /// A set of characters which share a particular property value.
 ///
@@ -383,11 +389,8 @@ pub mod bidi_data;
     marker(XidStartV1Marker, "props/XIDS@1", singleton)
 )]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyCodePointSetV1<'data> {
@@ -396,217 +399,6 @@ pub enum PropertyCodePointSetV1<'data> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-
-/// A map efficiently storing data about individual characters.
-///
-/// This data enum is extensible, more backends may be added in the future.
-/// Old data can be used with newer code but not vice versa.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
-pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
-    /// A codepoint trie storing the data
-    CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
-    // new variants should go BELOW existing ones
-    // Serde serializes based on variant name and index in the enum
-    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-macro_rules! data_struct_generic {
-    ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
-        $(
-            #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
-            #[derive(Debug, Default)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(databake::Bake),
-                databake(path = icu_properties::provider),
-            )]
-            pub struct $marker;
-            impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;
-            }
-            impl icu_provider::DataMarker for $marker {
-                const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!($path));
-                    info.is_singleton = true;
-                    info
-                };
-            }
-        )+
-    }
-}
-data_struct_generic!(
-    marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
-    marker(
-        CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClass,
-        "props/ccc@1"
-    ),
-    marker(EastAsianWidthV1Marker, EastAsianWidth, "props/ea@1"),
-    marker(GeneralCategoryV1Marker, GeneralCategory, "props/gc@1"),
-    marker(
-        GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreak,
-        "props/GCB@1"
-    ),
-    marker(
-        HangulSyllableTypeV1Marker,
-        HangulSyllableType,
-        "props/hst@1"
-    ),
-    marker(
-        IndicSyllabicCategoryV1Marker,
-        IndicSyllabicCategory,
-        "props/InSC@1"
-    ),
-    marker(JoiningTypeV1Marker, JoiningType, "props/jt@1"),
-    marker(LineBreakV1Marker, LineBreak, "props/lb@1"),
-    marker(ScriptV1Marker, Script, "props/sc@1"),
-    marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
-    marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
-);
-
-/// A set of characters and strings which share a particular property value.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(
-    marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton),
-    marker(ExemplarCharactersAuxiliaryV1Marker, "props/exemplarchars/auxiliary@1"),
-    marker(ExemplarCharactersIndexV1Marker, "props/exemplarchars/index@1"),
-    marker(ExemplarCharactersMainV1Marker, "props/exemplarchars/main@1"),
-    marker(ExemplarCharactersNumbersV1Marker, "props/exemplarchars/numbers@1"),
-    marker(
-        ExemplarCharactersPunctuationV1Marker,
-        "props/exemplarchars/punctuation@1"
-    )
-)]
-#[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
-pub enum PropertyUnicodeSetV1<'data> {
-    /// A set representing characters in an inversion list, and the strings in a list.
-    CPInversionListStrList(
-        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
-    ),
-    // new variants should go BELOW existing ones
-    // Serde serializes based on variant name and index in the enum
-    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-
-impl<'data> PropertyUnicodeSetV1<'data> {
-    #[inline]
-    pub(crate) fn contains(&self, s: &str) -> bool {
-        match *self {
-            Self::CPInversionListStrList(ref l) => l.contains(s),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn contains32(&self, cp: u32) -> bool {
-        match *self {
-            Self::CPInversionListStrList(ref l) => l.contains32(cp),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn contains_char(&self, ch: char) -> bool {
-        match *self {
-            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_code_point_inversion_list_string_list(
-        l: CodePointInversionListAndStringList<'static>,
-    ) -> Self {
-        Self::CPInversionListStrList(l)
-    }
-
-    #[inline]
-    pub(crate) fn as_code_point_inversion_list_string_list(
-        &'_ self,
-    ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {
-        match *self {
-            Self::CPInversionListStrList(ref l) => Some(l),
-            // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_code_point_inversion_list_string_list(
-        &self,
-    ) -> CodePointInversionListAndStringList<'_> {
-        match *self {
-            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
-        }
-    }
-}
-
-/// A struct that efficiently stores `Script` and `Script_Extensions` property data.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(
-    ScriptWithExtensionsPropertyV1Marker,
-    "props/scx@1",
-    singleton
-))]
-#[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ScriptWithExtensionsPropertyV1<'data> {
-    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
-    /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation
-    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
-    ///
-    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
-    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
-    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
-    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
-    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
-    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
-    ///
-    /// When the lower 10 bits of the value are used as an index, that index is
-    /// used for the outer-level vector of the nested `extensions` structure.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub trie: CodePointTrie<'data, ScriptWithExt>,
-
-    /// This companion structure stores Script_Extensions values, which are
-    /// themselves arrays / vectors. This structure only stores the values for
-    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
-    /// sub-vector represents the Script_Extensions array value for a code point,
-    /// and may also indicate Script value, as described for the `trie` field.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
 // See CodePointSetData for documentation of these functions
@@ -663,6 +455,89 @@ impl<'data> PropertyCodePointSetV1<'data> {
         }
     }
 }
+
+/// A map efficiently storing data about individual characters.
+///
+/// This data enum is extensible, more backends may be added in the future.
+/// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
+    /// A codepoint trie storing the data
+    CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+macro_rules! data_struct_generic {
+    ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
+        $(
+            #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
+            #[derive(Debug, Default)]
+            #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
+            pub struct $marker;
+            impl icu_provider::DynamicDataMarker for $marker {
+                type DataStruct = PropertyCodePointMapV1<'static, $ty>;
+            }
+            impl icu_provider::DataMarker for $marker {
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!($path));
+                    info.is_singleton = true;
+                    info
+                };
+            }
+        )+
+    }
+}
+
+use crate::props::*;
+
+data_struct_generic!(
+    marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
+    marker(
+        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClass,
+        "props/ccc@1"
+    ),
+    marker(EastAsianWidthV1Marker, EastAsianWidth, "props/ea@1"),
+    marker(GeneralCategoryV1Marker, GeneralCategory, "props/gc@1"),
+    marker(
+        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreak,
+        "props/GCB@1"
+    ),
+    marker(
+        HangulSyllableTypeV1Marker,
+        HangulSyllableType,
+        "props/hst@1"
+    ),
+    marker(
+        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategory,
+        "props/InSC@1"
+    ),
+    marker(JoiningTypeV1Marker, JoiningType, "props/jt@1"),
+    marker(LineBreakV1Marker, LineBreak, "props/lb@1"),
+    marker(ScriptV1Marker, Script, "props/sc@1"),
+    marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
+    marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
+    marker(
+        BidiMirroringGlyphV1Marker,
+        BidiMirroringGlyph,
+        "props/Bidi_G@1"
+    ),
+);
 
 // See CodePointMapData for documentation of these functions
 impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
@@ -727,4 +602,119 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
             Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
         }
     }
+}
+
+/// A set of characters and strings which share a particular property value.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton))]
+#[derive(Debug, Eq, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum PropertyUnicodeSetV1<'data> {
+    /// A set representing characters in an inversion list, and the strings in a list.
+    CPInversionListStrList(
+        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
+    ),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+impl<'data> PropertyUnicodeSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains_str(&self, s: &str) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_str(s),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains32(&self, cp: u32) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains32(cp),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains(&self, ch: char) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list_string_list(
+        l: CodePointInversionListAndStringList<'static>,
+    ) -> Self {
+        Self::CPInversionListStrList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list_string_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {
+        match *self {
+            Self::CPInversionListStrList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list_string_list(
+        &self,
+    ) -> CodePointInversionListAndStringList<'_> {
+        match *self {
+            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
+/// A struct that efficiently stores `Script` and `Script_Extensions` property data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    ScriptWithExtensionsPropertyV1Marker,
+    "props/scx@1",
+    singleton
+))]
+#[derive(Debug, Eq, PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct ScriptWithExtensionsPropertyV1<'data> {
+    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
+    /// higher order bits 11..10 will indicate how to deduce the Script value and
+    /// Script_Extensions value, nearly matching the representation
+    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
+    ///
+    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
+    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
+    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
+    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
+    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
+    ///
+    /// When the lower 10 bits of the value are used as an index, that index is
+    /// used for the outer-level vector of the nested `extensions` structure.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
+
+    /// This companion structure stores Script_Extensions values, which are
+    /// themselves arrays / vectors. This structure only stores the values for
+    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
+    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// and may also indicate Script value, as described for the `trie` field.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }

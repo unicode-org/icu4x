@@ -3,11 +3,35 @@
     "0": "cette heure-ci"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ h"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " h"
+        }
+      ]
+    ]
   }
 }

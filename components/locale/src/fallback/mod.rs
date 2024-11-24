@@ -25,8 +25,8 @@ mod algorithms;
 /// # Examples
 ///
 /// ```
-/// use icu::locale::locale;
 /// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::locale;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();
@@ -108,16 +108,12 @@ impl LocaleFallbacker {
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
-        let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
-            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
-        };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
         // as invariant. However, they are covariant, and in non-const code this covariance can be safely triggered
         // using Yokeable::transform. In const code we must transmute. In the long run we should
         // be able to `transform()` in const code, and also we will have hopefully improved map polymorphism (#3128)
-        unsafe { core::mem::transmute(tickstatic) }
+        unsafe { core::mem::transmute(LocaleFallbackerBorrowed::<'static>::new()) }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
@@ -188,7 +184,27 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for LocaleFallbackerBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleFallbackerBorrowed<'static> {
+    /// Creates a [`LocaleFallbackerBorrowed`] with compiled fallback data (likely subtags and parent locales).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
+        }
+    }
+
     /// Cheaply converts a [`LocaleFallbackerBorrowed<'static>`] into a [`LocaleFallbacker`].
     ///
     /// Note: Due to branching and indirection, using [`LocaleFallbacker`] might inhibit some

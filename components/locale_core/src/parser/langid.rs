@@ -231,7 +231,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                         } else {
                             break;
                         }
-                        iter = iter.next_const().0
+                        iter = iter.next_const().0;
                     }
                     if let Some(k) = key {
                         keyword = Some((k, current_type));

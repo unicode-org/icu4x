@@ -134,19 +134,19 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Best effort locale canonicalizer that doesn't need any data
-        ///
-        /// Use LocaleCanonicalizer for better control and functionality
-        #[diplomat::rust_link(icu::locale::Locale::canonicalize, FnInStruct)]
-        pub fn canonicalize(
+        /// Normalizes a locale string.
+        #[diplomat::rust_link(icu::locale::Locale::normalize, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::normalize_utf8, FnInStruct, hidden)]
+        pub fn normalize(
             s: &DiplomatStr,
             write: &mut DiplomatWrite,
         ) -> Result<(), LocaleParseError> {
-            let _infallible = icu_locale_core::Locale::canonicalize(s)?.write_to(write);
+            let _infallible = icu_locale_core::Locale::normalize_utf8(s)?.write_to(write);
             Ok(())
         }
         /// Returns a string representation of [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::to_string, FnInStruct, hidden)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);

@@ -1,19 +1,42 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000ساعة"
-      ],
-      [
-        "Two",
-        "\u0000ساعتان"
-      ],
-      [
-        "Few",
-        "\u0001 ساعات"
+        {
+          "Literal": "ساعة"
+        }
       ]
     ],
-    "other": "\u0001 ساعة"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "ساعتان"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ساعات"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ساعة"
+        }
+      ]
+    ]
   }
 }

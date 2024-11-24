@@ -2,9 +2,6 @@
   "main": {
     "sr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr"
       },
       "numbers": {
@@ -137,10 +134,10 @@
             "displayName-count-other": "босанско-херцеговачких динара"
           },
           "BAM": {
-            "displayName": "босанско-херцеговачка конвертибилна марка",
-            "displayName-count-one": "босанско-херцеговачка конвертибилна марка",
-            "displayName-count-few": "босанско-херцеговачке конвертибилне маркe",
-            "displayName-count-other": "босанско-херцеговачких конвертибилних марака",
+            "displayName": "босанскохерцеговачка конвертибилна марка",
+            "displayName-count-one": "босанскохерцеговачка конвертибилна марка",
+            "displayName-count-few": "босанскохерцеговачке конвертибилне маркe",
+            "displayName-count-other": "босанскохерцеговачких конвертибилних марака",
             "symbol": "КМ",
             "symbol-alt-narrow": "KM"
           },
@@ -542,7 +539,7 @@
             "displayName-count-other": "етиопских бира"
           },
           "EUR": {
-            "displayName": "Евро",
+            "displayName": "евро",
             "displayName-count-one": "евро",
             "displayName-count-few": "евра",
             "displayName-count-other": "евра",
@@ -1498,10 +1495,10 @@
             "symbol-alt-variant": "TL"
           },
           "TTD": {
-            "displayName": "Тринидад-тобагошки долар",
-            "displayName-count-one": "тринидад-тобагошки долар",
-            "displayName-count-few": "тринидад-тобагошка долара",
-            "displayName-count-other": "тринидад-тобагошких долара",
+            "displayName": "тринидадскотобашки долар",
+            "displayName-count-one": "тринидадскотобашки долар",
+            "displayName-count-few": "тринидадскотобашка долара",
+            "displayName-count-other": "тринидадскотобашких долара",
             "symbol-alt-narrow": "$"
           },
           "TWD": {
@@ -1750,7 +1747,7 @@
             "displayName-count-other": "кодова тестиране валуте"
           },
           "XXX": {
-            "displayName": "Непозната валута",
+            "displayName": "непозната валута",
             "displayName-count-one": "непозната јединица валуте",
             "displayName-count-few": "непознате валуте",
             "displayName-count-other": "непознатих валута",

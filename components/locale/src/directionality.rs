@@ -22,29 +22,31 @@ pub enum Direction {
 
 /// Provides methods to determine the direction of a locale.
 ///
+/// The `Expander` generic parameter wraps a [`LocaleExpander`].
+///
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{locale, Direction, LocaleDirectionality};
+/// use icu::locale::{langid, Direction, LocaleDirectionality};
 ///
 /// let ld = LocaleDirectionality::new();
 ///
-/// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
+/// assert_eq!(ld.get(&langid!("en")), Some(Direction::LeftToRight));
 /// ```
 #[derive(Debug)]
-pub struct LocaleDirectionality {
+pub struct LocaleDirectionality<Expander = LocaleExpander> {
     script_direction: DataPayload<ScriptDirectionV1Marker>,
-    expander: LocaleExpander,
+    expander: Expander,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for LocaleDirectionality {
+impl Default for LocaleDirectionality<LocaleExpander> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl LocaleDirectionality {
+impl LocaleDirectionality<LocaleExpander> {
     /// Creates a [`LocaleDirectionality`] from compiled data.
     ///
     /// This includes limited likely subtags data, see [`LocaleExpander::new()`].
@@ -52,12 +54,11 @@ impl LocaleDirectionality {
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new())
     }
-
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, DataError> {
+    ) -> Result<Self, DataError> {
         let expander = LocaleExpander::try_new_with_any_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
     }
@@ -67,11 +68,10 @@ impl LocaleDirectionality {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleDirectionality, DataError> {
+    ) -> Result<Self, DataError> {
         let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
-
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
@@ -83,7 +83,9 @@ impl LocaleDirectionality {
         let expander = LocaleExpander::try_new_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
     }
+}
 
+impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] and compiled data.
     ///
     /// This allows using [`LocaleExpander::new_extended()`] with data for all locales.
@@ -92,23 +94,23 @@ impl LocaleDirectionality {
     ///
     /// ```
     /// use icu::locale::{
-    ///     locale, Direction, LocaleDirectionality, LocaleExpander,
+    ///     langid, Direction, LocaleDirectionality, LocaleExpander,
     /// };
     ///
     /// let ld_default = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld_default.get(&locale!("jbn")), None);
+    /// assert_eq!(ld_default.get(&langid!("jbn")), None);
     ///
     /// let expander = LocaleExpander::new_extended();
     /// let ld_extended = LocaleDirectionality::new_with_expander(expander);
     ///
     /// assert_eq!(
-    ///     ld_extended.get(&locale!("jbn")),
+    ///     ld_extended.get(&langid!("jbn")),
     ///     Some(Direction::RightToLeft)
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+    pub const fn new_with_expander(expander: Expander) -> Self {
         LocaleDirectionality {
             script_direction: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SCRIPT_DIRECTION_V1_MARKER,
@@ -120,8 +122,8 @@ impl LocaleDirectionality {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
-        expander: LocaleExpander,
-    ) -> Result<LocaleDirectionality, DataError>
+        expander: Expander,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<ScriptDirectionV1Marker> + ?Sized,
     {
@@ -150,34 +152,34 @@ impl LocaleDirectionality {
     /// Using an existing locale:
     ///
     /// ```
-    /// use icu::locale::{locale, Direction, LocaleDirectionality};
+    /// use icu::locale::{langid, Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld.get(&locale!("en-US")), Some(Direction::LeftToRight));
+    /// assert_eq!(ld.get(&langid!("en-US")), Some(Direction::LeftToRight));
     ///
-    /// assert_eq!(ld.get(&locale!("ar")), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&langid!("ar")), Some(Direction::RightToLeft));
     ///
-    /// assert_eq!(ld.get(&locale!("en-Arab")), Some(Direction::RightToLeft));
+    /// assert_eq!(ld.get(&langid!("en-Arab")), Some(Direction::RightToLeft));
     ///
-    /// assert_eq!(ld.get(&locale!("foo")), None);
+    /// assert_eq!(ld.get(&langid!("foo")), None);
     /// ```
     ///
     /// Using a script directly:
     ///
     /// ```
     /// use icu::locale::subtags::script;
-    /// use icu::locale::{Locale, Direction, LocaleDirectionality};
+    /// use icu::locale::{Direction, LanguageIdentifier, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///
     /// assert_eq!(
-    ///     ld.get(&Locale::from(Some(script!("Latn")))),
+    ///     ld.get(&LanguageIdentifier::from(Some(script!("Latn")))),
     ///     Some(Direction::LeftToRight)
     /// );
     /// ```
-    pub fn get(&self, locale: impl AsRef<LanguageIdentifier>) -> Option<Direction> {
-        let script = self.expander.get_likely_script(locale.as_ref())?;
+    pub fn get(&self, langid: &LanguageIdentifier) -> Option<Direction> {
+        let script = self.expander.as_ref().get_likely_script(langid)?;
 
         if self.script_in_ltr(script) {
             Some(Direction::LeftToRight)
@@ -195,9 +197,10 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_right_to_left(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_right_to_left(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .as_ref()
+            .get_likely_script(langid)
             .map(|s| self.script_in_rtl(s))
             .unwrap_or(false)
     }
@@ -209,9 +212,10 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_left_to_right(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_left_to_right(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .as_ref()
+            .get_likely_script(langid)
             .map(|s| self.script_in_ltr(s))
             .unwrap_or(false)
     }
@@ -220,7 +224,7 @@ impl LocaleDirectionality {
         self.script_direction
             .get()
             .rtl
-            .binary_search(&script.into_tinystr().to_unvalidated())
+            .binary_search(&script.to_tinystr().to_unvalidated())
             .is_ok()
     }
 
@@ -228,7 +232,7 @@ impl LocaleDirectionality {
         self.script_direction
             .get()
             .ltr
-            .binary_search(&script.into_tinystr().to_unvalidated())
+            .binary_search(&script.to_tinystr().to_unvalidated())
             .is_ok()
     }
 }

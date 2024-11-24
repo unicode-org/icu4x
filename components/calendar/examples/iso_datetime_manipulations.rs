@@ -29,11 +29,11 @@ const DATETIMES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 
 fn main() {
     for &(year, month, day, hour, minute, second) in DATETIMES_ISO {
-        let datetime = DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
+        let datetime = DateTime::try_new_iso(year, month, day, hour, minute, second)
             .expect("datetime should parse");
         println!(
             "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
-            datetime.date.year().number,
+            datetime.date.year().era_year_or_extended(),
             datetime.date.month().ordinal,
             datetime.date.day_of_month().0,
             u8::from(datetime.time.hour),

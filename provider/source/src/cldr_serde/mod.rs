@@ -15,7 +15,7 @@ pub(crate) mod currencies;
 #[cfg(feature = "experimental")]
 pub(crate) mod date_fields;
 pub(crate) mod directionality;
-#[cfg(feature = "experimental")]
+#[cfg_attr(not(feature = "experimental"), allow(dead_code))]
 pub(crate) mod displaynames;
 pub(crate) mod exemplar_chars;
 pub(crate) mod japanese;
@@ -32,7 +32,6 @@ pub(crate) mod plurals;
 pub(crate) mod time_zones;
 #[cfg(feature = "experimental")]
 pub(crate) mod transforms;
-#[cfg(feature = "experimental")]
 pub(crate) mod units;
 pub(crate) mod week_data;
 

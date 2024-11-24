@@ -5,29 +5,91 @@
     "1": "следеће године"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\bпре  године"
-      ],
-      [
-        "Few",
-        "\bпре  године"
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " године"
+        }
       ]
     ],
-    "other": "\bпре  година"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " године"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " година"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0006за  годину"
-      ],
-      [
-        "Few",
-        "\u0006за  године"
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " годину"
+        }
       ]
     ],
-    "other": "\u0006за  година"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " године"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " година"
+        }
+      ]
+    ]
   }
 }

@@ -33,15 +33,29 @@ export class DisplayNamesOptions {
     set languageDisplay(value) {
         this.#languageDisplay = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#style = arguments[0];
-            this.#fallback = arguments[1];
-            this.#languageDisplay = arguments[2];
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("DisplayNamesOptions's constructor takes an object of DisplayNamesOptions's fields.");
         }
+
+        if ("style" in structObj) {
+            this.#style = structObj.style;
+        } else {
+            this.#style = null;
+        }
+
+        if ("fallback" in structObj) {
+            this.#fallback = structObj.fallback;
+        } else {
+            this.#fallback = null;
+        }
+
+        if ("languageDisplay" in structObj) {
+            this.#languageDisplay = structObj.languageDisplay;
+        } else {
+            this.#languageDisplay = null;
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -51,7 +65,18 @@ export class DisplayNamesOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#style.ffiValue, this.#fallback.ffiValue, this.#languageDisplay.ffiValue]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#style, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#fallback, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#languageDisplay, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#style, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#fallback, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#languageDisplay, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -59,12 +84,18 @@ export class DisplayNamesOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
-        const styleDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#style = DisplayNamesStyle[Array.from(DisplayNamesStyle.values.keys())[styleDeref]];
-        const fallbackDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#fallback = DisplayNamesFallback[Array.from(DisplayNamesFallback.values.keys())[fallbackDeref]];
-        const languageDisplayDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#languageDisplay = LanguageDisplay[Array.from(LanguageDisplay.values.keys())[languageDisplayDeref]];
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("DisplayNamesOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
+        const styleDeref = ptr;
+        structObj.style = diplomatRuntime.readOption(wasm, styleDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesStyle(diplomatRuntime.internalConstructor, deref) });
+        const fallbackDeref = ptr + 8;
+        structObj.fallback = diplomatRuntime.readOption(wasm, fallbackDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesFallback(diplomatRuntime.internalConstructor, deref) });
+        const languageDisplayDeref = ptr + 16;
+        structObj.languageDisplay = diplomatRuntime.readOption(wasm, languageDisplayDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LanguageDisplay(diplomatRuntime.internalConstructor, deref) });
+
+        return new DisplayNamesOptions(structObj, internalConstructor);
     }
 }

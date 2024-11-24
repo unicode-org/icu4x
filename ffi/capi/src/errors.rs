@@ -79,65 +79,41 @@ pub mod ffi {
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
-    pub struct TimeZoneInvalidIdError;
-
-    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    /// Legacy error
-    // TODO(2.0): remove
-    #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
+    #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
-    pub enum Error {
-        /// The error is not currently categorized as Error.
-        /// Please file a bug
-        UnknownError = 0x00,
+    pub enum DateTimeFormatterLoadError {
+        Unknown = 0x00,
 
-        // general data errors
-        // See DataError
-        DataMissingDataMarkerError = 0x1_00,
-        DataMissingLocaleError = 0x1_02,
-        DataNeedsLocaleError = 0x1_04,
-        DataExtraneousLocaleError = 0x1_05,
-        DataFilteredResourceError = 0x1_06,
-        DataMismatchedTypeError = 0x1_07,
-        DataCustomError = 0x1_0A,
-        DataIoError = 0x1_0B,
-        DataUnavailableBufferFormatError = 0x1_0C,
+        UnsupportedLength = 0x8_03,
+        DuplicateField = 0x8_09,
+        TypeTooSpecific = 0x8_0A,
 
-        // property errors
-        PropertyUnexpectedPropertyNameError = 0x4_02,
-
-        // datetime format errors
-        DateTimePatternError = 0x8_00,
-        DateTimeMissingInputFieldError = 0x8_01,
-        DateTimeSkeletonError = 0x8_02,
-        DateTimeUnsupportedFieldError = 0x8_03,
-        DateTimeUnsupportedOptionsError = 0x8_04,
-        DateTimeMissingWeekdaySymbolError = 0x8_05,
-        DateTimeMissingMonthSymbolError = 0x8_06,
-        DateTimeFixedDecimalError = 0x8_07,
-        DateTimeMismatchedCalendarError = 0x8_08,
+        DataMarkerNotFound = 0x01,
+        DataIdentifierNotFound = 0x02,
+        DataInvalidRequest = 0x03,
+        DataInconsistentData = 0x04,
+        DataDowncast = 0x05,
+        DataDeserialize = 0x06,
+        DataCustom = 0x07,
+        DataIo = 0x08,
     }
-}
 
-impl From<icu_provider::DataError> for Error {
-    fn from(e: icu_provider::DataError) -> Self {
-        match e.kind {
-            icu_provider::DataErrorKind::MarkerNotFound => Error::DataMissingDataMarkerError,
-            icu_provider::DataErrorKind::IdentifierNotFound => Error::DataMissingLocaleError,
-            icu_provider::DataErrorKind::InvalidRequest => Error::DataExtraneousLocaleError,
-            icu_provider::DataErrorKind::Downcast(..) => Error::DataMismatchedTypeError,
-            icu_provider::DataErrorKind::Custom => Error::DataCustomError,
-            #[cfg(all(
-                feature = "provider_fs",
-                not(any(target_arch = "wasm32", target_os = "none"))
-            ))]
-            icu_provider::DataErrorKind::Io(..) => Error::DataIoError,
-            _ => Error::UnknownError,
-        }
+    // TODO: This type is currently never constructed, as all formatters perform lossy formatting.
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
+    pub enum DateTimeFormatError {
+        Unknown = 0x00,
+        MissingInputField = 0x01,
+        ZoneInfoMissingFields = 0x02, // FFI-only error
+        InvalidEra = 0x03,
+        InvalidMonthCode = 0x04,
+        InvalidCyclicYear = 0x05,
+        NamesNotLoaded = 0x10,
+        FixedDecimalFormatterNotLoaded = 0x11,
+        UnsupportedField = 0x12,
     }
 }
 
@@ -157,18 +133,6 @@ impl From<icu_provider::DataError> for DataError {
             ))]
             icu_provider::DataErrorKind::Io(..) => Self::Io,
             _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "properties")]
-impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
-    fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
-        match e {
-            icu_properties::UnexpectedPropertyNameOrDataError::Data(e) => e.into(),
-            icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName => {
-                Error::PropertyUnexpectedPropertyNameError
-            }
         }
     }
 }
@@ -206,33 +170,62 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeError> for Error {
-    fn from(e: icu_datetime::DateTimeError) -> Self {
+impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
+    fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
         match e {
-            icu_datetime::DateTimeError::Pattern(_) => Error::DateTimePatternError,
-            icu_datetime::DateTimeError::Data(err) => err.into(),
-            icu_datetime::DateTimeError::MissingInputField(_) => {
-                Error::DateTimeMissingInputFieldError
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::ConflictingField(_),
+            ) => Self::DuplicateField,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
+            ) => Self::UnsupportedLength,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_),
+            ) => Self::TypeTooSpecific,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::Data(data_error, _),
+            ) => data_error.into(),
+            icu_datetime::DateTimeFormatterLoadError::Data(data_error) => data_error.into(),
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
+    fn from(e: icu_provider::DataError) -> Self {
+        match e.kind {
+            icu_provider::DataErrorKind::MarkerNotFound => Self::DataMarkerNotFound,
+            icu_provider::DataErrorKind::IdentifierNotFound => Self::DataIdentifierNotFound,
+            icu_provider::DataErrorKind::InvalidRequest => Self::DataInvalidRequest,
+            icu_provider::DataErrorKind::InconsistentData(..) => Self::DataInconsistentData,
+            icu_provider::DataErrorKind::Downcast(..) => Self::DataDowncast,
+            icu_provider::DataErrorKind::Deserialize => Self::DataDeserialize,
+            icu_provider::DataErrorKind::Custom => Self::DataCustom,
+            #[cfg(all(
+                feature = "provider_fs",
+                not(any(target_arch = "wasm32", target_os = "none"))
+            ))]
+            icu_provider::DataErrorKind::Io(..) => Self::DataIo,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
+    fn from(value: icu_datetime::DateTimeWriteError) -> Self {
+        match value {
+            icu_datetime::DateTimeWriteError::MissingInputField(..) => Self::MissingInputField,
+            icu_datetime::DateTimeWriteError::InvalidEra(..) => Self::InvalidEra,
+            icu_datetime::DateTimeWriteError::InvalidMonthCode(..) => Self::InvalidMonthCode,
+            icu_datetime::DateTimeWriteError::InvalidCyclicYear { .. } => Self::InvalidCyclicYear,
+            icu_datetime::DateTimeWriteError::NamesNotLoaded(..) => Self::NamesNotLoaded,
+            icu_datetime::DateTimeWriteError::FixedDecimalFormatterNotLoaded => {
+                Self::FixedDecimalFormatterNotLoaded
             }
-            // TODO(#1324): Add back skeleton errors
-            // DateTimeFormatterError::Skeleton(_) => Error::DateTimeFormatSkeletonError,
-            icu_datetime::DateTimeError::UnsupportedField(_) => {
-                Error::DateTimeUnsupportedFieldError
-            }
-            icu_datetime::DateTimeError::UnsupportedOptions => {
-                Error::DateTimeUnsupportedOptionsError
-            }
-            icu_datetime::DateTimeError::MissingWeekdaySymbol(_) => {
-                Error::DateTimeMissingWeekdaySymbolError
-            }
-            icu_datetime::DateTimeError::MissingMonthSymbol(_) => {
-                Error::DateTimeMissingMonthSymbolError
-            }
-            icu_datetime::DateTimeError::FixedDecimal => Error::DateTimeFixedDecimalError,
-            icu_datetime::DateTimeError::MismatchedAnyCalendar(_, _) => {
-                Error::DateTimeMismatchedCalendarError
-            }
-            _ => Error::UnknownError,
+            icu_datetime::DateTimeWriteError::UnsupportedField(..) => Self::UnsupportedField,
+            _ => Self::Unknown,
         }
     }
 }

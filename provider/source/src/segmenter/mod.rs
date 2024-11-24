@@ -10,8 +10,11 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie;
 use icu::properties::{
-    maps, sets, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-    IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
+    props::{
+        CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
+        IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
+    },
+    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
 use icu::segmenter::provider::*;
 use icu::segmenter::WordType;
@@ -88,53 +91,68 @@ fn generate_rule_break_data(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> RuleBreakDataV2<'static> {
+    use icu::properties::{props::ExtendedPictographic, PropertyParser};
+
     let segmenter = provider
         .icuexport()
         .unwrap()
         .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
         .expect("The data should be valid!");
 
-    let data = maps::load_word_break(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<WordBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let wb = data.as_borrowed();
 
-    let data = maps::load_grapheme_cluster_break(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let gb = data.as_borrowed();
 
-    let data = maps::load_sentence_break(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<SentenceBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let sb = data.as_borrowed();
 
-    let data = maps::load_line_break(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<LineBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let lb = data.as_borrowed();
 
-    let data = maps::load_east_asian_width(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<EastAsianWidth>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let eaw = data.as_borrowed();
 
-    let data = maps::load_general_category(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let gc = data.as_borrowed();
 
-    let data = maps::load_script(provider).expect("The data should be valid");
+    let data =
+        CodePointMapData::<Script>::try_new_unstable(provider).expect("The data should be valid");
     let script = data.as_borrowed();
 
-    let data = sets::load_extended_pictographic(provider).expect("The data should be valid!");
+    let data = CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)
+        .expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
 
-    let data = maps::load_indic_syllabic_category(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<IndicSyllabicCategory>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let insc = data.as_borrowed();
 
-    let data = maps::load_canonical_combining_class(provider).expect("The data should be valid!");
+    let data = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let ccc = data.as_borrowed();
 
-    let data =
-        GraphemeClusterBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let data = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let gcb_name_to_enum = data.as_borrowed();
 
-    let data = LineBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let data =
+        PropertyParser::<LineBreak>::try_new_unstable(provider).expect("The data should be valid!");
     let lb_name_to_enum = data.as_borrowed();
 
-    let data = SentenceBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let data = PropertyParser::<SentenceBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let sb_name_to_enum = data.as_borrowed();
 
-    let data = WordBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let data =
+        PropertyParser::<WordBreak>::try_new_unstable(provider).expect("The data should be valid!");
     let wb_name_to_enum = data.as_borrowed();
 
     fn set_break_state(
@@ -156,10 +174,7 @@ fn generate_rule_break_data(
         properties_names.iter().position(|n| n.eq(s))
     }
 
-    fn is_cjk_fullwidth(
-        eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>,
-        codepoint: u32,
-    ) -> bool {
+    fn is_cjk_fullwidth(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
         matches!(
             eaw.get32(codepoint),
             EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
@@ -243,6 +258,17 @@ fn generate_rule_break_data(
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get32(c) == prop {
+                            // UAX29 defines the colon as MidLetter, but ICU4C's
+                            // English data doesn't.
+                            // See https://unicode-org.atlassian.net/browse/ICU-22112
+                            //
+                            // TODO: We have to consider this definition from CLDR instead.
+                            if (c == 0x003a || c == 0xfe55 || c == 0xff1a) && p.name == "MidLetter"
+                            {
+                                // Default (en etc) is undefined class.
+                                continue;
+                            }
+
                             properties_map[c as usize] = property_index;
                         }
                     }
@@ -339,6 +365,9 @@ fn generate_rule_break_data(
                         || p.name == "ID_CN"
                         || p.name == "PO_EAW"
                         || p.name == "PR_EAW"
+                        || p.name == "AL_DOTTED_CIRCLE"
+                        || p.name == "QU_PI"
+                        || p.name == "QU_PF"
                     {
                         for i in 0..(CODEPOINT_TABLE_LEN as u32) {
                             match lb.get32(i) {
@@ -391,6 +420,26 @@ fn generate_rule_break_data(
                                     }
                                 }
 
+                                LineBreak::Alphabetic => {
+                                    if p.name == "AL_DOTTED_CIRCLE" && i == 0x25CC {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::Quotation => {
+                                    if p.name == "QU_PI"
+                                        && gc.get32(i) == GeneralCategory::InitialPunctuation
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+
+                                    if p.name == "QU_PF"
+                                        && gc.get32(i) == GeneralCategory::FinalPunctuation
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
                                 _ => {}
                             }
                         }
@@ -403,6 +452,18 @@ fn generate_rule_break_data(
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if lb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
+                        }
+                    }
+
+                    if p.name == "AL" {
+                        // LB1: SG has no special rules.
+                        let prop = lb_name_to_enum
+                            .get_loose("SG")
+                            .expect("property name should be valid!");
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if lb.get32(c) == prop {
+                                properties_map[c as usize] = property_index;
+                            }
                         }
                     }
                     continue;
@@ -576,6 +637,76 @@ fn generate_rule_break_data(
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn generate_rule_break_data_override(
+    provider: &SourceDataProvider,
+    rules_file: &str,
+    trie_type: crate::TrieType,
+) -> RuleBreakDataOverrideV1<'static> {
+    let segmenter = provider
+        .icuexport()
+        .unwrap()
+        .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
+        .expect("The data should be valid!");
+
+    const CODEPOINT_TABLE_LEN: usize = 0xE1000;
+    let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_names = Vec::<String>::new();
+
+    properties_names.push("Unknown".to_string());
+
+    for p in &segmenter.tables {
+        let property_index = if !properties_names.contains(&p.name) {
+            properties_names.push(p.name.clone());
+            (properties_names.len() - 1).try_into().unwrap()
+        } else {
+            continue;
+        };
+
+        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+            // If any values aren't set, this is builtin type.
+            match &*segmenter.segmenter_type {
+                "word" => {
+                    // UAX29 defines the colon as MidLetter, but ICU4C's
+                    // English data doesn't.
+                    // See https://unicode-org.atlassian.net/browse/ICU-22112
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "MidLetter" {
+                        properties_map[0x003a] = property_index;
+                        properties_map[0xfe55] = property_index;
+                        properties_map[0xff1a] = property_index;
+                    }
+                }
+                "sentence" => {
+                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
+                    // Greek data does.
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "STerm" {
+                        properties_map[0x003b] = property_index;
+                        properties_map[0x037e] = property_index;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    RuleBreakDataOverrideV1 {
+        property_table_override: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
+    }
+}
+
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -605,6 +736,44 @@ macro_rules! implement {
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
+            }
+        }
+    }
+}
+
+macro_rules! implement_override {
+    ($marker:ident, $rules:literal, [$($supported:expr),*]) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                return Err(DataError::custom(
+                    "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+                )
+                .with_req($marker::INFO, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                return {
+                    self.check_req::<$marker>(req)?;
+                    let data = generate_rule_break_data_override(
+                        &hardcoded_segmenter_provider(),
+                        $rules,
+                        self.trie_type(),
+                    );
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data),
+                    })
+                };
+            }
+        }
+
+        impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                const SUPPORTED: &[&str] = &[$($supported),*];
+                Ok(SUPPORTED
+                   .iter()
+                   .map(|l|DataIdentifierCow::from_locale(DataLocale::try_from_str(l).unwrap()))
+                   .collect())
             }
         }
     }
@@ -694,6 +863,16 @@ implement!(LineBreakDataV2Marker, "segmenter/line.toml");
 implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
 implement!(WordBreakDataV2Marker, "segmenter/word.toml");
 implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
+implement_override!(
+    WordBreakDataOverrideV1Marker,
+    "segmenter/word.toml",
+    ["fi", "sv"]
+);
+implement_override!(
+    SentenceBreakDataOverrideV1Marker,
+    "segmenter/sentence.toml",
+    ["el"]
+);
 
 #[cfg(test)]
 mod tests {
@@ -730,9 +909,9 @@ mod tests {
         //     _ => XX,
         // }
 
-        const CM: u8 = 10;
-        const XX: u8 = 45;
-        const ID: u8 = 21;
+        const CM: u8 = 14;
+        const XX: u8 = 52;
+        const ID: u8 = 25;
 
         assert_eq!(data.property_table.get32(0x20000), ID);
         assert_eq!(data.property_table.get32(0x3fffd), ID);
@@ -740,4 +919,16 @@ mod tests {
         assert_eq!(data.property_table.get32(0xe0001), CM);
         assert_eq!(data.property_table.get32(0xe0020), CM);
     }
+
+    #[test]
+    #[should_panic]
+    fn missing_locale_data() {
+        let provider = SourceDataProvider::new_testing();
+        let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        response.payload.get();
+    }
+
+    // TODO: Add loading override table data. But no locales in testdata.
 }

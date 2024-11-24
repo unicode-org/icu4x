@@ -43,12 +43,12 @@ export class CodePointRangeIterator {
     }
 
     next() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 12, 4, false);
         
         const result = wasm.icu4x_CodePointRangeIterator_next_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new CodePointRangeIteratorResult(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return CodePointRangeIteratorResult._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

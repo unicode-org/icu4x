@@ -46,7 +46,7 @@
 //!
 //! Examples of AnyProviders:
 //!
-//! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
+//! - [`FixedProvider`] wraps a specific data struct and returns it.
 //!
 //! ### BufferProvider
 //!
@@ -78,7 +78,7 @@
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
 //!
-//! [`AnyPayloadProvider`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
+//! [`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/fixed/any_payload/struct.FixedProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
@@ -128,7 +128,7 @@ pub use data_provider::{
 };
 
 mod error;
-pub use error::{DataError, DataErrorKind};
+pub use error::{DataError, DataErrorKind, ResultDataError};
 
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;
@@ -150,7 +150,7 @@ pub mod marker {
 
     pub use super::marker_full::{
         data_marker_path, impl_data_provider_never_marker, DataMarkerPath, DataMarkerPathHash,
-        NeverMarker,
+        ErasedMarker, NeverMarker,
     };
 }
 
@@ -172,7 +172,7 @@ pub mod prelude {
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
         DataResponseMetadata, DryDataProvider, DynamicDataMarker, DynamicDataProvider,
-        DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
+        DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider, ResultDataError,
     };
 
     #[doc(no_inline)]

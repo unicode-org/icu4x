@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "livre sterling"
-      ]
+    "one": [
+      0,
+      "livre sterling"
     ],
-    "other": "livres sterling"
+    "other": [
+      0,
+      "livres sterling"
+    ]
   }
 }

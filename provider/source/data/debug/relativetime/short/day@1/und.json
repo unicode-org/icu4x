@@ -5,11 +5,35 @@
     "1": "tomorrow"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- d"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ d"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d"
+        }
+      ]
+    ]
   }
 }

@@ -75,7 +75,7 @@ impl<C: Calendar> AsCalendar for Ref<'_, C> {
     }
 }
 
-impl<'a, C> Deref for Ref<'a, C> {
+impl<C> Deref for Ref<'_, C> {
     type Target = C;
     fn deref(&self) -> &C {
         self.0
@@ -95,10 +95,10 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::try_new_iso_date(1970, 1, 2)
+/// let date_iso = Date::try_new_iso(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().number, 1970);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
@@ -109,9 +109,11 @@ pub struct Date<A: AsCalendar> {
 
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
+    ///
+    /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -205,7 +207,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific year represented by `self`
     #[inline]
-    pub fn year(&self) -> types::FormattableYear {
+    pub fn year(&self) -> types::YearInfo {
         self.calendar.as_calendar().year(&self.inner)
     }
 
@@ -217,7 +219,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific month represented by `self`
     #[inline]
-    pub fn month(&self) -> types::FormattableMonth {
+    pub fn month(&self) -> types::MonthInfo {
         self.calendar.as_calendar().month(&self.inner)
     }
 
@@ -242,7 +244,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::Date;
     ///
-    /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
@@ -268,7 +270,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::week::WeekOf;
     /// use icu::calendar::Date;
     ///
-    /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
+    /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
     ///
     /// // The following info is usually locale-specific
     /// let week_calculator = WeekCalculator::default();
@@ -318,9 +320,27 @@ impl<A: AsCalendar> Date<A> {
         &self.calendar
     }
 
-    #[cfg(test)]
-    pub(crate) fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
+    #[doc(hidden)]
+    pub fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
         Iso::fixed_from_iso(self.to_iso().inner)
+    }
+}
+
+impl Date<Iso> {
+    /// Calculates the number of days between two dates.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateDurationUnit;
+    ///
+    /// let a = Date::try_new_iso(1994, 12, 10).unwrap();
+    /// let b = Date::try_new_iso(2024, 10, 30).unwrap();
+    ///
+    /// assert_eq!(b.days_since(a), 10_917);
+    /// ```
+    #[doc(hidden)] // unstable
+    pub fn days_since(&self, other: Date<Iso>) -> i32 {
+        (Iso::fixed_from_iso(*self.inner()) - Iso::fixed_from_iso(other.inner)) as i32
     }
 }
 
@@ -386,15 +406,27 @@ where
 
 impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "Date({}-{}-{}, {} era, for calendar {})",
-            self.year().number,
-            self.month().ordinal,
-            self.day_of_month().0,
-            self.year().era.0,
-            self.calendar.as_calendar().debug_name()
-        )
+        let month = self.month().ordinal;
+        let day = self.day_of_month().0;
+        let calendar = self.calendar.as_calendar().debug_name();
+        match self.year().kind {
+            types::YearKind::Era(e) => {
+                let era = e.standard_era.0;
+                let era_year = e.era_year;
+                write!(
+                    f,
+                    "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
+                )
+            }
+            types::YearKind::Cyclic(cy) => {
+                let year = cy.year;
+                let related_iso = cy.related_iso;
+                write!(
+                    f,
+                    "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
+                )
+            }
+        }
     }
 }
 
@@ -421,21 +453,21 @@ mod tests {
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            Date::try_new_iso_date(-10, 1, 1).unwrap(),
-            Date::try_new_iso_date(-10, 1, 2).unwrap(),
-            Date::try_new_iso_date(-10, 2, 1).unwrap(),
-            Date::try_new_iso_date(-1, 1, 1).unwrap(),
-            Date::try_new_iso_date(-1, 1, 2).unwrap(),
-            Date::try_new_iso_date(-1, 2, 1).unwrap(),
-            Date::try_new_iso_date(0, 1, 1).unwrap(),
-            Date::try_new_iso_date(0, 1, 2).unwrap(),
-            Date::try_new_iso_date(0, 2, 1).unwrap(),
-            Date::try_new_iso_date(1, 1, 1).unwrap(),
-            Date::try_new_iso_date(1, 1, 2).unwrap(),
-            Date::try_new_iso_date(1, 2, 1).unwrap(),
-            Date::try_new_iso_date(10, 1, 1).unwrap(),
-            Date::try_new_iso_date(10, 1, 2).unwrap(),
-            Date::try_new_iso_date(10, 2, 1).unwrap(),
+            Date::try_new_iso(-10, 1, 1).unwrap(),
+            Date::try_new_iso(-10, 1, 2).unwrap(),
+            Date::try_new_iso(-10, 2, 1).unwrap(),
+            Date::try_new_iso(-1, 1, 1).unwrap(),
+            Date::try_new_iso(-1, 1, 2).unwrap(),
+            Date::try_new_iso(-1, 2, 1).unwrap(),
+            Date::try_new_iso(0, 1, 1).unwrap(),
+            Date::try_new_iso(0, 1, 2).unwrap(),
+            Date::try_new_iso(0, 2, 1).unwrap(),
+            Date::try_new_iso(1, 1, 1).unwrap(),
+            Date::try_new_iso(1, 1, 2).unwrap(),
+            Date::try_new_iso(1, 2, 1).unwrap(),
+            Date::try_new_iso(10, 1, 1).unwrap(),
+            Date::try_new_iso(10, 1, 2).unwrap(),
+            Date::try_new_iso(10, 2, 1).unwrap(),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

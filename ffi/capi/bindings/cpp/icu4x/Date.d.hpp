@@ -47,19 +47,25 @@ public:
 
   inline uint16_t day_of_year() const;
 
-  inline uint32_t day_of_month() const;
+  inline uint8_t day_of_month() const;
 
   inline icu4x::IsoWeekday day_of_week() const;
 
-  inline uint32_t week_of_month(icu4x::IsoWeekday first_weekday) const;
+  inline uint8_t week_of_month(icu4x::IsoWeekday first_weekday) const;
 
   inline icu4x::WeekOf week_of_year(const icu4x::WeekCalculator& calculator) const;
 
-  inline uint32_t ordinal_month() const;
+  inline uint8_t ordinal_month() const;
 
   inline std::string month_code() const;
 
+  inline uint8_t month_number() const;
+
+  inline bool month_is_leap() const;
+
   inline int32_t year_in_era() const;
+
+  inline int32_t extended_year() const;
 
   inline std::string era() const;
 

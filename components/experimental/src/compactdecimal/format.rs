@@ -7,7 +7,7 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
 
-use crate::compactdecimal::compactdecimal::CompactDecimalFormatter;
+use crate::compactdecimal::formatter::CompactDecimalFormatter;
 use crate::compactdecimal::provider::{Count, PatternULE};
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
@@ -31,7 +31,7 @@ impl FormattedCompactDecimal<'_> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -49,14 +49,14 @@ impl FormattedCompactDecimal<'_> {
     }
 }
 
-impl<'l> Writeable for FormattedCompactDecimal<'l> {
+impl Writeable for FormattedCompactDecimal<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
         if self.value.exponent() == 0 {
             self.formatter
-                .fixed_decimal_format
+                .fixed_decimal_formatter
                 .format(self.value.significand())
                 .write_to(sink)
         } else {
@@ -87,7 +87,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                             .ok_or(core::fmt::Error)?,
                     )?;
                     self.formatter
-                        .fixed_decimal_format
+                        .fixed_decimal_formatter
                         .format(self.value.significand())
                         .write_to(sink)?;
                     sink.write_str(

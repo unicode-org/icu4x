@@ -8,8 +8,8 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{
-            Annotation, DateRecord, IxdtfParseRecord, Sign, TimeRecord, TimeZoneAnnotation,
-            TimeZoneRecord, UTCOffsetRecord,
+            Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
+            TimeZoneRecord, UtcOffsetRecordOrZ,
         },
         IxdtfParser,
     },
@@ -944,13 +944,7 @@ fn test_zulu_offset() {
                 second: 0,
                 nanosecond: 0,
             }),
-            offset: Some(UTCOffsetRecord {
-                sign: Sign::Negative,
-                hour: 0,
-                minute: 0,
-                second: 0,
-                nanosecond: 0,
-            }),
+            offset: Some(crate::parsers::records::UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
                 critical: false,
                 tz: TimeZoneRecord::Name("America/Chicago".as_bytes())
@@ -975,13 +969,7 @@ fn test_zulu_offset() {
                 second: 0,
                 nanosecond: 0,
             }),
-            offset: Some(UTCOffsetRecord {
-                sign: Sign::Negative,
-                hour: 0,
-                minute: 0,
-                second: 0,
-                nanosecond: 0,
-            }),
+            offset: Some(UtcOffsetRecordOrZ::Z),
             tz: None,
             calendar: None,
         })

@@ -5,29 +5,82 @@
     "1": "в следующем месяце"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0001 месяц назад"
-      ],
-      [
-        "Many",
-        "\u0001 месяцев назад"
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяц назад"
+        }
       ]
     ],
-    "other": "\u0001 месяца назад"
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяцев назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяца назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\fчерез  месяц"
-      ],
-      [
-        "Many",
-        "\fчерез  месяцев"
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяц"
+        }
       ]
     ],
-    "other": "\fчерез  месяца"
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяцев"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяца"
+        }
+      ]
+    ]
   }
 }

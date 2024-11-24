@@ -1,16 +1,15 @@
 import { Calendar } from "icu4x"
-import { CustomTimeZone } from "icu4x"
 import { DataProvider } from "icu4x"
 import { DateTime } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
+import { TimeZoneInfo } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatDatetimeWithCustomTimeZone() {
-    var terminusArgs = arguments;
+export function formatDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, name_1, bcp47Id, offsetSeconds, dst) {
     return (function (...args) { return args[0].formatDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            ZonedDateTimeFormatter.createWithLengths.apply(
+            ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -21,23 +20,22 @@ export function formatDatetimeWithCustomTimeZone() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    length
                 ]
             ),
             DateTime.fromIsoInCalendar.apply(
                 null,
                 [
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8],
-                    terminusArgs[9],
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond,
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -49,28 +47,29 @@ export function formatDatetimeWithCustomTimeZone() {
                             Locale.fromString.apply(
                                 null,
                                 [
-                                    terminusArgs[10]
+                                    name_1
                                 ]
                             )
                         ]
                     )
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
-                    terminusArgs[11]
+                    bcp47Id,
+                    offsetSeconds,
+                    dst
                 ]
             )
         ]
     );
 }
-export function formatIsoDatetimeWithCustomTimeZone() {
-    var terminusArgs = arguments;
+export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            ZonedDateTimeFormatter.createWithLengths.apply(
+            ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -81,29 +80,30 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8],
-                    terminusArgs[9]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZoneInfo.fromParts.apply(
                 null,
                 [
-                    terminusArgs[10]
+                    bcp47Id,
+                    offsetSeconds,
+                    dst
                 ]
             )
         ]

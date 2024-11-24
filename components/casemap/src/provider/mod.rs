@@ -73,11 +73,8 @@ pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 /// </div>
 #[icu_provider::data_struct(marker(CaseMapV1Marker, "props/casemap@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemap::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
@@ -106,7 +103,7 @@ impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
     }
 }
 
-impl<'data> CaseMapV1<'data> {
+impl CaseMapV1<'_> {
     /// Creates a new CaseMapV1 using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.

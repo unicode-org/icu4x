@@ -75,7 +75,7 @@
 //! };
 //! let bincode_bytes =
 //!     bincode::serialize(&data).expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 67);
+//! assert_eq!(bincode_bytes.len(), 63);
 //!
 //! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -149,7 +149,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 168);
+//! assert_eq!(bincode_bytes.len(), 160);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -213,7 +213,7 @@
 
 extern crate alloc;
 
-mod flexzerovec;
+mod cow;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
 mod map;
@@ -226,11 +226,11 @@ mod zerovec;
 // This must be after `mod zerovec` for some impls on `ZeroSlice<RawBytesULE>`
 // to show up in the right spot in the docs
 pub mod ule;
-
 #[cfg(feature = "yoke")]
 mod yoke_impls;
 mod zerofrom_impls;
 
+pub use crate::cow::VarZeroCow;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
 pub use crate::map::map::ZeroMap;
@@ -238,12 +238,11 @@ pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
-pub(crate) use flexzerovec::chunk_to_usize;
-
 #[doc(hidden)] // macro use
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 
+    pub use alloc::borrow;
     pub use alloc::boxed;
 
     #[cfg(feature = "serde")]
@@ -293,9 +292,12 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::{Index16, Index32, VarZeroVecFormat, VarZeroVecOwned};
+    pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat, VarZeroVecOwned};
 
-    pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
+    pub type VarZeroVec16<'a, T> = VarZeroVec<'a, T, Index16>;
+    pub type VarZeroVec32<'a, T> = VarZeroVec<'a, T, Index32>;
+    pub type VarZeroSlice16<T> = VarZeroSlice<T, Index16>;
+    pub type VarZeroSlice32<T> = VarZeroSlice<T, Index32>;
 }
 
 // Proc macro reexports
@@ -415,6 +417,7 @@ pub use zerovec_derive::make_ule;
 ///
 /// - [`Ord`] and [`PartialOrd`]
 /// - [`ZeroMapKV`]
+/// - [`alloc::borrow::ToOwned`]
 ///
 /// To disable one of the automatic derives, use `#[zerovec::skip_derive(...)]` like so: `#[zerovec::skip_derive(ZeroMapKV)]`.
 /// `Ord` and `PartialOrd` are implemented as a unit and can only be disabled as a group with `#[zerovec::skip_derive(Ord)]`.
@@ -434,6 +437,10 @@ pub use zerovec_derive::make_ule;
 ///
 /// Note that this implementation will autogenerate [`EncodeAsVarULE`] impls for _both_ `Self` and `&Self`
 /// for convenience. This allows for a little more flexibility encoding slices.
+///
+/// In case there are multiple [`VarULE`] (i.e., variable-sized) fields, this macro will produce private fields that
+/// appropriately pack the data together, with the packing format by default being [`crate::vecs::Index16`], but can be
+/// overridden with `#[zerovec::format(zerovec::vecs::Index8)]`.
 ///
 /// [`EncodeAsVarULE`]: ule::EncodeAsVarULE
 /// [`VarULE`]: ule::VarULE
@@ -518,6 +525,8 @@ pub use zerovec_derive::make_ule;
 pub use zerovec_derive::make_varule;
 
 #[cfg(test)]
+// Expected sizes are based on a 64-bit architecture
+#[cfg(target_pointer_width = "64")]
 mod tests {
     use super::*;
     use core::mem::size_of;
@@ -545,12 +554,10 @@ mod tests {
         check_size_of!(56 | 48, ZeroMap<str, u32>);
         check_size_of!(64 | 48, ZeroMap<str, str>);
         check_size_of!(120 | 96, ZeroMap2d<str, str, str>);
-        check_size_of!(32 | 24, vecs::FlexZeroVec);
 
         check_size_of!(24, Option<ZeroVec<u8>>);
         check_size_of!(32 | 24, Option<VarZeroVec<str>>);
         check_size_of!(64 | 56 | 48, Option<ZeroMap<str, str>>);
         check_size_of!(120 | 104 | 96, Option<ZeroMap2d<str, str, str>>);
-        check_size_of!(32 | 24, Option<vecs::FlexZeroVec>);
     }
 }

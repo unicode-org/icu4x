@@ -4,7 +4,7 @@
 
 #![cfg(all(test, feature = "datagen"))]
 
-use icu_datetime::pattern::reference;
+use icu_datetime::provider::pattern::reference;
 use std::{fs::File, io::BufReader};
 
 #[derive(serde::Serialize, serde::Deserialize)]

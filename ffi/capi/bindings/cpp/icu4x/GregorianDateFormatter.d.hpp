@@ -20,8 +20,8 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
-class DateLength;
-class Error;
+class DateTimeFormatterLoadError;
+class DateTimeLength;
 }
 
 
@@ -35,7 +35,7 @@ namespace icu4x {
 class GregorianDateFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::GregorianDateFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::GregorianDateFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline std::string format_iso_date(const icu4x::IsoDate& value) const;
 

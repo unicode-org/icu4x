@@ -24,7 +24,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::week::WeekOf, Struct)]
     #[diplomat::out]
     pub struct WeekOf {
-        pub week: u16,
+        pub week: u8,
         pub unit: WeekRelativeUnit,
     }
     /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
@@ -40,14 +40,14 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WeekCalculator>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
 
             Ok(Box::new(WeekCalculator(call_constructor!(
                 icu_calendar::week::WeekCalculator::try_new,
                 icu_calendar::week::WeekCalculator::try_new_with_any_provider,
                 icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
             )?)))
         }
 

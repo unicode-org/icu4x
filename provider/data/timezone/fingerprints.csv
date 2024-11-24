@@ -1,3 +1,4 @@
-time_zone/bcp47_to_iana@1, <singleton>, 7700B, 7679B, 23e2467f999c5942
-time_zone/iana_to_bcp47@2, <singleton>, 9577B, 9535B, f744f30340782c63
-time_zone/metazone_period@1, <singleton>, 11184B, 11096B, ae67d0d5ca6a1bbc
+time_zone/bcp47_to_iana@1, <singleton>, 7630B, 7609B, 7efd2629d86e0cdc
+time_zone/iana_to_bcp47@3, <singleton>, 9551B, 9509B, ef97860b5f688e6d
+time_zone/offset_period@1, <singleton>, 13374B, 13286B, 397b18d3f2345411
+time_zone/windows_zones_to_bcp47@1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd

@@ -20,14 +20,14 @@ pub struct FormattedUnit<'l> {
     pub(crate) plural_rules: &'l PluralRules,
 }
 
-impl<'l> Writeable for FormattedUnit<'l> {
+impl Writeable for FormattedUnit<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
         self.display_name
             .patterns
-            .get_pattern(self.plural_rules.category_for(self.value))
+            .get(self.value.into(), self.plural_rules)
             .interpolate((self.fixed_decimal_formatter.format(self.value),))
             .write_to(sink)
     }
@@ -91,7 +91,7 @@ fn test_basic() {
     ];
 
     for (locale, unit, value, options, expected) in test_cases {
-        let fmt = UnitsFormatter::try_new(&locale.into(), unit, options).unwrap();
+        let fmt = UnitsFormatter::try_new(locale.into(), unit, options).unwrap();
         let value = value.parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&value), expected);
     }

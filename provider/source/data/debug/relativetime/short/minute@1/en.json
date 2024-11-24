@@ -3,11 +3,32 @@
     "0": "this minute"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 min. ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min. ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in  min."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min."
+        }
+      ]
+    ]
   }
 }

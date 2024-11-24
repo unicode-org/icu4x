@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "numberingSystems": {
       "adlm": {
@@ -73,6 +73,10 @@
         "_digits": "０１２３４５６７８９",
         "_type": "numeric"
       },
+      "gara": {
+        "_digits": "𐵀𐵁𐵂𐵃𐵄𐵅𐵆𐵇𐵈𐵉",
+        "_type": "numeric"
+      },
       "geor": {
         "_rules": "georgian",
         "_type": "algorithmic"
@@ -95,6 +99,10 @@
       },
       "gujr": {
         "_digits": "૦૧૨૩૪૫૬૭૮૯",
+        "_type": "numeric"
+      },
+      "gukh": {
+        "_digits": "𖄰𖄱𖄲𖄳𖄴𖄵𖄶𖄷𖄸𖄹",
         "_type": "numeric"
       },
       "guru": {
@@ -169,6 +177,10 @@
         "_digits": "೦೧೨೩೪೫೬೭೮೯",
         "_type": "numeric"
       },
+      "krai": {
+        "_digits": "𖵰𖵱𖵲𖵳𖵴𖵵𖵶𖵷𖵸𖵹",
+        "_type": "numeric"
+      },
       "lana": {
         "_digits": "᪀᪁᪂᪃᪄᪅᪆᪇᪈᪉",
         "_type": "numeric"
@@ -237,6 +249,14 @@
         "_digits": "၀၁၂၃၄၅၆၇၈၉",
         "_type": "numeric"
       },
+      "mymrepka": {
+        "_digits": "𑛚𑛛𑛜𑛝𑛞𑛟𑛠𑛡𑛢𑛣",
+        "_type": "numeric"
+      },
+      "mymrpao": {
+        "_digits": "𑛐𑛑𑛒𑛓𑛔𑛕𑛖𑛗𑛘𑛙",
+        "_type": "numeric"
+      },
       "mymrshan": {
         "_digits": "႐႑႒႓႔႕႖႗႘႙",
         "_type": "numeric"
@@ -261,12 +281,20 @@
         "_digits": "᱐᱑᱒᱓᱔᱕᱖᱗᱘᱙",
         "_type": "numeric"
       },
+      "onao": {
+        "_digits": "𞗱𞗲𞗳𞗴𞗵𞗶𞗷𞗸𞗹𞗺",
+        "_type": "numeric"
+      },
       "orya": {
         "_digits": "୦୧୨୩୪୫୬୭୮୯",
         "_type": "numeric"
       },
       "osma": {
         "_digits": "𐒠𐒡𐒢𐒣𐒤𐒥𐒦𐒧𐒨𐒩",
+        "_type": "numeric"
+      },
+      "outlined": {
+        "_digits": "𜳰𜳱𜳲𜳳𜳴𜳵𜳶𜳷𜳸𜳹",
         "_type": "numeric"
       },
       "rohg": {
@@ -307,6 +335,10 @@
       },
       "sund": {
         "_digits": "᮰᮱᮲᮳᮴᮵᮶᮷᮸᮹",
+        "_type": "numeric"
+      },
+      "sunu": {
+        "_digits": "𑯰𑯱𑯲𑯳𑯴𑯵𑯶𑯷𑯸𑯹",
         "_type": "numeric"
       },
       "takr": {

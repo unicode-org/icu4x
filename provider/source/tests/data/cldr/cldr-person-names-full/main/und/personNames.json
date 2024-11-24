@@ -2,9 +2,6 @@
   "main": {
     "und": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "root"
       },
       "personNames": {

@@ -29,7 +29,7 @@ impl<const N: usize> fmt::Debug for UnvalidatedTinyAsciiStr<N> {
 impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     #[inline]
     /// Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
-    pub fn try_into_tinystr(&self) -> Result<TinyAsciiStr<N>, ParseError> {
+    pub fn try_into_tinystr(self) -> Result<TinyAsciiStr<N>, ParseError> {
         TinyAsciiStr::try_from_raw(self.0)
     }
 

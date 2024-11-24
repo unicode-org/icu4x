@@ -84,10 +84,10 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// Create and use DataPayloadOr:
 ///
 /// ```
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
-/// use icu_locale_core::langid;
 ///
 /// let response: DataResponse<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
@@ -454,6 +454,18 @@ where
         }
     }
 
+    /// Borrows the underlying data statically if possible.
+    ///
+    /// This will succeed if [`DataPayload`] is constructed with [`DataPayload::from_static_ref`], which is used by
+    /// baked providers.
+    #[inline]
+    pub fn get_static(&self) -> Option<&'static <M::DataStruct as Yokeable<'static>>::Output> {
+        match &self.0 {
+            DataPayloadInner::Yoke(_) => None,
+            DataPayloadInner::StaticRef(r) => Some(Yokeable::transform(*r)),
+        }
+    }
+
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
@@ -718,6 +730,100 @@ where
         })
     }
 
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
+    ///
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
+    /// to the same data struct.
+    #[inline]
+    pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
+        unsafe { core::mem::transmute(self) }
+    }
+
+    /// Convert a [`DataPayload`] to one of the same type with runtime type checking.
+    ///
+    /// Primarily useful to convert from a generic to a concrete marker type.
+    ///
+    /// If the `M2` type argument does not match the true marker type, a `DataError` is returned.
+    ///
+    /// For compile-time static casting, use [`DataPayload::cast()`].
+    ///
+    /// # Examples
+    ///
+    /// Short-circuit a data request request based on the marker, returning
+    /// a result from a different data provider:
+    ///
+    /// ```
+    /// use icu_locale_core::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::empty::EmptyDataProvider;
+    /// use std::any::TypeId;
+    /// use std::borrow::Cow;
+    ///
+    /// struct MyForkingProvider<P0, P1> {
+    ///     fallback_provider: P0,
+    ///     hello_world_provider: P1,
+    /// }
+    ///
+    /// impl<M, P0, P1> DataProvider<M> for MyForkingProvider<P0, P1>
+    /// where
+    ///     M: DataMarker,
+    ///     P0: DataProvider<M>,
+    ///     P1: DataProvider<HelloWorldV1Marker>,
+    /// {
+    ///     #[inline]
+    ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    ///         if TypeId::of::<HelloWorldV1Marker>() == TypeId::of::<M>() {
+    ///             let response = DataProvider::<HelloWorldV1Marker>::load(
+    ///                 &self.hello_world_provider,
+    ///                 req,
+    ///             )?;
+    ///             Ok(DataResponse {
+    ///                 metadata: response.metadata,
+    ///                 payload: response.payload.dynamic_cast()?,
+    ///             })
+    ///         } else {
+    ///             self.fallback_provider.load(req)
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// let provider = MyForkingProvider {
+    ///     fallback_provider: EmptyDataProvider::new(),
+    ///     hello_world_provider: HelloWorldProvider,
+    /// };
+    ///
+    /// let formatter =
+    ///     HelloWorldFormatter::try_new_unstable(&provider, locale!("de").into())
+    ///         .unwrap();
+    ///
+    /// // This succeeds because the data was loaded from HelloWorldProvider
+    /// // rather than the empty fallback provider.
+    /// assert_eq!(formatter.format_to_string(), "Hallo Welt");
+    /// ```
+    pub fn dynamic_cast<M2>(self) -> Result<DataPayload<M2>, DataError>
+    where
+        M2: DynamicDataMarker,
+    {
+        let mut option_self = Some(self);
+        let mut option_out = None::<DataPayload<M2>>;
+        if let Some(x) = (&mut option_out as &mut dyn core::any::Any).downcast_mut() {
+            core::mem::swap(&mut option_self, x);
+            debug_assert!(option_out.is_some());
+            if let Some(out) = option_out {
+                return Ok(out);
+            }
+        }
+        Err(DataError::for_type::<M2>().with_str_context(core::any::type_name::<M>()))
+    }
+
     /// Convert a mutable reference of a [`DataPayload`] to another mutable reference
     /// of the same type with runtime type checking.
     ///
@@ -748,7 +854,8 @@ where
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         let mut res = self.inner.load(req)?;
-    ///         let mut cast_result = res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///         let mut cast_result =
+    ///             res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
     ///         if let Ok(ref mut concrete_payload) = cast_result {
     ///             // Add an emoji to the hello world message
     ///             concrete_payload.with_mut(|data| {
@@ -763,7 +870,7 @@ where
     ///     inner: HelloWorldProvider,
     /// };
     /// let formatter =
-    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///     HelloWorldFormatter::try_new_unstable(&provider, locale!("de").into())
     ///         .unwrap();
     ///
     /// assert_eq!(formatter.format_to_string(), "✨ Hallo Welt");

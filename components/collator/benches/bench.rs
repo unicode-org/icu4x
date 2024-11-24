@@ -5,15 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
 use icu::collator::*;
-use icu::locale::Locale;
-use icu_provider::DataLocale;
-
-fn to_data_locale(locale_str: &str) -> DataLocale {
-    locale_str
-        .parse::<Locale>()
-        .expect("Failed to parse locale")
-        .into()
-}
+use icu::locale::locale;
 
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
@@ -99,36 +91,36 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         Strength::Identical,
     ];
     let performance_parameters = [
-        (to_data_locale("en_US"), vec![&content_latin], &all_strength),
-        (to_data_locale("da_DK"), vec![&content_latin], &all_strength),
-        (to_data_locale("fr_CA"), vec![&content_latin], &all_strength),
+        (locale!("en-US"), vec![&content_latin], &all_strength),
+        (locale!("da-DK"), vec![&content_latin], &all_strength),
+        (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
-            to_data_locale("ja_JP"),
+            locale!("ja-JP"),
             vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
             &all_strength,
         ),
         (
-            to_data_locale("zh-u-co-pinyin"),
+            locale!("zh-u-co-pinyin"),
             vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_CN
         (
-            to_data_locale("zh-u-co-stroke"),
+            locale!("zh-u-co-stroke"),
             vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_TW
         (
-            to_data_locale("ru_RU"),
+            locale!("ru-RU"),
             vec![&content_latin, &content_russian],
             &all_strength,
         ),
         (
-            to_data_locale("th"),
+            locale!("th"),
             vec![&content_latin, &content_thai],
             &all_strength,
         ),
         (
-            to_data_locale("ko_KR"),
+            locale!("ko-KR"),
             vec![&content_latin, &content_korean],
             &all_strength,
         ),
@@ -154,9 +146,11 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
-                let mut options = CollatorOptions::new();
+                let mut options = CollatorOptions::default();
                 options.strength = Some(*strength);
-                let collator = Collator::try_new(&locale_under_bench, options).unwrap();
+                let collator =
+                    Collator::try_new(CollatorPreferences::from(&locale_under_bench), options)
+                        .unwrap();
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
                     BenchmarkId::new(

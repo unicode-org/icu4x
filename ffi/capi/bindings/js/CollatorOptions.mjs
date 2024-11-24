@@ -69,19 +69,53 @@ export class CollatorOptions {
     set backwardSecondLevel(value) {
         this.#backwardSecondLevel = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#strength = arguments[0];
-            this.#alternateHandling = arguments[1];
-            this.#caseFirst = arguments[2];
-            this.#maxVariable = arguments[3];
-            this.#caseLevel = arguments[4];
-            this.#numeric = arguments[5];
-            this.#backwardSecondLevel = arguments[6];
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("CollatorOptions's constructor takes an object of CollatorOptions's fields.");
         }
+
+        if ("strength" in structObj) {
+            this.#strength = structObj.strength;
+        } else {
+            this.#strength = null;
+        }
+
+        if ("alternateHandling" in structObj) {
+            this.#alternateHandling = structObj.alternateHandling;
+        } else {
+            this.#alternateHandling = null;
+        }
+
+        if ("caseFirst" in structObj) {
+            this.#caseFirst = structObj.caseFirst;
+        } else {
+            this.#caseFirst = null;
+        }
+
+        if ("maxVariable" in structObj) {
+            this.#maxVariable = structObj.maxVariable;
+        } else {
+            this.#maxVariable = null;
+        }
+
+        if ("caseLevel" in structObj) {
+            this.#caseLevel = structObj.caseLevel;
+        } else {
+            this.#caseLevel = null;
+        }
+
+        if ("numeric" in structObj) {
+            this.#numeric = structObj.numeric;
+        } else {
+            this.#numeric = null;
+        }
+
+        if ("backwardSecondLevel" in structObj) {
+            this.#backwardSecondLevel = structObj.backwardSecondLevel;
+        } else {
+            this.#backwardSecondLevel = null;
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -91,7 +125,22 @@ export class CollatorOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strength, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#alternateHandling, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#caseFirst, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#maxVariable, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#caseLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#numeric, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#backwardSecondLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strength, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#alternateHandling, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#caseFirst, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 24, this.#maxVariable, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 32, this.#caseLevel, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 40, this.#numeric, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 48, this.#backwardSecondLevel, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -99,20 +148,26 @@ export class CollatorOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
-        const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strength = CollatorStrength[Array.from(CollatorStrength.values.keys())[strengthDeref]];
-        const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#alternateHandling = CollatorAlternateHandling[Array.from(CollatorAlternateHandling.values.keys())[alternateHandlingDeref]];
-        const caseFirstDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#caseFirst = CollatorCaseFirst[Array.from(CollatorCaseFirst.values.keys())[caseFirstDeref]];
-        const maxVariableDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 12);
-        this.#maxVariable = CollatorMaxVariable[Array.from(CollatorMaxVariable.values.keys())[maxVariableDeref]];
-        const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
-        this.#caseLevel = CollatorCaseLevel[Array.from(CollatorCaseLevel.values.keys())[caseLevelDeref]];
-        const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        this.#numeric = CollatorNumeric[Array.from(CollatorNumeric.values.keys())[numericDeref]];
-        const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
-        this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CollatorOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
+        const strengthDeref = ptr;
+        structObj.strength = diplomatRuntime.readOption(wasm, strengthDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorStrength(diplomatRuntime.internalConstructor, deref) });
+        const alternateHandlingDeref = ptr + 8;
+        structObj.alternateHandling = diplomatRuntime.readOption(wasm, alternateHandlingDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorAlternateHandling(diplomatRuntime.internalConstructor, deref) });
+        const caseFirstDeref = ptr + 16;
+        structObj.caseFirst = diplomatRuntime.readOption(wasm, caseFirstDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseFirst(diplomatRuntime.internalConstructor, deref) });
+        const maxVariableDeref = ptr + 24;
+        structObj.maxVariable = diplomatRuntime.readOption(wasm, maxVariableDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorMaxVariable(diplomatRuntime.internalConstructor, deref) });
+        const caseLevelDeref = ptr + 32;
+        structObj.caseLevel = diplomatRuntime.readOption(wasm, caseLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseLevel(diplomatRuntime.internalConstructor, deref) });
+        const numericDeref = ptr + 40;
+        structObj.numeric = diplomatRuntime.readOption(wasm, numericDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorNumeric(diplomatRuntime.internalConstructor, deref) });
+        const backwardSecondLevelDeref = ptr + 48;
+        structObj.backwardSecondLevel = diplomatRuntime.readOption(wasm, backwardSecondLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, deref) });
+
+        return new CollatorOptions(structObj, internalConstructor);
     }
 }

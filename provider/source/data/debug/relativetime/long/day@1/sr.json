@@ -7,16 +7,49 @@
     "2": "прекосутра"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  дана"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дана"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0006за  дан"
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дан"
+        }
       ]
     ],
-    "other": "\u0006за  дана"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дана"
+        }
+      ]
+    ]
   }
 }

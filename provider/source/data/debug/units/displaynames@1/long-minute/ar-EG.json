@@ -1,19 +1,42 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000دقيقة"
-      ],
-      [
-        "Two",
-        "\u0000دقيقتان"
-      ],
-      [
-        "Few",
-        "\u0001 دقائق"
+        {
+          "Literal": "دقيقة"
+        }
       ]
     ],
-    "other": "\u0001 دقيقة"
+    "two": [
+      0,
+      [
+        {
+          "Literal": "دقيقتان"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " دقائق"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " دقيقة"
+        }
+      ]
+    ]
   }
 }

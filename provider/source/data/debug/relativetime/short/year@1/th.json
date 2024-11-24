@@ -5,11 +5,32 @@
     "1": "ปีหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ปีที่แล้ว"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ปีที่แล้ว"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  ปี"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ปี"
+        }
+      ]
+    ]
   }
 }

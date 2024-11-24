@@ -25,14 +25,14 @@ pub struct LongFormattedCurrency<'l> {
 
 writeable::impl_display_with_writeable!(LongFormattedCurrency<'_>);
 
-impl<'l> Writeable for LongFormattedCurrency<'l> {
+impl Writeable for LongFormattedCurrency<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
-        let plural_category = self.plural_rules.category_for(self.value);
-        let display_name = self.extended.display_names.get_str(plural_category);
-        let pattern = self.patterns.patterns.get_pattern(plural_category);
+        let operands = self.value.into();
+        let display_name = self.extended.display_names.get(operands, self.plural_rules);
+        let pattern = self.patterns.patterns.get(operands, self.plural_rules);
         let formatted_value = self.fixed_decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
@@ -52,7 +52,7 @@ mod tests {
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -69,7 +69,7 @@ mod tests {
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -86,7 +86,7 @@ mod tests {
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();

@@ -3,11 +3,35 @@
     "0": "ovog sata"
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  č."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " č."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  č."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " č."
+        }
+      ]
+    ]
   }
 }

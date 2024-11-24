@@ -43,16 +43,12 @@ use icu_normalizer::provider::{
     CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
 };
-use icu_properties::bidi_data;
-use icu_properties::bidi_data::BidiAuxiliaryProperties;
-use icu_properties::maps;
-use icu_properties::maps::CodePointMapData;
-use icu_properties::names::PropertyScriptToIcuScriptMapper;
-use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
-    GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
+    BidiMirroringGlyphV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
+    ScriptValueToShortNameV1Marker,
 };
-use icu_properties::{GeneralCategory, Script};
+use icu_properties::{CodePointMapData, PropertyNamesShort};
 use icu_provider::prelude::*;
 
 use harfbuzz_traits::{
@@ -80,7 +76,7 @@ impl AllUnicodeFuncs {
 impl GeneralCategoryFunc for AllUnicodeFuncs {
     #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
-        convert_gc(maps::general_category().get(ch))
+        convert_gc(CodePointMapData::<GeneralCategory>::new().get(ch))
     }
 }
 
@@ -88,7 +84,7 @@ impl GeneralCategoryFunc for AllUnicodeFuncs {
 impl CombiningClassFunc for AllUnicodeFuncs {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        CanonicalCombiningClassMapBorrowed::new().get(ch).0
+        CanonicalCombiningClassMapBorrowed::new().get_u8(ch)
     }
 }
 
@@ -96,8 +92,8 @@ impl CombiningClassFunc for AllUnicodeFuncs {
 impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
-        bidi_data::bidi_auxiliary_properties()
-            .get32_mirroring_props(ch.into())
+        CodePointMapData::<BidiMirroringGlyph>::new()
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }
@@ -107,9 +103,9 @@ impl MirroringFunc for AllUnicodeFuncs {
 impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        let script = maps::script().get(ch);
-        Script::enum_to_icu_script_mapper()
-            .get(script)
+        let script = CodePointMapData::<Script>::new().get(ch);
+        PropertyNamesShort::<Script>::new()
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }
@@ -148,7 +144,7 @@ impl GeneralCategoryData {
     where
         D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = maps::load_general_category(provider)?;
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
 
         Ok(Self { gc })
     }
@@ -249,7 +245,7 @@ impl CombiningClassData {
 impl CombiningClassFunc for CombiningClassData {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        self.ccc.as_borrowed().get(ch).0
+        self.ccc.as_borrowed().get_u8(ch)
     }
 }
 
@@ -258,16 +254,16 @@ impl CombiningClassFunc for CombiningClassData {
 /// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct MirroringData {
-    bidi: BidiAuxiliaryProperties,
+    bidi: CodePointMapData<BidiMirroringGlyph>,
 }
 
 impl MirroringData {
     /// Construct a new [`MirroringData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
+        D: DataProvider<BidiMirroringGlyphV1Marker> + ?Sized,
     {
-        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+        let bidi = CodePointMapData::try_new_unstable(provider)?;
 
         Ok(Self { bidi })
     }
@@ -292,7 +288,7 @@ impl MirroringFunc for MirroringData {
     fn mirroring(&self, ch: char) -> char {
         self.bidi
             .as_borrowed()
-            .get32_mirroring_props(ch.into())
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }
@@ -304,7 +300,7 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_name: PropertyScriptToIcuScriptMapper<Script>,
+    script_names: PropertyNamesShort<Script>,
 }
 
 impl ScriptData {
@@ -313,11 +309,11 @@ impl ScriptData {
     where
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
-        let script = maps::load_script(provider)?;
-        let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
+        let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
+        let script_names = PropertyNamesShort::try_new_unstable(provider)?;
         Ok(Self {
-            script,
-            script_name,
+            script: script_set,
+            script_names,
         })
     }
 
@@ -340,9 +336,9 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        self.script_name
+        self.script_names
             .as_borrowed()
-            .get(script)
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }

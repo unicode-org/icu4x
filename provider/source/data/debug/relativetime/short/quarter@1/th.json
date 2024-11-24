@@ -5,11 +5,32 @@
     "1": "ไตรมาสหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ไตรมาสที่แล้ว"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ไตรมาสที่แล้ว"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  ไตรมาส"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ไตรมาส"
+        }
+      ]
+    ]
   }
 }

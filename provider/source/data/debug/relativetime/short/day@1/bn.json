@@ -7,11 +7,29 @@
     "2": "আগামী পরশু"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 দিন আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিন আগে"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 দিনের মধ্যে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিনের মধ্যে"
+        }
+      ]
+    ]
   }
 }

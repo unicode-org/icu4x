@@ -5,10 +5,10 @@ GregorianDateLengthsV1Marker \
 GregorianDateSymbolsV1Marker \
 TimeLengthsV1Marker \
 TimeSymbolsV1Marker \
-DecimalSymbolsV1Marker \
+DecimalSymbolsV2Marker \
 TimeZoneFormatsV1Marker \
 MetazoneSpecificNamesShortV1Marker \
 --locales en \
---format blob2 \
+--format blob \
 --out $(dirname $0)/blob.postcard \
 --overwrite

@@ -25,6 +25,7 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
 use zerofrom::ZeroFrom;
+use zerovec::vecs::Index32;
 use zerovec::VarZeroSlice;
 
 type Filter<'a> = CodePointInversionList<'a>;
@@ -153,6 +154,71 @@ type Env = LiteMap<String, InternalTransliterator>;
 
 /// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
 /// including overrides with custom implementations.
+///
+/// # Examples
+///
+/// A transliterator with a custom alias referenced by another:
+///
+/// ```
+/// use icu::experimental::transliterate::{Transliterator, CustomTransliterator, RuleCollection};
+/// use icu::locale::Locale;
+///
+/// // Set up a transliterator with 3 custom rules.
+/// // Note: These rules are for demonstration purposes only! Do not use.
+///
+/// // 1. Main entrypoint: a chain of several transliterators
+/// let mut collection = RuleCollection::default();
+/// collection.register_source(
+///     &"und-t-und-x0-custom".parse().unwrap(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     [],
+///     false,
+///     true,
+/// );
+///
+/// // 2. A custom ruleset that expands lowercase umlauts
+/// collection.register_source(
+///     &"und-t-und-x0-dep1".parse().unwrap(),
+///     r#"
+///       [ä {a \u0308}] → ae;
+///       [ö {o \u0308}] → oe;
+///       [ü {u \u0308}] → ue;
+///     "#.to_string(),
+///     ["Any-FlattenLowerUmlaut"],
+///     false,
+///     true,
+/// );
+///
+/// // 3. A custom transliterator that uppercases all ASCII characters
+/// #[derive(Debug)]
+/// struct AsciiUpperTransliterator;
+/// impl CustomTransliterator for AsciiUpperTransliterator {
+///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///         input.to_ascii_uppercase()
+///     }
+/// }
+/// collection.register_aliases(
+///     &"und-t-und-x0-dep2".parse().unwrap(),
+///     ["Any-AsciiUpper"],
+/// );
+///
+/// // Create a transliterator from the main entrypoint:
+/// let provider = collection.as_provider();
+/// let t = Transliterator::try_new_with_override_unstable(
+///     &provider,
+///     &provider,
+///     &"und-t-und-x0-custom".parse().unwrap(),
+///     |locale| locale.normalizing_eq("und-t-und-x0-dep2").then_some(Ok(Box::new(AsciiUpperTransliterator))),
+/// )
+/// .unwrap();
+///
+/// // Test the behavior:
+/// // - The uppercase 'Ü' is stripped of its umlaut
+/// // - The lowercase 'ä' is expanded to "ae"
+/// // - All ASCII characters are uppercased: not 'ß', which is not ASCII
+/// let r = t.transliterate("Übermäßig".to_string());
+/// assert_eq!(r, "UBERMAEßIG");
+/// ```
 #[derive(Debug)]
 pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
@@ -163,19 +229,57 @@ impl Transliterator {
     /// Construct a [`Transliterator`] from the given [`Locale`].
     ///
     /// # Examples
-    /// ```ignore
+    /// ```
     /// use icu::experimental::transliterate::Transliterator;
     /// // BCP-47-T ID for Bengali to Arabic transliteration
     /// let locale = "und-Arab-t-und-beng".parse().unwrap();
-    /// let t = Transliterator::try_new_unstable(locale, provider).unwrap();
+    /// let t = Transliterator::try_new(&locale).unwrap();
     /// let output = t.transliterate("অকার্যতানাযা".to_string());
     ///
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
-    pub fn try_new_unstable<P>(locale: Locale, provider: &P) -> Result<Transliterator, DataError>
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(locale: &Locale) -> Result<Self, DataError> {
+        Self::try_new_unstable(
+            &crate::provider::Baked,
+            &icu_normalizer::provider::Baked,
+            locale,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+        locale: &Locale,
+    ) -> Result<Self, DataError> {
+        Self::try_new_unstable(
+            &provider.as_downcasting(),
+            &provider.as_downcasting(),
+            locale,
+        )
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+        locale: &Locale,
+    ) -> Result<Self, DataError> {
+        Self::try_new_unstable(
+            &provider.as_deserializing(),
+            &provider.as_deserializing(),
+            locale,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<PT, PN>(
+        transliterator_provider: &PT,
+        normalizer_provider: &PN,
+        locale: &Locale,
+    ) -> Result<Self, DataError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
@@ -184,9 +288,9 @@ impl Transliterator {
     {
         Self::internal_try_new_with_override_unstable(
             locale,
-            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
-            provider,
-            provider,
+            None::<&fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>>,
+            transliterator_provider,
+            normalizer_provider,
         )
     }
 
@@ -200,50 +304,111 @@ impl Transliterator {
     ///
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
-    /// ```ignore
-    /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu::locale::Locale;
+    /// ```
     /// use core::ops::Range;
+    /// use icu::experimental::transliterate::{
+    ///     CustomTransliterator, Transliterator,
+    /// };
+    /// use icu::locale::Locale;
     ///
     /// #[derive(Debug)]
     /// struct FunkyGermanToAscii;
     /// impl CustomTransliterator for FunkyGermanToAscii {
-    ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
+    ///     fn transliterate(
+    ///         &self,
+    ///         input: &str,
+    ///         allowed_range: Range<usize>,
+    ///     ) -> String {
     ///         input[allowed_range].replace("oeverride", "overridden")
     ///     }
     /// }
     ///
     /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
-    /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
-    ///     override_locale.eq(lookup_locale).then_some(Box::new(FunkyGermanToAscii))
-    /// };
-    ///
     /// let locale = "de-t-de-d0-ascii".parse().unwrap();
-    /// let t = Transliterator::try_new_with_override_unstable(locale, lookup, provider).unwrap();
+    /// let t = Transliterator::try_new_with_override(&locale, |locale| {
+    ///     override_locale
+    ///         .eq(locale)
+    ///         .then_some(Ok(Box::new(FunkyGermanToAscii)))
+    /// })
+    /// .unwrap();
     /// let output = t.transliterate("This is an överride example".to_string());
     ///
     /// assert_eq!(output, "This is an overridden example");
     /// ```
-    pub fn try_new_with_override_unstable<P, F>(
-        locale: Locale,
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_override<F>(locale: &Locale, lookup: F) -> Result<Self, DataError>
+    where
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
+    {
+        Self::try_new_with_override_unstable(
+            &crate::provider::Baked,
+            &icu_normalizer::provider::Baked,
+            locale,
+            lookup,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_override)]
+    pub fn try_new_with_override_with_any_provider<F>(
+        provider: &(impl AnyProvider + ?Sized),
+        locale: &Locale,
         lookup: F,
-        provider: &P,
+    ) -> Result<Self, DataError>
+    where
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
+    {
+        Self::try_new_with_override_unstable(
+            &provider.as_downcasting(),
+            &provider.as_downcasting(),
+            locale,
+            lookup,
+        )
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
+    pub fn try_new_with_override_with_buffer_provider<F>(
+        provider: &(impl BufferProvider + ?Sized),
+        locale: &Locale,
+        lookup: F,
+    ) -> Result<Self, DataError>
+    where
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
+    {
+        Self::try_new_with_override_unstable(
+            &provider.as_deserializing(),
+            &provider.as_deserializing(),
+            locale,
+            lookup,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_override)]
+    pub fn try_new_with_override_unstable<PT, PN, F>(
+        transliterator_provider: &PT,
+        normalizer_provider: &PN,
+        locale: &Locale,
+        lookup: F,
     ) -> Result<Transliterator, DataError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            Some(&lookup),
+            transliterator_provider,
+            normalizer_provider,
+        )
     }
 
     fn internal_try_new_with_override_unstable<PN, PT, F>(
-        locale: Locale,
+        locale: &Locale,
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
@@ -256,41 +421,34 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        let payload = Transliterator::load_rbt(
+        let mut env = LiteMap::new();
+
+        let transliterator = Transliterator::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
             DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
-            transliterator_provider,
-        )?;
-        let rbt = payload.get();
-        if !rbt.visibility {
-            // transliterator is internal
-            return Err(DataError::custom("internal only transliterator"));
-        }
-        let mut env = LiteMap::new();
-        // Avoid recursive load
-        env.insert(locale.to_string(), InternalTransliterator::Null);
-        Transliterator::load_dependencies_recursive(
-            rbt,
-            &mut env,
             lookup,
             transliterator_provider,
             normalizer_provider,
+            false,
+            &mut env,
         )?;
+
         Ok(Transliterator {
-            transliterator: payload,
+            transliterator,
             env,
         })
     }
 
-    fn load_dependencies_recursive<PT, PN, F>(
-        rbt: &RuleBasedTransliterator<'_>,
-        env: &mut LiteMap<String, InternalTransliterator>,
+    fn load_rbt<PT, PN, F>(
+        marker_attributes: &DataMarkerAttributes,
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<(), DataError>
+        allow_internal: bool,
+        env: &mut LiteMap<String, InternalTransliterator>,
+    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -299,49 +457,48 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
-        for dep in rbt.deps() {
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
+            ..Default::default()
+        };
+        let transliterator = transliterator_provider.load(req)?.payload;
+        if !allow_internal && !transliterator.get().visibility {
+            return Err(DataError::custom("internal only transliterator"));
+        }
+        // Avoid recursive load
+        env.insert(marker_attributes.to_string(), InternalTransliterator::Null);
+        for dep in transliterator.get().deps() {
             if !env.contains_key(&*dep) {
-                // 1. Insert a placeholder to avoid infinite recursion.
-                env.insert(dep.to_string(), InternalTransliterator::Null);
-                // 2. Load the transliterator, by checking
-                let internal_t = dep
+                // Load the transliterator, by checking
+                let internal_t =
                     // a) hardcoded specials
-                    .strip_prefix("x-")
-                    .map(|special| Transliterator::load_special(special, normalizer_provider))
+                    Transliterator::load_special(&dep, normalizer_provider)
                     // b) the user-provided override
-                    .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
+                    .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
                     .unwrap_or_else(|| {
-                        let rbt = Transliterator::load_rbt(
+                        Transliterator::load_rbt(
                             #[allow(clippy::unwrap_used)] // infallible
                             DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
+                            lookup,
                             transliterator_provider,
-                        )?;
-                        Ok(InternalTransliterator::RuleBased(rbt))
+                            normalizer_provider,
+                            true,
+                            env,
+                        ).map(InternalTransliterator::RuleBased)
                     })?;
-                if let InternalTransliterator::RuleBased(rbt) = &internal_t {
-                    // 3. Recursively load the dependencies of the dependency.
-                    Self::load_dependencies_recursive(
-                        rbt.get(),
-                        env,
-                        lookup,
-                        transliterator_provider,
-                        normalizer_provider,
-                    )?;
-                }
-                // 4. Replace the placeholder with the loaded transliterator.
                 env.insert(dep.to_string(), internal_t);
             }
         }
-        Ok(())
+        Ok(transliterator)
     }
 
     fn load_special<P>(
         special: &str,
         normalizer_provider: &P,
-    ) -> Result<InternalTransliterator, DataError>
+    ) -> Option<Result<InternalTransliterator, DataError>>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -352,72 +509,44 @@ impl Transliterator {
     {
         // TODO(#3909, #3910): add more
         match special {
-            "any-nfc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfc(normalizer_provider)?,
-            )),
-            "any-nfkc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfkc(normalizer_provider)?,
-            )),
-            "any-nfd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfd(normalizer_provider)?,
-            )),
-            "any-nfkd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfkd(normalizer_provider)?,
-            )),
-            "any-null" => Ok(InternalTransliterator::Null),
-            "any-remove" => Ok(InternalTransliterator::Remove),
-            "any-hex/unicode" => Ok(InternalTransliterator::Hex(
+            "any-nfc" => Some(
+                ComposingTransliterator::try_nfc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfkc" => Some(
+                ComposingTransliterator::try_nfkc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfd" => Some(
+                DecomposingTransliterator::try_nfd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-nfkd" => Some(
+                DecomposingTransliterator::try_nfkd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-null" => Some(Ok(InternalTransliterator::Null)),
+            "any-remove" => Some(Ok(InternalTransliterator::Remove)),
+            "any-lower" => Some(Err(DataError::custom("any-lower not implemented"))),
+            "any-upper" => Some(Err(DataError::custom("any-upper not implemented"))),
+            "any-title" => Some(Err(DataError::custom("any-title not implemented"))),
+            "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
-            )),
-            "any-hex/rust" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/rust" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
-            )),
-            "any-hex/xml" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/xml" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
-            )),
-            "any-hex/perl" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/perl" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
-            )),
-            "any-hex/plain" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/plain" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
-            )),
-            s => Err(DataError::custom("unavailable transliterator").with_debug_context(s)),
+            ))),
+            _ => None,
         }
-    }
-
-    fn load_with_override<F>(
-        id: &str,
-        lookup: &F,
-    ) -> Result<Option<InternalTransliterator>, DataError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
-        let locale: Locale = id.parse().map_err(|e| {
-            DataError::custom("invalid data: transliterator dependency is not a valid Locale")
-                .with_debug_context(&e)
-        })?;
-        Ok(lookup(&locale).map(InternalTransliterator::Dyn))
-    }
-
-    fn load_rbt<P>(
-        marker_attributes: &DataMarkerAttributes,
-        provider: &P,
-    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
-    where
-        P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-    {
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
-            ..Default::default()
-        };
-        let payload = provider.load(req)?.payload;
-        let rbt = payload.get();
-        if rbt.id_group_list.len() != rbt.rule_group_list.len() {
-            return Err(DataError::custom(
-                "invalid data: id_group_list and rule_group_list have different lengths",
-            ));
-        }
-        Ok(payload)
     }
 
     // Before stabilization, consider the input type we want to accept here. We might want to
@@ -434,7 +563,7 @@ impl Transliterator {
     }
 }
 
-impl<'a> RuleBasedTransliterator<'a> {
+impl RuleBasedTransliterator<'_> {
     /// Transliteration using rules works as follows:
     ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter
     ///  2. Transliterate each run in sequence
@@ -461,7 +590,7 @@ impl<'a> RuleBasedTransliterator<'a> {
     }
 }
 
-impl<'a> SimpleId<'a> {
+impl SimpleId<'_> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
         // definitely loaded in the constructor
@@ -474,11 +603,11 @@ impl<'a> SimpleId<'a> {
 }
 
 struct RuleGroup<'a> {
-    rules: &'a VarZeroSlice<RuleULE>,
+    rules: &'a VarZeroSlice<RuleULE, Index32>,
 }
 
 impl<'a> RuleGroup<'a> {
-    fn from(rules: &'a VarZeroSlice<RuleULE>) -> Self {
+    fn from(rules: &'a VarZeroSlice<RuleULE, Index32>) -> Self {
         Self { rules }
     }
 
@@ -516,7 +645,7 @@ impl<'a> RuleGroup<'a> {
     }
 }
 
-impl<'a> Rule<'a> {
+impl Rule<'_> {
     /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
     /// current run.
     fn apply(&self, mut dest: Insertable, data: MatchData, vt: &VarTable, env: &Env) {
@@ -852,7 +981,7 @@ enum SpecialMatcher<'a> {
     AnchorEnd,
 }
 
-impl<'a> SpecialMatcher<'a> {
+impl SpecialMatcher<'_> {
     // Thought: a lot of duplicated code in matches and rev_matches. deduplicate.
     //  maybe by being generic over Direction? doesn't work for some special cases, though, like segments and sets
 
@@ -869,10 +998,10 @@ impl<'a> SpecialMatcher<'a> {
                 // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
                 if matcher.is_empty() {
-                    if set.contains("") {
+                    if set.contains_str("") {
                         return true;
                     }
-                    if set.contains("\u{FFFF}") {
+                    if set.contains_str("\u{FFFF}") {
                         if matcher.match_end_anchor() {
                             return true;
                         }
@@ -908,7 +1037,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 if let Some(input_c) = matcher.next_char() {
                     // eprintln!("checking if set {set:?} contains char {input_c:?}");
-                    if set.contains_char(input_c) {
+                    if set.contains(input_c) {
                         // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }
@@ -972,10 +1101,10 @@ impl<'a> SpecialMatcher<'a> {
                 // eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
                 if matcher.is_empty() {
-                    if set.contains("") {
+                    if set.contains_str("") {
                         return true;
                     }
-                    if set.contains("\u{FFFF}") {
+                    if set.contains_str("\u{FFFF}") {
                         if matcher.match_end_anchor() {
                             return true;
                         }
@@ -1002,7 +1131,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 if let Some(input_c) = matcher.next_char() {
                     // eprintln!("checking if set {set:?} contains char {input_c:?}");
-                    if set.contains_char(input_c) {
+                    if set.contains(input_c) {
                         // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }
@@ -1061,7 +1190,7 @@ enum SpecialReplacer<'a> {
     PureCursor,
 }
 
-impl<'a> SpecialReplacer<'a> {
+impl SpecialReplacer<'_> {
     /// Estimates the size of the replacement string produced by this Replacer.
     fn estimate_size(&self, data: &MatchData, vt: &VarTable) -> usize {
         match self {
@@ -1256,11 +1385,8 @@ impl<'a> VarTable<'a> {
 
 #[cfg(test)]
 mod tests {
-    #![allow(unused_imports)]
     use super::*;
-
-    use crate as icu_experimental;
-    include!("../../../tests/transliterate/data/provider.rs");
+    use crate::transliterate::RuleCollection;
 
     #[test]
     fn test_empty_matches() {
@@ -1272,9 +1398,19 @@ mod tests {
             ("b1", "bmatch1"),
         ];
 
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/EmptyMatches.txt").into(),
+            [],
+            false,
+            true,
+        );
+
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1285,9 +1421,26 @@ mod tests {
 
     #[test]
     fn test_recursive_suite() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-root".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveRoot.txt").into(),
+            [],
+            false,
+            true,
+        );
+        collection.register_source(
+            &"und-x-rec".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveA.txt").into(),
+            ["Test-Test/RecursiveSuiteA"],
+            false,
+            true,
+        );
+
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-root".parse().unwrap(),
         )
         .unwrap();
 
@@ -1298,9 +1451,18 @@ mod tests {
 
     #[test]
     fn test_cursor_placeholders_filters() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/CursorFilters.txt").into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1311,9 +1473,18 @@ mod tests {
 
     #[test]
     fn test_functionality() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            include_str!("../../../tests/transliterate/data/transforms/Functionality.txt").into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
 
@@ -1324,9 +1495,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii() {
-        let t =
-            Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &TestingProvider)
-                .unwrap();
+        let t = Transliterator::try_new(&"de-t-de-d0-ascii".parse().unwrap()).unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
@@ -1346,12 +1515,13 @@ mod tests {
         }
 
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
-        let t = Transliterator::try_new_with_override_unstable(
-            "de-t-de-d0-ascii".parse().unwrap(),
-            |locale| locale.eq(&want_locale).then_some(Box::new(MaoamTranslit)),
-            &TestingProvider,
-        )
-        .unwrap();
+        let t =
+            Transliterator::try_new_with_override(&"de-t-de-d0-ascii".parse().unwrap(), |locale| {
+                locale
+                    .eq(&want_locale)
+                    .then_some(Ok(Box::new(MaoamTranslit)))
+            })
+            .unwrap();
 
         let input = "Ich liebe ꜵ über alles";
         let output = "Ich liebe maoam ueber alles";
@@ -1360,11 +1530,7 @@ mod tests {
 
     #[test]
     fn test_nfc_nfd() {
-        let t = Transliterator::try_new_unstable(
-            "und-t-und-latn-d0-ascii".parse().unwrap(),
-            &TestingProvider,
-        )
-        .unwrap();
+        let t = Transliterator::try_new(&"und-t-und-latn-d0-ascii".parse().unwrap()).unwrap();
         let input = "äa\u{0308}";
         let output = "aa";
         assert_eq!(t.transliterate(input.to_string()), output);
@@ -1372,9 +1538,18 @@ mod tests {
 
     #[test]
     fn test_hex_rust() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            "::Hex/Rust;".into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
@@ -1384,9 +1559,18 @@ mod tests {
 
     #[test]
     fn test_hex_unicode() {
+        let mut collection = RuleCollection::default();
+        collection.register_source(
+            &"und-x-test".parse().unwrap(),
+            "::Hex/Unicode;".into(),
+            [],
+            false,
+            true,
+        );
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
-            &TestingProvider,
+            &collection.as_provider(),
+            &icu_normalizer::provider::Baked,
+            &"und-x-test".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";

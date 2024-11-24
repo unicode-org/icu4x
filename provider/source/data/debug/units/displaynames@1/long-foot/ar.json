@@ -1,11 +1,23 @@
 {
   "patterns": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0000قدم"
+        {
+          "Literal": "قدم"
+        }
       ]
     ],
-    "other": "\u0001 قدم"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " قدم"
+        }
+      ]
+    ]
   }
 }

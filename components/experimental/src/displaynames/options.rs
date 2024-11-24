@@ -17,7 +17,7 @@
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
 /// options.style = Some(Style::Short);
-/// let display_name = RegionDisplayNames::try_new(&locale.into(), options)
+/// let display_name = RegionDisplayNames::try_new(locale.into(), options)
 ///     .expect("Data should load successfully");
 ///
 /// // Full name would be "Bosnia & Herzegovina"
@@ -36,7 +36,7 @@ pub struct DisplayNamesOptions {
 }
 
 /// An enum for formatting style.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Style {

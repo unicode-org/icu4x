@@ -4,10 +4,9 @@
 
 //! Internal traits and structs for loading data from other crates.
 
-use icu_calendar::week::WeekCalculator;
-use icu_calendar::AnyCalendar;
+use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_provider::prelude::*;
 
 /// Trait for loading a FixedDecimalFormatter.
@@ -16,23 +15,16 @@ use icu_provider::prelude::*;
 pub(crate) trait FixedDecimalFormatterLoader {
     fn load(
         &self,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError>;
-}
-
-/// Trait for loading a WeekCalculator.
-///
-/// Implemented on the provider-specific loader types in this module.
-pub(crate) trait WeekCalculatorLoader {
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError>;
 }
 
 /// Trait for loading an AnyCalendar.
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait AnyCalendarLoader {
-    fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError>;
+    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError>;
 }
 
 /// Loader for types from other crates using compiled data.
@@ -44,26 +36,18 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(
         &self,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new(locale, options)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl WeekCalculatorLoader for ExternalLoaderCompiledData {
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new(locale)
+        FixedDecimalFormatter::try_new(prefs, options)
     }
 }
 
 #[cfg(feature = "compiled_data")]
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        Ok(AnyCalendar::new_for_locale(locale))
+    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
+        AnyCalendar::try_new(prefs)
     }
 }
 
@@ -77,20 +61,10 @@ where
     #[inline]
     fn load(
         &self,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
-    }
-}
-
-impl<P> WeekCalculatorLoader for ExternalLoaderAny<'_, P>
-where
-    P: ?Sized + AnyProvider,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_any_provider(self.0, locale)
+        FixedDecimalFormatter::try_new_with_any_provider(self.0, prefs, options)
     }
 }
 
@@ -99,8 +73,8 @@ where
     P: ?Sized + AnyProvider,
 {
     #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_any_provider(self.0, locale)
+    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
+        AnyCalendar::try_new_with_any_provider(self.0, prefs)
     }
 }
 
@@ -116,21 +90,10 @@ where
     #[inline]
     fn load(
         &self,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options)
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<P> WeekCalculatorLoader for ExternalLoaderBuffer<'_, P>
-where
-    P: ?Sized + BufferProvider,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_with_buffer_provider(self.0, locale)
+        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, prefs, options)
     }
 }
 
@@ -140,8 +103,8 @@ where
     P: ?Sized + BufferProvider,
 {
     #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_with_buffer_provider(self.0, locale)
+    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
+        AnyCalendar::try_new_with_buffer_provider(self.0, prefs)
     }
 }
 
@@ -150,25 +113,17 @@ pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+    P: ?Sized
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+        + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
 {
     #[inline]
     fn load(
         &self,
-        locale: &DataLocale,
+        prefs: FixedDecimalFormatterPreferences,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
-    }
-}
-
-impl<P> WeekCalculatorLoader for ExternalLoaderUnstable<'_, P>
-where
-    P: ?Sized + DataProvider<icu_calendar::provider::WeekDataV2Marker>,
-{
-    #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, DataError> {
-        WeekCalculator::try_new_unstable(self.0, locale)
+        FixedDecimalFormatter::try_new_unstable(self.0, prefs, options)
     }
 }
 
@@ -183,7 +138,7 @@ where
         + ?Sized,
 {
     #[inline]
-    fn load(&self, locale: &DataLocale) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_locale_unstable(self.0, locale)
+    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
+        AnyCalendar::try_new_unstable(self.0, prefs)
     }
 }

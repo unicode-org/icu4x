@@ -3,11 +3,35 @@
     "0": "ahora"
   },
   "past": {
-    "specials": [],
-    "other": "\u0006hace  seg."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seg."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u000bdentro de  seg."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seg."
+        }
+      ]
+    ]
   }
 }

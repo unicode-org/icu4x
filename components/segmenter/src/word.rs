@@ -11,8 +11,17 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
+
+/// Options to tailor word breaking behavior.
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct WordBreakOptions<'a> {
+    /// Content locale for word segmenter
+    pub content_locale: Option<&'a LanguageIdentifier>,
+}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -65,7 +74,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// Returns an iterator over pairs of boundary position and word type.
     pub fn iter_with_word_type<'i: 'l + 's>(
         &'i mut self,
-    ) -> impl Iterator<Item = (usize, WordType)> + '_ {
+    ) -> impl Iterator<Item = (usize, WordType)> + 'i {
         core::iter::from_fn(move || self.next().map(|i| (i, self.word_type())))
     }
 
@@ -168,6 +177,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
+    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1Marker>>,
 }
 
 impl WordSegmenter {
@@ -207,6 +217,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
+            payload_locale_override: None,
         }
     }
 
@@ -214,7 +225,7 @@ impl WordSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
-            try_new_auto: skip,
+            new_auto: skip,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -227,6 +238,7 @@ impl WordSegmenter {
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
@@ -235,6 +247,56 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    #[cfg(feature = "auto")]
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_auto_with_options,
+            try_new_auto_with_options_with_any_provider,
+            try_new_auto_with_options_with_buffer_provider,
+            try_new_auto_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[cfg(feature = "auto")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    pub fn try_new_auto_with_options_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_auto(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
         })
     }
 
@@ -279,6 +341,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
+            payload_locale_override: None,
         }
     }
 
@@ -299,6 +362,7 @@ impl WordSegmenter {
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
@@ -306,6 +370,55 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_lstm_with_options,
+            try_new_lstm_with_options_with_any_provider,
+            try_new_lstm_with_options_with_buffer_provider,
+            try_new_lstm_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[cfg(feature = "lstm")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    pub fn try_new_lstm_with_options_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
         })
     }
 
@@ -344,6 +457,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
+            payload_locale_override: None,
         }
     }
 
@@ -362,6 +476,7 @@ impl WordSegmenter {
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
@@ -370,6 +485,54 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_dictionary_with_options,
+            try_new_dictionary_with_options_with_any_provider,
+            try_new_dictionary_with_options_with_buffer_provider,
+            try_new_dictionary_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    pub fn try_new_dictionary_with_options_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_dict(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
         })
     }
 
@@ -377,6 +540,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -385,6 +552,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            locale_override,
         })
     }
 
@@ -397,6 +565,10 @@ impl WordSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -405,6 +577,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            locale_override,
         })
     }
 
@@ -412,6 +585,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -420,6 +597,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            locale_override,
         })
     }
 
@@ -427,6 +605,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -435,6 +617,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            locale_override,
         })
     }
 }
@@ -535,7 +718,7 @@ where
 #[derive(Debug)]
 pub struct WordBreakTypeUtf16;
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
+impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

@@ -261,3 +261,22 @@ impl From<std::io::Error> for DataError {
         DataErrorKind::Io(e.kind()).into_error()
     }
 }
+
+/// Extension trait for `Result<T, DataError>`.
+pub trait ResultDataError<T>: Sized {
+    /// Propagates all errors other than [`DataErrorKind::IdentifierNotFound`], and returns `None` in that case.
+    fn allow_identifier_not_found(self) -> Result<Option<T>, DataError>;
+}
+
+impl<T> ResultDataError<T> for Result<T, DataError> {
+    fn allow_identifier_not_found(self) -> Result<Option<T>, DataError> {
+        match self {
+            Ok(t) => Ok(Some(t)),
+            Err(DataError {
+                kind: DataErrorKind::IdentifierNotFound,
+                ..
+            }) => Ok(None),
+            Err(e) => Err(e),
+        }
+    }
+}

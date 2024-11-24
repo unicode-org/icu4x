@@ -47,7 +47,7 @@ const fn skip_before_separator(slice: &[u8]) -> &[u8] {
 #[derive(Copy, Clone, Debug)]
 pub struct SubtagIterator<'a> {
     remaining: &'a [u8],
-    // current is a prefix of remaning
+    // current is a prefix of remaining
     current: Option<&'a [u8]>,
 }
 

@@ -5,11 +5,35 @@
     "1": "el próximo trimestre"
   },
   "past": {
-    "specials": [],
-    "other": "\u0006hace  trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\u000bdentro de  trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
+    ]
   }
 }

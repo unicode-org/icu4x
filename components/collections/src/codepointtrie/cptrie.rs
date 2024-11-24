@@ -36,7 +36,8 @@ use zerovec::ZeroVec;
 /// Also see [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -57,7 +58,6 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// In most cases, the error value is read from the last element of the `data` array,
     /// this value is used for empty codepointtrie arrays
-
     /// Error type when converting from a u32 to this `TrieValue`.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
@@ -135,7 +135,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
@@ -980,7 +981,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 }
 
 #[cfg(feature = "databake")]
-impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'trie, T> {
+impl<T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'_, T> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         let header = self.header.bake(env);
         let index = self.index.bake(env);
@@ -991,13 +992,13 @@ impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'tri
 }
 
 #[cfg(feature = "databake")]
-impl<'trie, T: TrieValue + databake::Bake> databake::BakeSize for CodePointTrie<'trie, T> {
+impl<T: TrieValue + databake::Bake> databake::BakeSize for CodePointTrie<'_, T> {
     fn borrows_size(&self) -> usize {
         self.header.borrows_size() + self.index.borrows_size() + self.data.borrows_size()
     }
 }
 
-impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
+impl<T: TrieValue + Into<u32>> CodePointTrie<'_, T> {
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`.
     ///
@@ -1020,7 +1021,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
-impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
+impl<T: TrieValue> Clone for CodePointTrie<'_, T>
 where
     <T as zerovec::ule::AsULE>::ULE: Clone,
 {
@@ -1035,7 +1036,9 @@ where
 }
 
 /// Represents a range of consecutive code points sharing the same value in a
-/// code point map. The start and end of the interval is represented as a
+/// code point map.
+///
+/// The start and end of the interval is represented as a
 /// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct CodePointMapRange<T> {
@@ -1058,7 +1061,7 @@ pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpm_range: Option<CodePointMapRange<T>>,
 }
 
-impl<'a, T: TrieValue> Iterator for CodePointMapRangeIterator<'a, T> {
+impl<T: TrieValue> Iterator for CodePointMapRangeIterator<'_, T> {
     type Item = CodePointMapRange<T>;
 
     fn next(&mut self) -> Option<Self::Item> {

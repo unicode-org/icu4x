@@ -3,29 +3,91 @@
     "0": "овог сата"
   },
   "past": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\bпре  сата"
-      ],
-      [
-        "Few",
-        "\bпре  сата"
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
       ]
     ],
-    "other": "\bпре  сати"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сати"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [
+    "one": [
+      0,
       [
-        "One",
-        "\u0006за  сат"
-      ],
-      [
-        "Few",
-        "\u0006за  сата"
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сат"
+        }
       ]
     ],
-    "other": "\u0006за  сати"
+    "few": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сати"
+        }
+      ]
+    ]
   }
 }

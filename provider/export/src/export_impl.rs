@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
+use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -27,27 +27,11 @@ impl<T: IntoIterator> IntoParallelIterator for T {}
 use rayon::prelude::*;
 
 impl ExportDriver {
-    /// Exports data from the given provider to the given exporter.
-    ///
-    /// See
-    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
-    /// [`BlobExporter`](icu_provider_blob::export),
-    /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](icu_provider_baked::export).
-    pub fn export(
-        self,
-        provider: &impl ExportableProvider,
-        mut sink: impl DataExporter,
-    ) -> Result<(), DataError> {
-        self.export_dyn(provider, &mut sink)
-    }
-
-    // Avoids multiple monomorphizations
-    fn export_dyn(
+    pub(crate) fn export_dyn(
         self,
         provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
-    ) -> Result<(), DataError> {
+    ) -> Result<ExportMetadata, DataError> {
         let Self {
             markers,
             requested_families,
@@ -88,8 +72,15 @@ impl ExportDriver {
             }
         );
 
+        let mut flush_metadata = FlushMetadata::default();
+        flush_metadata.supports_dry_provider = matches!(
+            deduplication_strategy,
+            DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
+        );
+        let flush_metadata = flush_metadata;
+
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
-            log::trace!("Generating marker/locale: {marker:?}/{}", id.locale);
+            log::trace!("Generating marker/locale: {marker:?}/{id}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -102,22 +93,19 @@ impl ExportDriver {
                     ),
                     metadata,
                 };
-                match provider.load_data(marker, req) {
-                    Ok(data_response) => {
+                match provider.load_data(marker, req).allow_identifier_not_found() {
+                    Ok(Some(data_response)) => {
                         if let Some(iter) = locale_iter.as_ref() {
                             if iter.get().is_default() && !id.locale.is_default() {
-                                log::debug!("Falling back to und: {marker:?}/{}", id.locale);
+                                log::debug!("Falling back to und: {marker:?}/{id}");
                             }
                         }
                         return Some(Ok(data_response.payload));
                     }
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => {
+                    Ok(None) => {
                         if let Some(iter) = locale_iter.as_mut() {
                             if iter.get().is_default() {
-                                log::debug!("Could not find data for: {marker:?}/{}", id.locale);
+                                log::debug!("Could not find data for: {marker:?}/{id}");
                                 return None;
                             }
                             iter.step();
@@ -154,7 +142,7 @@ impl ExportDriver {
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(marker, &payload)
+                sink.flush_singleton(marker, &payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
@@ -236,7 +224,8 @@ impl ExportDriver {
 
             let transform_duration = instant1.elapsed();
 
-            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker, flush_metadata)
+                .map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;
@@ -255,7 +244,9 @@ impl ExportDriver {
             Ok(())
         })?;
 
-        sink.close()
+        let exporter = sink.close()?;
+
+        Ok(ExportMetadata { exporter })
     }
 }
 
@@ -427,12 +418,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
             ) {
                 if inherited_payload == payload {
                     // Found a match: don't need to write anything
-                    log::trace!(
-                        "Deduplicating {:?}/{} (inherits from {})",
-                        id.locale,
-                        id.marker_attributes.as_str(),
-                        iter.get()
-                    );
+                    log::trace!("Deduplicating {id} (inherits from {})", iter.get());
                     return Ok(());
                 } else {
                     // Not a match: we must include this
@@ -490,17 +476,17 @@ fn test_collation_filtering() {
 
     struct Provider;
 
-    impl DataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+    impl DataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
         fn load(
             &self,
             _req: DataRequest,
-        ) -> Result<DataResponse<icu::collator::provider::CollationDataV1Marker>, DataError>
+        ) -> Result<DataResponse<icu::collator::provider::CollationTailoringV1Marker>, DataError>
         {
             unreachable!()
         }
     }
 
-    impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+    impl IterableDataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
         fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
@@ -532,7 +518,7 @@ fn test_collation_filtering() {
 
     icu_provider::export::make_exportable_provider!(
         Provider,
-        [icu::collator::provider::CollationDataV1Marker,]
+        [icu::collator::provider::CollationTailoringV1Marker,]
     );
 
     #[derive(Debug)]
@@ -602,7 +588,7 @@ fn test_collation_filtering() {
         .with_additional_collations(cas.include_collations.iter().copied().map(String::from));
         let resolved_locales = select_locales_for_marker(
             &Provider,
-            icu::collator::provider::CollationDataV1Marker::INFO,
+            icu::collator::provider::CollationTailoringV1Marker::INFO,
             &driver.requested_families,
             &driver.attributes_filters,
             false,

@@ -119,6 +119,21 @@ struct Cli {
     #[cfg(feature = "provider")]
     segmenter_lstm_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "TAG", default_value = "latest")]
+    #[arg(
+        help = "Download tzdb from this GitHub tag (https://github.com/eggert/tzdb)\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
+    )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
+    tzdb_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local tzdb directory (see https://github.com/eggert/tzdb).")]
+    #[cfg(feature = "provider")]
+    tzdb_root: Option<PathBuf>,
+
     #[arg(long, value_enum, default_value_t = TrieType::Small)]
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
@@ -163,7 +178,7 @@ struct Cli {
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
                   --overwrite is present, in which case the directory is deleted first. \
-                  For --format={blob,blob2}, omit this option to dump to stdout. \
+                  For --format=blob, omit this option to dump to stdout. \
                   For --format={dir,mod} defaults to 'icu4x_data'."
     )]
     output: Option<PathBuf>,
@@ -203,7 +218,6 @@ struct Cli {
 enum Format {
     Fs,
     Blob,
-    Blob2,
     Baked,
 }
 
@@ -413,6 +427,22 @@ fn main() -> eyre::Result<()> {
                 }
             };
 
+            p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {
+                (Some(path), _) => p.with_tzdb(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => {
+                    p.with_tzdb_for_tag(SourceDataProvider::LATEST_TESTED_TZDB_TAG)
+                }
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_tzdb_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => {
+                    eyre::bail!(
+                        "Downloading data from tags requires the `networking` Cargo feature"
+                    )
+                }
+            };
+
             if cli.locales.as_slice() == ["recommended"] {
                 preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels([
@@ -463,16 +493,15 @@ fn main() -> eyre::Result<()> {
     };
 
     let deduplication_strategy = match cli.deduplication {
-        Some(Deduplication::Maximal) => icu_provider_export::DeduplicationStrategy::Maximal,
+        Some(Deduplication::Maximal) => DeduplicationStrategy::Maximal,
         Some(Deduplication::RetainBaseLanguages) => {
-            icu_provider_export::DeduplicationStrategy::RetainBaseLanguages
+            DeduplicationStrategy::RetainBaseLanguages
         }
-        Some(Deduplication::None) => icu_provider_export::DeduplicationStrategy::None,
+        Some(Deduplication::None) => DeduplicationStrategy::None,
         None => match cli.format {
-            Format::Fs | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
+            Format::Fs | Format::Blob => DeduplicationStrategy::None,
             Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() =>
                 eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
-            // TODO(2.0): Default to RetainBaseLanguages here
             Format::Baked => DeduplicationStrategy::Maximal,
         }
     };
@@ -504,7 +533,7 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    match cli.format {
+    let _metadata = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
@@ -531,11 +560,11 @@ fn main() -> eyre::Result<()> {
             )?
         })?,
         #[cfg(not(feature = "blob_exporter"))]
-        Format::Blob | Format::Blob2 => {
+        Format::Blob => {
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature")
         }
         #[cfg(feature = "blob_exporter")]
-        Format::Blob | Format::Blob2 => driver.export(&provider, {
+        Format::Blob => driver.export(&provider, {
             use icu_provider_export::blob_exporter::*;
 
             let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
@@ -549,11 +578,7 @@ fn main() -> eyre::Result<()> {
             } else {
                 Box::new(std::io::stdout())
             };
-            if cli.format == Format::Blob {
-                BlobExporter::new_with_sink(sink)
-            } else {
-                BlobExporter::new_v2_with_sink(sink)
-            }
+            BlobExporter::new_with_sink(sink)
         })?,
         #[cfg(not(feature = "baked_exporter"))]
         Format::Baked => {
@@ -573,7 +598,7 @@ fn main() -> eyre::Result<()> {
                 },
             )?
         })?,
-    }
+    };
 
     Ok(())
 }

@@ -65,13 +65,10 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
         let mut short_names = BTreeMap::new();
         for entry in other.main.value.localedisplaynames.scripts.iter() {
             if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                short_names.insert(
-                    Script::try_from_str(script)?.into_tinystr(),
-                    entry.1.as_str(),
-                );
+                short_names.insert(Script::try_from_str(script)?.to_tinystr(), entry.1.as_str());
             } else if !entry.0.contains(ALT_SUBSTRING) {
                 names.insert(
-                    Script::try_from_str(entry.0)?.into_tinystr(),
+                    Script::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
             }
@@ -112,7 +109,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&script!("Cans").into_tinystr().to_unvalidated())
+                .get(&script!("Cans").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -133,7 +130,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&script!("Cans").into_tinystr().to_unvalidated())
+                .get(&script!("Cans").to_tinystr().to_unvalidated())
                 .unwrap(),
             "UCAS"
         );

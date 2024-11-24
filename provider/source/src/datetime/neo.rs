@@ -6,7 +6,7 @@ use super::supported_cals;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::datetime::pattern;
+use icu::datetime::provider::pattern;
 
 use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
@@ -17,6 +17,7 @@ use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
+use writeable::Writeable;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -136,8 +137,7 @@ impl SourceDataProvider {
         Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |id, data| {
-            let Some((context, length)) =
-                marker_attrs::symbol_marker_attr_info(id.marker_attributes)
+            let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
                 panic!(
                     "Found unexpected marker attributes {}",
@@ -212,7 +212,7 @@ fn weekday_convert(
     ];
 
     Ok(LinearNamesV1 {
-        symbols: (&days).into(),
+        names: (&days).into(),
     })
 }
 
@@ -239,7 +239,7 @@ fn dayperiods_convert(
     }
 
     Ok(LinearNamesV1 {
-        symbols: (&periods).into(),
+        names: (&periods).into(),
     })
 }
 
@@ -254,7 +254,6 @@ fn eras_convert(
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
     let map = super::symbols::get_era_code_map(&calendar_str);
-    let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
     // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
@@ -286,13 +285,7 @@ fn eras_convert(
         None
     };
 
-    let modern_japanese_eras = if *calendar == value!("japanese") {
-        Some(datagen.cldr()?.modern_japanese_eras()?)
-    } else {
-        None
-    };
-
-    let extra_japanese = if *calendar == value!("japanese") || *calendar == value!("japanext") {
+    if *calendar == value!("japanese") || *calendar == value!("japanext") {
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
@@ -306,54 +299,65 @@ fn eras_convert(
             .get("gregorian")
             .expect("CLDR gregorian.json contains the expected calendar");
 
-        let eras = greg_data
+        let greg_eras = greg_data
             .eras
             .as_ref()
             .expect("gregorian must have eras")
             .load(length);
-        Some((
-            eras.get("0").expect("gregorian calendar must have 0 era"),
-            eras.get("1").expect("gregorian calendar must have 1 era"),
-        ))
-    } else {
-        None
-    };
+        let ce = greg_eras
+            .get("0")
+            .expect("gregorian calendar must have 0 era");
+        let bce = greg_eras
+            .get("1")
+            .expect("gregorian calendar must have 1 era");
+        let modern_japanese_eras = if *calendar == value!("japanese") {
+            Some(datagen.cldr()?.modern_japanese_eras()?)
+        } else {
+            None
+        };
 
-    for (cldr, code) in map {
-        if let Some(name) = eras.get(cldr) {
-            if let Some(modern_japanese_eras) = modern_japanese_eras {
-                if !modern_japanese_eras.contains(cldr) {
-                    continue;
+        let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
+
+        for (cldr, code) in map {
+            if let Some(name) = eras.get(cldr) {
+                if let Some(modern_japanese_eras) = modern_japanese_eras {
+                    if !modern_japanese_eras.contains(cldr) {
+                        continue;
+                    }
                 }
-            }
-            out_eras.insert(code, &**name);
-        } else if let Some(extra_ethiopic) = extra_ethiopic {
-            if cldr == "2" {
-                out_eras.insert(code, extra_ethiopic);
-            } else {
-                panic!("Unknown ethiopic era number {cldr}");
-            }
-        } else if let Some(extra_japanese) = extra_japanese {
-            if cldr == "-1" {
-                // AD era
-                out_eras.insert(code, extra_japanese.0);
+                out_eras.insert(code, &**name);
+            } else if cldr == "-1" {
+                out_eras.insert(code, ce);
             } else if cldr == "-2" {
-                // BC era
-                out_eras.insert(code, extra_japanese.1);
+                out_eras.insert(code, bce);
             } else {
                 panic!("Unknown japanese era number {cldr}");
             }
-        } else {
-            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {locale}");
         }
-    }
+        Ok(YearNamesV1::VariableEras(
+            out_eras
+                .iter()
+                .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
+                .collect(),
+        ))
+    } else {
+        let mut out_eras: Vec<&str> = Vec::new();
+        for (index, (cldr, _code)) in map.enumerate() {
+            if let Some(name) = eras.get(cldr) {
+                out_eras.push(&**name)
+            } else if let Some(extra_ethiopic) = extra_ethiopic {
+                if cldr == "2" {
+                    out_eras.push(extra_ethiopic);
+                } else {
+                    panic!("Unknown ethiopic era number {cldr}");
+                }
+            } else {
+                panic!("Did not find era data for era index {index} (CLDR: #{cldr}) for {calendar} and {locale}");
+            }
+        }
 
-    Ok(YearNamesV1::Eras(
-        out_eras
-            .iter()
-            .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
-            .collect(),
-    ))
+        Ok(YearNamesV1::FixedEras((&out_eras).into()))
+    }
 }
 fn years_convert(
     datagen: &SourceDataProvider,
@@ -435,16 +439,9 @@ fn months_convert(
             panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
-        let leap = &pattern.leap;
-        let Some(index) = leap.find("{0}") else {
-            panic!("Calendar {calendar} for {locale} has leap pattern {leap}, which does not contain {{0}} placeholder");
-        };
-        let string = leap.replace("{0}", "");
-        let pattern = SimpleSubstitutionPattern {
-            pattern: string.into(),
-            subst_index: index,
-        };
-        return Ok(MonthNamesV1::LeapNumeric(pattern));
+        return Ok(MonthNamesV1::LeapNumeric(Cow::Owned(
+            pattern.leap.0.to_owned(),
+        )));
     }
 
     let months = data.months.get_symbols(context, length);
@@ -529,7 +526,11 @@ fn months_convert(
                 if symbols[i].is_empty() {
                     continue;
                 }
-                let replaced = leap.replace("{0}", &symbols[i]);
+                let replaced = leap
+                    .0
+                    .interpolate([&symbols[i]])
+                    .write_to_string()
+                    .into_owned();
                 symbols[nonleap + i] = replaced.into();
             }
             Ok(MonthNamesV1::LeapLinear((&symbols).into()))
@@ -566,8 +567,7 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
             // only replace numeric items
             if field.length != FieldLength::One {
                 assert!(
-                    field.length != FieldLength::TwoDigit
-                        || symbol_to_replace != Some(field.symbol),
+                    field.length != FieldLength::Two || symbol_to_replace != Some(field.symbol),
                     "We don't know what to do when there is a non-targeted numeric override \
                          on a two-digit numeric field"
                 );

@@ -7,9 +7,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** A type capable of looking up a property value from a string name.
 *
-*See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
+*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
 *
-*See the [Rust documentation for `PropertyValueNameToEnumMapperBorrowed`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html) for more information.
+*See the [Rust documentation for `PropertyParserBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html) for more information.
+*
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html#method.new) for more information.
 */
 const PropertyValueNameToEnumMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_PropertyValueNameToEnumMapper_destroy_mv1(ptr);
@@ -45,9 +47,9 @@ export class PropertyValueNameToEnumMapper {
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, ...nameSlice);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
     
         try {
             return result;
@@ -61,9 +63,9 @@ export class PropertyValueNameToEnumMapper {
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, ...nameSlice);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
     
         try {
             return result;
@@ -81,7 +83,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -99,7 +101,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -117,7 +119,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -135,7 +137,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -153,7 +155,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -171,7 +173,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -189,7 +191,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -207,7 +209,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -225,7 +227,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -243,7 +245,7 @@ export class PropertyValueNameToEnumMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);

@@ -36,6 +36,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+postcard = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
@@ -44,9 +45,9 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/databake", "dep:databake"]
+datagen = ["std", "serde", "zerovec/databake", "dep:databake"]
 experimental = []
-bench = ["serde"]
+bench = ["serde", "datagen"]
 compiled_data = ["dep:icu_plurals_data"]
 
 [lib]

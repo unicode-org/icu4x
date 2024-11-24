@@ -1,17 +1,41 @@
 {
-  "defaults": {
-    "arge": {
-      "dt": "ARST",
-      "st": "ART"
-    },
-    "arwe": {
-      "dt": "WARST",
-      "st": "WART"
-    }
-  },
-  "overrides": {
-    "utc": {
-      "st": "UTC"
-    }
-  }
+  "defaults": [
+    [
+      [
+        "arge",
+        "Standard"
+      ],
+      "ART"
+    ],
+    [
+      [
+        "arge",
+        "Daylight"
+      ],
+      "ARST"
+    ],
+    [
+      [
+        "arwe",
+        "Standard"
+      ],
+      "WART"
+    ],
+    [
+      [
+        "arwe",
+        "Daylight"
+      ],
+      "WARST"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ]
 }

@@ -3,11 +3,32 @@
     "0": "ชั่วโมงนี้"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ชม. ที่แล้ว"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชม. ที่แล้ว"
+        }
+      ]
+    ]
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  ชม."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชม."
+        }
+      ]
+    ]
   }
 }

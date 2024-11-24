@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -109,8 +109,7 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice: &[T::ULE] = self.vector.as_slice();
-        ZeroSlice::from_ule_slice(slice)
+        self.as_slice()
     }
 }
 
@@ -193,7 +192,7 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
 
 impl<'a, T: AsULE> AsRef<ZeroSlice<T>> for ZeroVec<'a, T> {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        self.deref()
+        self.as_slice()
     }
 }
 
@@ -310,16 +309,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         let capacity = vec.capacity();
         let len = vec.len();
         let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
-        // Note: starting in 1.70 we can use NonNull::slice_from_raw_parts
-        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
+        // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
+        // "Returns an unsafe mutable pointer to the vector’s buffer,
+        // or a dangling raw pointer valid for zero sized reads"
+        let ptr = unsafe { NonNull::new_unchecked(ptr) };
+        let buf = NonNull::slice_from_raw_parts(ptr, len);
         Self {
-            vector: EyepatchHackVector {
-                // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
-                // "Returns an unsafe mutable pointer to the vector’s buffer,
-                // or a dangling raw pointer valid for zero sized reads"
-                buf: unsafe { NonNull::new_unchecked(slice) },
-                capacity,
-            },
+            vector: EyepatchHackVector { buf, capacity },
             marker: PhantomData,
         }
     }
@@ -348,7 +344,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// Parses a `&[u8]` buffer into a `ZeroVec<T>`.
     ///
     /// This function is infallible for built-in integer types, but fallible for other types,
-    /// such as `char`. For more information, see [`ULE::parse_byte_slice`].
+    /// such as `char`. For more information, see [`ULE::parse_bytes_to_slice`].
     ///
     /// The bytes within the byte buffer must remain constant for the life of the ZeroVec.
     ///
@@ -364,13 +360,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// assert!(!zerovec.is_owned());
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
-        let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
+    pub fn parse_bytes(bytes: &'a [u8]) -> Result<Self, UleError> {
+        let slice: &'a [T::ULE] = T::ULE::parse_bytes_to_slice(bytes)?;
         Ok(Self::new_borrowed(slice))
     }
 
@@ -400,7 +396,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// let zv_bytes = zerovec.into_bytes();
     ///
     /// assert!(!zv_bytes.is_owned());
@@ -422,14 +418,24 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     pub fn into_bytes(self) -> ZeroVec<'a, u8> {
         match self.into_cow() {
             Cow::Borrowed(slice) => {
-                let bytes: &'a [u8] = T::ULE::as_byte_slice(slice);
+                let bytes: &'a [u8] = T::ULE::slice_as_bytes(slice);
                 ZeroVec::new_borrowed(bytes)
             }
             Cow::Owned(vec) => {
-                let bytes = Vec::from(T::ULE::as_byte_slice(&vec));
+                let bytes = Vec::from(T::ULE::slice_as_bytes(&vec));
                 ZeroVec::new_owned(bytes)
             }
         }
+    }
+
+    /// Returns this [`ZeroVec`] as a [`ZeroSlice`].
+    ///
+    /// To get a reference with a longer lifetime from a borrowed [`ZeroVec`],
+    /// use [`ZeroVec::as_maybe_borrowed`].
+    #[inline]
+    pub const fn as_slice(&self) -> &ZeroSlice<T> {
+        let slice: &[T::ULE] = self.vector.as_slice();
+        ZeroSlice::from_ule_slice(slice)
     }
 
     /// Casts a `ZeroVec<T>` to a compatible `ZeroVec<P>`.
@@ -447,7 +453,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     ///
     /// let zerovec_u16: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert_eq!(zerovec_u16.get(3), Some(32973));
     ///
     /// let zerovec_i16: ZeroVec<i16> = zerovec_u16.cast();
@@ -480,7 +486,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
     /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    ///     ZeroVec::parse_bytes(bytes).expect("valid code points");
     /// let zv_u8_3: ZeroVec<[u8; 3]> =
     ///     zv_char.try_into_converted().expect("infallible conversion");
     ///
@@ -509,7 +515,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
     /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    ///     ZeroVec::parse_bytes(bytes).expect("valid code points");
     ///
     /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
     /// zv_char.try_into_converted::<u16>();
@@ -522,7 +528,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
     /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    ///     ZeroVec::parse_bytes(bytes).expect("valid code points");
     /// let zv_u16: ZeroVec<u16> =
     ///     zv_char.into_bytes().try_into_parsed().expect("infallible");
     ///
@@ -536,13 +542,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         );
         match self.into_cow() {
             Cow::Borrowed(old_slice) => {
-                let bytes: &'a [u8] = T::ULE::as_byte_slice(old_slice);
-                let new_slice = P::ULE::parse_byte_slice(bytes)?;
+                let bytes: &'a [u8] = T::ULE::slice_as_bytes(old_slice);
+                let new_slice = P::ULE::parse_bytes_to_slice(bytes)?;
                 Ok(ZeroVec::new_borrowed(new_slice))
             }
             Cow::Owned(old_vec) => {
-                let bytes: &[u8] = T::ULE::as_byte_slice(&old_vec);
-                P::ULE::validate_byte_slice(bytes)?;
+                let bytes: &[u8] = T::ULE::slice_as_bytes(&old_vec);
+                P::ULE::validate_bytes(bytes)?;
                 // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
                 let (ptr, len, cap) = {
                     // Take ownership of the pointer
@@ -570,8 +576,11 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         self.vector.capacity != 0
     }
 
-    /// If this is a borrowed ZeroVec, return it as a slice that covers
-    /// its lifetime parameter
+    /// If this is a borrowed [`ZeroVec`], return it as a slice that covers
+    /// its lifetime parameter.
+    ///
+    /// To infallibly get a [`ZeroSlice`] with a shorter lifetime, use
+    /// [`ZeroVec::as_slice`].
     #[inline]
     pub fn as_maybe_borrowed(&self) -> Option<&'a ZeroSlice<T>> {
         if self.is_owned() {
@@ -648,11 +657,11 @@ impl<'a> ZeroVec<'a, u8> {
     pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, UleError> {
         match self.into_cow() {
             Cow::Borrowed(bytes) => {
-                let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
+                let slice: &'a [T::ULE] = T::ULE::parse_bytes_to_slice(bytes)?;
                 Ok(ZeroVec::new_borrowed(slice))
             }
             Cow::Owned(vec) => {
-                let slice = Vec::from(T::ULE::parse_byte_slice(&vec)?);
+                let slice = Vec::from(T::ULE::parse_bytes_to_slice(&vec)?);
                 Ok(ZeroVec::new_owned(slice))
             }
         }
@@ -774,7 +783,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// zerovec.for_each_mut(|item| *item += 1);
     ///
@@ -799,7 +808,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     ///
     /// zerovec.try_for_each_mut(|item| {
     ///     *item = item.checked_add(1).ok_or(())?;
@@ -832,7 +841,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let owned = zerovec.into_owned();
@@ -860,7 +869,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// zerovec.with_mut(|v| v.push(12_u16.to_unaligned()));
@@ -891,7 +900,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// zerovec.to_mut_slice()[1] = 5u16.to_unaligned();
@@ -922,7 +931,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let first = zerovec.take_first().unwrap();
@@ -966,7 +975,7 @@ where
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///     ZeroVec::parse_bytes(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let last = zerovec.take_last().unwrap();
@@ -1118,7 +1127,7 @@ mod tests {
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
         }
         {
-            let zerovec = ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap();
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -1133,7 +1142,7 @@ mod tests {
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
         {
-            let zerovec = ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap();
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
@@ -1143,74 +1152,68 @@ mod tests {
     fn test_odd_alignment() {
         assert_eq!(
             Some(0x020100),
-            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
-                .unwrap()
-                .get(0)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(0)
         );
         assert_eq!(
             Some(0x04000201),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[1..77])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[1..77])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x05040002),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[2..78])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[2..78])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x06050400),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x060504),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[4..])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[4..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[75..79])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[75..79])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(18)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[76..])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[76..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
-                .unwrap()
-                .get(19)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(19)
         );
         // TODO(#1144): Check for correct slice length in RawBytesULE
         // assert_eq!(
         //     None,
-        //     ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])
+        //     ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[77..])
         //         .unwrap()
         //         .get(0)
         // );
         assert_eq!(
             None,
-            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
-                .unwrap()
-                .get(20)
+            ZeroVec::<u32>::parse_bytes(TEST_BUFFER_LE).unwrap().get(20)
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
+            ZeroVec::<u32>::parse_bytes(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(19)
         );

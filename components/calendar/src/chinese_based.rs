@@ -6,14 +6,13 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 //!
 //! ```rust
-//! use icu::calendar::{chinese::Chinese, Date, Iso};
+//! use icu::calendar::{cal::Chinese, Date, Iso};
 //!
-//! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
+//! let iso_date = Date::try_new_iso(2023, 6, 23).unwrap();
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
-//! assert_eq!(chinese_date.year().number, 4660);
-//! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
@@ -22,7 +21,7 @@ use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
     provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
-    types::{FormattableMonth, MonthCode},
+    types::{MonthCode, MonthInfo},
     Calendar, Iso,
 };
 
@@ -129,8 +128,8 @@ pub(crate) fn compute_many_packed<CB: ChineseBased>(
         .collect()
 }
 
-impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
-    for ChineseBasedPrecomputedData<'b, CB>
+impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
+    for ChineseBasedPrecomputedData<'_, CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
         self.data
@@ -345,7 +344,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         year_info: ChineseBasedYearInfo,
     ) -> Result<ArithmeticDate<C>, DateError> {
         let max_month = Self::months_in_year_with_info(year_info);
-        if !(1..=max_month).contains(&month) {
+        if month == 0 || !(1..=max_month).contains(&month) {
             return Err(DateError::Range {
                 field: "month",
                 value: month as i32,
@@ -353,17 +352,9 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
                 max: max_month as i32,
             });
         }
-        if month == 0 {
-            return Err(DateError::Range {
-                field: "month",
-                value: 0,
-                min: 1,
-                max: 12,
-            });
-        }
 
         let max_day = year_info.days_in_month(month);
-        if day > max_day {
+        if day == 0 || day > max_day {
             return Err(DateError::Range {
                 field: "day",
                 value: day as i32,
@@ -421,7 +412,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    pub(crate) fn month(&self) -> FormattableMonth {
+    pub(crate) fn month(&self) -> MonthInfo {
         let ordinal = self.0.month;
         let leap_month_option = self.0.year_info.leap_month();
 
@@ -481,9 +472,10 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
             }
         };
         let code = MonthCode(code_inner);
-        FormattableMonth {
-            ordinal: ordinal as u32,
-            code,
+        MonthInfo {
+            ordinal,
+            standard_code: code,
+            formatting_code: code,
         }
     }
 }

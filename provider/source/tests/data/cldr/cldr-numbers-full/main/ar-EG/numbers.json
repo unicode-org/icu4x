@@ -2,9 +2,6 @@
   "main": {
     "ar-EG": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar",
         "territory": "EG"
       },
@@ -27,7 +24,7 @@
           "superscriptingExponent": "×",
           "perMille": "؉",
           "infinity": "∞",
-          "nan": "ليس رقم",
+          "nan": "ليس رقمًا",
           "timeSeparator": ":"
         },
         "symbols-numberSystem-latn": {
@@ -414,11 +411,6 @@
             }
           },
           "currencyPatternAppendISO": "{0} ¤¤",
-          "unitPattern-count-zero": "{0} {1}",
-          "unitPattern-count-one": "{0} {1}",
-          "unitPattern-count-two": "{0} {1}",
-          "unitPattern-count-few": "{0} {1}",
-          "unitPattern-count-many": "{0} {1}",
           "unitPattern-count-other": "{0} {1}"
         },
         "miscPatterns-numberSystem-arab": {

@@ -54,19 +54,25 @@ namespace capi {
     
     uint16_t icu4x_DateTime_day_of_year_mv1(const icu4x::capi::DateTime* self);
     
-    uint32_t icu4x_DateTime_day_of_month_mv1(const icu4x::capi::DateTime* self);
+    uint8_t icu4x_DateTime_day_of_month_mv1(const icu4x::capi::DateTime* self);
     
     icu4x::capi::IsoWeekday icu4x_DateTime_day_of_week_mv1(const icu4x::capi::DateTime* self);
     
-    uint32_t icu4x_DateTime_week_of_month_mv1(const icu4x::capi::DateTime* self, icu4x::capi::IsoWeekday first_weekday);
+    uint8_t icu4x_DateTime_week_of_month_mv1(const icu4x::capi::DateTime* self, icu4x::capi::IsoWeekday first_weekday);
     
     icu4x::capi::WeekOf icu4x_DateTime_week_of_year_mv1(const icu4x::capi::DateTime* self, const icu4x::capi::WeekCalculator* calculator);
     
-    uint32_t icu4x_DateTime_ordinal_month_mv1(const icu4x::capi::DateTime* self);
+    uint8_t icu4x_DateTime_ordinal_month_mv1(const icu4x::capi::DateTime* self);
     
     void icu4x_DateTime_month_code_mv1(const icu4x::capi::DateTime* self, diplomat::capi::DiplomatWrite* write);
     
+    uint8_t icu4x_DateTime_month_number_mv1(const icu4x::capi::DateTime* self);
+    
+    bool icu4x_DateTime_month_is_leap_mv1(const icu4x::capi::DateTime* self);
+    
     int32_t icu4x_DateTime_year_in_era_mv1(const icu4x::capi::DateTime* self);
+    
+    int32_t icu4x_DateTime_extended_year_mv1(const icu4x::capi::DateTime* self);
     
     void icu4x_DateTime_era_mv1(const icu4x::capi::DateTime* self, diplomat::capi::DiplomatWrite* write);
     
@@ -167,7 +173,7 @@ inline uint16_t icu4x::DateTime::day_of_year() const {
   return result;
 }
 
-inline uint32_t icu4x::DateTime::day_of_month() const {
+inline uint8_t icu4x::DateTime::day_of_month() const {
   auto result = icu4x::capi::icu4x_DateTime_day_of_month_mv1(this->AsFFI());
   return result;
 }
@@ -177,7 +183,7 @@ inline icu4x::IsoWeekday icu4x::DateTime::day_of_week() const {
   return icu4x::IsoWeekday::FromFFI(result);
 }
 
-inline uint32_t icu4x::DateTime::week_of_month(icu4x::IsoWeekday first_weekday) const {
+inline uint8_t icu4x::DateTime::week_of_month(icu4x::IsoWeekday first_weekday) const {
   auto result = icu4x::capi::icu4x_DateTime_week_of_month_mv1(this->AsFFI(),
     first_weekday.AsFFI());
   return result;
@@ -189,7 +195,7 @@ inline icu4x::WeekOf icu4x::DateTime::week_of_year(const icu4x::WeekCalculator& 
   return icu4x::WeekOf::FromFFI(result);
 }
 
-inline uint32_t icu4x::DateTime::ordinal_month() const {
+inline uint8_t icu4x::DateTime::ordinal_month() const {
   auto result = icu4x::capi::icu4x_DateTime_ordinal_month_mv1(this->AsFFI());
   return result;
 }
@@ -202,8 +208,23 @@ inline std::string icu4x::DateTime::month_code() const {
   return output;
 }
 
+inline uint8_t icu4x::DateTime::month_number() const {
+  auto result = icu4x::capi::icu4x_DateTime_month_number_mv1(this->AsFFI());
+  return result;
+}
+
+inline bool icu4x::DateTime::month_is_leap() const {
+  auto result = icu4x::capi::icu4x_DateTime_month_is_leap_mv1(this->AsFFI());
+  return result;
+}
+
 inline int32_t icu4x::DateTime::year_in_era() const {
   auto result = icu4x::capi::icu4x_DateTime_year_in_era_mv1(this->AsFFI());
+  return result;
+}
+
+inline int32_t icu4x::DateTime::extended_year() const {
+  auto result = icu4x::capi::icu4x_DateTime_extended_year_mv1(this->AsFFI());
   return result;
 }
 

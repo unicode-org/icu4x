@@ -5,7 +5,7 @@
 [package]
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
-version = "0.10.4"
+version = "0.11.0"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
 
@@ -30,12 +30,7 @@ zerovec-derive = { workspace = true, optional = true}
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["alloc", "derive"], optional = true }
 
-# Special dep for yoke: avoid non-breaking zerovec bumps requiring breaking yoke bumps
-# Can be reset on next zerovec breaking if necessary
-#
-# This effectively stands for the range `~0.6 OR ~0.7`, i.e. it supports all 0.6 versions
-# and all 0.7 versions, but not further.
-yoke = { version = ">=0.6.0, <0.8.0", path = "../yoke", optional = true }
+yoke = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -50,8 +45,8 @@ rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
-potential_utf = { workspace = true, features = ["zerovec"] }
-yoke = { path = "../../utils/yoke", features = ["derive"] }
+potential_utf = { path = "../../utils/potential_utf", features = ["zerovec"] }
+yoke = { workspace = true, features = ["derive"] }
 zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

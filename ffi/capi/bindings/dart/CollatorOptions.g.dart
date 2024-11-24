@@ -3,31 +3,24 @@
 part of 'lib.g.dart';
 
 final class _CollatorOptionsFfi extends ffi.Struct {
-  @ffi.Int32()
-  external int strength;
-  @ffi.Int32()
-  external int alternateHandling;
-  @ffi.Int32()
-  external int caseFirst;
-  @ffi.Int32()
-  external int maxVariable;
-  @ffi.Int32()
-  external int caseLevel;
-  @ffi.Int32()
-  external int numeric;
-  @ffi.Int32()
-  external int backwardSecondLevel;
+  external _ResultInt32Void strength;
+  external _ResultInt32Void alternateHandling;
+  external _ResultInt32Void caseFirst;
+  external _ResultInt32Void maxVariable;
+  external _ResultInt32Void caseLevel;
+  external _ResultInt32Void numeric;
+  external _ResultInt32Void backwardSecondLevel;
 }
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 final class CollatorOptions {
-  CollatorStrength strength;
-  CollatorAlternateHandling alternateHandling;
-  CollatorCaseFirst caseFirst;
-  CollatorMaxVariable maxVariable;
-  CollatorCaseLevel caseLevel;
-  CollatorNumeric numeric;
-  CollatorBackwardSecondLevel backwardSecondLevel;
+  CollatorStrength? strength;
+  CollatorAlternateHandling? alternateHandling;
+  CollatorCaseFirst? caseFirst;
+  CollatorMaxVariable? maxVariable;
+  CollatorCaseLevel? caseLevel;
+  CollatorNumeric? numeric;
+  CollatorBackwardSecondLevel? backwardSecondLevel;
 
   CollatorOptions({required this.strength, required this.alternateHandling, required this.caseFirst, required this.maxVariable, required this.caseLevel, required this.numeric, required this.backwardSecondLevel});
 
@@ -38,24 +31,31 @@ final class CollatorOptions {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   CollatorOptions._fromFfi(_CollatorOptionsFfi ffi) :
-    strength = CollatorStrength.values[ffi.strength],
-    alternateHandling = CollatorAlternateHandling.values[ffi.alternateHandling],
-    caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
-    maxVariable = CollatorMaxVariable.values[ffi.maxVariable],
-    caseLevel = CollatorCaseLevel.values[ffi.caseLevel],
-    numeric = CollatorNumeric.values[ffi.numeric],
-    backwardSecondLevel = CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
+    strength = ffi.strength.isOk ? CollatorStrength.values[ffi.strength.union.ok] : null,
+    alternateHandling = ffi.alternateHandling.isOk ? CollatorAlternateHandling.values[ffi.alternateHandling.union.ok] : null,
+    caseFirst = ffi.caseFirst.isOk ? CollatorCaseFirst.values[ffi.caseFirst.union.ok] : null,
+    maxVariable = ffi.maxVariable.isOk ? CollatorMaxVariable.values[ffi.maxVariable.union.ok] : null,
+    caseLevel = ffi.caseLevel.isOk ? CollatorCaseLevel.values[ffi.caseLevel.union.ok] : null,
+    numeric = ffi.numeric.isOk ? CollatorNumeric.values[ffi.numeric.union.ok] : null,
+    backwardSecondLevel = ffi.backwardSecondLevel.isOk ? CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel.union.ok] : null;
 
   // ignore: unused_element
   _CollatorOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_CollatorOptionsFfi>();
-    struct.strength = strength.index;
-    struct.alternateHandling = alternateHandling.index;
-    struct.caseFirst = caseFirst.index;
-    struct.maxVariable = maxVariable.index;
-    struct.caseLevel = caseLevel.index;
-    struct.numeric = numeric.index;
-    struct.backwardSecondLevel = backwardSecondLevel.index;
+    CollatorStrength? strength = this.strength;
+    struct.strength = strength != null ? _ResultInt32Void.ok(strength.index) : _ResultInt32Void.err();
+    CollatorAlternateHandling? alternateHandling = this.alternateHandling;
+    struct.alternateHandling = alternateHandling != null ? _ResultInt32Void.ok(alternateHandling.index) : _ResultInt32Void.err();
+    CollatorCaseFirst? caseFirst = this.caseFirst;
+    struct.caseFirst = caseFirst != null ? _ResultInt32Void.ok(caseFirst.index) : _ResultInt32Void.err();
+    CollatorMaxVariable? maxVariable = this.maxVariable;
+    struct.maxVariable = maxVariable != null ? _ResultInt32Void.ok(maxVariable.index) : _ResultInt32Void.err();
+    CollatorCaseLevel? caseLevel = this.caseLevel;
+    struct.caseLevel = caseLevel != null ? _ResultInt32Void.ok(caseLevel.index) : _ResultInt32Void.err();
+    CollatorNumeric? numeric = this.numeric;
+    struct.numeric = numeric != null ? _ResultInt32Void.ok(numeric.index) : _ResultInt32Void.err();
+    CollatorBackwardSecondLevel? backwardSecondLevel = this.backwardSecondLevel;
+    struct.backwardSecondLevel = backwardSecondLevel != null ? _ResultInt32Void.ok(backwardSecondLevel.index) : _ResultInt32Void.err();
     return struct;
   }
 

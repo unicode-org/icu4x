@@ -2,97 +2,82 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod common;
-mod error;
-pub mod hour_cycle;
-mod item;
-pub mod reference;
-pub mod runtime;
+//! Lower-level, power-user APIs for formatting datetimes with pattern strings.
+//!
+//! ❗ This module forgoes most internationalization functionality of the datetime crate.
+//! It assumes that the pattern is already localized for the customer's locale. Most clients
+//! should use [`DateTimeFormatter`] instead of directly formatting with patterns.
+//!
+//! [`DateTimeFormatter`]: crate::DateTimeFormatter
 
-use crate::fields;
-pub use error::PatternError;
-pub use hour_cycle::CoarseHourCycle;
-use icu_provider::prelude::*;
-pub use item::{GenericPatternItem, PatternItem};
+mod formatter;
+mod names;
+#[allow(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
+mod pattern;
 
-/// The granularity of time represented in a pattern item.
-/// Ordered from least granular to most granular for comparison.
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::pattern),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub use formatter::DateTimePatternFormatter;
+pub use formatter::FormattedDateTimePattern;
+use icu_pattern::SinglePlaceholderPattern;
+pub(crate) use names::RawDateTimeNames;
+pub(crate) use names::RawDateTimeNamesBorrowed;
+pub(crate) use names::TimeZoneDataPayloadsBorrowed;
+pub use names::TypedDateTimeNames;
+pub use pattern::DateTimePattern;
+
+use crate::fields::Field;
+
+pub(crate) enum GetNameForMonthError {
+    Invalid,
+    NotLoaded,
+}
+pub(crate) enum GetNameForWeekdayError {
+    NotLoaded,
+}
+
+pub(crate) enum GetSymbolForEraError {
+    Invalid,
+    NotLoaded,
+}
+
+pub(crate) enum GetSymbolForCyclicYearError {
+    Invalid { max: usize },
+    NotLoaded,
+}
+
+pub(crate) enum GetNameForDayPeriodError {
+    NotLoaded,
+}
+
+/// Internal enum to represent the kinds of month symbols for interpolation
+pub(crate) enum MonthPlaceholderValue<'a> {
+    PlainString(&'a str),
+    Numeric,
+    NumericPattern(&'a SinglePlaceholderPattern),
+}
+
+/// Error returned from [`TypedDateTimeNames`]'s pattern load methods.
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
-pub enum TimeGranularity {
-    None,
-    Hours,
-    Minutes,
-    Seconds,
-    Nanoseconds,
-}
-
-impl Default for TimeGranularity {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl TimeGranularity {
-    /// Returns [`true`] if the most granular time being displayed will align with
-    /// the top of the hour, otherwise returns [`false`].
-    /// e.g. `12:00:00` is at the top of the hour for any display granularity.
-    /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
-    pub fn is_top_of_hour(self, minute: u8, second: u8, nanosecond: u32) -> bool {
-        match self {
-            Self::None | Self::Hours => true,
-            Self::Minutes => minute == 0,
-            Self::Seconds => minute + second == 0,
-            Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
-        use TimeGranularity::*;
-        match ordinal {
-            1 => Hours,
-            2 => Minutes,
-            3 => Seconds,
-            4 => Nanoseconds,
-            _ => None,
-        }
-    }
-
-    #[inline]
-    pub(crate) const fn ordinal(self) -> u8 {
-        use TimeGranularity::*;
-        match self {
-            None => 0,
-            Hours => 1,
-            Minutes => 2,
-            Seconds => 3,
-            Nanoseconds => 4,
-        }
-    }
-}
-
-impl From<&PatternItem> for TimeGranularity {
-    /// Retrieves the granularity of time represented by a [`PatternItem`].
-    /// If the [`PatternItem`] is not time-related, returns [`None`].
-    fn from(item: &PatternItem) -> Self {
-        match item {
-            PatternItem::Field(field) => match field.symbol {
-                fields::FieldSymbol::Hour(_) => Self::Hours,
-                fields::FieldSymbol::Minute => Self::Minutes,
-                fields::FieldSymbol::Second(_) => Self::Seconds,
-                fields::FieldSymbol::DecimalSecond(_) => Self::Nanoseconds,
-                _ => Self::None,
-            },
-            _ => Self::None,
-        }
-    }
+pub enum PatternLoadError {
+    /// A field conflicts with a previous field.
+    ///
+    /// Fields conflict if they require the same type of data, for example the
+    /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
+    /// and `L` (format vs standalone month) conflict.
+    #[displaydoc("A field {0:?} conflicts with a previous field.")]
+    ConflictingField(Field),
+    /// The field symbol is not supported in that length.
+    ///
+    /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
+    #[displaydoc("The field {0:?} symbol is not supported in that length.")]
+    UnsupportedLength(Field),
+    /// The specific type does not support this field.
+    ///
+    /// This happens for example when trying to load a month field
+    /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
+    #[displaydoc("The specific type does not support the field {0:?}.")]
+    TypeTooSpecific(Field),
+    /// An error arising from the [`data provider`](icu_provider) for loading names.
+    #[displaydoc("Problem loading data for field {1:?}: {0}")]
+    Data(icu_provider::DataError, Field),
 }

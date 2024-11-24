@@ -15,14 +15,16 @@
                     "time_zone_name": "long-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGenericLong"],
-                    "length": "long"
-                }
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
+                },
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -42,14 +44,16 @@
                     "time_zone_name": "short-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGenericShort"],
-                    "length": "long"
-                }
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
+                },
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -69,14 +73,16 @@
                     "time_zone_name": "short-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecificShort"],
-                    "length": "long"
-                }
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
+                },
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -96,14 +102,16 @@
                     "time_zone_name": "long-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecificLong"],
-                    "length": "long"
-                }
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
+                },
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -120,17 +128,19 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
+                    "time_zone_name": "long-offset"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneOffset"],
-                    "length": "long"
-                }
+                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneOffset"],
+                    "length": "long",
+                    "timePrecision": "secondPlus"
+                },
+                "hourCycle": "h23"
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+05:00"
+                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -146,7 +156,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
+                    "time_zone_name": "long-offset"
                 }
             }
         },

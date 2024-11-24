@@ -30,7 +30,7 @@ let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 
 let date = result.date.unwrap();
 let time = result.time.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 let tz_annotation = result.tz.unwrap();
 
 assert_eq!(date.year, 2024);
@@ -44,7 +44,10 @@ assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
 assert_eq!(offset.nanosecond, 0);
 assert!(!tz_annotation.critical);
-assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+assert_eq!(
+    tz_annotation.tz,
+    TimeZoneRecord::Name("America/New_York".as_bytes())
+);
 ```
 
 ### Date/Time Strings
@@ -81,7 +84,7 @@ let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
 
 let date = result.date.unwrap();
 let time = result.time.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 let tz_annotation = result.tz.unwrap();
 
 assert_eq!(date.year, 2024);
@@ -95,7 +98,10 @@ assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
 assert_eq!(offset.nanosecond, 0);
 assert!(!tz_annotation.critical);
-assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+assert_eq!(
+    tz_annotation.tz,
+    TimeZoneRecord::Name("America/New_York".as_bytes())
+);
 ```
 
 For more information on the update to RFC 3339, please see RFC 9557, Section 2.
@@ -128,14 +134,17 @@ time. Instead, an application may decide to calculate the time with the rules of
 zone annotation if it is provided.
 
 ```rust
-use ixdtf::parsers::{IxdtfParser, records::{TimeZoneRecord, Sign}};
+use ixdtf::parsers::{
+    records::{Sign, TimeZoneRecord},
+    IxdtfParser,
+};
 
 let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
 
 let result = IxdtfParser::from_str(zulu_offset).parse().unwrap();
 
 let tz_annotation = result.tz.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 
 // The offset is `Z`/`-00:00`, so the application can use the rules of
 // "America/New_York" to calculate the time for IXDTF string.
@@ -145,7 +154,10 @@ assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
 assert_eq!(offset.nanosecond, 0);
 assert!(tz_annotation.critical);
-assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+assert_eq!(
+    tz_annotation.tz,
+    TimeZoneRecord::Name("America/New_York".as_bytes())
+);
 ```
 
 #### Key-Value Annotations
@@ -284,7 +296,7 @@ let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 let result = IxdtfParser::from_str(example_two).parse().unwrap();
 
 let tz_annotation = result.tz.unwrap();
-let offset = result.offset.unwrap();
+let offset = result.offset.unwrap().resolve_rfc_9557();
 
 // The time zone annotation and offset conflict with each other, and must therefore be
 // resolved by the user.

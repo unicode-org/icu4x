@@ -5,33 +5,29 @@
 //! This module contains types and implementations for the Chinese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{chinese::Chinese, Date, DateTime, Ref};
+//! use icu::calendar::{cal::Chinese, Date, DateTime, Ref};
 //!
 //! let chinese = Chinese::new();
 //! let chinese = Ref(&chinese); // to avoid cloning
 //!
 //! // `Date` type
-//! let chinese_date =
-//!     Date::try_new_chinese_date_with_calendar(4660, 6, 6, chinese)
-//!         .expect("Failed to initialize Chinese Date instance.");
+//! let chinese_date = Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
+//!     .expect("Failed to initialize Chinese Date instance.");
 //!
 //! // `DateTime` type
-//! let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
-//!     4660, 6, 6, 13, 1, 0, chinese,
-//! )
-//! .expect("Failed to initialize Chinese DateTime instance");
+//! let chinese_datetime =
+//!     DateTime::try_new_chinese_with_calendar(4660, 6, 6, 13, 1, 0, chinese)
+//!         .expect("Failed to initialize Chinese DateTime instance");
 //!
 //! // `Date` checks
-//! assert_eq!(chinese_date.year().number, 4660);
-//! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
-//! assert_eq!(chinese_datetime.date.year().number, 4660);
-//! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_datetime.date.month().ordinal, 6);
 //! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
 //! assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -48,7 +44,6 @@ use crate::chinese_based::{
 use crate::error::DateError;
 use crate::iso::Iso;
 use crate::provider::chinese_based::ChineseCacheV1Marker;
-use crate::types::{Era, FormattableYear};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use core::cmp::Ordering;
@@ -191,7 +186,7 @@ impl Calendar for Chinese {
     // Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -206,8 +201,10 @@ impl Calendar for Chinese {
             return Err(DateError::UnknownMonthCode(month_code));
         };
 
-        if era.0 != tinystr!(16, "chinese") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "chinese") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         Inner::new_from_ordinals(year, month, day, year_info)
@@ -268,8 +265,7 @@ impl Calendar for Chinese {
         Self::DEBUG_NAME
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::format_chinese_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
@@ -281,13 +277,13 @@ impl Calendar for Chinese {
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day as u32)
+        types::DayOfMonth(date.0 .0.day)
     }
 
     /// Information of the day of the year
@@ -322,21 +318,21 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::{chinese::Chinese, Date};
+    /// use icu::calendar::{cal::Chinese, Date};
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
     /// let date_chinese =
-    ///     Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
+    ///     Date::try_new_chinese_with_calendar(4660, 6, 11, chinese)
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
-    /// assert_eq!(date_chinese.year().number, 4660);
-    /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
-    /// assert_eq!(date_chinese.year().related_iso, Some(2023));
+    /// assert_eq!(date_chinese.year().era_year_or_extended(), 4660);
+    /// assert_eq!(date_chinese.year().cyclic().unwrap().get(), 40);
+    /// assert_eq!(date_chinese.year().related_iso(), Some(2023));
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
-    pub fn try_new_chinese_date_with_calendar(
+    pub fn try_new_chinese_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -362,25 +358,23 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::{chinese::Chinese, DateTime};
+    /// use icu::calendar::{cal::Chinese, DateTime};
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
-    /// let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
-    ///     4660, 6, 11, 13, 1, 0, chinese,
-    /// )
-    /// .expect("Failed to initialize Chinese DateTime instance.");
+    /// let chinese_datetime =
+    ///     DateTime::try_new_chinese_with_calendar(4660, 6, 11, 13, 1, 0, chinese)
+    ///         .expect("Failed to initialize Chinese DateTime instance.");
     ///
-    /// assert_eq!(chinese_datetime.date.year().number, 4660);
-    /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
+    /// assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
+    /// assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
     /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
     /// assert_eq!(chinese_datetime.time.hour.number(), 13);
     /// assert_eq!(chinese_datetime.time.minute.number(), 1);
     /// assert_eq!(chinese_datetime.time.second.number(), 0);
     /// ```
-    pub fn try_new_chinese_datetime_with_calendar(
+    pub fn try_new_chinese_with_calendar(
         year: i32,
         month: u8,
         day: u8,
@@ -390,7 +384,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
         calendar: A,
     ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
-            date: Date::try_new_chinese_date_with_calendar(year, month, day, calendar)?,
+            date: Date::try_new_chinese_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -405,34 +399,22 @@ impl ChineseBasedWithDataLoading for Chinese {
 }
 
 impl Chinese {
-    /// Get a FormattableYear from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
+    /// Get a YearInfo from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
     /// can be passed in for faster results.
-    ///
-    /// `era` is always `Era(tinystr!(16, "chinese"))`
-    /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
-    /// `cyclic` is an option with the current year in the sexagesimal cycle (see [`Chinese`])
-    /// `related_iso` is the ISO year in which the given Chinese year begins (see [`Chinese`])
     fn format_chinese_year(
         year: i32,
         year_info_option: Option<ChineseBasedYearInfo>,
-    ) -> FormattableYear {
-        let era = Era(tinystr!(16, "chinese"));
-        let number = year;
-        let cyclic = (number - 1).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
+    ) -> types::YearInfo {
+        let cyclic = (year - 1).rem_euclid(60) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.new_year::<ChineseCB>(year)
         } else {
-            Inner::fixed_mid_year_from_year(number)
+            Inner::fixed_mid_year_from_year(year)
         };
-        let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
-        let related_iso = Some(iso_formattable_year.number);
-        types::FormattableYear {
-            era,
-            number,
-            cyclic,
-            related_iso,
-        }
+        let iso_year = Iso::iso_from_fixed(rata_die_in_year).year();
+        let related_iso = iso_year.era_year_or_extended();
+        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 }
 
@@ -611,7 +593,7 @@ mod test {
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let date = Date::try_new_chinese_date_with_calendar(
+                    let date = Date::try_new_chinese_with_calendar(
                         case.year, case.month, case.day, chinese,
                     )
                     .unwrap();
@@ -654,7 +636,7 @@ mod test {
 
     #[test]
     fn test_chinese_epoch() {
-        let iso = Date::try_new_iso_date(-2636, 2, 15).unwrap();
+        let iso = Date::try_new_iso(-2636, 2, 15).unwrap();
 
         do_twice(
             &Chinese::new_always_calculating(),
@@ -662,12 +644,12 @@ mod test {
             |chinese, _calendar_type| {
                 let chinese = iso.to_calendar(chinese);
 
-                assert_eq!(chinese.year().number, 1);
+                assert_eq!(chinese.year().era_year_or_extended(), 1);
                 assert_eq!(chinese.month().ordinal, 1);
-                assert_eq!(chinese.month().code.0, "M01");
+                assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
-                assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
-                assert_eq!(chinese.year().related_iso, Some(-2636));
+                assert_eq!(chinese.year().cyclic().unwrap().get(), 1);
+                assert_eq!(chinese.year().related_iso(), Some(-2636));
             },
         )
     }
@@ -680,8 +662,8 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_year: i32,
-            expected_month: u32,
-            expected_day: u32,
+            expected_month: u8,
+            expected_day: u8,
         }
 
         let cases = [
@@ -707,7 +689,7 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -715,7 +697,7 @@ mod test {
                     let chinese = iso.to_calendar(chinese);
                     assert_eq!(
                         case.expected_year,
-                        chinese.year().number,
+                        chinese.year().era_year_or_extended(),
                         "[{calendar_type}] ISO to Chinese failed for case: {case:?}"
                     );
                     assert_eq!(
@@ -749,7 +731,7 @@ mod test {
         for case in expected {
             let year = case.0;
             let expected_month = case.1;
-            let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
+            let iso = Date::try_new_iso(year, 6, 1).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -909,13 +891,13 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
+            let iso = Date::try_new_iso(case.year, case.month, case.day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese = iso.to_calendar(chinese);
-                    let result_code = chinese.month().code.0;
+                    let result_code = chinese.month().standard_code.0;
                     let expected_code = case.expected_code.to_string();
                     assert_eq!(
                         expected_code, result_code,
@@ -998,7 +980,7 @@ mod test {
             let year = i;
             let month = i as u8 % 12 + 1;
             let day = i as u8 % 28 + 1;
-            let iso = Date::try_new_iso_date(year, month, day).unwrap();
+            let iso = Date::try_new_iso(year, month, day).unwrap();
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
@@ -1020,8 +1002,8 @@ mod test {
             iso_day: u8,
             expected_rel_iso: i32,
             expected_cyclic: u8,
-            expected_month: u32,
-            expected_day: u32,
+            expected_month: u8,
+            expected_day: u8,
         }
 
         let cases = [
@@ -1106,15 +1088,15 @@ mod test {
         let chinese_cached = Chinese::new();
 
         for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese = iso.to_calendar(chinese);
-                    let chinese_rel_iso = chinese.year().related_iso;
-                    let chinese_cyclic = chinese.year().cyclic;
+                    let chinese_rel_iso = chinese.year().related_iso();
+                    let chinese_cyclic = chinese.year().cyclic();
                     let chinese_month = chinese.month().ordinal;
                     let chinese_day = chinese.day_of_month().0;
 

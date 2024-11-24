@@ -13,11 +13,10 @@
 namespace icu4x {
 namespace capi {
     enum CollatorMaxVariable {
-      CollatorMaxVariable_Auto = 0,
-      CollatorMaxVariable_Space = 1,
-      CollatorMaxVariable_Punctuation = 2,
-      CollatorMaxVariable_Symbol = 3,
-      CollatorMaxVariable_Currency = 4,
+      CollatorMaxVariable_Space = 0,
+      CollatorMaxVariable_Punctuation = 1,
+      CollatorMaxVariable_Symbol = 2,
+      CollatorMaxVariable_Currency = 3,
     };
     
     typedef struct CollatorMaxVariable_option {union { CollatorMaxVariable ok; }; bool is_ok; } CollatorMaxVariable_option;
@@ -28,11 +27,10 @@ namespace icu4x {
 class CollatorMaxVariable {
 public:
   enum Value {
-    Auto = 0,
-    Space = 1,
-    Punctuation = 2,
-    Symbol = 3,
-    Currency = 4,
+    Space = 0,
+    Punctuation = 1,
+    Symbol = 2,
+    Currency = 3,
   };
 
   CollatorMaxVariable() = default;

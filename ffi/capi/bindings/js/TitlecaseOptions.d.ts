@@ -6,14 +6,19 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 */
+type TitlecaseOptions_Obj = {
+    leadingAdjustment: LeadingAdjustment | null;
+    trailingCase: TrailingCase | null;
+};
+
 export class TitlecaseOptions {
 
-    get leadingAdjustment() : LeadingAdjustment;
-    set leadingAdjustment(value: LeadingAdjustment); 
+    get leadingAdjustment() : LeadingAdjustment | null;
+    set leadingAdjustment(value: LeadingAdjustment | null); 
 
-    get trailingCase() : TrailingCase;
-    set trailingCase(value: TrailingCase); 
-    constructor(leadingAdjustment: LeadingAdjustment, trailingCase: TrailingCase);
+    get trailingCase() : TrailingCase | null;
+    set trailingCase(value: TrailingCase | null); 
+    constructor(structObj : TitlecaseOptions_Obj);
 
     static defaultOptions(): TitlecaseOptions;
 }

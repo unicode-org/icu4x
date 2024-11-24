@@ -5,6 +5,7 @@
 // allowed for providers
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
@@ -40,11 +41,8 @@ size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
     marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateSymbolsV1<'data> {
@@ -57,15 +55,6 @@ pub struct DateSymbolsV1<'data> {
     /// Symbol data for eras.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub eras: Eras<'data>,
-}
-
-/// Symbol data for the months, weekdays, and eras needed to format a date.
-///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
-pub(crate) struct ErasedDateSymbolsV1Marker;
-
-impl DynamicDataMarker for ErasedDateSymbolsV1Marker {
-    type DataStruct = DateSymbolsV1<'static>;
 }
 
 size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
@@ -82,11 +71,8 @@ size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
 /// </div>
 #[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeSymbolsV1<'data> {
@@ -112,11 +98,8 @@ pub struct TimeSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
@@ -153,11 +136,8 @@ macro_rules! symbols {
             use super::*;
 
             #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
@@ -172,11 +152,8 @@ macro_rules! symbols {
             // UTS 35 specifies that `format` widths are mandatory,
             // except for `short`.
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
@@ -205,11 +182,8 @@ macro_rules! symbols {
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
@@ -236,11 +210,8 @@ macro_rules! symbols {
             }
 
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),
@@ -260,7 +231,6 @@ macro_rules! symbols {
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
             }
 
-            #[cfg(any(feature = "datagen", feature = "experimental"))]
             impl<'data> ContextsV1<'data> {
                 /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
                 pub(crate) fn stand_alone_abbreviated(&self) -> Option<&SymbolsV1<'data>> {
@@ -308,7 +278,7 @@ symbols!(
     }
 );
 
-impl<'data> months::SymbolsV1<'data> {
+impl months::SymbolsV1<'_> {
     /// Get the symbol for the given month code
     pub fn get(&self, code: MonthCode) -> Option<&str> {
         match *self {
