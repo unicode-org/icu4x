@@ -28,14 +28,12 @@ provide data explicitly using [`DataProvider`]s.
 Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 
 ```rust
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
+use icu::datetime::{fieldsets::YMD, DateTimeFormatter, Length};
 use icu::locale::locale;
 
-let dtf = DateTimeFormatter::try_new(
-    &locale!("es-US").into(),
-    YMD::medium(),
-)
-.expect("compiled data should include 'es-US'");
+let dtf =
+    DateTimeFormatter::try_new(locale!("es-US").into(), YMD::medium())
+        .expect("compiled data should include 'es-US'");
 ```
 
 Clients using compiled data benefit from simple code and optimal zero-cost data loading. Additionally,
@@ -51,9 +49,9 @@ Powerful data management is possible with [`DataProvider`]s, which are passed to
 special constructors:
 
 ```rust
-use icu::datetime::{DateTimeFormatter, NeoSkeletonLength, fieldset::YMD};
-use icu::locale::locale;
+use icu::datetime::{fieldsets::YMD, DateTimeFormatter, Length};
 use icu::locale::fallback::LocaleFallbacker;
+use icu::locale::locale;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -63,13 +61,13 @@ let provider = BlobDataProvider::try_new_from_blob(data)
     .expect("data should be valid");
 
 let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
-        .expect("provider should include fallback data");
+    .expect("provider should include fallback data");
 
 let provider = LocaleFallbackProvider::new(provider, fallbacker);
 
 let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,
-    &locale!("es-US").into(),
+    locale!("es-US").into(),
     YMD::medium(),
 )
 .expect("data should include 'es-US', 'es', or 'und'");

@@ -7,9 +7,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 */
+type LocaleFallbackConfig_Obj = {
+    priority: LocaleFallbackPriority;
+};
+
 export class LocaleFallbackConfig {
 
     get priority() : LocaleFallbackPriority;
     set priority(value: LocaleFallbackPriority); 
-    constructor(priority: LocaleFallbackPriority);
+    constructor(structObj : LocaleFallbackConfig_Obj);
 }

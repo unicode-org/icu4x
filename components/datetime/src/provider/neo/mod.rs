@@ -7,8 +7,9 @@
 mod adapter;
 
 use crate::provider::pattern::runtime::{self, PatternULE};
+use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
-use core::ops::Range;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use zerovec::{VarZeroVec, ZeroMap};
@@ -147,7 +148,7 @@ pub mod marker_attrs {
 
     /// Pattern lengths supported in data marker attributes.
     ///
-    /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
+    /// For a stable version of this enum, use [`Length`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -155,8 +156,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`length::Date`]: crate::options::length::Date
-    /// [`length::Time`]: crate::options::length::Time
+    /// [`Length`]: crate::options::Length
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
         Long,
@@ -317,7 +317,6 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -409,39 +408,16 @@ pub enum MonthNamesV1<'data> {
     /// leap month symbol.
     ///
     /// For numeric formatting only, on calendars with leap months
-    LeapNumeric(#[cfg_attr(feature = "serde", serde(borrow))] SimpleSubstitutionPattern<'data>),
-}
-
-/// Represents a simple substitution pattern;
-/// i.e. a string with a single placeholder
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct SimpleSubstitutionPattern<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: Cow<'data, str>,
-    /// The byte index in which to substitute stuff. Weak invariant: `subst_index <= pattern.len()`
-    pub subst_index: usize,
-}
-
-impl SimpleSubstitutionPattern<'_> {
-    pub(crate) fn get_prefix(&self) -> &str {
-        self.debug_unwrap_range(0..self.subst_index)
-    }
-    pub(crate) fn get_suffix(&self) -> &str {
-        self.debug_unwrap_range(self.subst_index..self.pattern.len())
-    }
-    fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
-        match self.pattern.get(range) {
-            Some(s) => s,
-            None => {
-                debug_assert!(false, "Invalid pattern: {self:?}");
-                ""
-            }
-        }
-    }
+    LeapNumeric(
+        #[cfg_attr(
+            feature = "serde",
+            serde(
+                borrow,
+                deserialize_with = "icu_pattern::deserialize_borrowed_cow::<icu_pattern::SinglePlaceholder, _>"
+            )
+        )]
+        Cow<'data, SinglePlaceholderPattern>,
+    ),
 }
 
 size_test!(LinearNamesV1, linear_names_v1_size, 24);
@@ -513,7 +489,6 @@ impl LinearNamesV1<'_> {
 size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
-///
 #[doc = glue_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">

@@ -54,8 +54,11 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// use icu_pattern::SinglePlaceholder;
 /// use writeable::assert_writeable_parts_eq;
 ///
-/// let pattern =
-///     Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default()).unwrap();
+/// let pattern = Pattern::<SinglePlaceholder>::try_from_str(
+///     "Hello, {0}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// assert_writeable_parts_eq!(
 ///     pattern.interpolate(["Alice"]),

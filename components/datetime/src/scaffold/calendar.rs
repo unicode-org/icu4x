@@ -6,6 +6,7 @@
 
 use crate::provider::{neo::*, *};
 use crate::scaffold::UnstableSealed;
+use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::cal::Chinese;
@@ -21,7 +22,7 @@ use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
 
-/// A calendar that can be found in CLDR
+/// A calendar that can be found in CLDR.
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
 /// in the CLDR transformer to support any new era maps.
@@ -437,69 +438,90 @@ impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
     }
 }
 
-/// A type that might be compatible with a specific calendar system.
-///
-/// All formattable types should implement this trait.
-pub trait IsAnyCalendarKind {
-    /// Whether this type is compatible with the given calendar.
+/// An input that may be associated with a specific runtime calendar.
+pub trait InSameCalendar {
+    /// Checks whether this type is compatible with the given calendar.
     ///
-    /// Types that are agnostic to calendar systems should return `true`.
-    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool;
+    /// Types that are agnostic to calendar systems should return `Ok(())`.
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError>;
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
     #[inline]
-    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
-        self.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        if self.calendar().any_calendar_kind() == Some(any_calendar_kind) {
+            Ok(())
+        } else {
+            Err(MismatchedCalendarError {
+                this_kind: any_calendar_kind,
+                date_kind: self.calendar().any_calendar_kind(),
+            })
+        }
     }
 }
 
-impl IsAnyCalendarKind for Time {
+impl InSameCalendar for Time {
     #[inline]
-    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
-        true
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     #[inline]
-    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
-        self.date.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        if self.date.calendar().any_calendar_kind() == Some(any_calendar_kind) {
+            Ok(())
+        } else {
+            Err(MismatchedCalendarError {
+                this_kind: any_calendar_kind,
+                date_kind: self.date.calendar().any_calendar_kind(),
+            })
+        }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsAnyCalendarKind for CustomZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for CustomZonedDateTime<A, Z> {
     #[inline]
-    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
-        true
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
     }
 }
 
-impl IsAnyCalendarKind for UtcOffset {
+impl InSameCalendar for UtcOffset {
     #[inline]
-    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
-        true
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
     }
 }
 
-impl<O: TimeZoneModel> IsAnyCalendarKind for TimeZoneInfo<O> {
+impl<O: TimeZoneModel> InSameCalendar for TimeZoneInfo<O> {
     #[inline]
-    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
-        true
+    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
+        Ok(())
     }
 }
 
-/// An input associated with a specific calendar.
-pub trait IsInCalendar<C> {}
+/// An input associated with a fixed, static calendar.
+pub trait InFixedCalendar<C> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for Date<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for Date<A> {}
 
-impl<C> IsInCalendar<C> for Time {}
+impl<C> InFixedCalendar<C> for Time {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> IsInCalendar<C> for CustomZonedDateTime<A, Z> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for CustomZonedDateTime<A, Z> {}
 
-impl<C> IsInCalendar<C> for UtcOffset {}
+impl<C> InFixedCalendar<C> for UtcOffset {}
 
-impl<C, O: TimeZoneModel> IsInCalendar<C> for TimeZoneInfo<O> {}
+impl<C, O: TimeZoneModel> InFixedCalendar<C> for TimeZoneInfo<O> {}

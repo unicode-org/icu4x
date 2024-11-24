@@ -98,7 +98,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         let slice: &[u8] = &self.entire_slice;
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
-            VarZeroSlice::from_byte_slice_unchecked(slice)
+            VarZeroSlice::from_bytes_unchecked(slice)
         }
     }
 
@@ -157,7 +157,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         assert!(len <= F::Len::MAX_VALUE as usize);
         let len_bytes = len.to_le_bytes();
         let len_ule = F::Len::iule_from_usize(len).expect(F::Len::TOO_LARGE_ERROR);
-        self.entire_slice[0..F::Len::SIZE].copy_from_slice(ULE::as_byte_slice(&[len_ule]));
+        self.entire_slice[0..F::Len::SIZE].copy_from_slice(ULE::slice_as_bytes(&[len_ule]));
         // Double-check that the length fits in the length field
         assert_eq!(len_bytes[F::Len::SIZE..].iter().sum::<u8>(), 0);
     }
@@ -176,7 +176,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
     unsafe fn index_data(&self, index: usize) -> Option<&F::Index> {
         let index_range = Self::index_range(index)?;
-        Some(&F::Index::from_byte_slice_unchecked(&self.entire_slice[index_range])[0])
+        Some(&F::Index::slice_from_bytes_unchecked(&self.entire_slice[index_range])[0])
     }
 
     /// Return the mutable slice representing the given `index`. Returns None when given index 0
@@ -192,7 +192,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), F::Index::SIZE);
-        Some(&mut F::Index::iule_from_byte_slice_unchecked_mut(data)[0])
+        Some(&mut F::Index::iule_from_bytes_unchecked_mut(data)[0])
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -208,7 +208,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             .checked_sub(1)
             .expect("shift_indices called with a 0 starting index");
         let len = self.len();
-        let indices = F::Index::iule_from_byte_slice_unchecked_mut(
+        let indices = F::Index::iule_from_bytes_unchecked_mut(
             &mut self.entire_slice[F::Len::SIZE..F::Len::SIZE + F::Index::SIZE * (len - 1)],
         );
         for idx in &mut indices[normalized_idx..] {
@@ -415,7 +415,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             }
         }
         let len = unsafe {
-            <F::Len as ULE>::from_byte_slice_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
+            <F::Len as ULE>::slice_from_bytes_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
                 .iule_to_usize()
         };
         if len == 0 {
@@ -432,7 +432,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // Test index validity.
         let indices = unsafe {
-            F::Index::from_byte_slice_unchecked(
+            F::Index::slice_from_bytes_unchecked(
                 &self.entire_slice[F::Len::SIZE..F::Len::SIZE + (len - 1) * F::Index::SIZE],
             )
         };

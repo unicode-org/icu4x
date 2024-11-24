@@ -60,6 +60,7 @@
 //! // Types implementing `Writeable` are recommended to also implement `fmt::Display`.
 //! // This can be simply done by redirecting to the `Writeable` implementation:
 //! writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
+//! assert_eq!(message.to_string(), "Hello, Alice!");
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -80,7 +81,7 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
-pub use cmp::cmp_bytes;
+pub use cmp::{cmp_str, cmp_utf8};
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
 
@@ -116,10 +117,11 @@ pub mod adapters {
     }
 }
 
-#[doc(hidden)] // for testing
+#[doc(hidden)] // for testing and macros
 pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;
     pub use super::testing::writeable_to_parts_for_test;
+    pub use alloc::string::String;
 }
 
 /// A hint to help consumers of `Writeable` pre-allocate bytes before they call
@@ -314,15 +316,32 @@ pub trait Writeable {
 /// It's recommended to do this for every [`Writeable`] type, as it will add
 /// support for `core::fmt` features like [`fmt!`](std::fmt),
 /// [`print!`](std::print), [`write!`](std::write), etc.
+///
+/// This macro also adds a concrete `to_string` function. This function will shadow the
+/// standard library `ToString`, using the more efficient writeable-based code path.
+/// To add only `Display`, use the `@display` macro variant.
 #[macro_export]
 macro_rules! impl_display_with_writeable {
-    ($type:ty) => {
+    (@display, $type:ty) => {
         /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
         /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
         impl core::fmt::Display for $type {
             #[inline]
             fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 $crate::Writeable::write_to(&self, f)
+            }
+        }
+    };
+    ($type:ty) => {
+        $crate::impl_display_with_writeable!(@display, $type);
+        impl $type {
+            /// Converts the given value to a `String`.
+            ///
+            /// Under the hood, this uses an efficient [`Writeable`] implementation.
+            /// However, in order to avoid allocating a string, it is more efficient
+            /// to use [`Writeable`] directly.
+            pub fn to_string(&self) -> $crate::_internal::String {
+                $crate::Writeable::write_to_string(self).into_owned()
             }
         }
     };
@@ -343,7 +362,6 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// # Examples
 ///

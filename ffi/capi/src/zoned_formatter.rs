@@ -7,19 +7,19 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldset::YMDTV, neo_skeleton::NeoSkeletonLength};
+    use icu_datetime::{fieldsets::YMDTV, options::Length};
     use icu_timezone::ZoneVariant;
 
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
         datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::{DateTimeFormatError, PatternLoadError},
+        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
         locale_core::ffi::Locale,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZoneInfo,
     };
 
-    use writeable::TryWriteable;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
@@ -39,9 +39,9 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<GregorianZonedDateTimeFormatter>, PatternLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
+        ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
@@ -49,7 +49,7 @@ pub mod ffi {
                     icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                     icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
-                    &locale,
+                    prefs,
                     options
                 )?,
             )))
@@ -72,7 +72,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _lossy = self.0.format(&zdt).try_write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
     }
@@ -93,16 +93,16 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<ZonedDateTimeFormatter>, PatternLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMDTV::with_length(NeoSkeletonLength::from(length)).hms();
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options,
             )?)))
         }
@@ -127,7 +127,7 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
             Ok(())
         }
 
@@ -147,7 +147,7 @@ pub mod ffi {
                     .at_time((datetime.0.date, datetime.0.time))
                     .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
             };
-            let _lossy = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
             Ok(())
         }
     }

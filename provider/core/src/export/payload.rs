@@ -108,8 +108,8 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::export::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
+    /// use icu_provider::export::*;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
@@ -140,8 +140,8 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::export::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
+    /// use icu_provider::export::*;
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     /// # use databake::quote;

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", test))]
 use super::super::runtime;
 use super::{
     super::{PatternError, PatternItem, TimeGranularity},
@@ -35,7 +35,7 @@ impl Pattern {
         &mut self.items
     }
 
-    #[cfg(feature = "serde")]
+    #[cfg(any(feature = "serde", test))]
     pub(crate) fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
         runtime::Pattern::from(self)
     }

@@ -32,21 +32,29 @@ impl std::error::Error for LengthError {}
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
-    /// Typical style is 1-2 digits. For numeric-only fields.
+    /// Numeric: minimum digits
+    ///
+    /// Text: same as [`Self::Three`]
     One,
-    /// Typical style is 2 digits. For numeric-only fields.
-    TwoDigit,
-    /// Abbreviated (spellout) format.
-    Abbreviated,
-    /// Wide / Long / Full  (spellout) format.
-    Wide,
-    /// Narrow / Long / Full  (spellout) format.
-    Narrow,
-    /// Meaning is field-dependent, for patterns that are 6 characters long. Ex: a [`Weekday`](super::Weekday) pattern like
-    /// `EEEEEE` means "Short", but `jjjjjj` or `CCCCCC` for [`Hour`](super::Hour) may mean
-    /// "Numeric hour (2 digits, zero pad if needed), narrow dayPeriod if used". See the
-    /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
-    /// for more details.
+    /// Numeric: pad to 2 digits
+    ///
+    /// Text: same as [`Self::Three`]
+    Two,
+    /// Numeric: pad to 3 digits
+    ///
+    /// Text: Abbreviated format.
+    Three,
+    /// Numeric: pad to 4 digits
+    ///
+    /// Text: Wide format.
+    Four,
+    /// Numeric: pad to 5 digits
+    ///
+    /// Text: Narrow format.
+    Five,
+    /// Numeric: pad to 6 digits
+    ///
+    /// Text: Short format.
     Six,
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
@@ -65,10 +73,10 @@ impl FieldLength {
     pub(crate) fn idx(&self) -> u8 {
         match self {
             FieldLength::One => 1,
-            FieldLength::TwoDigit => 2,
-            FieldLength::Abbreviated => 3,
-            FieldLength::Wide => 4,
-            FieldLength::Narrow => 5,
+            FieldLength::Two => 2,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
@@ -80,10 +88,10 @@ impl FieldLength {
     pub(crate) fn from_idx(idx: u8) -> Result<Self, LengthError> {
         Ok(match idx {
             1 => Self::One,
-            2 => Self::TwoDigit,
-            3 => Self::Abbreviated,
-            4 => Self::Wide,
-            5 => Self::Narrow,
+            2 => Self::Two,
+            3 => Self::Three,
+            4 => Self::Four,
+            5 => Self::Five,
             6 => Self::Six,
             idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
                 Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
@@ -96,10 +104,10 @@ impl FieldLength {
     pub(crate) fn to_len(self) -> usize {
         match self {
             FieldLength::One => 1,
-            FieldLength::TwoDigit => 2,
-            FieldLength::Abbreviated => 3,
-            FieldLength::Wide => 4,
-            FieldLength::Narrow => 5,
+            FieldLength::Two => 2,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
         }
@@ -111,7 +119,7 @@ impl FieldLength {
     /// This function maps field lengths 1 and 2 to field length 3.
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
-            FieldLength::One | FieldLength::TwoDigit => FieldLength::Abbreviated,
+            FieldLength::One | FieldLength::Two => FieldLength::Three,
             other => other,
         }
     }
@@ -145,13 +153,13 @@ impl FieldLengthULE {
 //
 // 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
 // 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length
+// 3. ULE::validate_bytes() checks that the given byte slice represents a valid slice.
+// 4. ULE::validate_bytes() checks that the given byte slice has a valid length
 //    (true since transparent over a type of size 1).
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldLengthULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }

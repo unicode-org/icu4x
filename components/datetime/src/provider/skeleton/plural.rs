@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{Field, FieldSymbol, Week};
+use crate::fields::{components, Field, FieldSymbol, Week};
 use crate::provider::pattern::{runtime::Pattern, PatternError, PatternItem};
 use either::Either;
 use icu_plurals::PluralCategory;
@@ -116,6 +116,18 @@ pub enum PatternPlurals<'data> {
     MultipleVariants(PluralPattern<'data>),
     /// A single pattern.
     SinglePattern(Pattern<'data>),
+}
+
+/// Get the resolved components for a FixedCalendarDateTimeFormatter, via the PatternPlurals. In the case of
+/// plurals resolve off of the required `other` pattern.
+impl From<&PatternPlurals<'_>> for components::Bag {
+    fn from(other: &PatternPlurals) -> Self {
+        let pattern = match other {
+            PatternPlurals::SinglePattern(pattern) => pattern,
+            PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
+        };
+        Self::from(pattern)
+    }
 }
 
 #[allow(missing_docs)]

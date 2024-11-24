@@ -39,9 +39,9 @@ impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
 /// # Examples
 ///
 /// ```
-/// use writeable::Part;
-/// use writeable::assert_writeable_parts_eq;
 /// use writeable::adapters::WithPart;
+/// use writeable::assert_writeable_parts_eq;
+/// use writeable::Part;
 ///
 /// // Simple usage:
 ///

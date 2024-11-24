@@ -22,9 +22,13 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
-//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::Maximal.into(),
+//!     LocaleFallbacker::new().static_to_owned(),
+//! )
+//! .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
+//! .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -63,7 +67,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -83,8 +87,7 @@
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
-//! let formatter =
-//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new(locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```

@@ -370,6 +370,7 @@ impl Iso {
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
                 standard_era: tinystr!(16, "default").into(),
                 era_year: year,
+                ambiguity: types::YearAmbiguity::Unambiguous,
             },
         )
     }

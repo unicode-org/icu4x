@@ -19,12 +19,26 @@ export class WeekOf {
         return this.#unit;
     }
     
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            console.error("WeekOf is an out struct and can only be created internally.");
+    constructor(structObj, internalConstructor) {
+        if (typeof structObj !== "object") {
+            throw new Error("WeekOf's constructor takes an object of WeekOf's fields.");
         }
+
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("WeekOf is an out struct and can only be created internally.");
+        }
+        if ("week" in structObj) {
+            this.#week = structObj.week;
+        } else {
+            throw new Error("Missing required field week.");
+        }
+
+        if ("unit" in structObj) {
+            this.#unit = structObj.unit;
+        } else {
+            throw new Error("Missing required field unit.");
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -57,10 +71,16 @@ export class WeekOf {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("WeekOf._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const weekDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0];
-        this.#week = weekDeref;
+        structObj.week = weekDeref;
         const unitDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#unit = new WeekRelativeUnit(diplomatRuntime.internalConstructor, unitDeref);
+        structObj.unit = new WeekRelativeUnit(diplomatRuntime.internalConstructor, unitDeref);
+
+        return new WeekOf(structObj, internalConstructor);
     }
 }

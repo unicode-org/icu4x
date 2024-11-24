@@ -29,11 +29,11 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// This function has `date_length` and `time_length` arguments and uses default options
   /// for the time zone.
   ///
-  /// Throws [PatternLoadError] on failure.
+  /// Throws [DateTimeFormatterLoadError] on failure.
   factory GregorianZonedDateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
-      throw PatternLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return GregorianZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }

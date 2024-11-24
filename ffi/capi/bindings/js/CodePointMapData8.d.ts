@@ -52,4 +52,6 @@ export class CodePointMapData8 {
     static loadSentenceBreak(provider: DataProvider): CodePointMapData8;
 
     static loadJoiningType(provider: DataProvider): CodePointMapData8;
+
+    static loadCanonicalCombiningClass(provider: DataProvider): CodePointMapData8;
 }

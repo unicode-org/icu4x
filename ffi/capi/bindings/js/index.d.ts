@@ -226,11 +226,11 @@ export { DataError } from "./DataError"
 
 export { DateTimeFormatError } from "./DateTimeFormatError"
 
+export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
+
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
-
-export { PatternLoadError } from "./PatternLoadError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
@@ -249,6 +249,30 @@ export { TransformResult } from "./TransformResult"
 export { LocaleDirection } from "./LocaleDirection"
 
 export { PluralCategory } from "./PluralCategory"
+
+export { BidiClass } from "./BidiClass"
+
+export { CanonicalCombiningClass } from "./CanonicalCombiningClass"
+
+export { EastAsianWidth } from "./EastAsianWidth"
+
+export { GeneralCategory } from "./GeneralCategory"
+
+export { GraphemeClusterBreak } from "./GraphemeClusterBreak"
+
+export { HangulSyllableType } from "./HangulSyllableType"
+
+export { IndicSyllabicCategory } from "./IndicSyllabicCategory"
+
+export { JoiningType } from "./JoiningType"
+
+export { LineBreak } from "./LineBreak"
+
+export { Script } from "./Script"
+
+export { SentenceBreak } from "./SentenceBreak"
+
+export { WordBreak } from "./WordBreak"
 
 export { LineBreakStrictness } from "./LineBreakStrictness"
 

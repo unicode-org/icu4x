@@ -2,20 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::Deref;
-
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{
     extensions::unicode::{SubdivisionId, Value},
     subtags::Subtag,
 };
-use alloc::string::ToString;
 
 struct_keyword!(
     /// A Unicode Subdivision Identifier defines a regional subdivision used for locales.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeSubdivisionIdentifier).
+    [Copy]
     RegionalSubdivision,
     "sd",
     SubdivisionId,
@@ -30,14 +28,6 @@ struct_keyword!(
         Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );
-
-impl Deref for RegionalSubdivision {
-    type Target = SubdivisionId;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
 
 #[cfg(test)]
 mod test {

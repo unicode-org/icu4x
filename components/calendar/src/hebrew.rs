@@ -12,9 +12,8 @@
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
 //! // `DateTime` type
-//! let hebrew_datetime =
-//!     DateTime::try_new_hebrew(3425, 10, 11, 13, 1, 0)
-//!         .expect("Failed to initialize hebrew DateTime instance.");
+//! let hebrew_datetime = DateTime::try_new_hebrew(3425, 10, 11, 13, 1, 0)
+//!     .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(hebrew_date.year().era_year_or_extended(), 3425);
@@ -344,6 +343,7 @@ impl Hebrew {
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
                 standard_era: tinystr!(16, "hebrew").into(),
                 era_year: civil_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     }
@@ -381,9 +381,8 @@ impl DateTime<Hebrew> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_hebrew =
-    ///     DateTime::try_new_hebrew(4201, 10, 11, 13, 1, 0)
-    ///         .expect("Failed to initialize Hebrew DateTime instance");
+    /// let datetime_hebrew = DateTime::try_new_hebrew(4201, 10, 11, 13, 1, 0)
+    ///     .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().era_year_or_extended(), 4201);
     /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);

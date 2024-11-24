@@ -53,10 +53,15 @@ impl DynamicDataMarker for BufferMarker {
 /// assert_eq!(
 ///     serde_json::from_slice::<HelloWorldV1>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::INFO, DataRequest {
-///                 id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///                 ..Default::default()
-///             })
+///             .load_data(
+///                 HelloWorldV1Marker::INFO,
+///                 DataRequest {
+///                     id: DataIdentifierBorrowed::for_locale(
+///                         &langid!("de").into()
+///                     ),
+///                     ..Default::default()
+///                 }
+///             )
 ///             .expect("load should succeed")
 ///             .payload
 ///             .get()

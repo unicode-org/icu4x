@@ -75,7 +75,7 @@ impl PatternItemULE {
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
         if Self::determine_field_from_u8(*value.0) {
             // ensure that unused bytes are all zero
-            fields::FieldULE::validate_bytes((*value.1, *value.2)).is_ok()
+            fields::FieldULE::validate_byte_pair((*value.1, *value.2)).is_ok()
                 && *value.0 == 0b1000_0000
         } else {
             char::try_from(u32::from_be_bytes([0x00, *value.0, *value.1, *value.2])).is_ok()
@@ -88,12 +88,12 @@ impl PatternItemULE {
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  2. PatternItemULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
@@ -245,12 +245,12 @@ impl GenericPatternItemULE {
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  2. GenericPatternItemULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
@@ -311,23 +311,23 @@ mod test {
     fn test_pattern_item_as_ule() {
         let samples = [
             (
-                PatternItem::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                [0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                PatternItem::from((FieldSymbol::Minute, FieldLength::Two)),
+                [0x80, FieldSymbol::Minute.idx(), FieldLength::Two.idx()],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
-                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Cyclic), FieldLength::Four)),
                 [
                     0x80,
                     FieldSymbol::Year(Year::Cyclic).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
             ),
             (
@@ -343,7 +343,7 @@ mod test {
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
+            assert_eq!(ULE::slice_as_bytes(&[ule]), ref_bytes);
             let pattern = PatternItem::from_unaligned(ule);
             assert_eq!(pattern, ref_pattern);
         }
@@ -353,7 +353,7 @@ mod test {
     fn test_pattern_item_ule() {
         let samples = [(
             [
-                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
+                PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Four)),
                 PatternItem::from('z'),
                 PatternItem::from((FieldSymbol::Second(Second::MillisInDay), FieldLength::One)),
             ],
@@ -361,7 +361,7 @@ mod test {
                 [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
-                    FieldLength::Wide.idx(),
+                    FieldLength::Four.idx(),
                 ],
                 [0x00, 0x00, 0x7a],
                 [
@@ -376,7 +376,7 @@ mod test {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_pattern.iter() {
                 let ule = item.to_unaligned();
-                bytes.extend(ULE::as_byte_slice(&[ule]));
+                bytes.extend(ULE::slice_as_bytes(&[ule]));
             }
 
             let mut bytes2: Vec<u8> = vec![];
@@ -384,7 +384,7 @@ mod test {
                 bytes2.extend_from_slice(seq);
             }
 
-            assert!(PatternItemULE::validate_byte_slice(&bytes).is_ok());
+            assert!(PatternItemULE::validate_bytes(&bytes).is_ok());
             assert_eq!(bytes, bytes2);
         }
     }
@@ -399,7 +399,7 @@ mod test {
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
+            assert_eq!(ULE::slice_as_bytes(&[ule]), ref_bytes);
             let pattern = GenericPatternItem::from_unaligned(ule);
             assert_eq!(pattern, ref_pattern);
         }

@@ -446,7 +446,7 @@
                     "length": "medium",
                     "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -471,7 +471,7 @@
                     "length": "medium",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -493,7 +493,7 @@
                     "length": "short",
                     "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
@@ -516,7 +516,7 @@
                     "length": "short",
                     "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
@@ -540,7 +540,7 @@
                     "length": "short",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h12" }
+                "hourCycle": "h12"
             }
         },
         "output": {
@@ -562,7 +562,7 @@
                     "length": "short",
                     "timePrecision": "hourExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -585,7 +585,7 @@
                     "length": "short",
                     "timePrecision": "minuteExact"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {
@@ -609,7 +609,7 @@
                     "length": "short",
                     "timePrecision": "secondPlus"
                 },
-                "preferences": { "hourCycle": "h23" }
+                "hourCycle": "h23"
             }
         },
         "output": {

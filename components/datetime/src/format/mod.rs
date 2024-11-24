@@ -3,32 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod datetime;
-pub(crate) mod neo;
 pub(crate) mod time_zone;
-
-use crate::fields::Field;
-use crate::provider::neo::SimpleSubstitutionPattern;
-
-pub(crate) enum GetNameForMonthError {
-    Missing,
-    MissingNames(Field),
-}
-pub(crate) enum GetNameForWeekdayError {
-    MissingNames(Field),
-}
-
-pub(crate) enum GetSymbolForEraError {
-    Missing,
-    MissingNames(Field),
-}
-
-pub(crate) enum GetNameForDayPeriodError {
-    MissingNames(Field),
-}
-
-/// Internal enum to represent the kinds of month symbols for interpolation
-pub(crate) enum MonthPlaceholderValue<'a> {
-    PlainString(&'a str),
-    Numeric,
-    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
-}

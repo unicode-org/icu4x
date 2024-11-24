@@ -213,6 +213,7 @@
 
 extern crate alloc;
 
+mod cow;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
 mod map;
@@ -225,11 +226,11 @@ mod zerovec;
 // This must be after `mod zerovec` for some impls on `ZeroSlice<RawBytesULE>`
 // to show up in the right spot in the docs
 pub mod ule;
-
 #[cfg(feature = "yoke")]
 mod yoke_impls;
 mod zerofrom_impls;
 
+pub use crate::cow::VarZeroCow;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
 pub use crate::map::map::ZeroMap;
@@ -241,6 +242,7 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 
+    pub use alloc::borrow;
     pub use alloc::boxed;
 
     #[cfg(feature = "serde")]
@@ -415,6 +417,7 @@ pub use zerovec_derive::make_ule;
 ///
 /// - [`Ord`] and [`PartialOrd`]
 /// - [`ZeroMapKV`]
+/// - [`alloc::borrow::ToOwned`]
 ///
 /// To disable one of the automatic derives, use `#[zerovec::skip_derive(...)]` like so: `#[zerovec::skip_derive(ZeroMapKV)]`.
 /// `Ord` and `PartialOrd` are implemented as a unit and can only be disabled as a group with `#[zerovec::skip_derive(Ord)]`.
@@ -434,6 +437,10 @@ pub use zerovec_derive::make_ule;
 ///
 /// Note that this implementation will autogenerate [`EncodeAsVarULE`] impls for _both_ `Self` and `&Self`
 /// for convenience. This allows for a little more flexibility encoding slices.
+///
+/// In case there are multiple [`VarULE`] (i.e., variable-sized) fields, this macro will produce private fields that
+/// appropriately pack the data together, with the packing format by default being [`crate::vecs::Index16`], but can be
+/// overridden with `#[zerovec::format(zerovec::vecs::Index8)]`.
 ///
 /// [`EncodeAsVarULE`]: ule::EncodeAsVarULE
 /// [`VarULE`]: ule::VarULE

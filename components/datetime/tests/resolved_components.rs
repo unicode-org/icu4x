@@ -4,26 +4,21 @@
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
-    neo_skeleton::{
-        Alignment, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDateTimeSkeleton, NeoSkeletonLength, NeoTimeComponents, TimePrecision, YearStyle,
-    },
-    options::{components, preferences},
+    fields::components,
+    fieldsets::{self, enums::*},
+    options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
     FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::locale;
 use icu_locale_core::Locale;
+use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
 
 fn assert_resolved_components(
-    skeleton: NeoDateTimeSkeleton,
+    skeleton: CompositeDateTimeFieldSet,
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_skeleton(
-        &locale.into(),
-        skeleton,
-    )
-    .unwrap();
+    let dtf =
+        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
         time: Time::midnight(),
@@ -34,10 +29,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let skeleton = NeoDateTimeSkeleton::for_length_and_components(
-        NeoSkeletonLength::Medium,
-        NeoDateTimeComponents::Date(NeoDateComponents::Auto),
-    );
+    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
@@ -49,18 +41,13 @@ fn test_length_date() {
 
 #[test]
 fn test_length_time() {
-    let skeleton = NeoDateTimeSkeleton::for_length_and_components(
-        NeoSkeletonLength::Medium,
-        NeoDateTimeComponents::Time(NeoTimeComponents::Auto),
-    );
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H12,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H12);
 
     assert_resolved_components(
         skeleton,
@@ -71,19 +58,15 @@ fn test_length_time() {
 
 #[test]
 fn test_length_time_preferences() {
-    let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
-        NeoSkeletonLength::Medium,
-        NeoDateTimeComponents::Time(NeoTimeComponents::Auto),
-    );
-    skeleton.alignment = Some(Alignment::Column);
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
+        fieldsets::T::medium().with_alignment(Alignment::Column),
+    ));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H24,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H24);
 
     assert_resolved_components(
         skeleton,
@@ -94,16 +77,12 @@ fn test_length_time_preferences() {
 
 #[test]
 fn test_date_and_time() {
-    let mut skeleton = NeoDateTimeSkeleton::for_length_and_components(
-        NeoSkeletonLength::Medium,
-        NeoDateTimeComponents::DateTime(
-            NeoDateComponents::YearMonthDayWeekday,
-            NeoTimeComponents::Auto,
-        ),
-    );
-    skeleton.year_style = Some(YearStyle::Always);
-    skeleton.time_precision = Some(TimePrecision::SecondExact(FractionalSecondDigits::F4));
-    skeleton.alignment = Some(Alignment::Column);
+    let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
+        fieldsets::YMDET::medium()
+            .with_year_style(YearStyle::Always)
+            .with_alignment(Alignment::Column)
+            .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),
+    ));
 
     let mut input_bag = components::Bag::default();
     input_bag.era = Some(components::Text::Short);
@@ -115,12 +94,10 @@ fn test_date_and_time() {
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
     input_bag.fractional_second = Some(FractionalSecondDigits::F4);
-    input_bag.preferences = None;
+    input_bag.hour_cycle = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
-    output_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H23,
-    ));
+    output_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
         skeleton,

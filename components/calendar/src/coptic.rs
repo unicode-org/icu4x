@@ -279,9 +279,8 @@ impl DateTime<Coptic> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_coptic =
-    ///     DateTime::try_new_coptic(1686, 5, 6, 13, 1, 0)
-    ///         .expect("Failed to initialize Coptic DateTime instance.");
+    /// let datetime_coptic = DateTime::try_new_coptic(1686, 5, 6, 13, 1, 0)
+    ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
     /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
@@ -313,6 +312,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "coptic").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
                 era_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     } else {
@@ -322,6 +322,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "coptic-inverse").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
                 era_year: 1 - year,
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             },
         )
     }

@@ -234,8 +234,15 @@ impl DateTime<Roc> {
     /// let datetime_roc = DateTime::try_new_roc(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
-    /// assert_eq!(datetime_roc.date.year().standard_era().unwrap().0, tinystr!(16, "roc"));
-    /// assert_eq!(datetime_roc.date.year().era_year_or_extended(), 1, "ROC year check failed!");
+    /// assert_eq!(
+    ///     datetime_roc.date.year().standard_era().unwrap().0,
+    ///     tinystr!(16, "roc")
+    /// );
+    /// assert_eq!(
+    ///     datetime_roc.date.year().era_year_or_extended(),
+    ///     1,
+    ///     "ROC year check failed!"
+    /// );
     /// assert_eq!(
     ///     datetime_roc.date.month().ordinal,
     ///     2,
@@ -275,6 +282,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
                 standard_era: tinystr!(16, "roc").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
                 era_year: year_i32.saturating_sub(ROC_ERA_OFFSET),
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     } else {
@@ -284,6 +292,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
                 standard_era: tinystr!(16, "roc-inverse").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
                 era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             },
         )
     }

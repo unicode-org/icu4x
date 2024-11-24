@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, locale};
-use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRules};
 use icu_provider::prelude::*;
 
 #[test]
 fn test_plural_rules() {
     assert_eq!(
-        PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+        PluralRules::try_new(locale!("en").into(), Default::default())
             .unwrap()
             .category_for(5_usize),
         PluralCategory::Other

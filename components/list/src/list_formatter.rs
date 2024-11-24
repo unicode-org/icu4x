@@ -15,6 +15,7 @@ extern crate writeable;
 
 define_preferences!(
     /// The preferences for list formatting.
+    [Copy]
     ListFormatterPreferences,
     {}
 );
@@ -34,10 +35,6 @@ macro_rules! constructor {
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
             /// an explanation of the different types.
-            ///
-            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-            ///
-            /// [📚 Help choosing a constructor](icu_provider::constructors)
             functions: [
                 $name,
                 $name_any,
@@ -114,8 +111,7 @@ impl ListFormatter {
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(
     ///     locale!("fr").into(),
-    ///     ListFormatterOptions::default()
-    ///         .with_length(ListLength::Wide)
+    ///     ListFormatterOptions::default().with_length(ListLength::Wide),
     /// )
     /// .unwrap();
     /// let pays = ["Italie", "France", "Espagne", "Allemagne"];

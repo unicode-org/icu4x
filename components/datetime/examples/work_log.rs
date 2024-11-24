@@ -10,7 +10,7 @@ icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
 use icu_calendar::DateTime;
-use icu_datetime::{fieldset::YMDT, FixedCalendarDateTimeFormatter};
+use icu_datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu_locale_core::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
@@ -27,7 +27,7 @@ const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
 ];
 
 fn main() {
-    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale!("en").into(), YMDT::medium())
+    let dtf = FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMDT::medium())
         .expect("Failed to create FixedCalendarDateTimeFormatter instance.");
 
     println!("\n====== Work Log (en) example ============");
@@ -36,6 +36,6 @@ fn main() {
         let date = DateTime::try_new_gregorian(year, month, day, hour, minute, second)
             .expect("datetime should parse");
         let fdt = dtf.format(&date);
-        println!("{idx}) {}", writeable::adapters::LossyWrap(fdt));
+        println!("{idx}) {}", fdt);
     }
 }

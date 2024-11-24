@@ -228,6 +228,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "julian").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
                 era_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             },
         )
     } else {
@@ -237,6 +238,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
                 standard_era: tinystr!(16, "julian-inverse").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
                 era_year: 1_i32.saturating_sub(year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             },
         )
     }
@@ -302,9 +304,8 @@ impl DateTime<Julian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_julian =
-    ///     DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
-    ///         .expect("Failed to initialize Julian DateTime instance.");
+    /// let datetime_julian = DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
+    ///     .expect("Failed to initialize Julian DateTime instance.");
     ///
     /// assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
     /// assert_eq!(datetime_julian.date.month().ordinal, 12);

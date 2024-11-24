@@ -2,8 +2,7 @@ import { DataProvider } from "icu4x"
 import { GregorianDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
-export function formatIsoDatetime() {
-    var terminusArgs = arguments;
+export function formatIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond) {
     return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
         null,
         [
@@ -18,22 +17,22 @@ export function formatIsoDatetime() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             )
         ]

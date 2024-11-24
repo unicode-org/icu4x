@@ -200,7 +200,7 @@ pub mod week {
 #[cfg(feature = "ixdtf")]
 pub use crate::ixdtf::ParseError;
 #[doc(no_inline)]
-pub use any_calendar::{AnyCalendar, AnyCalendarKind};
+pub use any_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;

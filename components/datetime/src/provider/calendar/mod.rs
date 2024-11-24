@@ -9,6 +9,7 @@ mod skeletons;
 mod symbols;
 
 use crate::provider::pattern;
+use crate::size_test_macro::size_test;
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 pub use skeletons::*;
@@ -90,6 +91,20 @@ pub struct TimeLengthsV1<'data> {
 pub mod patterns {
     use super::*;
     use crate::provider::pattern::runtime::{self, GenericPattern};
+
+    /// An enum containing four lengths (full, long, medium, short) for interfacing
+    /// with [`LengthPatternsV1`] and [`GenericLengthPatternsV1`]
+    #[derive(Debug)]
+    pub enum FullLongMediumShort {
+        /// "full" length
+        Full,
+        /// "long" length
+        Long,
+        /// "medium" length
+        Medium,
+        /// "short" length
+        Short,
+    }
 
     /// Data struct for date/time patterns broken down by pattern length.
     ///

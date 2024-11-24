@@ -304,6 +304,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethioaa").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
                     era_year: year + AMETE_ALEM_OFFSET,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         } else if year > 0 {
@@ -313,6 +314,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethiopic").into(),
                     formatting_era: types::FormattingEra::Index(2, tinystr!(16, "Incarnation")),
                     era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         } else {
@@ -322,6 +324,7 @@ impl Ethiopian {
                     standard_era: tinystr!(16, "ethiopic-inverse").into(),
                     formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Pre-Incarnation")),
                     era_year: 1 - year,
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
                 },
             )
         }
@@ -339,13 +342,9 @@ impl Date<Ethiopian> {
     /// use icu::calendar::cal::EthiopianEraStyle;
     /// use icu::calendar::Date;
     ///
-    /// let date_ethiopian = Date::try_new_ethiopian(
-    ///     EthiopianEraStyle::AmeteMihret,
-    ///     2014,
-    ///     8,
-    ///     25,
-    /// )
-    /// .expect("Failed to initialize Ethopic Date instance.");
+    /// let date_ethiopian =
+    ///     Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
+    ///         .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopian.year().era_year_or_extended(), 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);

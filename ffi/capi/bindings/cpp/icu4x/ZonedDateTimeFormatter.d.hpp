@@ -23,8 +23,8 @@ class TimeZoneInfo;
 namespace capi { struct ZonedDateTimeFormatter; }
 class ZonedDateTimeFormatter;
 class DateTimeFormatError;
+class DateTimeFormatterLoadError;
 class DateTimeLength;
-class PatternLoadError;
 }
 
 
@@ -38,7 +38,7 @@ namespace icu4x {
 class ZonedDateTimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::PatternLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const;
 

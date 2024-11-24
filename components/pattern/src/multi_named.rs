@@ -27,7 +27,8 @@ use crate::Error;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let pattern = MultiNamedPlaceholderPattern::try_from_str(
-///     "Hello, {person0} and {person1}!", Default::default()
+///     "Hello, {person0} and {person1}!",
+///     Default::default(),
 /// )
 /// .unwrap();
 ///
@@ -192,28 +193,37 @@ where
 ///
 /// // Single placeholder:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder>::try_from_str("{num} days ago", Default::default())
-///         .unwrap()
-///         .try_interpolate_to_string(&placeholder_value_map)
-///         .unwrap(),
+///     Pattern::<MultiNamedPlaceholder>::try_from_str(
+///         "{num} days ago",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .try_interpolate_to_string(&placeholder_value_map)
+///     .unwrap(),
 ///     "5 days ago",
 /// );
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder>::try_from_str("yesterday", Default::default())
-///         .unwrap()
-///         .try_interpolate_to_string(&placeholder_value_map)
-///         .unwrap(),
+///     Pattern::<MultiNamedPlaceholder>::try_from_str(
+///         "yesterday",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .try_interpolate_to_string(&placeholder_value_map)
+///     .unwrap(),
 ///     "yesterday",
 /// );
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder>::try_from_str("{letter}{num}{}", Default::default())
-///         .unwrap()
-///         .try_interpolate_to_string(&placeholder_value_map)
-///         .unwrap(),
+///     Pattern::<MultiNamedPlaceholder>::try_from_str(
+///         "{letter}{num}{}",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .try_interpolate_to_string(&placeholder_value_map)
+///     .unwrap(),
 ///     "X5empty",
 /// );
 /// ```
@@ -255,10 +265,13 @@ where
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// Pattern::<MultiNamedPlaceholder>::try_from_str("Your name is {your_name}", Default::default())
-///     .unwrap()
-///     .try_interpolate_to_string(&placeholder_value_map)
-///     .unwrap();
+/// Pattern::<MultiNamedPlaceholder>::try_from_str(
+///     "Your name is {your_name}",
+///     Default::default(),
+/// )
+/// .unwrap()
+/// .try_interpolate_to_string(&placeholder_value_map)
+/// .unwrap();
 /// ```
 ///
 /// Recover the best-effort lossy string by directly using [`Pattern::try_interpolate()`]:
@@ -276,7 +289,8 @@ where
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
 /// let pattern = Pattern::<MultiNamedPlaceholder>::try_from_str(
-///     "Your name is {your_name}", Default::default(),
+///     "Your name is {your_name}",
+///     Default::default(),
 /// )
 /// .unwrap();
 ///

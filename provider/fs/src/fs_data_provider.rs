@@ -24,13 +24,13 @@ use std::path::PathBuf;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a DataProvider from data files stored in a filesystem directory:
-/// let provider =
-///     FsDataProvider::try_new("tests/data/json".into()).expect("Directory exists");
+/// let provider = FsDataProvider::try_new("tests/data/json".into())
+///     .expect("Directory exists");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into(),
+///     locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///

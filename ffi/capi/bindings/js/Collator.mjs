@@ -87,7 +87,7 @@ export class Collator {
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new CollatorResolvedOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return CollatorResolvedOptions._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

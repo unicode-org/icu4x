@@ -58,11 +58,12 @@
 //! # fn main() {
 //! test_bake!(
 //!     AnotherOne,
-//!     const, crate::AnotherOne(
+//!     const,
+//!     crate::AnotherOne(
 //!         crate::MyStruct {
-//!           number: 17u32,
-//!           string: "foo",
-//!           slice: &[true, false],
+//!             number: 17u32,
+//!             string: "foo",
+//!             slice: &[true, false],
 //!         },
 //!         'b',
 //!     ),

@@ -12,15 +12,17 @@
 //! let islamic = Ref(&islamic); // to avoid cloning
 //!
 //! // `Date` type
-//! let islamic_date =
-//!     Date::try_new_observational_islamic_with_calendar(1348, 10, 11, islamic)
-//!         .expect("Failed to initialize islamic Date instance.");
+//! let islamic_date = Date::try_new_observational_islamic_with_calendar(
+//!     1348, 10, 11, islamic,
+//! )
+//! .expect("Failed to initialize islamic Date instance.");
 //!
 //! // `DateTime` type
-//! let islamic_datetime = DateTime::try_new_observational_islamic_with_calendar(
-//!     1348, 10, 11, 13, 1, 0, islamic,
-//! )
-//! .expect("Failed to initialize islamic DateTime instance.");
+//! let islamic_datetime =
+//!     DateTime::try_new_observational_islamic_with_calendar(
+//!         1348, 10, 11, 13, 1, 0, islamic,
+//!     )
+//!     .expect("Failed to initialize islamic DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(islamic_date.year().era_year_or_extended(), 1348);
@@ -61,6 +63,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
             standard_era: standard_era.into(),
             era_year: year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         },
     )
 }
@@ -601,10 +604,11 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_observational_islamic_with_calendar(
-    ///     474, 10, 11, 13, 1, 0, islamic,
-    /// )
-    /// .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic =
+    ///     DateTime::try_new_observational_islamic_with_calendar(
+    ///         474, 10, 11, 13, 1, 0, islamic,
+    ///     )
+    ///     .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().era_year_or_extended(), 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
@@ -793,8 +797,9 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
-    /// let date_islamic = Date::try_new_ummalqura_with_calendar(1392, 4, 25, islamic)
-    ///     .expect("Failed to initialize Islamic Date instance.");
+    /// let date_islamic =
+    ///     Date::try_new_ummalqura_with_calendar(1392, 4, 25, islamic)
+    ///         .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().era_year_or_extended(), 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
@@ -828,9 +833,10 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
-    /// let datetime_islamic =
-    ///     DateTime::try_new_ummalqura_with_calendar(474, 10, 11, 13, 1, 0, islamic)
-    ///         .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic = DateTime::try_new_ummalqura_with_calendar(
+    ///     474, 10, 11, 13, 1, 0, islamic,
+    /// )
+    /// .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().era_year_or_extended(), 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
@@ -1059,11 +1065,10 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     ///
     /// let islamic = IslamicCivil::new();
     ///
-    /// let datetime_islamic =
-    ///     DateTime::try_new_islamic_civil_with_calendar(
-    ///         474, 10, 11, 13, 1, 0, islamic,
-    ///     )
-    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic = DateTime::try_new_islamic_civil_with_calendar(
+    ///     474, 10, 11, 13, 1, 0, islamic,
+    /// )
+    /// .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().era_year_or_extended(), 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
@@ -1291,11 +1296,10 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     ///
     /// let islamic = IslamicTabular::new();
     ///
-    /// let datetime_islamic =
-    ///     DateTime::try_new_islamic_tabular_with_calendar(
-    ///         474, 10, 11, 13, 1, 0, islamic,
-    ///     )
-    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic = DateTime::try_new_islamic_tabular_with_calendar(
+    ///     474, 10, 11, 13, 1, 0, islamic,
+    /// )
+    /// .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().era_year_or_extended(), 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);

@@ -14,6 +14,16 @@ use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings. Depending on your use case, two orderings are available:
+///
+/// 1. A string ordering, suitable for stable serialization: [`LanguageIdentifier::strict_cmp`]
+/// 2. A struct ordering, suitable for use with a BTreeSet: [`LanguageIdentifier::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+///
 /// # Parsing
 ///
 /// Unicode recognizes three levels of standard conformance for any language identifier:
@@ -29,18 +39,6 @@ use alloc::borrow::Cow;
 ///
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
-///
-/// # Ordering
-///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
-///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`LanguageIdentifier::strict_cmp`]
-/// - [`LanguageIdentifier::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// # Examples
 ///
@@ -214,31 +212,50 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
+    /// Sorting a list of langids with this method requires converting one of them to a string:
+    ///
     /// ```
     /// use icu::locale::LanguageIdentifier;
     /// use std::cmp::Ordering;
+    /// use writeable::Writeable;
     ///
+    /// // Random input order:
     /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-Adlm",
-    ///     "und-GB",
-    ///     "und-ZA",
+    ///     "ar-Latn",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
     ///     "und-fonipa",
-    ///     "zh",
+    ///     "zh-Hant",
+    ///     "ar-SA",
     /// ];
     ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
-    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(|a, b| {
+    ///     let b = b.write_to_string();
+    ///     a.strict_cmp(b.as_bytes())
+    /// });
+    /// let strict_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted alphabetically
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, strict_cmp_strings);
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        writeable::cmp_bytes(self, other)
+        writeable::cmp_utf8(self, other)
     }
 
     pub(crate) fn as_tuple(
@@ -260,7 +277,47 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
-    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    /// This method returns a nonsensical ordering derived from the fields of the struct:
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// // Input strings, sorted alphabetically
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    /// assert!(bcp47_strings.windows(2).all(|w| w[0] < w[1]));
+    ///
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(LanguageIdentifier::total_cmp);
+    /// let total_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted arbitrarily
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-SA",
+    ///     "ar-Latn",
+    ///     "und-fonipa",
+    ///     "zh-TW",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, total_cmp_strings);
+    /// ```
+    ///
+    /// Use a wrapper to add a [`LanguageIdentifier`] to a [`BTreeSet`]:
     ///
     /// ```no_run
     /// use icu::locale::LanguageIdentifier;

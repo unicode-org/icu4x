@@ -240,6 +240,7 @@ fn year_as_saka(year: i32) -> types::YearInfo {
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
             standard_era: tinystr!(16, "saka").into(),
             era_year: year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         },
     )
 }
@@ -285,9 +286,8 @@ impl DateTime<Indian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_indian =
-    ///     DateTime::try_new_indian(1891, 10, 12, 13, 1, 0)
-    ///         .expect("Failed to initialize Indian DateTime instance.");
+    /// let datetime_indian = DateTime::try_new_indian(1891, 10, 12, 13, 1, 0)
+    ///     .expect("Failed to initialize Indian DateTime instance.");
     ///
     /// assert_eq!(datetime_indian.date.year().era_year_or_extended(), 1891);
     /// assert_eq!(datetime_indian.date.month().ordinal, 10);

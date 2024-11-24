@@ -17,8 +17,11 @@ use icu_pattern::SinglePlaceholderPattern;
 use writeable::assert_writeable_eq;
 
 // Parse a pattern string:
-let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default())
-    .unwrap();
+let pattern = SinglePlaceholderPattern::try_from_str(
+    "Hello, {0}!",
+    Default::default(),
+)
+.unwrap();
 
 // Interpolate into the pattern string:
 assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");

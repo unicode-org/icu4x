@@ -25,7 +25,7 @@ mod variant;
 
 pub use calendar::CalendarAlgorithm;
 pub use calendar::IslamicCalendarAlgorithm;
-pub use collation::CollationType;
+pub use collation::{CollationCaseFirst, CollationNumericOrdering, CollationType};
 pub use currency::CurrencyType;
 pub use currency_format::CurrencyFormatStyle;
 pub use dictionary_break::DictionaryBreakScriptExclusions;

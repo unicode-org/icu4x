@@ -296,4 +296,22 @@ export class CodePointMapData8 {
             diplomatReceive.free();
         }
     }
+
+    static loadCanonicalCombiningClass(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_CodePointMapData8_load_canonical_combining_class_mv1(diplomatReceive.buffer, provider.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
 }

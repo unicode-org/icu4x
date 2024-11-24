@@ -16,7 +16,7 @@ const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 
 fn main() {
     println!("\n====== Unread Emails (en) example ============");
-    let pr = PluralRules::try_new_cardinal(&locale!("en").into())
+    let pr = PluralRules::try_new_cardinal(locale!("en").into())
         .expect("Failed to create a PluralRules instance.");
 
     for value in VALUES {

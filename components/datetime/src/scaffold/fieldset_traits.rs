@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    format::neo::*,
-    neo_skeleton::*,
     provider::{neo::*, time_zones::tz, *},
     scaffold::*,
 };
@@ -17,44 +15,19 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
         NanoSecond, YearInfo,
     },
-    AnyCalendarKind, Date, Iso, Time,
+    Date, Iso, Time,
 };
-use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-
-/// Trait for components that can be formatted at runtime.
-pub trait IsRuntimeComponents: UnstableSealed + GetField<NeoComponents> {}
-
-/// A trait associating [`NeoComponents`].
-pub trait HasConstComponents {
-    /// The associated components.
-    const COMPONENTS: NeoComponents;
-}
-
-/// A trait associating [`NeoDateComponents`].
-pub trait HasConstDateComponents {
-    /// The associated components.
-    const COMPONENTS: NeoDateComponents;
-}
-
-/// A trait associating [`NeoTimeComponents`].
-pub trait HasConstTimeComponents {
-    /// The associated components.
-    const COMPONENTS: NeoTimeComponents;
-}
-
-/// A trait associating [`NeoTimeZoneStyle`].
-pub trait HasConstZoneComponent {
-    /// The associated component.
-    const COMPONENT: NeoTimeZoneStyle;
-}
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
@@ -66,12 +39,12 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfYearInput: IntoOption<DayOfYearInfo>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<IsoWeekday>;
-    /// Marker for resolving the any-calendar-kind input field.
-    type AnyCalendarKindInput: IntoOption<AnyCalendarKind>;
 }
 
 /// A trait associating types for date formatting in a specific calendar
 /// (data markers only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
@@ -85,6 +58,8 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 
 /// A trait associating types for date formatting in any calendar
 /// (data markers only).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
@@ -98,6 +73,8 @@ pub trait DateDataMarkers: UnstableSealed {
 
 /// A trait associating types for time formatting
 /// (input types and data markers).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
@@ -115,6 +92,8 @@ pub trait TimeMarkers: UnstableSealed {
 
 /// A trait associating types for time zone formatting
 /// (input types and data markers).
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
@@ -142,6 +121,8 @@ pub trait ZoneMarkers: UnstableSealed {
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting.
+///
+/// This is a sealed trait implemented on field set markers.
 pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
@@ -155,26 +136,32 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     ///
     /// Should implement [`ZoneMarkers`].
     type Z;
-    /// Type of the length option in the constructor.
-    type LengthOption: IntoOption<NeoSkeletonLength>;
-    /// Type of the alignment option in the constructor.
-    type AlignmentOption: IntoOption<Alignment>;
-    /// Type of the year style option in the constructor.
-    type YearStyleOption: IntoOption<YearStyle>;
-    /// Type of the time precision option in the constructor.
-    type TimePrecisionOption: IntoOption<TimePrecision>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
 
-/// Trait to consolidate input markers.
+/// Trait implemented on formattable datetime types.
+///
+/// This trait allows for only those types compatible with a particular field set to be passed
+/// as arguments to the formatting function for that field set. For example, this trait prevents
+/// [`Time`] from being passed to a formatter parameterized with [`fieldsets::YMD`].
+///
+/// The following types implement this trait:
+///
+/// - [`Date`](icu_calendar::Date)
+/// - [`Time`](icu_calendar::Time)
+/// - [`DateTime`](icu_calendar::DateTime)
+/// - [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+/// - [`UtcOffset`](icu_timezone::UtcOffset)
+/// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+///
+/// [`fieldsets::YMD`]: crate::fieldsets::YMD
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
-    + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -201,7 +188,6 @@ where
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
-        + GetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -215,6 +201,9 @@ where
 
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with a fixed calendar.
+///
+/// This trait is implemented on all providers that support datetime formatting,
+/// including [`crate::provider::Baked`].
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
@@ -264,6 +253,9 @@ where
 
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with any calendar.
+///
+/// This trait is implemented on all providers that support datetime formatting,
+/// including [`crate::provider::Baked`].
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
@@ -408,10 +400,13 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
-pub trait AllFixedCalendarExternalDataMarkers: DataProvider<DecimalSymbolsV1Marker> {}
+pub trait AllFixedCalendarExternalDataMarkers:
+    DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
+{
+}
 
 impl<T> AllFixedCalendarExternalDataMarkers for T where
-    T: ?Sized + DataProvider<DecimalSymbolsV1Marker>
+    T: ?Sized + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -424,7 +419,8 @@ pub trait AllAnyCalendarExternalDataMarkers:
     + DataProvider<IslamicUmmAlQuraCacheV1Marker>
     + DataProvider<JapaneseErasV1Marker>
     + DataProvider<JapaneseExtendedErasV1Marker>
-    + DataProvider<DecimalSymbolsV1Marker>
+    + DataProvider<DecimalSymbolsV2Marker>
+    + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
@@ -436,41 +432,34 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
         + DataProvider<IslamicUmmAlQuraCacheV1Marker>
         + DataProvider<JapaneseErasV1Marker>
         + DataProvider<JapaneseExtendedErasV1Marker>
-        + DataProvider<DecimalSymbolsV1Marker>
+        + DataProvider<DecimalSymbolsV2Marker>
+        + DataProvider<DecimalDigitsV1Marker>
 {
 }
 
-/// A struct implementing traits for never loading data.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty marker enum
-pub enum NeoNeverMarker {}
-
-impl UnstableSealed for NeoNeverMarker {}
-
-impl DateInputMarkers for NeoNeverMarker {
+impl DateInputMarkers for () {
     type YearInput = ();
     type MonthInput = ();
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
     type DayOfWeekInput = ();
-    type AnyCalendarKindInput = ();
 }
 
-impl<C> TypedDateDataMarkers<C> for NeoNeverMarker {
+impl<C> TypedDateDataMarkers<C> for () {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl DateDataMarkers for NeoNeverMarker {
+impl DateDataMarkers for () {
     type Skel = NoDataCalMarkers;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl TimeMarkers for NeoNeverMarker {
+impl TimeMarkers for () {
     type HourInput = ();
     type MinuteInput = ();
     type SecondInput = ();
@@ -479,7 +468,7 @@ impl TimeMarkers for NeoNeverMarker {
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl ZoneMarkers for NeoNeverMarker {
+impl ZoneMarkers for () {
     type TimeZoneIdInput = ();
     type TimeZoneOffsetInput = ();
     type TimeZoneVariantInput = ();
@@ -543,16 +532,16 @@ macro_rules! datetime_marker_helper {
         NeverMarker<GluePatternV1<'static>>
     };
     (@option/length, yes) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, long) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, medium) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/length, short) => {
-        NeoSkeletonLength
+        Length
     };
     (@option/yearstyle, yes) => {
         Option<YearStyle>
@@ -580,9 +569,6 @@ macro_rules! datetime_marker_helper {
     };
     (@input/day_of_year, yes) => {
         DayOfYearInfo
-    };
-    (@input/any_calendar_kind, yes) => {
-        AnyCalendarKind
     };
     (@input/hour, yes) => {
         IsoHour
@@ -690,13 +676,10 @@ macro_rules! datetime_marker_helper {
         tz::MzPeriodV1Marker
     };
     (@names/$any:ident,) => {
-        NeverMarker<()>
-    };
-    (@names/$any:ident,) => {
-        NeverMarker<()>
+        ()
     };
     (@names/zone/$any:ident,) => {
-        NeverMarker<()>
+        ()
     };
     () => {
         unreachable!() // prevent bugs

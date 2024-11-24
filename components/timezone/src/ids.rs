@@ -57,8 +57,8 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::TimeZoneIdMapper;
 /// use icu::timezone::TimeZoneBcp47Id;
+/// use icu::timezone::TimeZoneIdMapper;
 /// use tinystr::tinystr;
 ///
 /// let mapper = TimeZoneIdMapper::new();
@@ -209,7 +209,10 @@ impl TimeZoneIdMapperBorrowed<'_> {
     /// assert_eq!(*result, "inccu");
     ///
     /// // Unknown IANA time zone ID:
-    /// assert_eq!(mapper.iana_to_bcp47("America/San_Francisco"), TimeZoneBcp47Id::unknown());
+    /// assert_eq!(
+    ///     mapper.iana_to_bcp47("America/San_Francisco"),
+    ///     TimeZoneBcp47Id::unknown()
+    /// );
     /// ```
     pub fn iana_to_bcp47(&self, iana_id: &str) -> TimeZoneBcp47Id {
         self.iana_lookup_quick(iana_id)

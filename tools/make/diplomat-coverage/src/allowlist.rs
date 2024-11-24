@@ -188,13 +188,15 @@ lazy_static::lazy_static! {
         "icu::datetime::fields",
 
         // experimental
+        "icu::datetime::fields::components",
+        "icu::datetime::fieldsets::serde",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeWriteError",
         "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::TypedDateTimeNames",
+        "icu::datetime::pattern::TypedDateTimeNames",
 
         // experimental
         "icu::experimental",
