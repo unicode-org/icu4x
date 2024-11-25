@@ -470,7 +470,7 @@ const fn check_rata_die_have_i32_year(input: RataDie) -> Option<I32CastError> {
 }
 
 #[cfg(test)]
-mod tests {
+mod bruteforce_proofs {
     use super::FOUR_YEARS_TO_D;
     use super::ONE_PERIOD_TO_DAYS;
 
