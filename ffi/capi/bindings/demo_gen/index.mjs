@@ -209,7 +209,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Self:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -242,7 +242,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Self:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -299,7 +299,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Self:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -356,7 +356,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Self:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -371,7 +371,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -401,7 +401,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Value:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -416,7 +416,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -455,7 +455,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -509,7 +509,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Value:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -524,7 +524,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -587,7 +587,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -641,7 +641,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Value:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -656,7 +656,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -719,7 +719,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -758,7 +758,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -821,7 +821,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -884,7 +884,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -929,7 +929,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -983,7 +983,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Value:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -998,7 +998,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1061,7 +1061,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1115,7 +1115,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1400,7 +1400,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1481,7 +1481,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1535,7 +1535,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Locale:Name",
+                name: "Datetime:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -1568,7 +1568,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Locale:Name",
+                name: "Self:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },

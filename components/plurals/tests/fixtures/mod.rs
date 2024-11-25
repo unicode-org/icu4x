@@ -5,7 +5,7 @@
 use fixed_decimal::SignedFixedDecimal;
 #[cfg(feature = "experimental")]
 use icu_plurals::PluralOperands;
-use icu_plurals::{PluralCategory, PluralRuleType};
+use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesOptions};
 use serde::Deserialize;
 
 /// Defines the data-driven test sets for the operands.
@@ -135,11 +135,11 @@ pub enum PluralRuleTypeInput {
     Ordinal,
 }
 
-impl From<PluralRuleTypeInput> for PluralRuleType {
+impl From<PluralRuleTypeInput> for PluralRulesOptions {
     fn from(other: PluralRuleTypeInput) -> Self {
         match other {
-            PluralRuleTypeInput::Cardinal => PluralRuleType::Cardinal,
-            PluralRuleTypeInput::Ordinal => PluralRuleType::Ordinal,
+            PluralRuleTypeInput::Cardinal => PluralRuleType::Cardinal.into(),
+            PluralRuleTypeInput::Ordinal => PluralRuleType::Ordinal.into(),
         }
     }
 }

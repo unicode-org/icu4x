@@ -14,8 +14,7 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 ```rust
 let list_formatter = ListFormatter::try_new_and(
     locale!("es").into(),
-    ListFormatterOptions::default()
-      .with_length(ListLength::Wide)
+    ListFormatterOptions::default().with_length(ListLength::Wide),
 )
 .expect("locale should be present");
 
@@ -36,8 +35,7 @@ assert_writeable_eq!(
 ```rust
 let list_formatter = ListFormatter::try_new_or(
     locale!("th").into(),
-    ListFormatterOptions::default()
-      .with_length(ListLength::Short)
+    ListFormatterOptions::default().with_length(ListLength::Short),
 )
 .expect("locale should be present");
 
@@ -50,8 +48,7 @@ assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 ```rust
 let list_formatter = ListFormatter::try_new_unit(
     locale!("en").into(),
-    ListFormatterOptions::default()
-      .with_length(ListLength::Wide)
+    ListFormatterOptions::default().with_length(ListLength::Wide),
 )
 .expect("locale should be present");
 

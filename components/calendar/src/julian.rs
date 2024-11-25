@@ -304,9 +304,8 @@ impl DateTime<Julian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_julian =
-    ///     DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
-    ///         .expect("Failed to initialize Julian DateTime instance.");
+    /// let datetime_julian = DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
+    ///     .expect("Failed to initialize Julian DateTime instance.");
     ///
     /// assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
     /// assert_eq!(datetime_julian.date.month().ordinal, 12);

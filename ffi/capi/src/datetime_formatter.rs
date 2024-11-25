@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_datetime::{
         fieldsets::{T, YMD, YMDT},
-        options::NeoSkeletonLength,
+        options::Length,
     };
 
     use crate::{
@@ -21,15 +21,15 @@ pub mod ffi {
         time::ffi::Time,
     };
 
-    use writeable::TryWriteable;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct TimeFormatter(pub icu_datetime::FixedCalendarDateTimeFormatter<(), T>);
 
-    #[diplomat::enum_convert(icu_datetime::options::NeoSkeletonLength, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::options::NeoSkeletonLength, Enum)]
+    #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
     pub enum DateTimeLength {
         Long,
         Medium,
@@ -45,22 +45,22 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
-            let options = T::with_length(NeoSkeletonLength::from(length)).hm();
+            let prefs = (&locale.0).into();
+            let options = T::with_length(Length::from(length)).hm();
 
             Ok(Box::new(TimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
 
         /// Formats a [`Time`] to a string.
         pub fn format_time(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _lossy = self.0.format(&value.0).try_write_to(write);
+            let _infallible = self.0.format(&value.0).write_to(write);
         }
 
         /// Formats a [`DateTime`] to a string.
@@ -69,7 +69,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _lossy = self.0.format(&value.0.time).try_write_to(write);
+            let _infallible = self.0.format(&value.0.time).write_to(write);
         }
 
         /// Formats a [`IsoDateTime`] to a string.
@@ -78,7 +78,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let _lossy = self.0.format(&value.0.time).try_write_to(write);
+            let _infallible = self.0.format(&value.0.time).write_to(write);
         }
     }
 
@@ -99,15 +99,15 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMD::with_length(NeoSkeletonLength::from(length));
+            let prefs = (&locale.0).into();
+            let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(GregorianDateFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -119,7 +119,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
         /// Formats a [`IsoDateTime`] to a string.
         pub fn format_iso_datetime(
@@ -128,7 +128,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
@@ -149,15 +149,15 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
+            let prefs = (&locale.0).into();
+            let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -169,7 +169,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _lossy = self.0.format(&greg).try_write_to(write);
+            let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
@@ -188,15 +188,15 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<DateFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMD::with_length(NeoSkeletonLength::from(length));
+            let prefs = (&locale.0).into();
+            let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(DateFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options
             )?)))
         }
@@ -207,7 +207,7 @@ pub mod ffi {
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -220,7 +220,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
 
@@ -230,7 +230,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -243,7 +243,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
     }
@@ -263,15 +263,15 @@ pub mod ffi {
             locale: &Locale,
             length: DateTimeLength,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
-            let locale = locale.to_datalocale();
-            let options = YMDT::with_length(NeoSkeletonLength::from(length)).hm();
+            let prefs = (&locale.0).into();
+            let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
                 icu_datetime::DateTimeFormatter::try_new_with_any_provider,
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
                 options,
             )?)))
         }
@@ -282,7 +282,7 @@ pub mod ffi {
             value: &DateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _lossy = self.0.convert_and_format(&value.0).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
             Ok(())
         }
 
@@ -295,7 +295,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _lossy = self.0.convert_and_format(&any).try_write_to(write);
+            let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
     }

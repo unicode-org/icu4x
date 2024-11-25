@@ -23,40 +23,37 @@ use crate::neo_serde::TimePrecisionSerde;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
-/// let short_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
-///         YMD::short(),
-///     )
-///     .unwrap();
+/// let short_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::short(),
+/// )
+/// .unwrap();
 ///
-/// let medium_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
-///         YMD::medium(),
-///     )
-///     .unwrap();
+/// let medium_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::medium(),
+/// )
+/// .unwrap();
 ///
-/// let long_formatter =
-///     FixedCalendarDateTimeFormatter::try_new(
-///         &locale!("en-US").into(),
-///         YMD::long(),
-///     )
-///     .unwrap();
+/// let long_formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     YMD::long(),
+/// )
+/// .unwrap();
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     short_formatter.format(&Date::try_new_gregorian(2000, 1, 1).unwrap()),
 ///     "1/1/00"
 /// );
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     medium_formatter.format(&Date::try_new_gregorian(2000, 1, 1).unwrap()),
 ///     "Jan 1, 2000"
 /// );
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     long_formatter.format(&Date::try_new_gregorian(2000, 1, 1).unwrap()),
 ///     "January 1, 2000"
 /// );
@@ -72,7 +69,7 @@ use crate::neo_serde::TimePrecisionSerde;
 )]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
-pub enum NeoSkeletonLength {
+pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
     Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
@@ -81,7 +78,7 @@ pub enum NeoSkeletonLength {
     Short = 1,
 }
 
-impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
+impl IntoOption<Length> for Length {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -103,30 +100,30 @@ impl IntoOption<NeoSkeletonLength> for NeoSkeletonLength {
 /// use icu::datetime::options::Alignment;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// let plain_formatter =
 ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::short(),
 ///     )
 ///     .unwrap();
 ///
 /// let column_formatter =
 ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         YMD::short().with_alignment(Alignment::Column),
 ///     )
 ///     .unwrap();
 ///
 /// // By default, en-US does not pad the month and day with zeros.
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     plain_formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 ///     "1/1/25"
 /// );
 ///
 /// // The column alignment option hints that they should be padded.
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     column_formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 ///     "01/01/25"
 /// );
@@ -177,82 +174,82 @@ impl IntoOption<Alignment> for Alignment {
 /// use icu::datetime::options::YearStyle;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Auto),
 /// )
 /// .unwrap();
 ///
 /// // Era displayed when needed for disambiguation,
 /// // such as years before year 0 and small year numbers:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 ///     "1/1/1001 BC"
 /// );
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 ///     "1/1/77 AD"
 /// );
 /// // Era elided for modern years:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 ///     "1/1/1900"
 /// );
 /// // Era and century both elided for nearby years:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 ///     "1/1/25"
 /// );
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Full),
 /// )
 /// .unwrap();
 ///
 /// // Era still displayed in cases with ambiguity:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 ///     "1/1/1001 BC"
 /// );
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 ///     "1/1/77 AD"
 /// );
 /// // Era elided for modern years:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 ///     "1/1/1900"
 /// );
 /// // But now we always get a full-precision year:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 ///     "1/1/2025"
 /// );
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("en-US").into(),
+///     locale!("en-US").into(),
 ///     YMD::short().with_year_style(YearStyle::Always),
 /// )
 /// .unwrap();
 ///
 /// // Era still displayed in cases with ambiguity:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(-1000, 1, 1).unwrap()),
 ///     "1/1/1001 BC"
 /// );
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(77, 1, 1).unwrap()),
 ///     "1/1/77 AD"
 /// );
 /// // But now it is shown even on modern years:
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(1900, 1, 1).unwrap()),
 ///     "1/1/1900 AD"
 /// );
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Date::try_new_gregorian(2025, 1, 1).unwrap()),
 ///     "1/1/2025 AD"
 /// );
@@ -329,7 +326,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// let formatters = [
 ///     TimePrecision::HourPlus,
@@ -338,9 +335,10 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::MinuteExact,
 ///     TimePrecision::SecondPlus,
 ///     TimePrecision::SecondExact(FractionalSecondDigits::F0),
-/// ].map(|time_precision| {
+/// ]
+/// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
-///         &locale!("en-US").into(),
+///         locale!("en-US").into(),
 ///         T::short().with_time_precision(time_precision),
 ///     )
 ///     .unwrap()
@@ -356,19 +354,22 @@ impl IntoOption<YearStyle> for YearStyle {
 /// let expected_value_table = [
 ///     // 7:00:00, 7:00:10, 7:12:20.5432
 ///     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
-///     ["7 AM", "7 AM", "7 AM"], // HourExact
+///     ["7 AM", "7 AM", "7 AM"],             // HourExact
 ///     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
-///     ["7:00 AM", "7:00 AM", "7:12 AM"], // MinuteExact
+///     ["7:00 AM", "7:00 AM", "7:12 AM"],    // MinuteExact
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
 /// ];
 ///
-/// for (expected_value_row, formatter) in expected_value_table.iter().zip(formatters.iter()) {
-///     for (expected_value, time) in expected_value_row.iter().zip(times.iter()) {
-///         assert_try_writeable_eq!(
+/// for (expected_value_row, formatter) in
+///     expected_value_table.iter().zip(formatters.iter())
+/// {
+///     for (expected_value, time) in
+///         expected_value_row.iter().zip(times.iter())
+///     {
+///         assert_writeable_eq!(
 ///             formatter.format(time),
 ///             *expected_value,
-///             Ok(()),
 ///             "{formatter:?} @ {time:?}"
 ///         );
 ///     }
@@ -464,15 +465,17 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
-///     &locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)),
+///     locale!("en-US").into(),
+///     T::short().with_time_precision(TimePrecision::SecondExact(
+///         FractionalSecondDigits::F2,
+///     )),
 /// )
 /// .unwrap();
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&Time::try_new(16, 12, 20, 543200000).unwrap()),
 ///     "4:12:20.54 PM"
 /// );

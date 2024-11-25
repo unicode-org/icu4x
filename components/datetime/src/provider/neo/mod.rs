@@ -148,7 +148,7 @@ pub mod marker_attrs {
 
     /// Pattern lengths supported in data marker attributes.
     ///
-    /// For a stable version of this enum, use [`NeoSkeletonLength`].
+    /// For a stable version of this enum, use [`Length`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -156,7 +156,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`NeoSkeletonLength`]: crate::options::NeoSkeletonLength
+    /// [`Length`]: crate::options::Length
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
         Long,
@@ -317,7 +317,6 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -490,7 +489,6 @@ impl LinearNamesV1<'_> {
 size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
-///
 #[doc = glue_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">

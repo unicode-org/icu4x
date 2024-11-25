@@ -1,8 +1,7 @@
 import { DataProvider } from "icu4x"
 import { ListFormatter } from "icu4x"
 import { Locale } from "icu4x"
-export function format() {
-    var terminusArgs = arguments;
+export function format(name, length, list) {
     return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
         null,
         [
@@ -17,13 +16,13 @@ export function format() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
-            terminusArgs[2]
+            list
         ]
     );
 }

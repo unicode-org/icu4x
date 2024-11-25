@@ -3,8 +3,7 @@ import { GregorianZonedDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
-export function formatIsoDatetimeWithCustomTimeZone() {
-    var terminusArgs = arguments;
+export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
@@ -19,30 +18,30 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             ),
             TimeZoneInfo.fromParts.apply(
                 null,
                 [
-                    terminusArgs[9],
-                    terminusArgs[10],
-                    terminusArgs[11]
+                    bcp47Id,
+                    offsetSeconds,
+                    dst
                 ]
             )
         ]

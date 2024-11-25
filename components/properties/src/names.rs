@@ -25,8 +25,8 @@ use zerotrie::cursor::ZeroTrieSimpleAsciiCursor;
 /// # Example
 ///
 /// ```
-/// use icu::properties::PropertyParser;
 /// use icu::properties::props::GeneralCategory;
+/// use icu::properties::PropertyParser;
 ///
 /// let lookup = PropertyParser::<GeneralCategory>::new();
 /// // short name for value
@@ -134,8 +134,8 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::PropertyParser;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::PropertyParser;
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
@@ -160,8 +160,8 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::PropertyParser;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::PropertyParser;
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
@@ -187,8 +187,8 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::PropertyParser;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::PropertyParser;
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
@@ -217,8 +217,8 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::PropertyParser;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::PropertyParser;
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
@@ -336,8 +336,8 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// # Example
 ///
 /// ```
-/// use icu::properties::PropertyNamesLong;
 /// use icu::properties::props::CanonicalCombiningClass;
+/// use icu::properties::PropertyNamesLong;
 ///
 /// let names = PropertyNamesLong::<CanonicalCombiningClass>::new();
 /// assert_eq!(
@@ -417,8 +417,8 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'_, T> {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::PropertyNamesLong;
     /// use icu::properties::props::CanonicalCombiningClass;
+    /// use icu::properties::PropertyNamesLong;
     ///
     /// let lookup = PropertyNamesLong::<CanonicalCombiningClass>::new();
     /// assert_eq!(
@@ -474,18 +474,12 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
 /// # Example
 ///
 /// ```
-/// use icu::properties::PropertyNamesShort;
 /// use icu::properties::props::CanonicalCombiningClass;
+/// use icu::properties::PropertyNamesShort;
 ///
 /// let names = PropertyNamesShort::<CanonicalCombiningClass>::new();
-/// assert_eq!(
-///     names.get(CanonicalCombiningClass::KanaVoicing),
-///     Some("KV")
-/// );
-/// assert_eq!(
-///     names.get(CanonicalCombiningClass::AboveLeft),
-///     Some("AL")
-/// );
+/// assert_eq!(names.get(CanonicalCombiningClass::KanaVoicing), Some("KV"));
+/// assert_eq!(names.get(CanonicalCombiningClass::AboveLeft), Some("AL"));
 /// ```
 pub struct PropertyNamesShort<T: NamedEnumeratedProperty> {
     map: DataPayload<ErasedMarker<T::DataStructShort>>,
@@ -556,18 +550,12 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'_, T> {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::PropertyNamesShort;
     /// use icu::properties::props::CanonicalCombiningClass;
+    /// use icu::properties::PropertyNamesShort;
     ///
     /// let lookup = PropertyNamesShort::<CanonicalCombiningClass>::new();
-    /// assert_eq!(
-    ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
-    ///     Some("KV")
-    /// );
-    /// assert_eq!(
-    ///     lookup.get(CanonicalCombiningClass::AboveLeft),
-    ///     Some("AL")
-    /// );
+    /// assert_eq!(lookup.get(CanonicalCombiningClass::KanaVoicing), Some("KV"));
+    /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("AL"));
     /// ```
     #[inline]
     pub fn get(&self, property: T) -> Option<&str> {
@@ -583,24 +571,36 @@ impl PropertyNamesShortBorrowed<'_, Script> {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::PropertyNamesShort;
-    /// use icu::properties::props::Script;
     /// use icu::locale::subtags::script;
+    /// use icu::properties::props::Script;
+    /// use icu::properties::PropertyNamesShort;
     ///
     /// let lookup = PropertyNamesShort::<Script>::new();
-    /// assert_eq!(lookup.get_locale_script(Script::Brahmi), Some(script!("Brah")));
-    /// assert_eq!(lookup.get_locale_script(Script::Hangul), Some(script!("Hang")));
+    /// assert_eq!(
+    ///     lookup.get_locale_script(Script::Brahmi),
+    ///     Some(script!("Brah"))
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_locale_script(Script::Hangul),
+    ///     Some(script!("Hang"))
+    /// );
     /// ```
     ///
     /// For the reverse direction, use property parsing as normal:
     /// ```
-    /// use icu::properties::PropertyParser;
-    /// use icu::properties::props::Script;
     /// use icu::locale::subtags::script;
+    /// use icu::properties::props::Script;
+    /// use icu::properties::PropertyParser;
     ///
     /// let parser = PropertyParser::<Script>::new();
-    /// assert_eq!(parser.get_strict(script!("Brah").as_str()), Some(Script::Brahmi));
-    /// assert_eq!(parser.get_strict(script!("Hang").as_str()), Some(Script::Hangul));
+    /// assert_eq!(
+    ///     parser.get_strict(script!("Brah").as_str()),
+    ///     Some(Script::Brahmi)
+    /// );
+    /// assert_eq!(
+    ///     parser.get_strict(script!("Hang").as_str()),
+    ///     Some(Script::Hangul)
+    /// );
     /// ```
     #[inline]
     pub fn get_locale_script(&self, property: Script) -> Option<icu_locale_core::subtags::Script> {

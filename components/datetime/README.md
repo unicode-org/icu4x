@@ -53,20 +53,20 @@ use icu::calendar::DateTime;
 use icu::datetime::fieldsets;
 use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};
-use writeable::assert_try_writeable_eq;
+use writeable::assert_writeable_eq;
 
 // Field set for year, month, day, hour, and minute with a medium length:
 let field_set = fieldsets::YMDT::medium().hm();
 
 // Create a formatter for Argentinian Spanish:
 let locale = locale!("es-AR");
-let dtf = DateTimeFormatter::try_new(&locale.into(), field_set).unwrap();
+let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 
 // Format something:
 let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
-let formatted_date = dtf.convert_and_format(&datetime);
+let formatted_date = dtf.format_any_calendar(&datetime);
 
-assert_try_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
+assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 ```
 
 <!-- cargo-rdme end -->

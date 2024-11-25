@@ -153,7 +153,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return WeekOf._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

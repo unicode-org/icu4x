@@ -279,9 +279,8 @@ impl DateTime<Coptic> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_coptic =
-    ///     DateTime::try_new_coptic(1686, 5, 6, 13, 1, 0)
-    ///         .expect("Failed to initialize Coptic DateTime instance.");
+    /// let datetime_coptic = DateTime::try_new_coptic(1686, 5, 6, 13, 1, 0)
+    ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
     /// assert_eq!(datetime_coptic.date.month().ordinal, 5);

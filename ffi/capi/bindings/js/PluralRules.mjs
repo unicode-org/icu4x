@@ -94,7 +94,7 @@ export class PluralRules {
         const result = wasm.icu4x_PluralRules_categories_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new PluralCategories(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return PluralCategories._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

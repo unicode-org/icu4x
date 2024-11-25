@@ -4,6 +4,7 @@
 
 [package]
 name = "icu_provider_baked"
+description = "Tooling for the ICU4X baked data provider"
 
 version.workspace = true
 rust-version.workspace = true

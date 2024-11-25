@@ -41,7 +41,7 @@ impl AnyCalendar {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
             .ok_or(ParseError::UnknownCalendar)?;
-        let calendar = AnyCalendar::new(calendar_kind);
+        let calendar = AnyCalendar::new_for_kind(calendar_kind);
         Ok(calendar)
     }
 }
@@ -206,7 +206,8 @@ impl DateTime<Iso> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
+    /// let datetime =
+    ///     DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
@@ -258,7 +259,8 @@ impl DateTime<AnyCalendar> {
     /// ```
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime = DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
+    /// let datetime =
+    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(

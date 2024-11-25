@@ -64,19 +64,53 @@ export class WeekendContainsDay {
     set sunday(value) {
         this.#sunday = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#monday = arguments[0];
-            this.#tuesday = arguments[1];
-            this.#wednesday = arguments[2];
-            this.#thursday = arguments[3];
-            this.#friday = arguments[4];
-            this.#saturday = arguments[5];
-            this.#sunday = arguments[6];
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("WeekendContainsDay's constructor takes an object of WeekendContainsDay's fields.");
         }
+
+        if ("monday" in structObj) {
+            this.#monday = structObj.monday;
+        } else {
+            throw new Error("Missing required field monday.");
+        }
+
+        if ("tuesday" in structObj) {
+            this.#tuesday = structObj.tuesday;
+        } else {
+            throw new Error("Missing required field tuesday.");
+        }
+
+        if ("wednesday" in structObj) {
+            this.#wednesday = structObj.wednesday;
+        } else {
+            throw new Error("Missing required field wednesday.");
+        }
+
+        if ("thursday" in structObj) {
+            this.#thursday = structObj.thursday;
+        } else {
+            throw new Error("Missing required field thursday.");
+        }
+
+        if ("friday" in structObj) {
+            this.#friday = structObj.friday;
+        } else {
+            throw new Error("Missing required field friday.");
+        }
+
+        if ("saturday" in structObj) {
+            this.#saturday = structObj.saturday;
+        } else {
+            throw new Error("Missing required field saturday.");
+        }
+
+        if ("sunday" in structObj) {
+            this.#sunday = structObj.sunday;
+        } else {
+            throw new Error("Missing required field sunday.");
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -109,20 +143,26 @@ export class WeekendContainsDay {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("WeekendContainsDay._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const mondayDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
-        this.#monday = mondayDeref;
+        structObj.monday = mondayDeref;
         const tuesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
-        this.#tuesday = tuesdayDeref;
+        structObj.tuesday = tuesdayDeref;
         const wednesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] === 1;
-        this.#wednesday = wednesdayDeref;
+        structObj.wednesday = wednesdayDeref;
         const thursdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] === 1;
-        this.#thursday = thursdayDeref;
+        structObj.thursday = thursdayDeref;
         const fridayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] === 1;
-        this.#friday = fridayDeref;
+        structObj.friday = fridayDeref;
         const saturdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
-        this.#saturday = saturdayDeref;
+        structObj.saturday = saturdayDeref;
         const sundayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 6, 1))[0] === 1;
-        this.#sunday = sundayDeref;
+        structObj.sunday = sundayDeref;
+
+        return new WeekendContainsDay(structObj, internalConstructor);
     }
 }

@@ -111,8 +111,7 @@ impl ListFormatter {
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(
     ///     locale!("fr").into(),
-    ///     ListFormatterOptions::default()
-    ///         .with_length(ListLength::Wide)
+    ///     ListFormatterOptions::default().with_length(ListLength::Wide),
     /// )
     /// .unwrap();
     /// let pays = ["Italie", "France", "Espagne", "Allemagne"];

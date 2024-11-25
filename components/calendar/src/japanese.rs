@@ -26,7 +26,10 @@
 //! assert_eq!(date_japanese.year().era_year_or_extended(), 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
-//! assert_eq!(date_japanese.year().standard_era().unwrap(), Era(tinystr!(16, "showa")));
+//! assert_eq!(
+//!     date_japanese.year().standard_era().unwrap(),
+//!     Era(tinystr!(16, "showa"))
+//! );
 //!
 //! // `DateTime` type
 //! assert_eq!(datetime_japanese.date.year().era_year_or_extended(), 45);
@@ -430,8 +433,9 @@ impl Date<Japanese> {
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let date = Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
-    ///     .expect("Constructing a date should succeed");
+    /// let date =
+    ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
+    ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap(), era);
     /// assert_eq!(date.year().era_year_or_extended(), 14);
@@ -446,8 +450,13 @@ impl Date<Japanese> {
     ///
     /// // and for unknown eras
     /// let fake_era = types::Era(tinystr!(16, "neko")); // 🐱
-    /// let fake_date =
-    ///     Date::try_new_japanese_with_calendar(fake_era, 10, 1, 2, japanese_calendar);
+    /// let fake_date = Date::try_new_japanese_with_calendar(
+    ///     fake_era,
+    ///     10,
+    ///     1,
+    ///     2,
+    ///     japanese_calendar,
+    /// );
     /// assert!(fake_date.is_err());
     /// ```
     pub fn try_new_japanese_with_calendar<A: AsCalendar<Calendar = Japanese>>(
@@ -484,9 +493,14 @@ impl Date<JapaneseExtended> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let date =
-    ///     Date::try_new_japanese_extended_with_calendar(era, 7, 1, 2, japanext_calendar)
-    ///         .expect("Constructing a date should succeed");
+    /// let date = Date::try_new_japanese_extended_with_calendar(
+    ///     era,
+    ///     7,
+    ///     1,
+    ///     2,
+    ///     japanext_calendar,
+    /// )
+    /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap(), era);
     /// assert_eq!(date.year().era_year_or_extended(), 7);

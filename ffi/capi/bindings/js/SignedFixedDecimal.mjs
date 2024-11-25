@@ -69,7 +69,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -87,7 +87,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -105,7 +105,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);

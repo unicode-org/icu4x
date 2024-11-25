@@ -79,14 +79,17 @@ impl DataMarker for HelloWorldV1Marker {
 /// Load the reverse string using an auxiliary key:
 ///
 /// ```
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_locale_core::langid;
 ///
 /// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(DataMarkerAttributes::from_str_or_panic("reverse"), &langid!("en").into()),
+///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+///                 DataMarkerAttributes::from_str_or_panic("reverse"),
+///                 &langid!("en").into(),
+///             ),
 ///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed");

@@ -27,7 +27,6 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
 /// 2. Convert it to a string pattern via [`Writeable`]
 /// 3. Get the resolved components
-///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
@@ -38,9 +37,9 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
+/// use icu::datetime::fields::components;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::fields::components;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -53,12 +52,16 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// // Load data that resolves to the same pattern:
 /// let data_pattern = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-///     &locale!("es-MX").into(),
+///     locale!("es-MX").into(),
 ///     YMD::medium(),
 /// )
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.
-/// .format(&Date::try_new_iso(2024, 1, 1).unwrap().to_calendar(Gregorian))
+/// .format(
+///     &Date::try_new_iso(2024, 1, 1)
+///         .unwrap()
+///         .to_calendar(Gregorian),
+/// )
 /// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);

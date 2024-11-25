@@ -135,7 +135,6 @@ define_preferences!(
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
-///
 #[doc = fixed_decimal_formatter_size!()]
 #[derive(Debug)]
 pub struct FixedDecimalFormatter {

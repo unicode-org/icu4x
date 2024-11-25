@@ -25,8 +25,8 @@ mod algorithms;
 /// # Examples
 ///
 /// ```
-/// use icu::locale::locale;
 /// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::locale;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();

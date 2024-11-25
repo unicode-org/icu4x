@@ -3,8 +3,7 @@ import { GregorianDateFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
-export function formatIsoDate() {
-    var terminusArgs = arguments;
+export function formatIsoDate(name, length, year, month, day) {
     return (function (...args) { return args[0].formatIsoDate(...args.slice(1)) }).apply(
         null,
         [
@@ -19,25 +18,24 @@ export function formatIsoDate() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             IsoDate.create.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4]
+                    year,
+                    month,
+                    day
                 ]
             )
         ]
     );
 }
-export function formatIsoDatetime() {
-    var terminusArgs = arguments;
+export function formatIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond) {
     return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
         null,
         [
@@ -52,22 +50,22 @@ export function formatIsoDatetime() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             )
         ]

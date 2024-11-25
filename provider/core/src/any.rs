@@ -290,20 +290,25 @@ where
 /// # Examples
 ///
 /// ```
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
-/// use icu_locale_core::langid;
 ///
 /// let any_provider = HelloWorldProvider.as_any_provider();
 ///
 /// // Downcasting manually
 /// assert_eq!(
 ///     any_provider
-///         .load_any(HelloWorldV1Marker::INFO, DataRequest {
-///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///             ..Default::default()
-///         })
+///         .load_any(
+///             HelloWorldV1Marker::INFO,
+///             DataRequest {
+///                 id: DataIdentifierBorrowed::for_locale(
+///                     &langid!("de").into()
+///                 ),
+///                 ..Default::default()
+///             }
+///         )
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")

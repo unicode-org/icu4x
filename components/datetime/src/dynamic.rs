@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Enumerations over field sets.
+//! Enumerations over [field sets](crate::fieldsets).
 //!
 //! These enumerations can be used when the field set is not known at compile time. However,
 //! they may contribute negatively to the binary size of the formatters.
@@ -33,36 +33,43 @@
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use writeable::TryWriteable;
+//! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
 //!         let field_set = fieldsets::MDT::medium().hm();
-//!         CompositeDateTimeFieldSet::DateTime(fieldsets::enums::DateAndTimeFieldSet::MDT(field_set))
+//!         CompositeDateTimeFieldSet::DateTime(
+//!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
+//!         )
 //!     } else {
 //!         let field_set = fieldsets::MD::medium();
-//!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(field_set))
+//!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(
+//!             field_set,
+//!         ))
 //!     }
 //! }
 //!
-//! let locale = locale!("en-US").into();
 //! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
 //!
-//! let results = [true, false].map(get_field_set).map(|field_set| {
-//!     DateTimeFormatter::try_new(&locale, field_set).unwrap()
-//! }).map(|formatter| {
-//!     formatter.convert_and_format(&datetime).try_write_to_string().unwrap().into_owned()
-//! });
+//! let results = [true, false]
+//!     .map(get_field_set)
+//!     .map(|field_set| {
+//!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
+//!             .unwrap()
+//!     })
+//!     .map(|formatter| formatter.format_any_calendar(&datetime).to_string());
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
 
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fields, fieldsets, NeoSkeletonLength};
+use crate::{fields, fieldsets, Length};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateFieldSet {
@@ -90,6 +97,8 @@ pub enum DateFieldSet {
 }
 
 /// An enumeration over all possible calendar period field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarPeriodFieldSet {
@@ -110,6 +119,8 @@ pub enum CalendarPeriodFieldSet {
 }
 
 /// An enumeration over all possible time field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum TimeFieldSet {
@@ -118,6 +129,8 @@ pub enum TimeFieldSet {
 }
 
 /// An enumeration over all possible zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 ///
 /// Note: [`fieldsets::Zs`] and [`fieldsets::Vs`] are not included in this enum
 /// because they are data size optimizations only.
@@ -168,6 +181,8 @@ pub enum ZoneStyle {
 }
 
 /// An enumeration over all possible date+time composite field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DateAndTimeFieldSet {
@@ -201,6 +216,8 @@ pub enum DateAndTimeFieldSet {
 ///
 /// This enum is useful when formatting a type that does not contain a
 /// time zone or to avoid storing time zone data.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CompositeDateTimeFieldSet {
@@ -249,6 +266,8 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
 }
 
 /// An enum supporting all possible field sets and options.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CompositeFieldSet {
@@ -471,10 +490,7 @@ impl_attrs! {
 }
 
 impl ZoneFieldSet {
-    pub(crate) fn from_time_zone_style_and_length(
-        style: ZoneStyle,
-        length: NeoSkeletonLength,
-    ) -> Self {
+    pub(crate) fn from_time_zone_style_and_length(style: ZoneStyle, length: Length) -> Self {
         match style {
             ZoneStyle::Z => Self::Z(fieldsets::Z::with_length(length)),
             ZoneStyle::O => Self::O(fieldsets::O::with_length(length)),

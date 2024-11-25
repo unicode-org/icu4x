@@ -40,14 +40,14 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WeekCalculator>, DataError> {
-            let locale = locale.to_datalocale();
+            let prefs = (&locale.0).into();
 
             Ok(Box::new(WeekCalculator(call_constructor!(
                 icu_calendar::week::WeekCalculator::try_new,
                 icu_calendar::week::WeekCalculator::try_new_with_any_provider,
                 icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
                 provider,
-                &locale,
+                prefs,
             )?)))
         }
 

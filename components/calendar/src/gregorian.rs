@@ -204,9 +204,8 @@ impl DateTime<Gregorian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_gregorian =
-    ///     DateTime::try_new_gregorian(1970, 1, 2, 13, 1, 0)
-    ///         .expect("Failed to initialize Gregorian DateTime instance.");
+    /// let datetime_gregorian = DateTime::try_new_gregorian(1970, 1, 2, 13, 1, 0)
+    ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_gregorian.date.month().ordinal, 1);

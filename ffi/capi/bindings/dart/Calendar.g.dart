@@ -24,7 +24,7 @@ final class Calendar implements ffi.Finalizable {
 
   /// Creates a new [`Calendar`] from the specified date and time.
   ///
-  /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory Calendar.forLocale(DataProvider provider, Locale locale) {
@@ -37,7 +37,7 @@ final class Calendar implements ffi.Finalizable {
 
   /// Creates a new [`Calendar`] from the specified date and time.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+  /// See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
   ///
   /// Throws [DataError] on failure.
   factory Calendar.forKind(DataProvider provider, AnyCalendarKind kind) {
