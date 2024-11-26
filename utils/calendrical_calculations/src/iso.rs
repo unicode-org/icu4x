@@ -209,10 +209,10 @@ pub const fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
         // shift back from pseudo calendar
         let leap = is_leap_year(year) as u16 + DAYS_BEFORE_MAR;
         days_before_month as u16 + day as u16 + leap
-    } else if month == 2 {
-        (day + DAYS_BEFORE_FEB) as u16
     } else {
-        day as u16
+        // This will use CMOV instr
+        let prev_month_days = if month == 2 { DAYS_BEFORE_FEB } else { 0 };
+        prev_month_days as u16 + day as u16
     }
 }
 
@@ -349,12 +349,11 @@ pub(crate) const fn calc_pseudo_md_for_pseudo_year(day_of_year: u32) -> (u8, u8)
     // See `test_approx_2` below.
     const APPROX_NUM_A: u32 = 2141;
     const APPROX_NUM_B: u32 = 197913;
-    const DIV_MASK_02: u32 = (1 << 16) - 1;
     let approx_day = APPROX_NUM_A * day_of_year + APPROX_NUM_B;
     // Month from days: see [formulas 1] & [approx comment 2].
     let month = (approx_day >> 16) as u8;
     // Day of the month: see [formulas 1] & [approx comment 2].
-    let day = ((approx_day & DIV_MASK_02) as u16 / APPROX_NUM_A as u16) as u8;
+    let day = (approx_day as u16 / APPROX_NUM_A as u16) as u8;
     (month, day + 1)
 }
 
@@ -401,22 +400,27 @@ pub(crate) const fn calc_md_for_pseudo_year(day_of_year: u32, shift_months: bool
 /// * `month` in `3..=14`
 /// * `day` in `1..=31`
 pub const fn iso_from_year_day(year: i32, day_of_year: u16) -> (u8, u8) {
-    const DAYS_BEFORE_FEB: u8 = 31;
+    const DAYS_IN_JAN: u8 = 31;
+    const DAYS_IN_MAR: u8 = 31;
+    const DAYS_BEFORE_FEB: u8 = DAYS_IN_JAN;
     const DAYS_BEFORE_MAR: u32 = DAYS_BEFORE_FEB as u32 + 28;
     let day_of_year = day_of_year as u32;
     let shift = is_leap_year(year) as u32 + DAYS_BEFORE_MAR;
 
     if day_of_year > shift {
-        let day_of_year = day_of_year - shift - 1;
-        calc_pseudo_md_for_pseudo_year(day_of_year)
+        let day_of_year = day_of_year - shift;
+        if day_of_year > shift {
+            calc_pseudo_md_for_pseudo_year(day_of_year - 1)
+        } else {
+            let is_4th_month = (day_of_year > 31) as u8;
+            let month = 3 + is_4th_month;
+            let day = (day_of_year as u8) - (DAYS_IN_MAR * is_4th_month);
+            (month, day)
+        }
     } else {
-        // FEB have days in `32..=60` whish is `0b10_0000..=0b11_1100`
-        // So `second_month` is:
-        // * `0` for JAN
-        // * `1` for FEB
-        let second_month = ((day_of_year as u8) & (1 << 5)) >> 5;
-        let month = 1 + second_month;
-        let day = (day_of_year as u8) - (DAYS_BEFORE_FEB * second_month);
+        let is_2nd_month = (day_of_year > 31) as u8;
+        let month = 1 + is_2nd_month;
+        let day = (day_of_year as u8) - (DAYS_IN_JAN * is_2nd_month);
         (month, day)
     }
 }
