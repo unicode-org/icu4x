@@ -1,11 +1,16 @@
+// We also can compile parts of this file for bench purpose (to cmp algo perfs) => `#[cfg(test)]`
+
+#[cfg(test)]
 mod iso;
-mod iso_old_algos;
-mod iso_old_file;
+pub mod iso_old_algos;
+pub mod iso_old_file;
 
+#[cfg(test)]
 mod julian;
-mod julian_old_file;
+pub mod julian_old_file;
 
-mod helpful_consts {
+#[cfg(test)]
+pub mod helpful_consts {
     use core::ops::RangeInclusive;
 
     pub const N_YEAR_BOUND: i32 = 1234; // more than one cycle (400 years)

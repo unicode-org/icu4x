@@ -60,5 +60,21 @@ pub mod persian;
 /// represented as the number of days since ISO date 0001-01-01.
 pub mod rata_die;
 
-#[cfg(test)]
+#[cfg(any(test, feature = "bench"))]
+#[doc(hidden)]
 mod tests;
+
+#[cfg(feature = "bench")]
+#[doc(hidden)]
+/// Old implementations for bench comparing
+pub mod bench_support {
+    /// Old Julian implementation
+    pub mod julian_old {
+        pub use crate::tests::julian_old_file::*;
+    }
+    /// Old Greorgian implementation
+    pub mod iso_old {
+        pub use crate::tests::iso_old_algos::*;
+        pub use crate::tests::iso_old_file::*;
+    }
+}

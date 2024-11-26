@@ -37,9 +37,20 @@ displaydoc = { workspace = true }
 log = { workspace = true, optional = true }
 
 [features]
+bench = []
 logging = ["dep:log"]
 std = []
 
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+# [package.metadata.cargo-all-features]
+# # Bench feature gets tested separately and is only relevant for CI
+# denylist = ["bench"]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "iso"
+harness = false
+
+# [profile.bench]
+# lto = false
