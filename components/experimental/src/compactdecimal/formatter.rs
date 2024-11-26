@@ -13,7 +13,7 @@ use crate::compactdecimal::{
 };
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
@@ -313,7 +313,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_i64(-1_172_700), "-1.2M");
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
-        let unrounded = FixedDecimal::from(value);
+        let unrounded = SignedFixedDecimal::from(value);
         self.format_fixed_decimal(unrounded)
     }
 
@@ -378,11 +378,11 @@ impl CompactDecimalFormatter {
         use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = FixedDecimal::try_from_f64(value, RoundTrip)?;
+        let partly_rounded = SignedFixedDecimal::try_from_f64(value, RoundTrip)?;
         Ok(self.format_fixed_decimal(partly_rounded))
     }
 
-    /// Formats a [`FixedDecimal`] by automatically scaling and rounding it.
+    /// Formats a [`SignedFixedDecimal`] by automatically scaling and rounding it.
     ///
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
@@ -393,7 +393,7 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -405,38 +405,38 @@ impl CompactDecimalFormatter {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(0)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(843)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2207)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(15127)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(3010349)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(-13132)),
+    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
     /// // The sign display on the FixedDecimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
-    ///         FixedDecimal::from(2500)
+    ///         SignedFixedDecimal::from(2500)
     ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
@@ -480,12 +480,13 @@ impl CompactDecimalFormatter {
     ///     "-1.2M"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: FixedDecimal) -> FormattedCompactDecimal<'_> {
-        let log10_type = value.nonzero_magnitude_start();
+    pub fn format_fixed_decimal(&self, value: SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
+        let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
-        let mut significand = value.multiplied_pow10(-i16::from(exponent));
+        let mut significand = value.clone();
+        significand.multiply_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
-        if significand.nonzero_magnitude_start() == 0 {
+        if significand.absolute.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
             significand.round(-1);
         } else {
@@ -493,7 +494,8 @@ impl CompactDecimalFormatter {
             // so round to eliminate the fractional part.
             significand.round(0);
         }
-        let rounded_magnitude = significand.nonzero_magnitude_start() + i16::from(exponent);
+        let rounded_magnitude =
+            significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
         if rounded_magnitude > log10_type {
             // We got bumped up a magnitude by rounding.
             // This means that `significand` is a power of 10.
@@ -502,14 +504,14 @@ impl CompactDecimalFormatter {
             // to avoid iterating twice (we only need to look at the next key),
             // but this obscures the logic and the map is tiny.
             (plural_map, exponent) = self.plural_map_and_exponent_for_magnitude(rounded_magnitude);
-            significand =
-                significand.multiplied_pow10(i16::from(old_exponent) - i16::from(exponent));
+            significand = significand.clone();
+            significand.multiply_pow10(i16::from(old_exponent) - i16::from(exponent));
             // There is no need to perform any rounding: `significand`, being
             // a power of 10, is as round as it gets, and since `exponent` can
             // only have become larger, it is already the correct rounding of
             // `unrounded` to the precision we want to show.
         }
-        significand.trim_end();
+        significand.absolute.trim_end();
         FormattedCompactDecimal {
             formatter: self,
             plural_map,
@@ -622,7 +624,7 @@ impl CompactDecimalFormatter {
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, ExponentError> {
         let log10_type =
-            value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
+            value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);

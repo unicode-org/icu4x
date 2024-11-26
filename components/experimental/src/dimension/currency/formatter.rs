@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::{
     options::FixedDecimalFormatterOptions, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
 };
@@ -131,7 +131,7 @@ impl CurrencyFormatter {
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given currency code.
+    /// Formats a [`SignedFixedDecimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -152,7 +152,7 @@ impl CurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l FixedDecimal,
+        value: &'l SignedFixedDecimal,
         currency_code: CurrencyCode,
     ) -> FormattedCurrency<'l> {
         FormattedCurrency {

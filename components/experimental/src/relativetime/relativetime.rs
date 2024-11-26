@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{FixedDecimal, Sign};
+use fixed_decimal::{Sign, SignedFixedDecimal};
 use icu_decimal::{
     options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1Marker,
     provider::DecimalSymbolsV2Marker, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
@@ -34,7 +34,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -48,11 +48,11 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(5i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(5i8)),
 ///     "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-10i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-10i8)),
 ///     "10 seconds ago"
 /// );
 /// ```
@@ -60,7 +60,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -77,26 +77,26 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(0u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(0u8)),
 ///     "hoy"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-2i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-2i8)),
 ///     "anteayer"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(2u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(2u8)),
 ///     "pasado mañana"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(15i8)),
 ///     "dentro de 15 d"
 /// );
 /// ```
 ///
 /// # Example
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -110,11 +110,11 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(3u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(3u8)),
 ///     "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-15i8)),
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
@@ -379,7 +379,7 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: FixedDecimal) -> FormattedRelativeTime<'_> {
+    pub fn format(&self, value: SignedFixedDecimal) -> FormattedRelativeTime<'_> {
         let is_negative = value.sign() == Sign::Negative;
         FormattedRelativeTime {
             options: &self.options,

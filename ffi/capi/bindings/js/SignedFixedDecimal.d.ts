@@ -2,30 +2,30 @@
 import type { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 import type { FixedDecimalParseError } from "./FixedDecimalParseError"
 import type { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
-import type { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode"
 import type { FixedDecimalSign } from "./FixedDecimalSign"
 import type { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay"
+import type { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
 */
-export class FixedDecimal {
+export class SignedFixedDecimal {
     
 
     get ffiValue(): pointer;
 
-    static fromNumber(v: number): FixedDecimal;
+    static fromNumber(v: number): SignedFixedDecimal;
 
-    static fromBigInt(v: bigint): FixedDecimal;
+    static fromBigInt(v: bigint): SignedFixedDecimal;
 
-    static fromNumberWithLowerMagnitude(f: number, magnitude: number): FixedDecimal;
+    static fromNumberWithLowerMagnitude(f: number, magnitude: number): SignedFixedDecimal;
 
-    static fromNumberWithSignificantDigits(f: number, digits: number): FixedDecimal;
+    static fromNumberWithSignificantDigits(f: number, digits: number): SignedFixedDecimal;
 
-    static fromNumberWithRoundTripPrecision(f: number): FixedDecimal;
+    static fromNumberWithRoundTripPrecision(f: number): SignedFixedDecimal;
 
-    static fromString(v: string): FixedDecimal;
+    static fromString(v: string): SignedFixedDecimal;
 
     digitAt(magnitude: number): number;
 
@@ -67,11 +67,11 @@ export class FixedDecimal {
 
     trunc(position: number): void;
 
-    roundWithMode(position: number, mode: FixedDecimalRoundingMode): void;
+    roundWithMode(position: number, mode: FixedDecimalSignedRoundingMode): void;
 
-    roundWithModeAndIncrement(position: number, mode: FixedDecimalRoundingMode, increment: FixedDecimalRoundingIncrement): void;
+    roundWithModeAndIncrement(position: number, mode: FixedDecimalSignedRoundingMode, increment: FixedDecimalRoundingIncrement): void;
 
-    concatenateEnd(other: FixedDecimal): boolean;
+    concatenateEnd(other: SignedFixedDecimal): boolean;
 
     toString(): string;
 }
