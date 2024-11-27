@@ -11,15 +11,13 @@
 //! let chinese = Ref(&chinese); // to avoid cloning
 //!
 //! // `Date` type
-//! let chinese_date =
-//!     Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
-//!         .expect("Failed to initialize Chinese Date instance.");
+//! let chinese_date = Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
+//!     .expect("Failed to initialize Chinese Date instance.");
 //!
 //! // `DateTime` type
-//! let chinese_datetime = DateTime::try_new_chinese_with_calendar(
-//!     4660, 6, 6, 13, 1, 0, chinese,
-//! )
-//! .expect("Failed to initialize Chinese DateTime instance");
+//! let chinese_datetime =
+//!     DateTime::try_new_chinese_with_calendar(4660, 6, 6, 13, 1, 0, chinese)
+//!         .expect("Failed to initialize Chinese DateTime instance");
 //!
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
@@ -364,10 +362,9 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
-    /// let chinese_datetime = DateTime::try_new_chinese_with_calendar(
-    ///     4660, 6, 11, 13, 1, 0, chinese,
-    /// )
-    /// .expect("Failed to initialize Chinese DateTime instance.");
+    /// let chinese_datetime =
+    ///     DateTime::try_new_chinese_with_calendar(4660, 6, 11, 13, 1, 0, chinese)
+    ///         .expect("Failed to initialize Chinese DateTime instance.");
     ///
     /// assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
     /// assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);

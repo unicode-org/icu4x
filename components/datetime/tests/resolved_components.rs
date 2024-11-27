@@ -5,10 +5,7 @@
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
     fields::components,
-    fieldset::{
-        self,
-        dynamic::{CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet, TimeFieldSet},
-    },
+    fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
     FixedCalendarDateTimeFormatter,
 };
@@ -21,7 +18,7 @@ fn assert_resolved_components(
     locale: Locale,
 ) {
     let dtf =
-        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&locale.into(), skeleton).unwrap();
+        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
         time: Time::midnight(),
@@ -32,7 +29,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldset::YMD::medium()));
+    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
@@ -44,7 +41,7 @@ fn test_length_date() {
 
 #[test]
 fn test_length_time() {
-    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldset::T::medium().hms()));
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
@@ -62,9 +59,7 @@ fn test_length_time() {
 #[test]
 fn test_length_time_preferences() {
     let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
-        fieldset::T::medium()
-            .hms()
-            .with_alignment(Alignment::Column),
+        fieldsets::T::medium().with_alignment(Alignment::Column),
     ));
 
     let mut components_bag = components::Bag::default();
@@ -83,7 +78,7 @@ fn test_length_time_preferences() {
 #[test]
 fn test_date_and_time() {
     let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
-        fieldset::YMDET::medium()
+        fieldsets::YMDET::medium()
             .with_year_style(YearStyle::Always)
             .with_alignment(Alignment::Column)
             .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),

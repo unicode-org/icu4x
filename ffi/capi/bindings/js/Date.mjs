@@ -179,7 +179,7 @@ export class Date {
         const result = wasm.icu4x_Date_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return WeekOf._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

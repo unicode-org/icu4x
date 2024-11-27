@@ -67,7 +67,7 @@ export class CanonicalDecomposition {
         const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomatReceive.buffer, this.ffiValue, c);
     
         try {
-            return new Decomposed(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return Decomposed._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

@@ -5,12 +5,12 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldset::dynamic::CompositeFieldSet, FixedCalendarDateTimeFormatter};
+use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
 use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
-use writeable::TryWriteable;
+use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
 mod mock;
@@ -52,7 +52,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-                                &locale.into(),
+                                locale.into(),
                                 skeleton,
                             )
                             .expect("Failed to create FixedCalendarDateTimeFormatter.")
@@ -62,7 +62,7 @@ fn datetime_benches(c: &mut Criterion) {
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
-                            let _ = fdt.try_write_to(&mut result).unwrap();
+                            fdt.write_to(&mut result).unwrap();
                             result.clear();
                         }
                     }

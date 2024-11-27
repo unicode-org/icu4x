@@ -4,40 +4,48 @@
 
 use core::marker::PhantomData;
 
-use crate::{format::neo::*, provider::neo::*, scaffold::*};
+use crate::{provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
 ///
 /// This struct produces "composite field sets" as defined in UTS 35.
-///
-/// This struct does not have its own constructor, but it can be produced via
-/// factory functions on the other field sets.
+/// See [`fieldsets`](crate::fieldsets).
 ///
 /// # Examples
+///
+/// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
+///
+/// ```
+/// use icu::datetime::fieldsets::{Combo, E, L};
+///
+/// let field_set_1 = E::long().zone_l();
+/// let field_set_2 = Combo::<E, L>::long();
+///
+/// assert_eq!(field_set_1, field_set_2);
+/// ```
 ///
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
-///     &locale!("en-US").into(),
-///     ET::short().hm().l(),
+///     locale!("en-US").into(),
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap();
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap();
 ///
-/// assert_try_writeable_eq!(
-///     formatter.convert_and_format(&zdt),
+/// assert_writeable_eq!(
+///     formatter.format_any_calendar(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
@@ -46,55 +54,53 @@ use crate::{format::neo::*, provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldset::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
-///     &locale!("en-US").into(),
-///     ET::short().hm().l(),
+///     locale!("en-US").into(),
+///     ET::short().hm().zone_l(),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_iso_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap()
-/// .to_calendar(Gregorian);
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap()
+///     .to_calendar(Gregorian);
 ///
-/// assert_try_writeable_eq!(
+/// assert_writeable_eq!(
 ///     formatter.format(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
 ///
-/// Mix a dynamic [`DateFieldSet`](crate::fieldset::dynamic::DateFieldSet)
+/// Mix a dynamic [`DateFieldSet`](crate::fieldsets::enums::DateFieldSet)
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldset::{Combo, YMD, Vs, dynamic::DateFieldSet};
+/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, Vs, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::IxdtfParser;
-/// use writeable::assert_try_writeable_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
-///     &locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).v(),
+///     locale!("en-US").into(),
+///     DateFieldSet::YMD(YMD::long()).zone_v(),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new().try_location_only_from_str(
-///     "2024-10-18T15:44[America/Los_Angeles]",
-/// )
-/// .unwrap();
+/// let zdt = IxdtfParser::new()
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .unwrap();
 ///
-/// assert_try_writeable_eq!(
-///     formatter.convert_and_format(&zdt),
+/// assert_writeable_eq!(
+///     formatter.format_any_calendar(&zdt),
 ///     "October 18, 2024 PT"
 /// );
 /// ```

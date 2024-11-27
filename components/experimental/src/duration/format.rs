@@ -8,7 +8,7 @@ use super::validated_options::Unit;
 use core::fmt;
 use core::fmt::Write;
 use either::Either;
-use fixed_decimal::{FixedDecimal, SignDisplay};
+use fixed_decimal::{SignDisplay, SignedFixedDecimal, UnsignedFixedDecimal};
 use icu_decimal::FormattedFixedDecimal;
 use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
@@ -69,17 +69,17 @@ pub struct FormattedDuration<'l> {
 }
 
 /// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
-/// The (Unit, FixedDecimal) pair is used to crerate [`FormattedUnit`]s.
-type HeterogenousToFormatter = Either<DigitalDuration, (Unit, FixedDecimal)>;
+/// The (Unit, SignedFixedDecimal) pair is used to crerate [`FormattedUnit`]s.
+type HeterogenousToFormatter = Either<DigitalDuration, (Unit, SignedFixedDecimal)>;
 
 /// Describes a formatted duration.
 #[derive(Default)]
 struct DigitalDuration {
-    hours: Option<FixedDecimal>,
+    hours: Option<SignedFixedDecimal>,
     add_hour_minute_separator: bool,
-    minutes: Option<FixedDecimal>,
+    minutes: Option<SignedFixedDecimal>,
     add_minute_second_separator: bool,
-    seconds: Option<FixedDecimal>,
+    seconds: Option<SignedFixedDecimal>,
 }
 
 impl DigitalDuration {
@@ -150,7 +150,7 @@ impl FormattedDuration<'_> {
         // 5. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
-        let mut fd = FixedDecimal::from(self.duration.hours);
+        let mut fd = SignedFixedDecimal::from(self.duration.hours);
 
         // Since we construct the FixedDecimal from an unsigned hours value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
@@ -158,7 +158,7 @@ impl FormattedDuration<'_> {
         // 7. If hoursStyle is "2-digit", then
         if self.fmt.options.hour == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 8. If signDisplayed is false, then
@@ -196,7 +196,7 @@ impl FormattedDuration<'_> {
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
-        let mut fd = FixedDecimal::from(self.duration.minutes);
+        let mut fd = SignedFixedDecimal::from(self.duration.minutes);
 
         // Since we construct the FixedDecimal from an unsigned minutes value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
@@ -204,7 +204,7 @@ impl FormattedDuration<'_> {
         // 8. If minutesStyle is "2-digit", then
         if self.fmt.options.minute == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -228,9 +228,9 @@ impl FormattedDuration<'_> {
     /// then adds the first non-fractional unit and returns it.
     ///
     /// Divergence from standard: adds the first non-fractional unit as well.
-    fn add_fractional_digits(&self) -> FixedDecimal {
+    fn add_fractional_digits(&self) -> SignedFixedDecimal {
         let mut prev_val = self.duration.nanoseconds;
-        let mut prev_formatted = FixedDecimal::from(prev_val % 1000);
+        let mut prev_formatted = SignedFixedDecimal::from(prev_val % 1000);
         for (style, val) in [
             (self.fmt.options.microsecond, self.duration.microseconds),
             (self.fmt.options.millisecond, self.duration.milliseconds),
@@ -238,14 +238,18 @@ impl FormattedDuration<'_> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted = FixedDecimal::from(val % 1000)
-                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
+                prev_formatted.absolute = UnsignedFixedDecimal::from(val % 1000)
+                    .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
+
                 prev_val = val;
             } else {
-                return FixedDecimal::from(val)
-                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
-                    .unwrap();
+                return SignedFixedDecimal::new(
+                    prev_formatted.sign,
+                    UnsignedFixedDecimal::from(val)
+                        .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
+                        .unwrap(),
+                );
             }
         }
 
@@ -256,7 +260,7 @@ impl FormattedDuration<'_> {
     /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
     fn format_numeric_seconds(
         &self,
-        mut second_fd: FixedDecimal,
+        mut second_fd: SignedFixedDecimal,
         formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
@@ -286,7 +290,7 @@ impl FormattedDuration<'_> {
         // 8. If secondsStyle is "2-digit", then
         if self.fmt.options.second == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            second_fd.pad_start(2);
+            second_fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -303,7 +307,7 @@ impl FormattedDuration<'_> {
                 // a. Let maximumFractionDigits be 9𝔽.
                 // b. Let minimumFractionDigits be +0𝔽.
                 second_fd.trunc(-9);
-                second_fd.pad_end(0);
+                second_fd.absolute.pad_end(0);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
@@ -311,7 +315,7 @@ impl FormattedDuration<'_> {
                 // a. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                 second_fd.trunc(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_fd.pad_end(-i);
+                second_fd.absolute.pad_end(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
               // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
@@ -352,7 +356,7 @@ impl FormattedDuration<'_> {
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
 				self.add_fractional_digits()
 			} else {
-				FixedDecimal::from(self.duration.seconds)
+				SignedFixedDecimal::from(self.duration.seconds)
 			};
 
         // 9. Let secondsDisplay be durationFormat.[[SecondsDisplay]].
@@ -485,7 +489,7 @@ impl FormattedDuration<'_> {
             }
             // f. Else,
             else {
-                let mut formatted_value = FixedDecimal::from(value);
+                let mut formatted_value = SignedFixedDecimal::from(value);
                 formatted_value.set_sign(self.duration.get_sign());
 
                 // i. Let nfOpts be OrdinaryObjectCreate(null).
@@ -501,7 +505,7 @@ impl FormattedDuration<'_> {
                                 // i. Let maximumFractionDigits be 9𝔽.
                                 formatted_value.trunc(-9);
                                 // ii. Let minimumFractionDigits be +0𝔽.
-                                formatted_value.pad_end(0);
+                                formatted_value.absolute.pad_end(0);
                             }
                             // c. Else,
                             FractionalDigits::Fixed(i) => {
@@ -509,7 +513,7 @@ impl FormattedDuration<'_> {
                                 // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                                 formatted_value.trunc(-i);
                                 // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                                formatted_value.pad_end(-i);
+                                formatted_value.absolute.pad_end(-i);
                             }
                         } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
                           // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).

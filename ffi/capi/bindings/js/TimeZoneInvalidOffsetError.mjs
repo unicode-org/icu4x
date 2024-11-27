@@ -6,8 +6,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
 */
 export class TimeZoneInvalidOffsetError {
-    constructor() {
-        
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("TimeZoneInvalidOffsetError's constructor takes an object of TimeZoneInvalidOffsetError's fields.");
+        }
+
     }
 
 }

@@ -1,9 +1,8 @@
 import { DataProvider } from "icu4x"
-import { FixedDecimal } from "icu4x"
 import { FixedDecimalFormatter } from "icu4x"
 import { Locale } from "icu4x"
-export function format() {
-    var terminusArgs = arguments;
+import { SignedFixedDecimal } from "icu4x"
+export function format(name, groupingStrategy, f, magnitude) {
     return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
         null,
         [
@@ -18,17 +17,17 @@ export function format() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    groupingStrategy
                 ]
             ),
-            FixedDecimal.fromNumberWithLowerMagnitude.apply(
+            SignedFixedDecimal.fromNumberWithLowerMagnitude.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3]
+                    f,
+                    magnitude
                 ]
             )
         ]

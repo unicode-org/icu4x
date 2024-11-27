@@ -30,12 +30,32 @@ export class CodePointRangeIteratorResult {
         return this.#done;
     }
     
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            console.error("CodePointRangeIteratorResult is an out struct and can only be created internally.");
+    constructor(structObj, internalConstructor) {
+        if (typeof structObj !== "object") {
+            throw new Error("CodePointRangeIteratorResult's constructor takes an object of CodePointRangeIteratorResult's fields.");
         }
+
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CodePointRangeIteratorResult is an out struct and can only be created internally.");
+        }
+        if ("start" in structObj) {
+            this.#start = structObj.start;
+        } else {
+            throw new Error("Missing required field start.");
+        }
+
+        if ("end" in structObj) {
+            this.#end = structObj.end;
+        } else {
+            throw new Error("Missing required field end.");
+        }
+
+        if ("done" in structObj) {
+            this.#done = structObj.done;
+        } else {
+            throw new Error("Missing required field done.");
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -64,12 +84,18 @@ export class CodePointRangeIteratorResult {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CodePointRangeIteratorResult._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const startDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
-        this.#start = startDeref;
+        structObj.start = startDeref;
         const endDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
-        this.#end = endDeref;
+        structObj.end = endDeref;
         const doneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
-        this.#done = doneDeref;
+        structObj.done = doneDeref;
+
+        return new CodePointRangeIteratorResult(structObj, internalConstructor);
     }
 }

@@ -55,12 +55,56 @@ export class CollatorResolvedOptions {
         return this.#backwardSecondLevel;
     }
     
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            console.error("CollatorResolvedOptions is an out struct and can only be created internally.");
+    constructor(structObj, internalConstructor) {
+        if (typeof structObj !== "object") {
+            throw new Error("CollatorResolvedOptions's constructor takes an object of CollatorResolvedOptions's fields.");
         }
+
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CollatorResolvedOptions is an out struct and can only be created internally.");
+        }
+        if ("strength" in structObj) {
+            this.#strength = structObj.strength;
+        } else {
+            throw new Error("Missing required field strength.");
+        }
+
+        if ("alternateHandling" in structObj) {
+            this.#alternateHandling = structObj.alternateHandling;
+        } else {
+            throw new Error("Missing required field alternateHandling.");
+        }
+
+        if ("caseFirst" in structObj) {
+            this.#caseFirst = structObj.caseFirst;
+        } else {
+            throw new Error("Missing required field caseFirst.");
+        }
+
+        if ("maxVariable" in structObj) {
+            this.#maxVariable = structObj.maxVariable;
+        } else {
+            throw new Error("Missing required field maxVariable.");
+        }
+
+        if ("caseLevel" in structObj) {
+            this.#caseLevel = structObj.caseLevel;
+        } else {
+            throw new Error("Missing required field caseLevel.");
+        }
+
+        if ("numeric" in structObj) {
+            this.#numeric = structObj.numeric;
+        } else {
+            throw new Error("Missing required field numeric.");
+        }
+
+        if ("backwardSecondLevel" in structObj) {
+            this.#backwardSecondLevel = structObj.backwardSecondLevel;
+        } else {
+            throw new Error("Missing required field backwardSecondLevel.");
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -93,20 +137,26 @@ export class CollatorResolvedOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CollatorResolvedOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strength = new CollatorStrength(diplomatRuntime.internalConstructor, strengthDeref);
+        structObj.strength = new CollatorStrength(diplomatRuntime.internalConstructor, strengthDeref);
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#alternateHandling = new CollatorAlternateHandling(diplomatRuntime.internalConstructor, alternateHandlingDeref);
+        structObj.alternateHandling = new CollatorAlternateHandling(diplomatRuntime.internalConstructor, alternateHandlingDeref);
         const caseFirstDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#caseFirst = new CollatorCaseFirst(diplomatRuntime.internalConstructor, caseFirstDeref);
+        structObj.caseFirst = new CollatorCaseFirst(diplomatRuntime.internalConstructor, caseFirstDeref);
         const maxVariableDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 12);
-        this.#maxVariable = new CollatorMaxVariable(diplomatRuntime.internalConstructor, maxVariableDeref);
+        structObj.maxVariable = new CollatorMaxVariable(diplomatRuntime.internalConstructor, maxVariableDeref);
         const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
-        this.#caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
+        structObj.caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
         const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        this.#numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
+        structObj.numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
-        this.#backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
+        structObj.backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
+
+        return new CollatorResolvedOptions(structObj, internalConstructor);
     }
 }

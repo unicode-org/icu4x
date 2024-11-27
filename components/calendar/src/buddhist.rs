@@ -190,9 +190,8 @@ impl DateTime<Buddhist> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_buddhist =
-    ///     DateTime::try_new_buddhist(1970, 1, 2, 13, 1, 0)
-    ///         .expect("Failed to initialize Buddhist DateTime instance.");
+    /// let datetime_buddhist = DateTime::try_new_buddhist(1970, 1, 2, 13, 1, 0)
+    ///     .expect("Failed to initialize Buddhist DateTime instance.");
     ///
     /// assert_eq!(datetime_buddhist.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_buddhist.date.month().ordinal, 1);

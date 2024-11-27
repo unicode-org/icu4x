@@ -69,19 +69,53 @@ export class CollatorOptions {
     set backwardSecondLevel(value) {
         this.#backwardSecondLevel = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#strength = arguments[0];
-            this.#alternateHandling = arguments[1];
-            this.#caseFirst = arguments[2];
-            this.#maxVariable = arguments[3];
-            this.#caseLevel = arguments[4];
-            this.#numeric = arguments[5];
-            this.#backwardSecondLevel = arguments[6];
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("CollatorOptions's constructor takes an object of CollatorOptions's fields.");
         }
+
+        if ("strength" in structObj) {
+            this.#strength = structObj.strength;
+        } else {
+            this.#strength = null;
+        }
+
+        if ("alternateHandling" in structObj) {
+            this.#alternateHandling = structObj.alternateHandling;
+        } else {
+            this.#alternateHandling = null;
+        }
+
+        if ("caseFirst" in structObj) {
+            this.#caseFirst = structObj.caseFirst;
+        } else {
+            this.#caseFirst = null;
+        }
+
+        if ("maxVariable" in structObj) {
+            this.#maxVariable = structObj.maxVariable;
+        } else {
+            this.#maxVariable = null;
+        }
+
+        if ("caseLevel" in structObj) {
+            this.#caseLevel = structObj.caseLevel;
+        } else {
+            this.#caseLevel = null;
+        }
+
+        if ("numeric" in structObj) {
+            this.#numeric = structObj.numeric;
+        } else {
+            this.#numeric = null;
+        }
+
+        if ("backwardSecondLevel" in structObj) {
+            this.#backwardSecondLevel = structObj.backwardSecondLevel;
+        } else {
+            this.#backwardSecondLevel = null;
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -114,20 +148,26 @@ export class CollatorOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("CollatorOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const strengthDeref = ptr;
-        this.#strength = diplomatRuntime.readOption(wasm, strengthDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorStrength(diplomatRuntime.internalConstructor, deref) });
+        structObj.strength = diplomatRuntime.readOption(wasm, strengthDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorStrength(diplomatRuntime.internalConstructor, deref) });
         const alternateHandlingDeref = ptr + 8;
-        this.#alternateHandling = diplomatRuntime.readOption(wasm, alternateHandlingDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorAlternateHandling(diplomatRuntime.internalConstructor, deref) });
+        structObj.alternateHandling = diplomatRuntime.readOption(wasm, alternateHandlingDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorAlternateHandling(diplomatRuntime.internalConstructor, deref) });
         const caseFirstDeref = ptr + 16;
-        this.#caseFirst = diplomatRuntime.readOption(wasm, caseFirstDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseFirst(diplomatRuntime.internalConstructor, deref) });
+        structObj.caseFirst = diplomatRuntime.readOption(wasm, caseFirstDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseFirst(diplomatRuntime.internalConstructor, deref) });
         const maxVariableDeref = ptr + 24;
-        this.#maxVariable = diplomatRuntime.readOption(wasm, maxVariableDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorMaxVariable(diplomatRuntime.internalConstructor, deref) });
+        structObj.maxVariable = diplomatRuntime.readOption(wasm, maxVariableDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorMaxVariable(diplomatRuntime.internalConstructor, deref) });
         const caseLevelDeref = ptr + 32;
-        this.#caseLevel = diplomatRuntime.readOption(wasm, caseLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseLevel(diplomatRuntime.internalConstructor, deref) });
+        structObj.caseLevel = diplomatRuntime.readOption(wasm, caseLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseLevel(diplomatRuntime.internalConstructor, deref) });
         const numericDeref = ptr + 40;
-        this.#numeric = diplomatRuntime.readOption(wasm, numericDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorNumeric(diplomatRuntime.internalConstructor, deref) });
+        structObj.numeric = diplomatRuntime.readOption(wasm, numericDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorNumeric(diplomatRuntime.internalConstructor, deref) });
         const backwardSecondLevelDeref = ptr + 48;
-        this.#backwardSecondLevel = diplomatRuntime.readOption(wasm, backwardSecondLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, deref) });
+        structObj.backwardSecondLevel = diplomatRuntime.readOption(wasm, backwardSecondLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, deref) });
+
+        return new CollatorOptions(structObj, internalConstructor);
     }
 }

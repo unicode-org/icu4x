@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_provider_export::prelude::*;
 //! use icu_provider::hello_world::*;
+//! use icu_provider_export::prelude::*;
 //! use icu_provider_fs::export::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
@@ -26,9 +26,13 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
-//!     .export(&HelloWorldProvider, exporter)
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::Maximal.into(),
+//!     LocaleFallbacker::new().static_to_owned(),
+//! )
+//! .export(&HelloWorldProvider, exporter)
+//! .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```

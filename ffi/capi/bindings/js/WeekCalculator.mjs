@@ -97,7 +97,7 @@ export class WeekCalculator {
         const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new WeekendContainsDay(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return WeekendContainsDay._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

@@ -2,8 +2,7 @@ import { CaseMapper } from "icu4x"
 import { DataProvider } from "icu4x"
 import { Locale } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
-export function lowercase() {
-    var terminusArgs = arguments;
+export function lowercase(s, name) {
     return (function (...args) { return args[0].lowercase(...args.slice(1)) }).apply(
         null,
         [
@@ -17,18 +16,17 @@ export function lowercase() {
                     )
                 ]
             ),
-            terminusArgs[0],
+            s,
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[1]
+                    name
                 ]
             )
         ]
     );
 }
-export function uppercase() {
-    var terminusArgs = arguments;
+export function uppercase(s, name) {
     return (function (...args) { return args[0].uppercase(...args.slice(1)) }).apply(
         null,
         [
@@ -42,18 +40,17 @@ export function uppercase() {
                     )
                 ]
             ),
-            terminusArgs[0],
+            s,
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[1]
+                    name
                 ]
             )
         ]
     );
 }
-export function titlecaseSegmentWithOnlyCaseData() {
-    var terminusArgs = arguments;
+export function titlecaseSegmentWithOnlyCaseData(s, name, leading_adjustment, trailing_case) {
     return (function (...args) { return args[0].titlecaseSegmentWithOnlyCaseData(...args.slice(1)) }).apply(
         null,
         [
@@ -67,27 +64,28 @@ export function titlecaseSegmentWithOnlyCaseData() {
                     )
                 ]
             ),
-            terminusArgs[0],
+            s,
             Locale.fromString.apply(
                 null,
                 [
-                    terminusArgs[1]
+                    name
                 ]
             ),
             (function (...args) {
-                return new TitlecaseOptions(...args);
+                return new TitlecaseOptions({
+                    leadingAdjustment: args[0],
+                    trailingCase: args[1]});
             }).apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3]
+                    leading_adjustment,
+                    trailing_case
                 ]
             )
         ]
     );
 }
-export function fold() {
-    var terminusArgs = arguments;
+export function fold(s) {
     return (function (...args) { return args[0].fold(...args.slice(1)) }).apply(
         null,
         [
@@ -101,12 +99,11 @@ export function fold() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            s
         ]
     );
 }
-export function foldTurkic() {
-    var terminusArgs = arguments;
+export function foldTurkic(s) {
     return (function (...args) { return args[0].foldTurkic(...args.slice(1)) }).apply(
         null,
         [
@@ -120,7 +117,7 @@ export function foldTurkic() {
                     )
                 ]
             ),
-            terminusArgs[0]
+            s
         ]
     );
 }

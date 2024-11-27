@@ -24,8 +24,8 @@ use super::vecs::ZeroVecLike;
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 25] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-///     111, 110, 101,
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 0, 111,
+///     110, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.

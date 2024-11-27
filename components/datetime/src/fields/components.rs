@@ -35,7 +35,7 @@ use crate::{
     provider::pattern::{runtime::Pattern, PatternItem},
 };
 
-use crate::neo_pattern::DateTimePattern;
+use crate::pattern::DateTimePattern;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

@@ -66,7 +66,10 @@ macro_rules! assert_syntax {
 /// assert_eq!(offset.hour, 5);
 /// assert_eq!(offset.minute, 0);
 /// assert!(!tz_annotation.critical);
-/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+/// assert_eq!(
+///     tz_annotation.tz,
+///     TimeZoneRecord::Name("America/New_York".as_bytes())
+/// );
 /// ```
 ///
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
@@ -204,7 +207,10 @@ impl<'a> IxdtfParser<'a> {
     /// assert_eq!(offset.hour, 5);
     /// assert_eq!(offset.minute, 0);
     /// assert!(!tz_annotation.critical);
-    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+    /// assert_eq!(
+    ///     tz_annotation.tz,
+    ///     TimeZoneRecord::Name("America/New_York".as_bytes())
+    /// );
     /// ```
     ///
     /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
@@ -258,7 +264,6 @@ impl<'a> IxdtfParser<'a> {
 /// assert_eq!(seconds, 30);
 /// assert_eq!(fraction, 0);
 /// ```
-///
 #[cfg(feature = "duration")]
 #[derive(Debug)]
 pub struct IsoDurationParser<'a> {

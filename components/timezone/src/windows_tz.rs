@@ -106,19 +106,22 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     /// then the territory will default to the M.49 World Code, `001`.
     ///
     /// ```rust
-    /// use icu::timezone::{WindowsTimeZoneMapper, TimeZoneBcp47Id};
     /// use icu::locale::subtags::region;
+    /// use icu::timezone::{TimeZoneBcp47Id, WindowsTimeZoneMapper};
     /// use tinystr::tinystr;
     ///
     /// let win_tz_mapper = WindowsTimeZoneMapper::new();
     ///
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", None);
+    /// let bcp47_id =
+    ///     win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", None);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
-    ///  
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", Some(region!("US")));
+    ///
+    /// let bcp47_id = win_tz_mapper
+    ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("US")));
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
-    ///  
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", Some(region!("CA")));
+    ///
+    /// let bcp47_id = win_tz_mapper
+    ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("CA")));
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
     /// ```
     pub fn windows_tz_to_bcp47_id(

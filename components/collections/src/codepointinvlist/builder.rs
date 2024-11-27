@@ -172,9 +172,10 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set =
-    ///     CodePointInversionList::try_from_u32_inversion_list_slice(&[0x41, 0x4C])
-    ///         .unwrap();
+    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[
+    ///     0x41, 0x4C,
+    /// ])
+    /// .unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
@@ -340,8 +341,9 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[65, 70])
-    ///     .unwrap();
+    /// let set =
+    ///     CodePointInversionList::try_from_u32_inversion_list_slice(&[65, 70])
+    ///         .unwrap();
     /// builder.add_range('A'..='Z');
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();

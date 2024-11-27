@@ -3,36 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod datetime;
-pub(crate) mod neo;
 pub(crate) mod time_zone;
-
-use icu_pattern::SinglePlaceholderPattern;
-
-pub(crate) enum GetNameForMonthError {
-    Invalid,
-    NotLoaded,
-}
-pub(crate) enum GetNameForWeekdayError {
-    NotLoaded,
-}
-
-pub(crate) enum GetSymbolForEraError {
-    Invalid,
-    NotLoaded,
-}
-
-pub(crate) enum GetSymbolForCyclicYearError {
-    Invalid { max: usize },
-    NotLoaded,
-}
-
-pub(crate) enum GetNameForDayPeriodError {
-    NotLoaded,
-}
-
-/// Internal enum to represent the kinds of month symbols for interpolation
-pub(crate) enum MonthPlaceholderValue<'a> {
-    PlainString(&'a str),
-    Numeric,
-    NumericPattern(&'a SinglePlaceholderPattern),
-}

@@ -64,6 +64,8 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_joining_type(const icu4x::DataProvider& provider);
 
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_canonical_combining_class(const icu4x::DataProvider& provider);
+
   inline const icu4x::capi::CodePointMapData8* AsFFI() const;
   inline icu4x::capi::CodePointMapData8* AsFFI();
   inline static const icu4x::CodePointMapData8* FromFFI(const icu4x::capi::CodePointMapData8* ptr);

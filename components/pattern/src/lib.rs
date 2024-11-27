@@ -17,8 +17,11 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! // Parse a pattern string:
-//! let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default())
-//!     .unwrap();
+//! let pattern = SinglePlaceholderPattern::try_from_str(
+//!     "Hello, {0}!",
+//!     Default::default(),
+//! )
+//! .unwrap();
 //!
 //! // Interpolate into the pattern string:
 //! assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
@@ -101,7 +104,11 @@ mod private {
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
+/// let pattern = SinglePlaceholderPattern::try_from_str(
+///     "Hello, {0}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
@@ -116,8 +123,11 @@ pub type SinglePlaceholderPattern = Pattern<SinglePlaceholder>;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern =
-///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
+/// let pattern = DoublePlaceholderPattern::try_from_str(
+///     "Hello, {0} and {1}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(
@@ -137,7 +147,8 @@ pub type DoublePlaceholderPattern = Pattern<DoublePlaceholder>;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern = MultiNamedPlaceholderPattern::try_from_str(
-///     "Hello, {person0} and {person1}!", Default::default()
+///     "Hello, {person0} and {person1}!",
+///     Default::default(),
 /// )
 /// .unwrap();
 ///

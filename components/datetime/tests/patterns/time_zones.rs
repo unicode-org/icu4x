@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::{
-    fieldset::{self, dynamic::ZoneFieldSet},
-    options::NeoSkeletonLength,
+    fieldsets::{self, enums::ZoneFieldSet},
+    options::Length,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -21,13 +21,13 @@ pub struct TimeZoneTest {
 
 pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Long)),
-        "v" => ZoneFieldSet::V(fieldset::V::with_length(NeoSkeletonLength::Short)),
-        "VVVV" => ZoneFieldSet::L(fieldset::L::with_length(NeoSkeletonLength::Long)),
-        "zzzz" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Long)),
-        "z" => ZoneFieldSet::Z(fieldset::Z::with_length(NeoSkeletonLength::Short)),
-        "OOOO" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Long)),
-        "O" => ZoneFieldSet::O(fieldset::O::with_length(NeoSkeletonLength::Short)),
+        "vvvv" => ZoneFieldSet::V(fieldsets::V::with_length(Length::Long)),
+        "v" => ZoneFieldSet::V(fieldsets::V::with_length(Length::Short)),
+        "VVVV" => ZoneFieldSet::L(fieldsets::L::with_length(Length::Long)),
+        "zzzz" => ZoneFieldSet::Z(fieldsets::Z::with_length(Length::Long)),
+        "z" => ZoneFieldSet::Z(fieldsets::Z::with_length(Length::Short)),
+        "OOOO" => ZoneFieldSet::O(fieldsets::O::with_length(Length::Long)),
+        "O" => ZoneFieldSet::O(fieldsets::O::with_length(Length::Short)),
         _ => return None,
     })
 }

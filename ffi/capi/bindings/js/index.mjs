@@ -78,7 +78,7 @@ export { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 
-export { FixedDecimal } from "./FixedDecimal.mjs"
+export { SignedFixedDecimal } from "./SignedFixedDecimal.mjs"
 
 export { ListFormatter } from "./ListFormatter.mjs"
 
@@ -224,21 +224,21 @@ export { DataError } from "./DataError.mjs"
 
 export { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 
+export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
+
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
-
-export { PatternLoadError } from "./PatternLoadError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement.mjs"
 
-export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode.mjs"
-
 export { FixedDecimalSign } from "./FixedDecimalSign.mjs"
 
 export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay.mjs"
+
+export { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode.mjs"
 
 export { ListLength } from "./ListLength.mjs"
 
@@ -247,6 +247,30 @@ export { TransformResult } from "./TransformResult.mjs"
 export { LocaleDirection } from "./LocaleDirection.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
+
+export { BidiClass } from "./BidiClass.mjs"
+
+export { CanonicalCombiningClass } from "./CanonicalCombiningClass.mjs"
+
+export { EastAsianWidth } from "./EastAsianWidth.mjs"
+
+export { GeneralCategory } from "./GeneralCategory.mjs"
+
+export { GraphemeClusterBreak } from "./GraphemeClusterBreak.mjs"
+
+export { HangulSyllableType } from "./HangulSyllableType.mjs"
+
+export { IndicSyllabicCategory } from "./IndicSyllabicCategory.mjs"
+
+export { JoiningType } from "./JoiningType.mjs"
+
+export { LineBreak } from "./LineBreak.mjs"
+
+export { Script } from "./Script.mjs"
+
+export { SentenceBreak } from "./SentenceBreak.mjs"
+
+export { WordBreak } from "./WordBreak.mjs"
 
 export { LineBreakStrictness } from "./LineBreakStrictness.mjs"
 

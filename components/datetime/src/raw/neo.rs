@@ -2,16 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dynamic::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
-use crate::neo_pattern::DateTimePattern;
 use crate::options::*;
+use crate::pattern::DateTimePattern;
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
@@ -19,16 +20,16 @@ use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
-pub(crate) struct RawNeoOptions {
-    pub(crate) length: NeoSkeletonLength,
+pub(crate) struct RawOptions {
+    pub(crate) length: Length,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
-impl RawNeoOptions {
+impl RawOptions {
     #[cfg(all(feature = "serde", feature = "experimental"))]
-    pub(crate) fn merge(self, other: RawNeoOptions) -> Self {
+    pub(crate) fn merge(self, other: RawOptions) -> Self {
         Self {
             length: self.length,
             alignment: self.alignment.or(other.alignment),
@@ -43,10 +44,18 @@ pub(crate) struct RawPreferences {
     pub(crate) hour_cycle: Option<fields::Hour>,
 }
 
+impl RawPreferences {
+    pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
+        Self {
+            hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
-        options: RawNeoOptions,
+        options: RawOptions,
         payload: DataPayload<ErasedPackedPatterns>,
     },
     // TODO(#4478): add support for optional eras
@@ -64,7 +73,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 #[derive(Debug)]
 pub(crate) enum OverlapPatternSelectionData {
     SkeletonDateTime {
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
         payload: DataPayload<ErasedPackedPatterns>,
     },
@@ -73,7 +82,7 @@ pub(crate) enum OverlapPatternSelectionData {
 #[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
-        options: RawNeoOptions,
+        options: RawOptions,
         prefs: RawPreferences,
         payload: DataPayload<ErasedPackedPatterns>,
     },
@@ -181,13 +190,14 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         attributes: &DataMarkerAttributes,
-        options: RawNeoOptions,
+        options: RawOptions,
     ) -> Result<Self, DataError> {
+        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
         let payload = provider
             .load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
                 ..Default::default()
             })?
             .payload;
@@ -283,14 +293,15 @@ impl<'a> DatePatternDataBorrowed<'a> {
 impl OverlapPatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         attributes: &DataMarkerAttributes,
-        options: RawNeoOptions,
-        prefs: RawPreferences,
+        options: RawOptions,
     ) -> Result<Self, DataError> {
+        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let prefs = RawPreferences::from_prefs(prefs);
         let payload = provider
             .load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
                 ..Default::default()
             })?
             .payload;
@@ -349,11 +360,12 @@ impl OverlapPatternSelectionData {
 impl TimePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         components: TimeFieldSet,
-        options: RawNeoOptions,
-        prefs: RawPreferences,
+        options: RawOptions,
     ) -> Result<Self, DataError> {
+        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let prefs = RawPreferences::from_prefs(prefs);
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
         let mut maybe_payload = None;
@@ -362,7 +374,7 @@ impl TimePatternSelectionData {
                 .load_bound(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         components.id_str_for_hour_cycle(Some(hour_cycle)),
-                        locale,
+                        &locale,
                     ),
                     ..Default::default()
                 })
@@ -376,7 +388,7 @@ impl TimePatternSelectionData {
                     .load_bound(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             components.id_str_for_hour_cycle(None),
-                            locale,
+                            &locale,
                         ),
                         ..Default::default()
                     })?
@@ -484,16 +496,15 @@ impl DateTimeZonePatternSelectionData {
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
+        prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
-        prefs: RawPreferences,
     ) -> Result<Self, DataError> {
         match skeleton {
             CompositeFieldSet::Date(field_set) => {
                 let options = field_set.to_raw_options();
                 let selection = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
-                    locale,
+                    prefs,
                     field_set.id_str(),
                     options,
                 )?;
@@ -503,7 +514,7 @@ impl DateTimeZonePatternSelectionData {
                 let options = field_set.to_raw_options();
                 let selection = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
-                    locale,
+                    prefs,
                     field_set.id_str(),
                     options,
                 )?;
@@ -513,10 +524,9 @@ impl DateTimeZonePatternSelectionData {
                 let options = field_set.to_raw_options();
                 let selection = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
-                    locale,
+                    prefs,
                     field_set,
                     options,
-                    prefs,
                 )?;
                 Ok(Self::Time(selection))
             }
@@ -532,10 +542,9 @@ impl DateTimeZonePatternSelectionData {
                     if let Some(overlap) = OverlapPatternSelectionData::try_new_with_skeleton(
                         // Note: overlap patterns are stored in the date provider
                         date_provider,
-                        locale,
+                        prefs,
                         attributes,
                         options,
-                        prefs,
                     )
                     .allow_identifier_not_found()?
                     {
@@ -544,77 +553,68 @@ impl DateTimeZonePatternSelectionData {
                 }
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
-                    locale,
+                    prefs,
                     field_set.to_date_field_set().id_str(),
                     options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
-                    locale,
+                    prefs,
                     field_set.to_time_field_set(),
                     options,
-                    prefs,
                 )?;
-                let glue = Self::load_glue(glue_provider, locale, options, GlueType::DateTime)?;
+                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
             CompositeFieldSet::DateZone(field_set, time_zone_style) => {
                 let options = field_set.to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
-                    locale,
+                    prefs,
                     field_set.id_str(),
                     options,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Date)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
-                let glue = Self::load_glue(glue_provider, locale, options, GlueType::DateZone)?;
+                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
             CompositeFieldSet::TimeZone(field_set, time_zone_style) => {
                 let options = field_set.to_raw_options();
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
-                    locale,
+                    prefs,
                     field_set,
                     options,
-                    prefs,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Time)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
-                let glue = Self::load_glue(glue_provider, locale, options, GlueType::TimeZone)?;
+                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
             CompositeFieldSet::DateTimeZone(field_set, time_zone_style) => {
                 let options = field_set.to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
-                    locale,
+                    prefs,
                     field_set.to_date_field_set().id_str(),
                     options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
-                    locale,
+                    prefs,
                     field_set.to_time_field_set(),
                     options,
-                    prefs,
                 )?;
                 // Always use the short length for time zones when mixed with another field (Date + Time)
-                let zone_field_set = ZoneFieldSet::from_time_zone_style_and_length(
-                    time_zone_style,
-                    NeoSkeletonLength::Short,
-                );
+                let zone_field_set =
+                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
-                let glue = Self::load_glue(glue_provider, locale, options, GlueType::DateTimeZone)?;
+                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,
                     time,
@@ -626,25 +626,26 @@ impl DateTimeZonePatternSelectionData {
     }
 
     fn load_glue(
-        glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
-        options: RawNeoOptions,
+        provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        options: RawOptions,
         glue_type: GlueType,
     ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
-        glue_provider
+        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attrs::pattern_marker_attr_for_glue(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
                         match options.length {
-                            NeoSkeletonLength::Long => marker_attrs::PatternLength::Long,
-                            NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
-                            NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,
+                            Length::Long => marker_attrs::PatternLength::Long,
+                            Length::Medium => marker_attrs::PatternLength::Medium,
+                            Length::Short => marker_attrs::PatternLength::Short,
                         },
                         glue_type,
                     ),
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })

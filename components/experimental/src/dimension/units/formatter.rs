@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::preferences::{
@@ -62,7 +62,7 @@ pub struct UnitsFormatter {
 
 impl UnitsFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (wprefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
+        (prefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -176,8 +176,8 @@ impl UnitsFormatter {
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given unit.
-    pub fn format_fixed_decimal<'l>(&'l self, value: &'l FixedDecimal) -> FormattedUnit<'l> {
+    /// Formats a [`SignedFixedDecimal`] value for the given unit.
+    pub fn format_fixed_decimal<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),

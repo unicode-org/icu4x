@@ -174,8 +174,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
@@ -197,8 +197,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges();
@@ -220,8 +220,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_value(GeneralCategory::UppercaseLetter);
@@ -313,8 +313,8 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_group(GeneralCategoryGroup::Letter);

@@ -15,11 +15,11 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     AsCalendar, Calendar, DateTime,
 };
-use icu_datetime::fieldset::dynamic::*;
 use icu_datetime::scaffold::CldrCalendar;
+use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::{
-    neo_pattern::DateTimePattern, DateTimeFormatter, FixedCalendarDateTimeFormatter,
-    TypedDateTimeNames,
+    pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
+    FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
@@ -297,33 +297,25 @@ fn assert_fixture_element<A>(
         zone: TimeZoneInfo::utc(),
     };
 
-    let dtf = FixedCalendarDateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
+    let dtf = FixedCalendarDateTimeFormatter::try_new(locale.into(), skeleton).expect(description);
 
-    let any_dtf = DateTimeFormatter::try_new(&locale.into(), skeleton).expect(description);
+    let any_dtf = DateTimeFormatter::try_new(locale.into(), skeleton).expect(description);
 
     let actual1 = dtf.format(&input_value);
-    assert_try_writeable_eq!(
-        actual1,
-        output_value.expectation(),
-        Ok(()),
-        "{}",
-        description
-    );
+    assert_writeable_eq!(actual1, output_value.expectation(), "{}", description);
 
-    let actual2 = any_dtf.strict_format(&any_input).unwrap();
-    assert_try_writeable_eq!(
+    let actual2 = any_dtf.format_same_calendar(&any_input).unwrap();
+    assert_writeable_eq!(
         actual2,
         output_value.expectation(),
-        Ok(()),
         "(DateTimeFormatter) {}",
         description
     );
 
-    let actual3 = any_dtf.convert_and_format(&iso_any_input);
-    assert_try_writeable_eq!(
+    let actual3 = any_dtf.format_any_calendar(&iso_any_input);
+    assert_writeable_eq!(
         actual3,
         output_value.expectation(),
-        Ok(()),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
@@ -364,11 +356,11 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&locale.into(), skeleton)
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton)
                     .unwrap()
             };
             assert_writeable_eq!(
-                writeable::adapters::LossyWrap(dtf.format(&zoned_datetime)),
+                dtf.format(&zoned_datetime),
                 output_value.expectation(),
                 "{}",
                 description
@@ -394,7 +386,7 @@ fn test_dayperiod_patterns() {
                             DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
                         let mut pattern_formatter =
                             TypedDateTimeNames::<Gregorian, CompositeDateTimeFieldSet>::try_new(
-                                &(&locale).into(),
+                                (&locale).into(),
                             )
                             .unwrap();
                         let formatted_datetime = pattern_formatter
@@ -427,7 +419,7 @@ fn test_time_zone_format_configs() {
             .unwrap()
             .0
     {
-        let data_locale: DataLocale = test.locale.parse::<Locale>().unwrap().into();
+        let prefs: DateTimeFormatterPreferences = test.locale.parse::<Locale>().unwrap().into();
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
         for (pattern_input, expect) in &test.expectations {
             let Some(skeleton) = patterns::time_zones::pattern_to_semantic_skeleton(pattern_input)
@@ -435,17 +427,16 @@ fn test_time_zone_format_configs() {
                 continue;
             };
             let tzf =
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(&data_locale, skeleton)
-                    .unwrap();
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, skeleton).unwrap();
             assert_writeable_eq!(
-                writeable::adapters::LossyWrap(tzf.format(&zoned_datetime.zone)),
+                tzf.format(&zoned_datetime.zone),
                 *expect,
                 "\n\
-                    locale:   `{}`,\n\
+                    prefs:  `{:?}`,\n\
                     datetime: `{}`,\n\
                     config: `{:?}`,\n
                     ",
-                data_locale,
+                prefs,
                 test.datetime,
                 pattern_input,
             );
@@ -455,11 +446,11 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::fieldset::O;
+    use icu_datetime::fieldsets::O;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
+    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
         "GMT+0:00:12",
     );
@@ -467,11 +458,11 @@ fn test_time_zone_format_offset_seconds() {
 
 #[test]
 fn test_time_zone_format_offset_fallback() {
-    use icu_datetime::fieldset::O;
+    use icu_datetime::fieldsets::O;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(&locale!("en").into(), O::medium())
+    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
         .unwrap();
-    assert_try_writeable_eq!(
+    assert_writeable_eq!(
         tzf.format(
             &TimeZoneIdMapper::new()
                 .iana_to_bcp47("America/Los_Angeles")
@@ -488,7 +479,7 @@ fn test_time_zone_patterns() {
             .unwrap()
             .0
     {
-        let data_locale: DataLocale = test.locale.parse::<Locale>().unwrap().into();
+        let prefs: DateTimeFormatterPreferences = test.locale.parse::<Locale>().unwrap().into();
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
 
         for (pattern_input, expect) in &test.expectations {
@@ -498,7 +489,7 @@ fn test_time_zone_patterns() {
             }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(&data_locale).unwrap();
+                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
                 .unwrap()
@@ -507,10 +498,10 @@ fn test_time_zone_patterns() {
                 writeable::adapters::LossyWrap(formatted_datetime),
                 *expect,
                 "\n\
-                    locale:   `{}`,\n\
+                    prefs:  `{:?}`,\n\
                     datetime: `{}`,\n\
                     pattern:  `{}`",
-                data_locale,
+                prefs,
                 test.datetime,
                 pattern_input,
             );
