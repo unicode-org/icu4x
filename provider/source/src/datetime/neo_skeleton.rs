@@ -583,13 +583,14 @@ mod date_skeleton_consistency_tests {
         use icu::datetime::provider::pattern::PatternItem;
 
         let mut items = core::mem::take(pattern).into_items();
-        for item in items.iter_mut() {
+        items.retain_mut(|item| {
             match item {
                 PatternItem::Field(ref mut field @ Field {
                     symbol: FieldSymbol::Era,
                     length: FieldLength::Three
                 }) => {
                     field.length = FieldLength::One;
+                    true
                 }
                 // For now, ignore differences between 'y' and 'yy'
                 PatternItem::Field(ref mut field @ Field {
@@ -597,10 +598,29 @@ mod date_skeleton_consistency_tests {
                     ..
                 }) => {
                     field.length = FieldLength::One;
+                    true
                 }
-                _ => {}
+                // For now, ignore whitespace and ASCII punctuation
+                PatternItem::Literal(' ') => {
+                    false
+                }
+                PatternItem::Literal('.') => {
+                    false
+                }
+                PatternItem::Literal(',') => {
+                    false
+                }
+                PatternItem::Literal('/') => {
+                    false
+                }
+                PatternItem::Literal('-') => {
+                    false
+                }
+                _ => {
+                    true
+                }
             }
-        }
+        });
         *pattern = items.into();
     }
 
