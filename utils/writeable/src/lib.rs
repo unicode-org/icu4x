@@ -81,7 +81,7 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
-pub use cmp::cmp_bytes;
+pub use cmp::{cmp_str, cmp_utf8};
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
 
@@ -117,10 +117,11 @@ pub mod adapters {
     }
 }
 
-#[doc(hidden)] // for testing
+#[doc(hidden)] // for testing and macros
 pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;
     pub use super::testing::writeable_to_parts_for_test;
+    pub use alloc::string::String;
 }
 
 /// A hint to help consumers of `Writeable` pre-allocate bytes before they call
@@ -337,8 +338,10 @@ macro_rules! impl_display_with_writeable {
             /// Converts the given value to a `String`.
             ///
             /// Under the hood, this uses an efficient [`Writeable`] implementation.
-            pub fn to_string(&self) -> String {
-                $crate::Writeable::write_to_string(&self).into_owned()
+            /// However, in order to avoid allocating a string, it is more efficient
+            /// to use [`Writeable`] directly.
+            pub fn to_string(&self) -> $crate::_internal::String {
+                $crate::Writeable::write_to_string(self).into_owned()
             }
         }
     };
@@ -359,7 +362,6 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// # Examples
 ///

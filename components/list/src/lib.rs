@@ -18,8 +18,7 @@
 //! #
 //! let list_formatter = ListFormatter::try_new_and(
 //!     locale!("es").into(),
-//!     ListFormatterOptions::default()
-//!       .with_length(ListLength::Wide)
+//!     ListFormatterOptions::default().with_length(ListLength::Wide),
 //! )
 //! .expect("locale should be present");
 //!
@@ -44,8 +43,7 @@
 //! #
 //! let list_formatter = ListFormatter::try_new_or(
 //!     locale!("th").into(),
-//!     ListFormatterOptions::default()
-//!       .with_length(ListLength::Short)
+//!     ListFormatterOptions::default().with_length(ListLength::Short),
 //! )
 //! .expect("locale should be present");
 //!
@@ -62,8 +60,7 @@
 //! #
 //! let list_formatter = ListFormatter::try_new_unit(
 //!     locale!("en").into(),
-//!     ListFormatterOptions::default()
-//!       .with_length(ListLength::Wide)
+//!     ListFormatterOptions::default().with_length(ListLength::Wide),
 //! )
 //! .expect("locale should be present");
 //!

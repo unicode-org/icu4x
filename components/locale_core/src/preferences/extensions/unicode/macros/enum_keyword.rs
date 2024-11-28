@@ -53,26 +53,31 @@ macro_rules! __enum_keyword_inner {
 macro_rules! __enum_keyword {
     (
         $(#[$doc:meta])*
+        $([$derive_attrs:ty])?
         $name:ident {
             $(
                 $(#[$variant_doc:meta])*
+                $([$variant_attr:ty])?
                 $variant:ident $($v2:ident)?
             ),*
         }
     ) => {
         #[non_exhaustive]
         #[derive(Debug, Clone, Eq, PartialEq, Copy, Hash)]
+        $(#[derive($derive_attrs)])?
         $(#[$doc])*
         pub enum $name {
             $(
                 $(#[$variant_doc])*
+                $(#[$variant_attr])?
                 $variant $((Option<$v2>))?
             ),*
         }
     };
-    ($(#[$doc:meta])* $name:ident {
+    ($(#[$doc:meta])* $([$derive_attrs:ty])? $name:ident {
         $(
             $(#[$variant_doc:meta])*
+            $([$variant_attr:ty])?
             ($key:expr => $variant:ident $(($v2:ident) {
                 $(
                     ($subk:expr => $subv:ident)
@@ -82,9 +87,11 @@ macro_rules! __enum_keyword {
     }, $ext_key:literal) => {
         $crate::__enum_keyword!(
             $(#[$doc])*
+            $([$derive_attrs])?
             $name {
                 $(
                     $(#[$variant_doc])*
+                    $([$variant_attr])?
                     $variant $($v2)?
                 ),*
             }

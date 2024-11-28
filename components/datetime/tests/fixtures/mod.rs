@@ -4,8 +4,8 @@
 
 #![cfg(feature = "serde")]
 
-use icu_datetime::options;
-use icu_datetime::provider::skeleton::components;
+use icu_datetime::fields::components;
+use icu_datetime::{fieldsets::serde::CompositeFieldSetSerde, options};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -30,7 +30,7 @@ pub struct TestInput {
 pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
-    pub semantic: Option<icu_datetime::fieldset::dynamic::CompositeFieldSet>,
+    pub semantic: Option<CompositeFieldSetSerde>,
     #[serde(rename = "hourCycle")]
     pub hour_cycle: Option<TestHourCycle>,
 }

@@ -62,8 +62,8 @@ impl_tinystr_subtag!(
 ///
 /// ```
 /// use icu::locale::{
-///   subtags::region,
-///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+///     subtags::region,
 /// };
 ///
 /// let ss = subdivision_suffix!("zzzz");
@@ -73,7 +73,7 @@ impl_tinystr_subtag!(
 ///
 /// assert_eq!(si.to_string(), "gbzzzz");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
 pub struct SubdivisionId {
     /// A region field of a Subdivision Id.
@@ -89,8 +89,8 @@ impl SubdivisionId {
     ///
     /// ```
     /// use icu::locale::{
-    ///   subtags::region,
-    ///   extensions::unicode::{subdivision_suffix, SubdivisionId}
+    ///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+    ///     subtags::region,
     /// };
     ///
     /// let ss = subdivision_suffix!("zzzz");

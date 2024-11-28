@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::scaffold::*;
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
@@ -14,59 +13,27 @@ use icu_timezone::{
     CustomZonedDateTime, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
 };
 
+use super::UnstableSealed;
+
 /// A type that can return a certain field `T`.
-pub trait GetField<T> {
+///
+/// This is used as a bound on various datetime functions.
+pub trait GetField<T>: UnstableSealed {
     /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
 }
 
-/// Generates an impl of [`GetField`]
-macro_rules! impl_get_field {
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, never) => {
-        impl $(<$($generics0),+>)? GetField<()> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) {}
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, length, yes) => {
-        impl $(<$($generics0),+>)? GetField<NeoSkeletonLength> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> NeoSkeletonLength {
-                self.length
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, alignment, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<Alignment>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<Alignment> {
-                self.alignment
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, year_style, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<YearStyle>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<YearStyle> {
-                self.year_style
-            }
-        }
-    };
-    ($(< $($generics0:tt),+ >)? $type:ident $(< $($generics1:tt),+ >)?, time_precision, yes) => {
-        impl $(<$($generics0),+>)? GetField<Option<TimePrecision>> for $type $(<$($generics1),+>)? {
-            fn get_field(&self) -> Option<TimePrecision> {
-                self.time_precision
-            }
-        }
-    };
-}
-pub(crate) use impl_get_field;
-
 impl<T> GetField<T> for T
 where
-    T: Copy,
+    T: Copy + UnstableSealed,
 {
     #[inline]
     fn get_field(&self) -> T {
         *self
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for Date<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for Date<A> {
     #[inline]
@@ -103,6 +70,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
     }
 }
 
+impl UnstableSealed for Time {}
+
 impl GetField<IsoHour> for Time {
     #[inline]
     fn get_field(&self) -> IsoHour {
@@ -130,6 +99,8 @@ impl GetField<NanoSecond> for Time {
         self.nanosecond
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for DateTime<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for DateTime<A> {
     #[inline]
@@ -193,6 +164,8 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime
         self.time.nanosecond
     }
 }
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> UnstableSealed for CustomZonedDateTime<A, Z> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<YearInfo> for CustomZonedDateTime<A, Z> {
     #[inline]
@@ -315,12 +288,16 @@ where
     }
 }
 
+impl UnstableSealed for UtcOffset {}
+
 impl GetField<Option<UtcOffset>> for UtcOffset {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         Some(*self)
     }
 }
+
+impl<O: TimeZoneModel> UnstableSealed for TimeZoneInfo<O> {}
 
 impl<O> GetField<TimeZoneBcp47Id> for TimeZoneInfo<O>
 where

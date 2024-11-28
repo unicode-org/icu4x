@@ -80,10 +80,10 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::PatternLoadError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
-    pub enum PatternLoadError {
+    pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
         UnsupportedLength = 0x8_03,
@@ -170,20 +170,29 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::PatternLoadError> for PatternLoadError {
-    fn from(e: icu_datetime::PatternLoadError) -> Self {
+impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
+    fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
         match e {
-            icu_datetime::PatternLoadError::ConflictingField(_) => Self::DuplicateField,
-            icu_datetime::PatternLoadError::UnsupportedLength(_) => Self::UnsupportedLength,
-            icu_datetime::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
-            icu_datetime::PatternLoadError::Data(data_error) => data_error.into(),
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::ConflictingField(_),
+            ) => Self::DuplicateField,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
+            ) => Self::UnsupportedLength,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_),
+            ) => Self::TypeTooSpecific,
+            icu_datetime::DateTimeFormatterLoadError::Names(
+                icu_datetime::pattern::PatternLoadError::Data(data_error, _),
+            ) => data_error.into(),
+            icu_datetime::DateTimeFormatterLoadError::Data(data_error) => data_error.into(),
             _ => Self::Unknown,
         }
     }
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_provider::DataError> for PatternLoadError {
+impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
     fn from(e: icu_provider::DataError) -> Self {
         match e.kind {
             icu_provider::DataErrorKind::MarkerNotFound => Self::DataMarkerNotFound,

@@ -5,14 +5,11 @@
 extern crate icu;
 extern crate icu_provider;
 
-use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 use icu::locale::locale;
+use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 
 fn main() {
-    let fmt = HelloWorldFormatter::try_new_unstable(
-        &HelloWorldProvider,
-        &locale!("eo").into(),
-    )
-    .expect("locale exists");
+    let fmt = HelloWorldFormatter::try_new_unstable(&HelloWorldProvider, locale!("eo").into())
+        .expect("locale exists");
     println!("{}", fmt.format());
 }

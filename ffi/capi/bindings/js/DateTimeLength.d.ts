@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 // Base enumerator definition
-/** See the [Rust documentation for `NeoSkeletonLength`](https://docs.rs/icu/latest/icu/datetime/options/enum.NeoSkeletonLength.html) for more information.
+/** See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
 */
 export class DateTimeLength {
     constructor(value : DateTimeLength | string);

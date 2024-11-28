@@ -65,7 +65,7 @@ pub unsafe trait IntegerULE: ULE {
 
     /// Safety: Should always convert a buffer into an array of Self with the correct length
     #[doc(hidden)]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
 }
 
 /// This is a [`VarZeroVecFormat`] that stores u8s in the index array, and a u8 for a length.
@@ -123,7 +123,7 @@ unsafe impl IntegerULE for u8 {
         u8::try_from(u).ok()
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         bytes
     }
 }
@@ -142,8 +142,8 @@ unsafe impl IntegerULE for RawBytesULE<2> {
         u16::try_from(u).ok().map(u16::to_unaligned)
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
-        Self::from_byte_slice_unchecked_mut(bytes)
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+        Self::from_bytes_unchecked_mut(bytes)
     }
 }
 
@@ -161,8 +161,8 @@ unsafe impl IntegerULE for RawBytesULE<4> {
         u32::try_from(u).ok().map(u32::to_unaligned)
     }
     #[inline]
-    fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
-        Self::from_byte_slice_unchecked_mut(bytes)
+    fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+        Self::from_bytes_unchecked_mut(bytes)
     }
 }
 
@@ -174,7 +174,7 @@ unsafe impl IntegerULE for RawBytesULE<4> {
 /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
 /// exist.
 ///
-/// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
+/// See [`VarZeroVecComponents::parse_bytes()`] for information on the internal invariants involved
 #[derive(Debug)]
 pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
@@ -226,7 +226,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices[len - 2]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
+    pub fn parse_bytes(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
         // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
@@ -240,7 +240,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .get(0..F::Len::SIZE)
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_ule =
-            F::Len::parse_byte_slice(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
+            F::Len::parse_bytes_to_slice(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
 
         let len = len_ule
             .first()
@@ -252,7 +252,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_u32 = u32::try_from(len).map_err(|_| VarZeroVecFormatError::Metadata);
         // We pass down the rest of the invariants
-        Self::parse_byte_slice_with_length(len_u32?, rest)
+        Self::parse_bytes_with_length(len_u32?, rest)
     }
 
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
@@ -263,7 +263,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice_with_length(
+    pub fn parse_bytes_with_length(
         len: u32,
         slice: &'a [u8],
     ) -> Result<Self, VarZeroVecFormatError> {
@@ -300,12 +300,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
     /// successfully returned a [`VarZeroVecComponents`] when passed to
-    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
-    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    /// [`VarZeroVecComponents::parse_bytes()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_bytes()`].
     ///
     /// # Safety
     /// The bytes must have previously successfully run through
-    /// [`VarZeroVecComponents::parse_byte_slice()`]
+    /// [`VarZeroVecComponents::parse_bytes()`]
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
@@ -319,26 +319,26 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // MSRV Rust 1.79: Use split_at_unchecked
         let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
         // Safety: F::Len allows all byte sequences
-        let len_ule = F::Len::from_byte_slice_unchecked(len_bytes);
+        let len_ule = F::Len::slice_from_bytes_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).iule_to_usize();
         let len_u32 = len as u32;
 
-        // Safety: This method requires the bytes to have passed through `parse_byte_slice()`
-        // whereas we're calling something that asks for `parse_byte_slice_with_length()`.
-        // The two methods perform similar validation, with parse_byte_slice() validating an additional
+        // Safety: This method requires the bytes to have passed through `parse_bytes()`
+        // whereas we're calling something that asks for `parse_bytes_with_length()`.
+        // The two methods perform similar validation, with parse_bytes() validating an additional
         // 4-byte `length` header.
         Self::from_bytes_unchecked_with_length(len_u32, slice.get_unchecked(F::Len::SIZE..))
     }
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
     /// successfully returned a [`VarZeroVecComponents`] when passed to
-    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
-    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    /// [`VarZeroVecComponents::parse_bytes()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_bytes()`].
     ///
     /// # Safety
     /// The len,bytes must have previously successfully run through
-    /// [`VarZeroVecComponents::parse_byte_slice_with_length()`]
+    /// [`VarZeroVecComponents::parse_bytes_with_length()`]
     pub unsafe fn from_bytes_unchecked_with_length(len: u32, slice: &'a [u8]) -> Self {
         let len_minus_one = len.checked_sub(1);
         // The empty VZV is special-cased to the empty slice
@@ -392,7 +392,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     pub(crate) unsafe fn get_unchecked(self, idx: usize) -> &'a T {
         let range = self.get_things_range(idx);
         let things_slice = self.things.get_unchecked(range);
-        T::from_byte_slice_unchecked(things_slice)
+        T::from_bytes_unchecked(things_slice)
     }
 
     /// Get the range in `things` for the element at `idx`. Does not bounds check.
@@ -467,7 +467,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             }
             // Safety: start..end is a valid range in self.things
             let bytes = unsafe { self.things.get_unchecked(start..end) };
-            T::parse_byte_slice(bytes).map_err(VarZeroVecFormatError::Values)?;
+            T::parse_bytes(bytes).map_err(VarZeroVecFormatError::Values)?;
             start = end;
         }
         Ok(())
@@ -499,7 +499,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                     .chain(end),
             )
             .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
-            .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
+            .map(|bytes| unsafe { T::from_bytes_unchecked(bytes) })
     }
 
     pub fn to_vec(self) -> Vec<Box<T>> {
@@ -508,7 +508,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     #[inline]
     fn indices_slice(&self) -> &'a [F::Index] {
-        unsafe { F::Index::from_byte_slice_unchecked(self.indices) }
+        unsafe { F::Index::slice_from_bytes_unchecked(self.indices) }
     }
 
     // Dump a debuggable representation of this type
@@ -683,7 +683,7 @@ where
             assert!(idx <= F::Index::MAX_VALUE as usize);
             #[allow(clippy::expect_used)] // this function is explicitly panicky
             let bytes_to_write = F::Index::iule_from_usize(idx).expect(F::Index::TOO_LARGE_ERROR);
-            idx_slice.copy_from_slice(ULE::as_byte_slice(&[bytes_to_write]));
+            idx_slice.copy_from_slice(ULE::slice_as_bytes(&[bytes_to_write]));
 
             idx_offset = idx_limit;
         }
@@ -692,7 +692,7 @@ where
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
-        debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
+        debug_assert_eq!(T::validate_bytes(dat_slice), Ok(()));
         dat_offset = dat_limit;
     }
 
@@ -720,7 +720,7 @@ where
     #[allow(clippy::expect_used)] // This function is explicitly panicky
     let num_elements_ule = F::Len::iule_from_usize(elements.len()).expect(F::Len::TOO_LARGE_ERROR);
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    output[0..F::Len::SIZE].copy_from_slice(ULE::as_byte_slice(&[num_elements_ule]));
+    output[0..F::Len::SIZE].copy_from_slice(ULE::slice_as_bytes(&[num_elements_ule]));
 
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[F::Len::SIZE..]);

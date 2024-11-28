@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{FixedDecimal, Sign};
+use fixed_decimal::{Sign, SignedFixedDecimal};
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, provider::DecimalSymbolsV2Marker, FixedDecimalFormatter,
+    options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1Marker,
+    provider::DecimalSymbolsV2Marker, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
 };
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
+use icu_plurals::PluralRulesPreferences;
 use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -14,12 +17,24 @@ use crate::relativetime::format::FormattedRelativeTime;
 use crate::relativetime::options::RelativeTimeFormatterOptions;
 use crate::relativetime::provider::*;
 
+define_preferences!(
+    /// The preferences for relative time formatting.
+    [Copy]
+    RelativeTimeFormatterPreferences,
+    {}
+);
+prefs_convert!(
+    RelativeTimeFormatterPreferences,
+    FixedDecimalFormatterPreferences
+);
+prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
+
 /// A formatter to render locale-sensitive relative time.
 ///
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -27,17 +42,17 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
-///     &locale!("en").into(),
+///     locale!("en").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(5i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(5i8)),
 ///     "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-10i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-10i8)),
 ///     "10 seconds ago"
 /// );
 /// ```
@@ -45,7 +60,7 @@ use crate::relativetime::provider::*;
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -54,7 +69,7 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     &locale!("es").into(),
+///     locale!("es").into(),
 ///     RelativeTimeFormatterOptions {
 ///         numeric: Numeric::Auto,
 ///     },
@@ -62,26 +77,26 @@ use crate::relativetime::provider::*;
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(0u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(0u8)),
 ///     "hoy"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-2i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-2i8)),
 ///     "anteayer"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(2u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(2u8)),
 ///     "pasado mañana"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(15i8)),
 ///     "dentro de 15 d"
 /// );
 /// ```
 ///
 /// # Example
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -89,17 +104,17 @@ use crate::relativetime::provider::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
-///     &locale!("bn").into(),
+///     locale!("bn").into(),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(3u8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(3u8)),
 ///     "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(FixedDecimal::from(-15i8)),
+///     relative_time_formatter.format(SignedFixedDecimal::from(-15i8)),
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
@@ -120,19 +135,19 @@ macro_rules! constructor {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
         pub fn $baked(
-            locale: &DataLocale,
+            prefs: RelativeTimeFormatterPreferences,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError> {
-            let temp_loc = locale.clone().into_locale();
-            let plural_rules = PluralRules::try_new_cardinal(temp_loc.into())?;
+            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
-                locale,
+                (&prefs).into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();
@@ -145,7 +160,7 @@ macro_rules! constructor {
         }
 
         icu_provider::gen_any_buffer_data_constructors!(
-            (locale, options: RelativeTimeFormatterOptions) -> error: DataError,
+            (prefs: RelativeTimeFormatterPreferences, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
                 $baked: skip,
                 $any,
@@ -159,26 +174,26 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
-            locale: &DataLocale,
+            prefs: RelativeTimeFormatterPreferences,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError>
         where
             D: DataProvider<CardinalV1Marker>
                 + DataProvider<$marker>
-                + DataProvider<DecimalSymbolsV2Marker>
+                + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
                 + ?Sized,
         {
-            let temp_loc = locale.clone().into_locale();
-            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, temp_loc.into())?;
+            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
                 provider,
-                locale,
+                (&prefs).into(),
                 FixedDecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 })?;
             let rt = rt.payload.cast();
@@ -364,7 +379,7 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: FixedDecimal) -> FormattedRelativeTime<'_> {
+    pub fn format(&self, value: SignedFixedDecimal) -> FormattedRelativeTime<'_> {
         let is_negative = value.sign() == Sign::Negative;
         FormattedRelativeTime {
             options: &self.options,

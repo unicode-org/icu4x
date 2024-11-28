@@ -10,6 +10,7 @@ struct_keyword!(
     /// A Unicode Number System Identifier defines a type of number system.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeNumberSystemIdentifier).
+    [Copy]
     NumberingSystem,
     "nu",
     Subtag,

@@ -7,17 +7,18 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
-use fixed_decimal::FixedDecimal;
 use fixed_decimal::Sign;
+use fixed_decimal::SignedFixedDecimal;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
+    pub(crate) digits: &'l DecimalDigitsV1,
 }
 
 impl FormattedFixedDecimal<'_> {
@@ -40,14 +41,14 @@ impl Writeable for FormattedFixedDecimal<'_> {
         if let Some(affixes) = affixes {
             sink.write_str(affixes.0)?;
         }
-        let range = self.value.magnitude_range();
+        let range = self.value.absolute.magnitude_range();
         let upper_magnitude = *range.end();
         for m in range.rev() {
             if m == -1 {
                 sink.write_str(self.symbols.decimal_separator())?;
             }
             #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-            sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
+            sink.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
             if grouper::check(
                 upper_magnitude,
                 m,
@@ -76,7 +77,7 @@ mod tests {
     #[test]
     pub fn test_es_mx() {
         let locale = locale!("es-MX").into();
-        let fmt = FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = FixedDecimalFormatter::try_new(locale, Default::default()).unwrap();
         let fd = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt.format(&fd), "12,345.67");
     }

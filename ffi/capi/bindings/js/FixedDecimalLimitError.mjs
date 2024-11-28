@@ -6,8 +6,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
 */
 export class FixedDecimalLimitError {
-    constructor() {
-        
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("FixedDecimalLimitError's constructor takes an object of FixedDecimalLimitError's fields.");
+        }
+
     }
 
 }

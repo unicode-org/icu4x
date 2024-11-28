@@ -350,7 +350,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Separate mandatory breaks from the break opportunities:
 ///
 /// ```rust
-/// use icu::properties::{CodePointMapData, props::LineBreak};
+/// use icu::properties::{props::LineBreak, CodePointMapData};
 /// use icu::segmenter::LineSegmenter;
 ///
 /// # let segmenter = LineSegmenter::new_auto();

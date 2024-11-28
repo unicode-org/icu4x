@@ -7,11 +7,11 @@ use std::collections::HashSet;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use calendar::patterns::GenericLengthPatternsV1;
 use either::Either;
-use icu::datetime::fieldset::dynamic::*;
-use icu::datetime::options::NeoSkeletonLength;
-use icu::datetime::provider::calendar::{DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::fields::components;
+use icu::datetime::fieldsets::enums::*;
+use icu::datetime::options::Length;
+use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::{reference, runtime};
-use icu::datetime::provider::skeleton::components;
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
@@ -27,7 +27,7 @@ impl SourceDataProvider {
         req: DataRequest,
         calendar: Either<&Value, &str>,
         to_components_bag: impl Fn(
-            NeoSkeletonLength,
+            Length,
             &DataMarkerAttributes,
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
@@ -57,7 +57,7 @@ impl SourceDataProvider {
         calendar: Either<&Value, &str>,
         attributes: &DataMarkerAttributes,
         to_components_bag: impl Fn(
-            NeoSkeletonLength,
+            Length,
             &DataMarkerAttributes,
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
@@ -84,9 +84,9 @@ impl SourceDataProvider {
         }
 
         let [long, medium, short] = [
-            NeoSkeletonLength::Long,
-            NeoSkeletonLength::Medium,
-            NeoSkeletonLength::Short,
+            Length::Long,
+            Length::Medium,
+            Length::Short,
         ]
         .map(|length| to_components_bag(length, attributes, &data))
         .map(|components| {
@@ -289,7 +289,7 @@ fn test_check_for_field() {
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
 fn gen_time_components(
-    _: NeoSkeletonLength,
+    _: Length,
     attributes: &DataMarkerAttributes,
     _: &cldr_serde::ca::Dates,
 ) -> components::Bag {
@@ -315,7 +315,7 @@ fn gen_time_components(
 
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
 fn gen_date_components(
-    length: NeoSkeletonLength,
+    length: Length,
     attributes: &DataMarkerAttributes,
     data: &cldr_serde::ca::Dates,
 ) -> components::Bag {
@@ -332,9 +332,9 @@ fn gen_date_components(
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
     // TODO(#308): Utilize the numbering system pattern variations.
     let date_pattern: reference::Pattern = match length {
-        NeoSkeletonLength::Long => data.date_formats.long.get_pattern().parse().unwrap(),
-        NeoSkeletonLength::Medium => data.date_formats.medium.get_pattern().parse().unwrap(),
-        NeoSkeletonLength::Short => data.date_formats.short.get_pattern().parse().unwrap(),
+        Length::Long => data.date_formats.long.get_pattern().parse().unwrap(),
+        Length::Medium => data.date_formats.medium.get_pattern().parse().unwrap(),
+        Length::Short => data.date_formats.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
     let date_bag = components::Bag::from(&date_pattern);
@@ -352,9 +352,9 @@ fn gen_date_components(
     {
         // standalone month: use the skeleton length
         filtered_components.month = match length {
-            NeoSkeletonLength::Long => Some(components::Month::Long),
-            NeoSkeletonLength::Medium => Some(components::Month::Short),
-            NeoSkeletonLength::Short => Some(components::Month::Numeric),
+            Length::Long => Some(components::Month::Long),
+            Length::Medium => Some(components::Month::Short),
+            Length::Short => Some(components::Month::Numeric),
             _ => unreachable!(),
         };
     }
@@ -368,9 +368,9 @@ fn gen_date_components(
     if check_for_field(attributes, "e") {
         // Not all length patterns have the weekday
         filtered_components.weekday = match length {
-            NeoSkeletonLength::Long => Some(components::Text::Long),
-            NeoSkeletonLength::Medium => Some(components::Text::Short),
-            NeoSkeletonLength::Short => Some(components::Text::Short),
+            Length::Long => Some(components::Text::Long),
+            Length::Medium => Some(components::Text::Short),
+            Length::Short => Some(components::Text::Short),
             _ => unreachable!(),
         };
     }

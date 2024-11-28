@@ -24,14 +24,23 @@ export class TitlecaseOptions {
     set trailingCase(value) {
         this.#trailingCase = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#leadingAdjustment = arguments[0];
-            this.#trailingCase = arguments[1];
+    constructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("TitlecaseOptions's constructor takes an object of TitlecaseOptions's fields.");
         }
+
+        if ("leadingAdjustment" in structObj) {
+            this.#leadingAdjustment = structObj.leadingAdjustment;
+        } else {
+            this.#leadingAdjustment = null;
+        }
+
+        if ("trailingCase" in structObj) {
+            this.#trailingCase = structObj.trailingCase;
+        } else {
+            this.#trailingCase = null;
+        }
+
     }
 
     // Return this struct in FFI function friendly format.
@@ -59,11 +68,17 @@ export class TitlecaseOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("TitlecaseOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        var structObj = {};
         const leadingAdjustmentDeref = ptr;
-        this.#leadingAdjustment = diplomatRuntime.readOption(wasm, leadingAdjustmentDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LeadingAdjustment(diplomatRuntime.internalConstructor, deref) });
+        structObj.leadingAdjustment = diplomatRuntime.readOption(wasm, leadingAdjustmentDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LeadingAdjustment(diplomatRuntime.internalConstructor, deref) });
         const trailingCaseDeref = ptr + 8;
-        this.#trailingCase = diplomatRuntime.readOption(wasm, trailingCaseDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new TrailingCase(diplomatRuntime.internalConstructor, deref) });
+        structObj.trailingCase = diplomatRuntime.readOption(wasm, trailingCaseDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new TrailingCase(diplomatRuntime.internalConstructor, deref) });
+
+        return new TitlecaseOptions(structObj, internalConstructor);
     }
 
     static defaultOptions() {
@@ -72,7 +87,7 @@ export class TitlecaseOptions {
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
     
         try {
-            return new TitlecaseOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return TitlecaseOptions._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

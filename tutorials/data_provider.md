@@ -40,25 +40,26 @@ impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
 }
 
 // Helper function to add data into the growable provider on demand:
-let mut get_hello_world_formatter = |loc: &DataLocale| {
+let mut get_hello_world_formatter = |prefs: HelloWorldFormatterPreferences| {
     // Try to create the formatter a first time with data that has already been loaded.
-    if let Ok(formatter) = HelloWorldFormatter::try_new_unstable(&provider, loc) {
+    if let Ok(formatter) = HelloWorldFormatter::try_new_unstable(&provider, prefs) {
         return formatter;
     }
 
     // We failed to create the formatter. Load more data for the language and try creating the formatter a second time.
-    provider.push(SingleLocaleProvider(loc.clone()));
-    HelloWorldFormatter::try_new_unstable(&provider, loc)
+    let loc = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
+    provider.push(SingleLocaleProvider(loc));
+    HelloWorldFormatter::try_new_unstable(&provider, prefs)
         .expect("Language data should now be available")
 };
 
 // Test that it works:
 assert_eq!(
-    get_hello_world_formatter(&locale!("de").into()).format().write_to_string(),
+    get_hello_world_formatter(locale!("de").into()).format().write_to_string(),
     "Hallo Welt"
 );
 assert_eq!(
-    get_hello_world_formatter(&locale!("ro").into()).format().write_to_string(),
+    get_hello_world_formatter(locale!("ro").into()).format().write_to_string(),
     "Salut, lume"
 );
 ```
@@ -151,7 +152,7 @@ assert_eq!(
     // Note: It is necessary to use `try_new_unstable` with LruDataCache.
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja").into()
+        locale!("ja").into()
     )
     .unwrap()
     .format_to_string()
@@ -164,7 +165,7 @@ assert_eq!(
     "ওহে বিশ্ব",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("bn").into()
+        locale!("bn").into()
     )
     .unwrap()
     .format_to_string()
@@ -177,7 +178,7 @@ assert_eq!(
     "こんにちは世界",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja").into()
+        locale!("ja").into()
     )
     .unwrap()
     .format_to_string()
@@ -196,7 +197,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::DecimalSymbolsV2Marker;
+use icu::decimal::provider::{DecimalSymbolsV2Marker, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -217,8 +218,10 @@ where
         if req.id.locale.region == Some(region!("CH")) {
             if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2Marker>() {
                 decimal_payload.with_mut(|data| {
-                    // Change the digit 0 for all Swiss locales to '🐮'
-                    data.digits[0] = '🐮';
+                    let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
+                    // Change grouping separator for all Swiss locales to '🐮'
+                    builder.grouping_separator = "🐮".into();
+                    data.strings = builder.build();
                 });
             }
         }
@@ -235,7 +238,7 @@ let provider = CustomDecimalSymbolsProvider(
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und").into(),
+    locale!("und").into(),
     Default::default(),
 )
 .unwrap();
@@ -244,12 +247,12 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und-CH").into(),
+    locale!("und-CH").into(),
     Default::default(),
 )
 .unwrap();
 
-assert_eq!(formatter.format_to_string(&100007i64.into()), "1🐮🐮,🐮🐮7");
+assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
 
 ## Forking Data Providers
@@ -383,7 +386,7 @@ let provider = ResolvedLocaleProvider {
 // Request data for sr-ME...
 HelloWorldFormatter::try_new_unstable(
     &provider,
-    &locale!("sr-ME").into(),
+    locale!("sr-ME").into(),
 )
 .unwrap();
 

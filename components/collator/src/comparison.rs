@@ -72,14 +72,13 @@ struct LocaleSpecificDataHolder {
 
 icu_locale_core::preferences::define_preferences!(
     /// The preferences for collation.
+    [Copy]
     CollatorPreferences,
     {
         /// The collation type. This corresponds to the `-u-co` BCP-47 tag.
         collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType
     }
 );
-
-impl Copy for CollatorPreferences {}
 
 impl LocaleSpecificDataHolder {
     /// The constructor code reused between owned and borrowed cases.

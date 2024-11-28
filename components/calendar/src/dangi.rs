@@ -16,10 +16,9 @@
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
 //! // `DateTime` type
-//! let dangi_datetime = DateTime::try_new_dangi_with_calendar(
-//!     4356, 6, 6, 13, 1, 0, dangi,
-//! )
-//! .expect("Failed to initialize Dangi DateTime instance.");
+//! let dangi_datetime =
+//!     DateTime::try_new_dangi_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
+//!         .expect("Failed to initialize Dangi DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().era_year_or_extended(), 4356);
@@ -343,10 +342,9 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     ///
     /// let dangi = Dangi::new();
     ///
-    /// let dangi_datetime = DateTime::try_new_dangi_with_calendar(
-    ///     4356, 6, 6, 13, 1, 0, dangi,
-    /// )
-    /// .expect("Failed to initialize Dangi DateTime instance.");
+    /// let dangi_datetime =
+    ///     DateTime::try_new_dangi_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
+    ///         .expect("Failed to initialize Dangi DateTime instance.");
     ///
     /// assert_eq!(dangi_datetime.date.year().era_year_or_extended(), 4356);
     /// assert_eq!(dangi_datetime.date.year().cyclic().unwrap().get(), 40);

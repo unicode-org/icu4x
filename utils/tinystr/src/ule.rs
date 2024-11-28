@@ -12,13 +12,13 @@ use zerovec::{ZeroSlice, ZeroVec};
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  2. TinyAsciiStr is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. TinyAsciiStr byte equality is semantic equality
 unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
@@ -62,13 +62,13 @@ impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  2. UnvalidatedTinyAsciiStr is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. UnvalidatedTinyAsciiStr byte equality is semantic equality
 unsafe impl<const N: usize> ULE for UnvalidatedTinyAsciiStr<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
@@ -112,7 +112,7 @@ mod test {
 
         let bytes = vec.as_bytes();
 
-        let vec: ZeroVec<TinyAsciiStr<7>> = ZeroVec::parse_byte_slice(bytes).unwrap();
+        let vec: ZeroVec<TinyAsciiStr<7>> = ZeroVec::parse_bytes(bytes).unwrap();
 
         assert_eq!(&*vec.get(0).unwrap(), "foobar");
         assert_eq!(&*vec.get(1).unwrap(), "baz");

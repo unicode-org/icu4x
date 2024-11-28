@@ -44,7 +44,10 @@
 //! assert_eq!(offset.second, 0);
 //! assert_eq!(offset.nanosecond, 0);
 //! assert!(!tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! assert_eq!(
+//!     tz_annotation.tz,
+//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//! );
 //! ```
 //!
 //! ## Date/Time Strings
@@ -95,7 +98,10 @@
 //! assert_eq!(offset.second, 0);
 //! assert_eq!(offset.nanosecond, 0);
 //! assert!(!tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! assert_eq!(
+//!     tz_annotation.tz,
+//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//! );
 //! ```
 //!
 //! For more information on the update to RFC 3339, please see RFC 9557, Section 2.
@@ -128,7 +134,10 @@
 //! zone annotation if it is provided.
 //!
 //! ```rust
-//! use ixdtf::parsers::{IxdtfParser, records::{TimeZoneRecord, Sign}};
+//! use ixdtf::parsers::{
+//!     records::{Sign, TimeZoneRecord},
+//!     IxdtfParser,
+//! };
 //!
 //! let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
 //!
@@ -145,7 +154,10 @@
 //! assert_eq!(offset.second, 0);
 //! assert_eq!(offset.nanosecond, 0);
 //! assert!(tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! assert_eq!(
+//!     tz_annotation.tz,
+//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//! );
 //! ```
 //!
 //! ### Key-Value Annotations

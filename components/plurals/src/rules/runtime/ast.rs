@@ -288,13 +288,13 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 /// 2. AndOrPolarityOperandULE is aligned to 1 byte
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes
+//  3. The impl of validate_bytes() returns an error if any byte is not valid.
+//  4. The impl of validate_bytes() returns an error if there are extra bytes
 //     (impossible since it is of size 1 byte)
 //  5 The other ULE methods use the default impl.
 //  6. AndOrPolarityOperandULE byte equality is semantic equality.
 unsafe impl ULE for AndOrPolarityOperandULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(UleError::parse::<Self>)?;
         }
@@ -419,7 +419,7 @@ mod serde {
         where
             E: de::Error,
         {
-            let rule = VarZeroVec::parse_byte_slice(rule_bytes).map_err(|err| {
+            let rule = VarZeroVec::parse_bytes(rule_bytes).map_err(|err| {
                 de::Error::invalid_value(
                     de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule byte slice",
@@ -491,7 +491,7 @@ mod test {
             }
         );
 
-        let fd = fixed_decimal::FixedDecimal::from(1);
+        let fd = fixed_decimal::SignedFixedDecimal::from(1);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
@@ -502,27 +502,27 @@ mod test {
         let ref_rule = reference::parse(input.as_bytes()).expect("Failed to parse Rule");
         let rule = Rule::try_from(&ref_rule).expect("Failed to convert Rule");
 
-        let fd = fixed_decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::SignedFixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::FixedDecimal::from(13);
+        let fd = fixed_decimal::SignedFixedDecimal::from(13);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::FixedDecimal::from(103);
+        let fd = fixed_decimal::SignedFixedDecimal::from(103);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::FixedDecimal::from(113);
+        let fd = fixed_decimal::SignedFixedDecimal::from(113);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::FixedDecimal::from(178);
+        let fd = fixed_decimal::SignedFixedDecimal::from(178);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::SignedFixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
@@ -548,12 +548,12 @@ mod test {
         let rov = RangeOrValue::Value(1);
         let ule = rov.to_unaligned();
         let ref_bytes = &[1, 0, 0, 0, 1, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::slice_as_bytes(&[ule]), *ref_bytes);
 
         let rov = RangeOrValue::Range(2, 4);
         let ule = rov.to_unaligned();
         let ref_bytes = &[2, 0, 0, 0, 4, 0, 0, 0];
-        assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+        assert_eq!(ULE::slice_as_bytes(&[ule]), *ref_bytes);
     }
 
     #[test]

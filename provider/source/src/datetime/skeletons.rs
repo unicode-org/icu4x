@@ -80,6 +80,7 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use either::Either;
+    use icu::datetime::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{

@@ -63,7 +63,7 @@ where
             let mut source_variants = source.variants.iter();
             'outer: for raw_variant in raw_variants {
                 for source_variant in source_variants.by_ref() {
-                    match source_variant.strict_cmp(raw_variant.as_bytes()) {
+                    match source_variant.as_str().cmp(raw_variant) {
                         Ordering::Equal => {
                             // The source_variant is equal, move to next raw_variant
                             continue 'outer;
@@ -122,13 +122,11 @@ fn uts35_replacement<'a, I>(
         loop {
             match (sources.peek(), skips.peek(), replacements.peek()) {
                 (Some(&source), Some(skip), _)
-                    if source.strict_cmp(skip.as_bytes()) == Ordering::Greater =>
+                    if source.as_str().cmp(skip) == Ordering::Greater =>
                 {
                     skips.next();
                 }
-                (Some(&source), Some(skip), _)
-                    if source.strict_cmp(skip.as_bytes()) == Ordering::Equal =>
-                {
+                (Some(&source), Some(skip), _) if source.as_str().cmp(skip) == Ordering::Equal => {
                     skips.next();
                     sources.next();
                 }

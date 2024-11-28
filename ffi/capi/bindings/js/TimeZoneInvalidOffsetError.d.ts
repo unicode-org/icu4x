@@ -4,6 +4,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
 */
+type TimeZoneInvalidOffsetError_Obj = {
+};
+
 export class TimeZoneInvalidOffsetError {
-    constructor();
+    constructor(structObj : TimeZoneInvalidOffsetError_Obj);
 }

@@ -28,7 +28,11 @@ use alloc::{boxed::Box, string::String};
 /// use icu_pattern::SinglePlaceholderPattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
+/// let pattern = SinglePlaceholderPattern::try_from_str(
+///     "Hello, {0}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -118,8 +122,11 @@ where
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default())
-///     .unwrap();
+/// let pattern = Pattern::<SinglePlaceholder>::try_from_str(
+///     "Hello, {0}!",
+///     Default::default(),
+/// )
+/// .unwrap();
 ///
 /// assert_eq!("\u{8}Hello, !", &pattern.store);
 /// ```
@@ -129,38 +136,50 @@ where
 /// ```
 /// use core::str::FromStr;
 /// use icu_pattern::Pattern;
-/// use icu_pattern::SinglePlaceholder;
 /// use icu_pattern::QuoteMode;
+/// use icu_pattern::SinglePlaceholder;
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder>::try_from_str("{0} days ago", Default::default())
-///         .unwrap()
-///         .interpolate_to_string([5]),
+///     Pattern::<SinglePlaceholder>::try_from_str(
+///         "{0} days ago",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string([5]),
 ///     "5 days ago",
 /// );
 ///
 /// // Single named placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder>::try_from_str("{name}", Default::default())
-///         .unwrap()
-///         .interpolate_to_string(["Alice"]),
+///     Pattern::<SinglePlaceholder>::try_from_str(
+///         "{name}",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(["Alice"]),
 ///     "Alice",
 /// );
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder>::try_from_str("yesterday", Default::default())
-///         .unwrap()
-///         .interpolate_to_string(["hi"]),
+///     Pattern::<SinglePlaceholder>::try_from_str(
+///         "yesterday",
+///         Default::default()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(["hi"]),
 ///     "yesterday",
 /// );
 ///
 /// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder>::try_from_str("'{0}' {1}", QuoteMode::QuotingSupported.into())
-///         .unwrap()
-///         .interpolate_to_string(("hi",)),
+///     Pattern::<SinglePlaceholder>::try_from_str(
+///         "'{0}' {1}",
+///         QuoteMode::QuotingSupported.into()
+///     )
+///     .unwrap()
+///     .interpolate_to_string(("hi",)),
 ///     "{0} hi",
 /// );
 /// ```

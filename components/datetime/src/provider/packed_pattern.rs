@@ -8,7 +8,7 @@ use super::pattern::{
     runtime::{Pattern, PatternBorrowed, PatternMetadata},
     PatternItem,
 };
-use crate::{size_test_macro::size_test, NeoSkeletonLength};
+use crate::{size_test_macro::size_test, Length};
 use alloc::vec::Vec;
 use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
@@ -42,7 +42,6 @@ pub struct PackedPatternsBuilder<'a> {
 size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 
 /// Main data struct for packed datetime patterns.
-///
 #[doc = packed_skeleton_data_size!()]
 ///
 /// ## Variants
@@ -407,12 +406,8 @@ pub(crate) enum PackedSkeletonVariant {
 }
 
 impl PackedPatternsV1<'_> {
-    pub(crate) fn get(
-        &self,
-        length: NeoSkeletonLength,
-        variant: PackedSkeletonVariant,
-    ) -> PatternBorrowed {
-        use NeoSkeletonLength::*;
+    pub(crate) fn get(&self, length: Length, variant: PackedSkeletonVariant) -> PatternBorrowed {
+        use Length::*;
         use PackedSkeletonVariant::*;
         let lms = self.header & constants::LMS_MASK;
         let pattern_index = if matches!(variant, Standard) {
@@ -482,7 +477,7 @@ impl PackedPatternsV1<'_> {
 
     fn get_as_plural_elements(
         &self,
-        length: NeoSkeletonLength,
+        length: Length,
         variant: PackedSkeletonVariant,
     ) -> PluralElements<Pattern> {
         PluralElements::new(self.get(length, variant).as_pattern())
@@ -490,7 +485,7 @@ impl PackedPatternsV1<'_> {
 
     /// Converts this packed data to a builder that can be mutated.
     pub fn to_builder(&self) -> PackedPatternsBuilder {
-        use NeoSkeletonLength::*;
+        use Length::*;
         use PackedSkeletonVariant::*;
         let mut builder = PackedPatternsBuilder {
             standard: LengthPluralElements {

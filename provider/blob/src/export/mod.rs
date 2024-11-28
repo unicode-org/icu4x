@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_provider_export::prelude::*;
 //! use icu_provider_blob::export::*;
+//! use icu_provider_export::prelude::*;
 //!
 //! let mut blob: Vec<u8> = Vec::new();
 //!
@@ -20,9 +20,13 @@
 //! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
-//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::Maximal.into(),
+//!     LocaleFallbacker::new().static_to_owned(),
+//! )
+//! .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
+//! .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)
 //! # assert_eq!(blob, include_bytes!("../../tests/data/v3.postcard"));
@@ -46,7 +50,7 @@
 //! // Use the provider as a `BufferProvider`
 //! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 //!     &provider,
-//!     &locale!("en").into(),
+//!     locale!("en").into(),
 //! )
 //! .unwrap();
 //!

@@ -13,6 +13,9 @@ use displaydoc::Display;
 pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 
+#[cfg(any(feature = "experimental", feature = "datagen"))]
+pub mod components;
+
 use core::{
     cmp::{Ord, PartialOrd},
     convert::TryFrom,
@@ -75,7 +78,7 @@ impl Field {
 
 impl FieldULE {
     #[inline]
-    pub(crate) fn validate_bytes(bytes: (u8, u8)) -> Result<(), zerovec::ule::UleError> {
+    pub(crate) fn validate_byte_pair(bytes: (u8, u8)) -> Result<(), zerovec::ule::UleError> {
         symbols::FieldSymbolULE::validate_byte(bytes.0)?;
         length::FieldLengthULE::validate_byte(bytes.1)?;
         Ok(())
@@ -141,7 +144,7 @@ mod test {
 
         for (ref_field, ref_bytes) in samples {
             let ule = ref_field.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
+            assert_eq!(ULE::slice_as_bytes(&[ule]), ref_bytes);
             let field = Field::from_unaligned(ule);
             assert_eq!(field, ref_field);
         }
@@ -170,7 +173,7 @@ mod test {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_field.iter() {
                 let ule = item.to_unaligned();
-                bytes.extend(ULE::as_byte_slice(&[ule]));
+                bytes.extend(ULE::slice_as_bytes(&[ule]));
             }
 
             let mut bytes2: Vec<u8> = vec![];
@@ -178,7 +181,7 @@ mod test {
                 bytes2.extend_from_slice(seq);
             }
 
-            assert!(FieldULE::validate_byte_slice(&bytes).is_ok());
+            assert!(FieldULE::validate_bytes(&bytes).is_ok());
             assert_eq!(bytes, bytes2);
         }
     }

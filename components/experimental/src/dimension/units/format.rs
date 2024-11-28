@@ -5,13 +5,13 @@
 //! Experimental.
 
 use crate::dimension::provider::units::UnitsDisplayNameV1;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::{impl_display_with_writeable, Writeable};
 
 pub struct FormattedUnit<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     // TODO: review using options and essentials.
     // pub(crate) _options: &'l UnitsFormatterOptions,
     // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
@@ -91,7 +91,7 @@ fn test_basic() {
     ];
 
     for (locale, unit, value, options, expected) in test_cases {
-        let fmt = UnitsFormatter::try_new(&locale.into(), unit, options).unwrap();
+        let fmt = UnitsFormatter::try_new(locale.into(), unit, options).unwrap();
         let value = value.parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&value), expected);
     }

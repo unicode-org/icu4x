@@ -4,8 +4,7 @@ import { DateTime } from "icu4x"
 import { DateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
-export function formatDatetime() {
-    var terminusArgs = arguments;
+export function formatDatetime(name, length, year, month, day, hour, minute, second, nanosecond, name_1) {
     return (function (...args) { return args[0].formatDatetime(...args.slice(1)) }).apply(
         null,
         [
@@ -20,22 +19,22 @@ export function formatDatetime() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             DateTime.fromIsoInCalendar.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8],
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond,
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -47,7 +46,7 @@ export function formatDatetime() {
                             Locale.fromString.apply(
                                 null,
                                 [
-                                    terminusArgs[9]
+                                    name_1
                                 ]
                             )
                         ]
@@ -57,8 +56,7 @@ export function formatDatetime() {
         ]
     );
 }
-export function formatIsoDatetime() {
-    var terminusArgs = arguments;
+export function formatIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond) {
     return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
         null,
         [
@@ -73,22 +71,22 @@ export function formatIsoDatetime() {
                     Locale.fromString.apply(
                         null,
                         [
-                            terminusArgs[0]
+                            name
                         ]
                     ),
-                    terminusArgs[1]
+                    length
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
-                    terminusArgs[2],
-                    terminusArgs[3],
-                    terminusArgs[4],
-                    terminusArgs[5],
-                    terminusArgs[6],
-                    terminusArgs[7],
-                    terminusArgs[8]
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             )
         ]

@@ -2,10 +2,10 @@
 import { DataProvider } from "./DataProvider.mjs"
 import { DateTime } from "./DateTime.mjs"
 import { DateTimeFormatError } from "./DateTimeFormatError.mjs"
+import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
-import { PatternLoadError } from "./PatternLoadError.mjs"
 import { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -53,8 +53,8 @@ export class ZonedDateTimeFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new PatternLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('PatternLoadError: ' + cause.value, { cause });
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
