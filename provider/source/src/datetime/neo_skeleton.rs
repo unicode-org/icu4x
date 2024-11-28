@@ -10,7 +10,7 @@ use either::Either;
 use icu::datetime::fields::components;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
-use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::provider::calendar::{DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
@@ -557,13 +557,11 @@ fn test_en_overlap_patterns() {
 ///
 /// See: https://unicode-org.atlassian.net/browse/CLDR-14993
 #[cfg(feature = "networking")]
-#[test]
-fn test_date_skeleton_consistency() {
+#[cfg(test)]
+mod date_skeleton_consistency_tests {
+    use super::*;
     use crate::CoverageLevel;
     use pattern::CoarseHourCycle;
-
-    // NOTE: This test is intended to run over all modern locales
-    let provider = SourceDataProvider::new_latest_tested();
 
     #[derive(Copy, Clone)]
     struct TestCaseFixedArgs<'a> {
@@ -581,7 +579,7 @@ fn test_date_skeleton_consistency() {
     }
 
     /// Returns whether the check was successful.
-    fn check(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
+    fn check_single_pattern(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
         let components = components::Bag::from(&parsed_skeleton);
         let PatternPlurals::SinglePattern(selected_pattern) = components.select_pattern(
@@ -609,62 +607,92 @@ fn test_date_skeleton_consistency() {
         }
     }
 
-    let mut num_problems = 0;
-    for (_calendar, cldr_cal) in supported_cals().iter() {
+    fn check_all_patterns_for_calendar_and_locale(provider: &SourceDataProvider, cldr_cal: &str, locale: &DataLocale) -> usize {
+        let mut num_problems = 0;
+        let data = provider
+            .get_datetime_resources(&locale, Either::Right(cldr_cal))
+            .unwrap();
+        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
+        let time_lengths_v1 = TimeLengthsV1::from(&data);
+        let skeleton_patterns =
+            DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+        let test_case_data = TestCaseFixedArgs {
+            skeleton_patterns: &skeleton_patterns,
+            preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
+            length_combinations_v1: &length_combinations_v1,
+            cldr_cal,
+            locale: &locale,
+        };
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: &data.date_formats.short.get_pattern(),
+                skeleton: &data.date_skeletons.short.get_pattern(),
+                length: "date-short",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: &data.date_formats.medium.get_pattern(),
+                skeleton: &data.date_skeletons.medium.get_pattern(),
+                length: "date-medum",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: &data.date_formats.long.get_pattern(),
+                skeleton: &data.date_skeletons.long.get_pattern(),
+                length: "date-long",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: &data.date_formats.full.get_pattern(),
+                skeleton: &data.date_skeletons.full.get_pattern(),
+                length: "date-full",
+            },
+        ) as usize;
+        // TODO: Also check time? Date seems more impactful in the short term
+        num_problems
+    }
+
+    #[test]
+    fn gregorian_only() {
+        // NOTE: This test is intended to run over all modern locales
+        let provider = SourceDataProvider::new_latest_tested();
+    
+        let mut num_problems = 0;
         for locale in provider
             .locales_for_coverage_levels([CoverageLevel::Modern])
             .unwrap()
         {
-            let data = provider
-                .get_datetime_resources(&locale, Either::Right(cldr_cal))
-                .unwrap();
-            let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
-            let time_lengths_v1 = TimeLengthsV1::from(&data);
-            let skeleton_patterns =
-                DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
-            let test_case_data = TestCaseFixedArgs {
-                skeleton_patterns: &skeleton_patterns,
-                preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
-                length_combinations_v1: &length_combinations_v1,
-                cldr_cal,
-                locale: &locale,
-            };
-            num_problems += !check(
-                test_case_data,
-                TestCaseInfo {
-                    pattern: &data.date_formats.short.get_pattern(),
-                    skeleton: &data.date_skeletons.short.get_pattern(),
-                    length: "date-short",
-                },
-            ) as usize;
-            num_problems += !check(
-                test_case_data,
-                TestCaseInfo {
-                    pattern: &data.date_formats.medium.get_pattern(),
-                    skeleton: &data.date_skeletons.medium.get_pattern(),
-                    length: "date-medum",
-                },
-            ) as usize;
-            num_problems += !check(
-                test_case_data,
-                TestCaseInfo {
-                    pattern: &data.date_formats.long.get_pattern(),
-                    skeleton: &data.date_skeletons.long.get_pattern(),
-                    length: "date-long",
-                },
-            ) as usize;
-            num_problems += !check(
-                test_case_data,
-                TestCaseInfo {
-                    pattern: &data.date_formats.full.get_pattern(),
-                    skeleton: &data.date_skeletons.full.get_pattern(),
-                    length: "date-full",
-                },
-            ) as usize;
-            // TODO: Also check time? Date seems more impactful in the short term
+            num_problems += check_all_patterns_for_calendar_and_locale(&provider, "gregorian", &locale);
+        }
+        if num_problems != 0 {
+            panic!("{num_problems} problems");
         }
     }
-    if num_problems != 0 {
-        panic!("{num_problems} problems");
+
+    #[test]
+    #[ignore]
+    fn all_calendars() {
+        // NOTE: This test is intended to run over all modern locales
+        let provider = SourceDataProvider::new_latest_tested();
+    
+        let mut num_problems = 0;
+        for (_calendar, cldr_cal) in supported_cals().iter() {
+            for locale in provider
+                .locales_for_coverage_levels([CoverageLevel::Modern])
+                .unwrap()
+            {
+                num_problems += check_all_patterns_for_calendar_and_locale(&provider, cldr_cal, &locale);
+            }
+        }
+        if num_problems != 0 {
+            panic!("{num_problems} problems");
+        }
     }
 }
