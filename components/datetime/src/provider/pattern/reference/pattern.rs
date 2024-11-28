@@ -25,6 +25,13 @@ pub struct Pattern {
 }
 
 impl Pattern {
+    /// Convert a [`Pattern`] to a vector of pattern items.
+    ///
+    /// The [`Pattern`] can be restored via the `From` impl.
+    pub fn into_items(self) -> Vec<PatternItem> {
+        self.items
+    }
+
     #[cfg(feature = "datagen")]
     pub(crate) fn items(&self) -> &[PatternItem] {
         &self.items
@@ -38,26 +45,6 @@ impl Pattern {
     #[cfg(any(feature = "serde", test))]
     pub(crate) fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
         runtime::Pattern::from(self)
-    }
-
-    /// Replace fields with their equivalent canonical forms.
-    ///
-    /// For example, replace "GGG" with "G".
-    #[cfg(feature = "datagen")]
-    pub fn canonicalize(&mut self) {
-        use crate::fields::{Field, FieldLength, FieldSymbol};
-
-        for item in self.items.iter_mut() {
-            match item {
-                PatternItem::Field(ref mut field @ Field {
-                    symbol: FieldSymbol::Era,
-                    length: FieldLength::Three
-                }) => {
-                    field.length = FieldLength::One;
-                }
-                _ => {}
-            }
-        }
     }
 }
 

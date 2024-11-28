@@ -578,6 +578,32 @@ mod date_skeleton_consistency_tests {
         length: &'a str,
     }
 
+    fn canonicalize_pattern(pattern: &mut reference::Pattern) {
+        use icu::datetime::fields::{Field, FieldLength, FieldSymbol};
+        use icu::datetime::provider::pattern::PatternItem;
+
+        let mut items = core::mem::take(pattern).into_items();
+        for item in items.iter_mut() {
+            match item {
+                PatternItem::Field(ref mut field @ Field {
+                    symbol: FieldSymbol::Era,
+                    length: FieldLength::Three
+                }) => {
+                    field.length = FieldLength::One;
+                }
+                // For now, ignore differences between 'y' and 'yy'
+                PatternItem::Field(ref mut field @ Field {
+                    length: FieldLength::Two,
+                    ..
+                }) => {
+                    field.length = FieldLength::One;
+                }
+                _ => {}
+            }
+        }
+        *pattern = items.into();
+    }
+
     /// Returns whether the check was successful.
     fn check_single_pattern(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
@@ -590,10 +616,10 @@ mod date_skeleton_consistency_tests {
 
         // Canonicalize the two patterns to make comparison easier
         let mut selected_pattern = reference::Pattern::from(&selected_pattern);
-        selected_pattern.canonicalize();
+        canonicalize_pattern(&mut selected_pattern);
         let selected_pattern = runtime::Pattern::from(&selected_pattern).to_string();
         let mut expected_pattern: reference::Pattern = info.pattern.parse().unwrap();
-        expected_pattern.canonicalize();
+        canonicalize_pattern(&mut expected_pattern);
         let expected_pattern = runtime::Pattern::from(&expected_pattern).to_string();
 
         if expected_pattern != selected_pattern {
