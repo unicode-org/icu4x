@@ -22,6 +22,11 @@ use core_maths::*;
 pub struct RataDie(i64);
 
 impl RataDie {
+    /// The largest value that can be represented by this struct
+    pub const MAX: Self = RataDie(i64::MAX / 256);
+    /// The smallest value that can be represented by this struct
+    pub const MIN: Self = RataDie(i64::MIN / 256);
+
     /// Create a RataDie
     pub const fn new(fixed_date: i64) -> Self {
         let result = Self(fixed_date);
@@ -33,13 +38,13 @@ impl RataDie {
     /// Check that it is in range
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
-        if self.0 > i64::MAX / 256 {
+        if self.0 > Self::MAX.0 {
             debug_assert!(
                 false,
                 "RataDie is not designed to store values near to the overflow boundary"
             );
         }
-        if self.0 < i64::MIN / 256 {
+        if self.0 < Self::MIN.0 {
             debug_assert!(
                 false,
                 "RataDie is not designed to store values near to the overflow boundary"
@@ -50,7 +55,7 @@ impl RataDie {
     /// A valid RataDie that is intended to be below all dates representable in calendars
     #[doc(hidden)] // for testing only
     pub const fn big_negative() -> Self {
-        Self::new(i64::MIN / 256 / 256)
+        Self::new(Self::MIN.0 / 256)
     }
 
     /// Convert this to an i64 value representing the RataDie
