@@ -90,6 +90,7 @@ impl SourceDataProvider {
         ]
         .map(|length| to_components_bag(length, attributes, &data))
         .map(|components| {
+            // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
             let pattern = expand_pp_to_pe(components.select_pattern(
                 &skeleton_patterns,
                 time_lengths_v1.preferred_hour_cycle,
@@ -563,6 +564,21 @@ mod date_skeleton_consistency_tests {
     use crate::CoverageLevel;
     use pattern::CoarseHourCycle;
 
+    /// When canonicalizing the pattern, normalize only (G=GGG) or be more aggressive
+    /// (such as ignoring whitespace and certain punctuation characters)
+    #[derive(Copy, Clone)]
+    enum PatternCanonicalizationStrategy {
+        NormalizeOnly,
+        FlattenNumerics,
+        Aggressive,
+    }
+
+    #[derive(Copy, Clone)]
+    enum TestStrictness {
+        Comprehensive,
+        LowHangingFruit,
+    }
+
     #[derive(Copy, Clone)]
     struct TestCaseFixedArgs<'a> {
         skeleton_patterns: &'a DateSkeletonPatternsV1<'a>,
@@ -570,6 +586,8 @@ mod date_skeleton_consistency_tests {
         length_combinations_v1: &'a GenericLengthPatternsV1<'a>,
         cldr_cal: &'a str,
         locale: &'a DataLocale,
+        skeleton_pattern_set: &'a HashSet<String>,
+        pattern_canonicalization_strategy: PatternCanonicalizationStrategy,
     }
 
     struct TestCaseInfo<'a> {
@@ -578,42 +596,39 @@ mod date_skeleton_consistency_tests {
         length: &'a str,
     }
 
-    fn canonicalize_pattern(pattern: &mut reference::Pattern) {
+    fn canonicalize_pattern(pattern: &mut reference::Pattern, strategy: PatternCanonicalizationStrategy) {
         use icu::datetime::fields::{Field, FieldLength, FieldSymbol};
         use icu::datetime::provider::pattern::PatternItem;
+        use PatternCanonicalizationStrategy::*;
 
         let mut items = core::mem::take(pattern).into_items();
         items.retain_mut(|item| {
-            match item {
-                PatternItem::Field(ref mut field @ Field {
+            match (item, strategy) {
+                (PatternItem::Field(ref mut field @ Field {
                     symbol: FieldSymbol::Era,
                     length: FieldLength::Three
-                }) => {
+                }), NormalizeOnly | Aggressive | FlattenNumerics) => {
                     field.length = FieldLength::One;
                     true
                 }
-                // For now, ignore differences between 'y' and 'yy'
-                PatternItem::Field(ref mut field @ Field {
+                // Ignore differences between 'y' and 'yy'?
+                (PatternItem::Field(ref mut field @ Field {
                     length: FieldLength::Two,
                     ..
-                }) => {
+                }), Aggressive | FlattenNumerics) => {
                     field.length = FieldLength::One;
                     true
                 }
-                // For now, ignore whitespace and ASCII punctuation
-                PatternItem::Literal(' ') => {
-                    false
+                // Ignore differences between 'MMM' and 'MMMM'?
+                (PatternItem::Field(ref mut field @ Field {
+                    length: FieldLength::Four,
+                    ..
+                }), Aggressive | FlattenNumerics) => {
+                    field.length = FieldLength::Three;
+                    true
                 }
-                PatternItem::Literal('.') => {
-                    false
-                }
-                PatternItem::Literal(',') => {
-                    false
-                }
-                PatternItem::Literal('/') => {
-                    false
-                }
-                PatternItem::Literal('-') => {
+                // Ignore whitespace and ASCII punctuation?
+                (PatternItem::Literal(' ' | '.' | ',' | '/' | '-'), Aggressive) => {
                     false
                 }
                 _ => {
@@ -626,6 +641,7 @@ mod date_skeleton_consistency_tests {
 
     /// Returns whether the check was successful.
     fn check_single_pattern(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
+        // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
         let components = components::Bag::from(&parsed_skeleton);
         let PatternPlurals::SinglePattern(selected_pattern) = components.select_pattern(
@@ -634,26 +650,32 @@ mod date_skeleton_consistency_tests {
             data.length_combinations_v1,
         );
 
-        // Canonicalize the two patterns to make comparison easier
+        // Canonicalize the two patterns to make comparison more precise
         let mut selected_pattern = reference::Pattern::from(&selected_pattern);
-        canonicalize_pattern(&mut selected_pattern);
+        canonicalize_pattern(&mut selected_pattern, data.pattern_canonicalization_strategy);
         let selected_pattern = runtime::Pattern::from(&selected_pattern).to_string();
         let mut expected_pattern: reference::Pattern = info.pattern.parse().unwrap();
-        canonicalize_pattern(&mut expected_pattern);
+        let mut pattern_for_lookup = expected_pattern.clone();
+        canonicalize_pattern(&mut expected_pattern, data.pattern_canonicalization_strategy);
         let expected_pattern = runtime::Pattern::from(&expected_pattern).to_string();
+        canonicalize_pattern(&mut pattern_for_lookup, PatternCanonicalizationStrategy::FlattenNumerics);
+        let pattern_for_lookup = runtime::Pattern::from(&pattern_for_lookup).to_string();
 
+        // Check if there is a match
         if expected_pattern != selected_pattern {
             let locale = data.locale;
             let cal = data.cldr_cal;
             let length = info.length;
-            println!("{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}");
-            false
+            let in_available_formats = data.skeleton_pattern_set.contains(&pattern_for_lookup);
+            println!("{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}", if in_available_formats { "MATCH" } else { "MISSING" });
+            // Don't return an error if there is no match in available formats!
+            !in_available_formats
         } else {
             true
         }
     }
 
-    fn check_all_patterns_for_calendar_and_locale(provider: &SourceDataProvider, cldr_cal: &str, locale: &DataLocale) -> usize {
+    fn check_all_patterns_for_calendar_and_locale(provider: &SourceDataProvider, cldr_cal: &str, locale: &DataLocale, strictness: TestStrictness) -> usize {
         let mut num_problems = 0;
         let data = provider
             .get_datetime_resources(&locale, Either::Right(cldr_cal))
@@ -662,12 +684,23 @@ mod date_skeleton_consistency_tests {
         let time_lengths_v1 = TimeLengthsV1::from(&data);
         let skeleton_patterns =
             DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+        let skeleton_pattern_set = data.datetime_formats.available_formats.0.values().map(|pattern_str| {
+            let mut pattern: reference::Pattern = pattern_str.parse().unwrap();
+            // always use NormalizeOnly mode for availableFormats lookup
+            canonicalize_pattern(&mut pattern, PatternCanonicalizationStrategy::FlattenNumerics);
+            runtime::Pattern::from(&pattern).to_string()
+        }).collect::<HashSet<_>>();
         let test_case_data = TestCaseFixedArgs {
             skeleton_patterns: &skeleton_patterns,
             preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
             length_combinations_v1: &length_combinations_v1,
             cldr_cal,
             locale: &locale,
+            skeleton_pattern_set: &skeleton_pattern_set,
+            pattern_canonicalization_strategy: match strictness {
+                TestStrictness::Comprehensive => PatternCanonicalizationStrategy::NormalizeOnly,
+                TestStrictness::LowHangingFruit => PatternCanonicalizationStrategy::Aggressive,
+            },
         };
         num_problems += !check_single_pattern(
             test_case_data,
@@ -715,7 +748,7 @@ mod date_skeleton_consistency_tests {
             .locales_for_coverage_levels([CoverageLevel::Modern])
             .unwrap()
         {
-            num_problems += check_all_patterns_for_calendar_and_locale(&provider, "gregorian", &locale);
+            num_problems += check_all_patterns_for_calendar_and_locale(&provider, "gregorian", &locale, TestStrictness::LowHangingFruit);
         }
         if num_problems != 0 {
             panic!("{num_problems} problems");
@@ -734,7 +767,7 @@ mod date_skeleton_consistency_tests {
                 .locales_for_coverage_levels([CoverageLevel::Modern])
                 .unwrap()
             {
-                num_problems += check_all_patterns_for_calendar_and_locale(&provider, cldr_cal, &locale);
+                num_problems += check_all_patterns_for_calendar_and_locale(&provider, cldr_cal, &locale, TestStrictness::Comprehensive);
             }
         }
         if num_problems != 0 {
