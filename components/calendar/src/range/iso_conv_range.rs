@@ -279,6 +279,17 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
     /// # Note
     ///  Creating of `core::iter::StepBy` is private, so it can't be impl in the Iterator trait
     pub fn step_by(mut self, step: usize) -> Self {
+        self.step_by_wo_boundary_even(step);
+
+        // We should to round the bounds because it can be non-even after changing the step
+        let (from, to) = Self::round_bound(self.from, self.to, self.step.get());
+        self.from = from;
+        self.to = to;
+
+        self
+    }
+
+    fn step_by_wo_boundary_even(&mut self, step: usize) {
         // The doc say: "The method will panic if the given step is `0`."
         assert!(step != 0);
 
@@ -297,27 +308,20 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
             // Safety: `non-zero * non-zero` IS non-zero
             self.step = unsafe { NonZero::new_unchecked(step) };
         }
-        // We should to round the bounds because it can be non-even after changing the step
-        let (from, to) = Self::round_bound(self.from, self.to, self.step.get());
-        self.from = from;
-        self.to = to;
-
-        self
     }
 
     /// Skips next `n` elements of iteration.
-    pub fn skip(self, n: usize) -> Self {
-        if n == 0 {
-            self
-        } else {
+    pub fn skip(mut self, n: usize) -> Self {
+        if n != 0 {
             let step_save = self.step;
-            let mut new_self = self.step_by(n);
+            // We don't want to change the boundaries:
+            self.step_by_wo_boundary_even(n);
             // skip n dates:
-            new_self.next();
+            self.next();
             // returns to prev step:
-            new_self.step = step_save;
-            new_self
+            self.step = step_save;
         }
+        self
     }
 }
 
@@ -574,7 +578,17 @@ mod tests {
                 // println!("---------------");
             }};
         }
-
+        test_iter_mutation!(1..12 : 1 [] SEQ false [2, 2, 3, 10];);
+        test_iter_mutation!(1..12 : 1 [] SEQ true [2, 2, 3, 10];);
+        test_iter_mutation!(1..30 : 2 [REV /] SEQ false [2, 2, 3, 10];);
+        test_iter_mutation!(1..30 : 1 [REV / SKIP 3 /] SEQ false [5, 5, 10, 20];);
+        test_iter_mutation!(1..30 : 1 [REV / STEP 3 /] SEQ false [3, 3, 20];);
+        test_iter_mutation!(1..30 : 1 [REV / STEP 4 / REV /] SEQ false [3, 3, 20];);
+        test_iter_mutation!(1..30 : 1 [SKIP 7 /] SEQ true [3, 3, 20];);
+        test_iter_mutation!(1..30 : 2 [SKIP 3 / STEP 2 / SKIP 2 /] SEQ true [3, 3, 20];);
+        test_iter_mutation!(1..30 : 2 [SKIP 3 / SKIP 4 /] SEQ true [2, 2, 10];);
+        test_iter_mutation!(1..30 : 2 [REV / SKIP 3 / SKIP 4 /] SEQ true [2, 2, 10];);
+        test_iter_mutation!(1..30 : 3 [SKIP 2 / REV / SKIP 2 /] SEQ true [2, 2, 10];);
         test_iter_mutation!(2..27 : 2 [SKIP 2 / STEP 2 / REV / SKIP 1 /] SEQ false [1, 2, 1, 2];);
         test_iter_mutation!(
             2..30 : 1
