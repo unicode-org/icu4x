@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use super::{DateRangeFromIter, DateRangeIter};
 use crate::{AsCalendar, Date};
 use core::ops::{Range, RangeFrom, RangeInclusive};
@@ -7,7 +11,7 @@ pub trait ToDateIter<A: AsCalendar> {
     /// Type of [`Date`] Iterator
     type Iter: Iterator<Item = Date<A>>;
 
-    /// Convert rust range to date range iterator.
+    /// Convert object to date iterator.
     fn to_date_iter(self) -> Self::Iter;
 }
 

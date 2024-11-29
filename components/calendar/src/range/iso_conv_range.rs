@@ -1,21 +1,27 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use core::iter::Iterator;
 use core::num::NonZero;
 
+use crate::{AsCalendar, Date};
 use calendrical_calculations::rata_die::RataDie;
 
-use crate::{AsCalendar, Date};
-
-/// RangeFrom for [`Date`] struct.
+/// Iterator that contains all [`Date`] starting from the specified in [`Self::new`] one
+/// and going through the specified step.
 #[derive(Debug, Clone)]
 pub struct DateRangeFromIter<A: AsCalendar + Clone> {
+    /// [`RataDie`] of a [`Date`] that will be returned (if iterations not ended) on next [`Iterator::next`] call.
     cur: RataDie,
     step: NonZero<i64>,
+    /// Calendar of the Dates.
     calendar: A,
     is_ended: bool,
 }
 
 impl<A: AsCalendar + Clone> DateRangeFromIter<A> {
-    /// Creates new DateRangeFromIter
+    /// Creates new [`DateRangeFromIter`].
     /// # Panic
     /// If step is `0`.
     pub fn new(start: Date<A>, step: i32) -> Self {
@@ -35,6 +41,7 @@ impl<A: AsCalendar + Clone> DateRangeFromIter<A> {
         }
     }
 
+    /// Create a Date from given RataDie as i64.
     #[inline]
     fn date(&self, rata_die_i64: i64) -> Date<A> {
         let date = RataDie::new(rata_die_i64);
@@ -78,6 +85,7 @@ impl<A: AsCalendar + Clone> DateRangeFromIter<A> {
         } else {
             let step_save = self.step;
             let mut new_self = self.step_by(n);
+            // skip next n Dates:
             new_self.next();
             new_self.step = step_save;
             new_self
@@ -94,13 +102,12 @@ impl<A: AsCalendar + Clone> Iterator for DateRangeFromIter<A> {
         }
 
         let rata_die = self.cur.to_i64_date();
-        let next_rata_die = rata_die + self.step.get();
+        let next_rd = rata_die + self.step.get();
 
-        if next_rata_die < RataDie::MIN.to_i64_date() || RataDie::MAX.to_i64_date() < next_rata_die
-        {
+        if next_rd < RataDie::MIN.to_i64_date() || RataDie::MAX.to_i64_date() < next_rd {
             self.is_ended = true;
         } else {
-            self.cur = RataDie::new(next_rata_die);
+            self.cur = RataDie::new(next_rd);
         }
         Some(self.date(rata_die))
     }
@@ -114,12 +121,17 @@ impl<A: AsCalendar + Clone> From<core::ops::RangeFrom<Date<A>>> for DateRangeFro
 
 // ────────────────────────────────────────────────────────────────────────────
 
-/// Range for [`Date`] struct.
+/// Iterator that contains all [`Date`] within a specified range.
 #[derive(Debug, Clone)]
 pub struct DateRangeIter<A: AsCalendar + Clone> {
+    /// [`RataDie`] of a [`Date`] that will be returned (if iterations not ended)
+    ///  on next [`Iterator::next`] call.
     from: RataDie,
+    /// [`RataDie`] of a [`Date`] that will be returned (if iterations not ended)
+    /// on next [`DoubleEndedIterator::next_back`] call.
     to: RataDie,
     step: NonZero<i64>,
+    /// Calendar of the Dates.
     calendar: A,
     is_ended: bool,
 }
@@ -127,7 +139,7 @@ impl<A: AsCalendar + Clone + PartialEq> DateRangeIter<A> {
     fn check_calendar(start: &Date<A>, end: &Date<A>) {
         #[allow(clippy::panic)]
         if start.calendar != end.calendar {
-            panic!("Start and end dates have different calendars!")
+            panic!("Start({start:?}) and end({end:?}) dates have different calendars!")
         }
     }
 
@@ -163,6 +175,16 @@ impl<A: AsCalendar + Clone + PartialEq> DateRangeIter<A> {
 }
 
 impl<A: AsCalendar + Clone> DateRangeIter<A> {
+    /// Rounding the bounds to make it step-even.
+    ///
+    /// For example, if step is 3 and current bounds contains next Dates:\
+    /// `1.12.2024`, `2.12.2024`, `3.12.2024`, `4.12.2024`, `5.12.2024`, i.e.
+    /// `from` -> `1.12.2024`; `to` -> `5.12.2024`\
+    /// After the rounding it will be:\
+    /// `1.12.2024`, `2.12.2024`, `3.12.2024`, `4.12.2024`, i.e.
+    /// `from` -> `1.12.2024`; `to` -> `4.12.2024`.
+    ///
+    /// In other words, make `from` and `to` such that you can get one from other by stepping.
     fn round_bound(from: RataDie, to: RataDie, step: i64) -> (RataDie, RataDie) {
         let from = from.to_i64_date();
         let to = to.to_i64_date();
@@ -204,6 +226,7 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
         }
     }
 
+    /// Create a Date from given RataDie as i64.
     #[inline]
     fn date(&self, rata_die_i64: i64) -> Date<A> {
         let date = RataDie::new(rata_die_i64);
@@ -211,11 +234,13 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
         Date::new_from_iso(iso, self.calendar.clone())
     }
 
+    /// Is direction of stepping backward?
     #[inline(always)]
     fn is_backward(&self) -> bool {
         self.step.get() < 0
     }
 
+    /// Reverse direction of the stepping.
     fn rev_dir(&mut self) {
         // Because of `Self::round_bound` we can just change the sign of step
 
@@ -224,6 +249,7 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
         self.step = unsafe { NonZero::new_unchecked(rev_step) }
     }
 
+    /// Calculate `is_ended` value
     fn calc_is_ended(&mut self) -> bool {
         if !self.is_ended {
             self.is_ended = self.from > self.to;
@@ -266,6 +292,7 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
             // Safety: `non-zero * non-zero` IS non-zero
             self.step = unsafe { NonZero::new_unchecked(step) };
         }
+        // We should to round the bounds because it can be non-even after changing the step
         let (from, to) = Self::round_bound(self.from, self.to, self.step.get());
         self.from = from;
         self.to = to;
@@ -280,7 +307,9 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
         } else {
             let step_save = self.step;
             let mut new_self = self.step_by(n);
+            // skip n dates:
             new_self.next();
+            // returns to prev step:
             new_self.step = step_save;
             new_self
         }
