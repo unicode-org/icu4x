@@ -8,6 +8,16 @@ use core::num::NonZero;
 use crate::{AsCalendar, Date};
 use calendrical_calculations::rata_die::RataDie;
 
+/// Try to create a [`Date`] from given [`RataDie`] as i64.
+#[inline]
+fn date<A: AsCalendar + Clone>(rata_die_i64: i64, calendar: &A) -> Option<Date<A>> {
+    let date = RataDie::new(rata_die_i64);
+    match crate::Iso::iso_try_from_fixed(date) {
+        Ok(iso) => Some(Date::new_from_iso(iso, calendar.clone())),
+        _ => None,
+    }
+}
+
 /// Iterator that contains all [`Date`] starting from the specified in [`Self::new`] one
 /// and going through the specified step.
 #[derive(Debug, Clone)]
@@ -41,14 +51,6 @@ impl<A: AsCalendar + Clone> DateRangeFromIter<A> {
         }
     }
 
-    /// Create a Date from given RataDie as i64.
-    #[inline]
-    fn date(&self, rata_die_i64: i64) -> Date<A> {
-        let date = RataDie::new(rata_die_i64);
-        let iso = crate::Iso::iso_from_fixed(date);
-        Date::new_from_iso(iso, self.calendar.clone())
-    }
-
     /// Creates an iterator starting at the same point, but stepping by the given amount at each iteration.\
     /// It's faster than `Iterator::step_by`, because we not iterate each skipped step actually.
     ///
@@ -65,11 +67,17 @@ impl<A: AsCalendar + Clone> DateRangeFromIter<A> {
 
         // The doc say: "The method will panic if the given step is `0`."
         assert!(step != 0);
+        let is_backward = self.step.get() < 0;
 
         let (step, overflow) = self.step.get().overflowing_mul(step as i64);
         if overflow || MAX_DELTA < step.abs() {
-            // there no diff which value step is, it's more than MAX_DELTA and therefore it's ended from any cur point
-            self.is_ended = true;
+            // there no diff which value step is, it's more than MAX_DELTA and therefore
+            // next iteration will be last from any cur point
+            let sign = if is_backward { -1 } else { 1 };
+            // Safety:
+            // 1. `(|x| + 1) * sign` IS non-zero
+            // 2. delta.abs() << i64::MAX => delta + 1 is'not overflow
+            self.step = unsafe { NonZero::new_unchecked((MAX_DELTA + 1) * sign) };
         } else {
             // Safety: non-zero * non-zero IS non-zero
             self.step = unsafe { NonZero::new_unchecked(step) };
@@ -109,7 +117,12 @@ impl<A: AsCalendar + Clone> Iterator for DateRangeFromIter<A> {
         } else {
             self.cur = RataDie::new(next_rd);
         }
-        Some(self.date(rata_die))
+
+        let ret = date(rata_die, &self.calendar);
+        if ret.is_none() {
+            self.is_ended = true;
+        }
+        ret
     }
 }
 
@@ -226,14 +239,6 @@ impl<A: AsCalendar + Clone> DateRangeIter<A> {
         }
     }
 
-    /// Create a Date from given RataDie as i64.
-    #[inline]
-    fn date(&self, rata_die_i64: i64) -> Date<A> {
-        let date = RataDie::new(rata_die_i64);
-        let iso = crate::Iso::iso_from_fixed(date);
-        Date::new_from_iso(iso, self.calendar.clone())
-    }
-
     /// Is direction of stepping backward?
     #[inline(always)]
     fn is_backward(&self) -> bool {
@@ -324,9 +329,10 @@ impl<A: AsCalendar + Clone> Iterator for DateRangeIter<A> {
             return None;
         }
 
+        let rata_die;
         let step = self.step.get();
         if self.is_backward() {
-            let rata_die = self.to.to_i64_date();
+            rata_die = self.to.to_i64_date();
             let next_rata_die = rata_die + step;
 
             if next_rata_die < self.from.to_i64_date() {
@@ -335,9 +341,8 @@ impl<A: AsCalendar + Clone> Iterator for DateRangeIter<A> {
                 // Because `new_rata_die` is MOE than `self.from` => it's in `RataDie` bounds
                 self.to = RataDie::new(next_rata_die);
             }
-            Some(self.date(rata_die))
         } else {
-            let rata_die = self.from.to_i64_date();
+            rata_die = self.from.to_i64_date();
             let next_rata_die = rata_die + step;
 
             if self.to.to_i64_date() < next_rata_die {
@@ -346,8 +351,13 @@ impl<A: AsCalendar + Clone> Iterator for DateRangeIter<A> {
                 // Because `new_rata_die` is LOE than `self.to` => it's in `RataDie` bounds
                 self.from = RataDie::new(next_rata_die);
             }
-            Some(self.date(rata_die))
         }
+
+        let ret = date(rata_die, &self.calendar);
+        if ret.is_none() {
+            self.is_ended = true;
+        }
+        ret
     }
 }
 
@@ -583,5 +593,103 @@ mod tests {
         test_iter_mutation!(1..12 : 3 [SKIP 1 / STEP 3 / REV / REV / REV /] SEQ true [1, 1];);
         test_iter_mutation!(1..12 : 3 [] SEQ false [1]; [REV / STEP 3 /] SEQ false [1, 1, 2];);
         test_iter_mutation!(1..12 : 3 [] SEQ false [1]; [REV / STEP 3 /] SEQ false [0, 1, 2];);
+    }
+
+    #[test]
+    fn test_range_from_bound_cases() {
+        let delta = 100;
+        let n = 4;
+        let step = delta / n;
+        assert!(delta % n == 0);
+
+        let max_date = Date::try_new_iso(i32::MAX, 12, 31).unwrap();
+        let max_date_i64 = max_date.to_fixed().to_i64_date();
+
+        let min_date = Date::try_new_iso(i32::MIN, 1, 1).unwrap();
+        let min_date_i64 = min_date.to_fixed().to_i64_date();
+
+        let max_date_test = |shift: i64| {
+            assert!(shift.abs() < step);
+            let inint_date_i64 = max_date_i64 - delta + shift;
+            let date = RataDie::new(inint_date_i64);
+            let date = Iso::iso_from_fixed(date);
+            let mut iter = DateRangeFromIter::from(date..).step_by(step as usize);
+
+            let mut expected = vec![];
+            let to = if shift > 0 { n - 1 } else { n };
+            for i in 0..=to {
+                let date = RataDie::new(inint_date_i64 + step * i);
+                let date = Iso::iso_from_fixed(date);
+                expected.push(Some(date));
+            }
+            expected.push(None);
+
+            for expected_one in expected {
+                let real = iter.next();
+                assert_eq!(real, expected_one);
+            }
+        };
+
+        let min_date_test = |shift: i64| {
+            assert!(shift.abs() < step);
+            let inint_date_i64 = min_date_i64 + delta + shift;
+            let date = RataDie::new(inint_date_i64);
+            let date = Iso::iso_from_fixed(date);
+            // backward direction:
+            let mut iter = DateRangeFromIter::new(date, -1).step_by(step as usize);
+
+            let mut expected = vec![];
+            let to = if shift < 0 { n - 1 } else { n };
+            for i in 0..=to {
+                let date = RataDie::new(inint_date_i64 - step * i);
+                let date = Iso::iso_from_fixed(date);
+                expected.push(Some(date));
+            }
+            expected.push(None);
+
+            for expected_one in expected {
+                let real = iter.next();
+                assert_eq!(real, expected_one);
+            }
+        };
+
+        // Exact max date test:
+        max_date_test(0);
+        max_date_test(-1);
+        // Last date right after the max:
+        max_date_test(1);
+        // Shifted max date test:
+        max_date_test(-step / 3);
+        max_date_test(step / 3);
+
+        // Exact min date test:
+        min_date_test(0);
+        min_date_test(-1);
+        // Last date right after the min:
+        min_date_test(1);
+        // Shifted min date test:
+        min_date_test(-step / 3);
+        min_date_test(step / 3);
+
+        // Too big step test:
+        let random_date = Date::try_new_iso(2024, 11, 29).unwrap();
+        let iter = DateRangeFromIter::from(random_date..);
+        // One step iter (Step is more than RataDie::MAX - RataDie::MIN):
+        let mut iter = iter
+            .step_by((1 << 20) + 2567)
+            .step_by((1 << 20) + 123)
+            .step_by((1 << 18) + 7);
+        assert_eq!(iter.next(), Some(random_date));
+        assert_eq!(iter.next(), None);
+        assert!(iter.step.get() > 0);
+
+        // Too big backward step test:
+        let random_date = Date::try_new_iso(2024, 11, 29).unwrap();
+        let iter = DateRangeFromIter::new(random_date, -((1 << 20) + 256));
+        // One step iter (Step is more than RataDie::MAX - RataDie::MIN):
+        let mut iter = iter.step_by((1 << 20) + 123).step_by((1 << 18) + 7);
+        assert_eq!(iter.next(), Some(random_date));
+        assert_eq!(iter.next(), None);
+        assert!(iter.step.get() < 0);
     }
 }

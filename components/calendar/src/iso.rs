@@ -334,17 +334,21 @@ impl Iso {
         Date::try_new_iso(year, month, day).unwrap()
     }
     pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
-        let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
+        match Self::iso_try_from_fixed(date) {
+            Ok(date) => date,
             Err(I32CastError::BelowMin) => {
-                return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
+                Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
             }
             Err(I32CastError::AboveMax) => {
-                return Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
+                Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
             }
-            Ok(ymd) => ymd,
-        };
-        #[allow(clippy::unwrap_used)] // valid day and month
-        Date::try_new_iso(year, month, day).unwrap()
+        }
+    }
+    pub(crate) fn iso_try_from_fixed(date: RataDie) -> Result<Date<Iso>, I32CastError> {
+        calendrical_calculations::iso::iso_from_fixed(date).map(|(year, month, day)| {
+            #[allow(clippy::unwrap_used)] // valid day and month
+            Date::try_new_iso(year, month, day).unwrap()
+        })
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
