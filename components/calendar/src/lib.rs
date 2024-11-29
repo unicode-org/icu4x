@@ -213,4 +213,5 @@ pub use gregorian::Gregorian;
 pub use iso::Iso;
 pub use types::Time;
 
-mod range;
+/// Ranges for `Date` struct
+pub mod range;
