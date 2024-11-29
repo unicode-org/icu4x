@@ -454,7 +454,6 @@ mod tests {
         test_iter_mutation!(1 [SKIP 2 / SKIP 3 / STEP 2 / STEP 1 / STEP 3 / SKIP 1 /]);
     }
 
-    // TODO:MAKE OK
     #[test]
     fn test_range_iter_mutations() {
         const YEAR: i32 = 2025;
