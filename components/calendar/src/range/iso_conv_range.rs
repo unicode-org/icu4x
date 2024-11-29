@@ -692,4 +692,133 @@ mod tests {
         assert_eq!(iter.next(), None);
         assert!(iter.step.get() < 0);
     }
+
+    #[test]
+    fn test_range_bound_cases() {
+        let random_date = Date::try_new_iso(2024, 11, 29).unwrap();
+        let min_date = Date::try_new_iso(i32::MIN, 1, 1).unwrap();
+        let max_date = Date::try_new_iso(i32::MAX, 12, 31).unwrap();
+
+        // Empty iters:
+        for date in [min_date, random_date, max_date] {
+            let mut empty_iter = DateRangeIter::from(date..date);
+            assert_eq!(empty_iter.next(), None);
+
+            let mut empty_iter = DateRangeIter::from(date..min_date);
+            assert_eq!(empty_iter.next(), None);
+
+            let mut empty_iter = DateRangeIter::from(max_date..min_date);
+            assert_eq!(empty_iter.next(), None);
+
+            let mut empty_iter = DateRangeIter::from(date..min_date).rev();
+            assert_eq!(empty_iter.next(), None);
+
+            let mut empty_iter = DateRangeIter::from(max_date..min_date).rev();
+            assert_eq!(empty_iter.next(), None);
+        }
+
+        // Single iters:
+        for date in [min_date, random_date, max_date] {
+            let mut single_iter = DateRangeIter::from(date..=date);
+            assert_eq!(single_iter.next(), Some(date));
+            assert_eq!(single_iter.next(), None);
+
+            let mut single_iter = DateRangeIter::from(date..=date).rev();
+            assert_eq!(single_iter.next(), Some(date));
+            assert_eq!(single_iter.next(), None);
+
+            let mut single_iter = DateRangeIter::from(date..=date).step_by(1337);
+            assert_eq!(single_iter.next(), Some(date));
+            assert_eq!(single_iter.next(), None);
+        }
+
+        let l_date = Date::try_new_iso(-9999, 1, 1).unwrap();
+        let r_date = Date::try_new_iso(9999, 3, 3).unwrap();
+
+        let bstep_1 = (1 << 23) + 13;
+        let bstep_2 = 1 << 20;
+        let bstep_3 = (1 << 15) + 137;
+
+        // Too big steps:
+        let iter_init = DateRangeIter::from(l_date..=r_date);
+        // steps more than RataDie max min delta:
+        let mut iter = iter_init
+            .clone()
+            .step_by(bstep_1)
+            .step_by(bstep_2)
+            .step_by(bstep_3);
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_init
+            .clone()
+            .step_by(bstep_1)
+            .rev()
+            .step_by(bstep_2)
+            .step_by(bstep_3);
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let iter_rev = iter_init.clone().rev();
+        let mut iter = iter_rev
+            .clone()
+            .step_by(bstep_1)
+            .step_by(bstep_2)
+            .step_by(bstep_3);
+        assert_eq!(iter.next(), Some(r_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_rev
+            .clone()
+            .step_by(bstep_1)
+            .rev()
+            .step_by(bstep_2)
+            .step_by(bstep_3);
+        assert_eq!(iter.next(), Some(r_date));
+        assert_eq!(iter.next(), None);
+        // steps more than dates day delta:
+        let big_step = (9999 * 2 + 3) * 366;
+        let step_1 = 1379;
+        let step_2 = (big_step / 1379) + 1;
+        let mut iter = iter_init.clone().step_by(step_1).step_by(step_2);
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_init
+            .clone()
+            .step_by(step_1)
+            .rev()
+            .rev()
+            .step_by(step_2)
+            .rev();
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let iter_rev = iter_init.rev();
+        let mut iter = iter_rev.clone().step_by(step_1).step_by(step_2);
+        assert_eq!(iter.next(), Some(r_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_rev.clone().step_by(step_1).step_by(step_2).rev();
+        assert_eq!(iter.next(), Some(r_date));
+        assert_eq!(iter.next(), None);
+
+        // Excluded upper boundary:
+        let pre_r_date = Date::try_new_iso(9999, 3, 2).unwrap();
+        let iter_init = DateRangeIter::from(l_date..r_date);
+        // steps more than dates day delta:
+        let mut iter = iter_init.clone().step_by(step_1).step_by(step_2);
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_init
+            .clone()
+            .step_by(step_1)
+            .rev()
+            .rev()
+            .step_by(step_2)
+            .rev();
+        assert_eq!(iter.next(), Some(l_date));
+        assert_eq!(iter.next(), None);
+        let iter_rev = iter_init.rev();
+        let mut iter = iter_rev.clone().step_by(step_1).step_by(step_2);
+        assert_eq!(iter.next(), Some(pre_r_date));
+        assert_eq!(iter.next(), None);
+        let mut iter = iter_rev.clone().step_by(step_1).step_by(step_2).rev();
+        assert_eq!(iter.next(), Some(pre_r_date));
+        assert_eq!(iter.next(), None);
+    }
 }
