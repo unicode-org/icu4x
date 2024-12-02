@@ -28,6 +28,7 @@ define_preferences!(
     [Copy]
     CompactDecimalFormatterPreferences,
     {
+        /// The numbering system used for formatting.
         numbering_system: NumberingSystem
     }
 );
