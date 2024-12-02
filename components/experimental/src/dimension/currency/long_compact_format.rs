@@ -48,3 +48,39 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
         interpolated.write_to(sink)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use icu_locale_core::locale;
+    use tinystr::*;
+    use writeable::assert_writeable_eq;
+
+    use crate::dimension::currency::{
+        long_compact_format::LongCompactFormattedCurrency,
+        long_compact_formatter::LongCompactCurrencyFormatter, CurrencyCode,
+    };
+
+    #[test]
+    pub fn test_en_us() {
+        let currency_formatter_prefs = locale!("en-US").into();
+        let compact_decimal_formatter_prefs = locale!("en-US").into();
+
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            compact_decimal_formatter_prefs,
+            &currency_code,
+        )
+        .unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12,345.67 US dollars");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12,345.67 US dollars");
+    }
+}
