@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::CurrencyCode;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
@@ -14,7 +14,7 @@ use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 
 pub struct LongCompactFormattedCurrency<'l> {
-    pub(crate) decimal_value: &'l FixedDecimal,
+    pub(crate) decimal_value: &'l SignedFixedDecimal,
     pub(crate) compact_value: &'l CompactDecimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
