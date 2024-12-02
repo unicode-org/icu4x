@@ -14,13 +14,17 @@ use icu_provider::prelude::*;
 use crate::{
     compactdecimal::CompactDecimalFormatter,
     compactdecimal::CompactDecimalFormatterOptions,
+    compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::{
         currency_patterns::CurrencyPatternsDataV1Marker,
         extended_currency::CurrencyExtendedDataV1Marker,
     },
 };
 
-use super::{long_compact_format::LongCompactFormattedCurrency, CurrencyCode};
+use super::{
+    formatter::CurrencyFormatterPreferences, long_compact_format::LongCompactFormattedCurrency,
+    CurrencyCode,
+};
 
 extern crate alloc;
 
@@ -38,6 +42,7 @@ pub struct LongCompactCurrencyFormatter {
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1Marker>,
 
+    // TODO: maybe this will not be needed.
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
 
@@ -50,7 +55,7 @@ pub struct LongCompactCurrencyFormatter {
 
 impl LongCompactCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale: &DataLocale, currency_code: &CurrencyCode) -> error: DataError,
+        (currency_formatter_prefs: CurrencyFormatterPreferences, compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -66,12 +71,18 @@ impl LongCompactCurrencyFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, currency_code: &CurrencyCode) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+    pub fn try_new(
+        currency_formatter_prefs: CurrencyFormatterPreferences,
+        compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
+            (&currency_formatter_prefs).into(),
+            FixedDecimalFormatterOptions::default(),
+        )?;
 
         let compact_decimal_formatter = CompactDecimalFormatter::try_new_long(
-            locale,
+            (&compact_decimal_formatter_prefs).into(),
             CompactDecimalFormatterOptions::default(),
         )?;
 
