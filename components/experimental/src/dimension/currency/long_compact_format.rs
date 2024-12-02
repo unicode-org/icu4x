@@ -15,7 +15,8 @@ use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 
 pub struct LongCompactFormattedCurrency<'l> {
     pub(crate) decimal_value: &'l SignedFixedDecimal,
-    pub(crate) compact_value: &'l CompactDecimal,
+    // TODO: check if this needs to be here or on the fly.
+    // pub(crate) compact_value: &'l CompactDecimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
