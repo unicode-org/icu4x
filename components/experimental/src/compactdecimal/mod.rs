@@ -27,4 +27,5 @@ pub mod provider;
 
 pub use error::ExponentError;
 pub use formatter::CompactDecimalFormatter;
+pub use formatter::CompactDecimalFormatterPreferences;
 pub use options::CompactDecimalFormatterOptions;
