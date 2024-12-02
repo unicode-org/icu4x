@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 void main() {
   Logger.initSimpleLogger();
 
-  test('FixedDecimal.toString', () {
-    final x = FixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
+  test('SignedFixedDecimal.toString', () {
+    final x = SignedFixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
     expect(x.toString(), '1.4940300');
   });
 

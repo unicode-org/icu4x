@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::preferences::{
@@ -110,7 +110,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
         )
     }
 
-    /// Formats a [`FixedDecimal`] value for the given percent code.
+    /// Formats a [`SignedFixedDecimal`] value for the given percent code.
     ///
     /// # Examples
     /// ```
@@ -126,7 +126,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
     /// formatted_percent.write_to(&mut sink).unwrap();
     /// assert_eq!(sink.as_str(), "12,345.67%");
     /// ```
-    pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedPercent<'l> {
+    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedPercent<'l> {
         FormattedPercent {
             value,
             essential: self.essential.get(),

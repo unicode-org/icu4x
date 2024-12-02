@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Fixed Decimal Format object, capable of formatting a [`FixedDecimal`] as a string.
+/// An ICU4X Fixed Decimal Format object, capable of formatting a [`SignedFixedDecimal`] as a string.
 ///
 /// See the [Rust documentation for `FixedDecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
 final class FixedDecimalFormatter implements ffi.Finalizable {
@@ -51,10 +51,10 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     return FixedDecimalFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`FixedDecimal`] to a string.
+  /// Formats a [`SignedFixedDecimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
-  String format(FixedDecimal value) {
+  String format(SignedFixedDecimal value) {
     final write = _Write();
     _icu4x_FixedDecimalFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();

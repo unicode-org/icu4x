@@ -7,15 +7,15 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
-use fixed_decimal::FixedDecimal;
 use fixed_decimal::Sign;
+use fixed_decimal::SignedFixedDecimal;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
     pub(crate) digits: &'l DecimalDigitsV1,
@@ -41,7 +41,7 @@ impl Writeable for FormattedFixedDecimal<'_> {
         if let Some(affixes) = affixes {
             sink.write_str(affixes.0)?;
         }
-        let range = self.value.magnitude_range();
+        let range = self.value.absolute.magnitude_range();
         let upper_magnitude = *range.end();
         for m in range.rev() {
             if m == -1 {

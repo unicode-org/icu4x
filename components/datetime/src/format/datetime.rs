@@ -11,7 +11,7 @@ use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
 
 use core::fmt::{self, Write};
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::types::{DayOfWeekInMonth, IsoWeekday};
 use icu_decimal::FixedDecimalFormatter;
 use writeable::{Part, Writeable};
@@ -20,7 +20,7 @@ use writeable::{Part, Writeable};
 fn try_write_number<W>(
     result: &mut W,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    mut num: FixedDecimal,
+    mut num: SignedFixedDecimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -115,7 +115,7 @@ where
         }
         (FieldSymbol::Year(Year::Calendar), l) => {
             input!(year = input.year);
-            let mut year = FixedDecimal::from(year.era_year_or_extended());
+            let mut year = SignedFixedDecimal::from(year.era_year_or_extended());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
                 year.set_max_position(2);
@@ -157,9 +157,12 @@ where
             input!(related_iso = year.related_iso());
 
             // Always in latin digits according to spec
-            FixedDecimal::from(related_iso)
-                .padded_start(l.to_len() as i16)
-                .write_to(w)?;
+            {
+                let mut num = SignedFixedDecimal::from(related_iso);
+                num.pad_start(l.to_len() as i16);
+                num
+            }
+            .write_to(w)?;
             Ok(())
         }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
@@ -180,17 +183,20 @@ where
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     debug_assert!(l == FieldLength::One);
                     if let Some(fdf) = fdf {
+                        let mut num = SignedFixedDecimal::from(month.ordinal);
+                        num.pad_start(l.to_len() as i16);
                         substitution_pattern
-                            .interpolate([fdf.format(
-                                &FixedDecimal::from(month.ordinal).padded_start(l.to_len() as i16),
-                            )])
+                            .interpolate([fdf.format(&num)])
                             .write_to(w)?;
                         Ok(())
                     } else {
                         w.with_part(Part::ERROR, |w| {
                             substitution_pattern
-                                .interpolate([FixedDecimal::from(month.ordinal)
-                                    .padded_start(l.to_len() as i16)])
+                                .interpolate([{
+                                    let mut num = SignedFixedDecimal::from(month.ordinal);
+                                    num.pad_start(l.to_len() as i16);
+                                    num
+                                }])
                                 .write_to(w)
                         })?;
                         Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
@@ -295,9 +301,12 @@ where
             input!(nanosecond = input.nanosecond);
 
             // Formatting with fractional seconds
-            let mut s = FixedDecimal::from(second.number());
-            let _infallible =
-                s.concatenate_end(FixedDecimal::from(nanosecond.number()).multiplied_pow10(-9));
+            let mut s = SignedFixedDecimal::from(second.number());
+            let _infallible = s.concatenate_end(
+                SignedFixedDecimal::from(nanosecond.number())
+                    .absolute
+                    .multiplied_pow10(-9),
+            );
             debug_assert!(_infallible.is_ok());
             let position = -(decimal_second as i16);
             s.trunc(position);
@@ -514,7 +523,7 @@ mod tests {
                 try_write_number(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
                     Some(&fixed_decimal_format),
-                    FixedDecimal::from(*value),
+                    SignedFixedDecimal::from(*value),
                     *length,
                 )
                 .unwrap()
