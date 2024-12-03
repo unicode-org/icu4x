@@ -202,7 +202,7 @@ impl LongCompactCurrencyFormatter {
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
     /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "12,345.67 US dollars");
+    /// assert_eq!(sink.as_str(), "12 thousand US dollars");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,

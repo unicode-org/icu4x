@@ -9,6 +9,8 @@ use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
+use core::str::FromStr;
+
 use crate::compactdecimal::CompactDecimalFormatter;
 use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
@@ -34,6 +36,7 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
         W: core::fmt::Write + ?Sized,
     {
         let decimal_operands = self.decimal_value.into();
+
         // let compact_operands = self.compact_value.into();
         let display_name = self
             .extended
@@ -43,7 +46,12 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
             .patterns
             .patterns
             .get(decimal_operands, self.plural_rules);
-        let formatted_value = self.fixed_decimal_formatter.format(self.decimal_value);
+
+        // let compact_value = CompactDecimal::from_str(self.decimal_value.to_string().as_str()).unwrap();
+        let formatted_value = self
+            .compact_decimal_formatter
+            .format_fixed_decimal(self.decimal_value.to_owned());
+
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
     }
@@ -76,11 +84,11 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "12,345.67 US dollars");
+        assert_writeable_eq!(formatted_currency, "12 thousand US dollars");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "-12,345.67 US dollars");
+        assert_writeable_eq!(formatted_currency, "-12 thousand US dollars");
     }
 }
