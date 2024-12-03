@@ -8,7 +8,7 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::locale;
 
@@ -34,7 +34,7 @@ fn overview_bench(c: &mut Criterion) {
             // ranging from -1e9 to 1e9.
             let fdf = FixedDecimalFormatter::try_new(prefs, options).unwrap();
             for &num in &nums {
-                let fd = FixedDecimal::from(black_box(num));
+                let fd = SignedFixedDecimal::from(black_box(num));
                 fdf.format_to_string(&fd);
             }
         });

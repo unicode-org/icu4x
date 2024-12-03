@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::{
-        errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal, locale_core::ffi::Locale,
+        errors::ffi::DataError, fixed_decimal::ffi::SignedFixedDecimal, locale_core::ffi::Locale,
         provider::ffi::DataProvider,
     };
     use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatterPreferences};
@@ -17,7 +17,7 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// An ICU4X Fixed Decimal Format object, capable of formatting a [`FixedDecimal`] as a string.
+    /// An ICU4X Fixed Decimal Format object, capable of formatting a [`SignedFixedDecimal`] as a string.
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedFixedDecimal, Struct, hidden)]
     pub struct FixedDecimalFormatter(pub icu_decimal::FixedDecimalFormatter);
@@ -139,7 +139,7 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`FixedDecimal`] to a string.
+        /// Formats a [`SignedFixedDecimal`] to a string.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::decimal::FixedDecimalFormatter::format_to_string,
@@ -149,7 +149,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal, Struct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedFixedDecimal::to_string, FnInStruct, hidden)]
-        pub fn format(&self, value: &FixedDecimal, write: &mut diplomat_runtime::DiplomatWrite) {
+        pub fn format(
+            &self,
+            value: &SignedFixedDecimal,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
     }

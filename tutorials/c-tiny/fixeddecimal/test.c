@@ -4,7 +4,7 @@
 
 #include "DataProvider.h"
 #include "Locale.h"
-#include "FixedDecimal.h"
+#include "SignedFixedDecimal.h"
 #include "FixedDecimalFormatter.h"
 #include <string.h>
 #include <stdio.h>
@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
     }
 
     DataProvider* provider = icu4x_DataProvider_compiled_mv1();
-    FixedDecimal* decimal = icu4x_FixedDecimal_from_uint64_mv1(1000007);
-    icu4x_FixedDecimal_round_mv1(decimal, 0);
+    SignedFixedDecimal* decimal = icu4x_SignedFixedDecimal_from_uint64_mv1(1000007);
+    icu4x_SignedFixedDecimal_round_mv1(decimal, 0);
 
     FixedDecimalGroupingStrategy_option o = {.ok = FixedDecimalGroupingStrategy_Auto, .is_ok = true};
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    icu4x_FixedDecimal_destroy_mv1(decimal);
+    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
     icu4x_FixedDecimalFormatter_destroy_mv1(fdf);
     icu4x_Locale_destroy_mv1(locale);
     icu4x_DataProvider_destroy_mv1(provider);
