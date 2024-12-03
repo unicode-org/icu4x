@@ -159,9 +159,9 @@ impl LongCurrencyFormatter {
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///
-    /// let locale = locale!("en-US").into();
+    /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCurrencyFormatter::try_new(locale, &currency_code).unwrap();
+    /// let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
