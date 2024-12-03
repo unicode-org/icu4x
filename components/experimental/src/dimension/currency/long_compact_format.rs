@@ -3,23 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::CurrencyCode;
-use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
-
-use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::PluralRules;
-use writeable::Writeable;
-
-use core::str::FromStr;
-
 use crate::compactdecimal::CompactDecimalFormatter;
 use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
+use fixed_decimal::SignedFixedDecimal;
+use icu_plurals::PluralRules;
+use writeable::Writeable;
 
 pub struct LongCompactFormattedCurrency<'l> {
     pub(crate) signed_fixed_decimal: &'l SignedFixedDecimal,
-    // TODO: check if this needs to be here or on the fly.
-    // pub(crate) compact_value: &'l CompactDecimal,
-    // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
     pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
@@ -34,26 +26,15 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        // TODO: this is the correct one.
-        let compact_value = CompactDecimal::from_str(self.signed_fixed_decimal.to_string().as_str()).unwrap();
-        let compact_value = CompactDecimal::from_str("+1.20c6").unwrap();
-        let compact_operands = (&compact_value).into();
-        
+        let operands = self.signed_fixed_decimal.into();
+
         // let compact_operands = self.compact_value.into();
-        let display_name = self
-            .extended
-            .display_names
-            .get(compact_operands, self.plural_rules);
-        let pattern = self
-            .patterns
-            .patterns
-            .get(compact_operands, self.plural_rules);
+        let display_name = self.extended.display_names.get(operands, self.plural_rules);
+        let pattern = self.patterns.patterns.get(operands, self.plural_rules);
 
         let formatted_value = self
             .compact_decimal_formatter
-            .format_compact_decimal(&compact_value).unwrap(); // TODO: handle error
-
-
+            .format_fixed_decimal(self.signed_fixed_decimal.to_owned());
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
     }
@@ -65,10 +46,8 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::{
-        long_compact_format::LongCompactFormattedCurrency,
-        long_compact_formatter::LongCompactCurrencyFormatter, CurrencyCode,
-    };
+    use crate::dimension::currency::CurrencyCode;
+    use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
 
     #[test]
     pub fn test_en_us() {
