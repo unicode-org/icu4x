@@ -188,15 +188,16 @@ impl LongCompactCurrencyFormatter {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::long_formatter::LongCurrencyFormatter;
+    /// use icu::experimental::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///
-    /// let locale = locale!("en-US").into();
+    /// let currency_prefs = locale!("en-US").into();
+    /// let compact_decimal_prefs = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let fmt = LongCompactCurrencyFormatter::try_new(currency_prefs, compact_decimal_prefs, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
