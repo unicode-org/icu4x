@@ -12,6 +12,7 @@ use writeable::Writeable;
 
 pub struct LongCompactFormattedCurrency<'l> {
     pub(crate) signed_fixed_decimal: &'l SignedFixedDecimal,
+    // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
     pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
@@ -46,8 +47,8 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::CurrencyCode;
     use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
+    use crate::dimension::currency::CurrencyCode;
 
     #[test]
     pub fn test_en_us() {
@@ -71,5 +72,77 @@ mod tests {
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
         assert_writeable_eq!(formatted_currency, "-12 thousand US dollars");
+    }
+
+    #[test]
+    pub fn test_en_us_millions() {
+        let currency_formatter_prefs = locale!("en-US").into();
+        let compact_decimal_formatter_prefs = locale!("en-US").into();
+
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            compact_decimal_formatter_prefs,
+            &currency_code,
+        )
+        .unwrap();
+
+        // Positive case
+        let positive_value = "12345000.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12 million US dollars");
+
+        // Negative case
+        let negative_value = "-12345000.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12 million US dollars");
+    }
+
+    #[test]
+    pub fn test_fr_fr() {
+        let currency_formatter_prefs = locale!("fr-FR").into();
+        let compact_decimal_formatter_prefs = locale!("fr-FR").into();
+
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            compact_decimal_formatter_prefs,
+            &currency_code,
+        )
+        .unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12 mille dollars des États-Unis");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12 mille dollars des États-Unis");
+    }
+
+    #[test]
+    pub fn test_fr_fr_millions() {
+        let currency_formatter_prefs = locale!("fr-FR").into();
+        let compact_decimal_formatter_prefs = locale!("fr-FR").into();
+
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = LongCompactCurrencyFormatter::try_new(
+            currency_formatter_prefs,
+            compact_decimal_formatter_prefs,
+            &currency_code,
+        )
+        .unwrap();
+
+        // Positive case
+        let positive_value = "12345000.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12 millions dollars des États-Unis");
+
+        // Negative case
+        let negative_value = "-12345000.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12 millions dollars des États-Unis");
     }
 }

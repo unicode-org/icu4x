@@ -4,10 +4,7 @@
 
 //! Experimental.
 
-use core::str::FromStr;
-
-use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
-use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
+use fixed_decimal::SignedFixedDecimal;
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
@@ -41,7 +38,6 @@ pub struct LongCompactCurrencyFormatter {
 
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1Marker>,
-
 
     /// A [`CompactDecimalFormatter`] to format the currency value.
     compact_decimal_formatter: CompactDecimalFormatter,
@@ -77,11 +73,6 @@ impl LongCompactCurrencyFormatter {
         compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&currency_formatter_prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
-
         let compact_decimal_formatter = CompactDecimalFormatter::try_new_long(
             compact_decimal_formatter_prefs,
             CompactDecimalFormatterOptions::default(),
@@ -138,11 +129,6 @@ impl LongCompactCurrencyFormatter {
         let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
             currency_formatter_prefs.locale_prefs,
         );
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
-            provider,
-            (&currency_formatter_prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
