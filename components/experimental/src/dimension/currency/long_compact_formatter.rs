@@ -112,7 +112,6 @@ impl LongCompactCurrencyFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    #[cfg(feature = "compiled_data")]
     pub fn try_new_unstable<D>(
         provider: &D,
         currency_formatter_prefs: CurrencyFormatterPreferences,
@@ -121,11 +120,14 @@ impl LongCompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
-            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<
+                crate::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker,
+            > + DataProvider<
+                crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker,
+            > + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<icu_plurals::provider::CardinalV1Marker>
+            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
     {
         let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
             currency_formatter_prefs.locale_prefs,
@@ -153,7 +155,8 @@ impl LongCompactCurrencyFormatter {
         let plural_rules =
             PluralRules::try_new_cardinal_unstable(provider, (&currency_formatter_prefs).into())?;
 
-        let compact_decimal_formatter = CompactDecimalFormatter::try_new_long(
+        let compact_decimal_formatter = CompactDecimalFormatter::try_new_long_unstable(
+            provider,
             compact_decimal_formatter_prefs,
             CompactDecimalFormatterOptions::default(),
         )?;
