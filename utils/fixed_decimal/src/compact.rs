@@ -32,6 +32,20 @@ impl CompactDecimal {
         }
     }
 
+    /// Constructs a [`CompactDecimal`] from a [`SignedFixedDecimal`].
+    ///
+    /// Example:
+    /// ```
+    /// # use fixed_decimal::CompactDecimal;
+    /// # use fixed_decimal::SignedFixedDecimal;
+    /// # use std::str::FromStr;
+    /// #
+    /// assert_eq!(CompactDecimal::from_fixed_decimal(SignedFixedDecimal::from_str("+1.20").unwrap()), CompactDecimal::from_str("+1.20").unwrap());
+    /// ```
+    pub fn from_fixed_decimal(fixed_decimal: SignedFixedDecimal) -> Self {
+        Self::from_significand_and_exponent(fixed_decimal, 0)
+    }
+
     /// Returns a reference to the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
