@@ -30,8 +30,6 @@ extern crate alloc;
 /// [`LongCompactCurrencyFormatter`] supports:
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
-///
-/// Read more about the options in the [`super::options`] module.
 pub struct LongCompactCurrencyFormatter {
     /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1Marker>,
@@ -39,7 +37,7 @@ pub struct LongCompactCurrencyFormatter {
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1Marker>,
 
-    /// A [`CompactDecimalFormatter`] to format the currency value.
+    /// A [`CompactDecimalFormatter`] to format the currency value in compact form.
     compact_decimal_formatter: CompactDecimalFormatter,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
