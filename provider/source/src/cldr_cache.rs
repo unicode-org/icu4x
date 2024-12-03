@@ -16,6 +16,7 @@ use icu_provider::DataError;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::make_forking_provider;
+use writeable::Writeable;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -91,7 +92,7 @@ impl CldrCache {
         levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<DataLocale>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
-        Ok(self
+        let mut locales: Vec<DataLocale> = self
             .serde_cache
             .read_and_parse_json::<crate::cldr_serde::coverage_levels::Resource>(
                 "cldr-core/coverageLevels.json",
@@ -103,7 +104,12 @@ impl CldrCache {
             .map(Into::into)
             // `und` needs to be part of every set
             .chain([Default::default()])
-            .collect())
+            .collect();
+        locales.sort_by(|a, b| {
+            let b = b.write_to_string();
+            a.strict_cmp(b.as_bytes())
+        });
+        Ok(locales)
     }
 
     pub(crate) fn dir_suffix(&self) -> Result<&'static str, DataError> {

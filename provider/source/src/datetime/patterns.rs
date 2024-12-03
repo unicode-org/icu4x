@@ -107,7 +107,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengthsV1<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatternsV1::from(other);
+        let skeletons_v1 = DateSkeletonPatternsV1::from(&other.datetime_formats.available_formats);
 
         let pattern_str_full = other.time_formats.full.get_pattern();
         let pattern_str_long = other.time_formats.long.get_pattern();

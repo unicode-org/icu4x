@@ -230,6 +230,10 @@ pub(crate) struct Dates {
     pub(crate) date_formats: LengthPatterns,
     #[serde(rename = "timeFormats")]
     pub(crate) time_formats: LengthPatterns,
+    #[serde(rename = "dateSkeletons")]
+    pub(crate) date_skeletons: LengthPatterns,
+    #[serde(rename = "timeSkeletons")]
+    pub(crate) time_skeletons: LengthPatterns,
     #[serde(rename = "dateTimeFormats")]
     pub(crate) datetime_formats: DateTimeFormats,
 }
