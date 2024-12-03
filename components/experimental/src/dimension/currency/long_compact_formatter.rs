@@ -112,6 +112,7 @@ impl LongCompactCurrencyFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_unstable<D>(
         provider: &D,
         currency_formatter_prefs: CurrencyFormatterPreferences,
