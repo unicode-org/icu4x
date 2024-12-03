@@ -42,9 +42,6 @@ pub struct LongCompactCurrencyFormatter {
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1Marker>,
 
-    // TODO: maybe this will not be needed.
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
 
     /// A [`CompactDecimalFormatter`] to format the currency value.
     compact_decimal_formatter: CompactDecimalFormatter,
@@ -118,7 +115,6 @@ impl LongCompactCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
             compact_decimal_formatter,
             plural_rules,
         })
@@ -178,7 +174,6 @@ impl LongCompactCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
             compact_decimal_formatter,
             plural_rules,
         })
@@ -210,13 +205,10 @@ impl LongCompactCurrencyFormatter {
         currency_code: CurrencyCode,
     ) -> LongCompactFormattedCurrency<'l> {
         LongCompactFormattedCurrency {
-            decimal_value: value,
-            // TODO: fix this.
-            //compact_value: &CompactDecimal::from(value.into()),
+            signed_fixed_decimal: value,
             _currency_code: currency_code,
             extended: self.extended.get(),
             patterns: self.patterns.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
             compact_decimal_formatter: &self.compact_decimal_formatter,
             plural_rules: &self.plural_rules,
         }
