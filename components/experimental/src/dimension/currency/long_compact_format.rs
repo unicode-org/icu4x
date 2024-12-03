@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::CurrencyCode;
+use crate::alloc::borrow::ToOwned;
 use crate::compactdecimal::CompactDecimalFormatter;
 use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
@@ -29,7 +30,6 @@ impl Writeable for LongCompactFormattedCurrency<'_> {
     {
         let operands = self.signed_fixed_decimal.into();
 
-        // let compact_operands = self.compact_value.into();
         let display_name = self.extended.display_names.get(operands, self.plural_rules);
         let pattern = self.patterns.patterns.get(operands, self.plural_rules);
 
