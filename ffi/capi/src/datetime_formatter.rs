@@ -37,10 +37,25 @@ pub mod ffi {
     }
 
     impl TimeFormatter {
-        /// Creates a new [`TimeFormatter`] from locale data.
+        /// Creates a new [`TimeFormatter`] using compiled data.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = T::with_length(Length::from(length)).hm();
+
+            Ok(Box::new(TimeFormatter(
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`TimeFormatter`] using a particular data source.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -91,10 +106,25 @@ pub mod ffi {
     );
 
     impl GregorianDateFormatter {
-        /// Creates a new [`GregorianDateFormatter`] from locale data.
+        /// Creates a new [`GregorianDateFormatter`] using compiled data.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<GregorianDateFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMD::with_length(Length::from(length));
+
+            Ok(Box::new(GregorianDateFormatter(
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`GregorianDateFormatter`] using a particular data source.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -141,10 +171,25 @@ pub mod ffi {
     );
 
     impl GregorianDateTimeFormatter {
-        /// Creates a new [`GregorianDateFormatter`] from locale data.
+        /// Creates a new [`GregorianDateTimeFormatter`] using compiled data.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDT::with_length(Length::from(length)).hm();
+
+            Ok(Box::new(GregorianDateTimeFormatter(
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -180,10 +225,25 @@ pub mod ffi {
     pub struct DateFormatter(pub icu_datetime::DateTimeFormatter<YMD>);
 
     impl DateFormatter {
-        /// Creates a new [`DateFormatter`] from locale data.
+        /// Creates a new [`DateFormatter`] using compiled data.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<DateFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMD::with_length(Length::from(length));
+
+            Ok(Box::new(DateFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`DateFormatter`] using a particular data source.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -255,10 +315,25 @@ pub mod ffi {
     pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDT>);
 
     impl DateTimeFormatter {
-        /// Creates a new [`DateTimeFormatter`] from locale data.
+        /// Creates a new [`DateTimeFormatter`] using compiled data.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDT::with_length(Length::from(length)).hm();
+
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`DateTimeFormatter`] using a particular data source.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -272,10 +347,9 @@ pub mod ffi {
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
-                options,
+                options
             )?)))
         }
-
         /// Formats a [`DateTime`] to a string.
         pub fn format_datetime(
             &self,

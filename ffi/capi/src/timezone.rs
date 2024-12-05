@@ -28,7 +28,7 @@ pub mod ffi {
         /// Creates a time zone with no information.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::unknown, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::unknown, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn unknown() -> Box<TimeZoneInfo> {
             Box::new(icu_timezone::TimeZoneInfo::unknown().into())
         }
@@ -36,7 +36,7 @@ pub mod ffi {
         /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn utc() -> Box<TimeZoneInfo> {
             Box::new(icu_timezone::TimeZoneInfo::utc().into())
         }
