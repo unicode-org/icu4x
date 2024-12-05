@@ -2,13 +2,46 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::{
-    currency::CurrencyEssentialsV1Marker, currency_compact::ShortCurrencyCompactV1Marker,
+use crate::{
+    compactdecimal::{
+        CompactDecimalFormatter, CompactDecimalFormatterOptions, CompactDecimalFormatterPreferences,
+    },
+    dimension::provider::{
+        currency::CurrencyEssentialsV1Marker, currency_compact::ShortCurrencyCompactV1Marker,
+    },
 };
-use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::PluralRules;
+use fixed_decimal::SignedFixedDecimal;
+use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
+};
+use icu_provider::prelude::*;
 
-use super::compact_options::CompactCurrencyFormatterOptions;
+use super::{
+    compact_format::CompactFormattedCurrency, compact_options::CompactCurrencyFormatterOptions,
+    CurrencyCode,
+};
+
+extern crate alloc;
+
+define_preferences!(
+    /// The preferences for currency formatting.
+    [Copy]
+    CompactCurrencyFormatterPreferences,
+    {
+        numbering_system: NumberingSystem
+    }
+);
+
+prefs_convert!(
+    CompactCurrencyFormatterPreferences,
+    FixedDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(
+    CompactCurrencyFormatterPreferences,
+    CompactDecimalFormatterPreferences
+);
 
 /// A formatter for monetary values.
 ///
@@ -16,7 +49,7 @@ use super::compact_options::CompactCurrencyFormatterOptions;
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
 ///
-/// Read more about the options in the [`super::options`] module.
+/// Read more about the options in the [`super::compact_options`] module.
 pub struct CompactCurrencyFormatter {
     /// Short currency compact data for the compact currency formatter.
     short_currency_compact: DataPayload<ShortCurrencyCompactV1Marker>,
@@ -24,11 +57,8 @@ pub struct CompactCurrencyFormatter {
     /// Essential data for the compact currency formatter.
     essential: DataPayload<CurrencyEssentialsV1Marker>,
 
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
-
-    /// A [`PluralRules`] to determine the plural category of the unit.
-    plural_rules: PluralRules,
+    /// A [`CompactDecimalFormatter`] to format the currency value.
+    compact_decimal_formatter: CompactDecimalFormatter,
 
     /// Options bag for the compact currency formatter to determine the behavior of the formatter.
     /// for example: width.
@@ -37,7 +67,7 @@ pub struct CompactCurrencyFormatter {
 
 impl CompactCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: super::options::CompactCurrencyFormatterOptions) -> error: DataError,
+        (prefs: CompactCurrencyFormatterPreferences, options: super::compact_options::CompactCurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -46,6 +76,7 @@ impl CompactCurrencyFormatter {
             Self
         ]
     );
+
     /// Creates a new [`CompactCurrencyFormatter`] from compiled locale data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -53,32 +84,40 @@ impl CompactCurrencyFormatter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
-        options: super::options::CompactCurrencyFormatterOptions,
+        prefs: CompactCurrencyFormatterPreferences,
+        options: super::compact_options::CompactCurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
+        use crate::compactdecimal::CompactDecimalFormatterOptions;
+
+        let short_locale =
+            DataLocale::from_preferences_locale::<ShortCurrencyCompactV1Marker>(prefs.locale_prefs);
+
         let short_currency_compact = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&short_locale),
                 ..Default::default()
             })?
             .payload;
 
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+        let essential_locale =
+            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+
         let essential = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&essential_locale),
                 ..Default::default()
             })?
             .payload;
 
-        let plural_rules = PluralRules::try_new_cardinal(locale)?;
+        let compact_decimal_formatter = CompactDecimalFormatter::try_new_short(
+            (&prefs).into(),
+            CompactDecimalFormatterOptions::default(),
+        )?;
 
         Ok(Self {
             short_currency_compact,
             essential,
-            fixed_decimal_formatter,
-            plural_rules,
+            compact_decimal_formatter,
             options,
         })
     }
@@ -86,41 +125,45 @@ impl CompactCurrencyFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
-        options: super::options::CompactCurrencyFormatterOptions,
+        prefs: CompactCurrencyFormatterPreferences,
+        options: CompactCurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+            + DataProvider<crate::dimension::provider::currency::CurrencyEssentialsV1Marker>
+            + DataProvider<crate::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>
+            + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
+            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let locale =
+            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+
+        let compact_decimal_formatter = CompactDecimalFormatter::try_new_short_unstable(
             provider,
-            locale,
-            FixedDecimalFormatterOptions::default(),
+            (&prefs).into(),
+            CompactDecimalFormatterOptions::default(),
         )?;
 
         let short_currency_compact = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
 
-        let essential = provider
+        let essential = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
-
-        let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
         Ok(Self {
             short_currency_compact,
             essential,
-            fixed_decimal_formatter,
-            plural_rules,
+            compact_decimal_formatter,
             options,
         })
     }
@@ -146,7 +189,7 @@ impl CompactCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l FixedDecimal,
+        value: &'l SignedFixedDecimal,
         currency_code: CurrencyCode,
     ) -> CompactFormattedCurrency<'l> {
         CompactFormattedCurrency {
@@ -154,9 +197,8 @@ impl CompactCurrencyFormatter {
             currency_code,
             options: &self.options,
             essential: self.essential.get(),
-            short_currency_compact: self.short_currency_compact.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
-            plural_rules: &self.plural_rules,
+            _short_currency_compact: self.short_currency_compact.get(),
+            compact_decimal_formatter: &self.compact_decimal_formatter,
         }
     }
 }

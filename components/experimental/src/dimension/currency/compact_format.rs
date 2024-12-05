@@ -2,22 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{compact_options::CompactCurrencyFormatterOptions, CurrencyCode};
-use crate::dimension::provider::{
-    currency::CurrencyEssentialsV1, currency_compact::ShortCurrencyCompactV1,
+use super::{
+    compact_options::{CompactCurrencyFormatterOptions, Width},
+    CurrencyCode,
 };
-use fixed_decimal::FixedDecimal;
-use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::PluralRules;
+use crate::{
+    compactdecimal::CompactDecimalFormatter,
+    dimension::provider::{
+        currency::{self, CurrencyEssentialsV1},
+        currency_compact::ShortCurrencyCompactV1,
+    },
+};
+use fixed_decimal::SignedFixedDecimal;
+use writeable::Writeable;
 
 pub struct CompactFormattedCurrency<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CompactCurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
-    pub(crate) short_currency_compact: &'l ShortCurrencyCompactV1<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
-    pub(crate) plural_rules: &'l PluralRules,
+    pub(crate) _short_currency_compact: &'l ShortCurrencyCompactV1<'l>,
+    pub(crate) compact_decimal_formatter: &'l CompactDecimalFormatter,
 }
 
 writeable::impl_display_with_writeable!(CompactFormattedCurrency<'_>);
@@ -52,21 +57,8 @@ impl<'l> Writeable for CompactFormattedCurrency<'l> {
             Width::Narrow => config.narrow_pattern_selection,
         };
 
-        let plural_category = self.plural_rules.category_for(self.value);
-        let pattern_selection = match pattern_selection {
-            currency::PatternSelection::Standard => CompactCount::Standard(plural_category),
-            currency::PatternSelection::StandardAlphaNextToNumber => {
-                CompactCount::StandardAlphaNextToNumber(plural_category)
-            }
-        };
-
-        // TODO: get the i8 for the pattern to get the appropriate pattern from the map.
-
         let pattern = match pattern_selection {
-            currency::PatternSelection::Standard => self
-                .short_currency_compact
-                .compact_patterns
-                .get(&(0, CompactCount::Standard(PluralCategory::One))),
+            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
             currency::PatternSelection::StandardAlphaNextToNumber => self
                 .essential
                 .standard_alpha_next_to_number_pattern
@@ -74,13 +66,80 @@ impl<'l> Writeable for CompactFormattedCurrency<'l> {
         }
         .ok_or(core::fmt::Error)?;
 
+        // TODO: add this step in the next PR
+        // let plural_category = self.plural_rules.category_for(self.value);
+        // let pattern_selection = match pattern_selection {
+        //     currency::PatternSelection::Standard => CompactCount::Standard(plural_category),
+        //     currency::PatternSelection::StandardAlphaNextToNumber => {
+        //         CompactCount::AlphaNextToNumber(plural_category)
+        //     }
+        // };
+
+        // // TODO: get the i8 for the pattern to get the appropriate pattern from the map.
+
+        // let pattern = match pattern_selection {
+        //     CompactCount::Standard(_) => self
+        //         .short_currency_compact
+        //         .compact_patterns
+        //         .get(&(0, CompactCount::Standard(plural_category))),
+        //     CompactCount::AlphaNextToNumber(_) => self
+        //         .short_currency_compact
+        //         .compact_patterns
+        //         .get(&(0, CompactCount::AlphaNextToNumber(plural_category))),
+        // }
+        // .ok_or(core::fmt::Error)?;
+
         pattern
             .interpolate((
-                self.fixed_decimal_formatter.format(self.value),
+                self.compact_decimal_formatter
+                    .format_fixed_decimal(self.value.to_owned()),
                 currency_placeholder,
             ))
             .write_to(sink)?;
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use icu_locale_core::locale;
+    use tinystr::*;
+    use writeable::assert_writeable_eq;
+
+    use crate::dimension::currency::{compact_formatter::CompactCurrencyFormatter, CurrencyCode};
+
+    #[test]
+    pub fn test_en_us() {
+        let locale = locale!("en-US").into();
+        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let fmt = CompactCurrencyFormatter::try_new(locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "$12K");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "$-12K");
+    }
+
+    #[test]
+    pub fn test_fr_fr() {
+        let locale = locale!("fr-FR").into();
+        let currency_code = CurrencyCode(tinystr!(3, "EUR"));
+        let fmt = CompactCurrencyFormatter::try_new(locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12\u{a0}k\u{a0}€");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12\u{a0}k\u{a0}€");
     }
 }
