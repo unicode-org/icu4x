@@ -87,8 +87,6 @@ impl CompactCurrencyFormatter {
         prefs: CompactCurrencyFormatterPreferences,
         options: super::compact_options::CompactCurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        use crate::compactdecimal::CompactDecimalFormatterOptions;
-
         let short_locale =
             DataLocale::from_preferences_locale::<ShortCurrencyCompactV1Marker>(prefs.locale_prefs);
 

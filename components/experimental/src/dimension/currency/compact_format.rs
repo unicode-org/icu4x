@@ -59,6 +59,9 @@ impl<'l> Writeable for CompactFormattedCurrency<'l> {
             Width::Narrow => config.narrow_pattern_selection,
         };
 
+        // TODO: The current behavior is the behavior when there is no compact currency pattern found.
+        // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
+
         let pattern = match pattern_selection {
             currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
             currency::PatternSelection::StandardAlphaNextToNumber => self
@@ -67,29 +70,6 @@ impl<'l> Writeable for CompactFormattedCurrency<'l> {
                 .as_ref(),
         }
         .ok_or(core::fmt::Error)?;
-
-        // TODO: add this step in the next PR
-        // let plural_category = self.plural_rules.category_for(self.value);
-        // let pattern_selection = match pattern_selection {
-        //     currency::PatternSelection::Standard => CompactCount::Standard(plural_category),
-        //     currency::PatternSelection::StandardAlphaNextToNumber => {
-        //         CompactCount::AlphaNextToNumber(plural_category)
-        //     }
-        // };
-
-        // // TODO: get the i8 for the pattern to get the appropriate pattern from the map.
-
-        // let pattern = match pattern_selection {
-        //     CompactCount::Standard(_) => self
-        //         .short_currency_compact
-        //         .compact_patterns
-        //         .get(&(0, CompactCount::Standard(plural_category))),
-        //     CompactCount::AlphaNextToNumber(_) => self
-        //         .short_currency_compact
-        //         .compact_patterns
-        //         .get(&(0, CompactCount::AlphaNextToNumber(plural_category))),
-        // }
-        // .ok_or(core::fmt::Error)?;
 
         pattern
             .interpolate((
@@ -143,5 +123,42 @@ mod tests {
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
         assert_writeable_eq!(formatted_currency, "-12\u{a0}k\u{a0}€");
+    }
+
+    #[test]
+    pub fn test_zh_cn() {
+        let locale = locale!("zh-CN").into();
+        let currency_code = CurrencyCode(tinystr!(3, "CNY"));
+        let fmt = CompactCurrencyFormatter::try_new(locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "¥1.2万");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "¥-1.2万");
+    }
+
+    #[test]
+    pub fn test_ar_eg() {
+        let locale = locale!("ar-EG").into();
+        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
+        let fmt = CompactCurrencyFormatter::try_new(locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"); //  "١٢ ألف ج.م."
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(
+            formatted_currency,
+            "\u{200f}\u{61c}-١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"
+        );
     }
 }
