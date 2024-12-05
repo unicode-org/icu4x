@@ -53,15 +53,10 @@ mod tests {
     #[test]
     pub fn test_en_us() {
         let currency_formatter_prefs = locale!("en-US").into();
-        let compact_decimal_formatter_prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(
-            currency_formatter_prefs,
-            compact_decimal_formatter_prefs,
-            &currency_code,
-        )
-        .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
+            .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -77,15 +72,10 @@ mod tests {
     #[test]
     pub fn test_en_us_millions() {
         let currency_formatter_prefs = locale!("en-US").into();
-        let compact_decimal_formatter_prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(
-            currency_formatter_prefs,
-            compact_decimal_formatter_prefs,
-            &currency_code,
-        )
-        .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
+            .unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();
@@ -101,15 +91,10 @@ mod tests {
     #[test]
     pub fn test_fr_fr() {
         let currency_formatter_prefs = locale!("fr-FR").into();
-        let compact_decimal_formatter_prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(
-            currency_formatter_prefs,
-            compact_decimal_formatter_prefs,
-            &currency_code,
-        )
-        .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
+            .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -125,15 +110,10 @@ mod tests {
     #[test]
     pub fn test_fr_fr_millions() {
         let currency_formatter_prefs = locale!("fr-FR").into();
-        let compact_decimal_formatter_prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCompactCurrencyFormatter::try_new(
-            currency_formatter_prefs,
-            compact_decimal_formatter_prefs,
-            &currency_code,
-        )
-        .unwrap();
+        let fmt = LongCompactCurrencyFormatter::try_new(currency_formatter_prefs, &currency_code)
+            .unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();

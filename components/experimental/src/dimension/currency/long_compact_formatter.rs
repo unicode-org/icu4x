@@ -5,7 +5,7 @@
 //! Experimental.
 
 use fixed_decimal::SignedFixedDecimal;
-use icu_plurals::PluralRules;
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -17,13 +17,32 @@ use crate::{
         extended_currency::CurrencyExtendedDataV1Marker,
     },
 };
-
-use super::{
-    formatter::CurrencyFormatterPreferences, long_compact_format::LongCompactFormattedCurrency,
-    CurrencyCode,
+use icu_locale_core::preferences::{
+    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
 
+use super::{long_compact_format::LongCompactFormattedCurrency, CurrencyCode};
+
 extern crate alloc;
+
+define_preferences!(
+    /// The preferences for currency formatting.
+    [Copy]
+    LongCompactCurrencyFormatterPreferences,
+    {
+        numbering_system: NumberingSystem
+    }
+);
+
+prefs_convert!(
+    LongCompactCurrencyFormatterPreferences,
+    CompactDecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(
+    LongCompactCurrencyFormatterPreferences,
+    PluralRulesPreferences
+);
 
 /// A formatter for monetary values.
 ///
@@ -47,8 +66,7 @@ pub struct LongCompactCurrencyFormatter {
 impl LongCompactCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
         (
-            currency_formatter_prefs: CurrencyFormatterPreferences,
-            compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences,
+            prefs: LongCompactCurrencyFormatterPreferences,
             currency_code: &CurrencyCode
         ) -> error: DataError,
         functions: [
@@ -67,12 +85,11 @@ impl LongCompactCurrencyFormatter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        currency_formatter_prefs: CurrencyFormatterPreferences,
-        compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences,
+        prefs: LongCompactCurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
         let compact_decimal_formatter = CompactDecimalFormatter::try_new_long(
-            compact_decimal_formatter_prefs,
+            (&prefs).into(),
             CompactDecimalFormatterOptions::default(),
         )?;
 
@@ -84,7 +101,7 @@ impl LongCompactCurrencyFormatter {
             })?;
 
         let locale = &DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            currency_formatter_prefs.locale_prefs,
+            prefs.locale_prefs,
         );
 
         let extended = crate::provider::Baked
@@ -99,7 +116,7 @@ impl LongCompactCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal((&currency_formatter_prefs).into())?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
             extended,
@@ -112,8 +129,7 @@ impl LongCompactCurrencyFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        currency_formatter_prefs: CurrencyFormatterPreferences,
-        compact_decimal_formatter_prefs: CompactDecimalFormatterPreferences,
+        prefs: LongCompactCurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError>
     where
@@ -127,9 +143,8 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
     {
-        let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            currency_formatter_prefs.locale_prefs,
-        );
+        let locale =
+            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
@@ -150,12 +165,11 @@ impl LongCompactCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let plural_rules =
-            PluralRules::try_new_cardinal_unstable(provider, (&currency_formatter_prefs).into())?;
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         let compact_decimal_formatter = CompactDecimalFormatter::try_new_long_unstable(
             provider,
-            compact_decimal_formatter_prefs,
+            (&prefs).into(),
             CompactDecimalFormatterOptions::default(),
         )?;
 
