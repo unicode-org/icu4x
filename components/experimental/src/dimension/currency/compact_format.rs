@@ -16,6 +16,8 @@ use crate::{
 use fixed_decimal::SignedFixedDecimal;
 use writeable::Writeable;
 
+use crate::alloc::borrow::ToOwned;
+
 pub struct CompactFormattedCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
