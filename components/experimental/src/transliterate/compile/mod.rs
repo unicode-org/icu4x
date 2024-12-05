@@ -232,6 +232,7 @@ impl RuleCollection {
             + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<XidStartV1Marker>,
         NP: ?Sized
+            + DataProvider<CanonicalDecompositionDataV2Marker>
             + DataProvider<CompatibilityDecompositionDataV2Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
@@ -413,6 +414,7 @@ macro_rules! redirect {
 }
 
 redirect!(
+    CanonicalDecompositionDataV2Marker,
     CompatibilityDecompositionDataV2Marker,
     CanonicalDecompositionTablesV1Marker,
     CompatibilityDecompositionTablesV1Marker,
