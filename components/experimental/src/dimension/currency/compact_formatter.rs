@@ -153,7 +153,7 @@ impl CompactCurrencyFormatter {
             })?
             .payload;
 
-        let essential = crate::provider::Baked
+        let essential = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
