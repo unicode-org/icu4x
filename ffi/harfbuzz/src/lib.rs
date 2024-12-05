@@ -40,7 +40,7 @@ use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
-    CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
+    CanonicalCompositionsV1Marker, CanonicalDecompositionDataV2Marker,
     CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
 };
 use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
@@ -220,7 +220,7 @@ impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
+        D: DataProvider<CanonicalDecompositionDataV2Marker> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
 
@@ -397,7 +397,7 @@ impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV2Marker>
             + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,

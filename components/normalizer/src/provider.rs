@@ -42,49 +42,26 @@ const _: () = {
     make_provider!(Baked);
     impl_canonical_compositions_v1_marker!(Baked);
     impl_non_recursive_decomposition_supplement_v1_marker!(Baked);
-    impl_canonical_decomposition_data_v1_marker!(Baked);
+    impl_canonical_decomposition_data_v2_marker!(Baked);
     impl_canonical_decomposition_tables_v1_marker!(Baked);
-    impl_compatibility_decomposition_supplement_v1_marker!(Baked);
+    impl_compatibility_decomposition_data_v2_marker!(Baked);
     impl_compatibility_decomposition_tables_v1_marker!(Baked);
-    impl_uts46_decomposition_supplement_v1_marker!(Baked);
+    impl_uts46_decomposition_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     CanonicalCompositionsV1Marker::INFO,
-    CanonicalDecompositionDataV1Marker::INFO,
+    CanonicalDecompositionDataV2Marker::INFO,
     CanonicalDecompositionTablesV1Marker::INFO,
-    CompatibilityDecompositionSupplementV1Marker::INFO,
+    CompatibilityDecompositionDataV2Marker::INFO,
     CompatibilityDecompositionTablesV1Marker::INFO,
     NonRecursiveDecompositionSupplementV1Marker::INFO,
-    Uts46DecompositionSupplementV1Marker::INFO,
+    Uts46DecompositionDataV2Marker::INFO,
 ];
 
-/// Main data for NFD
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(
-    CanonicalDecompositionDataV1Marker,
-    "normalizer/nfd@1",
-    singleton
-))]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecompositionDataV1<'data> {
-    /// Trie for NFD decomposition.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub trie: CodePointTrie<'data, u32>,
-}
-
-/// Data that either NFKD or the decomposed form of UTS 46 needs
-/// _in addition to_ the NFD data.
+/// Decomposition data
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -92,49 +69,22 @@ pub struct DecompositionDataV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        CompatibilityDecompositionSupplementV1Marker,
-        "normalizer/nfkd@1",
-        singleton
-    ),
-    marker(Uts46DecompositionSupplementV1Marker, "normalizer/uts46d@1", singleton)
+    marker(CanonicalDecompositionDataV2Marker, "normalizer/nfd@2", singleton),
+    marker(CompatibilityDecompositionDataV2Marker, "normalizer/nfkd@2", singleton),
+    marker(Uts46DecompositionDataV2Marker, "normalizer/uts46d@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecompositionSupplementV1<'data> {
-    /// Trie for the decompositions that differ from NFD.
-    /// Getting a zero from this trie means that you need
-    /// to make another lookup from `DecompositionDataV1::trie`.
+pub struct DecompositionDataV2<'data> {
+    /// Trie for decomposition.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
-    /// Flags that indicate how the set of characters whose
-    /// decompositions starts with a non-starter differs from
-    /// the set for NFD.
-    ///
-    /// Bit 0: Whether half-width kana voicing marks decompose
-    ///        into non-starters (their full-width combining
-    ///        counterparts).
-    /// Bit 1: Whether U+0345 COMBINING GREEK YPOGEGRAMMENI
-    ///        decomposes into a starter (U+03B9 GREEK SMALL
-    ///        LETTER IOTA).
-    /// (Other bits unused.)
-    pub flags: u8,
     /// The passthrough bounds of NFD/NFC are lowered to this
     /// maximum instead. (16-bit, because cannot be higher
     /// than 0x0300, which is the bound for NFC.)
     pub passthrough_cap: u16,
-}
-
-impl DecompositionSupplementV1<'_> {
-    const HALF_WIDTH_VOICING_MARK_MASK: u8 = 1;
-
-    /// Whether half-width kana voicing marks decompose into non-starters
-    /// (their full-width combining counterparts).
-    pub fn half_width_voicing_marks_become_non_starters(&self) -> bool {
-        (self.flags & DecompositionSupplementV1::HALF_WIDTH_VOICING_MARK_MASK) != 0
-    }
 }
 
 /// The expansion tables for cases where the decomposition isn't

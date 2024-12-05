@@ -21,7 +21,7 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::DecompositionDataV1;
+use icu_normalizer::provider::DecompositionDataV2;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
@@ -31,67 +31,66 @@ use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationDataV1;
 
-/// Marker that a complex decomposition isn't round-trippable
-/// under re-composition.
+/// Marker that the decomposition does not round trip via NFC.
 ///
-/// TODO: When taking a data format break, swap this and
-/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
-/// to make backward-combiningness use the same bit in all
-/// cases.
-const NON_ROUND_TRIP_MARKER: u16 = 0b1;
+/// See components/normalizer/trie-value-format.md
+const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
-/// Marker that a complex decomposition starts with a starter
-/// that can combine backwards.
-const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
+/// Marker that the first character of the decomposition
+/// can combine backwards.
+///
+/// See components/normalizer/trie-value-format.md
+const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
-/// Values above this are treated as a BMP character.
-const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
+/// Mask for the bits have to be zero for this to be a BMP
+/// singleton decomposition, or value baked into the surrogate
+/// range.
+///
+/// See components/normalizer/trie-value-format.md
+const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
 
-/// Marker value for U+FDFA in NFKD
-const FDFA_MARKER: u16 = 3;
+/// Mask for the bits have to be zero for this to be a complex
+/// decomposition.
+///
+/// See components/normalizer/trie-value-format.md
+const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
-/// Marker for starters that decompose to themselves but may
-/// combine backwards under canonical composition.
-/// (Main trie only; not used in the supplementary trie.)
-const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
-
-// Magic marker trie value for characters whose decomposition
-// starts with a non-starter. The actual decomposition is
-// hard-coded.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
-
-/// `u16` version of the previous marker value.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
+/// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
+/// but they differ by `NON_ROUND_TRIP_MARKER`.)
+///
+/// See components/normalizer/trie-value-format.md
+const FDFA_MARKER: u16 = 1;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
+///
+/// See components/normalizer/trie-value-format.md
 fn trie_value_has_ccc(trie_value: u32) -> bool {
-    (trie_value & 0xFFFFFF00) == 0xD800
+    (trie_value & 0x3FFFFE00) == 0xD800
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
+///
+/// See components/normalizer/trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
-    trie_value == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER
+    (trie_value & 0x3FFFFF00) == 0xD900
 }
 
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
+///
+/// See components/normalizer/trie-value-format.md
 fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
     trie_value_has_ccc(trie_value)
-        || trie_value_indicates_special_non_starter_decomposition(trie_value)
 }
 
 /// Extracts a canonical combining class (possibly zero) from a trie value.
 ///
-/// # Panics
-///
-/// The trie value must not be one that signifies a special non-starter
-/// decomposition. (Debug-only)
+/// See components/normalizer/trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
         CanonicalCombiningClass(trie_value as u8)
     } else {
-        debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
         CanonicalCombiningClass::NotReordered
     }
 }
@@ -809,6 +808,8 @@ where
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data ZeroSlice<u16>,
     /// NFD main trie.
+    ///
+    /// See components/normalizer/trie-value-format.md
     trie: &'data CodePointTrie<'data, u32>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
@@ -835,7 +836,7 @@ where
         tailoring: &'data CollationDataV1,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data ZeroSlice<u16>,
-        decompositions: &'data DecompositionDataV1,
+        decompositions: &'data DecompositionDataV2,
         tables: &'data DecompositionTablesV1,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
@@ -1040,36 +1041,37 @@ where
         // Hangul syllables in lookahead, because Hangul isn't allowed to
         // participate in contractions, and the trie default is that a character
         // is its own decomposition.
+
+        // See components/normalizer/trie-value-format.md
         let decomposition = c.trie_val;
-        if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
+        if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) <= 1 {
             // The character is its own decomposition (or Hangul syllable)
             // Set the Canonical Combining Class to zero
             self.upcoming.push(
                 CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(c.character()),
             );
         } else {
-            let trail_or_complex = (decomposition >> 16) as u16;
-            let lead = decomposition as u16;
-            if lead > HIGHEST_MARKER && trail_or_complex != 0 {
+            let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+            let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+            if !high_zeros && !low_zeros {
                 // Decomposition into two BMP characters: starter and non-starter
-                self.upcoming.push(
-                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(char_from_u16(
-                        lead,
-                    )),
-                );
-                let low_c = char_from_u16(trail_or_complex);
+                let starter = char_from_u32(decomposition & 0x7FFF);
+                let low_c = char_from_u32((decomposition >> 15) & 0x7FFF);
+                self.upcoming
+                    .push(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(starter));
                 let trie_value = self.trie.get(low_c);
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
                         low_c, trie_value,
                     ),
                 );
-            } else if trail_or_complex == 0 {
+            } else if high_zeros {
+                let singleton = decomposition as u16;
                 debug_assert_ne!(
-                    lead, FDFA_MARKER,
+                    singleton, FDFA_MARKER,
                     "How come U+FDFA NFKD marker seen in NFD?"
                 );
-                if (lead & 0xFF00) == 0xD800 {
+                if (singleton & 0xFF00) == 0xD800 {
                     // We're at the end of the stream, so we aren't dealing with the
                     // next undecomposed starter but are dealing with an
                     // already-decomposed non-starter. Just put it back.
@@ -1078,35 +1080,22 @@ where
                     #[cfg(debug_assertions)]
                     debug_assert!(self.iter_exhausted);
                 } else {
-                    debug_assert_ne!(lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16);
                     // Decomposition into one BMP character
                     self.upcoming.push(
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
-                            char_from_u16(lead),
+                            char_from_u16(singleton),
                         ),
                     );
                 }
             } else {
-                // Complex decomposition
-                // Format for 16-bit value:
-                // 15..13: length minus two for 16-bit case and length minus one for
-                //         the 32-bit case. Length 8 needs to fit in three bits in
-                //         the 16-bit case, and this way the value is future-proofed
-                //         up to 9 in the 16-bit case. Zero is unused and length one
-                //         in the 16-bit case goes directly into the trie.
-                //     12: 1 if all trailing characters are guaranteed non-starters,
-                //         0 if no guarantees about non-starterness.
-                //         Note: The bit choice is this way around to allow for
-                //         dynamically falling back to not having this but instead
-                //         having one more bit for length by merely choosing
-                //         different masks.
-                //  11..0: Start offset in storage. If less than the length of
-                //         scalars16, the offset is into scalars16. Otherwise,
-                //         the offset minus the length of scalars16 is an offset
-                //         into scalars32.
-                let offset = usize::from(trail_or_complex & 0xFFF);
+                debug_assert!(low_zeros);
+                // Only 12 of 14 bits used as of Unicode 16.
+                let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                // Only 3 of 4 bits used as of Unicode 16.
+                let len_bits = decomposition & 0b1111;
+                let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
                 if offset < self.scalars16.len() {
-                    let len = usize::from(trail_or_complex >> 13) + 2;
+                    let len = (len_bits + 2) as usize;
                     for u in unwrap_or_gigo(
                         self.scalars16.get_subslice(offset..offset + len),
                         SINGLE_REPLACEMENT_CHARACTER_U16, // single instead of empty for consistency with the other code path
@@ -1119,7 +1108,7 @@ where
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
                 } else {
-                    let len = usize::from(trail_or_complex >> 13) + 1;
+                    let len = (len_bits + 1) as usize;
                     let offset32 = offset - self.scalars16.len();
                     for ch in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
@@ -1132,7 +1121,7 @@ where
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
                 }
-                search_start_combining = trail_or_complex & 0x1000 == 0;
+                search_start_combining = !only_non_starters_in_trail;
             }
         }
         let start_combining = if search_start_combining {
@@ -1289,8 +1278,9 @@ where
             // optimize based on that bet.
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
+                // See components/normalizer/trie-value-format.md
                 let decomposition = c_c_tv.trie_val;
-                if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
+                if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                     // Attribute belongs on an inner expression, but
@@ -1344,22 +1334,22 @@ where
                         // handle `Implicit` and `Offset` tags here.
                     }
                 } else {
-                    let trail_or_complex = (decomposition >> 16) as u16;
-                    let lead = decomposition as u16;
-                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
+                    let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                    let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                    if !high_zeros && !low_zeros {
                         // Decomposition into two BMP characters: starter and non-starter
-                        c = char_from_u16(lead);
+                        c = char_from_u32(decomposition & 0x7FFF);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
                             ce32 = data.ce32_for_char(c);
                         }
-                        let combining = char_from_u16(trail_or_complex);
+                        let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
                         if self.is_next_decomposition_starts_with_starter() {
                             let diacritic_index =
-                                (trail_or_complex as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
+                                (combining as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                             if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                                debug_assert!(trail_or_complex != 0x0344, "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
+                                debug_assert_ne!(combining, '\u{0344}', "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
                                 if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                                     let ce_for_combining =
                                         CollationElement::new_from_secondary(secondary);
@@ -1409,13 +1399,14 @@ where
                         }
                         combining_characters
                             .push(CharacterAndClass::new_with_placeholder(combining));
-                    } else if trail_or_complex == 0 {
+                    } else if high_zeros {
+                        let singleton = decomposition as u16;
                         debug_assert_ne!(
-                            lead, FDFA_MARKER,
+                            singleton, FDFA_MARKER,
                             "How come U+FDFA NFKD marker seen in NFD?"
                         );
                         // Decomposition into one BMP character
-                        c = char_from_u16(lead);
+                        c = char_from_u16(singleton);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
@@ -1428,26 +1419,14 @@ where
                             }
                         }
                     } else {
-                        // Complex decomposition
-                        // Format for 16-bit value:
-                        // 15..13: length minus two for 16-bit case and length minus one for
-                        //         the 32-bit case. Length 8 needs to fit in three bits in
-                        //         the 16-bit case, and this way the value is future-proofed
-                        //         up to 9 in the 16-bit case. Zero is unused and length one
-                        //         in the 16-bit case goes directly into the trie.
-                        //     12: 1 if all trailing characters are guaranteed non-starters,
-                        //         0 if no guarantees about non-starterness.
-                        //         Note: The bit choice is this way around to allow for
-                        //         dynamically falling back to not having this but instead
-                        //         having one more bit for length by merely choosing
-                        //         different masks.
-                        //  11..0: Start offset in storage. If less than the length of
-                        //         scalars16, the offset is into scalars16. Otherwise,
-                        //         the offset minus the length of scalars16 is an offset
-                        //         into scalars32.
-                        let offset = usize::from(trail_or_complex & 0xFFF);
+                        debug_assert!(low_zeros);
+                        // Only 12 of 14 bits used as of Unicode 16.
+                        let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                        // Only 3 of 4 bits used as of Unicode 16.
+                        let len_bits = decomposition & 0b1111;
+                        let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
                         if offset < self.scalars16.len() {
-                            let len = usize::from(trail_or_complex >> 13) + 2;
+                            let len = (len_bits + 2) as usize;
                             let (starter, tail) = self
                                 .scalars16
                                 .get_subslice(offset..offset + len)
@@ -1461,7 +1440,7 @@ where
                                     |(first, tail)| (char_from_u16(first), tail),
                                 );
                             c = starter;
-                            if trail_or_complex & 0x1000 != 0 {
+                            if only_non_starters_in_trail {
                                 for u in tail.iter() {
                                     let char_from_u = char_from_u16(u);
                                     let trie_value = self.trie.get(char_from_u);
@@ -1498,7 +1477,7 @@ where
                                 }
                             }
                         } else {
-                            let len = usize::from(trail_or_complex >> 13) + 1;
+                            let len = (len_bits + 1) as usize;
                             let offset32 = offset - self.scalars16.len();
                             let (starter, tail) = self
                                 .scalars32
@@ -1511,7 +1490,7 @@ where
                                 });
 
                             c = starter;
-                            if trail_or_complex & 0x1000 != 0 {
+                            if only_non_starters_in_trail {
                                 for ch in tail.iter() {
                                     let trie_value = self.trie.get(ch);
                                     let ccc = ccc_from_trie_value(trie_value);
