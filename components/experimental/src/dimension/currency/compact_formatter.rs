@@ -178,12 +178,12 @@ impl CompactCurrencyFormatter {
     ///
     /// let locale = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CompactCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let fmt = CompactCurrencyFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
     /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "12,345.67 US dollars");
+    /// assert_eq!(sink.as_str(), "$12K");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
