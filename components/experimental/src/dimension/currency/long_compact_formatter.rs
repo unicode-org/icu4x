@@ -192,9 +192,8 @@ impl LongCompactCurrencyFormatter {
     /// use writeable::Writeable;
     ///
     /// let currency_prefs = locale!("en-US").into();
-    /// let compact_decimal_prefs = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCompactCurrencyFormatter::try_new(currency_prefs, compact_decimal_prefs, &currency_code).unwrap();
+    /// let fmt = LongCompactCurrencyFormatter::try_new(currency_prefs, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
