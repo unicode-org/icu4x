@@ -166,7 +166,7 @@ impl CompactCurrencyFormatter {
         })
     }
 
-    /// Formats in the compact format a [`FixedDecimal`] value for the given currency code.
+    /// Formats in the compact format a [`SignedFixedDecimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
