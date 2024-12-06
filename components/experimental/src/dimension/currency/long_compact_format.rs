@@ -11,7 +11,7 @@ use fixed_decimal::SignedFixedDecimal;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-pub struct LongCompactFormattedCurrency<'l> {
+pub struct FormattedLongCompactCurrency<'l> {
     pub(crate) signed_fixed_decimal: &'l SignedFixedDecimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
@@ -21,9 +21,9 @@ pub struct LongCompactFormattedCurrency<'l> {
     pub(crate) plural_rules: &'l PluralRules,
 }
 
-writeable::impl_display_with_writeable!(LongCompactFormattedCurrency<'_>);
+writeable::impl_display_with_writeable!(FormattedLongCompactCurrency<'_>);
 
-impl Writeable for LongCompactFormattedCurrency<'_> {
+impl Writeable for FormattedLongCompactCurrency<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

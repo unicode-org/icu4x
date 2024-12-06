@@ -21,7 +21,7 @@ use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
 
-use super::{long_compact_format::LongCompactFormattedCurrency, CurrencyCode};
+use super::{long_compact_format::FormattedLongCompactCurrency, CurrencyCode};
 
 extern crate alloc;
 
@@ -204,8 +204,8 @@ impl LongCompactCurrencyFormatter {
         &'l self,
         value: &'l SignedFixedDecimal,
         currency_code: CurrencyCode,
-    ) -> LongCompactFormattedCurrency<'l> {
-        LongCompactFormattedCurrency {
+    ) -> FormattedLongCompactCurrency<'l> {
+        FormattedLongCompactCurrency {
             signed_fixed_decimal: value,
             _currency_code: currency_code,
             extended: self.extended.get(),
