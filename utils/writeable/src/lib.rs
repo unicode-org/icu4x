@@ -34,9 +34,9 @@
 //!
 //! | Case | `Writeable` | `Display` |
 //! |---|---|---|
-//! | Create string from single-string message (139 chars) | 19.999 ns | 22.133 ns |
-//! | Create string from complex message | 35.838 ns | 87.703 ns |
-//! | Write complex message to buffer | 56.855 ns | 64.971 ns |
+//! | Create string from single-string message (139 chars) | 15.642 ns | 19.251 ns |
+//! | Create string from complex message | 35.830 ns | 89.478 ns |
+//! | Write complex message to buffer | 57.336 ns | 64.408 ns |
 //!
 //! # Examples
 //!
