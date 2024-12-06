@@ -18,7 +18,7 @@ use writeable::Writeable;
 
 use crate::alloc::borrow::ToOwned;
 
-pub struct CompactFormattedCurrency<'l> {
+pub struct FormattedCompactCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CompactCurrencyFormatterOptions,
@@ -27,9 +27,9 @@ pub struct CompactFormattedCurrency<'l> {
     pub(crate) compact_decimal_formatter: &'l CompactDecimalFormatter,
 }
 
-writeable::impl_display_with_writeable!(CompactFormattedCurrency<'_>);
+writeable::impl_display_with_writeable!(FormattedCompactCurrency<'_>);
 
-impl<'l> Writeable for CompactFormattedCurrency<'l> {
+impl<'l> Writeable for FormattedCompactCurrency<'l> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,

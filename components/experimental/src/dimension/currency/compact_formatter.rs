@@ -18,7 +18,7 @@ use icu_locale_core::preferences::{
 use icu_provider::prelude::*;
 
 use super::{
-    compact_format::CompactFormattedCurrency, compact_options::CompactCurrencyFormatterOptions,
+    compact_format::FormattedCompactCurrency, compact_options::CompactCurrencyFormatterOptions,
     CurrencyCode,
 };
 
@@ -189,8 +189,8 @@ impl CompactCurrencyFormatter {
         &'l self,
         value: &'l SignedFixedDecimal,
         currency_code: CurrencyCode,
-    ) -> CompactFormattedCurrency<'l> {
-        CompactFormattedCurrency {
+    ) -> FormattedCompactCurrency<'l> {
+        FormattedCompactCurrency {
             value,
             currency_code,
             options: &self.options,
