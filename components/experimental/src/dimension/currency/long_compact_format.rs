@@ -35,6 +35,7 @@ impl Writeable for FormattedLongCompactCurrency<'_> {
 
         let formatted_value = self
             .compact_decimal_formatter
+            // TODO(#5881): remove to_owned once `format_fixed_decimal` is fixed
             .format_fixed_decimal(self.signed_fixed_decimal.to_owned());
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
