@@ -67,7 +67,7 @@ pub struct CompactCurrencyFormatter {
 
 impl CompactCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (prefs: CompactCurrencyFormatterPreferences, options: super::compact_options::CompactCurrencyFormatterOptions) -> error: DataError,
+        (prefs: CompactCurrencyFormatterPreferences, options: CompactCurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -85,7 +85,7 @@ impl CompactCurrencyFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: CompactCurrencyFormatterPreferences,
-        options: super::compact_options::CompactCurrencyFormatterOptions,
+        options: CompactCurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let short_locale =
             DataLocale::from_preferences_locale::<ShortCurrencyCompactV1Marker>(prefs.locale_prefs);
