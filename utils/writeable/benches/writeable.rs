@@ -148,6 +148,33 @@ fn writeable_benches(c: &mut Criterion) {
             })
         });
     });
+    c.bench_function("writeable/write_to/short", |b| {
+        b.iter(|| {
+            let mut buf = String::with_capacity(500);
+            WriteableMessage {
+                message: black_box(SHORT_STR),
+            }
+            .write_to(&mut buf)
+        });
+    });
+    c.bench_function("writeable/write_to/medium", |b| {
+        b.iter(|| {
+            let mut buf = String::with_capacity(500);
+            WriteableMessage {
+                message: black_box(MEDIUM_STR),
+            }
+            .write_to(&mut buf)
+        });
+    });
+    c.bench_function("writeable/write_to/long", |b| {
+        b.iter(|| {
+            let mut buf = String::with_capacity(500);
+            WriteableMessage {
+                message: black_box(LONG_STR),
+            }
+            .write_to(&mut buf)
+        });
+    });
 }
 
 #[cfg(feature = "bench")]
@@ -209,6 +236,33 @@ fn display_benches(c: &mut Criterion) {
             .to_string()
         });
     });
+    c.bench_function("display/fmt/short", |b| {
+        b.iter(|| {
+            use std::io::Write;
+            let mut buf = Vec::<u8>::with_capacity(500);
+            write!(&mut buf, "{}", DisplayMessage {
+                message: black_box(SHORT_STR),
+            })
+        });
+    });
+    c.bench_function("display/fmt/medium", |b| {
+        b.iter(|| {
+            use std::io::Write;
+            let mut buf = Vec::<u8>::with_capacity(500);
+            write!(&mut buf, "{}", DisplayMessage {
+                message: black_box(MEDIUM_STR),
+            })
+        });
+    });
+    c.bench_function("display/fmt/long", |b| {
+        b.iter(|| {
+            use std::io::Write;
+            let mut buf = Vec::<u8>::with_capacity(500);
+            write!(&mut buf, "{}", DisplayMessage {
+                message: black_box(LONG_STR),
+            })
+        });
+    });
 }
 
 #[cfg(feature = "bench")]
@@ -243,6 +297,19 @@ fn complex_benches(c: &mut Criterion) {
             black_box(REFERENCE_STRS)
                 .map(|s| writeable::cmp_str(black_box(&COMPLEX_WRITEABLE_MEDIUM), s))
         });
+    });
+    c.bench_function("complex/write_to/medium", |b| {
+        b.iter(|| {
+            let mut buf = String::with_capacity(500);
+            black_box(COMPLEX_WRITEABLE_MEDIUM).write_to(&mut buf)
+        });
+    });
+    c.bench_function("complex/fmt/medium", |b| {
+        b.iter(|| {
+            use std::io::Write;
+            let mut buf = Vec::<u8>::with_capacity(500);
+            write!(&mut buf, "{}", black_box(COMPLEX_WRITEABLE_MEDIUM))
+        })
     });
 }
 
