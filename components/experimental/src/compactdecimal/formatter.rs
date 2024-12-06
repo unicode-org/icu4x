@@ -315,7 +315,7 @@ impl CompactDecimalFormatter {
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = SignedFixedDecimal::from(value);
-        self.format_fixed_decimal(unrounded)
+        self.format_fixed_decimal(&unrounded)
     }
 
     /// Formats a floating-point number in compact decimal notation using the default
@@ -380,7 +380,7 @@ impl CompactDecimalFormatter {
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
         let partly_rounded = SignedFixedDecimal::try_from_f64(value, RoundTrip)?;
-        Ok(self.format_fixed_decimal(partly_rounded))
+        Ok(self.format_fixed_decimal(&partly_rounded))
     }
 
     /// Formats a [`SignedFixedDecimal`] by automatically scaling and rounding it.
@@ -481,7 +481,7 @@ impl CompactDecimalFormatter {
     ///     "-1.2M"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
+    pub fn format_fixed_decimal(&self, value: &SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = value.clone();
