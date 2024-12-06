@@ -74,6 +74,7 @@ impl<'l> Writeable for FormattedCompactCurrency<'l> {
         pattern
             .interpolate((
                 self.compact_decimal_formatter
+                    // TODO(#5881): remove to_owned once `format_fixed_decimal` is fixed
                     .format_fixed_decimal(self.value.to_owned()),
                 currency_placeholder,
             ))
