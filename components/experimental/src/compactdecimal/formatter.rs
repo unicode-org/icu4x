@@ -406,38 +406,38 @@ impl CompactDecimalFormatter {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(0)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(843)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(2207)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(15127)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(3010349)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(SignedFixedDecimal::from(-13132)),
+    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
     /// // The sign display on the FixedDecimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
-    ///         SignedFixedDecimal::from(2500)
+    ///         &SignedFixedDecimal::from(2500)
     ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
@@ -457,27 +457,27 @@ impl CompactDecimalFormatter {
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("999499.99".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"999499.99".parse().unwrap()),
     ///     "999K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("999500.00".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"999500.00".parse().unwrap()),
     ///     "1M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1650".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1650".parse().unwrap()),
     ///     "1.6K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1750".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1750".parse().unwrap()),
     ///     "1.8K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1950".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1950".parse().unwrap()),
     ///     "2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("-1172700".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"-1172700".parse().unwrap()),
     ///     "-1.2M"
     /// );
     /// ```
