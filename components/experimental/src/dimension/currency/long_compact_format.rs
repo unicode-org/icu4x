@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::CurrencyCode;
-use crate::alloc::borrow::ToOwned;
 use crate::compactdecimal::CompactDecimalFormatter;
 use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
@@ -35,8 +34,7 @@ impl Writeable for FormattedLongCompactCurrency<'_> {
 
         let formatted_value = self
             .compact_decimal_formatter
-            // TODO(#5881): remove to_owned once `format_fixed_decimal` is fixed
-            .format_fixed_decimal(self.signed_fixed_decimal.to_owned());
+            .format_fixed_decimal(self.signed_fixed_decimal);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
     }
