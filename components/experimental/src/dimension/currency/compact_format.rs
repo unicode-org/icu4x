@@ -16,8 +16,6 @@ use crate::{
 use fixed_decimal::SignedFixedDecimal;
 use writeable::Writeable;
 
-use crate::alloc::borrow::ToOwned;
-
 pub struct FormattedCompactCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
@@ -74,8 +72,7 @@ impl<'l> Writeable for FormattedCompactCurrency<'l> {
         pattern
             .interpolate((
                 self.compact_decimal_formatter
-                    // TODO(#5881): remove to_owned once `format_fixed_decimal` is fixed
-                    .format_fixed_decimal(self.value.to_owned()),
+                    .format_fixed_decimal(self.value),
                 currency_placeholder,
             ))
             .write_to(sink)?;
