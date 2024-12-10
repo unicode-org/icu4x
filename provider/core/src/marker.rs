@@ -4,6 +4,7 @@
 
 use crate::fallback::LocaleFallbackConfig;
 use crate::{DataError, DataErrorKind, DataLocale, DataProvider, DataProviderWithMarker};
+use core::fmt;
 use core::marker::PhantomData;
 use yoke::Yokeable;
 use zerovec::ule::*;
@@ -506,7 +507,7 @@ impl DataMarkerPath {
 /// Executables can be searched for `DataMarkerInfo` instances to produce optimized data files.
 /// Therefore, users should not generally create DataMarkerInfo instances; they should instead use
 /// the ones exported by a component.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct DataMarkerInfo {
     /// The human-readable path string ends with `@` followed by one or more digits (the version
@@ -621,6 +622,12 @@ macro_rules! __data_marker_path {
 }
 #[doc(inline)]
 pub use __data_marker_path as data_marker_path;
+
+impl fmt::Debug for DataMarkerInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.path.fmt(f)
+    }
+}
 
 /// A marker for the given `DataStruct`.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
