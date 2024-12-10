@@ -341,6 +341,24 @@ impl AsULE for DataMarkerPathHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for DataMarkerPathHash {}
 
+#[repr(C, packed)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+struct TaggedDataMarkerHash {
+    prefix: [u8; 10], // "icu4x_tdmh"
+    hash: DataMarkerPathHash,
+    suffix: u8, // "\n"
+}
+
+impl TaggedDataMarkerHash {
+    const fn new(hash: DataMarkerPathHash) -> Self {
+        Self {
+            prefix: *b"icu4x_tdmh",
+            hash,
+            suffix: b'\n',
+        }
+    }
+}
+
 /// The string path of a data marker. For example, "foo@1"
 ///
 /// ```
@@ -363,7 +381,7 @@ pub struct DataMarkerPath {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.
     tagged: &'static str,
-    hash: DataMarkerPathHash,
+    hash: TaggedDataMarkerHash,
 }
 
 impl PartialEq for DataMarkerPath {
@@ -390,7 +408,7 @@ impl PartialOrd for DataMarkerPath {
 impl core::hash::Hash for DataMarkerPath {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        self.hash.hash(state)
+        self.hash.hash.hash(state)
     }
 }
 
@@ -437,6 +455,7 @@ impl DataMarkerPath {
             )
             .to_le_bytes(),
         );
+        let hash = TaggedDataMarkerHash::new(hash);
 
         Ok(Self { tagged, hash })
     }
@@ -514,7 +533,7 @@ impl DataMarkerPath {
     /// ```
     #[inline]
     pub const fn hashed(self) -> DataMarkerPathHash {
-        self.hash
+        self.hash.hash
     }
 }
 
