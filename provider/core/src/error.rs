@@ -96,7 +96,7 @@ impl fmt::Display for DataError {
             write!(f, ": {}", self.kind)?;
         }
         if let Some(marker) = self.marker_path {
-            write!(f, " (marker: {})", marker.as_str())?;
+            write!(f, " (marker: {marker:?})")?;
         }
         if let Some(str_context) = self.str_context {
             write!(f, ": {str_context}")?;
