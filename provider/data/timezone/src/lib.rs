@@ -4,7 +4,7 @@
 
 //! Data for the `icu_timezone` crate
 //!
-//! This data was generated with CLDR version 46.0.0, ICU version release-76-1, and
+//! This data was generated with CLDR version 46.1.0-BETA1, ICU version release-76-1, and
 //! LSTM segmenter version v0.1.0.
 
 #![no_std]
