@@ -669,14 +669,13 @@ mod date_skeleton_consistency_tests {
         // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
         let components = components::Bag::from(&parsed_skeleton);
-        let selected_pattern = if let PatternPlurals::SinglePattern(x) = components.select_pattern(
+        let selected_pattern = match components.select_pattern(
             data.skeleton_patterns,
             data.preferred_hour_cycle,
             data.length_combinations_v1,
         ) {
-            x
-        } else {
-            todo!()
+            PatternPlurals::SinglePattern(x) => x,
+            PatternPlurals::MultipleVariants(_) => unreachable!()
         };
 
         // Canonicalize the two patterns to make comparison more precise
@@ -741,7 +740,7 @@ mod date_skeleton_consistency_tests {
             .values()
             .map(|pattern_str| {
                 let mut pattern: reference::Pattern = pattern_str.parse().unwrap();
-                // always use NormalizeOnly mode for availableFormats lookup
+                // always use FlattenNumerics mode for availableFormats lookup
                 canonicalize_pattern(
                     &mut pattern,
                     PatternCanonicalizationStrategy::FlattenNumerics,
