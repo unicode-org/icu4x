@@ -29,13 +29,30 @@ pub mod ffi {
     );
 
     impl GregorianZonedDateTimeFormatter {
-        /// Creates a new [`GregorianZonedDateTimeFormatter`] from locale data.
+        /// Creates a new [`GregorianZonedDateTimeFormatter`] from locale data using compiled data.
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDTV::with_length(Length::from(length));
+
+            Ok(Box::new(GregorianZonedDateTimeFormatter(
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+        /// Creates a new [`GregorianZonedDateTimeFormatter`] from locale data using a particular data source.
+        ///
+        /// This function has `date_length` and `time_length` arguments and uses default options
+        /// for the time zone.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -54,7 +71,6 @@ pub mod ffi {
                 )?,
             )))
         }
-
         /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
@@ -83,13 +99,30 @@ pub mod ffi {
     pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDTV>);
 
     impl ZonedDateTimeFormatter {
-        /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
+        /// Creates a new [`ZonedDateTimeFormatter`] from locale data using compiled data.
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
+            locale: &Locale,
+            length: DateTimeLength,
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = YMDTV::with_length(Length::from(length));
+
+            Ok(Box::new(ZonedDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
+            )))
+        }
+        /// Creates a new [`ZonedDateTimeFormatter`] from locale data using a particular data source.
+        ///
+        /// This function has `date_length` and `time_length` arguments and uses default options
+        /// for the time zone.
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
@@ -106,7 +139,6 @@ pub mod ffi {
                 options,
             )?)))
         }
-
         /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_datetime_with_custom_time_zone(
             &self,

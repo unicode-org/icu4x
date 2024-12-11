@@ -14,9 +14,8 @@ int main() {
     Logger::init_simple_logger();
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     std::unique_ptr<FixedDecimalFormatter> fdf = FixedDecimalFormatter::create_with_grouping_strategy(
-        *dp.get(), *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
+        *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
 
     std::unique_ptr<SignedFixedDecimal> decimal = SignedFixedDecimal::from(1000007);
     std::string out = fdf->format(*decimal.get());
@@ -105,7 +104,7 @@ int main() {
     locale = Locale::from_string("th-u-nu-thai").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
     fdf = FixedDecimalFormatter::create_with_grouping_strategy(
-        *dp.get(), *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
+        *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = SignedFixedDecimal::from_double_with_round_trip_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());

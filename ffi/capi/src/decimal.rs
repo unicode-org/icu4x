@@ -32,11 +32,31 @@ pub mod ffi {
     }
 
     impl FixedDecimalFormatter {
-        /// Creates a new [`FixedDecimalFormatter`] from locale data.
+        /// Creates a new [`FixedDecimalFormatter`], using compiled data
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_grouping_strategy")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_grouping_strategy(
+            locale: &Locale,
+            grouping_strategy: Option<FixedDecimalGroupingStrategy>,
+        ) -> Result<Box<FixedDecimalFormatter>, DataError> {
+            let prefs = FixedDecimalFormatterPreferences::from(&locale.0);
+
+            let mut options = FixedDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy
+                .map(Into::into)
+                .unwrap_or(options.grouping_strategy);
+            Ok(Box::new(FixedDecimalFormatter(
+                icu_decimal::FixedDecimalFormatter::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new [`FixedDecimalFormatter`], using a particular data source.
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_grouping_strategy_and_provider")]
+        #[diplomat::demo(default_constructor)]
+        pub fn create_with_grouping_strategy_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             grouping_strategy: Option<FixedDecimalGroupingStrategy>,

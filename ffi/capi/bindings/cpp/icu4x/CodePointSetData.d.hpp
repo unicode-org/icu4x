@@ -36,139 +36,273 @@ public:
 
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_complemented() const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_for_general_category_group(const icu4x::DataProvider& provider, uint32_t group);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_general_category_group(uint32_t group);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_ascii_hex_digit(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_general_category_group_with_provider(const icu4x::DataProvider& provider, uint32_t group);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_alnum(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_ascii_hex_digit();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_alphabetic(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ascii_hex_digit_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_bidi_control(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_alnum();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_bidi_mirrored(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_alnum_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_blank(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_alphabetic();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_cased(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_alphabetic_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_case_ignorable(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_bidi_control();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_full_composition_exclusion(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_bidi_control_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_casefolded(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_bidi_mirrored();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_casemapped(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_bidi_mirrored_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_nfkc_casefolded(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_blank();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_lowercased(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_blank_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_titlecased(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_cased();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_changes_when_uppercased(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_cased_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_dash(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_case_ignorable();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_deprecated(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_case_ignorable_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_default_ignorable_code_point(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_full_composition_exclusion();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_diacritic(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_full_composition_exclusion_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_emoji_modifier_base(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_casefolded();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_emoji_component(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_casefolded_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_emoji_modifier(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_casemapped();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_emoji(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_casemapped_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_emoji_presentation(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_nfkc_casefolded();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_extender(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_nfkc_casefolded_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_extended_pictographic(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_lowercased();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_graph(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_lowercased_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_grapheme_base(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_titlecased();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_grapheme_extend(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_titlecased_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_grapheme_link(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_changes_when_uppercased();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_hex_digit(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_changes_when_uppercased_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_hyphen(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_dash();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_id_continue(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_dash_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_ideographic(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_deprecated();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_id_start(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_deprecated_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_ids_binary_operator(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_default_ignorable_code_point();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_ids_trinary_operator(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_default_ignorable_code_point_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_join_control(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_diacritic();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_logical_order_exception(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_diacritic_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_lowercase(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_emoji_modifier_base();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_math(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_emoji_modifier_base_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_noncharacter_code_point(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_emoji_component();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_nfc_inert(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_emoji_component_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_nfd_inert(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_emoji_modifier();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_nfkc_inert(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_emoji_modifier_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_nfkd_inert(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_emoji();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_pattern_syntax(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_emoji_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_pattern_white_space(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_emoji_presentation();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_prepended_concatenation_mark(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_emoji_presentation_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_print(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_extender();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_quotation_mark(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_extender_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_radical(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_extended_pictographic();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_regional_indicator(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_extended_pictographic_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_soft_dotted(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_graph();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_segment_starter(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_graph_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_case_sensitive(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_grapheme_base();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_sentence_terminal(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_grapheme_base_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_terminal_punctuation(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_grapheme_extend();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_unified_ideograph(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_grapheme_extend_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_uppercase(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_grapheme_link();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_variation_selector(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_grapheme_link_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_white_space(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_hex_digit();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_xdigit(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_hex_digit_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_xid_continue(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_hyphen();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_xid_start(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_hyphen_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_for_ecma262(const icu4x::DataProvider& provider, std::string_view property_name);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_id_continue();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_id_continue_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_ideographic();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ideographic_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_id_start();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_id_start_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_ids_binary_operator();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ids_binary_operator_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_ids_trinary_operator();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ids_trinary_operator_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_join_control();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_join_control_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_logical_order_exception();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_logical_order_exception_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_lowercase();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_lowercase_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_math();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_math_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_noncharacter_code_point();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_noncharacter_code_point_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_nfc_inert();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfc_inert_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_nfd_inert();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfd_inert_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_nfkc_inert();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfkc_inert_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_nfkd_inert();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_nfkd_inert_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_pattern_syntax();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_pattern_syntax_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_pattern_white_space();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_pattern_white_space_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_prepended_concatenation_mark();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_prepended_concatenation_mark_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_print();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_print_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_quotation_mark();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_quotation_mark_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_radical();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_radical_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_regional_indicator();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_regional_indicator_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_soft_dotted();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_soft_dotted_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_segment_starter();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_segment_starter_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_case_sensitive();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_case_sensitive_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_sentence_terminal();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_sentence_terminal_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_terminal_punctuation();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_terminal_punctuation_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_unified_ideograph();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_unified_ideograph_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_uppercase();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_uppercase_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_variation_selector();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_variation_selector_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_white_space();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_white_space_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_xdigit();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_xdigit_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_xid_continue();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_xid_continue_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_xid_start();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_xid_start_with_provider(const icu4x::DataProvider& provider);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_for_ecma262(std::string_view property_name);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_for_ecma262_with_provider(const icu4x::DataProvider& provider, std::string_view property_name);
 
   inline const icu4x::capi::CodePointSetData* AsFFI() const;
   inline icu4x::capi::CodePointSetData* AsFFI();

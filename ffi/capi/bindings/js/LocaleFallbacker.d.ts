@@ -15,7 +15,9 @@ export class LocaleFallbacker {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): LocaleFallbacker;
+    static create(): LocaleFallbacker;
+
+    static createWithProvider(provider: DataProvider): LocaleFallbacker;
 
     static withoutData(): LocaleFallbacker;
 

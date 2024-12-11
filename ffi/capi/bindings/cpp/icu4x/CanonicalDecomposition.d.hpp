@@ -29,7 +29,9 @@ namespace icu4x {
 class CanonicalDecomposition {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CanonicalDecomposition> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline icu4x::Decomposed decompose(char32_t c) const;
 

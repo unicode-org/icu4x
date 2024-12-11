@@ -24,13 +24,26 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_FixedDecimalFormatter_destroy_mv1));
 
-  /// Creates a new [`FixedDecimalFormatter`] from locale data.
+  /// Creates a new [`FixedDecimalFormatter`], using compiled data
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy? groupingStrategy) {
-    final result = _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider._ffi, locale._ffi, groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
+  factory FixedDecimalFormatter.withGroupingStrategy(Locale locale, FixedDecimalGroupingStrategy? groupingStrategy) {
+    final result = _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(locale._ffi, groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return FixedDecimalFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new [`FixedDecimalFormatter`], using a particular data source.
+  ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory FixedDecimalFormatter.withGroupingStrategyAndProvider(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy? groupingStrategy) {
+    final result = _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1(provider._ffi, locale._ffi, groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -67,9 +80,14 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
 external void _icu4x_FixedDecimalFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
+external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, ffi.Uint8, ffi.Uint8, ffi.Uint8, _SliceRune, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')

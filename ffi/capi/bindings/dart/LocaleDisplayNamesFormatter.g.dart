@@ -22,14 +22,28 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleDisplayNamesFormatter_destroy_mv1));
 
-  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
+  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptions options) {
+  factory LocaleDisplayNamesFormatter(Locale locale, DisplayNamesOptions options) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
+    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(locale._ffi, options._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return LocaleDisplayNamesFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
+  ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory LocaleDisplayNamesFormatter.createWithProvider(DataProvider provider, Locale locale, DisplayNamesOptions options) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_with_provider_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -52,9 +66,14 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 external void _icu4x_LocaleDisplayNamesFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_create_v1_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_create_v1_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_create_v1_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_LocaleDisplayNamesFormatter_create_v1_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_of_mv1')

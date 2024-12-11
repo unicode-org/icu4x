@@ -1,5 +1,4 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
 import { Date } from "icu4x"
 import { Locale } from "icu4x"
 export function monthCode(year, month, day, name) {
@@ -15,11 +14,6 @@ export function monthCode(year, month, day, name) {
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [
@@ -46,11 +40,6 @@ export function era(year, month, day, name) {
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [

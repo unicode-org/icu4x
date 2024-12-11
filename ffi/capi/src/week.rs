@@ -33,10 +33,21 @@ pub mod ffi {
     pub struct WeekCalculator(pub icu_calendar::week::WeekCalculator);
 
     impl WeekCalculator {
-        /// Creates a new [`WeekCalculator`] from locale data.
+        /// Creates a new [`WeekCalculator`] from locale data using compiled data.
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(
+        #[cfg(feature = "compiled_data")]
+        pub fn create(locale: &Locale) -> Result<Box<WeekCalculator>, DataError> {
+            let prefs = (&locale.0).into();
+
+            Ok(Box::new(WeekCalculator(
+                icu_calendar::week::WeekCalculator::try_new(prefs)?,
+            )))
+        }
+        /// Creates a new [`WeekCalculator`] from locale data using a particular data source.
+        #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WeekCalculator>, DataError> {
@@ -50,7 +61,6 @@ pub mod ffi {
                 prefs,
             )?)))
         }
-
         #[diplomat::rust_link(
             icu::calendar::week::WeekCalculator::first_weekday,
             StructField,
@@ -61,7 +71,7 @@ pub mod ffi {
             StructField,
             compact
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_first_day_of_week_and_min_week_days(
             first_weekday: IsoWeekday,
             min_week_days: u8,

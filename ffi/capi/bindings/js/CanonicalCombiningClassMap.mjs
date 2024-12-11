@@ -40,10 +40,20 @@ export class CanonicalCombiningClassMap {
         return this.#ptr;
     }
 
-    static create(provider) {
+    static create() {
+        const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1();
+    
+        try {
+            return new CanonicalCombiningClassMap(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

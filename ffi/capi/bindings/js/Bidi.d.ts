@@ -17,7 +17,9 @@ export class Bidi {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): Bidi;
+    static create(): Bidi;
+
+    static createWithProvider(provider: DataProvider): Bidi;
 
     forText(text: string, defaultLevel: number | null): BidiInfo;
 

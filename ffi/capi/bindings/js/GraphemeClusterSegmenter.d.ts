@@ -15,7 +15,9 @@ export class GraphemeClusterSegmenter {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): GraphemeClusterSegmenter;
+    static create(): GraphemeClusterSegmenter;
+
+    static createWithProvider(provider: DataProvider): GraphemeClusterSegmenter;
 
     segment(input: string): GraphemeClusterBreakIteratorUtf16;
 }

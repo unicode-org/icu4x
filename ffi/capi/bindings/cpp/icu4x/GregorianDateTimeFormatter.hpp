@@ -22,7 +22,10 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result {union {icu4x::capi::GregorianDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result;
-    icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
+    icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
+    
+    typedef struct icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result {union {icu4x::capi::GregorianDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result;
+    icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
     void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const icu4x::capi::GregorianDateTimeFormatter* self, const icu4x::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
@@ -33,8 +36,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::GregorianDateTimeFormatter::create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length) {
-  auto result = icu4x::capi::icu4x_GregorianDateTimeFormatter_create_with_length_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::GregorianDateTimeFormatter::create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length) {
+  auto result = icu4x::capi::icu4x_GregorianDateTimeFormatter_create_with_length_mv1(locale.AsFFI(),
+    length.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::GregorianDateTimeFormatter>>(std::unique_ptr<icu4x::GregorianDateTimeFormatter>(icu4x::GregorianDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::GregorianDateTimeFormatter::create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length) {
+  auto result = icu4x::capi::icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1(provider.AsFFI(),
     locale.AsFFI(),
     length.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::GregorianDateTimeFormatter>>(std::unique_ptr<icu4x::GregorianDateTimeFormatter>(icu4x::GregorianDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GregorianDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));

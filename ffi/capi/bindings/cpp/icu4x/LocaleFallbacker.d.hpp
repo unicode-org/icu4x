@@ -31,7 +31,9 @@ namespace icu4x {
 class LocaleFallbacker {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::LocaleFallbacker> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline static std::unique_ptr<icu4x::LocaleFallbacker> without_data();
 

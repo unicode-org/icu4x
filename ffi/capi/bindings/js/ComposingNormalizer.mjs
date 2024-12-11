@@ -38,10 +38,20 @@ export class ComposingNormalizer {
         return this.#ptr;
     }
 
-    static createNfc(provider) {
+    static createNfc() {
+        const result = wasm.icu4x_ComposingNormalizer_create_nfc_mv1();
+    
+        try {
+            return new ComposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createNfcWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ComposingNormalizer_create_nfc_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_ComposingNormalizer_create_nfc_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -56,10 +66,20 @@ export class ComposingNormalizer {
         }
     }
 
-    static createNfkc(provider) {
+    static createNfkc() {
+        const result = wasm.icu4x_ComposingNormalizer_create_nfkc_mv1();
+    
+        try {
+            return new ComposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createNfkcWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ComposingNormalizer_create_nfkc_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

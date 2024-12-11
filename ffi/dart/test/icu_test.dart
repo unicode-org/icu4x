@@ -10,7 +10,7 @@ void main() {
   });
 
   test('LocaleFallbacker', () {
-    final iterator = LocaleFallbacker(DataProvider.compiled())
+    final iterator = LocaleFallbacker()
         .forConfig(LocaleFallbackConfig(priority: LocaleFallbackPriority.region))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
@@ -24,17 +24,17 @@ void main() {
     Rune a = 'a'.runes.first;
     Rune emoji = '💡'.runes.first;
 
-    final emojiSet = CodePointSetData.emoji(DataProvider.compiled());
+    final emojiSet = CodePointSetData.emoji();
     expect(emojiSet.contains(a), false);
     expect(emojiSet.contains(emoji), true);
 
-    Rune upperA = CaseMapper(DataProvider.compiled()).simpleUppercase(a);
+    Rune upperA = CaseMapper().simpleUppercase(a);
     expect(String.fromCharCode(upperA), 'A');
   });
 
   test('ListFormatter', () {
     final formatter = ListFormatter.andWithLength(
-        DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
+        Locale.fromString('es'), ListLength.wide);
     final list = ['España', 'Francia', 'Suiza', 'Italia'];
 
     expect(formatter.format(list), 'España, Francia, Suiza e Italia');

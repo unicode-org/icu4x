@@ -18,7 +18,9 @@ export class GregorianDateFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLength(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianDateFormatter;
+    static createWithLength(locale: Locale, length: DateTimeLength): GregorianDateFormatter;
+
+    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianDateFormatter;
 
     formatIsoDate(value: IsoDate): string;
 

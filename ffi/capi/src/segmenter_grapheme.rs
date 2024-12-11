@@ -44,10 +44,21 @@ pub mod ffi {
     );
 
     impl GraphemeClusterSegmenter {
+        /// Construct an [`GraphemeClusterSegmenter`] using compiled data.
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<GraphemeClusterSegmenter> {
+            Box::new(GraphemeClusterSegmenter(
+                icu_segmenter::GraphemeClusterSegmenter::new(),
+            ))
+        }
         /// Construct an [`GraphemeClusterSegmenter`].
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
             Ok(Box::new(GraphemeClusterSegmenter(call_constructor!(
                 icu_segmenter::GraphemeClusterSegmenter::new [r => Ok(r)],
                 icu_segmenter::GraphemeClusterSegmenter::try_new_with_any_provider,
@@ -55,7 +66,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

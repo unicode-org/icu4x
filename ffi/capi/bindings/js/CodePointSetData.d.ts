@@ -24,137 +24,271 @@ export class CodePointSetData {
 
     iterRangesComplemented(): CodePointRangeIterator;
 
-    static loadForGeneralCategoryGroup(provider: DataProvider, group: number): CodePointSetData;
+    static createGeneralCategoryGroup(group: number): CodePointSetData;
 
-    static loadAsciiHexDigit(provider: DataProvider): CodePointSetData;
+    static createGeneralCategoryGroupWithProvider(provider: DataProvider, group: number): CodePointSetData;
 
-    static loadAlnum(provider: DataProvider): CodePointSetData;
+    static createAsciiHexDigit(): CodePointSetData;
 
-    static loadAlphabetic(provider: DataProvider): CodePointSetData;
+    static createAsciiHexDigitWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadBidiControl(provider: DataProvider): CodePointSetData;
+    static createAlnum(): CodePointSetData;
 
-    static loadBidiMirrored(provider: DataProvider): CodePointSetData;
+    static createAlnumWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadBlank(provider: DataProvider): CodePointSetData;
+    static createAlphabetic(): CodePointSetData;
 
-    static loadCased(provider: DataProvider): CodePointSetData;
+    static createAlphabeticWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadCaseIgnorable(provider: DataProvider): CodePointSetData;
+    static createBidiControl(): CodePointSetData;
 
-    static loadFullCompositionExclusion(provider: DataProvider): CodePointSetData;
+    static createBidiControlWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadChangesWhenCasefolded(provider: DataProvider): CodePointSetData;
+    static createBidiMirrored(): CodePointSetData;
 
-    static loadChangesWhenCasemapped(provider: DataProvider): CodePointSetData;
+    static createBidiMirroredWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadChangesWhenNfkcCasefolded(provider: DataProvider): CodePointSetData;
+    static createBlank(): CodePointSetData;
 
-    static loadChangesWhenLowercased(provider: DataProvider): CodePointSetData;
+    static createBlankWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadChangesWhenTitlecased(provider: DataProvider): CodePointSetData;
+    static createCased(): CodePointSetData;
 
-    static loadChangesWhenUppercased(provider: DataProvider): CodePointSetData;
+    static createCasedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadDash(provider: DataProvider): CodePointSetData;
+    static createCaseIgnorable(): CodePointSetData;
 
-    static loadDeprecated(provider: DataProvider): CodePointSetData;
+    static createCaseIgnorableWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadDefaultIgnorableCodePoint(provider: DataProvider): CodePointSetData;
+    static createFullCompositionExclusion(): CodePointSetData;
 
-    static loadDiacritic(provider: DataProvider): CodePointSetData;
+    static createFullCompositionExclusionWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadEmojiModifierBase(provider: DataProvider): CodePointSetData;
+    static createChangesWhenCasefolded(): CodePointSetData;
 
-    static loadEmojiComponent(provider: DataProvider): CodePointSetData;
+    static createChangesWhenCasefoldedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadEmojiModifier(provider: DataProvider): CodePointSetData;
+    static createChangesWhenCasemapped(): CodePointSetData;
 
-    static loadEmoji(provider: DataProvider): CodePointSetData;
+    static createChangesWhenCasemappedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadEmojiPresentation(provider: DataProvider): CodePointSetData;
+    static createChangesWhenNfkcCasefolded(): CodePointSetData;
 
-    static loadExtender(provider: DataProvider): CodePointSetData;
+    static createChangesWhenNfkcCasefoldedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadExtendedPictographic(provider: DataProvider): CodePointSetData;
+    static createChangesWhenLowercased(): CodePointSetData;
 
-    static loadGraph(provider: DataProvider): CodePointSetData;
+    static createChangesWhenLowercasedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadGraphemeBase(provider: DataProvider): CodePointSetData;
+    static createChangesWhenTitlecased(): CodePointSetData;
 
-    static loadGraphemeExtend(provider: DataProvider): CodePointSetData;
+    static createChangesWhenTitlecasedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadGraphemeLink(provider: DataProvider): CodePointSetData;
+    static createChangesWhenUppercased(): CodePointSetData;
 
-    static loadHexDigit(provider: DataProvider): CodePointSetData;
+    static createChangesWhenUppercasedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadHyphen(provider: DataProvider): CodePointSetData;
+    static createDash(): CodePointSetData;
 
-    static loadIdContinue(provider: DataProvider): CodePointSetData;
+    static createDashWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadIdeographic(provider: DataProvider): CodePointSetData;
+    static createDeprecated(): CodePointSetData;
 
-    static loadIdStart(provider: DataProvider): CodePointSetData;
+    static createDeprecatedWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadIdsBinaryOperator(provider: DataProvider): CodePointSetData;
+    static createDefaultIgnorableCodePoint(): CodePointSetData;
 
-    static loadIdsTrinaryOperator(provider: DataProvider): CodePointSetData;
+    static createDefaultIgnorableCodePointWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadJoinControl(provider: DataProvider): CodePointSetData;
+    static createDiacritic(): CodePointSetData;
 
-    static loadLogicalOrderException(provider: DataProvider): CodePointSetData;
+    static createDiacriticWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadLowercase(provider: DataProvider): CodePointSetData;
+    static createEmojiModifierBase(): CodePointSetData;
 
-    static loadMath(provider: DataProvider): CodePointSetData;
+    static createEmojiModifierBaseWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadNoncharacterCodePoint(provider: DataProvider): CodePointSetData;
+    static createEmojiComponent(): CodePointSetData;
 
-    static loadNfcInert(provider: DataProvider): CodePointSetData;
+    static createEmojiComponentWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadNfdInert(provider: DataProvider): CodePointSetData;
+    static createEmojiModifier(): CodePointSetData;
 
-    static loadNfkcInert(provider: DataProvider): CodePointSetData;
+    static createEmojiModifierWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadNfkdInert(provider: DataProvider): CodePointSetData;
+    static createEmoji(): CodePointSetData;
 
-    static loadPatternSyntax(provider: DataProvider): CodePointSetData;
+    static createEmojiWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadPatternWhiteSpace(provider: DataProvider): CodePointSetData;
+    static createEmojiPresentation(): CodePointSetData;
 
-    static loadPrependedConcatenationMark(provider: DataProvider): CodePointSetData;
+    static createEmojiPresentationWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadPrint(provider: DataProvider): CodePointSetData;
+    static createExtender(): CodePointSetData;
 
-    static loadQuotationMark(provider: DataProvider): CodePointSetData;
+    static createExtenderWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadRadical(provider: DataProvider): CodePointSetData;
+    static createExtendedPictographic(): CodePointSetData;
 
-    static loadRegionalIndicator(provider: DataProvider): CodePointSetData;
+    static createExtendedPictographicWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadSoftDotted(provider: DataProvider): CodePointSetData;
+    static createGraph(): CodePointSetData;
 
-    static loadSegmentStarter(provider: DataProvider): CodePointSetData;
+    static createGraphWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadCaseSensitive(provider: DataProvider): CodePointSetData;
+    static createGraphemeBase(): CodePointSetData;
 
-    static loadSentenceTerminal(provider: DataProvider): CodePointSetData;
+    static createGraphemeBaseWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadTerminalPunctuation(provider: DataProvider): CodePointSetData;
+    static createGraphemeExtend(): CodePointSetData;
 
-    static loadUnifiedIdeograph(provider: DataProvider): CodePointSetData;
+    static createGraphemeExtendWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadUppercase(provider: DataProvider): CodePointSetData;
+    static createGraphemeLink(): CodePointSetData;
 
-    static loadVariationSelector(provider: DataProvider): CodePointSetData;
+    static createGraphemeLinkWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadWhiteSpace(provider: DataProvider): CodePointSetData;
+    static createHexDigit(): CodePointSetData;
 
-    static loadXdigit(provider: DataProvider): CodePointSetData;
+    static createHexDigitWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadXidContinue(provider: DataProvider): CodePointSetData;
+    static createHyphen(): CodePointSetData;
 
-    static loadXidStart(provider: DataProvider): CodePointSetData;
+    static createHyphenWithProvider(provider: DataProvider): CodePointSetData;
 
-    static loadForEcma262(provider: DataProvider, propertyName: string): CodePointSetData;
+    static createIdContinue(): CodePointSetData;
+
+    static createIdContinueWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createIdeographic(): CodePointSetData;
+
+    static createIdeographicWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createIdStart(): CodePointSetData;
+
+    static createIdStartWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createIdsBinaryOperator(): CodePointSetData;
+
+    static createIdsBinaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createIdsTrinaryOperator(): CodePointSetData;
+
+    static createIdsTrinaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createJoinControl(): CodePointSetData;
+
+    static createJoinControlWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createLogicalOrderException(): CodePointSetData;
+
+    static createLogicalOrderExceptionWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createLowercase(): CodePointSetData;
+
+    static createLowercaseWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createMath(): CodePointSetData;
+
+    static createMathWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createNoncharacterCodePoint(): CodePointSetData;
+
+    static createNoncharacterCodePointWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createNfcInert(): CodePointSetData;
+
+    static createNfcInertWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createNfdInert(): CodePointSetData;
+
+    static createNfdInertWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createNfkcInert(): CodePointSetData;
+
+    static createNfkcInertWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createNfkdInert(): CodePointSetData;
+
+    static createNfkdInertWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createPatternSyntax(): CodePointSetData;
+
+    static createPatternSyntaxWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createPatternWhiteSpace(): CodePointSetData;
+
+    static createPatternWhiteSpaceWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createPrependedConcatenationMark(): CodePointSetData;
+
+    static createPrependedConcatenationMarkWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createPrint(): CodePointSetData;
+
+    static createPrintWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createQuotationMark(): CodePointSetData;
+
+    static createQuotationMarkWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createRadical(): CodePointSetData;
+
+    static createRadicalWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createRegionalIndicator(): CodePointSetData;
+
+    static createRegionalIndicatorWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createSoftDotted(): CodePointSetData;
+
+    static createSoftDottedWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createSegmentStarter(): CodePointSetData;
+
+    static createSegmentStarterWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createCaseSensitive(): CodePointSetData;
+
+    static createCaseSensitiveWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createSentenceTerminal(): CodePointSetData;
+
+    static createSentenceTerminalWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createTerminalPunctuation(): CodePointSetData;
+
+    static createTerminalPunctuationWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createUnifiedIdeograph(): CodePointSetData;
+
+    static createUnifiedIdeographWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createUppercase(): CodePointSetData;
+
+    static createUppercaseWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createVariationSelector(): CodePointSetData;
+
+    static createVariationSelectorWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createWhiteSpace(): CodePointSetData;
+
+    static createWhiteSpaceWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createXdigit(): CodePointSetData;
+
+    static createXdigitWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createXidContinue(): CodePointSetData;
+
+    static createXidContinueWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createXidStart(): CodePointSetData;
+
+    static createXidStartWithProvider(provider: DataProvider): CodePointSetData;
+
+    static createForEcma262(propertyName: string): CodePointSetData;
+
+    static createForEcma262WithProvider(provider: DataProvider, propertyName: string): CodePointSetData;
 }

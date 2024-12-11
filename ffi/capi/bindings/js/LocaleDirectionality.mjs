@@ -41,10 +41,20 @@ export class LocaleDirectionality {
         return this.#ptr;
     }
 
-    static create(provider) {
+    static create() {
+        const result = wasm.icu4x_LocaleDirectionality_create_mv1();
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -59,10 +69,20 @@ export class LocaleDirectionality {
         }
     }
 
-    static createWithExpander(provider, expander) {
+    static createWithExpander(expander) {
+        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(expander.ffiValue);
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createWithExpanderAndProvider(provider, expander) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

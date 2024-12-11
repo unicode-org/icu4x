@@ -1,5 +1,4 @@
 import { CaseMapper } from "icu4x"
-import { DataProvider } from "icu4x"
 import { Locale } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
 export function lowercase(s: string, name: string);

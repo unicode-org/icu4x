@@ -15,7 +15,9 @@ export class ScriptWithExtensions {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): ScriptWithExtensions;
+    static create(): ScriptWithExtensions;
+
+    static createWithProvider(provider: DataProvider): ScriptWithExtensions;
 
     getScriptVal(ch: codepoint): number;
 

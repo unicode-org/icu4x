@@ -13,7 +13,9 @@ export class CanonicalCombiningClassMap {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): CanonicalCombiningClassMap;
+    static create(): CanonicalCombiningClassMap;
+
+    static createWithProvider(provider: DataProvider): CanonicalCombiningClassMap;
 
     get(ch: codepoint): number;
 }

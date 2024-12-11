@@ -18,7 +18,9 @@ export class TimeFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLength(provider: DataProvider, locale: Locale, length: DateTimeLength): TimeFormatter;
+    static createWithLength(locale: Locale, length: DateTimeLength): TimeFormatter;
+
+    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): TimeFormatter;
 
     formatTime(value: Time): string;
 

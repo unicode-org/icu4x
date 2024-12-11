@@ -42,10 +42,20 @@ export class WordSegmenter {
         return this.#ptr;
     }
 
-    static createAuto(provider) {
+    static createAuto() {
+        const result = wasm.icu4x_WordSegmenter_create_auto_mv1();
+    
+        try {
+            return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createAutoWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_auto_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_auto_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -60,10 +70,10 @@ export class WordSegmenter {
         }
     }
 
-    static createAutoWithContentLocale(provider, locale) {
+    static createAutoWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_auto_with_content_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_auto_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -78,10 +88,10 @@ export class WordSegmenter {
         }
     }
 
-    static createLstm(provider) {
+    static createAutoWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_lstm_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -96,10 +106,20 @@ export class WordSegmenter {
         }
     }
 
-    static createLstmWithContentLocale(provider, locale) {
+    static createLstm() {
+        const result = wasm.icu4x_WordSegmenter_create_lstm_mv1();
+    
+        try {
+            return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createLstmWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_lstm_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -114,10 +134,10 @@ export class WordSegmenter {
         }
     }
 
-    static createDictionary(provider) {
+    static createLstmWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -132,10 +152,74 @@ export class WordSegmenter {
         }
     }
 
-    static createDictionaryWithContentLocale(provider, locale) {
+    static createLstmWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createDictionary() {
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1();
+    
+        try {
+            return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createDictionaryWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createDictionaryWithContentLocale(locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createDictionaryWithContentLocaleAndProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
