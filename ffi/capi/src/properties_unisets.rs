@@ -41,6 +41,7 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
+        /// Create a map for the `Basic_Emoji` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
         #[diplomat::attr(auto, named_constructor = "basic")]
         #[cfg(feature = "compiled_data")]
@@ -49,6 +50,7 @@ pub mod ffi {
                 icu_properties::EmojiSetData::new::<BasicEmoji>().static_to_owned(),
             ))
         }
+        /// Create a map for the `Basic_Emoji` property, using a particular data source.
 
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic_with_provider")]

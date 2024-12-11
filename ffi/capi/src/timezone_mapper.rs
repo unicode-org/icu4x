@@ -27,6 +27,7 @@ pub mod ffi {
     pub struct TimeZoneIdMapper(pub icu_timezone::TimeZoneIdMapper);
 
     impl TimeZoneIdMapper {
+        /// Create a new [`TimeZoneIdMapper`] using compiled data
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -36,6 +37,7 @@ pub mod ffi {
             ))
         }
 
+        /// Create a new [`TimeZoneIdMapper`] using a particular data source
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
         pub fn create_with_provider(
@@ -141,6 +143,7 @@ pub mod ffi {
     );
 
     impl TimeZoneIdMapperWithFastCanonicalization {
+        /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
@@ -156,7 +159,7 @@ pub mod ffi {
                 icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new().static_to_owned(),
             ))
         }
-
+        /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using a particular data source
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct

@@ -21,7 +21,7 @@ pub mod ffi {
     );
 
     impl UnitsConverterFactory {
-        /// Construct a new [`UnitsConverterFactory`] instance.
+        /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
         #[diplomat::rust_link(
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct
@@ -33,7 +33,7 @@ pub mod ffi {
                 icu_experimental::units::converter_factory::ConverterFactory::new(),
             ))
         }
-        /// Construct a new [`UnitsConverterFactory`] instance.
+        /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
         #[diplomat::rust_link(
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct

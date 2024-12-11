@@ -13,7 +13,7 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// A set of "exemplar characters" for a given locale.
     #[diplomat::rust_link(icu::locale, Mod)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharacters, Struct)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharactersBorrowed, Struct)]
@@ -46,6 +46,7 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
@@ -60,6 +61,7 @@ pub mod ffi {
             )))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
@@ -78,6 +80,7 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
@@ -91,6 +94,7 @@ pub mod ffi {
                     .static_to_owned(),
             )))
         }
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
 
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
@@ -110,6 +114,8 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
@@ -123,6 +129,7 @@ pub mod ffi {
                     .static_to_owned(),
             )))
         }
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
 
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
@@ -141,6 +148,9 @@ pub mod ffi {
                 &locale
             )?)))
         }
+
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
@@ -154,6 +164,9 @@ pub mod ffi {
                     .static_to_owned(),
             )))
         }
+
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
@@ -172,6 +185,8 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
@@ -185,6 +200,7 @@ pub mod ffi {
                     .static_to_owned(),
             )))
         }
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
 
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
