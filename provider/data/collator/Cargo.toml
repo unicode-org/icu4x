@@ -17,7 +17,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [package.metadata.sources]
-cldr = { tagged = "46.0.0" }
+cldr = { tagged = "46.1.0-BETA1" }
 icuexport = { tagged = "release-76-1" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
