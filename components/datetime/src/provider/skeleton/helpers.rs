@@ -545,13 +545,7 @@ impl components::Bag {
             CoarseHourCycle::H23H24 => HourCycle::H23,
         };
         let fields = self.to_vec_fields(default_hour_cycle);
-        match create_best_pattern_for_fields(
-            skeletons,
-            length_patterns,
-            &fields,
-            &self,
-            false,
-        ) {
+        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
             BestSkeleton::AllFieldsMatch(p) => p,
             _ => {
                 // Build a last-resort pattern that contains all of the requested fields.

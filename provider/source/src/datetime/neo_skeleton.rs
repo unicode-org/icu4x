@@ -83,69 +83,65 @@ impl SourceDataProvider {
             }
         }
 
-        let [long, medium, short] = [
-            Length::Long,
-            Length::Medium,
-            Length::Short,
-        ]
-        .map(|length| to_components_bag(length, attributes, &data))
-        .map(|components| {
-            // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
-            let pattern = expand_pp_to_pe(components.select_pattern(
-                &skeleton_patterns,
-                time_lengths_v1.preferred_hour_cycle,
-                &length_combinations_v1,
-            ));
-            match components {
-                components::Bag {
-                    era: None,
-                    year: Some(_),
-                    ..
-                } => {
-                    // TODO(#4478): Use CLDR data when it becomes available
-                    // TODO: Set the length to NeoSkeletonLength? Or not, because
-                    // the era should normally be displayed as short?
-                    let mut components_with_full_year = components;
-                    components_with_full_year.year = Some(components::Year::Numeric);
-                    let mut components_with_era = components_with_full_year;
-                    components_with_era.era = Some(components::Text::Short);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_full_year.select_pattern(
-                            &skeleton_patterns,
-                            time_lengths_v1.preferred_hour_cycle,
-                            &length_combinations_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_era.select_pattern(
-                            &skeleton_patterns,
-                            time_lengths_v1.preferred_hour_cycle,
-                            &length_combinations_v1,
-                        ))),
-                    )
+        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
+            .map(|length| to_components_bag(length, attributes, &data))
+            .map(|components| {
+                // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
+                let pattern = expand_pp_to_pe(components.select_pattern(
+                    &skeleton_patterns,
+                    time_lengths_v1.preferred_hour_cycle,
+                    &length_combinations_v1,
+                ));
+                match components {
+                    components::Bag {
+                        era: None,
+                        year: Some(_),
+                        ..
+                    } => {
+                        // TODO(#4478): Use CLDR data when it becomes available
+                        // TODO: Set the length to NeoSkeletonLength? Or not, because
+                        // the era should normally be displayed as short?
+                        let mut components_with_full_year = components;
+                        components_with_full_year.year = Some(components::Year::Numeric);
+                        let mut components_with_era = components_with_full_year;
+                        components_with_era.era = Some(components::Text::Short);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_full_year.select_pattern(
+                                &skeleton_patterns,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_era.select_pattern(
+                                &skeleton_patterns,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
+                            ))),
+                        )
+                    }
+                    components::Bag { hour: Some(_), .. } => {
+                        let mut components_with_minute = components;
+                        components_with_minute.minute = Some(components::Numeric::Numeric);
+                        let mut components_with_second = components;
+                        components_with_second.minute = Some(components::Numeric::Numeric);
+                        components_with_second.second = Some(components::Numeric::Numeric);
+                        (
+                            pattern,
+                            Some(expand_pp_to_pe(components_with_minute.select_pattern(
+                                &skeleton_patterns,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
+                            ))),
+                            Some(expand_pp_to_pe(components_with_second.select_pattern(
+                                &skeleton_patterns,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
+                            ))),
+                        )
+                    }
+                    _ => (pattern, None, None),
                 }
-                components::Bag { hour: Some(_), .. } => {
-                    let mut components_with_minute = components;
-                    components_with_minute.minute = Some(components::Numeric::Numeric);
-                    let mut components_with_second = components;
-                    components_with_second.minute = Some(components::Numeric::Numeric);
-                    components_with_second.second = Some(components::Numeric::Numeric);
-                    (
-                        pattern,
-                        Some(expand_pp_to_pe(components_with_minute.select_pattern(
-                            &skeleton_patterns,
-                            time_lengths_v1.preferred_hour_cycle,
-                            &length_combinations_v1,
-                        ))),
-                        Some(expand_pp_to_pe(components_with_second.select_pattern(
-                            &skeleton_patterns,
-                            time_lengths_v1.preferred_hour_cycle,
-                            &length_combinations_v1,
-                        ))),
-                    )
-                }
-                _ => (pattern, None, None),
-            }
-        });
+            });
         let builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
                 long: long.0.as_ref().map(runtime::Pattern::as_ref),
@@ -596,7 +592,10 @@ mod date_skeleton_consistency_tests {
         length: &'a str,
     }
 
-    fn canonicalize_pattern(pattern: &mut reference::Pattern, strategy: PatternCanonicalizationStrategy) {
+    fn canonicalize_pattern(
+        pattern: &mut reference::Pattern,
+        strategy: PatternCanonicalizationStrategy,
+    ) {
         use icu::datetime::fields::{Field, FieldLength, FieldSymbol};
         use icu::datetime::provider::pattern::PatternItem;
         use PatternCanonicalizationStrategy::*;
@@ -604,36 +603,47 @@ mod date_skeleton_consistency_tests {
         let mut items = core::mem::take(pattern).into_items();
         items.retain_mut(|item| {
             match (item, strategy) {
-                (PatternItem::Field(ref mut field @ Field {
-                    symbol: FieldSymbol::Era,
-                    length: FieldLength::Three
-                }), NormalizeOnly | Aggressive | FlattenNumerics) => {
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            symbol: FieldSymbol::Era,
+                            length: FieldLength::Three,
+                        },
+                    ),
+                    NormalizeOnly | Aggressive | FlattenNumerics,
+                ) => {
                     field.length = FieldLength::One;
                     true
                 }
                 // Ignore differences between 'y' and 'yy'?
-                (PatternItem::Field(ref mut field @ Field {
-                    length: FieldLength::Two,
-                    ..
-                }), Aggressive | FlattenNumerics) => {
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            length: FieldLength::Two,
+                            ..
+                        },
+                    ),
+                    Aggressive | FlattenNumerics,
+                ) => {
                     field.length = FieldLength::One;
                     true
                 }
                 // Ignore differences between 'MMM' and 'MMMM'?
-                (PatternItem::Field(ref mut field @ Field {
-                    length: FieldLength::Four,
-                    ..
-                }), Aggressive | FlattenNumerics) => {
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            length: FieldLength::Four,
+                            ..
+                        },
+                    ),
+                    Aggressive | FlattenNumerics,
+                ) => {
                     field.length = FieldLength::Three;
                     true
                 }
                 // Ignore whitespace and ASCII punctuation?
-                (PatternItem::Literal(' ' | '.' | ',' | '/' | '-'), Aggressive) => {
-                    false
-                }
-                _ => {
-                    true
-                }
+                (PatternItem::Literal(' ' | '.' | ',' | '/' | '-'), Aggressive) => false,
+                _ => true,
             }
         });
         *pattern = items.into();
@@ -652,13 +662,22 @@ mod date_skeleton_consistency_tests {
 
         // Canonicalize the two patterns to make comparison more precise
         let mut selected_pattern = reference::Pattern::from(&selected_pattern);
-        canonicalize_pattern(&mut selected_pattern, data.pattern_canonicalization_strategy);
+        canonicalize_pattern(
+            &mut selected_pattern,
+            data.pattern_canonicalization_strategy,
+        );
         let selected_pattern = runtime::Pattern::from(&selected_pattern).to_string();
         let mut expected_pattern: reference::Pattern = info.pattern.parse().unwrap();
         let mut pattern_for_lookup = expected_pattern.clone();
-        canonicalize_pattern(&mut expected_pattern, data.pattern_canonicalization_strategy);
+        canonicalize_pattern(
+            &mut expected_pattern,
+            data.pattern_canonicalization_strategy,
+        );
         let expected_pattern = runtime::Pattern::from(&expected_pattern).to_string();
-        canonicalize_pattern(&mut pattern_for_lookup, PatternCanonicalizationStrategy::FlattenNumerics);
+        canonicalize_pattern(
+            &mut pattern_for_lookup,
+            PatternCanonicalizationStrategy::FlattenNumerics,
+        );
         let pattern_for_lookup = runtime::Pattern::from(&pattern_for_lookup).to_string();
 
         // Check if there is a match
@@ -667,7 +686,14 @@ mod date_skeleton_consistency_tests {
             let cal = data.cldr_cal;
             let length = info.length;
             let in_available_formats = data.skeleton_pattern_set.contains(&pattern_for_lookup);
-            println!("{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}", if in_available_formats { "MATCH" } else { "MISSING" });
+            println!(
+                "{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}",
+                if in_available_formats {
+                    "MATCH"
+                } else {
+                    "MISSING"
+                }
+            );
             // Don't return an error if there is no match in available formats!
             !in_available_formats
         } else {
@@ -675,7 +701,12 @@ mod date_skeleton_consistency_tests {
         }
     }
 
-    fn check_all_patterns_for_calendar_and_locale(provider: &SourceDataProvider, cldr_cal: &str, locale: &DataLocale, strictness: TestStrictness) -> usize {
+    fn check_all_patterns_for_calendar_and_locale(
+        provider: &SourceDataProvider,
+        cldr_cal: &str,
+        locale: &DataLocale,
+        strictness: TestStrictness,
+    ) -> usize {
         let mut num_problems = 0;
         let data = provider
             .get_datetime_resources(&locale, Either::Right(cldr_cal))
@@ -684,12 +715,21 @@ mod date_skeleton_consistency_tests {
         let time_lengths_v1 = TimeLengthsV1::from(&data);
         let skeleton_patterns =
             DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
-        let skeleton_pattern_set = data.datetime_formats.available_formats.0.values().map(|pattern_str| {
-            let mut pattern: reference::Pattern = pattern_str.parse().unwrap();
-            // always use NormalizeOnly mode for availableFormats lookup
-            canonicalize_pattern(&mut pattern, PatternCanonicalizationStrategy::FlattenNumerics);
-            runtime::Pattern::from(&pattern).to_string()
-        }).collect::<HashSet<_>>();
+        let skeleton_pattern_set = data
+            .datetime_formats
+            .available_formats
+            .0
+            .values()
+            .map(|pattern_str| {
+                let mut pattern: reference::Pattern = pattern_str.parse().unwrap();
+                // always use NormalizeOnly mode for availableFormats lookup
+                canonicalize_pattern(
+                    &mut pattern,
+                    PatternCanonicalizationStrategy::FlattenNumerics,
+                );
+                runtime::Pattern::from(&pattern).to_string()
+            })
+            .collect::<HashSet<_>>();
         let test_case_data = TestCaseFixedArgs {
             skeleton_patterns: &skeleton_patterns,
             preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
@@ -742,13 +782,18 @@ mod date_skeleton_consistency_tests {
     fn gregorian_only() {
         // NOTE: This test is intended to run over all modern locales
         let provider = SourceDataProvider::new_latest_tested();
-    
+
         let mut num_problems = 0;
         for locale in provider
             .locales_for_coverage_levels([CoverageLevel::Modern])
             .unwrap()
         {
-            num_problems += check_all_patterns_for_calendar_and_locale(&provider, "gregorian", &locale, TestStrictness::LowHangingFruit);
+            num_problems += check_all_patterns_for_calendar_and_locale(
+                &provider,
+                "gregorian",
+                &locale,
+                TestStrictness::LowHangingFruit,
+            );
         }
         if num_problems != 0 {
             panic!("{num_problems} problems");
@@ -760,14 +805,19 @@ mod date_skeleton_consistency_tests {
     fn all_calendars() {
         // NOTE: This test is intended to run over all modern locales
         let provider = SourceDataProvider::new_latest_tested();
-    
+
         let mut num_problems = 0;
         for (_calendar, cldr_cal) in supported_cals().iter() {
             for locale in provider
                 .locales_for_coverage_levels([CoverageLevel::Modern])
                 .unwrap()
             {
-                num_problems += check_all_patterns_for_calendar_and_locale(&provider, cldr_cal, &locale, TestStrictness::Comprehensive);
+                num_problems += check_all_patterns_for_calendar_and_locale(
+                    &provider,
+                    cldr_cal,
+                    &locale,
+                    TestStrictness::Comprehensive,
+                );
             }
         }
         if num_problems != 0 {

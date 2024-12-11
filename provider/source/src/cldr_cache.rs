@@ -16,12 +16,12 @@ use icu_provider::DataError;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::make_forking_provider;
-use writeable::Writeable;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::OnceLock;
+use writeable::Writeable;
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
