@@ -28,7 +28,7 @@ The decomposition is the NFKD decomposition of U+FDFA: The highest bit is 0, the
 
 Hangul syllable: The trie value is 1. (I.e. only the lowest bit is set to 1.)
 
-The decomposition is a singleton decomposition to a single BMP character > 0x1F: The highest bit is 1 iff the decomposition can combining backwards (does not occur as of Unicode 16.0), the second-highest bit is 1, the low half is the decomposition.
+The decomposition is a singleton decomposition to a single BMP character > 0x1F: The highest bit is 1 iff the decomposition can combine backwards (does not occur as of Unicode 16.0), the second-highest bit is 1, the low half is the decomposition.
 
 The character is not the ANGSTROM SIGN, and the decomposition is to a starter <= U+7FFF and > 0x1F that cannot combine backwards followed by a non-starter <= U+7FFF and > 0x1F: The highest bit is 0. The second-highest bit is set according to its general semantics. The lowest 15 bits are the leading starter. The next 15 bits are the trailing non-starter.
 
