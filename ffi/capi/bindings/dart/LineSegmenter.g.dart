@@ -24,7 +24,7 @@ final class LineSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LineSegmenter_destroy_mv1));
 
-  /// Construct a [`LineSegmenter`] with default options. It automatically loads the best
+  /// Construct a [`LineSegmenter`] with default options using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -33,7 +33,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with default options. It automatically loads the best
+  /// Construct a [`LineSegmenter`] with default options using a particular data source. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -48,7 +48,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   factory LineSegmenter.lstm() {
@@ -57,7 +57,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai,  using a particular data source.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   ///
@@ -71,7 +71,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
-  /// Burmese, Khmer, Lao, and Thai..
+  /// Burmese, Khmer, Lao, and Thai, using compiled data
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   factory LineSegmenter.dictionary() {
@@ -80,7 +80,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
-  /// Burmese, Khmer, Lao, and Thai..
+  /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   ///
@@ -93,7 +93,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+  /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
@@ -104,7 +104,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
-  /// available payload data for Burmese, Khmer, Lao, and Thai.
+  /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
   ///
@@ -119,7 +119,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   factory LineSegmenter.lstmWithOptions(Locale contentLocale, LineBreakOptions options) {
@@ -129,7 +129,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   ///
@@ -144,7 +144,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   factory LineSegmenter.dictionaryWithOptions(Locale contentLocale, LineBreakOptions options) {
@@ -154,7 +154,7 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
-  /// Burmese, Khmer, Lao, and Thai.
+  /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   ///

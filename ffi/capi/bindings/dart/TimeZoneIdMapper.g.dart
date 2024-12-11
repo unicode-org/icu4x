@@ -27,12 +27,16 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneIdMapper_destroy_mv1));
 
+  /// Create a new [`TimeZoneIdMapper`] using compiled data
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html#method.new) for more information.
   factory TimeZoneIdMapper() {
     final result = _icu4x_TimeZoneIdMapper_create_mv1();
     return TimeZoneIdMapper._fromFfi(result, []);
   }
 
+  /// Create a new [`TimeZoneIdMapper`] using a particular data source
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
