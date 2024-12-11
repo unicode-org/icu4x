@@ -22,7 +22,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleDisplayNamesFormatter_destroy_mv1));
 
-  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
+  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
@@ -36,7 +36,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     return LocaleDisplayNamesFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
+  /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///

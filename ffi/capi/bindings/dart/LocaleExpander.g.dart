@@ -24,7 +24,7 @@ final class LocaleExpander implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleExpander_destroy_mv1));
 
-  /// Create a new [`LocaleExpander`].
+  /// Create a new [`LocaleExpander`] using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
   factory LocaleExpander() {
@@ -45,7 +45,7 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
 
-  /// Create a new [`LocaleExpander`] with extended data.
+  /// Create a new [`LocaleExpander`] with extended data using compiled data.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   factory LocaleExpander.extended() {

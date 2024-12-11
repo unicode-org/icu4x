@@ -49,7 +49,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.main(Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_main_mv1(locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_main_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -60,7 +60,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.mainWithProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_main_with_provider_mv1(provider._ffi, locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_main_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -71,7 +71,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.auxiliary(Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_auxiliary_mv1(locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_auxiliary_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -82,7 +82,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.auxiliaryWithProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_auxiliary_with_provider_mv1(provider._ffi, locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -93,7 +93,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.punctuation(Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_punctuation_mv1(locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_punctuation_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -104,7 +104,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.punctuationWithProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_punctuation_with_provider_mv1(provider._ffi, locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -115,7 +115,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.numbers(Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_numbers_mv1(locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_numbers_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -126,7 +126,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.numbersWithProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_numbers_with_provider_mv1(provider._ffi, locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -137,7 +137,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.index(Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_index_mv1(locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_index_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -148,7 +148,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory ExemplarCharacters.indexWithProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_ExemplarCharacters_try_new_index_with_provider_mv1(provider._ffi, locale._ffi);
+    final result = _icu4x_ExemplarCharacters_create_index_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -172,51 +172,51 @@ external bool _icu4x_ExemplarCharacters_contains_str_mv1(ffi.Pointer<ffi.Opaque>
 external bool _icu4x_ExemplarCharacters_contains_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_main_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_main_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_main_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_main_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_main_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_main_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_main_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_main_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_auxiliary_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_auxiliary_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_auxiliary_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_auxiliary_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_auxiliary_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_auxiliary_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_punctuation_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_punctuation_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_punctuation_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_punctuation_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_punctuation_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_punctuation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_numbers_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_numbers_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_numbers_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_numbers_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_numbers_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_numbers_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_numbers_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_index_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_index_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_index_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_index_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_try_new_index_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_index_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_try_new_index_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_index_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);

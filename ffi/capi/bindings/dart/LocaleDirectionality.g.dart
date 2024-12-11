@@ -22,7 +22,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleDirectionality_destroy_mv1));
 
-  /// Construct a new LocaleDirectionality instance
+  /// Construct a new LocaleDirectionality instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
   factory LocaleDirectionality() {
@@ -30,7 +30,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance
+  /// Construct a new LocaleDirectionality instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
   ///
@@ -43,7 +43,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new LocaleDirectionality instance with a custom expander
+  /// Construct a new LocaleDirectionality instance with a custom expander and compiled data.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   factory LocaleDirectionality.withExpander(LocaleExpander expander) {
@@ -51,7 +51,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result, []);
   }
 
-  /// Construct a new LocaleDirectionality instance with a custom expander
+  /// Construct a new LocaleDirectionality instance with a custom expander and a particular data source.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   ///
