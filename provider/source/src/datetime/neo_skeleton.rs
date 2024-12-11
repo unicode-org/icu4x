@@ -709,7 +709,7 @@ mod date_skeleton_consistency_tests {
     ) -> usize {
         let mut num_problems = 0;
         let data = provider
-            .get_datetime_resources(&locale, Either::Right(cldr_cal))
+            .get_datetime_resources(locale, Either::Right(cldr_cal))
             .unwrap();
         let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
         let time_lengths_v1 = TimeLengthsV1::from(&data);
@@ -735,7 +735,7 @@ mod date_skeleton_consistency_tests {
             preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
             length_combinations_v1: &length_combinations_v1,
             cldr_cal,
-            locale: &locale,
+            locale,
             skeleton_pattern_set: &skeleton_pattern_set,
             pattern_canonicalization_strategy: match strictness {
                 TestStrictness::Comprehensive => PatternCanonicalizationStrategy::NormalizeOnly,
@@ -745,32 +745,32 @@ mod date_skeleton_consistency_tests {
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: &data.date_formats.short.get_pattern(),
-                skeleton: &data.date_skeletons.short.get_pattern(),
+                pattern: data.date_formats.short.get_pattern(),
+                skeleton: data.date_skeletons.short.get_pattern(),
                 length: "date-short",
             },
         ) as usize;
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: &data.date_formats.medium.get_pattern(),
-                skeleton: &data.date_skeletons.medium.get_pattern(),
+                pattern: data.date_formats.medium.get_pattern(),
+                skeleton: data.date_skeletons.medium.get_pattern(),
                 length: "date-medum",
             },
         ) as usize;
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: &data.date_formats.long.get_pattern(),
-                skeleton: &data.date_skeletons.long.get_pattern(),
+                pattern: data.date_formats.long.get_pattern(),
+                skeleton: data.date_skeletons.long.get_pattern(),
                 length: "date-long",
             },
         ) as usize;
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: &data.date_formats.full.get_pattern(),
-                skeleton: &data.date_skeletons.full.get_pattern(),
+                pattern: data.date_formats.full.get_pattern(),
+                skeleton: data.date_skeletons.full.get_pattern(),
                 length: "date-full",
             },
         ) as usize;
