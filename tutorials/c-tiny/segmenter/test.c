@@ -8,12 +8,8 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    icu4x_LineSegmenter_create_auto_mv1_result segmenter_result = icu4x_LineSegmenter_create_auto_mv1();
-    if (!segmenter_result.is_ok)  {
-        printf("Failed to create icu4x_LineSegmenter_mv1\n");
-        return 1;
-    }
-    LineSegmenter* segmenter = segmenter_result.ok;
+    LineSegmenter* segmenter = icu4x_LineSegmenter_create_auto_mv1();
+
 
     char output[40];
     DiplomatWrite write = diplomat_simple_write(output, 40);

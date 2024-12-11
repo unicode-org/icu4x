@@ -15,8 +15,7 @@ int main() {
     Logger::init_simple_logger();
     std::unique_ptr<Locale> locale = Locale::from_string("ar").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<DataProvider> dp = DataProvider::from_fs(path).ok().value();
-    std::unique_ptr<PluralRules> pr = PluralRules::create_cardinal(*dp.get(), *locale.get()).ok().value();
+    std::unique_ptr<PluralRules> pr = PluralRules::create_cardinal(*locale.get()).ok().value();
 
     std::unique_ptr<PluralOperands> op = PluralOperands::from_string("3").ok().value();
     PluralCategory cat = pr->category_for(*op.get());

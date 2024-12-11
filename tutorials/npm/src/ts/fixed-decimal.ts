@@ -1,18 +1,16 @@
-import { DataProvider, SignedFixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
+import { SignedFixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
 import { Result, Ok, result, unwrap } from './index';
 
 export class FixedDecimalDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: DataProvider;
 
     #locale: Result<Locale>;
     #groupingStrategy: FixedDecimalGroupingStrategy;
     #formatter: Result<FixedDecimalFormatter>;
     #fixedDecimal: Result<SignedFixedDecimal> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
+    constructor(displayFn: (formatted: string) => void) {
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
 
         this.#locale = Ok(Locale.fromString("en"));
         this.#groupingStrategy = FixedDecimalGroupingStrategy.Auto;
@@ -37,7 +35,6 @@ export class FixedDecimalDemo {
 
     #updateFormatter(): void {
         this.#formatter = result(() => FixedDecimalFormatter.createWithGroupingStrategy(
-            this.#dataProvider,
             unwrap(this.#locale),
             this.#groupingStrategy,
         ));
@@ -63,11 +60,11 @@ export class FixedDecimalDemo {
     }
 }
 
-export function setup(dataProvider: DataProvider): void {
+export function setup(): void {
     const formattedDecimal = document.getElementById('fdf-formatted') as HTMLParagraphElement;
     const fixedDecimalDemo = new FixedDecimalDemo((formatted) => {
         formattedDecimal.innerText = formatted;
-    }, dataProvider);
+    });
 
     const otherLocaleBtn = document.getElementById('fdf-locale-other') as HTMLInputElement | null;
     otherLocaleBtn?.addEventListener('click', () => fixedDecimalDemo.setLocale(otherLocaleInput.value));

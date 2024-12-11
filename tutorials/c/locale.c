@@ -241,19 +241,10 @@ int main() {
     icu4x_Locale_destroy_mv1(locale);
 
     // Create a LocaleCanonicalizer and LocaleExpander.
-    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
-    icu4x_LocaleCanonicalizer_create_mv1_result result2 = icu4x_LocaleCanonicalizer_create_mv1(provider);
-    if (!result2.is_ok) {
-        printf("Could not construct Locale Canonicalizer");
-        return 1;
-    }
-    LocaleCanonicalizer* lc = result2.ok;
-    icu4x_LocaleExpander_create_mv1_result result3 = icu4x_LocaleExpander_create_mv1(provider);
-    if (!result3.is_ok) {
-        printf("Could not construct Locale Canonicalizer");
-        return 1;
-    }
-    LocaleExpander* le = result3.ok;
+    LocaleCanonicalizer* lc = icu4x_LocaleCanonicalizer_create_mv1();
+
+    LocaleExpander* le = icu4x_LocaleExpander_create_mv1();
+
 
     // Test maximize.
     write = diplomat_simple_write(output, 40);
