@@ -38,10 +38,20 @@ export class DecomposingNormalizer {
         return this.#ptr;
     }
 
-    static createNfd(provider) {
+    static createNfd() {
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1();
+    
+        try {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createNfdWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -56,10 +66,20 @@ export class DecomposingNormalizer {
         }
     }
 
-    static createNfkd(provider) {
+    static createNfkd() {
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1();
+    
+        try {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createNfkdWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

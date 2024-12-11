@@ -22,26 +22,52 @@ final class PluralRules implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PluralRules_destroy_mv1));
 
-  /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
+  /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory PluralRules.cardinal(DataProvider provider, Locale locale) {
-    final result = _icu4x_PluralRules_create_cardinal_mv1(provider._ffi, locale._ffi);
+  factory PluralRules.cardinal(Locale locale) {
+    final result = _icu4x_PluralRules_create_cardinal_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
+  /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using a particular data source.
+  ///
+  /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PluralRules.cardinalWithProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_PluralRules_create_cardinal_with_provider_mv1(provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PluralRules._fromFfi(result.union.ok, []);
+  }
+
+  /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory PluralRules.ordinal(DataProvider provider, Locale locale) {
-    final result = _icu4x_PluralRules_create_ordinal_mv1(provider._ffi, locale._ffi);
+  factory PluralRules.ordinal(Locale locale) {
+    final result = _icu4x_PluralRules_create_ordinal_mv1(locale._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PluralRules._fromFfi(result.union.ok, []);
+  }
+
+  /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using a particular data source.
+  ///
+  /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PluralRules.ordinalWithProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_PluralRules_create_ordinal_with_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -71,14 +97,24 @@ final class PluralRules implements ffi.Finalizable {
 external void _icu4x_PluralRules_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_cardinal_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_cardinal_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PluralRules_create_cardinal_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_cardinal_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_ordinal_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_cardinal_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PluralRules_create_ordinal_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_cardinal_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_ordinal_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_ordinal_mv1(ffi.Pointer<ffi.Opaque> locale);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_ordinal_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_ordinal_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_category_for_mv1')

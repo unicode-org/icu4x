@@ -22,7 +22,10 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result {union {icu4x::capi::FixedDecimalFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result;
-    icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::FixedDecimalGroupingStrategy_option grouping_strategy);
+    icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(const icu4x::capi::Locale* locale, icu4x::capi::FixedDecimalGroupingStrategy_option grouping_strategy);
+    
+    typedef struct icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1_result {union {icu4x::capi::FixedDecimalFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1_result;
+    icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1_result icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::FixedDecimalGroupingStrategy_option grouping_strategy);
     
     typedef struct icu4x_FixedDecimalFormatter_create_with_manual_data_mv1_result {union {icu4x::capi::FixedDecimalFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_FixedDecimalFormatter_create_with_manual_data_mv1_result;
     icu4x_FixedDecimalFormatter_create_with_manual_data_mv1_result icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomat::capi::DiplomatStringView plus_sign_prefix, diplomat::capi::DiplomatStringView plus_sign_suffix, diplomat::capi::DiplomatStringView minus_sign_prefix, diplomat::capi::DiplomatStringView minus_sign_suffix, diplomat::capi::DiplomatStringView decimal_separator, diplomat::capi::DiplomatStringView grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::capi::DiplomatCharView digits, icu4x::capi::FixedDecimalGroupingStrategy_option grouping_strategy);
@@ -36,8 +39,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> icu4x::FixedDecimalFormatter::create_with_grouping_strategy(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::FixedDecimalGroupingStrategy> grouping_strategy) {
-  auto result = icu4x::capi::icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> icu4x::FixedDecimalFormatter::create_with_grouping_strategy(const icu4x::Locale& locale, std::optional<icu4x::FixedDecimalGroupingStrategy> grouping_strategy) {
+  auto result = icu4x::capi::icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(locale.AsFFI(),
+    grouping_strategy.has_value() ? (icu4x::capi::FixedDecimalGroupingStrategy_option{ { grouping_strategy.value().AsFFI() }, true }) : (icu4x::capi::FixedDecimalGroupingStrategy_option{ {}, false }));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::FixedDecimalFormatter>>(std::unique_ptr<icu4x::FixedDecimalFormatter>(icu4x::FixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> icu4x::FixedDecimalFormatter::create_with_grouping_strategy_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::FixedDecimalGroupingStrategy> grouping_strategy) {
+  auto result = icu4x::capi::icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1(provider.AsFFI(),
     locale.AsFFI(),
     grouping_strategy.has_value() ? (icu4x::capi::FixedDecimalGroupingStrategy_option{ { grouping_strategy.value().AsFFI() }, true }) : (icu4x::capi::FixedDecimalGroupingStrategy_option{ {}, false }));
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::FixedDecimalFormatter>>(std::unique_ptr<icu4x::FixedDecimalFormatter>(icu4x::FixedDecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));

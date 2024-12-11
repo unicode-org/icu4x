@@ -49,10 +49,16 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+  factory GeneralCategoryNameToMaskMapper() {
+    final result = _icu4x_GeneralCategoryNameToMaskMapper_create_mv1();
+    return GeneralCategoryNameToMaskMapper._fromFfi(result, []);
+  }
+
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory GeneralCategoryNameToMaskMapper(DataProvider provider) {
-    final result = _icu4x_GeneralCategoryNameToMaskMapper_load_mv1(provider._ffi);
+  factory GeneralCategoryNameToMaskMapper.withProvider(DataProvider provider) {
+    final result = _icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -76,6 +82,11 @@ external int _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(ffi.Pointer<f
 external int _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_load_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_GeneralCategoryNameToMaskMapper_load_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_GeneralCategoryNameToMaskMapper_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);

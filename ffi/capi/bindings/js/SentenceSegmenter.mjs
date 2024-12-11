@@ -42,10 +42,20 @@ export class SentenceSegmenter {
         return this.#ptr;
     }
 
-    static create(provider) {
+    static create() {
+        const result = wasm.icu4x_SentenceSegmenter_create_mv1();
+    
+        try {
+            return new SentenceSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SentenceSegmenter_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_SentenceSegmenter_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -60,10 +70,28 @@ export class SentenceSegmenter {
         }
     }
 
-    static withContentLocale(provider, locale) {
+    static createWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SentenceSegmenter_create_with_content_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_SentenceSegmenter_create_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createWithContentLocaleAndProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

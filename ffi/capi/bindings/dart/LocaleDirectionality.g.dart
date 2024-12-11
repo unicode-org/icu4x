@@ -25,10 +25,18 @@ final class LocaleDirectionality implements ffi.Finalizable {
   /// Construct a new LocaleDirectionality instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
+  factory LocaleDirectionality() {
+    final result = _icu4x_LocaleDirectionality_create_mv1();
+    return LocaleDirectionality._fromFfi(result, []);
+  }
+
+  /// Construct a new LocaleDirectionality instance
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LocaleDirectionality(DataProvider provider) {
-    final result = _icu4x_LocaleDirectionality_create_mv1(provider._ffi);
+  factory LocaleDirectionality.withProvider(DataProvider provider) {
+    final result = _icu4x_LocaleDirectionality_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -38,10 +46,18 @@ final class LocaleDirectionality implements ffi.Finalizable {
   /// Construct a new LocaleDirectionality instance with a custom expander
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
+  factory LocaleDirectionality.withExpander(LocaleExpander expander) {
+    final result = _icu4x_LocaleDirectionality_create_with_expander_mv1(expander._ffi);
+    return LocaleDirectionality._fromFfi(result, []);
+  }
+
+  /// Construct a new LocaleDirectionality instance with a custom expander
+  ///
+  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LocaleDirectionality.withExpander(DataProvider provider, LocaleExpander expander) {
-    final result = _icu4x_LocaleDirectionality_create_with_expander_mv1(provider._ffi, expander._ffi);
+  factory LocaleDirectionality.withExpanderAndProvider(DataProvider provider, LocaleExpander expander) {
+    final result = _icu4x_LocaleDirectionality_create_with_expander_and_provider_mv1(provider._ffi, expander._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -73,14 +89,24 @@ final class LocaleDirectionality implements ffi.Finalizable {
 external void _icu4x_LocaleDirectionality_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleDirectionality_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleDirectionality_create_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_with_expander_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleDirectionality_create_with_expander_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> expander);
+external _ResultOpaqueInt32 _icu4x_LocaleDirectionality_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_with_expander_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleDirectionality_create_with_expander_mv1(ffi.Pointer<ffi.Opaque> expander);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_create_with_expander_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_LocaleDirectionality_create_with_expander_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> expander);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDirectionality_get_mv1')

@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { GregorianDateFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { IsoDateTime } from "icu4x"
@@ -10,11 +9,6 @@ export function formatIsoDate(name, length, year, month, day) {
             GregorianDateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -42,11 +36,6 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
             GregorianDateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [

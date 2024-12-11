@@ -81,10 +81,20 @@ export class CodePointSetData {
         finally {}
     }
 
-    static loadForGeneralCategoryGroup(provider, group) {
+    static createGeneralCategoryGroup(group) {
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(group);
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createGeneralCategoryGroupWithProvider(provider, group) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_for_general_category_group_mv1(diplomatReceive.buffer, provider.ffiValue, group);
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, group);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -97,12 +107,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createAsciiHexDigit() {
+        const result = wasm.icu4x_CodePointSetData_create_ascii_hex_digit_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadAsciiHexDigit(provider) {
+    static createAsciiHexDigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_ascii_hex_digit_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -117,10 +137,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadAlnum(provider) {
+    static createAlnum() {
+        const result = wasm.icu4x_CodePointSetData_create_alnum_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createAlnumWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_alnum_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_alnum_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -133,12 +163,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createAlphabetic() {
+        const result = wasm.icu4x_CodePointSetData_create_alphabetic_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadAlphabetic(provider) {
+    static createAlphabeticWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_alphabetic_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_alphabetic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -153,10 +193,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadBidiControl(provider) {
+    static createBidiControl() {
+        const result = wasm.icu4x_CodePointSetData_create_bidi_control_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createBidiControlWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_bidi_control_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_bidi_control_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -169,12 +219,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createBidiMirrored() {
+        const result = wasm.icu4x_CodePointSetData_create_bidi_mirrored_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadBidiMirrored(provider) {
+    static createBidiMirroredWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_bidi_mirrored_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -189,10 +249,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadBlank(provider) {
+    static createBlank() {
+        const result = wasm.icu4x_CodePointSetData_create_blank_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createBlankWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_blank_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_blank_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -207,10 +277,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadCased(provider) {
+    static createCased() {
+        const result = wasm.icu4x_CodePointSetData_create_cased_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createCasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_cased_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_cased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -222,13 +302,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createCaseIgnorable() {
+        const result = wasm.icu4x_CodePointSetData_create_case_ignorable_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadCaseIgnorable(provider) {
+    static createCaseIgnorableWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_case_ignorable_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_case_ignorable_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -240,13 +330,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createFullCompositionExclusion() {
+        const result = wasm.icu4x_CodePointSetData_create_full_composition_exclusion_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadFullCompositionExclusion(provider) {
+    static createFullCompositionExclusionWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_full_composition_exclusion_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -258,13 +358,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenCasefolded() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casefolded_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenCasefolded(provider) {
+    static createChangesWhenCasefoldedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_casefolded_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casefolded_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -276,13 +386,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenCasemapped() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casemapped_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenCasemapped(provider) {
+    static createChangesWhenCasemappedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_casemapped_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -294,13 +414,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenNfkcCasefolded() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenNfkcCasefolded(provider) {
+    static createChangesWhenNfkcCasefoldedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -312,13 +442,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenLowercased() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_lowercased_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenLowercased(provider) {
+    static createChangesWhenLowercasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_lowercased_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -330,13 +470,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenTitlecased() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_titlecased_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenTitlecased(provider) {
+    static createChangesWhenTitlecasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_titlecased_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_titlecased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -348,13 +498,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createChangesWhenUppercased() {
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_uppercased_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadChangesWhenUppercased(provider) {
+    static createChangesWhenUppercasedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_changes_when_uppercased_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -366,13 +526,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createDash() {
+        const result = wasm.icu4x_CodePointSetData_create_dash_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadDash(provider) {
+    static createDashWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_dash_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_dash_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -384,13 +554,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createDeprecated() {
+        const result = wasm.icu4x_CodePointSetData_create_deprecated_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadDeprecated(provider) {
+    static createDeprecatedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_deprecated_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_deprecated_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -402,13 +582,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createDefaultIgnorableCodePoint() {
+        const result = wasm.icu4x_CodePointSetData_create_default_ignorable_code_point_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadDefaultIgnorableCodePoint(provider) {
+    static createDefaultIgnorableCodePointWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_default_ignorable_code_point_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_default_ignorable_code_point_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -420,13 +610,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createDiacritic() {
+        const result = wasm.icu4x_CodePointSetData_create_diacritic_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadDiacritic(provider) {
+    static createDiacriticWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_diacritic_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_diacritic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -438,13 +638,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createEmojiModifierBase() {
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_base_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadEmojiModifierBase(provider) {
+    static createEmojiModifierBaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_emoji_modifier_base_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_base_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -456,13 +666,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createEmojiComponent() {
+        const result = wasm.icu4x_CodePointSetData_create_emoji_component_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadEmojiComponent(provider) {
+    static createEmojiComponentWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_emoji_component_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_component_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -474,13 +694,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createEmojiModifier() {
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadEmojiModifier(provider) {
+    static createEmojiModifierWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_emoji_modifier_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -492,13 +722,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createEmoji() {
+        const result = wasm.icu4x_CodePointSetData_create_emoji_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadEmoji(provider) {
+    static createEmojiWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_emoji_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -510,13 +750,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createEmojiPresentation() {
+        const result = wasm.icu4x_CodePointSetData_create_emoji_presentation_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadEmojiPresentation(provider) {
+    static createEmojiPresentationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_emoji_presentation_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_presentation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -528,13 +778,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createExtender() {
+        const result = wasm.icu4x_CodePointSetData_create_extender_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadExtender(provider) {
+    static createExtenderWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_extender_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_extender_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -546,13 +806,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createExtendedPictographic() {
+        const result = wasm.icu4x_CodePointSetData_create_extended_pictographic_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadExtendedPictographic(provider) {
+    static createExtendedPictographicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_extended_pictographic_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_extended_pictographic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -564,13 +834,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createGraph() {
+        const result = wasm.icu4x_CodePointSetData_create_graph_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadGraph(provider) {
+    static createGraphWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_graph_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_graph_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -582,13 +862,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createGraphemeBase() {
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_base_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadGraphemeBase(provider) {
+    static createGraphemeBaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_grapheme_base_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_base_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -600,13 +890,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createGraphemeExtend() {
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_extend_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadGraphemeExtend(provider) {
+    static createGraphemeExtendWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_grapheme_extend_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -618,13 +918,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createGraphemeLink() {
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_link_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadGraphemeLink(provider) {
+    static createGraphemeLinkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_grapheme_link_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_link_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -636,13 +946,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createHexDigit() {
+        const result = wasm.icu4x_CodePointSetData_create_hex_digit_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadHexDigit(provider) {
+    static createHexDigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_hex_digit_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -654,13 +974,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createHyphen() {
+        const result = wasm.icu4x_CodePointSetData_create_hyphen_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadHyphen(provider) {
+    static createHyphenWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_hyphen_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_hyphen_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -675,10 +1005,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadIdContinue(provider) {
+    static createIdContinue() {
+        const result = wasm.icu4x_CodePointSetData_create_id_continue_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createIdContinueWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_id_continue_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -691,12 +1031,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createIdeographic() {
+        const result = wasm.icu4x_CodePointSetData_create_ideographic_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadIdeographic(provider) {
+    static createIdeographicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_ideographic_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ideographic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -711,10 +1061,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadIdStart(provider) {
+    static createIdStart() {
+        const result = wasm.icu4x_CodePointSetData_create_id_start_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createIdStartWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_id_start_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -727,12 +1087,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createIdsBinaryOperator() {
+        const result = wasm.icu4x_CodePointSetData_create_ids_binary_operator_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadIdsBinaryOperator(provider) {
+    static createIdsBinaryOperatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_ids_binary_operator_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ids_binary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -747,10 +1117,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadIdsTrinaryOperator(provider) {
+    static createIdsTrinaryOperator() {
+        const result = wasm.icu4x_CodePointSetData_create_ids_trinary_operator_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createIdsTrinaryOperatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_ids_trinary_operator_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -763,12 +1143,22 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createJoinControl() {
+        const result = wasm.icu4x_CodePointSetData_create_join_control_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
-    static loadJoinControl(provider) {
+    static createJoinControlWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_join_control_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_join_control_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -783,10 +1173,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadLogicalOrderException(provider) {
+    static createLogicalOrderException() {
+        const result = wasm.icu4x_CodePointSetData_create_logical_order_exception_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createLogicalOrderExceptionWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_logical_order_exception_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -801,10 +1201,20 @@ export class CodePointSetData {
         }
     }
 
-    static loadLowercase(provider) {
+    static createLowercase() {
+        const result = wasm.icu4x_CodePointSetData_create_lowercase_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createLowercaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_lowercase_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_lowercase_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -816,13 +1226,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createMath() {
+        const result = wasm.icu4x_CodePointSetData_create_math_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadMath(provider) {
+    static createMathWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_math_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_math_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -834,13 +1254,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createNoncharacterCodePoint() {
+        const result = wasm.icu4x_CodePointSetData_create_noncharacter_code_point_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadNoncharacterCodePoint(provider) {
+    static createNoncharacterCodePointWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_noncharacter_code_point_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_noncharacter_code_point_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -852,13 +1282,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createNfcInert() {
+        const result = wasm.icu4x_CodePointSetData_create_nfc_inert_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadNfcInert(provider) {
+    static createNfcInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_nfc_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -870,13 +1310,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createNfdInert() {
+        const result = wasm.icu4x_CodePointSetData_create_nfd_inert_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadNfdInert(provider) {
+    static createNfdInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_nfd_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -888,13 +1338,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createNfkcInert() {
+        const result = wasm.icu4x_CodePointSetData_create_nfkc_inert_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadNfkcInert(provider) {
+    static createNfkcInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_nfkc_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -906,13 +1366,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createNfkdInert() {
+        const result = wasm.icu4x_CodePointSetData_create_nfkd_inert_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadNfkdInert(provider) {
+    static createNfkdInertWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_nfkd_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -924,13 +1394,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createPatternSyntax() {
+        const result = wasm.icu4x_CodePointSetData_create_pattern_syntax_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadPatternSyntax(provider) {
+    static createPatternSyntaxWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_pattern_syntax_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -942,13 +1422,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createPatternWhiteSpace() {
+        const result = wasm.icu4x_CodePointSetData_create_pattern_white_space_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadPatternWhiteSpace(provider) {
+    static createPatternWhiteSpaceWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_pattern_white_space_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_pattern_white_space_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -960,13 +1450,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createPrependedConcatenationMark() {
+        const result = wasm.icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadPrependedConcatenationMark(provider) {
+    static createPrependedConcatenationMarkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -978,13 +1478,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createPrint() {
+        const result = wasm.icu4x_CodePointSetData_create_print_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadPrint(provider) {
+    static createPrintWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_print_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_print_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -996,13 +1506,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createQuotationMark() {
+        const result = wasm.icu4x_CodePointSetData_create_quotation_mark_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadQuotationMark(provider) {
+    static createQuotationMarkWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_quotation_mark_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1014,13 +1534,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createRadical() {
+        const result = wasm.icu4x_CodePointSetData_create_radical_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadRadical(provider) {
+    static createRadicalWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_radical_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_radical_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1032,13 +1562,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createRegionalIndicator() {
+        const result = wasm.icu4x_CodePointSetData_create_regional_indicator_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadRegionalIndicator(provider) {
+    static createRegionalIndicatorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_regional_indicator_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1050,13 +1590,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createSoftDotted() {
+        const result = wasm.icu4x_CodePointSetData_create_soft_dotted_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadSoftDotted(provider) {
+    static createSoftDottedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_soft_dotted_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_soft_dotted_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1068,13 +1618,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createSegmentStarter() {
+        const result = wasm.icu4x_CodePointSetData_create_segment_starter_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadSegmentStarter(provider) {
+    static createSegmentStarterWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_segment_starter_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1086,13 +1646,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createCaseSensitive() {
+        const result = wasm.icu4x_CodePointSetData_create_case_sensitive_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadCaseSensitive(provider) {
+    static createCaseSensitiveWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_case_sensitive_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1104,13 +1674,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createSentenceTerminal() {
+        const result = wasm.icu4x_CodePointSetData_create_sentence_terminal_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadSentenceTerminal(provider) {
+    static createSentenceTerminalWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_sentence_terminal_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1122,13 +1702,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createTerminalPunctuation() {
+        const result = wasm.icu4x_CodePointSetData_create_terminal_punctuation_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadTerminalPunctuation(provider) {
+    static createTerminalPunctuationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_terminal_punctuation_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_terminal_punctuation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1140,13 +1730,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createUnifiedIdeograph() {
+        const result = wasm.icu4x_CodePointSetData_create_unified_ideograph_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadUnifiedIdeograph(provider) {
+    static createUnifiedIdeographWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_unified_ideograph_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1158,13 +1758,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createUppercase() {
+        const result = wasm.icu4x_CodePointSetData_create_uppercase_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadUppercase(provider) {
+    static createUppercaseWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_uppercase_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_uppercase_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1176,13 +1786,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createVariationSelector() {
+        const result = wasm.icu4x_CodePointSetData_create_variation_selector_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadVariationSelector(provider) {
+    static createVariationSelectorWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_variation_selector_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_variation_selector_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1194,13 +1814,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createWhiteSpace() {
+        const result = wasm.icu4x_CodePointSetData_create_white_space_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadWhiteSpace(provider) {
+    static createWhiteSpaceWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_white_space_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_white_space_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1212,13 +1842,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createXdigit() {
+        const result = wasm.icu4x_CodePointSetData_create_xdigit_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadXdigit(provider) {
+    static createXdigitWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_xdigit_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xdigit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1230,13 +1870,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createXidContinue() {
+        const result = wasm.icu4x_CodePointSetData_create_xid_continue_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadXidContinue(provider) {
+    static createXidContinueWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_xid_continue_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xid_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1248,13 +1898,23 @@ export class CodePointSetData {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    static createXidStart() {
+        const result = wasm.icu4x_CodePointSetData_create_xid_start_mv1();
+    
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static loadXidStart(provider) {
+    static createXidStartWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_xid_start_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xid_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1269,14 +1929,38 @@ export class CodePointSetData {
         }
     }
 
-    static loadForEcma262(provider, propertyName) {
+    static createForEcma262(propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, propertyName));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointSetData_load_for_ecma262_mv1(diplomatReceive.buffer, provider.ffiValue, ...propertyNameSlice.splat());
+        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_mv1(diplomatReceive.buffer, ...propertyNameSlice.splat());
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static createForEcma262WithProvider(provider, propertyName) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, propertyName));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, ...propertyNameSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { Locale } from "icu4x"
 import { TitlecaseMapper } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
@@ -9,11 +8,6 @@ export function titlecaseSegment(s, name, leading_adjustment, trailing_case) {
             TitlecaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s,

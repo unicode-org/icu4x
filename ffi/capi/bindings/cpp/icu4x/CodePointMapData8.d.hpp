@@ -44,27 +44,49 @@ public:
 
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint8_t value) const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_general_category(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_general_category();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_bidi_class(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_general_category_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_east_asian_width(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_bidi_class();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_hangul_syllable_type(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_indic_syllabic_category(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_east_asian_width();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_line_break(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_east_asian_width_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> try_grapheme_cluster_break(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_hangul_syllable_type();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_word_break(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_sentence_break(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_indic_syllabic_category();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_joining_type(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> load_canonical_combining_class(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_line_break();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_line_break_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_grapheme_cluster_break();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_word_break();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_word_break_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_sentence_break();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_sentence_break_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_joining_type();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_joining_type_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_canonical_combining_class();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
 
   inline const icu4x::capi::CodePointMapData8* AsFFI() const;
   inline icu4x::capi::CodePointMapData8* AsFFI();

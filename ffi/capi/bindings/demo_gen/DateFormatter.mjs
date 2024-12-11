@@ -1,5 +1,4 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
 import { Date } from "icu4x"
 import { DateFormatter } from "icu4x"
 import { DateTime } from "icu4x"
@@ -13,11 +12,6 @@ export function formatDate(name, length, year, month, day, name_1) {
             DateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -36,11 +30,6 @@ export function formatDate(name, length, year, month, day, name_1) {
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [
@@ -61,11 +50,6 @@ export function formatIsoDate(name, length, year, month, day) {
             DateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -93,11 +77,6 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
             DateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -120,11 +99,6 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [
@@ -145,11 +119,6 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
             DateFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [

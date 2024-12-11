@@ -94,10 +94,20 @@ export class CodePointMapData16 {
         finally {}
     }
 
-    static loadScript(provider) {
+    static createScript() {
+        const result = wasm.icu4x_CodePointMapData16_create_script_mv1();
+    
+        try {
+            return new CodePointMapData16(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createScriptWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CodePointMapData16_load_script_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData16_create_script_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

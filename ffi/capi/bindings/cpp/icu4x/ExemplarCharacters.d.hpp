@@ -34,15 +34,25 @@ public:
 
   inline bool contains(char32_t cp) const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_main(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_main(const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_auxiliary(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_main_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_punctuation(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_auxiliary(const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_numbers(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_auxiliary_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_index(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_punctuation(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_punctuation_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_numbers(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_numbers_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_index(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ExemplarCharacters>, icu4x::DataError> try_new_index_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline const icu4x::capi::ExemplarCharacters* AsFFI() const;
   inline icu4x::capi::ExemplarCharacters* AsFFI();

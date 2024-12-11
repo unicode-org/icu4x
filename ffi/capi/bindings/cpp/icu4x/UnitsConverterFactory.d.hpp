@@ -34,7 +34,9 @@ namespace icu4x {
 class UnitsConverterFactory {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::UnitsConverterFactory> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline std::unique_ptr<icu4x::UnitsConverter> converter(const icu4x::MeasureUnit& from, const icu4x::MeasureUnit& to) const;
 

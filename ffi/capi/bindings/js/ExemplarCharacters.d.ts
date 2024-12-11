@@ -22,13 +22,23 @@ export class ExemplarCharacters {
 
     contains(cp: codepoint): boolean;
 
-    static tryNewMain(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static tryNewMain(locale: Locale): ExemplarCharacters;
 
-    static tryNewAuxiliary(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static tryNewMainWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
-    static tryNewPunctuation(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static tryNewAuxiliary(locale: Locale): ExemplarCharacters;
 
-    static tryNewNumbers(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static tryNewAuxiliaryWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
-    static tryNewIndex(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static tryNewPunctuation(locale: Locale): ExemplarCharacters;
+
+    static tryNewPunctuationWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
+
+    static tryNewNumbers(locale: Locale): ExemplarCharacters;
+
+    static tryNewNumbersWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
+
+    static tryNewIndex(locale: Locale): ExemplarCharacters;
+
+    static tryNewIndexWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 }

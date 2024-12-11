@@ -19,5 +19,7 @@ export class GeneralCategoryNameToMaskMapper {
 
     getLoose(name: string): number;
 
-    static load(provider: DataProvider): GeneralCategoryNameToMaskMapper;
+    static create(): GeneralCategoryNameToMaskMapper;
+
+    static createWithProvider(provider: DataProvider): GeneralCategoryNameToMaskMapper;
 }

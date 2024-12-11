@@ -29,5 +29,7 @@ export class CodePointMapData16 {
 
     getSetForValue(value: number): CodePointSetData;
 
-    static loadScript(provider: DataProvider): CodePointMapData16;
+    static createScript(): CodePointMapData16;
+
+    static createScriptWithProvider(provider: DataProvider): CodePointMapData16;
 }
