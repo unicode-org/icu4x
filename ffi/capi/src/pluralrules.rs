@@ -39,12 +39,24 @@ pub mod ffi {
     pub struct PluralRules(icu_plurals::PluralRules);
 
     impl PluralRules {
-        /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
+        /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using compiled data.
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "cardinal")]
-        pub fn create_cardinal(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRules(
+                icu_plurals::PluralRules::try_new_cardinal(prefs)?,
+            )))
+        }
+        /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using a particular data source.
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "cardinal_with_provider")]
+        pub fn create_cardinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
@@ -57,13 +69,24 @@ pub mod ffi {
                 prefs
             )?)))
         }
-
-        /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
+        /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "ordinal")]
-        pub fn create_ordinal(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ordinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
+            let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
+            Ok(Box::new(PluralRules(
+                icu_plurals::PluralRules::try_new_ordinal(prefs)?,
+            )))
+        }
+        /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using a particular data source.
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ordinal_with_provider")]
+        pub fn create_ordinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
@@ -76,7 +99,6 @@ pub mod ffi {
                 prefs
             )?)))
         }
-
         /// Get the category for a given number represented as operands
         #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
         pub fn category_for(&self, op: &PluralOperands) -> PluralCategory {
@@ -109,7 +131,7 @@ pub mod ffi {
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::SignedFixedDecimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }

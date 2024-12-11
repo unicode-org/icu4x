@@ -42,7 +42,7 @@ pub mod ffi {
         /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
         /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn compiled() -> Box<DataProvider> {
             Box::new(Self(DataProviderInner::Compiled))
@@ -89,7 +89,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn empty() -> Box<DataProvider> {
             Box::new(DataProvider(DataProviderInner::Empty))
         }
@@ -266,6 +266,34 @@ macro_rules! call_constructor {
             $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
             #[cfg(feature = "compiled_data")]
             $crate::provider::DataProviderInner::Compiled => $compiled($($args,)*),
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! call_constructor2 {
+    ($buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::DataProviderInner::Empty => unreachable!(),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::DataProviderInner::Compiled => unreachable!(),
+        }
+    };
+    ($buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::DataProviderInner::Empty => unreachable!(),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::DataProviderInner::Compiled => unreachable!(),
         }
     };
 }

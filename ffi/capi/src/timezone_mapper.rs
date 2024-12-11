@@ -28,8 +28,19 @@ pub mod ffi {
 
     impl TimeZoneIdMapper {
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<TimeZoneIdMapper>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<TimeZoneIdMapper> {
+            Box::new(TimeZoneIdMapper(
+                icu_timezone::TimeZoneIdMapper::new().static_to_owned(),
+            ))
+        }
+
+        #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<TimeZoneIdMapper>, DataError> {
             Ok(Box::new(TimeZoneIdMapper(call_constructor!(
                 icu_timezone::TimeZoneIdMapper::new [r => Ok(r.static_to_owned())],
                 icu_timezone::TimeZoneIdMapper::try_new_with_any_provider,
@@ -138,8 +149,24 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::new,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<TimeZoneIdMapperWithFastCanonicalization> {
+            Box::new(TimeZoneIdMapperWithFastCanonicalization(
+                icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new().static_to_owned(),
+            ))
+        }
+
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::new,
+            FnInStruct
+        )]
+        #[diplomat::attr(auto, named_constructor = "with_provider")]
+        pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {
             Ok(Box::new(TimeZoneIdMapperWithFastCanonicalization(

@@ -28,8 +28,10 @@ namespace capi {
     
     icu4x::capi::CodePointSetData* icu4x_CodePointMapData16_get_set_for_value_mv1(const icu4x::capi::CodePointMapData16* self, uint16_t value);
     
-    typedef struct icu4x_CodePointMapData16_load_script_mv1_result {union {icu4x::capi::CodePointMapData16* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData16_load_script_mv1_result;
-    icu4x_CodePointMapData16_load_script_mv1_result icu4x_CodePointMapData16_load_script_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x::capi::CodePointMapData16* icu4x_CodePointMapData16_create_script_mv1(void);
+    
+    typedef struct icu4x_CodePointMapData16_create_script_with_provider_mv1_result {union {icu4x::capi::CodePointMapData16* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData16_create_script_with_provider_mv1_result;
+    icu4x_CodePointMapData16_create_script_with_provider_mv1_result icu4x_CodePointMapData16_create_script_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     
     void icu4x_CodePointMapData16_destroy_mv1(CodePointMapData16* self);
@@ -62,8 +64,13 @@ inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointMapData16::get_s
   return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> icu4x::CodePointMapData16::load_script(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_CodePointMapData16_load_script_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::CodePointMapData16> icu4x::CodePointMapData16::create_script() {
+  auto result = icu4x::capi::icu4x_CodePointMapData16_create_script_mv1();
+  return std::unique_ptr<icu4x::CodePointMapData16>(icu4x::CodePointMapData16::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> icu4x::CodePointMapData16::create_script_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_CodePointMapData16_create_script_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData16>>(std::unique_ptr<icu4x::CodePointMapData16>(icu4x::CodePointMapData16::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

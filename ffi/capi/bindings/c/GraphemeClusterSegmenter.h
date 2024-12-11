@@ -20,8 +20,10 @@
 
 
 
-typedef struct icu4x_GraphemeClusterSegmenter_create_mv1_result {union {GraphemeClusterSegmenter* ok; DataError err;}; bool is_ok;} icu4x_GraphemeClusterSegmenter_create_mv1_result;
-icu4x_GraphemeClusterSegmenter_create_mv1_result icu4x_GraphemeClusterSegmenter_create_mv1(const DataProvider* provider);
+GraphemeClusterSegmenter* icu4x_GraphemeClusterSegmenter_create_mv1(void);
+
+typedef struct icu4x_GraphemeClusterSegmenter_create_with_provider_mv1_result {union {GraphemeClusterSegmenter* ok; DataError err;}; bool is_ok;} icu4x_GraphemeClusterSegmenter_create_with_provider_mv1_result;
+icu4x_GraphemeClusterSegmenter_create_with_provider_mv1_result icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(const DataProvider* provider);
 
 GraphemeClusterBreakIteratorUtf8* icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(const GraphemeClusterSegmenter* self, DiplomatStringView input);
 

@@ -16,7 +16,9 @@ export class TimeZoneIdMapperWithFastCanonicalization {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): TimeZoneIdMapperWithFastCanonicalization;
+    static create(): TimeZoneIdMapperWithFastCanonicalization;
+
+    static createWithProvider(provider: DataProvider): TimeZoneIdMapperWithFastCanonicalization;
 
     canonicalizeIana(value: string): string | null;
 

@@ -11,9 +11,13 @@ export class ComposingNormalizer {
 
     get ffiValue(): pointer;
 
-    static createNfc(provider: DataProvider): ComposingNormalizer;
+    static createNfc(): ComposingNormalizer;
 
-    static createNfkc(provider: DataProvider): ComposingNormalizer;
+    static createNfcWithProvider(provider: DataProvider): ComposingNormalizer;
+
+    static createNfkc(): ComposingNormalizer;
+
+    static createNfkcWithProvider(provider: DataProvider): ComposingNormalizer;
 
     normalize(s: string): string;
 

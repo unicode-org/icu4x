@@ -54,10 +54,18 @@ pub mod ffi {
     pub struct CaseMapper(pub icu_casemap::CaseMapper);
 
     impl CaseMapper {
-        /// Construct a new CaseMapper instance
+        /// Construct a new CaseMapper instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<CaseMapper> {
+            Box::new(CaseMapper(icu_casemap::CaseMapper::new()))
+        }
+
+        /// Construct a new CaseMapper instance using a particular data source.
+        #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
             Ok(Box::new(CaseMapper(call_constructor!(
                 icu_casemap::CaseMapper::new [r => Ok(r)],
                 icu_casemap::CaseMapper::try_new_with_any_provider,
@@ -65,7 +73,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
         /// Returns the full lowercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
@@ -211,11 +218,21 @@ pub mod ffi {
     pub struct CaseMapCloser(pub icu_casemap::CaseMapCloser<icu_casemap::CaseMapper>);
 
     impl CaseMapCloser {
-        /// Construct a new CaseMapper instance
+        /// Construct a new CaseMapCloser instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<CaseMapCloser>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Result<Box<CaseMapCloser>, DataError> {
+            Ok(Box::new(CaseMapCloser(icu_casemap::CaseMapCloser::new())))
+        }
+        /// Construct a new CaseMapCloser instance using a particular data source.
+        #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CaseMapCloser>, DataError> {
             Ok(Box::new(CaseMapCloser(call_constructor!(
                 icu_casemap::CaseMapCloser::new [r => Ok(r)],
                 icu_casemap::CaseMapCloser::try_new_with_any_provider,
@@ -223,7 +240,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
         /// Also adds special case closure mappings.
         #[cfg(feature = "properties")]
@@ -259,11 +275,23 @@ pub mod ffi {
     pub struct TitlecaseMapper(pub icu_casemap::TitlecaseMapper<icu_casemap::CaseMapper>);
 
     impl TitlecaseMapper {
-        /// Construct a new `TitlecaseMapper` instance
+        /// Construct a new `TitlecaseMapper` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<TitlecaseMapper>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Result<Box<TitlecaseMapper>, DataError> {
+            Ok(Box::new(TitlecaseMapper(
+                icu_casemap::TitlecaseMapper::new(),
+            )))
+        }
+        /// Construct a new `TitlecaseMapper` instance using a particular data source.
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<TitlecaseMapper>, DataError> {
             Ok(Box::new(TitlecaseMapper(call_constructor!(
                 icu_casemap::TitlecaseMapper::new [r => Ok(r)],
                 icu_casemap::TitlecaseMapper::try_new_with_any_provider,
@@ -271,7 +299,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
         /// Returns the full titlecase mapping of the given string
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options

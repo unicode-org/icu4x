@@ -26,17 +26,26 @@ pub mod ffi {
     pub struct Bidi(pub icu_properties::CodePointMapData<icu_properties::props::BidiClass>);
 
     impl Bidi {
-        /// Creates a new [`Bidi`] from locale data.
+        /// Creates a new [`Bidi`] from locale data using compiled data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<Bidi> {
+            Box::new(Bidi(
+                icu_properties::CodePointMapData::new().static_to_owned(),
+            ))
+        }
+
+        /// Creates a new [`Bidi`] from locale data, and a particular data source.
+        #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
             Ok(Box::new(Bidi(call_constructor_unstable!(
                 icu_properties::CodePointMapData::new [m => Ok(m.static_to_owned())],
                 icu_properties::CodePointMapData::try_new_unstable,
                 provider,
             )?)))
         }
-
         /// Use the data loaded in this object to process a string and calculate bidi information
         ///
         /// Takes in a Level for the default level, if it is an invalid value or None it will default to Auto.

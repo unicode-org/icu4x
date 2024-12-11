@@ -22,26 +22,42 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecomposingNormalizer_destroy_mv1));
 
-  /// Construct a new DecomposingNormalizer instance for NFD
+  /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
+  ///
+  /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+  factory DecomposingNormalizer.nfd() {
+    final result = _icu4x_DecomposingNormalizer_create_nfd_mv1();
+    return DecomposingNormalizer._fromFfi(result, []);
+  }
+
+  /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory DecomposingNormalizer.nfd(DataProvider provider) {
-    final result = _icu4x_DecomposingNormalizer_create_nfd_mv1(provider._ffi);
+  factory DecomposingNormalizer.nfdWithProvider(DataProvider provider) {
+    final result = _icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
     return DecomposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new DecomposingNormalizer instance for NFKD
+  /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+  ///
+  /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+  factory DecomposingNormalizer.nfkd() {
+    final result = _icu4x_DecomposingNormalizer_create_nfkd_mv1();
+    return DecomposingNormalizer._fromFfi(result, []);
+  }
+
+  /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory DecomposingNormalizer.nfkd(DataProvider provider) {
-    final result = _icu4x_DecomposingNormalizer_create_nfkd_mv1(provider._ffi);
+  factory DecomposingNormalizer.nfkdWithProvider(DataProvider provider) {
+    final result = _icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -110,14 +126,24 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 external void _icu4x_DecomposingNormalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfd_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfd_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DecomposingNormalizer_create_nfd_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_DecomposingNormalizer_create_nfd_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfkd_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DecomposingNormalizer_create_nfkd_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfkd_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_DecomposingNormalizer_create_nfkd_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_normalize_mv1')

@@ -19,7 +19,9 @@ export class UnitsConverterFactory {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): UnitsConverterFactory;
+    static create(): UnitsConverterFactory;
+
+    static createWithProvider(provider: DataProvider): UnitsConverterFactory;
 
     converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
 

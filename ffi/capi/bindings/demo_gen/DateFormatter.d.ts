@@ -1,5 +1,4 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
 import { Date } from "icu4x"
 import { DateFormatter } from "icu4x"
 import { DateTime } from "icu4x"

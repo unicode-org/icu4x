@@ -36,8 +36,24 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<ScriptWithExtensions>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<ScriptWithExtensions> {
+            Box::new(ScriptWithExtensions(
+                icu_properties::script::ScriptWithExtensions::new().static_to_owned(),
+            ))
+        }
+
+        #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<ScriptWithExtensions>, DataError> {
             Ok(Box::new(ScriptWithExtensions(call_constructor!(
                 icu_properties::script::ScriptWithExtensions::new [r => Ok(r.static_to_owned())],
                 icu_properties::script::ScriptWithExtensions::try_new_with_any_provider,

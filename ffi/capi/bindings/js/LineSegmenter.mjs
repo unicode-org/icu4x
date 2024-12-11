@@ -43,10 +43,20 @@ export class LineSegmenter {
         return this.#ptr;
     }
 
-    static createAuto(provider) {
+    static createAuto() {
+        const result = wasm.icu4x_LineSegmenter_create_auto_mv1();
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createAutoWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -61,10 +71,20 @@ export class LineSegmenter {
         }
     }
 
-    static createLstm(provider) {
+    static createLstm() {
+        const result = wasm.icu4x_LineSegmenter_create_lstm_mv1();
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createLstmWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -79,10 +99,20 @@ export class LineSegmenter {
         }
     }
 
-    static createDictionary(provider) {
+    static createDictionary() {
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1();
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createDictionaryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -97,12 +127,26 @@ export class LineSegmenter {
         }
     }
 
-    static autoWithOptions(provider, contentLocale, options) {
+    static autoWithOptions(contentLocale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        }
+    }
+
+    static autoWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -119,12 +163,26 @@ export class LineSegmenter {
         }
     }
 
-    static lstmWithOptions(provider, contentLocale, options) {
+    static lstmWithOptions(contentLocale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        }
+    }
+
+    static lstmWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -141,12 +199,26 @@ export class LineSegmenter {
         }
     }
 
-    static dictionaryWithOptions(provider, contentLocale, options) {
+    static dictionaryWithOptions(contentLocale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+    
+        try {
+            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        }
+    }
+
+    static dictionaryWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {

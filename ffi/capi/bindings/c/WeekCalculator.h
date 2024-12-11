@@ -21,7 +21,10 @@
 
 
 typedef struct icu4x_WeekCalculator_create_mv1_result {union {WeekCalculator* ok; DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_mv1_result;
-icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const DataProvider* provider, const Locale* locale);
+icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const Locale* locale);
+
+typedef struct icu4x_WeekCalculator_create_with_provider_mv1_result {union {WeekCalculator* ok; DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_with_provider_mv1_result;
+icu4x_WeekCalculator_create_with_provider_mv1_result icu4x_WeekCalculator_create_with_provider_mv1(const DataProvider* provider, const Locale* locale);
 
 WeekCalculator* icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(IsoWeekday first_weekday, uint8_t min_week_days);
 

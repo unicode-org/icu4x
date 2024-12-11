@@ -18,7 +18,9 @@ export class GregorianZonedDateTimeFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLength(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianZonedDateTimeFormatter;
+    static createWithLength(locale: Locale, length: DateTimeLength): GregorianZonedDateTimeFormatter;
+
+    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianZonedDateTimeFormatter;
 
     formatIsoDatetimeWithCustomTimeZone(datetime: IsoDateTime, timeZone: TimeZoneInfo): string;
 }

@@ -4,13 +4,12 @@
 
 import test from 'ava';
 
-import { SignedFixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
+import { SignedFixedDecimal, Locale, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
 
 test('use createCompiled to format a simple decimal', async t => {
   const locale = Locale.fromString('bn');
-  const provider = DataProvider.compiled();
 
-  const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
+  const format = FixedDecimalFormatter.createWithGroupingStrategy(locale, FixedDecimalGroupingStrategy.Auto);
 
   const decimal = SignedFixedDecimal.fromNumber(1234);
   decimal.multiplyPow10(-2);

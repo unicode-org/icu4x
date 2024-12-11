@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/DataProvider.hpp>
 #include <icu4x/MeasureUnit.hpp>
 #include <icu4x/MeasureUnitParser.hpp>
 #include <icu4x/UnitsConverter.hpp>
@@ -13,8 +12,7 @@
 using namespace icu4x;
 
 int main() {
-  auto dp = DataProvider::compiled();
-  auto converter_factory = UnitsConverterFactory::create(*dp.get()).ok().value();
+  auto converter_factory = UnitsConverterFactory::create();
   auto parser = converter_factory->parser();
   auto from = parser->parse("meter");
   auto to = parser->parse("foot");

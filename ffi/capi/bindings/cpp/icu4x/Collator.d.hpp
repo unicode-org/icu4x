@@ -32,7 +32,9 @@ namespace icu4x {
 class Collator {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> create_v1(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options);
 
   inline int8_t compare(std::string_view left, std::string_view right) const;
 

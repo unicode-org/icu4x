@@ -40,9 +40,19 @@ pub mod ffi {
     pub struct SentenceBreakIteratorLatin1<'a>(icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>);
 
     impl SentenceSegmenter {
-        /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct, hidden)]
-        pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
+        /// Construct a [`SentenceSegmenter`] using compiled data.
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<SentenceSegmenter> {
+            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new()))
+        }
+        /// Construct a [`SentenceSegmenter`], using a particular data source.
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
             Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
                 icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
@@ -51,15 +61,30 @@ pub mod ffi {
             )?)))
         }
 
-        /// Construct an [`SentenceSegmenter`].
+        /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::segmenter::SentenceSegmenter::try_new_with_options,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_content_locale")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
+            Ok(Box::new(SentenceSegmenter(
+                icu_segmenter::SentenceSegmenter::try_new_with_options(locale.into())?,
+            )))
+        }
+
+        /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceSegmenter::try_new_with_options,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale_and_provider")]
+        pub fn create_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {

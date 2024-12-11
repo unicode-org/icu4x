@@ -36,7 +36,9 @@ namespace icu4x {
 class GregorianZonedDateTimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const;
 

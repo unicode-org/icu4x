@@ -17,11 +17,15 @@
 
 
 
-typedef struct icu4x_DecomposingNormalizer_create_nfd_mv1_result {union {DecomposingNormalizer* ok; DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfd_mv1_result;
-icu4x_DecomposingNormalizer_create_nfd_mv1_result icu4x_DecomposingNormalizer_create_nfd_mv1(const DataProvider* provider);
+DecomposingNormalizer* icu4x_DecomposingNormalizer_create_nfd_mv1(void);
 
-typedef struct icu4x_DecomposingNormalizer_create_nfkd_mv1_result {union {DecomposingNormalizer* ok; DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_mv1_result;
-icu4x_DecomposingNormalizer_create_nfkd_mv1_result icu4x_DecomposingNormalizer_create_nfkd_mv1(const DataProvider* provider);
+typedef struct icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result {union {DecomposingNormalizer* ok; DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result;
+icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(const DataProvider* provider);
+
+DecomposingNormalizer* icu4x_DecomposingNormalizer_create_nfkd_mv1(void);
+
+typedef struct icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result {union {DecomposingNormalizer* ok; DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result;
+icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(const DataProvider* provider);
 
 void icu4x_DecomposingNormalizer_normalize_mv1(const DecomposingNormalizer* self, DiplomatStringView s, DiplomatWrite* write);
 

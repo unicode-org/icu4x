@@ -40,10 +40,10 @@ export class ListFormatter {
         return this.#ptr;
     }
 
-    static createAndWithLength(provider, locale, length) {
+    static createAndWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ListFormatter_create_and_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_and_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -58,10 +58,10 @@ export class ListFormatter {
         }
     }
 
-    static createOrWithLength(provider, locale, length) {
+    static createAndWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ListFormatter_create_or_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_and_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -76,10 +76,64 @@ export class ListFormatter {
         }
     }
 
-    static createUnitWithLength(provider, locale, length) {
+    static createOrWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ListFormatter_create_unit_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_ListFormatter_create_or_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createOrWithLengthAndProvider(provider, locale, length) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ListFormatter_create_or_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createUnitWithLength(locale, length) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ListFormatter_create_unit_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ListFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createUnitWithLengthAndProvider(provider, locale, length) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

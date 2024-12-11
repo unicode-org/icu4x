@@ -108,13 +108,30 @@ pub mod ffi {
     }
 
     impl Collator {
-        /// Construct a new Collator instance.
+        /// Construct a new Collator instance using compiled data.
+        #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_v1(
+            locale: &Locale,
+            options: CollatorOptionsV1,
+        ) -> Result<Box<Collator>, DataError> {
+            Ok(Box::new(Collator(
+                icu_collator::Collator::try_new((&locale.0).into(), options.into())?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Construct a new Collator instance using a particular data source.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
-        pub fn create_v1(
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
+        pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             options: CollatorOptionsV1,
@@ -128,7 +145,6 @@ pub mod ffi {
                 icu_collator::CollatorOptions::from(options),
             )?)))
         }
-
         /// Compare two strings.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

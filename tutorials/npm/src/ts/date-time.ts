@@ -1,9 +1,8 @@
-import { DataProvider, DateTimeLength, DateTime, DateTimeFormatter, Locale, TimeLength, Calendar } from "icu4x";
+import { DateTimeLength, DateTime, DateTimeFormatter, Locale, TimeLength, Calendar } from "icu4x";
 import { Ok, Result, result, unwrap } from "./index";
 
 export class DateTimeDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: DataProvider;
 
     #localeStr: string;
     #calendarStr: string;
@@ -15,12 +14,11 @@ export class DateTimeDemo {
     #formatter: Result<DateTimeFormatter>;
     #dateTime: Result<DateTime> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
+    constructor(displayFn: (formatted: string) => void) {
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
 
         this.#locale = Ok(Locale.fromString("en"));
-        this.#calendar = Ok(Calendar.createForLocale(dataProvider, unwrap(this.#locale)));
+        this.#calendar = Ok(Calendar.createForLocale(unwrap(this.#locale)));
         this.#dateTimeLength = DateTimeLength.Short;
         this.#dateTime = null;
         this.#dateTimeStr = "";
@@ -54,7 +52,7 @@ export class DateTimeDemo {
             }
         }
         this.#locale = result(() => Locale.fromString(locid));
-        this.#calendar = result(() => Calendar.createForLocale(this.#dataProvider, unwrap(this.#locale) ));
+        this.#calendar = result(() => Calendar.createForLocale(unwrap(this.#locale) ));
         this.#updateDateTime();
     }
 
@@ -86,7 +84,6 @@ export class DateTimeDemo {
 
     #updateFormatter(): void {
         this.#formatter = result(() => DateTimeFormatter.createWithLength(
-            this.#dataProvider,
             unwrap(this.#locale),
             this.#dateTimeLength
         ));
@@ -112,9 +109,9 @@ export class DateTimeDemo {
     }
 }
 
-export function setup(dataProvider: DataProvider): void {
+export function setup(): void {
     const formattedDateTime = document.getElementById('dtf-formatted') as HTMLInputElement;
-    const dateTimeDemo = new DateTimeDemo((formatted) => formattedDateTime.innerText = formatted, dataProvider);
+    const dateTimeDemo = new DateTimeDemo((formatted) => formattedDateTime.innerText = formatted);
 
     const otherLocaleBtn = document.getElementById('dtf-locale-other') as HTMLInputElement | null;
     otherLocaleBtn?.addEventListener('click', () => {

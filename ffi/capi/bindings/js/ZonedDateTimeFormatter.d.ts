@@ -19,7 +19,9 @@ export class ZonedDateTimeFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLength(provider: DataProvider, locale: Locale, length: DateTimeLength): ZonedDateTimeFormatter;
+    static createWithLength(locale: Locale, length: DateTimeLength): ZonedDateTimeFormatter;
+
+    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): ZonedDateTimeFormatter;
 
     formatDatetimeWithCustomTimeZone(datetime: DateTime, timeZone: TimeZoneInfo): string;
 

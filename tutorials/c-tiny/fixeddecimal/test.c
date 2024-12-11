@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "DataProvider.h"
 #include "Locale.h"
 #include "SignedFixedDecimal.h"
 #include "FixedDecimalFormatter.h"
@@ -25,14 +24,13 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
     SignedFixedDecimal* decimal = icu4x_SignedFixedDecimal_from_uint64_mv1(1000007);
     icu4x_SignedFixedDecimal_round_mv1(decimal, 0);
 
     FixedDecimalGroupingStrategy_option o = {.ok = FixedDecimalGroupingStrategy_Auto, .is_ok = true};
 
     icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =
-        icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider, locale, o);
+        icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(locale, o);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
         return 1;
@@ -58,7 +56,6 @@ int main(int argc, char *argv[]) {
     icu4x_SignedFixedDecimal_destroy_mv1(decimal);
     icu4x_FixedDecimalFormatter_destroy_mv1(fdf);
     icu4x_Locale_destroy_mv1(locale);
-    icu4x_DataProvider_destroy_mv1(provider);
 
     return 0;
 }

@@ -16,16 +16,32 @@ pub mod ffi {
     pub struct ComposingNormalizer(pub icu_normalizer::ComposingNormalizer);
 
     impl ComposingNormalizer {
-        /// Construct a new ComposingNormalizer instance for NFC
+        /// Construct a new ComposingNormalizer instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc")]
+        #[diplomat::attr(auto, named_constructor = "nfc")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
+        #[cfg(feature = "compiled_data")]
+        pub fn create_nfc() -> Box<ComposingNormalizer> {
+            Box::new(ComposingNormalizer(
+                icu_normalizer::ComposingNormalizer::new_nfc().static_to_owned(),
+            ))
+        }
+        /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc_with_provider")]
+        pub fn create_nfc_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r.static_to_owned())],
                 icu_normalizer::ComposingNormalizer::try_new_nfc_with_any_provider,
@@ -33,16 +49,31 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
-        /// Construct a new ComposingNormalizer instance for NFKC
+        /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc")]
-        pub fn create_nfkc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
+        #[diplomat::attr(auto, named_constructor = "nfkc")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_nfkc() -> Box<ComposingNormalizer> {
+            Box::new(ComposingNormalizer(
+                icu_normalizer::ComposingNormalizer::new_nfkc().static_to_owned(),
+            ))
+        }
+        /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc_with_provider")]
+        pub fn create_nfkc_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r.static_to_owned())],
                 icu_normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider,
@@ -50,7 +81,6 @@ pub mod ffi {
                 provider,
             )?)))
         }
-
         /// Normalize a string
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -145,7 +175,7 @@ pub mod ffi {
     pub struct DecomposingNormalizer(pub icu_normalizer::DecomposingNormalizer);
 
     impl DecomposingNormalizer {
-        /// Construct a new DecomposingNormalizer instance for NFD
+        /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
@@ -154,7 +184,22 @@ pub mod ffi {
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_nfd(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_nfd() -> Box<DecomposingNormalizer> {
+            Box::new(DecomposingNormalizer(
+                icu_normalizer::DecomposingNormalizer::new_nfd().static_to_owned(),
+            ))
+        }
+
+        /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd_with_provider")]
+        pub fn create_nfd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
             Ok(Box::new(DecomposingNormalizer(call_constructor!(
@@ -165,15 +210,30 @@ pub mod ffi {
             )?)))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKD
+        /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd")]
-        pub fn create_nfkd(
+        #[diplomat::attr(auto, named_constructor = "nfkd")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_nfkd() -> Box<DecomposingNormalizer> {
+            Box::new(DecomposingNormalizer(
+                icu_normalizer::DecomposingNormalizer::new_nfkd().static_to_owned(),
+            ))
+        }
+
+        /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd_with_provider")]
+        pub fn create_nfkd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
             Ok(Box::new(DecomposingNormalizer(call_constructor!(

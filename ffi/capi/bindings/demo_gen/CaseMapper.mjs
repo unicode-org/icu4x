@@ -1,5 +1,4 @@
 import { CaseMapper } from "icu4x"
-import { DataProvider } from "icu4x"
 import { Locale } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
 export function lowercase(s, name) {
@@ -9,11 +8,6 @@ export function lowercase(s, name) {
             CaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s,
@@ -33,11 +27,6 @@ export function uppercase(s, name) {
             CaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s,
@@ -57,11 +46,6 @@ export function titlecaseSegmentWithOnlyCaseData(s, name, leading_adjustment, tr
             CaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s,
@@ -92,11 +76,6 @@ export function fold(s) {
             CaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s
@@ -110,11 +89,6 @@ export function foldTurkic(s) {
             CaseMapper.create.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
                 ]
             ),
             s

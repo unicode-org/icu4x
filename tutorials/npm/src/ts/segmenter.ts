@@ -1,16 +1,14 @@
-import { DataProvider, WordSegmenter } from "icu4x";
+import { WordSegmenter } from "icu4x";
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: DataProvider;
 
     #segmenter: WordSegmenter;
     #model: string;
     #text: string;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
+    constructor(displayFn: (formatted: string) => void) {
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
 
         this.#model = "Auto";
         this.#text = "";
@@ -29,11 +27,11 @@ export class SegmenterDemo {
 
     #updateSegmenter(): void {
         if (this.#model === "Auto") {
-            this.#segmenter = WordSegmenter.createAuto(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createAuto();
         } else if (this.#model === "LSTM") {
-            this.#segmenter = WordSegmenter.createLstm(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createLstm();
         } else if (this.#model === "Dictionary") {
-            this.#segmenter = WordSegmenter.createDictionary(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createDictionary();
         } else {
             console.error("Unknown model: " + this.#model);
         }
@@ -59,12 +57,12 @@ export class SegmenterDemo {
     }
 }
 
-export function setup(dataProvider: DataProvider): void {
+export function setup(): void {
     const segmentedText = document.getElementById('seg-segmented') as HTMLParagraphElement;
     const segmenterDemo = new SegmenterDemo((formatted) => {
         // Use innerHTML because we have actual HTML we want to display
         segmentedText.innerHTML = formatted;
-    }, dataProvider);
+    });
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="segmenter-model"]')) {
         btn?.addEventListener('click', () => segmenterDemo.setModel(btn.value));

@@ -22,7 +22,10 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_WeekCalculator_create_mv1_result {union {icu4x::capi::WeekCalculator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_mv1_result;
-    icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
+    icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const icu4x::capi::Locale* locale);
+    
+    typedef struct icu4x_WeekCalculator_create_with_provider_mv1_result {union {icu4x::capi::WeekCalculator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_with_provider_mv1_result;
+    icu4x_WeekCalculator_create_with_provider_mv1_result icu4x_WeekCalculator_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     icu4x::capi::WeekCalculator* icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(icu4x::capi::IsoWeekday first_weekday, uint8_t min_week_days);
     
@@ -39,8 +42,13 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError> icu4x::WeekCalculator::create(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_WeekCalculator_create_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError> icu4x::WeekCalculator::create(const icu4x::Locale& locale) {
+  auto result = icu4x::capi::icu4x_WeekCalculator_create_mv1(locale.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WeekCalculator>>(std::unique_ptr<icu4x::WeekCalculator>(icu4x::WeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError> icu4x::WeekCalculator::create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+  auto result = icu4x::capi::icu4x_WeekCalculator_create_with_provider_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WeekCalculator>>(std::unique_ptr<icu4x::WeekCalculator>(icu4x::WeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }

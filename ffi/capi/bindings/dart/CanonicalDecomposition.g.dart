@@ -26,13 +26,21 @@ final class CanonicalDecomposition implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalDecomposition_destroy_mv1));
 
-  /// Construct a new CanonicalDecomposition instance for NFC
+  /// Construct a new CanonicalDecomposition instance for NFC using compiled data.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+  factory CanonicalDecomposition() {
+    final result = _icu4x_CanonicalDecomposition_create_mv1();
+    return CanonicalDecomposition._fromFfi(result, []);
+  }
+
+  /// Construct a new CanonicalDecomposition instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory CanonicalDecomposition(DataProvider provider) {
-    final result = _icu4x_CanonicalDecomposition_create_mv1(provider._ffi);
+  factory CanonicalDecomposition.withProvider(DataProvider provider) {
+    final result = _icu4x_CanonicalDecomposition_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -54,9 +62,14 @@ final class CanonicalDecomposition implements ffi.Finalizable {
 external void _icu4x_CanonicalDecomposition_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CanonicalDecomposition_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CanonicalDecomposition_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CanonicalDecomposition_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_CanonicalDecomposition_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CanonicalDecomposition_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CanonicalDecomposition_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CanonicalDecomposition_decompose_mv1')

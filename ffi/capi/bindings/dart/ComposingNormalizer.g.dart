@@ -22,26 +22,42 @@ final class ComposingNormalizer implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ComposingNormalizer_destroy_mv1));
 
-  /// Construct a new ComposingNormalizer instance for NFC
+  /// Construct a new ComposingNormalizer instance for NFC using compiled data.
+  ///
+  /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+  factory ComposingNormalizer.nfc() {
+    final result = _icu4x_ComposingNormalizer_create_nfc_mv1();
+    return ComposingNormalizer._fromFfi(result, []);
+  }
+
+  /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory ComposingNormalizer.nfc(DataProvider provider) {
-    final result = _icu4x_ComposingNormalizer_create_nfc_mv1(provider._ffi);
+  factory ComposingNormalizer.nfcWithProvider(DataProvider provider) {
+    final result = _icu4x_ComposingNormalizer_create_nfc_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new ComposingNormalizer instance for NFKC
+  /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
+  ///
+  /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+  factory ComposingNormalizer.nfkc() {
+    final result = _icu4x_ComposingNormalizer_create_nfkc_mv1();
+    return ComposingNormalizer._fromFfi(result, []);
+  }
+
+  /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory ComposingNormalizer.nfkc(DataProvider provider) {
-    final result = _icu4x_ComposingNormalizer_create_nfkc_mv1(provider._ffi);
+  factory ComposingNormalizer.nfkcWithProvider(DataProvider provider) {
+    final result = _icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -89,14 +105,24 @@ final class ComposingNormalizer implements ffi.Finalizable {
 external void _icu4x_ComposingNormalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfc_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfc_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfc_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_ComposingNormalizer_create_nfc_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfkc_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfc_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfc_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfkc_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_ComposingNormalizer_create_nfkc_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')

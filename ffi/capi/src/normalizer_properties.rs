@@ -23,7 +23,7 @@ pub mod ffi {
     );
 
     impl CanonicalCombiningClassMap {
-        /// Construct a new CanonicalCombiningClassMap instance for NFC
+        /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
@@ -33,8 +33,26 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<CanonicalCombiningClassMap> {
+            Box::new(CanonicalCombiningClassMap(
+                icu_normalizer::properties::CanonicalCombiningClassMap::new().static_to_owned(),
+            ))
+        }
+
+        /// Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCombiningClassMap::new,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
             Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
@@ -88,15 +106,32 @@ pub mod ffi {
     pub struct CanonicalComposition(pub icu_normalizer::properties::CanonicalComposition);
 
     impl CanonicalComposition {
-        /// Construct a new CanonicalComposition instance for NFC
+        /// Construct a new CanonicalComposition instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCompositionBorrowed::new,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<CanonicalComposition>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<CanonicalComposition> {
+            Box::new(CanonicalComposition(
+                icu_normalizer::properties::CanonicalComposition::new().static_to_owned(),
+            ))
+        }
+
+        /// Construct a new CanonicalComposition instance for NFC using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCompositionBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CanonicalComposition>, DataError> {
             Ok(Box::new(CanonicalComposition(call_constructor!(
                 icu_normalizer::properties::CanonicalComposition::new [r => Ok(r.static_to_owned())],
                 icu_normalizer::properties::CanonicalComposition::try_new_with_any_provider,
@@ -143,15 +178,32 @@ pub mod ffi {
     pub struct CanonicalDecomposition(pub icu_normalizer::properties::CanonicalDecomposition);
 
     impl CanonicalDecomposition {
-        /// Construct a new CanonicalDecomposition instance for NFC
+        /// Construct a new CanonicalDecomposition instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalDecompositionBorrowed::new,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<CanonicalDecomposition>, DataError> {
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<CanonicalDecomposition> {
+            Box::new(CanonicalDecomposition(
+                icu_normalizer::properties::CanonicalDecomposition::new().static_to_owned(),
+            ))
+        }
+
+        /// Construct a new CanonicalDecomposition instance for NFC using a particular data source.
+        #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalDecompositionBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CanonicalDecomposition>, DataError> {
             Ok(Box::new(CanonicalDecomposition(call_constructor!(
                 icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r.static_to_owned())],
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_any_provider,

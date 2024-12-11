@@ -1,5 +1,4 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
 import { DateTime } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
@@ -12,11 +11,6 @@ export function formatTime(name, length, hour, minute, second, nanosecond) {
             TimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -45,11 +39,6 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
             TimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -72,11 +61,6 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [
@@ -97,11 +81,6 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
             TimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
