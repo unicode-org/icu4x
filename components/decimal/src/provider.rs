@@ -132,7 +132,7 @@ impl<'data> DecimalSymbolStrsBuilder<'data> {
     }
 }
 
-/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
+/// Symbols and metadata required for formatting a [`SignedFixedDecimal`](crate::SignedFixedDecimal).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

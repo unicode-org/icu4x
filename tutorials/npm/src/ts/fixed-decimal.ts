@@ -1,4 +1,4 @@
-import { DataProvider, FixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
+import { DataProvider, SignedFixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
 import { Result, Ok, result, unwrap } from './index';
 
 export class FixedDecimalDemo {
@@ -8,7 +8,7 @@ export class FixedDecimalDemo {
     #locale: Result<Locale>;
     #groupingStrategy: FixedDecimalGroupingStrategy;
     #formatter: Result<FixedDecimalFormatter>;
-    #fixedDecimal: Result<FixedDecimal> | null;
+    #fixedDecimal: Result<SignedFixedDecimal> | null;
 
     constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
         this.#displayFn = displayFn;
@@ -31,7 +31,7 @@ export class FixedDecimalDemo {
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => FixedDecimal.fromString(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => SignedFixedDecimal.fromString(digits));
         this.#render();
     }
 

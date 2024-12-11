@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
+import { SignedFixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
 
 test('use createCompiled to format a simple decimal', async t => {
   const locale = Locale.fromString('bn');
@@ -12,7 +12,7 @@ test('use createCompiled to format a simple decimal', async t => {
 
   const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-  const decimal = FixedDecimal.fromNumber(1234);
+  const decimal = SignedFixedDecimal.fromNumber(1234);
   decimal.multiplyPow10(-2);
 
   t.is(format.format(decimal), '১২.৩৪');

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 ///
@@ -16,12 +16,12 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 ///
 /// - Integers, signed and unsigned
 /// - Strings representing an arbitrary-precision decimal
-/// - [`FixedDecimal`]
+/// - [`SignedFixedDecimal`]
 ///
 /// This crate does not support selection from a floating-point number, because floats are not
 /// capable of carrying trailing zeros, which are required for proper plural rule selection. For
 /// example, in English, "1 star" has a different plural form than "1.0 stars", but this
-/// distinction cannot be represented using a float. Clients should use [`FixedDecimal`] instead.
+/// distinction cannot be represented using a float. Clients should use [`SignedFixedDecimal`] instead.
 ///
 /// # Examples
 ///
@@ -63,10 +63,10 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 /// );
 /// ```
 ///
-/// From [`FixedDecimal`]
+/// From [`SignedFixedDecimal`]
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::SignedFixedDecimal;
 /// use icu::plurals::rules::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
 ///
@@ -79,7 +79,11 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 ///         t: 45,
 ///         c: 0,
 ///     }),
-///     (&FixedDecimal::from(12345).multiplied_pow10(-2)).into()
+///     (&{
+///         let mut decimal = SignedFixedDecimal::from(12345);
+///         decimal.multiply_pow10(-2);
+///         decimal
+///     }).into()
 /// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -226,24 +230,24 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &FixedDecimal, exp: u8) -> PluralOperands {
+    fn from_significand_and_exponent(dec: &SignedFixedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
-        let mag_range = dec.magnitude_range();
+        let mag_range = dec.absolute.magnitude_range();
         let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
         let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.digit_at(magnitude - exp_i16) as u64;
+            i += dec.absolute.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.digit_at(magnitude - exp_i16) as u64;
+            let digit = dec.absolute.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {
@@ -287,10 +291,10 @@ impl PluralOperands {
     }
 }
 
-impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
+impl From<&SignedFixedDecimal> for PluralOperands {
+    /// Converts a [`fixed_decimal::SignedFixedDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
-    fn from(dec: &FixedDecimal) -> Self {
+    fn from(dec: &SignedFixedDecimal) -> Self {
         Self::from_significand_and_exponent(dec, 0)
     }
 }
@@ -303,14 +307,14 @@ impl From<&CompactDecimal> for PluralOperands {
     ///
     /// ```
     /// use fixed_decimal::CompactDecimal;
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::locale::locale;
     /// use icu::plurals::rules::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;
     /// use icu::plurals::PluralRules;
     ///
-    /// let fixed_decimal = "1000000.20".parse::<FixedDecimal>().unwrap();
+    /// let fixed_decimal = "1000000.20".parse::<SignedFixedDecimal>().unwrap();
     /// let compact_decimal = "1.00000020c6".parse::<CompactDecimal>().unwrap();
     ///
     /// assert_eq!(
