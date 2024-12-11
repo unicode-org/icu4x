@@ -116,11 +116,12 @@ pub mod ffi {
     }
 
     impl RegionDisplayNames {
-        /// Creates a new `RegionDisplayNames` from locale data and an options bag.
+        /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
         #[diplomat::attr(all(supports = fallible_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_v1(
             locale: &Locale,
             options: DisplayNamesOptionsV1,
@@ -132,7 +133,7 @@ pub mod ffi {
             )))
         }
 
-        /// Creates a new `RegionDisplayNames` from locale data and an options bag.
+        /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]

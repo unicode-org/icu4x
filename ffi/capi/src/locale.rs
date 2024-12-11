@@ -88,7 +88,7 @@ pub mod ffi {
     pub struct LocaleExpander(pub icu_locale::LocaleExpander);
 
     impl LocaleExpander {
-        /// Create a new [`LocaleExpander`].
+        /// Create a new [`LocaleExpander`] using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -108,7 +108,7 @@ pub mod ffi {
                 provider,
             )?)))
         }
-        /// Create a new [`LocaleExpander`] with extended data.
+        /// Create a new [`LocaleExpander`] with extended data using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "extended")]
         #[cfg(feature = "compiled_data")]

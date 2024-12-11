@@ -120,7 +120,7 @@ int main() {
         std::cout << "Basic_Emoji set contains appropriate characters" << std::endl;
     }
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
-    std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::try_new_main(*locale.get()).ok().value();
+    std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::create_main(*locale.get()).ok().value();
     if (!exemplars->contains(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;
         result = 1;
