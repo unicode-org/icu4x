@@ -106,7 +106,7 @@ pub struct Chinese {
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
+pub struct ChineseDateInner(pub(crate) ChineseBasedDateInner<Chinese>);
 
 type Inner = ChineseBasedDateInner<Chinese>;
 
