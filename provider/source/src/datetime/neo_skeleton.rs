@@ -558,6 +558,7 @@ fn test_en_overlap_patterns() {
 mod date_skeleton_consistency_tests {
     use super::*;
     use crate::CoverageLevel;
+    use icu::datetime::fields;
     use pattern::CoarseHourCycle;
 
     /// When canonicalizing the pattern, normalize only (G=GGG) or be more aggressive
@@ -626,6 +627,20 @@ mod date_skeleton_consistency_tests {
                     Aggressive | FlattenNumerics,
                 ) => {
                     field.length = FieldLength::One;
+                    true
+                }
+                // TODO(#5892): For now, ignore differences between 'ccc', 'cccc', and 'EEE'
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            symbol: FieldSymbol::Weekday(fields::Weekday::StandAlone),
+                            length: FieldLength::Four,
+                        },
+                    ),
+                    Aggressive,
+                ) => {
+                    field.symbol = FieldSymbol::Weekday(fields::Weekday::Format);
+                    field.length = FieldLength::Three;
                     true
                 }
                 // Ignore differences between 'MMM' and 'MMMM'?
