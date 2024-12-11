@@ -18,7 +18,7 @@ Bit 30: 1 iff applying NFC to the decomposition does not result in the character
 
 The character is a starter (CCC == 0) that decomposes to itself: The 31 lower bits set to zero. (Bit 31 may be set to 1, but bit 30 cannot.)
 
-REPLACEMENT CHARACTER: Bit 31 set to 1 and all others set to zero. This in an exception to the above item in order to allow catching UTF-8 errors as a side effect of a passthrough check. (This requires masking bit 31 off in `properties.rs` to report U+FFFD as having the default decomposition.)
+REPLACEMENT CHARACTER: Bit 31 set to 1 and all others set to zero. This in an exception to the above item in order to allow catching UTF-8 errors as a side effect of a passthrough check.
 
 The character is a non-starter (CCC != 0) that decomposes to itself: The highest bit is set to 1, the rest of the high half is set to zeros, the second-least-significant byte is 0xD8, and the least-significant byte is the CCC value.
 
