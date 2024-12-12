@@ -46,7 +46,6 @@ pub mod ffi {
         }
 
         /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
-
         #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::new,

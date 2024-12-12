@@ -51,7 +51,6 @@ pub mod ffi {
             ))
         }
         /// Create a map for the `Basic_Emoji` property, using a particular data source.
-
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic_with_provider")]
         pub fn create_basic_with_provider(
