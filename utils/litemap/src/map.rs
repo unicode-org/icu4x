@@ -878,12 +878,24 @@ where
     }
 
     /// Produce an ordered iterator over keys
+    #[deprecated = "use keys() instead"]
     pub fn iter_keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
         self.values.lm_iter().map(|val| val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
+    #[deprecated = "use values() instead"]
     pub fn iter_values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
+        self.values.lm_iter().map(|val| val.1)
+    }
+
+    /// Produce an ordered iterator over keys
+    pub fn keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
+        self.values.lm_iter().map(|val| val.0)
+    }
+
+    /// Produce an iterator over values, ordered by their keys
+    pub fn values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
         self.values.lm_iter().map(|val| val.1)
     }
 }
@@ -907,6 +919,30 @@ where
 
     fn into_iter(self) -> Self::IntoIter {
         self.values.lm_into_iter()
+    }
+}
+
+impl<'a, K, V, S> IntoIterator for &'a LiteMap<K, V, S>
+where
+    S: StoreIterable<'a, K, V>,
+{
+    type Item = (&'a K, &'a V);
+    type IntoIter = S::KeyValueIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_iter()
+    }
+}
+
+impl<'a, K, V, S> IntoIterator for &'a mut LiteMap<K, V, S>
+where
+    S: StoreIterableMut<'a, K, V>,
+{
+    type Item = (&'a K, &'a mut V);
+    type IntoIter = S::KeyValueIterMut;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_iter_mut()
     }
 }
 
