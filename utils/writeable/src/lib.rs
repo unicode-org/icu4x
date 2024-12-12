@@ -227,10 +227,11 @@ impl Part {
     };
 }
 
-/// A sink that supports annotating parts of the string with `Part`s.
+/// A sink that supports annotating parts of the string with [`Part`]s.
 pub trait PartsWrite: fmt::Write {
     type SubPartsWrite: PartsWrite + ?Sized;
 
+    /// Annotates all strings written by the closure with the given [`Part`].
     fn with_part(
         &mut self,
         part: Part,

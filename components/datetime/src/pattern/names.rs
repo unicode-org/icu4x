@@ -100,6 +100,7 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::{Date, Time};
 /// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
@@ -129,6 +130,7 @@ size_test!(
 ///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
+///         (7, 10, parts::WEEKDAY), // mon
 ///         (11, 14, Part::ERROR), // M11
 ///         (23, 25, Part::ERROR), // CE
 ///         (42, 44, Part::ERROR), // AM
@@ -150,6 +152,7 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
 /// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
@@ -176,15 +179,25 @@ size_test!(
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
+///         (7, 10, parts::WEEKDAY), // {E}
 ///         (11, 14, Part::ERROR), // {M}
+///         (11, 14, parts::MONTH), // {M}
 ///         (15, 18, Part::ERROR), // {d}
+///         (15, 18, parts::DAY), // {d}
 ///         (19, 22, Part::ERROR), // {y}
+///         (19, 22, parts::YEAR), // {y}
 ///         (23, 26, Part::ERROR), // {G}
+///         (23, 26, parts::ERA), // {G}
 ///         (30, 33, Part::ERROR), // {h}
+///         (30, 33, parts::HOUR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
+///         (34, 37, parts::MINUTE), // {m}
 ///         (38, 41, Part::ERROR), // {s}
+///         (38, 41, parts::SECOND), // {s}
 ///         (42, 45, Part::ERROR), // {a}
+///         (42, 45, parts::DAY_PERIOD), // {a}
 ///         (46, 49, Part::ERROR), // {z}
+///         (46, 49, parts::TIME_ZONE_NAME), // {z}
 ///     ]
 /// );
 /// ```
