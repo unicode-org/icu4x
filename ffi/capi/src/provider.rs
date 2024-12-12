@@ -319,3 +319,25 @@ macro_rules! call_constructor_unstable {
         }
     };
 }
+
+#[macro_export]
+macro_rules! call_constructor_unstable2 {
+    ($unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            _ => unreachable!()
+        }
+    };
+    ($unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
+        match &$provider.0 {
+            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                "This provider has been destroyed",
+            ))?,
+            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
+            _ => unreachable!()
+        }
+    };
+}
