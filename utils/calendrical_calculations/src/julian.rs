@@ -1,18 +1,14 @@
 // This file is part of ICU4X.
 //
-// The contents of this file implement algorithms from Calendrical Calculations
-// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
-// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
-// under the Apache-2.0 license. Accordingly, this file is released under
-// the Apache License, Version 2.0 which can be found at the calendrical_calculations
-// package root or at http://www.apache.org/licenses/LICENSE-2.0.
+// The contents of this file implement algorithms from the article:
+// "Euclidean Affine Functions and Applications to Calendar Algorithms"
+// by Cassio Neri & Lorenz Schneider (Feb. 2021), DOI: 10.48550/arXiv.2102.06959
 
-use crate::helpers::{i64_to_i32, I32CastError};
+use crate::helpers::I32CastError;
 use crate::rata_die::RataDie;
 
-// Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
-// 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
-const JULIAN_EPOCH: RataDie = RataDie::new(-1);
+/// In Julian calendar each 4 years sequence of leap days repeated.\
+const ONE_PERIOD_TO_DAYS: i64 = 365 * 4 + 1;
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687>
 #[inline(always)]
@@ -20,80 +16,84 @@ pub const fn is_leap_year(year: i32) -> bool {
     year % 4 == 0
 }
 
-/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709>
-pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
-    let mut fixed =
-        JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + (year as i64 - 1).div_euclid(4);
-    debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
-    fixed += match month {
-        1 => 0,
-        2 => 31,
-        3 => 59,
-        4 => 90,
-        5 => 120,
-        6 => 151,
-        7 => 181,
-        8 => 212,
-        9 => 243,
-        10 => 273,
-        11 => 304,
-        12 => 334,
-        _ => -1,
-    };
-    // Only add one if the month is after February (month > 2), since leap days are added to the end of February
-    if month > 2 && is_leap_year(year) {
-        fixed += 1;
+/// # Returns
+/// day of the year in the Grigorian calendar:
+/// + `1..=365` for a non leap year
+/// + `1..=366` for a leap year
+pub const fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
+    const DAYS_BEFORE_FEB: u8 = 31;
+    const DAYS_BEFORE_MAR: u16 = DAYS_BEFORE_FEB as u16 + 28;
+
+    #[allow(clippy::comparison_chain)]
+    if month > 2 {
+        let days_before_month = super::iso::calc_day_before_month_in_pseudo_year(month, false);
+        // shift back from pseudo calendar
+        // ⚠️ `is_leap_year` differ from `iso` so we need to copy-paste ＼(＾∇＾)／ this fn fully
+        //  | also can be used macro/fn that take fn but .. readability!
+        let leap = is_leap_year(year) as u16 + DAYS_BEFORE_MAR;
+        days_before_month as u16 + day as u16 + leap
+    } else if month == 2 {
+        (day + DAYS_BEFORE_FEB) as u16
+    } else {
+        day as u16
     }
-    RataDie::new(fixed + (day as i64))
 }
 
-/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738>
-pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let approx = (4 * date.to_i64_date() + 1464).div_euclid(1461);
-    let year = i64_to_i32(approx)?;
-    let prior_days = date
-        - fixed_from_julian(year, 1, 1)
-        - if is_leap_year(year) && date > fixed_from_julian(year, 2, 28) {
-            1
-        } else {
-            0
-        };
-    let adjusted_year = if prior_days >= 365 {
-        year.saturating_add(1)
-    } else {
-        year
-    };
-    let adjusted_prior_days = prior_days.rem_euclid(365);
-    debug_assert!((0..365).contains(&adjusted_prior_days));
-    let month = if adjusted_prior_days < 31 {
-        1
-    } else if adjusted_prior_days < 59 {
-        2
-    } else if adjusted_prior_days < 90 {
-        3
-    } else if adjusted_prior_days < 120 {
-        4
-    } else if adjusted_prior_days < 151 {
-        5
-    } else if adjusted_prior_days < 181 {
-        6
-    } else if adjusted_prior_days < 212 {
-        7
-    } else if adjusted_prior_days < 243 {
-        8
-    } else if adjusted_prior_days < 273 {
-        9
-    } else if adjusted_prior_days < 304 {
-        10
-    } else if adjusted_prior_days < 334 {
-        11
-    } else {
-        12
-    };
-    let day = (date - fixed_from_julian(adjusted_year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
-    debug_assert!(day <= 31, "Day assertion failed; date: {date:?}, adjusted_year: {adjusted_year}, prior_days: {prior_days}, month: {month}, day: {day}");
+/// Returns years passed from Jan 1st of year 1.
+///
+/// The Algo based on Cassio Neri & Lorenz Schneider algo for Gregorian calendar.
+pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
+    debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
 
-    Ok((adjusted_year, month, day))
+    let day_of_year = day_of_year(year, month, day) as i64;
+
+    let year = year as i64;
+    let non_leap = ((year & 0b11) != 0) as i64;
+    // Leap years every 4 year: `365 * year + year / 4`
+    let rata_die_year = non_leap + ((ONE_PERIOD_TO_DAYS * year) >> 2);
+
+    const SHIFT: i64 = -368;
+    RataDie::new(rata_die_year + day_of_year + SHIFT)
+}
+
+/// Returns (years, months, days) passed from Jan 1st of year 1.
+///
+/// The Algo based on Cassio Neri & Lorenz Schneider algo for Gregorian calendar  
+pub const fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
+    // ⚠️ To better understand the algo see `iso::iso_from_fixed`
+
+    const ONE_PERIOD_TO_DAYS: i64 = 365 * 4 + 1;
+    const AMOUNT_OF_PERIODS: i64 = (1 << 50) / 4 + 1;
+    const YEAR_SHIFT: i64 = 1;
+    const SHIFT: i64 =
+        307 + ((YEAR_SHIFT + 3) / 4) + YEAR_SHIFT * 365 + ONE_PERIOD_TO_DAYS * AMOUNT_OF_PERIODS;
+    const SHIFT_TO_YEARS: i64 = 4 * AMOUNT_OF_PERIODS + YEAR_SHIFT;
+
+    if let Some(err) = check_rata_die_have_i32_year(date) {
+        return Err(err);
+    }
+
+    let date = date.to_i64_date();
+
+    let shifted_rata_die = (date + SHIFT) as u64;
+    // ⚠️ in the initial algo there stay `(shifted_rata_die << 2) | 3`
+    // But because of the SHIFT choose (`YEAR_SHIFT`)
+    // We can remove `| 3`
+    let prepared_days = shifted_rata_die << 2;
+    let year = (prepared_days / (ONE_PERIOD_TO_DAYS as u64)) as i64;
+    let day_of_period = prepared_days % (ONE_PERIOD_TO_DAYS as u64);
+
+    // In our case we should not do `| 3`
+    let prepared = day_of_period;
+    const APPROX_NUM_C: u64 = 2939745;
+    let approx_prepared = APPROX_NUM_C * prepared;
+    let day_of_year = (approx_prepared as u32) / (APPROX_NUM_C as u32) / 4;
+
+    let need_to_shift_months = day_of_year >= 306;
+    let year = (year - SHIFT_TO_YEARS) + (need_to_shift_months as i64);
+    let (month, day) = crate::iso::calc_md_for_pseudo_year(day_of_year, need_to_shift_months);
+
+    Ok((year as i32, month, day))
 }
 
 /// Get a fixed date from the ymd of a Julian date.
@@ -114,4 +114,19 @@ pub const fn fixed_from_julian_book_version(book_year: i32, month: u8, day: u8) 
         month,
         day,
     )
+}
+
+#[inline(always)]
+const fn check_rata_die_have_i32_year(input: RataDie) -> Option<I32CastError> {
+    const MIN: i64 = fixed_from_julian(i32::MIN, 1, 1).to_i64_date();
+    const MAX: i64 = fixed_from_julian(i32::MAX, 12, 31).to_i64_date();
+
+    let input = input.to_i64_date();
+    if input < MIN {
+        Some(I32CastError::BelowMin)
+    } else if input > MAX {
+        Some(I32CastError::AboveMax)
+    } else {
+        None
+    }
 }

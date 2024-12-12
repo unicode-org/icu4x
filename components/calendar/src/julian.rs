@@ -67,12 +67,11 @@ pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 impl CalendarArithmetic for Julian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn month_days(year: i32, month: u8, data: ()) -> u8 {
+        // See `Iso::month_days`
         match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
-            2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+            2 => 28 | (Self::is_leap_year(year, data) as u8),
+            1..=12 => 30 | (month ^ (month >> 3)),
             _ => 0,
         }
     }
