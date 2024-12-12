@@ -176,8 +176,8 @@ pub mod ffi {
         pub fn create_east_asian_width() -> Box<CodePointMapData8> {
             convert_8(icu_properties::CodePointMapData::<EastAsianWidth>::new().static_to_owned())
         }
-        /// Create a map for the `East_Asian_Width` property, using a particular data source.
 
+        /// Create a map for the `East_Asian_Width` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width_with_provider")]
         pub fn create_east_asian_width_with_provider(
@@ -316,8 +316,8 @@ pub mod ffi {
         pub fn create_joining_type() -> Box<CodePointMapData8> {
             convert_8(icu_properties::CodePointMapData::<JoiningType>::new().static_to_owned())
         }
-        /// Create a map for the `Joining_Type` property, using a particular data source.
 
+        /// Create a map for the `Joining_Type` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "joining_type_with_provider")]
         pub fn create_joining_type_with_provider(
@@ -408,8 +408,8 @@ pub mod ffi {
                 self.0.as_borrowed().get_set_for_value(value),
             ))
         }
-        /// Create a map for the `Script` property, using compiled data.
 
+        /// Create a map for the `Script` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(auto, named_constructor = "script")]
         #[cfg(feature = "compiled_data")]
@@ -422,8 +422,8 @@ pub mod ffi {
                 .unwrap();
             Box::new(CodePointMapData16(data))
         }
-        /// Create a map for the `Script` property, using a particular data source.
 
+        /// Create a map for the `Script` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "script_with_provider")]
         pub fn create_script_with_provider(
