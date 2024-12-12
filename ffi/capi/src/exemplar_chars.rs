@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
     /// A set of "exemplar characters" for a given locale.
@@ -67,6 +68,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "main_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_main_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -99,6 +101,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -131,6 +134,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_punctuation_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -164,6 +168,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_numbers_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -197,6 +202,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "index_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_index_with_provider(
             provider: &DataProvider,
             locale: &Locale,

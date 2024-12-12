@@ -7,16 +7,23 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{fieldsets::YMDTV, options::Length};
+    use icu_datetime::fieldsets::YMDTV;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_datetime::options::Length;
     use icu_timezone::ZoneVariant;
 
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
     use crate::{
         datetime::ffi::{DateTime, IsoDateTime},
-        datetime_formatter::ffi::DateTimeLength,
-        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
-        locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
+        errors::ffi::DateTimeFormatError,
         timezone::ffi::TimeZoneInfo,
+    };
+
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{
+        datetime_formatter::ffi::DateTimeLength, errors::ffi::DateTimeFormatterLoadError,
+        locale_core::ffi::Locale,
     };
 
     use writeable::Writeable;
@@ -52,6 +59,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -120,6 +128,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,

@@ -8,9 +8,9 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
     use crate::locale_core::ffi::Locale;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::rust_link(icu::locale::TransformResult, Enum)]
     #[diplomat::enum_convert(icu_locale::TransformResult)]
@@ -35,6 +35,7 @@ pub mod ffi {
         /// Create a new [`LocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
@@ -57,6 +58,7 @@ pub mod ffi {
         /// Create a new [`LocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
@@ -92,6 +94,7 @@ pub mod ffi {
         /// Create a new [`LocaleExpander`] using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
@@ -110,6 +113,7 @@ pub mod ffi {
         /// Create a new [`LocaleExpander`] with extended data using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {

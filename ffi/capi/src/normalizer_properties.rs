@@ -8,6 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
+    #[cfg(feature = "buffer_provider")]
     use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// Lookup of the Canonical_Combining_Class Unicode property
@@ -52,6 +53,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
@@ -127,6 +129,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalComposition>, DataError> {
@@ -197,6 +200,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {

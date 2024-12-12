@@ -10,8 +10,8 @@ pub mod ffi {
     use alloc::vec::Vec;
     use core::fmt::Write;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     pub enum BidiDirection {
         Ltr,
@@ -39,6 +39,7 @@ pub mod ffi {
         /// Creates a new [`Bidi`] from locale data, and a particular data source.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
             Ok(Box::new(Bidi(call_constructor_unstable!(
                 icu_properties::CodePointMapData::try_new_unstable,

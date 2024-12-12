@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
     #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
@@ -76,6 +77,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
@@ -108,6 +110,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_with_options, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -138,6 +141,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
@@ -170,6 +174,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm_with_options, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -200,6 +205,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
@@ -238,6 +244,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,

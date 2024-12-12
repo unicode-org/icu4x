@@ -7,17 +7,20 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{
-        fieldsets::{T, YMD, YMDT},
-        options::Length,
-    };
+    use icu_datetime::fieldsets::{T, YMD, YMDT};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_datetime::options::Length;
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DateTimeFormatterLoadError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
     use crate::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
-        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
-        locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
+        errors::ffi::DateTimeFormatError,
         time::ffi::Time,
     };
 
@@ -55,6 +58,7 @@ pub mod ffi {
 
         /// Creates a new [`TimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -122,6 +126,7 @@ pub mod ffi {
 
         /// Creates a new [`GregorianDateFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -185,6 +190,7 @@ pub mod ffi {
 
         /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -237,6 +243,7 @@ pub mod ffi {
 
         /// Creates a new [`DateFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -325,6 +332,7 @@ pub mod ffi {
 
         /// Creates a new [`DateTimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,

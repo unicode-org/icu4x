@@ -8,7 +8,9 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// An object that runs the ICU4X locale fallback algorithm.
     #[diplomat::opaque]
@@ -78,6 +80,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleFallbacker>, DataError> {

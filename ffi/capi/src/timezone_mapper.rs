@@ -9,8 +9,8 @@ pub mod ffi {
     use alloc::boxed::Box;
     use writeable::Writeable;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     use tinystr::TinyAsciiStr;
 
@@ -40,6 +40,7 @@ pub mod ffi {
         /// Create a new [`TimeZoneIdMapper`] using a particular data source
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapper>, DataError> {
@@ -167,6 +168,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(auto, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {

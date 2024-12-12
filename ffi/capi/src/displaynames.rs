@@ -8,8 +8,11 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{DataError, LocaleParseError};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DataError;
+    use crate::errors::ffi::LocaleParseError;
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
@@ -86,6 +89,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -136,6 +140,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,

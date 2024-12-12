@@ -8,7 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    #[cfg(feature = "buffer_provider")]
+    use crate::errors::ffi::DataError;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
@@ -39,6 +42,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(auto, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<UnitsConverterFactory>, DataError> {

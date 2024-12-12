@@ -10,7 +10,11 @@ use icu_casemap::titlecase::TitlecaseOptions;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
@@ -65,6 +69,7 @@ pub mod ffi {
         /// Construct a new CaseMapper instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
             Ok(Box::new(CaseMapper(call_constructor!(
                 icu_casemap::CaseMapper::try_new_with_buffer_provider,
@@ -228,6 +233,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CaseMapCloser>, DataError> {
@@ -285,6 +291,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TitlecaseMapper>, DataError> {

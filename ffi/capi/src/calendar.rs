@@ -10,8 +10,10 @@ pub mod ffi {
     use alloc::sync::Arc;
     use core::fmt::Write;
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::errors::ffi::DataError;
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
 
     /// The various calendar types currently supported by [`Calendar`]
@@ -126,6 +128,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale_with_provider")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_for_locale_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -142,6 +145,7 @@ pub mod ffi {
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_kind_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_for_kind_with_provider(
             provider: &DataProvider,
             kind: AnyCalendarKind,

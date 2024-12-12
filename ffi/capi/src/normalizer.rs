@@ -8,6 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
+    #[cfg(feature = "buffer_provider")]
     use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
@@ -39,6 +40,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_nfc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
@@ -69,6 +71,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_nfkc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
@@ -195,6 +198,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_nfd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
@@ -227,6 +231,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_nfkd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
