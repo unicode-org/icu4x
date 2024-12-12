@@ -53,7 +53,7 @@ pub mod ffi {
         ) -> Result<Box<WeekCalculator>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(WeekCalculator(call_constructor2!(
+            Ok(Box::new(WeekCalculator(call_constructor!(
                 icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
                 provider,
                 prefs,

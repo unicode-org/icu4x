@@ -40,7 +40,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
-            Ok(Box::new(Bidi(call_constructor_unstable2!(
+            Ok(Box::new(Bidi(call_constructor_unstable!(
                 icu_properties::CodePointMapData::try_new_unstable,
                 provider,
             )?)))

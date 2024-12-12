@@ -79,7 +79,7 @@ pub mod ffi {
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider,
                 provider
             )?)))
@@ -112,7 +112,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider,
                 provider,
                 locale.into(),
@@ -141,7 +141,7 @@ pub mod ffi {
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider,
                 provider
             )?)))
@@ -174,7 +174,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider,
                 provider,
                 locale.into(),
@@ -203,7 +203,7 @@ pub mod ffi {
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider,
                 provider
             )?)))
@@ -242,7 +242,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor2!(
+            Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider,
                 provider,
                 locale.into(),

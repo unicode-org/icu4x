@@ -56,7 +56,7 @@ pub mod ffi {
         pub fn create_basic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<EmojiSetData>, DataError> {
-            Ok(Box::new(EmojiSetData(call_constructor_unstable2!(
+            Ok(Box::new(EmojiSetData(call_constructor_unstable!(
                 icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>,
                 provider,
             )?)))

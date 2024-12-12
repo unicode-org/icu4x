@@ -244,34 +244,6 @@ where
 
 #[macro_export]
 macro_rules! call_constructor {
-    ($compiled:path [$pre_transform:ident => $transform:expr], $any:path, $buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
-        match &$provider.0 {
-            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                "This provider has been destroyed",
-            ))?,
-            $crate::provider::DataProviderInner::Empty => $any(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
-            #[cfg(feature = "buffer_provider")]
-            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
-        }
-    };
-    ($compiled:path, $any:path, $buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
-        match &$provider.0 {
-            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                "This provider has been destroyed",
-            ))?,
-            $crate::provider::DataProviderInner::Empty => $any(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
-            #[cfg(feature = "buffer_provider")]
-            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => $compiled($($args,)*),
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! call_constructor2 {
     ($buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
         match &$provider.0 {
             $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
@@ -294,34 +266,6 @@ macro_rules! call_constructor2 {
 
 #[macro_export]
 macro_rules! call_constructor_unstable {
-    ($compiled:path [$pre_transform:ident => $transform:expr], $unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
-        match &$provider.0 {
-            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                "This provider has been destroyed",
-            ))?,
-            $crate::provider::DataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
-            #[cfg(feature = "buffer_provider")]
-            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => { let $pre_transform = $compiled($($args,)*); $transform },
-        }
-    };
-    ($compiled:path, $unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
-        match &$provider.0 {
-            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                "This provider has been destroyed",
-            ))?,
-            $crate::provider::DataProviderInner::Empty => $unstable(&icu_provider_adapters::empty::EmptyDataProvider::new(), $($args,)*),
-            #[cfg(feature = "buffer_provider")]
-            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $unstable(&icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(buffer_provider), $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => $compiled($($args,)*),
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! call_constructor_unstable2 {
     ($unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
         match &$provider.0 {
             $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(

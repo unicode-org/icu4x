@@ -77,7 +77,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::try_new_unstable,
                     provider,
                 )?
@@ -102,7 +102,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                             icu_properties::PropertyParser::<
                                 icu_properties::props::HangulSyllableType,
                             >::try_new_unstable,
@@ -129,7 +129,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::try_new_unstable,
                     provider,
                 )?
@@ -154,7 +154,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::BidiClass>::try_new_unstable,
                     provider,
                 )?
@@ -175,7 +175,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                         icu_properties::PropertyParser::<
                             icu_properties::props::IndicSyllabicCategory,
                         >::try_new_unstable,
@@ -202,7 +202,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::LineBreak>::try_new_unstable,
                     provider,
                 )?
@@ -228,7 +228,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                             icu_properties::PropertyParser::<
                                 icu_properties::props::GraphemeClusterBreak,
                             >::try_new_unstable,
@@ -255,7 +255,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::WordBreak>::try_new_unstable,
                     provider,
                 )?
@@ -280,7 +280,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::try_new_unstable,
                     provider,
                 )?
@@ -305,7 +305,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                     icu_properties::PropertyParser::<icu_properties::props::Script>::try_new_unstable,
                     provider,
                 )?
@@ -378,7 +378,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
             Ok(Box::new(GeneralCategoryNameToMaskMapper(
-                call_constructor_unstable2!(
+                call_constructor_unstable!(
                             icu_properties::PropertyParser::<
                                 icu_properties::props::GeneralCategoryGroup,
                             >::try_new_unstable,

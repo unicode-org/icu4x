@@ -38,7 +38,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
-            Ok(Box::new(LocaleCanonicalizer(call_constructor2!(
+            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
                 icu_locale::LocaleCanonicalizer::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -60,11 +60,11 @@ pub mod ffi {
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
-            let expander = call_constructor2!(
+            let expander = call_constructor!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?;
-            Ok(Box::new(LocaleCanonicalizer(call_constructor2!(
+            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
                 icu_locale::LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
                 provider,
                 expander
@@ -95,7 +95,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
-            Ok(Box::new(LocaleExpander(call_constructor2!(
+            Ok(Box::new(LocaleExpander(call_constructor!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -113,7 +113,7 @@ pub mod ffi {
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
-            Ok(Box::new(LocaleExpander(call_constructor2!(
+            Ok(Box::new(LocaleExpander(call_constructor!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))

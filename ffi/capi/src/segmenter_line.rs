@@ -80,7 +80,7 @@ pub mod ffi {
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider,
                 provider
             )?)))
@@ -100,7 +100,7 @@ pub mod ffi {
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider,
                 provider,
             )?)))
@@ -120,7 +120,7 @@ pub mod ffi {
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider,
                 provider,
             )?)))
@@ -157,7 +157,7 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
                 provider,
                 options,
@@ -195,7 +195,7 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
                 provider,
                 options,
@@ -239,7 +239,7 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor2!(
+            Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
                 provider,
                 options,

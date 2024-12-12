@@ -53,7 +53,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor2!(
+            Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -86,7 +86,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor2!(
+            Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
                 provider,
                 locale.into(),

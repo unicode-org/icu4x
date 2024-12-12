@@ -55,7 +55,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(call_constructor2!(
+            Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
                 icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider,
                 provider
             )?)))
@@ -130,7 +130,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalComposition>, DataError> {
-            Ok(Box::new(CanonicalComposition(call_constructor2!(
+            Ok(Box::new(CanonicalComposition(call_constructor!(
                 icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -200,7 +200,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(call_constructor2!(
+            Ok(Box::new(CanonicalDecomposition(call_constructor!(
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider,
                 provider,
             )?)))

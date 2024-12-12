@@ -61,7 +61,7 @@ pub mod ffi {
             let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
-                call_constructor2!(
+                call_constructor!(
                     icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                     provider,
                     prefs,
@@ -128,7 +128,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDTV::with_length(Length::from(length));
 
-            Ok(Box::new(ZonedDateTimeFormatter(call_constructor2!(
+            Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,

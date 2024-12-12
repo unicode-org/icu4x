@@ -67,7 +67,7 @@ pub mod ffi {
             options.grouping_strategy = grouping_strategy
                 .map(Into::into)
                 .unwrap_or(options.grouping_strategy);
-            Ok(Box::new(FixedDecimalFormatter(call_constructor2!(
+            Ok(Box::new(FixedDecimalFormatter(call_constructor!(
                 icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
