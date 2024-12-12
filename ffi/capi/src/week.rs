@@ -55,10 +55,12 @@ pub mod ffi {
         ) -> Result<Box<WeekCalculator>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(WeekCalculator(call_constructor!(
-                icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
-                provider,
-                prefs,
+            Ok(Box::new(WeekCalculator(provider.call_constructor(
+                |provider| {
+                    icu_calendar::week::WeekCalculator::try_new_with_buffer_provider(
+                        provider, prefs,
+                    )
+                },
             )?)))
         }
         #[diplomat::rust_link(

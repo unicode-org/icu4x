@@ -57,9 +57,12 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ScriptWithExtensions>, DataError> {
-            Ok(Box::new(ScriptWithExtensions(call_constructor!(
-                icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider,
-                provider
+            Ok(Box::new(ScriptWithExtensions(provider.call_constructor(
+                |provider| {
+                    icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider(
+                        provider,
+                    )
+                },
             )?)))
         }
 

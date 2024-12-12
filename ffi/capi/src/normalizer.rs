@@ -44,9 +44,10 @@ pub mod ffi {
         pub fn create_nfc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider,
-                provider,
+            Ok(Box::new(ComposingNormalizer(provider.call_constructor(
+                |provider| {
+                    icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
@@ -75,9 +76,10 @@ pub mod ffi {
         pub fn create_nfkc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider,
-                provider,
+            Ok(Box::new(ComposingNormalizer(provider.call_constructor(
+                |provider| {
+                    icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Normalize a string
@@ -202,9 +204,12 @@ pub mod ffi {
         pub fn create_nfd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider,
-                provider,
+            Ok(Box::new(DecomposingNormalizer(provider.call_constructor(
+                |provider| {
+                    icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider(
+                        provider,
+                    )
+                },
             )?)))
         }
 
@@ -235,9 +240,12 @@ pub mod ffi {
         pub fn create_nfkd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
-                provider,
+            Ok(Box::new(DecomposingNormalizer(provider.call_constructor(
+                |provider| {
+                    icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider(
+                        provider,
+                    )
+                },
             )?)))
         }
 

@@ -65,10 +65,10 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider,
-                provider,
-                prefs
+            Ok(Box::new(PluralRules(provider.call_constructor(
+                |provider| {
+                    icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider(provider, prefs)
+                },
             )?)))
         }
         /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
@@ -94,10 +94,10 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider,
-                provider,
-                prefs
+            Ok(Box::new(PluralRules(provider.call_constructor(
+                |provider| {
+                    icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider(provider, prefs)
+                },
             )?)))
         }
         /// Get the category for a given number represented as operands

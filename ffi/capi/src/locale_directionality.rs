@@ -44,9 +44,8 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleDirectionality>, DataError> {
-            Ok(Box::new(LocaleDirectionality(call_constructor!(
-                icu_locale::LocaleDirectionality::try_new_with_buffer_provider,
-                provider,
+            Ok(Box::new(LocaleDirectionality(provider.call_constructor(
+                |provider| icu_locale::LocaleDirectionality::try_new_with_buffer_provider(provider),
             )?)))
         }
 

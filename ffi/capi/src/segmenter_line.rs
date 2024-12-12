@@ -82,9 +82,10 @@ pub mod ffi {
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider,
-                provider
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
@@ -103,9 +104,10 @@ pub mod ffi {
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider,
-                provider,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
@@ -124,9 +126,10 @@ pub mod ffi {
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider,
-                provider,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
@@ -162,10 +165,12 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
-                provider,
-                options,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider(
+                        provider, options,
+                    )
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
@@ -201,10 +206,12 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
-                provider,
-                options,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider(
+                        provider, options,
+                    )
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
@@ -246,11 +253,7 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
-                provider,
-                options,
-            )?)))
+            Ok(Box::new(LineSegmenter(provider.call_constructor(|provider| icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider(provider, options))?)))
         }
         /// Segments a string.
         ///

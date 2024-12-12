@@ -71,9 +71,8 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
-            Ok(Box::new(CaseMapper(call_constructor!(
-                icu_casemap::CaseMapper::try_new_with_buffer_provider,
-                provider,
+            Ok(Box::new(CaseMapper(provider.call_constructor(
+                |provider| icu_casemap::CaseMapper::try_new_with_buffer_provider(provider),
             )?)))
         }
         /// Returns the full lowercase mapping of the given string
@@ -237,9 +236,8 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CaseMapCloser>, DataError> {
-            Ok(Box::new(CaseMapCloser(call_constructor!(
-                icu_casemap::CaseMapCloser::try_new_with_buffer_provider,
-                provider,
+            Ok(Box::new(CaseMapCloser(provider.call_constructor(
+                |provider| icu_casemap::CaseMapCloser::try_new_with_buffer_provider(provider),
             )?)))
         }
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
@@ -295,9 +293,8 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TitlecaseMapper>, DataError> {
-            Ok(Box::new(TitlecaseMapper(call_constructor!(
-                icu_casemap::TitlecaseMapper::try_new_with_buffer_provider,
-                provider,
+            Ok(Box::new(TitlecaseMapper(provider.call_constructor(
+                |provider| icu_casemap::TitlecaseMapper::try_new_with_buffer_provider(provider),
             )?)))
         }
         /// Returns the full titlecase mapping of the given string
