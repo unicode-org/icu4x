@@ -27,6 +27,8 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneIdMapperWithFastCanonicalization_destroy_mv1));
 
+  /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.new) for more information.
@@ -35,6 +37,8 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
     return TimeZoneIdMapperWithFastCanonicalization._fromFfi(result, []);
   }
 
+  /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using a particular data source
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.new) for more information.

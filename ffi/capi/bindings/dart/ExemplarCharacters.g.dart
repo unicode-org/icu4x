@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+/// A set of "exemplar characters" for a given locale.
 ///
 /// See the [Rust documentation for `locale`](https://docs.rs/icu/latest/icu/locale/index.html) for more information.
 ///
@@ -45,6 +45,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return result;
   }
 
+  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -56,6 +58,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
+  ///
   /// See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -67,6 +71,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -78,6 +84,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -89,6 +97,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -100,6 +110,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -111,6 +123,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -122,6 +136,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -133,6 +149,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -144,6 +162,8 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
+  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+  ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
   ///
   /// Throws [DataError] on failure.

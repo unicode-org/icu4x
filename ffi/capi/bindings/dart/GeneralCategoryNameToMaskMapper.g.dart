@@ -48,12 +48,16 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     return result;
   }
 
+  /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
   factory GeneralCategoryNameToMaskMapper() {
     final result = _icu4x_GeneralCategoryNameToMaskMapper_create_mv1();
     return GeneralCategoryNameToMaskMapper._fromFfi(result, []);
   }
 
+  /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.

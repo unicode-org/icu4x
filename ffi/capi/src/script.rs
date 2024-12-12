@@ -30,6 +30,7 @@ pub mod ffi {
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
 
     impl ScriptWithExtensions {
+        /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::new,
@@ -44,6 +45,7 @@ pub mod ffi {
             ))
         }
 
+        /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::new,
