@@ -33,6 +33,23 @@ pub mod ffi {
     }
 
     impl DataProvider {
+        pub(crate) fn call_constructor<F, Ret>(
+            &self,
+            ctor: F,
+        ) -> Result<Ret, icu_provider::DataError>
+        where
+            F: FnOnce(
+                &(dyn icu_provider::buf::BufferProvider + 'static),
+            ) -> Result<Ret, icu_provider::DataError>,
+        {
+            match &self.0 {
+                DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
+                DataProviderInner::Buffer(ref buffer_provider) => ctor(buffer_provider),
+            }
+        }
+
         /// Constructs an `FsDataProvider` and returns it as an [`DataProvider`].
         /// Requires the `provider_fs` Cargo feature.
         /// Not supported in WASM.
