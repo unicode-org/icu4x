@@ -5,7 +5,7 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+/** A set of "exemplar characters" for a given locale.
 *
 *See the [Rust documentation for `locale`](https://docs.rs/icu/latest/icu/locale/index.html) for more information.
 *

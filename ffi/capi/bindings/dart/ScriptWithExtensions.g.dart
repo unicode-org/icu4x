@@ -24,12 +24,16 @@ final class ScriptWithExtensions implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensions_destroy_mv1));
 
+  /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
   factory ScriptWithExtensions() {
     final result = _icu4x_ScriptWithExtensions_create_mv1();
     return ScriptWithExtensions._fromFfi(result, []);
   }
 
+  /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+  ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.

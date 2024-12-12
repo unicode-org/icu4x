@@ -83,12 +83,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Ascii_Hex_Digit` property, using compiled data.
+  ///
   /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.AsciiHexDigit.html) for more information.
   factory CodePointSetData.asciiHexDigit() {
     final result = _icu4x_CodePointSetData_create_ascii_hex_digit_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.AsciiHexDigit.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -100,12 +104,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Alnum` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Alnum`](https://docs.rs/icu/latest/icu/properties/props/struct.Alnum.html) for more information.
   factory CodePointSetData.alnum() {
     final result = _icu4x_CodePointSetData_create_alnum_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Alnum` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Alnum`](https://docs.rs/icu/latest/icu/properties/props/struct.Alnum.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -117,12 +125,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Alphabetic` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/latest/icu/properties/props/struct.Alphabetic.html) for more information.
   factory CodePointSetData.alphabetic() {
     final result = _icu4x_CodePointSetData_create_alphabetic_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Alphabetic` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/latest/icu/properties/props/struct.Alphabetic.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -134,12 +146,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Bidi_Control` property, using compiled data.
+  ///
   /// See the [Rust documentation for `BidiControl`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiControl.html) for more information.
   factory CodePointSetData.bidiControl() {
     final result = _icu4x_CodePointSetData_create_bidi_control_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Bidi_Control` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `BidiControl`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiControl.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -151,12 +167,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Bidi_Mirrored` property, using compiled data.
+  ///
   /// See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirrored.html) for more information.
   factory CodePointSetData.bidiMirrored() {
     final result = _icu4x_CodePointSetData_create_bidi_mirrored_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Bidi_Mirrored` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirrored.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -168,12 +188,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Blank` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Blank`](https://docs.rs/icu/latest/icu/properties/props/struct.Blank.html) for more information.
   factory CodePointSetData.blank() {
     final result = _icu4x_CodePointSetData_create_blank_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Blank` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Blank`](https://docs.rs/icu/latest/icu/properties/props/struct.Blank.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -185,12 +209,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Cased` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Cased`](https://docs.rs/icu/latest/icu/properties/props/struct.Cased.html) for more information.
   factory CodePointSetData.cased() {
     final result = _icu4x_CodePointSetData_create_cased_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Cased` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Cased`](https://docs.rs/icu/latest/icu/properties/props/struct.Cased.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -202,12 +230,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Case_Ignorable` property, using compiled data.
+  ///
   /// See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/latest/icu/properties/props/struct.CaseIgnorable.html) for more information.
   factory CodePointSetData.caseIgnorable() {
     final result = _icu4x_CodePointSetData_create_case_ignorable_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Case_Ignorable` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `CaseIgnorable`](https://docs.rs/icu/latest/icu/properties/props/struct.CaseIgnorable.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -219,12 +251,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Full_Composition_Exclusion` property, using compiled data.
+  ///
   /// See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/latest/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
   factory CodePointSetData.fullCompositionExclusion() {
     final result = _icu4x_CodePointSetData_create_full_composition_exclusion_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Full_Composition_Exclusion` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/latest/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -236,12 +272,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Casefolded` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
   factory CodePointSetData.changesWhenCasefolded() {
     final result = _icu4x_CodePointSetData_create_changes_when_casefolded_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Casefolded` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenCasefolded`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenCasefolded.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -253,12 +293,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Casemapped` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
   factory CodePointSetData.changesWhenCasemapped() {
     final result = _icu4x_CodePointSetData_create_changes_when_casemapped_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Casemapped` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -270,12 +314,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
   factory CodePointSetData.changesWhenNfkcCasefolded() {
     final result = _icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenNfkcCasefolded`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenNfkcCasefolded.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -287,12 +335,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Lowercased` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
   factory CodePointSetData.changesWhenLowercased() {
     final result = _icu4x_CodePointSetData_create_changes_when_lowercased_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Lowercased` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -304,12 +356,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Titlecased` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
   factory CodePointSetData.changesWhenTitlecased() {
     final result = _icu4x_CodePointSetData_create_changes_when_titlecased_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Titlecased` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenTitlecased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenTitlecased.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -321,12 +377,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Changes_When_Uppercased` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
   factory CodePointSetData.changesWhenUppercased() {
     final result = _icu4x_CodePointSetData_create_changes_when_uppercased_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Changes_When_Uppercased` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -338,12 +398,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Dash` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Dash`](https://docs.rs/icu/latest/icu/properties/props/struct.Dash.html) for more information.
   factory CodePointSetData.dash() {
     final result = _icu4x_CodePointSetData_create_dash_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Dash` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Dash`](https://docs.rs/icu/latest/icu/properties/props/struct.Dash.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -355,12 +419,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Deprecated` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Deprecated`](https://docs.rs/icu/latest/icu/properties/props/struct.Deprecated.html) for more information.
   factory CodePointSetData.deprecated() {
     final result = _icu4x_CodePointSetData_create_deprecated_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Deprecated` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Deprecated`](https://docs.rs/icu/latest/icu/properties/props/struct.Deprecated.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -372,12 +440,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
+  ///
   /// See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/latest/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
   factory CodePointSetData.defaultIgnorableCodePoint() {
     final result = _icu4x_CodePointSetData_create_default_ignorable_code_point_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Default_Ignorable_Code_Point` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `DefaultIgnorableCodePoint`](https://docs.rs/icu/latest/icu/properties/props/struct.DefaultIgnorableCodePoint.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -389,12 +461,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Diacritic` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Diacritic`](https://docs.rs/icu/latest/icu/properties/props/struct.Diacritic.html) for more information.
   factory CodePointSetData.diacritic() {
     final result = _icu4x_CodePointSetData_create_diacritic_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Diacritic` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Diacritic`](https://docs.rs/icu/latest/icu/properties/props/struct.Diacritic.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -406,12 +482,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Emoji_Modifier_Base` property, using compiled data.
+  ///
   /// See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiModifierBase.html) for more information.
   factory CodePointSetData.emojiModifierBase() {
     final result = _icu4x_CodePointSetData_create_emoji_modifier_base_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Emoji_Modifier_Base` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `EmojiModifierBase`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiModifierBase.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -423,12 +503,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Emoji_Component` property, using compiled data.
+  ///
   /// See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiComponent.html) for more information.
   factory CodePointSetData.emojiComponent() {
     final result = _icu4x_CodePointSetData_create_emoji_component_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Emoji_Component` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiComponent.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -440,12 +524,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Emoji_Modifier` property, using compiled data.
+  ///
   /// See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiModifier.html) for more information.
   factory CodePointSetData.emojiModifier() {
     final result = _icu4x_CodePointSetData_create_emoji_modifier_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Emoji_Modifier` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `EmojiModifier`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiModifier.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -457,12 +545,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Emoji` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Emoji`](https://docs.rs/icu/latest/icu/properties/props/struct.Emoji.html) for more information.
   factory CodePointSetData.emoji() {
     final result = _icu4x_CodePointSetData_create_emoji_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Emoji` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Emoji`](https://docs.rs/icu/latest/icu/properties/props/struct.Emoji.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -474,12 +566,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Emoji_Presentation` property, using compiled data.
+  ///
   /// See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiPresentation.html) for more information.
   factory CodePointSetData.emojiPresentation() {
     final result = _icu4x_CodePointSetData_create_emoji_presentation_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Emoji_Presentation` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `EmojiPresentation`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiPresentation.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -491,12 +587,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Extender` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Extender`](https://docs.rs/icu/latest/icu/properties/props/struct.Extender.html) for more information.
   factory CodePointSetData.extender() {
     final result = _icu4x_CodePointSetData_create_extender_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Extender` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Extender`](https://docs.rs/icu/latest/icu/properties/props/struct.Extender.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -508,12 +608,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Extended_Pictographic` property, using compiled data.
+  ///
   /// See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/latest/icu/properties/props/struct.ExtendedPictographic.html) for more information.
   factory CodePointSetData.extendedPictographic() {
     final result = _icu4x_CodePointSetData_create_extended_pictographic_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Extended_Pictographic` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `ExtendedPictographic`](https://docs.rs/icu/latest/icu/properties/props/struct.ExtendedPictographic.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -525,12 +629,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Graph` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Graph`](https://docs.rs/icu/latest/icu/properties/props/struct.Graph.html) for more information.
   factory CodePointSetData.graph() {
     final result = _icu4x_CodePointSetData_create_graph_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Graph` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Graph`](https://docs.rs/icu/latest/icu/properties/props/struct.Graph.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -542,12 +650,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Grapheme_Base` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeBase.html) for more information.
   factory CodePointSetData.graphemeBase() {
     final result = _icu4x_CodePointSetData_create_grapheme_base_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Grapheme_Base` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `GraphemeBase`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeBase.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -559,12 +671,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Grapheme_Extend` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeExtend.html) for more information.
   factory CodePointSetData.graphemeExtend() {
     final result = _icu4x_CodePointSetData_create_grapheme_extend_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Grapheme_Extend` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeExtend.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -576,12 +692,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Grapheme_Link` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeLink.html) for more information.
   factory CodePointSetData.graphemeLink() {
     final result = _icu4x_CodePointSetData_create_grapheme_link_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Grapheme_Link` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `GraphemeLink`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeLink.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -593,12 +713,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Hex_Digit` property, using compiled data.
+  ///
   /// See the [Rust documentation for `HexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.HexDigit.html) for more information.
   factory CodePointSetData.hexDigit() {
     final result = _icu4x_CodePointSetData_create_hex_digit_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Hex_Digit` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `HexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.HexDigit.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -610,12 +734,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Hyphen` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/latest/icu/properties/props/struct.Hyphen.html) for more information.
   factory CodePointSetData.hyphen() {
     final result = _icu4x_CodePointSetData_create_hyphen_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Hyphen` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/latest/icu/properties/props/struct.Hyphen.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -627,12 +755,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Id_Continue` property, using compiled data.
+  ///
   /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.IdContinue.html) for more information.
   factory CodePointSetData.idContinue() {
     final result = _icu4x_CodePointSetData_create_id_continue_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Id_Continue` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.IdContinue.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -644,12 +776,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Ideographic` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/latest/icu/properties/props/struct.Ideographic.html) for more information.
   factory CodePointSetData.ideographic() {
     final result = _icu4x_CodePointSetData_create_ideographic_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Ideographic` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/latest/icu/properties/props/struct.Ideographic.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -661,12 +797,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Id_Start` property, using compiled data.
+  ///
   /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/latest/icu/properties/props/struct.IdStart.html) for more information.
   factory CodePointSetData.idStart() {
     final result = _icu4x_CodePointSetData_create_id_start_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Id_Start` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/latest/icu/properties/props/struct.IdStart.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -678,12 +818,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Ids_Binary_Operator` property, using compiled data.
+  ///
   /// See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/latest/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
   factory CodePointSetData.idsBinaryOperator() {
     final result = _icu4x_CodePointSetData_create_ids_binary_operator_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Ids_Binary_Operator` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `IdsBinaryOperator`](https://docs.rs/icu/latest/icu/properties/props/struct.IdsBinaryOperator.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -695,12 +839,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Ids_Trinary_Operator` property, using compiled data.
+  ///
   /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/latest/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
   factory CodePointSetData.idsTrinaryOperator() {
     final result = _icu4x_CodePointSetData_create_ids_trinary_operator_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/latest/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -712,12 +860,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Join_Control` property, using compiled data.
+  ///
   /// See the [Rust documentation for `JoinControl`](https://docs.rs/icu/latest/icu/properties/props/struct.JoinControl.html) for more information.
   factory CodePointSetData.joinControl() {
     final result = _icu4x_CodePointSetData_create_join_control_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Join_Control` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `JoinControl`](https://docs.rs/icu/latest/icu/properties/props/struct.JoinControl.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -729,12 +881,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Logical_Order_Exception` property, using compiled data.
+  ///
   /// See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/latest/icu/properties/props/struct.LogicalOrderException.html) for more information.
   factory CodePointSetData.logicalOrderException() {
     final result = _icu4x_CodePointSetData_create_logical_order_exception_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Logical_Order_Exception` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/latest/icu/properties/props/struct.LogicalOrderException.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -746,12 +902,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Lowercase` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Lowercase`](https://docs.rs/icu/latest/icu/properties/props/struct.Lowercase.html) for more information.
   factory CodePointSetData.lowercase() {
     final result = _icu4x_CodePointSetData_create_lowercase_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Lowercase` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Lowercase`](https://docs.rs/icu/latest/icu/properties/props/struct.Lowercase.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -763,12 +923,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Math` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Math`](https://docs.rs/icu/latest/icu/properties/props/struct.Math.html) for more information.
   factory CodePointSetData.math() {
     final result = _icu4x_CodePointSetData_create_math_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Math` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Math`](https://docs.rs/icu/latest/icu/properties/props/struct.Math.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -780,12 +944,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Noncharacter_Code_Point` property, using compiled data.
+  ///
   /// See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/latest/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
   factory CodePointSetData.noncharacterCodePoint() {
     final result = _icu4x_CodePointSetData_create_noncharacter_code_point_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Noncharacter_Code_Point` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `NoncharacterCodePoint`](https://docs.rs/icu/latest/icu/properties/props/struct.NoncharacterCodePoint.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -797,12 +965,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Nfc_Inert` property, using compiled data.
+  ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfcInert.html) for more information.
   factory CodePointSetData.nfcInert() {
     final result = _icu4x_CodePointSetData_create_nfc_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Nfc_Inert` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfcInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -814,12 +986,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Nfd_Inert` property, using compiled data.
+  ///
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfdInert.html) for more information.
   factory CodePointSetData.nfdInert() {
     final result = _icu4x_CodePointSetData_create_nfd_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Nfd_Inert` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `NfdInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfdInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -831,12 +1007,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Nfkc_Inert` property, using compiled data.
+  ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfkcInert.html) for more information.
   factory CodePointSetData.nfkcInert() {
     final result = _icu4x_CodePointSetData_create_nfkc_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Nfkc_Inert` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfkcInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -848,12 +1028,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Nfkd_Inert` property, using compiled data.
+  ///
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfkdInert.html) for more information.
   factory CodePointSetData.nfkdInert() {
     final result = _icu4x_CodePointSetData_create_nfkd_inert_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Nfkd_Inert` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `NfkdInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfkdInert.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -865,12 +1049,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Pattern_Syntax` property, using compiled data.
+  ///
   /// See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/latest/icu/properties/props/struct.PatternSyntax.html) for more information.
   factory CodePointSetData.patternSyntax() {
     final result = _icu4x_CodePointSetData_create_pattern_syntax_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Pattern_Syntax` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/latest/icu/properties/props/struct.PatternSyntax.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -882,12 +1070,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Pattern_White_Space` property, using compiled data.
+  ///
   /// See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
   factory CodePointSetData.patternWhiteSpace() {
     final result = _icu4x_CodePointSetData_create_pattern_white_space_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Pattern_White_Space` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `PatternWhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/struct.PatternWhiteSpace.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -899,12 +1091,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
+  ///
   /// See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
   factory CodePointSetData.prependedConcatenationMark() {
     final result = _icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Prepended_Concatenation_Mark` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -916,12 +1112,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Print` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Print`](https://docs.rs/icu/latest/icu/properties/props/struct.Print.html) for more information.
   factory CodePointSetData.print() {
     final result = _icu4x_CodePointSetData_create_print_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Print` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Print`](https://docs.rs/icu/latest/icu/properties/props/struct.Print.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -933,12 +1133,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Quotation_Mark` property, using compiled data.
+  ///
   /// See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.QuotationMark.html) for more information.
   factory CodePointSetData.quotationMark() {
     final result = _icu4x_CodePointSetData_create_quotation_mark_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Quotation_Mark` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.QuotationMark.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -950,12 +1154,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Radical` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Radical`](https://docs.rs/icu/latest/icu/properties/props/struct.Radical.html) for more information.
   factory CodePointSetData.radical() {
     final result = _icu4x_CodePointSetData_create_radical_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Radical` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Radical`](https://docs.rs/icu/latest/icu/properties/props/struct.Radical.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -967,12 +1175,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Regional_Indicator` property, using compiled data.
+  ///
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/properties/props/struct.RegionalIndicator.html) for more information.
   factory CodePointSetData.regionalIndicator() {
     final result = _icu4x_CodePointSetData_create_regional_indicator_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Regional_Indicator` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/properties/props/struct.RegionalIndicator.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -984,12 +1196,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Soft_Dotted` property, using compiled data.
+  ///
   /// See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/latest/icu/properties/props/struct.SoftDotted.html) for more information.
   factory CodePointSetData.softDotted() {
     final result = _icu4x_CodePointSetData_create_soft_dotted_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Soft_Dotted` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `SoftDotted`](https://docs.rs/icu/latest/icu/properties/props/struct.SoftDotted.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1001,12 +1217,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Segment_Starter` property, using compiled data.
+  ///
   /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/latest/icu/properties/props/struct.SegmentStarter.html) for more information.
   factory CodePointSetData.segmentStarter() {
     final result = _icu4x_CodePointSetData_create_segment_starter_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Segment_Starter` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/latest/icu/properties/props/struct.SegmentStarter.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1018,12 +1238,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Case_Sensitive` property, using compiled data.
+  ///
   /// See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/latest/icu/properties/props/struct.CaseSensitive.html) for more information.
   factory CodePointSetData.caseSensitive() {
     final result = _icu4x_CodePointSetData_create_case_sensitive_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Case_Sensitive` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `CaseSensitive`](https://docs.rs/icu/latest/icu/properties/props/struct.CaseSensitive.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1035,12 +1259,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Sentence_Terminal` property, using compiled data.
+  ///
   /// See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceTerminal.html) for more information.
   factory CodePointSetData.sentenceTerminal() {
     final result = _icu4x_CodePointSetData_create_sentence_terminal_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Sentence_Terminal` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceTerminal.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1052,12 +1280,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Terminal_Punctuation` property, using compiled data.
+  ///
   /// See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/latest/icu/properties/props/struct.TerminalPunctuation.html) for more information.
   factory CodePointSetData.terminalPunctuation() {
     final result = _icu4x_CodePointSetData_create_terminal_punctuation_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Terminal_Punctuation` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `TerminalPunctuation`](https://docs.rs/icu/latest/icu/properties/props/struct.TerminalPunctuation.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1069,12 +1301,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Unified_Ideograph` property, using compiled data.
+  ///
   /// See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/latest/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
   factory CodePointSetData.unifiedIdeograph() {
     final result = _icu4x_CodePointSetData_create_unified_ideograph_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Unified_Ideograph` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/latest/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1086,12 +1322,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Uppercase` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Uppercase`](https://docs.rs/icu/latest/icu/properties/props/struct.Uppercase.html) for more information.
   factory CodePointSetData.uppercase() {
     final result = _icu4x_CodePointSetData_create_uppercase_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Uppercase` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Uppercase`](https://docs.rs/icu/latest/icu/properties/props/struct.Uppercase.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1103,12 +1343,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Variation_Selector` property, using compiled data.
+  ///
   /// See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/latest/icu/properties/props/struct.VariationSelector.html) for more information.
   factory CodePointSetData.variationSelector() {
     final result = _icu4x_CodePointSetData_create_variation_selector_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Variation_Selector` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/latest/icu/properties/props/struct.VariationSelector.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1120,12 +1364,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `White_Space` property, using compiled data.
+  ///
   /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/struct.WhiteSpace.html) for more information.
   factory CodePointSetData.whiteSpace() {
     final result = _icu4x_CodePointSetData_create_white_space_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `White_Space` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/struct.WhiteSpace.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1137,12 +1385,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Xdigit` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/latest/icu/properties/props/struct.Xdigit.html) for more information.
   factory CodePointSetData.xdigit() {
     final result = _icu4x_CodePointSetData_create_xdigit_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Xdigit` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/latest/icu/properties/props/struct.Xdigit.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1154,12 +1406,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Xid_Continue` property, using compiled data.
+  ///
   /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.XidContinue.html) for more information.
   factory CodePointSetData.xidContinue() {
     final result = _icu4x_CodePointSetData_create_xid_continue_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Xid_Continue` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.XidContinue.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -1171,12 +1427,16 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Create a set for the `Xid_Start` property, using compiled data.
+  ///
   /// See the [Rust documentation for `XidStart`](https://docs.rs/icu/latest/icu/properties/props/struct.XidStart.html) for more information.
   factory CodePointSetData.xidStart() {
     final result = _icu4x_CodePointSetData_create_xid_start_mv1();
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a set for the `Xid_Start` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `XidStart`](https://docs.rs/icu/latest/icu/properties/props/struct.XidStart.html) for more information.
   ///
   /// Throws [DataError] on failure.

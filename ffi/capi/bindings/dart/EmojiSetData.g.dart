@@ -47,12 +47,16 @@ final class EmojiSetData implements ffi.Finalizable {
     return result;
   }
 
+  /// Create a map for the `Basic_Emoji` property, using compiled data.
+  ///
   /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
   factory EmojiSetData.basic() {
     final result = _icu4x_EmojiSetData_create_basic_mv1();
     return EmojiSetData._fromFfi(result, []);
   }
 
+  /// Create a map for the `Basic_Emoji` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
   ///
   /// Throws [DataError] on failure.

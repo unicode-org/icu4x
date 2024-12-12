@@ -27,7 +27,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverterFactory_destroy_mv1));
 
-  /// Construct a new [`UnitsConverterFactory`] instance.
+  /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   factory UnitsConverterFactory() {
@@ -35,7 +35,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     return UnitsConverterFactory._fromFfi(result, []);
   }
 
-  /// Construct a new [`UnitsConverterFactory`] instance.
+  /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   ///

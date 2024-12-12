@@ -93,12 +93,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a map for the `General_Category` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
   factory CodePointMapData8.generalCategory() {
     final result = _icu4x_CodePointMapData8_create_general_category_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `General_Category` property, using a particular data source
+  ///
   /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -110,12 +114,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Bidi_Class` property, using compiled data.
+  ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
   factory CodePointMapData8.bidiClass() {
     final result = _icu4x_CodePointMapData8_create_bidi_class_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Bidi_Class` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -127,12 +135,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `East_Asian_Width` property, using compiled data.
+  ///
   /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
   factory CodePointMapData8.eastAsianWidth() {
     final result = _icu4x_CodePointMapData8_create_east_asian_width_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `East_Asian_Width` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -144,12 +156,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Hangul_Syllable_Type` property, using compiled data.
+  ///
   /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
   factory CodePointMapData8.hangulSyllableType() {
     final result = _icu4x_CodePointMapData8_create_hangul_syllable_type_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Hangul_Syllable_Type` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -161,12 +177,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Indic_Syllabic_Property` property, using compiled data.
+  ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
   factory CodePointMapData8.indicSyllabicCategory() {
     final result = _icu4x_CodePointMapData8_create_indic_syllabic_category_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Indic_Syllabic_Property` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -178,12 +198,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Line_Break` property, using compiled data.
+  ///
   /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
   factory CodePointMapData8.lineBreak() {
     final result = _icu4x_CodePointMapData8_create_line_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Line_Break` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -195,12 +219,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
+  ///
   /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
   factory CodePointMapData8.graphemeClusterBreak() {
     final result = _icu4x_CodePointMapData8_create_grapheme_cluster_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Grapheme_Cluster_Break` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -212,12 +240,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Word_Break` property, using compiled data.
+  ///
   /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.WordBreak.html) for more information.
   factory CodePointMapData8.wordBreak() {
     final result = _icu4x_CodePointMapData8_create_word_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Word_Break` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.WordBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -229,12 +261,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Sentence_Break` property, using compiled data.
+  ///
   /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
   factory CodePointMapData8.sentenceBreak() {
     final result = _icu4x_CodePointMapData8_create_sentence_break_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Sentence_Break` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -246,12 +282,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Joining_Type` property, using compiled data.
+  ///
   /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html) for more information.
   factory CodePointMapData8.joiningType() {
     final result = _icu4x_CodePointMapData8_create_joining_type_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Joining_Type` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html) for more information.
   ///
   /// Throws [DataError] on failure.
@@ -263,12 +303,16 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Canonical_Combining_Class` property, using compiled data.
+  ///
   /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
   factory CodePointMapData8.canonicalCombiningClass() {
     final result = _icu4x_CodePointMapData8_create_canonical_combining_class_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }
 
+  /// Create a map for the `Canonical_Combining_Class` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
   ///
   /// Throws [DataError] on failure.
