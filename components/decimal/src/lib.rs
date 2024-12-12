@@ -97,6 +97,7 @@ extern crate alloc;
 mod format;
 mod grouper;
 pub mod options;
+pub mod parts;
 pub mod provider;
 pub(crate) mod size_test_macro;
 

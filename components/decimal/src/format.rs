@@ -4,11 +4,16 @@
 
 //! Lower-level types for decimal formatting.
 
+use core::fmt::Write;
+
 use crate::grouper;
 use crate::options::*;
+use crate::parts;
 use crate::provider::*;
 use fixed_decimal::Sign;
 use fixed_decimal::SignedFixedDecimal;
+use writeable::Part;
+use writeable::PartsWrite;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
@@ -23,43 +28,70 @@ pub struct FormattedFixedDecimal<'l> {
 
 impl FormattedFixedDecimal<'_> {
     /// Returns the affixes needed for the current sign, as (prefix, suffix)
-    fn get_affixes(&self) -> Option<(&str, &str)> {
+    fn get_affixes(&self) -> Option<(Part, (&str, &str))> {
         match self.value.sign() {
             Sign::None => None,
-            Sign::Negative => Some(self.symbols.minus_sign_affixes()),
-            Sign::Positive => Some(self.symbols.plus_sign_affixes()),
+            Sign::Negative => Some((parts::MINUS_SIGN, self.symbols.minus_sign_affixes())),
+            Sign::Positive => Some((parts::PLUS_SIGN, self.symbols.plus_sign_affixes())),
         }
     }
 }
 
 impl Writeable for FormattedFixedDecimal<'_> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, w: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
-        W: core::fmt::Write + ?Sized,
+        W: writeable::PartsWrite + ?Sized,
     {
         let affixes = self.get_affixes();
-        if let Some(affixes) = affixes {
-            sink.write_str(affixes.0)?;
+        if let Some((part, affixes)) = affixes {
+            w.with_part(part, |w| w.write_str(affixes.0))?;
         }
         let range = self.value.absolute.magnitude_range();
         let upper_magnitude = *range.end();
-        for m in range.rev() {
-            if m == -1 {
-                sink.write_str(self.symbols.decimal_separator())?;
+        let mut range = range.rev();
+        let mut has_fraction = false;
+        w.with_part(parts::INTEGER, |w| {
+            loop {
+                let m = match range.next() {
+                    Some(m) if m < 0 => {
+                        has_fraction = true;
+                        break Ok(());
+                    }
+                    Some(m) => m,
+                    None => {
+                        break Ok(());
+                    }
+                };
+                #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
+                w.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
+                if grouper::check(
+                    upper_magnitude,
+                    m,
+                    self.options.grouping_strategy,
+                    &self.symbols.grouping_sizes,
+                ) {
+                    w.with_part(parts::GROUP, |w| w.write_str(self.symbols.grouping_separator()))?;
+                }
             }
-            #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-            sink.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
-            if grouper::check(
-                upper_magnitude,
-                m,
-                self.options.grouping_strategy,
-                &self.symbols.grouping_sizes,
-            ) {
-                sink.write_str(self.symbols.grouping_separator())?;
-            }
+        })?;
+        if has_fraction {
+            w.with_part(parts::DECIMAL, |w| w.write_str(self.symbols.decimal_separator()))?;
+            w.with_part(parts::FRACTION, |w| {
+                let mut m = -1; // read in the previous loop
+                loop {
+                    #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
+                    w.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
+                    m = match range.next() {
+                        Some(m) => m,
+                        None => {
+                            break Ok(());
+                        }
+                    };
+                }
+            })?;
         }
-        if let Some(affixes) = affixes {
-            sink.write_str(affixes.1)?;
+        if let Some((part, affixes)) = affixes {
+            w.with_part(part, |w| w.write_str(affixes.1))?;
         }
         Ok(())
     }
