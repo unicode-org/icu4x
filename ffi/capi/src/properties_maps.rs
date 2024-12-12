@@ -142,8 +142,7 @@ pub mod ffi {
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<GeneralCategory>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable,
                 provider,
             )?))
@@ -163,8 +162,7 @@ pub mod ffi {
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<BidiClass>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<BidiClass>::try_new_unstable,
                 provider,
             )?))
@@ -183,8 +181,7 @@ pub mod ffi {
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<EastAsianWidth>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<EastAsianWidth>::try_new_unstable,
                 provider,
             )?))
@@ -204,8 +201,7 @@ pub mod ffi {
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<HangulSyllableType>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<HangulSyllableType>::try_new_unstable,
                 provider,
             )?))
@@ -225,8 +221,7 @@ pub mod ffi {
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<IndicSyllabicCategory>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<IndicSyllabicCategory>::try_new_unstable,
                 provider,
             )?))
@@ -244,8 +239,7 @@ pub mod ffi {
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<LineBreak>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<LineBreak>::try_new_unstable,
                 provider,
             )?))
@@ -265,8 +259,7 @@ pub mod ffi {
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<GraphemeClusterBreak>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<GraphemeClusterBreak>::try_new_unstable,
                 provider,
             )?))
@@ -284,8 +277,7 @@ pub mod ffi {
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<WordBreak>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<WordBreak>::try_new_unstable,
                 provider,
             )?))
@@ -303,8 +295,7 @@ pub mod ffi {
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<SentenceBreak>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<SentenceBreak>::try_new_unstable,
                 provider,
             )?))
@@ -323,8 +314,7 @@ pub mod ffi {
         pub fn create_joining_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<JoiningType>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<JoiningType>::try_new_unstable,
                 provider,
             )?))
@@ -345,8 +335,7 @@ pub mod ffi {
         pub fn create_canonical_combining_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<CanonicalCombiningClass>::new [r => Ok(r.static_to_owned())],
+            Ok(convert_8(call_constructor_unstable2!(
                 icu_properties::CodePointMapData::<CanonicalCombiningClass>::try_new_unstable,
                 provider,
             )?))
@@ -431,8 +420,7 @@ pub mod ffi {
         ) -> Result<Box<CodePointMapData16>, DataError> {
             #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(CodePointMapData16(
-                call_constructor_unstable!(
-                    icu_properties::CodePointMapData::<Script>::new [r => Ok(r.static_to_owned())],
+                call_constructor_unstable2!(
                     icu_properties::CodePointMapData::<Script>::try_new_unstable,
                     provider,
                 )?

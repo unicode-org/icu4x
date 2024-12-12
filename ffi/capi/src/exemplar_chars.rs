@@ -72,8 +72,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main [r => r.map(|r| r.static_to_owned())],
+            Ok(Box::new(ExemplarCharacters(call_constructor_unstable2!(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
                 provider,
                 &locale
@@ -105,8 +104,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary [r => r.map(|r| r.static_to_owned())],
+            Ok(Box::new(ExemplarCharacters(call_constructor_unstable2!(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
                 provider,
                 &locale
@@ -138,8 +136,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation [r => r.map(|r| r.static_to_owned())],
+            Ok(Box::new(ExemplarCharacters(call_constructor_unstable2!(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
                 provider,
                 &locale
@@ -172,8 +169,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers [r => r.map(|r| r.static_to_owned())],
+            Ok(Box::new(ExemplarCharacters(call_constructor_unstable2!(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
                 provider,
                 &locale
@@ -206,8 +202,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index [r => r.map(|r| r.static_to_owned())],
+            Ok(Box::new(ExemplarCharacters(call_constructor_unstable2!(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
                 provider,
                 &locale

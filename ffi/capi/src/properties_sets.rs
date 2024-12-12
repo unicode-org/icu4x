@@ -96,8 +96,7 @@ pub mod ffi {
             group: u32,
         ) -> Result<Box<CodePointSetData>, DataError> {
             Ok(Box::new(CodePointSetData(
-                call_constructor_unstable!(
-                    icu_properties::CodePointMapData::<GeneralCategory>::new [r => Ok(r.static_to_owned())],
+                call_constructor_unstable2!(
                     icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable,
                     provider,
                 )?
@@ -122,8 +121,7 @@ pub mod ffi {
         pub fn create_ascii_hex_digit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<AsciiHexDigit> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<AsciiHexDigit>,
                 provider
             )?)))
@@ -145,8 +143,7 @@ pub mod ffi {
         pub fn create_alnum_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Alnum> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Alnum>,
                 provider
             )?)))
@@ -168,8 +165,7 @@ pub mod ffi {
         pub fn create_alphabetic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Alphabetic> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Alphabetic>,
                 provider
             )?)))
@@ -191,8 +187,7 @@ pub mod ffi {
         pub fn create_bidi_control_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<BidiControl> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<BidiControl>,
                 provider
             )?)))
@@ -214,8 +209,7 @@ pub mod ffi {
         pub fn create_bidi_mirrored_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<BidiMirrored> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<BidiMirrored>,
                 provider
             )?)))
@@ -237,8 +231,7 @@ pub mod ffi {
         pub fn create_blank_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Blank> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Blank>,
                 provider
             )?)))
@@ -260,8 +253,7 @@ pub mod ffi {
         pub fn create_cased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Cased> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Cased>,
                 provider
             )?)))
@@ -283,8 +275,7 @@ pub mod ffi {
         pub fn create_case_ignorable_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<CaseIgnorable> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<CaseIgnorable>,
                 provider
             )?)))
@@ -307,8 +298,7 @@ pub mod ffi {
         pub fn create_full_composition_exclusion_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<FullCompositionExclusion> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<FullCompositionExclusion>,
                 provider
             )?)))
@@ -330,8 +320,7 @@ pub mod ffi {
         pub fn create_changes_when_casefolded_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenCasefolded> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasefolded>,
                 provider
             )?)))
@@ -353,8 +342,7 @@ pub mod ffi {
         pub fn create_changes_when_casemapped_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenCasemapped> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasemapped>,
                 provider
             )?)))
@@ -377,8 +365,7 @@ pub mod ffi {
         pub fn create_changes_when_nfkc_casefolded_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenNfkcCasefolded> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenNfkcCasefolded>,
                 provider
             )?)))
@@ -400,8 +387,7 @@ pub mod ffi {
         pub fn create_changes_when_lowercased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenLowercased> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenLowercased>,
                 provider
             )?)))
@@ -423,8 +409,7 @@ pub mod ffi {
         pub fn create_changes_when_titlecased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenTitlecased> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenTitlecased>,
                 provider
             )?)))
@@ -446,8 +431,7 @@ pub mod ffi {
         pub fn create_changes_when_uppercased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ChangesWhenUppercased> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenUppercased>,
                 provider
             )?)))
@@ -469,8 +453,7 @@ pub mod ffi {
         pub fn create_dash_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Dash> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Dash>,
                 provider
             )?)))
@@ -492,8 +475,7 @@ pub mod ffi {
         pub fn create_deprecated_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Deprecated> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Deprecated>,
                 provider
             )?)))
@@ -516,8 +498,7 @@ pub mod ffi {
         pub fn create_default_ignorable_code_point_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<DefaultIgnorableCodePoint> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<DefaultIgnorableCodePoint>,
                 provider
             )?)))
@@ -539,8 +520,7 @@ pub mod ffi {
         pub fn create_diacritic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Diacritic> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Diacritic>,
                 provider
             )?)))
@@ -562,8 +542,7 @@ pub mod ffi {
         pub fn create_emoji_modifier_base_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<EmojiModifierBase> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiModifierBase>,
                 provider
             )?)))
@@ -585,8 +564,7 @@ pub mod ffi {
         pub fn create_emoji_component_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<EmojiComponent> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiComponent>,
                 provider
             )?)))
@@ -608,8 +586,7 @@ pub mod ffi {
         pub fn create_emoji_modifier_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<EmojiModifier> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiModifier>,
                 provider
             )?)))
@@ -631,8 +608,7 @@ pub mod ffi {
         pub fn create_emoji_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Emoji> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Emoji>,
                 provider
             )?)))
@@ -654,8 +630,7 @@ pub mod ffi {
         pub fn create_emoji_presentation_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<EmojiPresentation> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiPresentation>,
                 provider
             )?)))
@@ -677,8 +652,7 @@ pub mod ffi {
         pub fn create_extender_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Extender> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Extender>,
                 provider
             )?)))
@@ -700,8 +674,7 @@ pub mod ffi {
         pub fn create_extended_pictographic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<ExtendedPictographic> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<ExtendedPictographic>,
                 provider
             )?)))
@@ -723,8 +696,7 @@ pub mod ffi {
         pub fn create_graph_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Graph> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Graph>,
                 provider
             )?)))
@@ -746,8 +718,7 @@ pub mod ffi {
         pub fn create_grapheme_base_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<GraphemeBase> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeBase>,
                 provider
             )?)))
@@ -769,8 +740,7 @@ pub mod ffi {
         pub fn create_grapheme_extend_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<GraphemeExtend> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeExtend>,
                 provider
             )?)))
@@ -792,8 +762,7 @@ pub mod ffi {
         pub fn create_grapheme_link_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<GraphemeLink> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeLink>,
                 provider
             )?)))
@@ -815,8 +784,7 @@ pub mod ffi {
         pub fn create_hex_digit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<HexDigit> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<HexDigit>,
                 provider
             )?)))
@@ -838,8 +806,7 @@ pub mod ffi {
         pub fn create_hyphen_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Hyphen> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Hyphen>,
                 provider
             )?)))
@@ -861,8 +828,7 @@ pub mod ffi {
         pub fn create_id_continue_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<IdContinue> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<IdContinue>,
                 provider
             )?)))
@@ -884,8 +850,7 @@ pub mod ffi {
         pub fn create_ideographic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Ideographic> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Ideographic>,
                 provider
             )?)))
@@ -907,8 +872,7 @@ pub mod ffi {
         pub fn create_id_start_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<IdStart> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<IdStart>,
                 provider
             )?)))
@@ -930,8 +894,7 @@ pub mod ffi {
         pub fn create_ids_binary_operator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<IdsBinaryOperator> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<IdsBinaryOperator>,
                 provider
             )?)))
@@ -953,8 +916,7 @@ pub mod ffi {
         pub fn create_ids_trinary_operator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<IdsTrinaryOperator> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<IdsTrinaryOperator>,
                 provider
             )?)))
@@ -976,8 +938,7 @@ pub mod ffi {
         pub fn create_join_control_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<JoinControl> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<JoinControl>,
                 provider
             )?)))
@@ -999,8 +960,7 @@ pub mod ffi {
         pub fn create_logical_order_exception_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<LogicalOrderException> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<LogicalOrderException>,
                 provider
             )?)))
@@ -1022,8 +982,7 @@ pub mod ffi {
         pub fn create_lowercase_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Lowercase> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Lowercase>,
                 provider
             )?)))
@@ -1045,8 +1004,7 @@ pub mod ffi {
         pub fn create_math_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Math> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Math>,
                 provider
             )?)))
@@ -1068,8 +1026,7 @@ pub mod ffi {
         pub fn create_noncharacter_code_point_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<NoncharacterCodePoint> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<NoncharacterCodePoint>,
                 provider
             )?)))
@@ -1091,8 +1048,7 @@ pub mod ffi {
         pub fn create_nfc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<NfcInert> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<NfcInert>,
                 provider
             )?)))
@@ -1114,8 +1070,7 @@ pub mod ffi {
         pub fn create_nfd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<NfdInert> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<NfdInert>,
                 provider
             )?)))
@@ -1137,8 +1092,7 @@ pub mod ffi {
         pub fn create_nfkc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<NfkcInert> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<NfkcInert>,
                 provider
             )?)))
@@ -1160,8 +1114,7 @@ pub mod ffi {
         pub fn create_nfkd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<NfkdInert> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<NfkdInert>,
                 provider
             )?)))
@@ -1183,8 +1136,7 @@ pub mod ffi {
         pub fn create_pattern_syntax_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<PatternSyntax> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<PatternSyntax>,
                 provider
             )?)))
@@ -1206,8 +1158,7 @@ pub mod ffi {
         pub fn create_pattern_white_space_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<PatternWhiteSpace> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<PatternWhiteSpace>,
                 provider
             )?)))
@@ -1230,8 +1181,7 @@ pub mod ffi {
         pub fn create_prepended_concatenation_mark_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<PrependedConcatenationMark> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<PrependedConcatenationMark>,
                 provider
             )?)))
@@ -1253,8 +1203,7 @@ pub mod ffi {
         pub fn create_print_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Print> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Print>,
                 provider
             )?)))
@@ -1276,8 +1225,7 @@ pub mod ffi {
         pub fn create_quotation_mark_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<QuotationMark> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<QuotationMark>,
                 provider
             )?)))
@@ -1299,8 +1247,7 @@ pub mod ffi {
         pub fn create_radical_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Radical> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Radical>,
                 provider
             )?)))
@@ -1322,8 +1269,7 @@ pub mod ffi {
         pub fn create_regional_indicator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<RegionalIndicator> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<RegionalIndicator>,
                 provider
             )?)))
@@ -1345,8 +1291,7 @@ pub mod ffi {
         pub fn create_soft_dotted_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<SoftDotted> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<SoftDotted>,
                 provider
             )?)))
@@ -1368,8 +1313,7 @@ pub mod ffi {
         pub fn create_segment_starter_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<SegmentStarter> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<SegmentStarter>,
                 provider
             )?)))
@@ -1391,8 +1335,7 @@ pub mod ffi {
         pub fn create_case_sensitive_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<CaseSensitive> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<CaseSensitive>,
                 provider
             )?)))
@@ -1414,8 +1357,7 @@ pub mod ffi {
         pub fn create_sentence_terminal_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<SentenceTerminal> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<SentenceTerminal>,
                 provider
             )?)))
@@ -1437,8 +1379,7 @@ pub mod ffi {
         pub fn create_terminal_punctuation_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<TerminalPunctuation> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<TerminalPunctuation>,
                 provider
             )?)))
@@ -1460,8 +1401,7 @@ pub mod ffi {
         pub fn create_unified_ideograph_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<UnifiedIdeograph> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<UnifiedIdeograph>,
                 provider
             )?)))
@@ -1483,8 +1423,7 @@ pub mod ffi {
         pub fn create_uppercase_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Uppercase> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Uppercase>,
                 provider
             )?)))
@@ -1506,8 +1445,7 @@ pub mod ffi {
         pub fn create_variation_selector_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<VariationSelector> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<VariationSelector>,
                 provider
             )?)))
@@ -1529,8 +1467,7 @@ pub mod ffi {
         pub fn create_white_space_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<WhiteSpace> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<WhiteSpace>,
                 provider
             )?)))
@@ -1552,8 +1489,7 @@ pub mod ffi {
         pub fn create_xdigit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<Xdigit> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<Xdigit>,
                 provider
             )?)))
@@ -1575,8 +1511,7 @@ pub mod ffi {
         pub fn create_xid_continue_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<XidContinue> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<XidContinue>,
                 provider
             )?)))
@@ -1598,8 +1533,7 @@ pub mod ffi {
         pub fn create_xid_start_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new::<XidStart> [r => Ok(r.static_to_owned())],
+            Ok(Box::new(CodePointSetData(call_constructor_unstable2!(
                 icu_properties::CodePointSetData::try_new_unstable::<XidStart>,
                 provider
             )?)))
@@ -1625,12 +1559,14 @@ pub mod ffi {
             provider: &DataProvider,
             property_name: &DiplomatStr,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new_for_ecma262 [r => r.map(|d| Ok(d.static_to_owned()))],
-                icu_properties::CodePointSetData::try_new_for_ecma262_unstable,
-                provider,
-                property_name
-            ).ok_or(DataError::Custom)??)))
+            Ok(Box::new(CodePointSetData(
+                call_constructor_unstable2!(
+                    icu_properties::CodePointSetData::try_new_for_ecma262_unstable,
+                    provider,
+                    property_name
+                )
+                .ok_or(DataError::Custom)??,
+            )))
         }
     }
 }
