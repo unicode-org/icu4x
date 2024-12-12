@@ -277,11 +277,8 @@ macro_rules! call_constructor2 {
             $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
                 "This provider has been destroyed",
             ))?,
-            $crate::provider::DataProviderInner::Empty => unreachable!(),
-            #[cfg(feature = "buffer_provider")]
             $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => unreachable!(),
+            _ => unreachable!()
         }
     };
     ($buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
@@ -289,11 +286,8 @@ macro_rules! call_constructor2 {
             $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
                 "This provider has been destroyed",
             ))?,
-            $crate::provider::DataProviderInner::Empty => unreachable!(),
-            #[cfg(feature = "buffer_provider")]
             $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
-            #[cfg(feature = "compiled_data")]
-            $crate::provider::DataProviderInner::Compiled => unreachable!(),
+            _ => unreachable!()
         }
     };
 }
