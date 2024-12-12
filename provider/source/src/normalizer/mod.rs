@@ -54,29 +54,8 @@ macro_rules! normalization_data_provider {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(DecompositionDataV1 { trie }),
-                })
-            },
-            toml_data // simply matches the identifier in the above block
-        );
-    };
-}
-
-macro_rules! normalization_supplement_provider {
-    ($marker:ident, $file_name:literal) => {
-        normalization_provider!(
-            $marker,
-            DecompositionSupplement,
-            $file_name,
-            {
-                let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
-                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-
-                Ok(DataResponse {
-                    metadata: Default::default(),
-                    payload: DataPayload::from_owned(DecompositionSupplementV1 {
+                    payload: DataPayload::from_owned(DecompositionDataV2 {
                         trie,
-                        flags: toml_data.flags,
                         passthrough_cap: toml_data.cap,
                     }),
                 })
@@ -166,11 +145,11 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
     };
 }
 
-normalization_data_provider!(CanonicalDecompositionDataV1Marker, "nfd");
+normalization_data_provider!(CanonicalDecompositionDataV2Marker, "nfd");
 
-normalization_supplement_provider!(CompatibilityDecompositionSupplementV1Marker, "nfkd");
+normalization_data_provider!(CompatibilityDecompositionDataV2Marker, "nfkd");
 
-normalization_supplement_provider!(Uts46DecompositionSupplementV1Marker, "uts46d");
+normalization_data_provider!(Uts46DecompositionDataV2Marker, "uts46d");
 
 normalization_tables_provider!(CanonicalDecompositionTablesV1Marker, "nfdex");
 
