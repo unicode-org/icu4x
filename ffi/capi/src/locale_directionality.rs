@@ -74,22 +74,12 @@ pub mod ffi {
                 DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                DataProviderInner::Empty => {
-                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
-                        &icu_provider_adapters::empty::EmptyDataProvider::new(),
-                        expander.0.clone(),
-                    )?
-                }
-                #[cfg(feature = "buffer_provider")]
+
                 DataProviderInner::Buffer(buffer_provider) => {
                     icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &buffer_provider.as_deserializing(),
                         expander.0.clone(),
                     )?
-                }
-                #[cfg(feature = "compiled_data")]
-                DataProviderInner::Compiled => {
-                    icu_locale::LocaleDirectionality::new_with_expander(expander.0.clone())
                 }
             })))
         }
