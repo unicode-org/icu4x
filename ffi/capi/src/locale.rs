@@ -38,9 +38,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
-            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
-                icu_locale::LocaleCanonicalizer::new [r => Ok(r)],
-                icu_locale::LocaleCanonicalizer::try_new_with_any_provider,
+            Ok(Box::new(LocaleCanonicalizer(call_constructor2!(
                 icu_locale::LocaleCanonicalizer::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -62,15 +60,11 @@ pub mod ffi {
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
-            let expander = call_constructor!(
-                icu_locale::LocaleExpander::new_extended [r => Ok(r)],
-                icu_locale::LocaleExpander::try_new_with_any_provider,
+            let expander = call_constructor2!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?;
-            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
-                icu_locale::LocaleCanonicalizer::new_with_expander [r => Ok(r)],
-                icu_locale::LocaleCanonicalizer::try_new_with_expander_with_any_provider,
+            Ok(Box::new(LocaleCanonicalizer(call_constructor2!(
                 icu_locale::LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
                 provider,
                 expander
@@ -101,9 +95,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
-            Ok(Box::new(LocaleExpander(call_constructor!(
-                icu_locale::LocaleExpander::new [r => Ok(r)],
-                icu_locale::LocaleExpander::try_new_with_any_provider,
+            Ok(Box::new(LocaleExpander(call_constructor2!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -121,9 +113,7 @@ pub mod ffi {
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
-            Ok(Box::new(LocaleExpander(call_constructor!(
-                icu_locale::LocaleExpander::new_extended [r => Ok(r)],
-                icu_locale::LocaleExpander::try_new_with_any_provider,
+            Ok(Box::new(LocaleExpander(call_constructor2!(
                 icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))

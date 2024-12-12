@@ -63,9 +63,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = T::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(TimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+            Ok(Box::new(TimeFormatter(call_constructor2!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
@@ -132,9 +130,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(GregorianDateFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+            Ok(Box::new(GregorianDateFormatter(call_constructor2!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
@@ -197,9 +193,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
+            Ok(Box::new(GregorianDateTimeFormatter(call_constructor2!(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
@@ -251,9 +245,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(DateFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new,
-                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
+            Ok(Box::new(DateFormatter(call_constructor2!(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,
@@ -341,9 +333,7 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(DateTimeFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new,
-                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
+            Ok(Box::new(DateTimeFormatter(call_constructor2!(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 prefs,

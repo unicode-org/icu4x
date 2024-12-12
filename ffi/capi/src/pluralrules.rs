@@ -61,9 +61,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_cardinal,
-                icu_plurals::PluralRules::try_new_cardinal_with_any_provider,
+            Ok(Box::new(PluralRules(call_constructor2!(
                 icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider,
                 provider,
                 prefs
@@ -91,9 +89,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_ordinal,
-                icu_plurals::PluralRules::try_new_ordinal_with_any_provider,
+            Ok(Box::new(PluralRules(call_constructor2!(
                 icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider,
                 provider,
                 prefs

@@ -59,9 +59,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
-            Ok(Box::new(GraphemeClusterSegmenter(call_constructor!(
-                icu_segmenter::GraphemeClusterSegmenter::new [r => Ok(r)],
-                icu_segmenter::GraphemeClusterSegmenter::try_new_with_any_provider,
+            Ok(Box::new(GraphemeClusterSegmenter(call_constructor2!(
                 icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider,
                 provider,
             )?)))

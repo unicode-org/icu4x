@@ -136,9 +136,7 @@ pub mod ffi {
             locale: &Locale,
             options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
-            Ok(Box::new(Collator(call_constructor!(
-                icu_collator::Collator::try_new [r => Ok(r?.static_to_owned())],
-                icu_collator::Collator::try_new_with_any_provider,
+            Ok(Box::new(Collator(call_constructor2!(
                 icu_collator::Collator::try_new_with_buffer_provider,
                 provider,
                 icu_collator::CollatorPreferences::from(&locale.0),

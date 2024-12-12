@@ -42,9 +42,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<UnitsConverterFactory>, DataError> {
-            Ok(Box::new(UnitsConverterFactory(call_constructor!(
-                icu_experimental::units::converter_factory::ConverterFactory::new [r => Ok(r)],
-                icu_experimental::units::converter_factory::ConverterFactory::try_new_with_any_provider,
+            Ok(Box::new(UnitsConverterFactory(call_constructor2!(
                 icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider,
                 provider,
             )?)))

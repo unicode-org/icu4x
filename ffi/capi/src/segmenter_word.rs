@@ -79,9 +79,7 @@ pub mod ffi {
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_auto [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_auto_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider,
                 provider
             )?)))
@@ -114,9 +112,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_auto_with_options,
-                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider,
                 provider,
                 locale.into(),
@@ -145,9 +141,7 @@ pub mod ffi {
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_lstm [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_lstm_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider,
                 provider
             )?)))
@@ -180,9 +174,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_lstm_with_options,
-                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider,
                 provider,
                 locale.into(),
@@ -211,9 +203,7 @@ pub mod ffi {
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_dictionary [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider,
                 provider
             )?)))
@@ -252,9 +242,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_options,
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_any_provider,
+            Ok(Box::new(WordSegmenter(call_constructor2!(
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider,
                 provider,
                 locale.into(),

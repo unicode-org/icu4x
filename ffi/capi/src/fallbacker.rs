@@ -81,9 +81,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleFallbacker>, DataError> {
-            Ok(Box::new(LocaleFallbacker(call_constructor!(
-                icu_locale::LocaleFallbacker::new [r => Ok(r.static_to_owned())],
-                icu_locale::LocaleFallbacker::try_new_with_any_provider,
+            Ok(Box::new(LocaleFallbacker(call_constructor2!(
                 icu_locale::LocaleFallbacker::try_new_with_buffer_provider,
                 provider,
             )?)))

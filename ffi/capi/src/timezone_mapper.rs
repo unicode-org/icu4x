@@ -43,9 +43,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapper>, DataError> {
-            Ok(Box::new(TimeZoneIdMapper(call_constructor!(
-                icu_timezone::TimeZoneIdMapper::new [r => Ok(r.static_to_owned())],
-                icu_timezone::TimeZoneIdMapper::try_new_with_any_provider,
+            Ok(Box::new(TimeZoneIdMapper(call_constructor2!(
                 icu_timezone::TimeZoneIdMapper::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -173,9 +171,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {
             Ok(Box::new(TimeZoneIdMapperWithFastCanonicalization(
-                call_constructor!(
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r.static_to_owned())],
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_any_provider,
+                call_constructor2!(
                     icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider,
                     provider,
                 )?,

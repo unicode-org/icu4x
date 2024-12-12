@@ -42,9 +42,7 @@ pub mod ffi {
         pub fn create_nfc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r.static_to_owned())],
-                icu_normalizer::ComposingNormalizer::try_new_nfc_with_any_provider,
+            Ok(Box::new(ComposingNormalizer(call_constructor2!(
                 icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider,
                 provider,
             )?)))
@@ -74,9 +72,7 @@ pub mod ffi {
         pub fn create_nfkc_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r.static_to_owned())],
-                icu_normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider,
+            Ok(Box::new(ComposingNormalizer(call_constructor2!(
                 icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider,
                 provider,
             )?)))
@@ -202,9 +198,7 @@ pub mod ffi {
         pub fn create_nfd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::new_nfd [r => Ok(r.static_to_owned())],
-                icu_normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider,
+            Ok(Box::new(DecomposingNormalizer(call_constructor2!(
                 icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider,
                 provider,
             )?)))
@@ -236,9 +230,7 @@ pub mod ffi {
         pub fn create_nfkd_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::new_nfkd [r => Ok(r.static_to_owned())],
-                icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider,
+            Ok(Box::new(DecomposingNormalizer(call_constructor2!(
                 icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
                 provider,
             )?)))

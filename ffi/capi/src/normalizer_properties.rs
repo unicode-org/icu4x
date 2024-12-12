@@ -55,9 +55,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
-                icu_normalizer::properties::CanonicalCombiningClassMap::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider,
+            Ok(Box::new(CanonicalCombiningClassMap(call_constructor2!(
                 icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider,
                 provider
             )?)))
@@ -132,9 +130,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalComposition>, DataError> {
-            Ok(Box::new(CanonicalComposition(call_constructor!(
-                icu_normalizer::properties::CanonicalComposition::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalComposition::try_new_with_any_provider,
+            Ok(Box::new(CanonicalComposition(call_constructor2!(
                 icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider,
                 provider,
             )?)))
@@ -204,9 +200,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(call_constructor!(
-                icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalDecomposition::try_new_with_any_provider,
+            Ok(Box::new(CanonicalDecomposition(call_constructor2!(
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider,
                 provider,
             )?)))

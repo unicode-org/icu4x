@@ -52,9 +52,7 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_and,
-                icu_list::ListFormatter::try_new_and_with_any_provider,
+            Ok(Box::new(ListFormatter(call_constructor2!(
                 icu_list::ListFormatter::try_new_and_with_buffer_provider,
                 provider,
                 prefs,
@@ -87,9 +85,7 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_or,
-                icu_list::ListFormatter::try_new_or_with_any_provider,
+            Ok(Box::new(ListFormatter(call_constructor2!(
                 icu_list::ListFormatter::try_new_or_with_buffer_provider,
                 provider,
                 prefs,
@@ -122,9 +118,7 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_unit,
-                icu_list::ListFormatter::try_new_unit_with_any_provider,
+            Ok(Box::new(ListFormatter(call_constructor2!(
                 icu_list::ListFormatter::try_new_unit_with_buffer_provider,
                 provider,
                 prefs,
