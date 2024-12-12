@@ -194,7 +194,7 @@ impl TimeZoneIdMapperBorrowed<'_> {
     /// Gets the BCP-47 time zone ID from an IANA time zone ID
     /// with a case-insensitive lookup.
     ///
-    /// Returns `None` if the IANA ID is not found.
+    /// Returns [`TimeZoneBcp47Id::unknown()`] if the IANA ID is not found.
     ///
     /// # Examples
     ///
