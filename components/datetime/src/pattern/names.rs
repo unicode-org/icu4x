@@ -100,6 +100,7 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::{Date, Time};
 /// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
@@ -129,10 +130,20 @@ size_test!(
 ///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
+///         (7, 10, parts::WEEKDAY), // mon
 ///         (11, 14, Part::ERROR), // M11
+///         (11, 14, parts::MONTH), // M11
+///         (15, 17, parts::DAY), // 20
+///         (18, 22, parts::YEAR), // 2023
 ///         (23, 25, Part::ERROR), // CE
+///         (23, 25, parts::ERA), // CE
+///         (29, 31, parts::HOUR), // 11
+///         (32, 34, parts::MINUTE), // 35
+///         (35, 41, parts::SECOND), // 03.000
 ///         (42, 44, Part::ERROR), // AM
+///         (42, 44, parts::DAY_PERIOD), // AM
 ///         (45, 50, Part::ERROR), // +0000
+///         (45, 50, parts::TIME_ZONE_NAME), // +0000
 ///     ]
 /// );
 ///
@@ -150,6 +161,7 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
 /// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
@@ -176,15 +188,25 @@ size_test!(
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
+///         (7, 10, parts::WEEKDAY), // {E}
 ///         (11, 14, Part::ERROR), // {M}
+///         (11, 14, parts::MONTH), // {M}
 ///         (15, 18, Part::ERROR), // {d}
+///         (15, 18, parts::DAY), // {d}
 ///         (19, 22, Part::ERROR), // {y}
+///         (19, 22, parts::YEAR), // {y}
 ///         (23, 26, Part::ERROR), // {G}
+///         (23, 26, parts::ERA), // {G}
 ///         (30, 33, Part::ERROR), // {h}
+///         (30, 33, parts::HOUR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
+///         (34, 37, parts::MINUTE), // {m}
 ///         (38, 41, Part::ERROR), // {s}
+///         (38, 41, parts::SECOND), // {s}
 ///         (42, 45, Part::ERROR), // {a}
+///         (42, 45, parts::DAY_PERIOD), // {a}
 ///         (46, 49, Part::ERROR), // {z}
+///         (46, 49, parts::TIME_ZONE_NAME), // {z}
 ///     ]
 /// );
 /// ```
@@ -320,6 +342,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
+    /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
@@ -349,8 +372,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
+    ///         (7, 11, parts::YEAR), // 2024
     ///         (12, 14, Part::ERROR), // 07
+    ///         (12, 14, parts::MONTH), // 07
     ///         (15, 17, Part::ERROR), // 01
+    ///         (15, 17, parts::DAY), // 01
     ///     ]
     /// );
     /// ```
