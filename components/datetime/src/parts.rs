@@ -6,43 +6,52 @@
 //!
 //! # Examples
 //!
-/// ```
-/// use icu::calendar::Gregorian;
-/// use icu::calendar::{Date, Time};
-/// use icu::datetime::DateTimeWriteError;
-/// use icu::datetime::parts;
-/// use icu::datetime::fieldsets;
-/// use icu::datetime::DateTimeFormatter;
-/// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
-/// use writeable::assert_writeable_parts_eq;
-///
-/// let dtf = DateTimeFormatter::try_new(
-///     locale!("en-u-ca-buddhist").into(),
-///     fieldsets::YMDTZ::medium(),
-/// )
-/// .unwrap();
-///
-/// let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]").unwrap();
-///
-/// // Missing data is filled in on a best-effort basis, and an error is signaled.
-/// assert_writeable_parts_eq!(
-///     dtf.format_any_calendar(&dtz),
-///     "Nov 20, 2566 BE, 11:35:03 AM GMT",
-///     [
-///         (0, 3, parts::MONTH),
-///         (4, 6, parts::DAY),
-///         (8, 12, parts::YEAR),
-///         (13, 15, parts::ERA),
-///         (17, 19, parts::HOUR),
-///         (20, 22, parts::MINUTE),
-///         (23, 25, parts::SECOND),
-///         // note: from 25 to 28 is a NNBSP
-///         (28, 30, parts::DAY_PERIOD),
-///         (31, 34, parts::TIME_ZONE_NAME),
-///     ]
-/// );
-/// ```
+//! ```
+//! use icu::calendar::Gregorian;
+//! use icu::calendar::{Date, Time};
+//! use icu::datetime::parts as datetime_parts;
+//! use icu::datetime::fieldsets;
+//! use icu::datetime::options::TimePrecision;
+//! use icu::datetime::DateTimeFormatter;
+//! use icu::decimal::parts as decimal_parts;
+//! use icu::locale::locale;
+//! use icu::timezone::IxdtfParser;
+//! use writeable::assert_writeable_parts_eq;
+//!
+//! let dtf = DateTimeFormatter::try_new(
+//!     locale!("en-u-ca-buddhist").into(),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::SecondPlus).zone_z(),
+//! )
+//! .unwrap();
+//!
+//! let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]").unwrap();
+//!
+//! // Missing data is filled in on a best-effort basis, and an error is signaled.
+//! assert_writeable_parts_eq!(
+//!     dtf.format_any_calendar(&dtz),
+//!     "Nov 20, 2566 BE, 11:35:03.5 AM GMT",
+//!     [
+//!         (0, 3, datetime_parts::MONTH),
+//!         (4, 6, decimal_parts::INTEGER),
+//!         (4, 6, datetime_parts::DAY),
+//!         (8, 12, decimal_parts::INTEGER),
+//!         (8, 12, datetime_parts::YEAR),
+//!         (13, 15, datetime_parts::ERA),
+//!         (17, 19, decimal_parts::INTEGER),
+//!         (17, 19, datetime_parts::HOUR),
+//!         (20, 22, decimal_parts::INTEGER),
+//!         (20, 22, datetime_parts::MINUTE),
+//!         (23, 25, decimal_parts::INTEGER),
+//!         (25, 26, decimal_parts::DECIMAL),
+//!         (26, 27, decimal_parts::FRACTION),
+//!         (23, 27, datetime_parts::SECOND),
+//!         // note: from 27 to 30 is a NNBSP
+//!         (30, 31, datetime_parts::DAY_PERIOD),
+//!         (32, 36, datetime_parts::TIME_ZONE_NAME),
+//!     ]
+//! );
+//! ```
+
 use writeable::Part;
 
 /// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
