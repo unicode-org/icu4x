@@ -69,12 +69,11 @@ pub mod ffi {
             let options = YMDTV::with_length(Length::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
-                call_constructor!(
-                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                    provider,
-                    prefs,
-                    options
-                )?,
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
             )))
         }
         /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
@@ -137,12 +136,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDTV::with_length(Length::from(length));
 
-            Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options,
-            )?)))
+            Ok(Box::new(ZonedDateTimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
         /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
         pub fn format_datetime_with_custom_time_zone(

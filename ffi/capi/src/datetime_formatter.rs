@@ -67,12 +67,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = T::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(TimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(TimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`Time`] to a string.
@@ -135,12 +136,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(GregorianDateFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(GregorianDateFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`IsoDate`] to a string.
@@ -199,12 +201,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(GregorianDateTimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`IsoDateTime`] to a string.
@@ -252,12 +255,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(DateFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(DateFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`Date`] to a string.
@@ -341,12 +345,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(DateTimeFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(DateTimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
         /// Formats a [`DateTime`] to a string.
         pub fn format_datetime(

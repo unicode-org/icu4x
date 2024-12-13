@@ -99,12 +99,9 @@ pub mod ffi {
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
-                call_constructor!(
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
-                    provider,
-                    prefs,
+                provider.call_constructor_custom_err(move |provider| icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider, prefs,
                     options,
-                )?,
+                ))?,
             )))
         }
 
@@ -148,12 +145,9 @@ pub mod ffi {
         ) -> Result<Box<RegionDisplayNames>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
-            Ok(Box::new(RegionDisplayNames(call_constructor!(
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
-                provider,
-                prefs,
+            Ok(Box::new(RegionDisplayNames(provider.call_constructor_custom_err(move |provider| icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider(provider, prefs,
                 options
-            )?)))
+            ))?)))
         }
 
         /// Returns the locale specific display name of a region.

@@ -33,6 +33,8 @@ pub mod ffi {
     }
 
     impl DataProvider {
+        // These will be unused if almost *all* components are turned off, which is tedious and unproductive to gate for
+        #[allow(unused)]
         pub(crate) fn call_constructor<F, Ret>(
             &self,
             ctor: F,
@@ -41,6 +43,21 @@ pub mod ffi {
             F: FnOnce(
                 &(dyn icu_provider::buf::BufferProvider + 'static),
             ) -> Result<Ret, icu_provider::DataError>,
+        {
+            match &self.0 {
+                DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
+                DataProviderInner::Buffer(ref buffer_provider) => ctor(buffer_provider),
+            }
+        }
+
+        #[allow(unused)]
+        #[cfg(any(feature = "datetime", feature = "decimal", feature = "experimental"))]
+        pub(crate) fn call_constructor_custom_err<F, Ret, Err>(&self, ctor: F) -> Result<Ret, Err>
+        where
+            Err: From<icu_provider::DataError>,
+            F: FnOnce(&(dyn icu_provider::buf::BufferProvider + 'static)) -> Result<Ret, Err>,
         {
             match &self.0 {
                 DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
