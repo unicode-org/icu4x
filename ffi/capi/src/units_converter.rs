@@ -46,7 +46,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<UnitsConverterFactory>, DataError> {
-            Ok(Box::new(UnitsConverterFactory(provider.call_constructor(|provider| icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider(provider))?)))
+            Ok(Box::new(UnitsConverterFactory(provider.call_constructor(icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider)?)))
         }
         /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
         /// Returns nothing if the conversion between the two units is not possible.

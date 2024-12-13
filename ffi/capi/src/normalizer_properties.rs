@@ -57,7 +57,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(provider.call_constructor(|provider| icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider(provider))?)))
+            Ok(Box::new(CanonicalCombiningClassMap(provider.call_constructor(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider)?)))
         }
 
         #[diplomat::rust_link(
@@ -204,7 +204,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(provider.call_constructor(|provider| icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider(provider))?)))
+            Ok(Box::new(CanonicalDecomposition(provider.call_constructor(icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider)?)))
         }
 
         /// Performs non-recursive canonical decomposition (including for Hangul).
