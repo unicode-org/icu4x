@@ -217,18 +217,6 @@ where
 }
 
 #[macro_export]
-macro_rules! call_constructor {
-    ($buffer:path, $provider:expr $(, $args:expr)* $(,)?) => {
-        match &$provider.0 {
-            $crate::provider::DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                "This provider has been destroyed",
-            ))?,
-            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $buffer(buffer_provider, $($args,)*),
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! call_constructor_unstable {
     ($unstable:path, $provider:expr $(, $args:expr)* $(,)?) => {
         match &$provider.0 {
