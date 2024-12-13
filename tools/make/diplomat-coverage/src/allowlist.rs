@@ -208,6 +208,7 @@ lazy_static::lazy_static! {
 
         // Don't want parts for 2.0, would need to introduce diplomat writeable with parts
         "icu::list::parts",
+        "icu::datetime::parts",
 
         // Not planned until someone needs them
         "icu::locale::extensions",
