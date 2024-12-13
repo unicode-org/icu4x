@@ -718,11 +718,16 @@ mod tests {
                 (16, 21, icu_list::parts::ELEMENT),
                 (21, 23, icu_list::parts::LITERAL),
                 (23, 37, icu_list::parts::ELEMENT),
+                (23, 25, icu_decimal::parts::INTEGER),
                 (23, 25, parts::HOUR),
                 (25, 26, parts::LITERAL),
+                (26, 28, icu_decimal::parts::INTEGER),
                 (26, 28, parts::MINUTE),
                 (28, 29, parts::LITERAL),
-                (29, 37, parts::SECOND)
+                (29, 37, parts::SECOND),
+                (29, 31, icu_decimal::parts::INTEGER),
+                (31, 32, icu_decimal::parts::DECIMAL),
+                (32, 37, icu_decimal::parts::FRACTION),
             ]
         );
     }
