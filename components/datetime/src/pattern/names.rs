@@ -132,9 +132,18 @@ size_test!(
 ///         (7, 10, Part::ERROR), // mon
 ///         (7, 10, parts::WEEKDAY), // mon
 ///         (11, 14, Part::ERROR), // M11
+///         (11, 14, parts::MONTH), // M11
+///         (15, 17, parts::DAY), // 20
+///         (18, 22, parts::YEAR), // 2023
 ///         (23, 25, Part::ERROR), // CE
+///         (23, 25, parts::ERA), // CE
+///         (29, 31, parts::HOUR), // 11
+///         (32, 34, parts::MINUTE), // 35
+///         (35, 41, parts::SECOND), // 03.000
 ///         (42, 44, Part::ERROR), // AM
+///         (42, 44, parts::DAY_PERIOD), // AM
 ///         (45, 50, Part::ERROR), // +0000
+///         (45, 50, parts::TIME_ZONE_NAME), // +0000
 ///     ]
 /// );
 ///
@@ -333,6 +342,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
+    /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
@@ -362,8 +372,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
+    ///         (7, 11, parts::YEAR), // 2024
     ///         (12, 14, Part::ERROR), // 07
+    ///         (12, 14, parts::MONTH), // 07
     ///         (15, 17, Part::ERROR), // 01
+    ///         (15, 17, parts::DAY), // 01
     ///     ]
     /// );
     /// ```
