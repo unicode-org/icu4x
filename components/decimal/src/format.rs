@@ -70,12 +70,16 @@ impl Writeable for FormattedFixedDecimal<'_> {
                     self.options.grouping_strategy,
                     &self.symbols.grouping_sizes,
                 ) {
-                    w.with_part(parts::GROUP, |w| w.write_str(self.symbols.grouping_separator()))?;
+                    w.with_part(parts::GROUP, |w| {
+                        w.write_str(self.symbols.grouping_separator())
+                    })?;
                 }
             }
         })?;
         if has_fraction {
-            w.with_part(parts::DECIMAL, |w| w.write_str(self.symbols.decimal_separator()))?;
+            w.with_part(parts::DECIMAL, |w| {
+                w.write_str(self.symbols.decimal_separator())
+            })?;
             w.with_part(parts::FRACTION, |w| {
                 let mut m = -1; // read in the previous loop
                 loop {

@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Parts of a formatted decimal.
-//! 
+//!
 //! # Examples
-//! 
+//!
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::calendar::{Date, Time};
@@ -19,7 +19,7 @@
 //!     Default::default(),
 //! )
 //! .unwrap();
-//! 
+//!
 //! let fixed_decimal = "-987654.321".parse().unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
