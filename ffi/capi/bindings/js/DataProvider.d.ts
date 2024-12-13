@@ -13,10 +13,6 @@ export class DataProvider {
 
     get ffiValue(): pointer;
 
-    static compiled(): DataProvider;
-
-    static empty(): DataProvider;
-
     forkByKey(other: DataProvider): void;
 
     forkByLocale(other: DataProvider): void;

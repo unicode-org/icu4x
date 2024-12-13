@@ -24,25 +24,6 @@ final class DataProvider implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DataProvider_destroy_mv1));
 
-  /// Constructs an [`DataProvider`] that uses compiled data.
-  ///
-  /// Requires the `compiled_data` feature.
-  ///
-  /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
-  /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
-  factory DataProvider.compiled() {
-    final result = _icu4x_DataProvider_compiled_mv1();
-    return DataProvider._fromFfi(result, []);
-  }
-
-  /// Constructs an empty [`DataProvider`].
-  ///
-  /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
-  factory DataProvider.empty() {
-    final result = _icu4x_DataProvider_empty_mv1();
-    return DataProvider._fromFfi(result, []);
-  }
-
   /// Creates a provider that tries the current provider and then, if the current provider
   /// doesn't support the data key, another provider `other`.
   ///
@@ -94,16 +75,6 @@ final class DataProvider implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_DataProvider_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_DataProvider_destroy_mv1(ffi.Pointer<ffi.Void> self);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_compiled_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_compiled_mv1();
-
-@meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_empty_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_empty_mv1();
 
 @meta.RecordUse()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DataProvider_fork_by_key_mv1')
