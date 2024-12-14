@@ -161,6 +161,11 @@ final class SignedFixedDecimal implements ffi.Finalizable {
     _icu4x_SignedFixedDecimal_trim_end_mv1(_ffi);
   }
 
+  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end_if_integer) for more information.
+  void trimEndIfInteger() {
+    _icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(_ffi);
+  }
+
   /// Zero-pad the [`SignedFixedDecimal`] on the left to a particular position
   ///
   /// See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
@@ -335,6 +340,11 @@ external void _icu4x_SignedFixedDecimal_trim_start_mv1(ffi.Pointer<ffi.Opaque> s
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SignedFixedDecimal_trim_end_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_SignedFixedDecimal_trim_end_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SignedFixedDecimal_trim_end_if_integer_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_SignedFixedDecimal_pad_start_mv1')

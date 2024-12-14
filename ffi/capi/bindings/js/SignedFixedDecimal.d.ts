@@ -51,6 +51,8 @@ export class SignedFixedDecimal {
 
     trimEnd(): void;
 
+    trimEndIfInteger(): void;
+
     padStart(position: number): void;
 
     padEnd(position: number): void;
