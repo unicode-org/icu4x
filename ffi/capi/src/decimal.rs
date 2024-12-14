@@ -176,5 +176,10 @@ pub mod ffi {
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
+
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::numbering_system, FnInStruct)]
+        pub fn numbering_system(&self, write: &mut diplomat_runtime::DiplomatWrite) {
+            let _infallible = self.0.numbering_system().write_to(write);
+        }
     }
 }
