@@ -161,7 +161,7 @@ final class SignedFixedDecimal implements ffi.Finalizable {
     _icu4x_SignedFixedDecimal_trim_end_mv1(_ffi);
   }
 
-  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end_if_integer) for more information.
+  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.trim_end_if_integer) for more information.
   void trimEndIfInteger() {
     _icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(_ffi);
   }
