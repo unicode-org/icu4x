@@ -32,6 +32,8 @@ namespace capi {
     
     void icu4x_FixedDecimalFormatter_format_mv1(const icu4x::capi::FixedDecimalFormatter* self, const icu4x::capi::SignedFixedDecimal* value, diplomat::capi::DiplomatWrite* write);
     
+    void icu4x_FixedDecimalFormatter_numbering_system_mv1(const icu4x::capi::FixedDecimalFormatter* self, diplomat::capi::DiplomatWrite* write);
+    
     
     void icu4x_FixedDecimalFormatter_destroy_mv1(FixedDecimalFormatter* self);
     
@@ -72,6 +74,14 @@ inline std::string icu4x::FixedDecimalFormatter::format(const icu4x::SignedFixed
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_FixedDecimalFormatter_format_mv1(this->AsFFI(),
     value.AsFFI(),
+    &write);
+  return output;
+}
+
+inline std::string icu4x::FixedDecimalFormatter::numbering_system() const {
+  std::string output;
+  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  icu4x::capi::icu4x_FixedDecimalFormatter_numbering_system_mv1(this->AsFFI(),
     &write);
   return output;
 }
