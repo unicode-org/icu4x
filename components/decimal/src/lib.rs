@@ -104,6 +104,7 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
+use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem,
@@ -245,7 +246,13 @@ impl FixedDecimalFormatter {
     /// assert_eq!(fmt_bn.numbering_system(), "beng");
     /// assert_eq!(fmt_zh_nu.numbering_system(), "hanidec");
     /// ```
-    pub fn numbering_system(&self) -> String {
-        self.symbols.get().numsys().into()
+    pub fn numbering_system(&self) -> Value {
+        match Value::try_from_str(self.symbols.get().numsys()) {
+            Ok(v) => v,
+            Err(e) => {
+                debug_assert!(false, "Problem converting numbering system ID to Value: {e}");
+                Value::new_empty()
+            }
+        }
     }
 }
