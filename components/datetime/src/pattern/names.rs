@@ -257,7 +257,7 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     mz_periods:
         <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container<()>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
-    fixed_decimal_formatter: Option<FixedDecimalFormatter>,
+    pub(crate) fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     _marker: PhantomData<FSet>,
 }
 
