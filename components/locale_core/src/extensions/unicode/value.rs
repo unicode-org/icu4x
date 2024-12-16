@@ -142,6 +142,19 @@ impl Value {
         self.0.len()
     }
 
+    /// Creates an empty [`Value`], which corresponds to a "true" value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::{value, Value};
+    ///
+    /// assert_eq!(value!("true"), Value::new_empty());
+    /// ```
+    pub const fn new_empty() -> Self {
+        Self(ShortBoxSlice::new())
+    }
+
     /// Returns `true` if the Value has no subtags.
     ///
     /// # Examples
