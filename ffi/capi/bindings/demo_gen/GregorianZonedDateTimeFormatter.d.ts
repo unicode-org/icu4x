@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { GregorianZonedDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"

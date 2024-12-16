@@ -27,10 +27,20 @@ pub mod ffi {
     pub struct LocaleDirectionality(pub icu_locale::LocaleDirectionality);
 
     impl LocaleDirectionality {
-        /// Construct a new LocaleDirectionality instance
+        /// Construct a new LocaleDirectionality instance using compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<LocaleDirectionality>, DataError> {
+        #[diplomat::attr(supports = constructors, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<LocaleDirectionality> {
+            Box::new(LocaleDirectionality(icu_locale::LocaleDirectionality::new()))
+        }
+
+        /// Construct a new LocaleDirectionality instance using a particular data source.
+        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<LocaleDirectionality>, DataError> {
             Ok(Box::new(LocaleDirectionality(call_constructor!(
                 icu_locale::LocaleDirectionality::new [r => Ok(r)],
                 icu_locale::LocaleDirectionality::try_new_with_any_provider,
@@ -39,10 +49,20 @@ pub mod ffi {
             )?)))
         }
 
-        /// Construct a new LocaleDirectionality instance with a custom expander
+        /// Construct a new LocaleDirectionality instance with a custom expander and compiled data.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_expander")]
-        pub fn create_with_expander(
+        #[diplomat::attr(supports = named_constructors, named_constructor = "with_expander")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_with_expander(expander: &LocaleExpander) -> Box<LocaleDirectionality> {
+            Box::new(LocaleDirectionality(
+                icu_locale::LocaleDirectionality::new_with_expander(expander.0.clone()),
+            ))
+        }
+
+        /// Construct a new LocaleDirectionality instance with a custom expander and a particular data source.
+        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_expander_and_provider")]
+        pub fn create_with_expander_and_provider(
             provider: &DataProvider,
             expander: &LocaleExpander,
         ) -> Result<Box<LocaleDirectionality>, DataError> {

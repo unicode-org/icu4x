@@ -33,9 +33,13 @@ namespace icu4x {
 class LocaleDirectionality {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::LocaleDirectionality> create();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_with_expander(const icu4x::DataProvider& provider, const icu4x::LocaleExpander& expander);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::LocaleDirectionality> create_with_expander(const icu4x::LocaleExpander& expander);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_with_expander_and_provider(const icu4x::DataProvider& provider, const icu4x::LocaleExpander& expander);
 
   inline icu4x::LocaleDirection get(const icu4x::Locale& locale) const;
 

@@ -28,7 +28,9 @@ namespace icu4x {
 class TimeZoneIdMapper {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::TimeZoneIdMapper> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline std::string iana_to_bcp47(std::string_view value) const;
 

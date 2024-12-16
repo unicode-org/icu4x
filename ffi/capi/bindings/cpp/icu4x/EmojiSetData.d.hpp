@@ -32,7 +32,9 @@ public:
 
   inline bool contains(char32_t cp) const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> load_basic(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::EmojiSetData> create_basic();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> create_basic_with_provider(const icu4x::DataProvider& provider);
 
   inline const icu4x::capi::EmojiSetData* AsFFI() const;
   inline icu4x::capi::EmojiSetData* AsFFI();

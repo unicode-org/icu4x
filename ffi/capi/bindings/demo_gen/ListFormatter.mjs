@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { ListFormatter } from "icu4x"
 import { Locale } from "icu4x"
 export function format(name, length, list) {
@@ -8,11 +7,6 @@ export function format(name, length, list) {
             ListFormatter.createAndWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [

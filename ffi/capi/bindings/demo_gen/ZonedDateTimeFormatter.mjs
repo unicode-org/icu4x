@@ -1,5 +1,4 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
 import { DateTime } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
@@ -12,11 +11,6 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
             ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [
@@ -39,11 +33,6 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
                     Calendar.createForLocale.apply(
                         null,
                         [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
                             Locale.fromString.apply(
                                 null,
                                 [
@@ -72,11 +61,6 @@ export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, d
             ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [

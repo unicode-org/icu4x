@@ -23,7 +23,10 @@
 
 
 typedef struct icu4x_DateTimeFormatter_create_with_length_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_length_mv1_result;
-icu4x_DateTimeFormatter_create_with_length_mv1_result icu4x_DateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
+icu4x_DateTimeFormatter_create_with_length_mv1_result icu4x_DateTimeFormatter_create_with_length_mv1(const Locale* locale, DateTimeLength length);
+
+typedef struct icu4x_DateTimeFormatter_create_with_length_and_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_length_and_provider_mv1_result;
+icu4x_DateTimeFormatter_create_with_length_and_provider_mv1_result icu4x_DateTimeFormatter_create_with_length_and_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 typedef struct icu4x_DateTimeFormatter_format_datetime_mv1_result {union { DateTimeFormatError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_datetime_mv1_result;
 icu4x_DateTimeFormatter_format_datetime_mv1_result icu4x_DateTimeFormatter_format_datetime_mv1(const DateTimeFormatter* self, const DateTime* value, DiplomatWrite* write);

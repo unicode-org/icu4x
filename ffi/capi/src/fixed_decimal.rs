@@ -71,7 +71,7 @@ pub mod ffi {
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, rename = "from_number")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_int32(v: i32) -> Box<SignedFixedDecimal> {
             Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(
                 v,
@@ -95,7 +95,7 @@ pub mod ffi {
         #[diplomat::attr(dart, rename = "from_int")]
         #[diplomat::attr(js, rename = "from_big_int")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_int64(v: i64) -> Box<SignedFixedDecimal> {
             Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(
                 v,
@@ -106,7 +106,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_uint64(v: u64) -> Box<SignedFixedDecimal> {
             Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(
                 v,

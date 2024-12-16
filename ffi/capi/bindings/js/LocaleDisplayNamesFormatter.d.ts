@@ -13,7 +13,9 @@ export class LocaleDisplayNamesFormatter {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider, locale: Locale, options: DisplayNamesOptions): LocaleDisplayNamesFormatter;
+    static create(locale: Locale, options: DisplayNamesOptions): LocaleDisplayNamesFormatter;
+
+    static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions): LocaleDisplayNamesFormatter;
 
     of(locale: Locale): string;
 }

@@ -22,8 +22,10 @@ namespace capi {
     
     uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const icu4x::capi::GeneralCategoryNameToMaskMapper* self, diplomat::capi::DiplomatStringView name);
     
-    typedef struct icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result {union {icu4x::capi::GeneralCategoryNameToMaskMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result;
-    icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result icu4x_GeneralCategoryNameToMaskMapper_load_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x::capi::GeneralCategoryNameToMaskMapper* icu4x_GeneralCategoryNameToMaskMapper_create_mv1(void);
+    
+    typedef struct icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1_result {union {icu4x::capi::GeneralCategoryNameToMaskMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1_result;
+    icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1_result icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     
     void icu4x_GeneralCategoryNameToMaskMapper_destroy_mv1(GeneralCategoryNameToMaskMapper* self);
@@ -44,8 +46,13 @@ inline uint32_t icu4x::GeneralCategoryNameToMaskMapper::get_loose(std::string_vi
   return result;
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError> icu4x::GeneralCategoryNameToMaskMapper::load(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_GeneralCategoryNameToMaskMapper_load_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper> icu4x::GeneralCategoryNameToMaskMapper::create() {
+  auto result = icu4x::capi::icu4x_GeneralCategoryNameToMaskMapper_create_mv1();
+  return std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>(icu4x::GeneralCategoryNameToMaskMapper::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError> icu4x::GeneralCategoryNameToMaskMapper::create_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_GeneralCategoryNameToMaskMapper_create_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>>(std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>(icu4x::GeneralCategoryNameToMaskMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

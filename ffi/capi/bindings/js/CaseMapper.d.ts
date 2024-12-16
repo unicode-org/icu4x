@@ -14,7 +14,9 @@ export class CaseMapper {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): CaseMapper;
+    static create(): CaseMapper;
+
+    static createWithProvider(provider: DataProvider): CaseMapper;
 
     lowercase(s: string, locale: Locale): string;
 

@@ -13,7 +13,7 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// A set of "exemplar characters" for a given locale.
     #[diplomat::rust_link(icu::locale, Mod)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharacters, Struct)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharactersBorrowed, Struct)]
@@ -46,12 +46,28 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "main")]
-        pub fn try_new_main(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_main(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "main_with_provider")]
+        pub fn create_main_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -64,12 +80,27 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary")]
-        pub fn try_new_auxiliary(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_auxiliary(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary_with_provider")]
+        pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -82,12 +113,27 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation")]
-        pub fn try_new_punctuation(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_punctuation(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation_with_provider")]
+        pub fn create_punctuation_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -100,12 +146,28 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers")]
-        pub fn try_new_numbers(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_numbers(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers_with_provider")]
+        pub fn create_numbers_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -118,12 +180,28 @@ pub mod ffi {
             )?)))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "index")]
-        pub fn try_new_index(
+        #[cfg(feature = "compiled_data")]
+        pub fn create_index(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "index_with_provider")]
+        pub fn create_index_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {

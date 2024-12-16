@@ -21,8 +21,7 @@ int main() {
         return 1;
     }
     Locale* locale = locale_result.ok;
-    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
-    icu4x_PluralRules_create_cardinal_mv1_result plural_result = icu4x_PluralRules_create_cardinal_mv1(provider, locale);
+    icu4x_PluralRules_create_cardinal_mv1_result plural_result = icu4x_PluralRules_create_cardinal_mv1(locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;
@@ -68,7 +67,6 @@ int main() {
     printf("Plural Category %d (should be %d)\n", (int)cat2, (int)PluralCategory_Many);
 
     icu4x_PluralRules_destroy_mv1(rules);
-    icu4x_DataProvider_destroy_mv1(provider);
     icu4x_Locale_destroy_mv1(locale);
 
     if (!categories.zero)  { return 1; }

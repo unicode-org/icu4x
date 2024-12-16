@@ -14,9 +14,13 @@ export class LocaleDirectionality {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): LocaleDirectionality;
+    static create(): LocaleDirectionality;
 
-    static createWithExpander(provider: DataProvider, expander: LocaleExpander): LocaleDirectionality;
+    static createWithProvider(provider: DataProvider): LocaleDirectionality;
+
+    static createWithExpander(expander: LocaleExpander): LocaleDirectionality;
+
+    static createWithExpanderAndProvider(provider: DataProvider, expander: LocaleExpander): LocaleDirectionality;
 
     get(locale: Locale): LocaleDirection;
 

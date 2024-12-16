@@ -15,9 +15,13 @@ export class PluralRules {
 
     get ffiValue(): pointer;
 
-    static createCardinal(provider: DataProvider, locale: Locale): PluralRules;
+    static createCardinal(locale: Locale): PluralRules;
 
-    static createOrdinal(provider: DataProvider, locale: Locale): PluralRules;
+    static createCardinalWithProvider(provider: DataProvider, locale: Locale): PluralRules;
+
+    static createOrdinal(locale: Locale): PluralRules;
+
+    static createOrdinalWithProvider(provider: DataProvider, locale: Locale): PluralRules;
 
     categoryFor(op: PluralOperands): PluralCategory;
 

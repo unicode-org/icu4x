@@ -28,9 +28,13 @@ namespace icu4x {
 class ComposingNormalizer {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfc(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::ComposingNormalizer> create_nfc();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfkc(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfc_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::ComposingNormalizer> create_nfkc();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfkc_with_provider(const icu4x::DataProvider& provider);
 
   inline std::string normalize(std::string_view s) const;
 

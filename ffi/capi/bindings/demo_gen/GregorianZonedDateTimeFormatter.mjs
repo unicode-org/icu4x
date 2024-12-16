@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { GregorianZonedDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
@@ -10,11 +9,6 @@ export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, d
             GregorianZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
                     Locale.fromString.apply(
                         null,
                         [

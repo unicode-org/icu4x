@@ -16,7 +16,9 @@ export class CanonicalDecomposition {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): CanonicalDecomposition;
+    static create(): CanonicalDecomposition;
+
+    static createWithProvider(provider: DataProvider): CanonicalDecomposition;
 
     decompose(c: codepoint): Decomposed;
 }

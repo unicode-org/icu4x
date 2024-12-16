@@ -1,4 +1,3 @@
-import { DataProvider } from "icu4x"
 import { GregorianDateFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { IsoDateTime } from "icu4x"

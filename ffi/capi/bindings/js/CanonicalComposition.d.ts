@@ -15,7 +15,9 @@ export class CanonicalComposition {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): CanonicalComposition;
+    static create(): CanonicalComposition;
+
+    static createWithProvider(provider: DataProvider): CanonicalComposition;
 
     compose(starter: codepoint, second: codepoint): codepoint;
 }

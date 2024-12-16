@@ -4,7 +4,6 @@
 
 #include <icu4x/CaseMapper.hpp>
 #include <icu4x/Logger.hpp>
-#include <icu4x/DataProvider.hpp>
 #include <icu4x/CodePointSetBuilder.hpp>
 #include <icu4x/TitlecaseOptionsV1.hpp>
 
@@ -17,9 +16,8 @@ int main() {
     std::unique_ptr<Locale> und = Locale::from_string("und").ok().value();
     std::unique_ptr<Locale> greek = Locale::from_string("el").ok().value();
     std::unique_ptr<Locale> turkish = Locale::from_string("tr").ok().value();
-    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
-    std::unique_ptr<CaseMapper> cm = CaseMapper::create(*dp.get()).ok().value();
+    std::unique_ptr<CaseMapper> cm = CaseMapper::create();
 
     TitlecaseOptionsV1 tc_options = TitlecaseOptionsV1::default_options();
 

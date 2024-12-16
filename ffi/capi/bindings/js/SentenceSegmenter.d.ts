@@ -15,9 +15,13 @@ export class SentenceSegmenter {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): SentenceSegmenter;
+    static create(): SentenceSegmenter;
 
-    static withContentLocale(provider: DataProvider, locale: Locale): SentenceSegmenter;
+    static createWithProvider(provider: DataProvider): SentenceSegmenter;
+
+    static createWithContentLocale(locale: Locale): SentenceSegmenter;
+
+    static createWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): SentenceSegmenter;
 
     segment(input: string): SentenceBreakIteratorUtf16;
 }

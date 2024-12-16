@@ -66,11 +66,21 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a map for the `Script` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
+  factory CodePointMapData16.script() {
+    final result = _icu4x_CodePointMapData16_create_script_mv1();
+    return CodePointMapData16._fromFfi(result, []);
+  }
+
+  /// Create a map for the `Script` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory CodePointMapData16.script(DataProvider provider) {
-    final result = _icu4x_CodePointMapData16_load_script_mv1(provider._ffi);
+  factory CodePointMapData16.scriptWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointMapData16_create_script_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -104,6 +114,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_iter_ranges_for_value
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_get_set_for_value_mv1(ffi.Pointer<ffi.Opaque> self, int value);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_load_script_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_create_script_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CodePointMapData16_load_script_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_create_script_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_create_script_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointMapData16_create_script_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);

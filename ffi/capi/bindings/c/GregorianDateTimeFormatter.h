@@ -21,7 +21,10 @@
 
 
 typedef struct icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result {union {GregorianDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result;
-icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
+icu4x_GregorianDateTimeFormatter_create_with_length_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_mv1(const Locale* locale, DateTimeLength length);
+
+typedef struct icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result {union {GregorianDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result;
+icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1_result icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const GregorianDateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 

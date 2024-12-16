@@ -36,17 +36,29 @@ namespace icu4x {
 class WordSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::WordSegmenter> create_auto();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_provider(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::WordSegmenter> create_lstm();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_provider(const icu4x::DataProvider& provider);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+
+  inline static std::unique_ptr<icu4x::WordSegmenter> create_dictionary();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_provider(const icu4x::DataProvider& provider);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline std::unique_ptr<icu4x::WordBreakIteratorUtf8> segment(std::string_view input) const;
 

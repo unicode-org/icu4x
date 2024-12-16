@@ -16,7 +16,9 @@ export class TimeZoneIdMapper {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): TimeZoneIdMapper;
+    static create(): TimeZoneIdMapper;
+
+    static createWithProvider(provider: DataProvider): TimeZoneIdMapper;
 
     ianaToBcp47(value: string): string;
 

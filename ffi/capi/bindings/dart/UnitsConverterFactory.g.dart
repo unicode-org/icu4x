@@ -27,13 +27,21 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverterFactory_destroy_mv1));
 
-  /// Construct a new [`UnitsConverterFactory`] instance.
+  /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+  factory UnitsConverterFactory() {
+    final result = _icu4x_UnitsConverterFactory_create_mv1();
+    return UnitsConverterFactory._fromFfi(result, []);
+  }
+
+  /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory UnitsConverterFactory(DataProvider provider) {
-    final result = _icu4x_UnitsConverterFactory_create_mv1(provider._ffi);
+  factory UnitsConverterFactory.withProvider(DataProvider provider) {
+    final result = _icu4x_UnitsConverterFactory_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -67,9 +75,14 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 external void _icu4x_UnitsConverterFactory_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_converter_mv1')

@@ -15,9 +15,13 @@ export class LocaleExpander {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): LocaleExpander;
+    static create(): LocaleExpander;
 
-    static createExtended(provider: DataProvider): LocaleExpander;
+    static createWithProvider(provider: DataProvider): LocaleExpander;
+
+    static createExtended(): LocaleExpander;
+
+    static createExtendedWithProvider(provider: DataProvider): LocaleExpander;
 
     maximize(locale: Locale): TransformResult;
 

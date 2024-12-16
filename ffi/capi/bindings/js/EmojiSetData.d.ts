@@ -23,5 +23,7 @@ export class EmojiSetData {
 
     contains(cp: codepoint): boolean;
 
-    static loadBasic(provider: DataProvider): EmojiSetData;
+    static createBasic(): EmojiSetData;
+
+    static createBasicWithProvider(provider: DataProvider): EmojiSetData;
 }

@@ -32,7 +32,9 @@ public:
 
   inline uint32_t get_loose(std::string_view name) const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError> load(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToMaskMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline const icu4x::capi::GeneralCategoryNameToMaskMapper* AsFFI() const;
   inline icu4x::capi::GeneralCategoryNameToMaskMapper* AsFFI();

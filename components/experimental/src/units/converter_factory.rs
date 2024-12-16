@@ -232,7 +232,7 @@ impl ConverterFactory {
         insert_non_basic_units(self, unit2, -1, &mut map)?;
 
         let (power_sums_are_zero, power_diffs_are_zero) =
-            map.iter_values()
+            map.values()
                 .fold((true, true), |(sums, diffs), powers_info| {
                     (
                         sums && powers_info.sums == 0,

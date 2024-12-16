@@ -28,7 +28,9 @@ namespace icu4x {
 class TimeZoneIdMapperWithFastCanonicalization {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonicalization>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> canonicalize_iana(std::string_view value) const;
 

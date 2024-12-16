@@ -2,21 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "DataProvider.h"
 #include "LineSegmenter.h"
 #include "LineBreakIteratorUtf8.h"
 #include <string.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
+    LineSegmenter* segmenter = icu4x_LineSegmenter_create_auto_mv1();
 
-    icu4x_LineSegmenter_create_auto_mv1_result segmenter_result = icu4x_LineSegmenter_create_auto_mv1(provider);
-    if (!segmenter_result.is_ok)  {
-        printf("Failed to create icu4x_LineSegmenter_mv1\n");
-        return 1;
-    }
-    LineSegmenter* segmenter = segmenter_result.ok;
 
     char output[40];
     DiplomatWrite write = diplomat_simple_write(output, 40);
@@ -42,7 +35,6 @@ int main(int argc, char *argv[]) {
 
     icu4x_LineBreakIteratorUtf8_destroy_mv1(iter);
     icu4x_LineSegmenter_destroy_mv1(segmenter);
-    icu4x_DataProvider_destroy_mv1(provider);
 
     return 0;
 }

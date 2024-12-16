@@ -74,7 +74,7 @@ impl CldrCache {
                         // I'm not sure why this errors
                         .replace("ə̃ {ə̃}+ → ə̃;", "")
                         // This does not escape the $, so the = is interpreted as a variable name
-                        .replace(r#"$="#, r#"\$="#)
+                        .replace(r#""$="#, r#""\$="#)
                         // Any-ASCII does not exist and should probably the Latin-ASCII
                         .replace("Any-ASCII", "Latin-ASCII")
                         // Non-canonical property names

@@ -17,8 +17,10 @@
 
 
 
-typedef struct icu4x_TimeZoneIdMapper_create_mv1_result {union {TimeZoneIdMapper* ok; DataError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_create_mv1_result;
-icu4x_TimeZoneIdMapper_create_mv1_result icu4x_TimeZoneIdMapper_create_mv1(const DataProvider* provider);
+TimeZoneIdMapper* icu4x_TimeZoneIdMapper_create_mv1(void);
+
+typedef struct icu4x_TimeZoneIdMapper_create_with_provider_mv1_result {union {TimeZoneIdMapper* ok; DataError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_create_with_provider_mv1_result;
+icu4x_TimeZoneIdMapper_create_with_provider_mv1_result icu4x_TimeZoneIdMapper_create_with_provider_mv1(const DataProvider* provider);
 
 void icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(const TimeZoneIdMapper* self, DiplomatStringView value, DiplomatWrite* write);
 

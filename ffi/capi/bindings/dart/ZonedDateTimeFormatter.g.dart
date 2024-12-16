@@ -24,14 +24,28 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedDateTimeFormatter_destroy_mv1));
 
-  /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
+  /// Creates a new [`ZonedDateTimeFormatter`] from locale data using compiled data.
   ///
   /// This function has `date_length` and `time_length` arguments and uses default options
   /// for the time zone.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
+  factory ZonedDateTimeFormatter.withLength(Locale locale, DateTimeLength length) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(locale._ffi, length.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new [`ZonedDateTimeFormatter`] from locale data using a particular data source.
+  ///
+  /// This function has `date_length` and `time_length` arguments and uses default options
+  /// for the time zone.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -69,9 +83,14 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 external void _icu4x_ZonedDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_with_length_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_with_length_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> locale, int length);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.RecordUse()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1')

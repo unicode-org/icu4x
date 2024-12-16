@@ -5,7 +5,7 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+/** A set of "exemplar characters" for a given locale.
 *
 *See the [Rust documentation for `locale`](https://docs.rs/icu/latest/icu/locale/index.html) for more information.
 *
@@ -22,13 +22,23 @@ export class ExemplarCharacters {
 
     contains(cp: codepoint): boolean;
 
-    static tryNewMain(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static createMain(locale: Locale): ExemplarCharacters;
 
-    static tryNewAuxiliary(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static createMainWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
-    static tryNewPunctuation(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static createAuxiliary(locale: Locale): ExemplarCharacters;
 
-    static tryNewNumbers(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static createAuxiliaryWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
-    static tryNewIndex(provider: DataProvider, locale: Locale): ExemplarCharacters;
+    static createPunctuation(locale: Locale): ExemplarCharacters;
+
+    static createPunctuationWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
+
+    static createNumbers(locale: Locale): ExemplarCharacters;
+
+    static createNumbersWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
+
+    static createIndex(locale: Locale): ExemplarCharacters;
+
+    static createIndexWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 }

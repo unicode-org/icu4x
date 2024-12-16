@@ -44,10 +44,28 @@ export class GregorianDateTimeFormatter {
         return this.#ptr;
     }
 
-    static createWithLength(provider, locale, length) {
+    static createWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_GregorianDateTimeFormatter_create_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_GregorianDateTimeFormatter_create_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new GregorianDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createWithLengthAndProvider(provider, locale, length) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_GregorianDateTimeFormatter_create_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -14,7 +14,9 @@ export class Collator {
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider, locale: Locale, options: CollatorOptions): Collator;
+    static create(locale: Locale, options: CollatorOptions): Collator;
+
+    static createWithProvider(provider: DataProvider, locale: Locale, options: CollatorOptions): Collator;
 
     compare(left: string, right: string): number;
 

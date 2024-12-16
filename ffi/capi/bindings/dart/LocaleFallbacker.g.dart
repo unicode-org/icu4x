@@ -24,13 +24,21 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbacker_destroy_mv1));
 
+  /// Creates a new `LocaleFallbacker` from compiled data.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+  factory LocaleFallbacker() {
+    final result = _icu4x_LocaleFallbacker_create_mv1();
+    return LocaleFallbacker._fromFfi(result, []);
+  }
+
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LocaleFallbacker(DataProvider provider) {
-    final result = _icu4x_LocaleFallbacker_create_mv1(provider._ffi);
+  factory LocaleFallbacker.withProvider(DataProvider provider) {
+    final result = _icu4x_LocaleFallbacker_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -63,9 +71,14 @@ final class LocaleFallbacker implements ffi.Finalizable {
 external void _icu4x_LocaleFallbacker_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_without_data_mv1')
