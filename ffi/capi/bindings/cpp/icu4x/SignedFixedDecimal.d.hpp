@@ -73,6 +73,8 @@ public:
 
   inline void trim_end();
 
+  inline void trim_end_if_integer();
+
   inline void pad_start(int16_t position);
 
   inline void pad_end(int16_t position);
