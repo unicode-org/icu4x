@@ -113,7 +113,7 @@ impl SourceDataProvider {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "46.1.0-BETA1";
 
     /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-76-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-12-16/76.x";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
