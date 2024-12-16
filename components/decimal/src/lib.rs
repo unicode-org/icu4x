@@ -250,7 +250,10 @@ impl FixedDecimalFormatter {
         match Value::try_from_str(self.symbols.get().numsys()) {
             Ok(v) => v,
             Err(e) => {
-                debug_assert!(false, "Problem converting numbering system ID to Value: {e}");
+                debug_assert!(
+                    false,
+                    "Problem converting numbering system ID to Value: {e}"
+                );
                 Value::new_empty()
             }
         }
