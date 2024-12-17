@@ -40,26 +40,6 @@ export class DataProvider {
         return this.#ptr;
     }
 
-    static compiled() {
-        const result = wasm.icu4x_DataProvider_compiled_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static empty() {
-        const result = wasm.icu4x_DataProvider_empty_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
     forkByKey(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

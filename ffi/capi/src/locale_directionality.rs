@@ -8,12 +8,14 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{
-        errors::ffi::DataError,
-        locale::ffi::LocaleExpander,
-        locale_core::ffi::Locale,
-        provider::{ffi::DataProvider, DataProviderInner},
-    };
+    #[cfg(feature = "buffer_provider")]
+    use crate::errors::ffi::DataError;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::{ffi::DataProvider, DataProviderInner};
+
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::locale::ffi::LocaleExpander;
+    use crate::locale_core::ffi::Locale;
 
     #[diplomat::rust_link(icu::locale::Direction, Enum)]
     pub enum LocaleDirection {
@@ -38,14 +40,12 @@ pub mod ffi {
         /// Construct a new LocaleDirectionality instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleDirectionality>, DataError> {
-            Ok(Box::new(LocaleDirectionality(call_constructor!(
-                icu_locale::LocaleDirectionality::new [r => Ok(r)],
-                icu_locale::LocaleDirectionality::try_new_with_any_provider,
+            Ok(Box::new(LocaleDirectionality(provider.call_constructor(
                 icu_locale::LocaleDirectionality::try_new_with_buffer_provider,
-                provider,
             )?)))
         }
 
@@ -62,6 +62,7 @@ pub mod ffi {
         /// Construct a new LocaleDirectionality instance with a custom expander and a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_expander_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_expander_and_provider(
             provider: &DataProvider,
             expander: &LocaleExpander,
@@ -72,22 +73,12 @@ pub mod ffi {
                 DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                DataProviderInner::Empty => {
-                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
-                        &icu_provider_adapters::empty::EmptyDataProvider::new(),
-                        expander.0.clone(),
-                    )?
-                }
-                #[cfg(feature = "buffer_provider")]
+
                 DataProviderInner::Buffer(buffer_provider) => {
                     icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &buffer_provider.as_deserializing(),
                         expander.0.clone(),
                     )?
-                }
-                #[cfg(feature = "compiled_data")]
-                DataProviderInner::Compiled => {
-                    icu_locale::LocaleDirectionality::new_with_expander(expander.0.clone())
                 }
             })))
         }

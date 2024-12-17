@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
@@ -50,14 +51,12 @@ pub mod ffi {
         /// Construct a [`SentenceSegmenter`], using a particular data source.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
-                icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
+            Ok(Box::new(SentenceSegmenter(provider.call_constructor(
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
-                provider,
             )?)))
         }
 
@@ -84,16 +83,18 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::try_new_with_options,
-                icu_segmenter::SentenceSegmenter::try_new_with_options_with_any_provider,
-                icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
-                provider,
-                locale.into(),
+            Ok(Box::new(SentenceSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider(
+                        provider,
+                        locale.into(),
+                    )
+                },
             )?)))
         }
 

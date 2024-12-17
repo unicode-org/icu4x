@@ -9,9 +9,10 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::date::ffi::IsoWeekday;
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::rust_link(icu::calendar::week::RelativeUnit, Enum)]
     #[diplomat::enum_convert(icu_calendar::week::RelativeUnit)]
@@ -47,18 +48,19 @@ pub mod ffi {
         /// Creates a new [`WeekCalculator`] from locale data using a particular data source.
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WeekCalculator>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(WeekCalculator(call_constructor!(
-                icu_calendar::week::WeekCalculator::try_new,
-                icu_calendar::week::WeekCalculator::try_new_with_any_provider,
-                icu_calendar::week::WeekCalculator::try_new_with_buffer_provider,
-                provider,
-                prefs,
+            Ok(Box::new(WeekCalculator(provider.call_constructor(
+                |provider| {
+                    icu_calendar::week::WeekCalculator::try_new_with_buffer_provider(
+                        provider, prefs,
+                    )
+                },
             )?)))
         }
         #[diplomat::rust_link(

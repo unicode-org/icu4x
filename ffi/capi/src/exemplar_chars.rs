@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
     /// A set of "exemplar characters" for a given locale.
@@ -67,13 +68,13 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "main_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_main_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main [r => r.map(|r| r.static_to_owned())],
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
                 provider,
                 &locale
@@ -100,13 +101,13 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary [r => r.map(|r| r.static_to_owned())],
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
                 provider,
                 &locale
@@ -133,13 +134,13 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_punctuation_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation [r => r.map(|r| r.static_to_owned())],
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
                 provider,
                 &locale
@@ -167,13 +168,13 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_numbers_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers [r => r.map(|r| r.static_to_owned())],
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
                 provider,
                 &locale
@@ -201,13 +202,13 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "index_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_index_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index [r => r.map(|r| r.static_to_owned())],
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
                 provider,
                 &locale

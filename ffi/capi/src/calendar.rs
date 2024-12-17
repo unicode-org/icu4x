@@ -10,8 +10,10 @@ pub mod ffi {
     use alloc::sync::Arc;
     use core::fmt::Write;
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::errors::ffi::DataError;
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
 
     /// The various calendar types currently supported by [`Calendar`]
@@ -126,34 +128,33 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale_with_provider")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_for_locale_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<Calendar>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(Calendar(Arc::new(call_constructor!(
-                icu_calendar::AnyCalendar::try_new,
-                icu_calendar::AnyCalendar::try_new_with_any_provider,
-                icu_calendar::AnyCalendar::try_new_with_buffer_provider,
-                provider,
-                prefs
+            Ok(Box::new(Calendar(Arc::new(provider.call_constructor(
+                |provider| icu_calendar::AnyCalendar::try_new_with_buffer_provider(provider, prefs),
             )?))))
         }
 
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_kind_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_for_kind_with_provider(
             provider: &DataProvider,
             kind: AnyCalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(call_constructor!(
-                icu_calendar::AnyCalendar::new_for_kind [r => Ok(r)],
-                icu_calendar::AnyCalendar::try_new_for_kind_with_any_provider,
-                icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider,
-                provider,
-                kind.into()
+            Ok(Box::new(Calendar(Arc::new(provider.call_constructor(
+                |provider| {
+                    icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider(
+                        provider,
+                        kind.into(),
+                    )
+                },
             )?))))
         }
 
