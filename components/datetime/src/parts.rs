@@ -11,6 +11,7 @@
 //! use icu::calendar::{Date, Time};
 //! use icu::datetime::parts as datetime_parts;
 //! use icu::datetime::fieldsets;
+//! use icu::datetime::options::FractionalSecondDigits;
 //! use icu::datetime::options::TimePrecision;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
@@ -20,7 +21,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::SecondPlus).zone_z(),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)).zone_z(),
 //! )
 //! .unwrap();
 //!
@@ -29,7 +30,7 @@
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
 //!     dtf.format_any_calendar(&dtz),
-//!     "Nov 20, 2566 BE, 11:35:03.5 AM GMT",
+//!     "Nov 20, 2566 BE, 11:35:03.50 AM GMT",
 //!     [
 //!         (0, 3, datetime_parts::MONTH),
 //!         (4, 6, decimal_parts::INTEGER),
@@ -41,13 +42,13 @@
 //!         (17, 19, datetime_parts::HOUR),
 //!         (20, 22, decimal_parts::INTEGER),
 //!         (20, 22, datetime_parts::MINUTE),
+//!         (23, 28, datetime_parts::SECOND),
 //!         (23, 25, decimal_parts::INTEGER),
 //!         (25, 26, decimal_parts::DECIMAL),
-//!         (26, 27, decimal_parts::FRACTION),
-//!         (23, 27, datetime_parts::SECOND),
-//!         // note: from 27 to 30 is a NNBSP
-//!         (30, 31, datetime_parts::DAY_PERIOD),
-//!         (32, 36, datetime_parts::TIME_ZONE_NAME),
+//!         (26, 28, decimal_parts::FRACTION),
+//!         // note: from 28 to 31 is a NNBSP
+//!         (31, 33, datetime_parts::DAY_PERIOD),
+//!         (34, 37, datetime_parts::TIME_ZONE_NAME),
 //!     ]
 //! );
 //! ```
