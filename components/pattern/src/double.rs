@@ -75,22 +75,27 @@ where
     W1: Writeable,
 {
     type Error = Infallible;
-    type W<'a>
-        = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>>
+
+    type W<'a> = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>>
     where
-        W0: 'a,
-        W1: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+        Self: 'a;
+
+    type L<'a, 'l, L> = &'l L
+    where
+        Self: 'a,
+        L: 'l + Writeable + ?Sized;
+
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         let writeable = match key {
             DoublePlaceholderKey::Place0 => Either::Left(&self.0),
             DoublePlaceholderKey::Place1 => Either::Right(&self.1),
         };
-        (
-            WriteableAsTryWriteableInfallible(writeable),
-            crate::PATTERN_PLACEHOLDER_PART,
-        )
+        WriteableAsTryWriteableInfallible(writeable)
+    }
+    #[inline]
+    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+        literal
     }
 }
 
@@ -99,22 +104,28 @@ where
     W: Writeable,
 {
     type Error = Infallible;
-    type W<'a>
-        = WriteableAsTryWriteableInfallible<&'a W>
+
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W>
     where
-        W: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+        Self: 'a;
+
+    type L<'a, 'l, L> = &'l L
+    where
+        Self: 'a,
+        L: 'l + Writeable + ?Sized;
+
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         let [item0, item1] = self;
         let writeable = match key {
             DoublePlaceholderKey::Place0 => item0,
             DoublePlaceholderKey::Place1 => item1,
         };
-        (
-            WriteableAsTryWriteableInfallible(writeable),
-            crate::PATTERN_PLACEHOLDER_PART,
-        )
+        WriteableAsTryWriteableInfallible(writeable)
+    }
+    #[inline]
+    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+        literal
     }
 }
 

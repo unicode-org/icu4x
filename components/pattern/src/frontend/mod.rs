@@ -15,11 +15,7 @@ use crate::Parser;
 use crate::ParserOptions;
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, boxed::Box, str::FromStr, string::String};
-use core::{
-    convert::Infallible,
-    fmt::{self, Write},
-    marker::PhantomData,
-};
+use core::{convert::Infallible, fmt, marker::PhantomData};
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
 /// A string pattern with placeholders.
@@ -46,13 +42,13 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 ///
 /// # Examples
 ///
-/// Interpolating a [`SinglePlaceholder`] pattern with parts:
+/// Interpolating a [`SinglePlaceholder`] pattern:
 ///
 /// ```
 /// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
-/// use writeable::assert_writeable_parts_eq;
+/// use writeable::assert_writeable_eq;
 ///
 /// let pattern = Pattern::<SinglePlaceholder>::try_from_str(
 ///     "Hello, {0}!",
@@ -60,14 +56,9 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// )
 /// .unwrap();
 ///
-/// assert_writeable_parts_eq!(
+/// assert_writeable_eq!(
 ///     pattern.interpolate(["Alice"]),
-///     "Hello, Alice!",
-///     [
-///         (0, 7, icu_pattern::PATTERN_LITERAL_PART),
-///         (7, 12, icu_pattern::PATTERN_PLACEHOLDER_PART),
-///         (12, 13, icu_pattern::PATTERN_LITERAL_PART),
-///     ]
+///     "Hello, Alice!"
 /// );
 /// ```
 ///
@@ -344,17 +335,14 @@ where
         for item in it {
             match item {
                 PatternItem::Literal(s) => {
-                    sink.with_part(P::LITERAL_PART, |sink| sink.write_str(s))?;
+                    self.value_provider.map_literal(s).write_to_parts(sink)?;
                 }
                 PatternItem::Placeholder(key) => {
-                    let (element_writeable, part) = self.value_provider.value_for(key);
-                    sink.with_part(part, |sink| {
-                        if let Err(e) = element_writeable.try_write_to_parts(sink)? {
-                            // Keep the first error if there was one
-                            error.get_or_insert(e);
-                        }
-                        Ok(())
-                    })?;
+                    let element_writeable = self.value_provider.value_for(key);
+                    if let Err(e) = element_writeable.try_write_to_parts(sink)? {
+                        // Keep the first error if there was one
+                        error.get_or_insert(e);
+                    }
                 }
             }
             #[cfg(debug_assertions)]

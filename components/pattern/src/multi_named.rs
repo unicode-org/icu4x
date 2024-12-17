@@ -94,22 +94,26 @@ where
     W: Writeable,
 {
     type Error = MissingNamedPlaceholderError<'k>;
-    type W<'a>
-        = Result<&'a W, Self::Error>
+
+    type W<'a> = Result<&'a W, Self::Error>
     where
-        W: 'a,
         Self: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+
+    type L<'a, 'l, L> = &'l L
+    where
+        Self: 'a,
+        L: 'l + Writeable + ?Sized;
+
     #[inline]
-    fn value_for<'a>(
-        &'a self,
-        key: MultiNamedPlaceholderKey<'k>,
-    ) -> (Self::W<'a>, writeable::Part) {
-        let writeable = match self.get(key.0) {
+    fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey<'k>) -> Self::W<'a> {
+        match self.get(key.0) {
             Some(value) => Ok(value),
             None => Err(MissingNamedPlaceholderError { name: key.0 }),
-        };
-        (writeable, crate::PATTERN_PLACEHOLDER_PART)
+        }
+    }
+    #[inline]
+    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+        literal
     }
 }
 
@@ -121,22 +125,26 @@ where
     S: litemap::store::Store<K, W>,
 {
     type Error = MissingNamedPlaceholderError<'k>;
-    type W<'a>
-        = Result<&'a W, Self::Error>
+
+    type W<'a> = Result<&'a W, Self::Error>
     where
-        W: 'a,
         Self: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+
+    type L<'a, 'l, L> = &'l L
+    where
+        Self: 'a,
+        L: 'l + Writeable + ?Sized;
+
     #[inline]
-    fn value_for<'a>(
-        &'a self,
-        key: MultiNamedPlaceholderKey<'k>,
-    ) -> (Self::W<'a>, writeable::Part) {
-        let writeable = match self.get(key.0) {
+    fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey<'k>) -> Self::W<'a> {
+        match self.get(key.0) {
             Some(value) => Ok(value),
             None => Err(MissingNamedPlaceholderError { name: key.0 }),
-        };
-        (writeable, crate::PATTERN_PLACEHOLDER_PART)
+        }
+    }
+    #[inline]
+    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+        literal
     }
 }
 
