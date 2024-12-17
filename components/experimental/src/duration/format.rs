@@ -710,19 +710,28 @@ mod tests {
             [
                 (0, 6, parts::YEAR),
                 (0, 6, icu_list::parts::ELEMENT),
+                (0, 1, icu_decimal::parts::MINUS_SIGN),
+                (1, 2, icu_decimal::parts::INTEGER),
                 (6, 8, icu_list::parts::LITERAL),
                 (8, 14, parts::MONTH),
                 (8, 14, icu_list::parts::ELEMENT),
+                (8, 9, icu_decimal::parts::INTEGER),
                 (14, 16, icu_list::parts::LITERAL),
                 (16, 21, parts::WEEK),
                 (16, 21, icu_list::parts::ELEMENT),
+                (16, 17, icu_decimal::parts::INTEGER),
                 (21, 23, icu_list::parts::LITERAL),
                 (23, 37, icu_list::parts::ELEMENT),
+                (23, 25, icu_decimal::parts::INTEGER),
                 (23, 25, parts::HOUR),
                 (25, 26, parts::LITERAL),
+                (26, 28, icu_decimal::parts::INTEGER),
                 (26, 28, parts::MINUTE),
                 (28, 29, parts::LITERAL),
-                (29, 37, parts::SECOND)
+                (29, 37, parts::SECOND),
+                (29, 31, icu_decimal::parts::INTEGER),
+                (31, 32, icu_decimal::parts::DECIMAL),
+                (32, 37, icu_decimal::parts::FRACTION),
             ]
         );
     }
