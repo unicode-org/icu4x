@@ -23,6 +23,11 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
+    ///
+    /// Currently the only source supported is loading from "blob" formatted data from a bytes buffer or the file system.
+    ///
+    /// If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
+    /// in their names.
     #[diplomat::rust_link(icu_provider, Mod)]
     pub struct DataProvider(pub DataProviderInner);
 
