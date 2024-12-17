@@ -8,7 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
     use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
@@ -131,18 +134,21 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
-            Ok(Box::new(Collator(call_constructor!(
-                icu_collator::Collator::try_new [r => Ok(r?.static_to_owned())],
-                icu_collator::Collator::try_new_with_any_provider,
-                icu_collator::Collator::try_new_with_buffer_provider,
-                provider,
-                icu_collator::CollatorPreferences::from(&locale.0),
-                icu_collator::CollatorOptions::from(options),
+            let options = options.into();
+            Ok(Box::new(Collator(provider.call_constructor(
+                |provider| {
+                    icu_collator::Collator::try_new_with_buffer_provider(
+                        provider,
+                        (&locale.0).into(),
+                        options,
+                    )
+                },
             )?)))
         }
         /// Compare two strings.

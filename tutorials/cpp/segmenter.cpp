@@ -144,7 +144,6 @@ void test_word_with_options(const std::string_view& str) {
 }
 
 void test_sentence(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
     const auto segmenter = SentenceSegmenter::create();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;

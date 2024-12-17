@@ -20,6 +20,7 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
+class AnyCalendarKind;
 class DateTimeFormatError;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
@@ -43,6 +44,8 @@ public:
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime(const icu4x::DateTime& value) const;
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
+
+  inline icu4x::AnyCalendarKind calendar_kind() const;
 
   inline const icu4x::capi::DateTimeFormatter* AsFFI() const;
   inline icu4x::capi::DateTimeFormatter* AsFFI();

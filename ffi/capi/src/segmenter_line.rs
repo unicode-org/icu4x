@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale_core::ffi::Locale;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
     use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
@@ -77,14 +78,14 @@ pub mod ffi {
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_auto [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_auto_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider,
-                provider
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
@@ -99,14 +100,14 @@ pub mod ffi {
         /// Burmese, Khmer, Lao, and Thai,  using a particular data source.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_lstm [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_lstm_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider,
-                provider,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
@@ -121,14 +122,14 @@ pub mod ffi {
         /// Burmese, Khmer, Lao, and Thai, using a particular data source.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_dictionary [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider,
-                provider,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider(provider)
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
@@ -155,6 +156,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options_and_provider")]
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors), named_constructor = "auto_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors), named_constructor = "auto_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: &Locale,
@@ -163,12 +165,12 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_auto_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
-                provider,
-                options,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider(
+                        provider, options,
+                    )
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
@@ -195,6 +197,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options_and_provider")]
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors), named_constructor = "lstm_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors), named_constructor = "lstm_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: &Locale,
@@ -203,12 +206,12 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_lstm_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
-                provider,
-                options,
+            Ok(Box::new(LineSegmenter(provider.call_constructor(
+                |provider| {
+                    icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider(
+                        provider, options,
+                    )
+                },
             )?)))
         }
         /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
@@ -241,6 +244,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options_and_provider")]
         #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors), named_constructor = "dictionary_with_options_and_provider")]
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors), named_constructor = "dictionary_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: &Locale,
@@ -249,13 +253,7 @@ pub mod ffi {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = Some(&content_locale.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_dictionary_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
-                provider,
-                options,
-            )?)))
+            Ok(Box::new(LineSegmenter(provider.call_constructor(|provider| icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider(provider, options))?)))
         }
         /// Segments a string.
         ///

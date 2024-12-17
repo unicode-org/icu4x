@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Error;
-use writeable::{Part, TryWriteable};
+use writeable::{TryWriteable, Writeable};
 
 #[cfg(feature = "alloc")]
 use alloc::{borrow::Cow, boxed::Box};
@@ -110,30 +110,97 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     fn empty() -> &'static Self::Store;
 }
 
-/// Default annotation for the literal portion of a pattern.
-///
-/// For more information, see [`PlaceholderValueProvider`]. For an example, see [`Pattern`].
-///
-/// [`Pattern`]: crate::Pattern
-pub const PATTERN_LITERAL_PART: Part = Part {
-    category: "pattern",
-    value: "literal",
-};
-
-/// Default annotation for the placeholder portion of a pattern.
-///
-/// For more information, see [`PlaceholderValueProvider`]. For an example, see [`Pattern`].
-///
-/// [`Pattern`]: crate::Pattern
-pub const PATTERN_PLACEHOLDER_PART: Part = Part {
-    category: "pattern",
-    value: "placeholder",
-};
-
 /// Trait implemented on collections that can produce [`TryWriteable`]s for interpolation.
 ///
-/// This trait determines the [`Part`]s produced by the writeable. In this crate, implementations
-/// of this trait default to using [`PATTERN_LITERAL_PART`] and [`PATTERN_PLACEHOLDER_PART`].
+/// This trait can add [`Part`]s for individual literals or placeholders. The implementations
+/// of this trait on standard types do not add any [`Part`]s.
+///
+/// # Examples
+///
+/// A custom implementation that adds parts:
+///
+/// ```
+/// use core::str::FromStr;
+/// use icu_pattern::Pattern;
+/// use icu_pattern::DoublePlaceholder;
+/// use icu_pattern::DoublePlaceholderKey;
+/// use icu_pattern::PlaceholderValueProvider;
+/// use writeable::adapters::WithPart;
+/// use writeable::adapters::WriteableAsTryWriteableInfallible;
+/// use writeable::assert_writeable_parts_eq;
+/// use writeable::Part;
+/// use writeable::Writeable;
+///
+/// let pattern = Pattern::<DoublePlaceholder>::try_from_str(
+///     "Hello, {0} and {1}!",
+///     Default::default(),
+/// )
+/// .unwrap();
+///
+/// struct ValuesWithParts<'a>(&'a str, &'a str);
+///
+/// const PART_PLACEHOLDER_0: Part = Part {
+///     category: "custom",
+///     value: "placeholder0",
+/// };
+/// const PART_PLACEHOLDER_1: Part = Part {
+///     category: "custom",
+///     value: "placeholder1",
+/// };
+/// const PART_LITERAL: Part = Part {
+///     category: "custom",
+///     value: "literal",
+/// };
+///
+/// impl PlaceholderValueProvider<DoublePlaceholderKey> for ValuesWithParts<'_> {
+///     type Error = core::convert::Infallible;
+///
+///     type W<'a> = WriteableAsTryWriteableInfallible<WithPart<&'a str>>
+///     where
+///         Self: 'a;
+///
+///     type L<'a, 'l> = WithPart<&'l str>
+///     where
+///         Self: 'a;
+///
+///     #[inline]
+///     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
+///         let writeable = match key {
+///             DoublePlaceholderKey::Place0 => WithPart {
+///                 writeable: self.0,
+///                 part: PART_PLACEHOLDER_0,
+///             },
+///             DoublePlaceholderKey::Place1 => WithPart {
+///                 writeable: self.1,
+///                 part: PART_PLACEHOLDER_1,
+///             },
+///         };
+///         WriteableAsTryWriteableInfallible(writeable)
+///     }
+///
+///     #[inline]
+///     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+///         WithPart {
+///             writeable: literal,
+///             part: PART_LITERAL,
+///         }
+///     }
+/// }
+///
+/// assert_writeable_parts_eq!(
+///     pattern.interpolate(ValuesWithParts("Alice", "Bob")),
+///     "Hello, Alice and Bob!",
+///     [
+///         (0, 7, PART_LITERAL),
+///         (7, 12, PART_PLACEHOLDER_0),
+///         (12, 17, PART_LITERAL),
+///         (17, 20, PART_PLACEHOLDER_1),
+///         (20, 21, PART_LITERAL),
+///     ]
+/// );
+/// ```
+///
+/// [`Part`]: writeable::Part
 pub trait PlaceholderValueProvider<K> {
     type Error;
 
@@ -141,11 +208,19 @@ pub trait PlaceholderValueProvider<K> {
     where
         Self: 'a;
 
-    const LITERAL_PART: Part;
+    type L<'a, 'l>: Writeable
+    where
+        Self: 'a;
 
-    /// Returns the [`TryWriteable`] to substitute for the given placeholder
-    /// and the [`Part`] representing it.
-    fn value_for(&self, key: K) -> (Self::W<'_>, Part);
+    /// Returns the [`TryWriteable`] to substitute for the given placeholder.
+    ///
+    /// See [`PatternItem::Placeholder`]
+    fn value_for(&self, key: K) -> Self::W<'_>;
+
+    /// Maps a literal string to a [`Writeable`] that could contain parts.
+    ///
+    /// See [`PatternItem::Literal`]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l>;
 }
 
 impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
@@ -153,13 +228,19 @@ where
     T: PlaceholderValueProvider<K> + ?Sized,
 {
     type Error = T::Error;
-    type W<'a>
-        = T::W<'a>
+
+    type W<'a> = T::W<'a>
     where
-        T: 'a,
-        'b: 'a;
-    const LITERAL_PART: Part = T::LITERAL_PART;
-    fn value_for(&self, key: K) -> (Self::W<'_>, Part) {
+        Self: 'a;
+
+    type L<'a, 'l> = T::L<'a, 'l>
+    where
+        Self: 'a;
+
+    fn value_for(&self, key: K) -> Self::W<'_> {
         (*self).value_for(key)
+    }
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        (*self).map_literal(literal)
     }
 }

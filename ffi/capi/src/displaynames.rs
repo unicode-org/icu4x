@@ -8,8 +8,11 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{DataError, LocaleParseError};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DataError;
+    use crate::errors::ffi::LocaleParseError;
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
@@ -86,6 +89,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -95,14 +99,9 @@ pub mod ffi {
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
-                call_constructor!(
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_any_provider,
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
-                    provider,
-                    prefs,
+                provider.call_constructor_custom_err(move |provider| icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider, prefs,
                     options,
-                )?,
+                ))?,
             )))
         }
 
@@ -138,6 +137,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -145,14 +145,9 @@ pub mod ffi {
         ) -> Result<Box<RegionDisplayNames>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
-            Ok(Box::new(RegionDisplayNames(call_constructor!(
-                icu_experimental::displaynames::RegionDisplayNames::try_new,
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_any_provider,
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
-                provider,
-                prefs,
+            Ok(Box::new(RegionDisplayNames(provider.call_constructor_custom_err(move |provider| icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider(provider, prefs,
                 options
-            )?)))
+            ))?)))
         }
 
         /// Returns the locale specific display name of a region.

@@ -104,6 +104,7 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
+use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem,
@@ -213,5 +214,48 @@ impl FixedDecimalFormatter {
     /// Formats a [`SignedFixedDecimal`], returning a [`String`].
     pub fn format_to_string(&self, value: &SignedFixedDecimal) -> String {
         self.format(value).write_to_string().into_owned()
+    }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::FixedDecimalFormatter;
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_en = FixedDecimalFormatter::try_new(
+    ///     locale!("en").into(),
+    ///     Default::default()
+    /// )
+    /// .unwrap();
+    ///
+    /// let fmt_bn = FixedDecimalFormatter::try_new(
+    ///     locale!("bn").into(),
+    ///     Default::default()
+    /// )
+    /// .unwrap();
+    ///
+    /// let fmt_zh_nu = FixedDecimalFormatter::try_new(
+    ///     locale!("zh-u-nu-hanidec").into(),
+    ///     Default::default()
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_eq!(fmt_en.numbering_system(), "latn");
+    /// assert_eq!(fmt_bn.numbering_system(), "beng");
+    /// assert_eq!(fmt_zh_nu.numbering_system(), "hanidec");
+    /// ```
+    pub fn numbering_system(&self) -> Value {
+        match Value::try_from_str(self.symbols.get().numsys()) {
+            Ok(v) => v,
+            Err(e) => {
+                debug_assert!(
+                    false,
+                    "Problem converting numbering system ID to Value: {e}"
+                );
+                Value::new_empty()
+            }
+        }
     }
 }
