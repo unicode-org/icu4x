@@ -860,66 +860,65 @@ where
             if !trie_value_has_ccc(ch_and_trie_val.trie_val) {
                 self.pending = Some(ch_and_trie_val);
                 break;
+            } else if !trie_value_indicates_special_non_starter_decomposition(
+                ch_and_trie_val.trie_val,
+            ) {
+                self.buffer
+                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
             } else {
-                if !trie_value_indicates_special_non_starter_decomposition(ch_and_trie_val.trie_val)
-                {
-                    self.buffer
-                        .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
-                } else {
-                    // The Tibetan special cases are starters that decompose into non-starters.
-                    let mapped = match ch_and_trie_val.character {
-                        '\u{0340}' => {
-                            // COMBINING GRAVE TONE MARK
-                            CharacterAndClass::new('\u{0300}', CCC_ABOVE)
-                        }
-                        '\u{0341}' => {
-                            // COMBINING ACUTE TONE MARK
-                            CharacterAndClass::new('\u{0301}', CCC_ABOVE)
-                        }
-                        '\u{0343}' => {
-                            // COMBINING GREEK KORONIS
-                            CharacterAndClass::new('\u{0313}', CCC_ABOVE)
-                        }
-                        '\u{0344}' => {
-                            // COMBINING GREEK DIALYTIKA TONOS
-                            self.buffer
-                                .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
-                            CharacterAndClass::new('\u{0301}', CCC_ABOVE)
-                        }
-                        '\u{0F73}' => {
-                            // TIBETAN VOWEL SIGN II
-                            self.buffer
-                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                            CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
-                        }
-                        '\u{0F75}' => {
-                            // TIBETAN VOWEL SIGN UU
-                            self.buffer
-                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                            CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
-                        }
-                        '\u{0F81}' => {
-                            // TIBETAN VOWEL SIGN REVERSED II
-                            self.buffer
-                                .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                            CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
-                        }
-                        '\u{FF9E}' => {
-                            // HALFWIDTH KATAKANA VOICED SOUND MARK
-                            CharacterAndClass::new('\u{3099}', ccc!(KanaVoicing, 8))
-                        }
-                        '\u{FF9F}' => {
-                            // HALFWIDTH KATAKANA VOICED SOUND MARK
-                            CharacterAndClass::new('\u{309A}', ccc!(KanaVoicing, 8))
-                        }
-                        _ => {
-                            // GIGO case
-                            debug_assert!(false);
-                            CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
-                        }
-                    };
-                    self.buffer.push(mapped);
-                }
+                // The Tibetan special cases are starters that decompose into non-starters.
+                let mapped = match ch_and_trie_val.character {
+                    '\u{0340}' => {
+                        // COMBINING GRAVE TONE MARK
+                        CharacterAndClass::new('\u{0300}', CCC_ABOVE)
+                    }
+                    '\u{0341}' => {
+                        // COMBINING ACUTE TONE MARK
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                    }
+                    '\u{0343}' => {
+                        // COMBINING GREEK KORONIS
+                        CharacterAndClass::new('\u{0313}', CCC_ABOVE)
+                    }
+                    '\u{0344}' => {
+                        // COMBINING GREEK DIALYTIKA TONOS
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
+                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                    }
+                    '\u{0F73}' => {
+                        // TIBETAN VOWEL SIGN II
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
+                    }
+                    '\u{0F75}' => {
+                        // TIBETAN VOWEL SIGN UU
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
+                    }
+                    '\u{0F81}' => {
+                        // TIBETAN VOWEL SIGN REVERSED II
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
+                    }
+                    '\u{FF9E}' => {
+                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                        CharacterAndClass::new('\u{3099}', ccc!(KanaVoicing, 8))
+                    }
+                    '\u{FF9F}' => {
+                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                        CharacterAndClass::new('\u{309A}', ccc!(KanaVoicing, 8))
+                    }
+                    _ => {
+                        // GIGO case
+                        debug_assert!(false);
+                        CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
+                    }
+                };
+                self.buffer.push(mapped);
             }
         }
         // Slicing succeeds by construction; we've always ensured that `combining_start`
