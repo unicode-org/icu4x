@@ -98,6 +98,14 @@ final class DateFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
+  /// Returns the calendar system used in this formatter.
+  ///
+  /// See the [Rust documentation for `calendar_bcp47`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.calendar_bcp47) for more information.
+  AnyCalendarKind calendarBcp47() {
+    final result = _icu4x_DateFormatter_calendar_bcp47_mv1(_ffi);
+    return AnyCalendarKind.values[result];
+  }
 }
 
 @meta.RecordUse()
@@ -134,3 +142,8 @@ external _ResultVoidInt32 _icu4x_DateFormatter_format_datetime_mv1(ffi.Pointer<f
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_iso_datetime_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_DateFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_calendar_bcp47_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_DateFormatter_calendar_bcp47_mv1(ffi.Pointer<ffi.Opaque> self);
