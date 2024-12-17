@@ -34,11 +34,8 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 ///
 /// # Format to Parts
 ///
-/// [`Pattern`] supports interpolating with [writeable::Part]s, annotations for whether the
-/// substring was a placeholder or a literal.
-///
-/// By default, the substrings are annotated with [`PATTERN_LITERAL_PART`] and
-/// [`PATTERN_PLACEHOLDER_PART`]. This can be customized with [`PlaceholderValueProvider`].
+/// [`Pattern`] propagates [`Part`]s from inner writeables. In addition, it supports annotating
+/// [`Part`]s for individual literals or placeholders via the [`PlaceholderValueProvider`] trait.
 ///
 /// # Examples
 ///
@@ -65,6 +62,7 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
 /// [`DoublePlaceholder`]: crate::DoublePlaceholder
 /// [`MultiNamedPlaceholder`]: crate::MultiNamedPlaceholder
+/// [`Part`]: writeable::Part
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[repr(transparent)]
 pub struct Pattern<B: PatternBackend> {

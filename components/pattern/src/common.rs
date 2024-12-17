@@ -199,6 +199,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///     ]
 /// );
 /// ```
+///
+/// [`Part`]: writeable::Part
 pub trait PlaceholderValueProvider<K> {
     type Error;
 
