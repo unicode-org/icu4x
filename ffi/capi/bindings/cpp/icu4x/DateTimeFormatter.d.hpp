@@ -45,7 +45,7 @@ public:
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
 
-  inline icu4x::AnyCalendarKind calendar_bcp47() const;
+  inline icu4x::AnyCalendarKind calendar_kind() const;
 
   inline const icu4x::capi::DateTimeFormatter* AsFFI() const;
   inline icu4x::capi::DateTimeFormatter* AsFFI();

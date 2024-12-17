@@ -44,7 +44,7 @@ namespace capi {
     typedef struct icu4x_DateFormatter_format_iso_datetime_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_DateFormatter_format_iso_datetime_mv1_result;
     icu4x_DateFormatter_format_iso_datetime_mv1_result icu4x_DateFormatter_format_iso_datetime_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
-    icu4x::capi::AnyCalendarKind icu4x_DateFormatter_calendar_bcp47_mv1(const icu4x::capi::DateFormatter* self);
+    icu4x::capi::AnyCalendarKind icu4x_DateFormatter_calendar_kind_mv1(const icu4x::capi::DateFormatter* self);
     
     
     void icu4x_DateFormatter_destroy_mv1(DateFormatter* self);
@@ -102,8 +102,8 @@ inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::DateForm
   return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Err<icu4x::DateTimeFormatError>(icu4x::DateTimeFormatError::FromFFI(result.err)));
 }
 
-inline icu4x::AnyCalendarKind icu4x::DateFormatter::calendar_bcp47() const {
-  auto result = icu4x::capi::icu4x_DateFormatter_calendar_bcp47_mv1(this->AsFFI());
+inline icu4x::AnyCalendarKind icu4x::DateFormatter::calendar_kind() const {
+  auto result = icu4x::capi::icu4x_DateFormatter_calendar_kind_mv1(this->AsFFI());
   return icu4x::AnyCalendarKind::FromFFI(result);
 }
 

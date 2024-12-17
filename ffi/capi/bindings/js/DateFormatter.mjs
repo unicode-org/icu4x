@@ -173,8 +173,8 @@ export class DateFormatter {
         }
     }
 
-    calendarBcp47() {
-        const result = wasm.icu4x_DateFormatter_calendar_bcp47_mv1(this.ffiValue);
+    calendarKind() {
+        const result = wasm.icu4x_DateFormatter_calendar_kind_mv1(this.ffiValue);
     
         try {
             return new AnyCalendarKind(diplomatRuntime.internalConstructor, result);

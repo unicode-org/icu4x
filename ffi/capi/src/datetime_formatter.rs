@@ -309,8 +309,8 @@ pub mod ffi {
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_bcp47, FnInStruct)]
-        pub fn calendar_bcp47(&self) -> AnyCalendarKind {
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
             self.0.calendar_kind().into()
         }
     }
@@ -381,8 +381,8 @@ pub mod ffi {
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_bcp47, FnInStruct)]
-        pub fn calendar_bcp47(&self) -> AnyCalendarKind {
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
             self.0.calendar_kind().into()
         }
     }

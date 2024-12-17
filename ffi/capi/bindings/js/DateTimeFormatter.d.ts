@@ -28,5 +28,5 @@ export class DateTimeFormatter {
 
     formatIsoDatetime(value: IsoDateTime): string;
 
-    calendarBcp47(): AnyCalendarKind;
+    calendarKind(): AnyCalendarKind;
 }

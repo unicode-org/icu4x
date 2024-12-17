@@ -43,7 +43,7 @@ icu4x_DateFormatter_format_datetime_mv1_result icu4x_DateFormatter_format_dateti
 typedef struct icu4x_DateFormatter_format_iso_datetime_mv1_result {union { DateTimeFormatError err;}; bool is_ok;} icu4x_DateFormatter_format_iso_datetime_mv1_result;
 icu4x_DateFormatter_format_iso_datetime_mv1_result icu4x_DateFormatter_format_iso_datetime_mv1(const DateFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 
-AnyCalendarKind icu4x_DateFormatter_calendar_bcp47_mv1(const DateFormatter* self);
+AnyCalendarKind icu4x_DateFormatter_calendar_kind_mv1(const DateFormatter* self);
 
 
 void icu4x_DateFormatter_destroy_mv1(DateFormatter* self);
