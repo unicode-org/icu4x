@@ -95,11 +95,13 @@ where
 {
     type Error = MissingNamedPlaceholderError<'k>;
 
-    type W<'a> = Result<&'a W, Self::Error>
+    type W<'a>
+        = Result<&'a W, Self::Error>
     where
         Self: 'a;
 
-    type L<'a, 'l> = &'l str
+    type L<'a, 'l>
+        = &'l str
     where
         Self: 'a;
 
@@ -125,11 +127,13 @@ where
 {
     type Error = MissingNamedPlaceholderError<'k>;
 
-    type W<'a> = Result<&'a W, Self::Error>
+    type W<'a>
+        = Result<&'a W, Self::Error>
     where
         Self: 'a;
 
-    type L<'a, 'l> = &'l str
+    type L<'a, 'l>
+        = &'l str
     where
         Self: 'a;
 
