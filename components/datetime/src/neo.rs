@@ -783,7 +783,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///     YMD::long(),
     /// )
     /// .unwrap();
-    /// 
+    ///
     /// assert_writeable_eq!(
     ///     formatter.format_any_calendar(&Date::try_new_iso(2024, 12, 16).unwrap()),
     ///     "16 ธันวาคม 2567"
