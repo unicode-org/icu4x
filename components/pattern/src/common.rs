@@ -204,10 +204,18 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 pub trait PlaceholderValueProvider<K> {
     type Error;
 
+    /// The type of [`TryWriteable`] returned by [`Self::value_for`].
+    ///
+    /// To return a [`Writeable`], wrap it with [`WriteableAsTryWriteableInfallible`].
+    ///
+    /// [`WriteableAsTryWriteableInfallible`]: writeable::adapters::WriteableAsTryWriteableInfallible
     type W<'a>: TryWriteable<Error = Self::Error>
     where
         Self: 'a;
 
+    /// The type of [`Writeable`] returned by [`Self::map_literal`].
+    ///
+    /// If you are not adding parts, this can be `&'l str`.
     type L<'a, 'l>: Writeable
     where
         Self: 'a;
