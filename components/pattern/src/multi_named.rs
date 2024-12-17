@@ -99,10 +99,9 @@ where
     where
         Self: 'a;
 
-    type L<'a, 'l, L> = &'l L
+    type L<'a, 'l> = &'l str
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     #[inline]
     fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey<'k>) -> Self::W<'a> {
@@ -112,7 +111,7 @@ where
         }
     }
     #[inline]
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         literal
     }
 }
@@ -130,10 +129,9 @@ where
     where
         Self: 'a;
 
-    type L<'a, 'l, L> = &'l L
+    type L<'a, 'l> = &'l str
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     #[inline]
     fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey<'k>) -> Self::W<'a> {
@@ -143,7 +141,7 @@ where
         }
     }
     #[inline]
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         literal
     }
 }

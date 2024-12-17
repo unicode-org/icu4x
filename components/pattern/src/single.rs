@@ -70,16 +70,15 @@ where
     where
         Self: 'a;
 
-    type L<'a, 'l, L> = &'l L
+    type L<'a, 'l> = &'l str
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         WriteableAsTryWriteableInfallible(&self.0)
     }
     #[inline]
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         literal
     }
 }
@@ -94,17 +93,16 @@ where
     where
         Self: 'a;
 
-    type L<'a, 'l, L> = &'l L
+    type L<'a, 'l> = &'l str
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         let [value] = self;
         WriteableAsTryWriteableInfallible(value)
     }
     #[inline]
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         literal
     }
 }

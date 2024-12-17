@@ -159,10 +159,9 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///     where
 ///         Self: 'a;
 ///
-///     type L<'a, 'l, L> = WithPart<&'l L>
+///     type L<'a, 'l> = WithPart<&'l str>
 ///     where
-///         Self: 'a,
-///         L: 'l + Writeable + ?Sized;
+///         Self: 'a;
 ///
 ///     #[inline]
 ///     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
@@ -180,7 +179,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///     }
 ///
 ///     #[inline]
-///     fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+///     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
 ///         WithPart {
 ///             writeable: literal,
 ///             part: PART_LITERAL,
@@ -207,16 +206,19 @@ pub trait PlaceholderValueProvider<K> {
     where
         Self: 'a;
 
-    type L<'a, 'l, L>: Writeable
+    type L<'a, 'l>: Writeable
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     /// Returns the [`TryWriteable`] to substitute for the given placeholder.
+    ///
+    /// See [`PatternItem::Placeholder`]
     fn value_for(&self, key: K) -> Self::W<'_>;
 
-    /// Maps a [`Writeable`] for a literal portion to another [`Writeable`].
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L>;
+    /// Maps a literal string to a [`Writeable`] that could contain parts.
+    ///
+    /// See [`PatternItem::Literal`]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l>;
 }
 
 impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
@@ -229,15 +231,14 @@ where
     where
         Self: 'a;
 
-    type L<'a, 'l, L> = T::L<'a, 'l, L>
+    type L<'a, 'l> = T::L<'a, 'l>
     where
-        Self: 'a,
-        L: 'l + Writeable + ?Sized;
+        Self: 'a;
 
     fn value_for(&self, key: K) -> Self::W<'_> {
         (*self).value_for(key)
     }
-    fn map_literal<'a, 'l, L: Writeable + ?Sized>(&'a self, literal: &'l L) -> Self::L<'a, 'l, L> {
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         (*self).map_literal(literal)
     }
 }
