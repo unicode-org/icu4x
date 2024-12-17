@@ -13,6 +13,7 @@ pub mod ffi {
     };
 
     use crate::{
+        calendar::ffi::AnyCalendarKind,
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
         errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
@@ -306,6 +307,12 @@ pub mod ffi {
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
+
+        /// Returns the calendar system used in this formatter.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
+            self.0.calendar_kind().into()
+        }
     }
 
     #[diplomat::opaque]
@@ -371,6 +378,12 @@ pub mod ffi {
             let any = value.0.to_any();
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
+        }
+
+        /// Returns the calendar system used in this formatter.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
+            self.0.calendar_kind().into()
         }
     }
 }
