@@ -341,6 +341,24 @@ impl AsULE for DataMarkerPathHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for DataMarkerPathHash {}
 
+#[repr(C, packed)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct TaggedDataMarkerHash {
+    prefix: [u8; 10], // "icu4x_tdmh"
+    hash: DataMarkerPathHash,
+    suffix: u8, // "\n"
+}
+
+impl TaggedDataMarkerHash {
+    const fn new(hash: DataMarkerPathHash) -> Self {
+        Self {
+            prefix: *b"icu4x_tdmh",
+            hash,
+            suffix: b'\n',
+        }
+    }
+}
+
 /// The string path of a data marker. For example, "foo@1"
 ///
 /// ```
@@ -358,39 +376,15 @@ unsafe impl EqULE for DataMarkerPathHash {}
 /// # use icu_provider::marker::DataMarkerPath;
 /// const K: DataMarkerPath = icu_provider::marker::data_marker_path!("foo/../bar@1");
 /// ```
-#[derive(Debug, Copy, Clone, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataMarkerPath {
-    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
-    // in a compiled binary.
-    tagged: &'static str,
-    hash: DataMarkerPathHash,
-}
-
-impl PartialEq for DataMarkerPath {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash && self.tagged == other.tagged
-    }
-}
-
-impl Ord for DataMarkerPath {
-    #[inline]
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.tagged.cmp(other.tagged)
-    }
-}
-
-impl PartialOrd for DataMarkerPath {
-    #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.tagged.cmp(other.tagged))
-    }
+    hash: TaggedDataMarkerHash,
 }
 
 impl core::hash::Hash for DataMarkerPath {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        self.hash.hash(state)
+        self.hash.hash.hash(state)
     }
 }
 
@@ -437,8 +431,9 @@ impl DataMarkerPath {
             )
             .to_le_bytes(),
         );
+        let hash = TaggedDataMarkerHash::new(hash);
 
-        Ok(Self { tagged, hash })
+        Ok(Self { hash })
     }
 
     const fn validate_path_manual_slice(
@@ -484,18 +479,6 @@ impl DataMarkerPath {
         }
     }
 
-    /// Gets the path as a static string slice.
-    #[inline]
-    pub const fn as_str(self) -> &'static str {
-        unsafe {
-            // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
-                self.tagged.as_ptr().add(leading_tag!().len()),
-                self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
-            ))
-        }
-    }
-
     /// Gets a platform-independent hash of a [`DataMarkerPath`].
     ///
     /// The hash is 4 bytes and allows for fast comparison.
@@ -514,7 +497,7 @@ impl DataMarkerPath {
     /// ```
     #[inline]
     pub const fn hashed(self) -> DataMarkerPathHash {
-        self.hash
+        self.hash.hash
     }
 }
 
@@ -642,7 +625,7 @@ pub use __data_marker_path as data_marker_path;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str(self.path.as_str())
+        self.path.fmt(f)
     }
 }
 
@@ -743,31 +726,6 @@ fn test_path_syntax() {
 }
 
 #[test]
-fn test_path_to_string() {
-    struct TestCase {
-        pub path: DataMarkerPath,
-        pub expected: &'static str,
-    }
-
-    for cas in [
-        TestCase {
-            path: data_marker_path!("core/cardinal@1"),
-            expected: "core/cardinal@1",
-        },
-        TestCase {
-            path: data_marker_path!("core/maxlengthsubcatg@1"),
-            expected: "core/maxlengthsubcatg@1",
-        },
-        TestCase {
-            path: data_marker_path!("core/cardinal@65535"),
-            expected: "core/cardinal@65535",
-        },
-    ] {
-        assert_eq!(cas.expected, cas.path.as_str());
-    }
-}
-
-#[test]
 fn test_hash_word_32() {
     assert_eq!(0, fxhash_32(b"", 0, 0));
     assert_eq!(0, fxhash_32(b"a", 1, 0));
@@ -807,6 +765,6 @@ fn test_path_hash() {
             hash: DataMarkerPathHash([176, 131, 182, 223]),
         },
     ] {
-        assert_eq!(cas.hash, cas.path.hashed(), "{}", cas.path.as_str());
+        assert_eq!(cas.hash, cas.path.hashed(), "{:?}", cas.path);
     }
 }
