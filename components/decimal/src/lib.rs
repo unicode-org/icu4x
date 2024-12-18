@@ -181,9 +181,9 @@ impl FixedDecimalFormatter {
             })?
             .payload;
 
-        let mut resolved_nu = symbols.get().numsys();
+        let resolved_nu = symbols.get().numsys();
 
-        if let Some(provided_nu) = provided_nu {
+        let digits = if let Some(provided_nu) = provided_nu {
             // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
             // the resolved one may end up being different due to a lack of data or fallback, e.g. attempting to resolve en-u-nu-thai will likely produce en-u-nu-Latn data.
             //
@@ -191,20 +191,50 @@ impl FixedDecimalFormatter {
             // - Explicitly specified numbering system that is the same as the resolved numbering system: This code effects no change
             // - Explicitly specified numbering system that is different from the resolved one: This code overrides it, but the symbols are still correctly loaded for the locale
             // - No explicitly specified numbering system: The default numbering system for the locale is used.
+            // - Explicitly specified numbering system without data for it: this falls back to the resolved numbering system
             //
-            // This does not handle the case where there is no data for the explicitly specified numbering system, instead returning an error. e.g. formatting en-u-nu-wxyz will produce an error.
-            resolved_nu = provided_nu;
-        }
+            // Assuming the provider has symbols for en-u-nu-latn, th-u-nu-thai (default for th), and th-u-nu-latin, this produces the following behavior:
+            //
+            // | Input Locale | Symbols | Digits | Return value of `numbering_system()` |
+            // |--------------|---------|--------|--------------------------------------|
+            // | en           | latn    | latn   | latn                                 |
+            // | en-u-nu-thai | latn    | thai   | thai                                 |
+            // | th           | thai    | thai   | thai                                 |
+            // | th-u-nu-latn | latn    | latn   | latn                                 |
+            // | en-u-nu-wxyz | latn    | latn   | latn                                 |
+            // | th-u-nu-wxyz | thai    | thai   | thai                                 |
 
-        let digits = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(resolved_nu),
-                    &locale!("und").into(),
-                ),
-                ..Default::default()
-            })?
-            .payload;
+            // Attempt to load the provided numbering system first
+            provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic(provided_nu),
+                        &locale!("und").into(),
+                    ),
+                    ..Default::default()
+                })
+                // If it doesn't exist, fall back to the resolved numbering system
+                .or_else(|_err| {
+                    provider.load(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            DataMarkerAttributes::from_str_or_panic(resolved_nu),
+                            &locale!("und").into(),
+                        ),
+                        ..Default::default()
+                    })
+                })?
+                .payload
+        } else {
+            provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic(resolved_nu),
+                        &locale!("und").into(),
+                    ),
+                    ..Default::default()
+                })?
+                .payload
+        };
 
         Ok(Self {
             options,
