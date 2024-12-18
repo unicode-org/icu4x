@@ -1024,10 +1024,10 @@
               "short": "GGGGGy/M/d"
             },
             "dateSkeletons": {
-              "full": "GyMMMEEEEd",
-              "long": "GyMMMd",
+              "full": "GyMEEEEd",
+              "long": "GyMd",
               "medium": {
-                "_value": "GyMMMd",
+                "_value": "GyMd",
                 "_numbers": "y=jpanyear"
               },
               "short": "GGGGGyMd"
