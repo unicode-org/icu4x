@@ -23,6 +23,4 @@ export class FixedDecimalFormatter {
     static createWithManualData(plusSignPrefix: string, plusSignSuffix: string, minusSignPrefix: string, minusSignSuffix: string, decimalSeparator: string, groupingSeparator: string, primaryGroupSize: number, secondaryGroupSize: number, minGroupSize: number, digits: Array<codepoint>, groupingStrategy: FixedDecimalGroupingStrategy | null): FixedDecimalFormatter;
 
     format(value: SignedFixedDecimal): string;
-
-    numberingSystem(): string;
 }

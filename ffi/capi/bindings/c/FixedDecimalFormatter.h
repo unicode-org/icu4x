@@ -31,8 +31,6 @@ icu4x_FixedDecimalFormatter_create_with_manual_data_mv1_result icu4x_FixedDecima
 
 void icu4x_FixedDecimalFormatter_format_mv1(const FixedDecimalFormatter* self, const SignedFixedDecimal* value, DiplomatWrite* write);
 
-void icu4x_FixedDecimalFormatter_numbering_system_mv1(const FixedDecimalFormatter* self, DiplomatWrite* write);
-
 
 void icu4x_FixedDecimalFormatter_destroy_mv1(FixedDecimalFormatter* self);
 
