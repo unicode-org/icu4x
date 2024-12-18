@@ -1482,8 +1482,7 @@ macro_rules! normalizer_methods {
             if up_to == text.len() {
                 return Cow::Borrowed(text);
             }
-            let mut ret = Vec::new();
-            ret.reserve(text.len());
+            let mut ret = Vec::with_capacity(text.len());
             let (head, tail) = text.split_at(up_to);
             ret.extend_from_slice(head);
             let _ = self.normalize_utf16_to(tail, &mut ret);
