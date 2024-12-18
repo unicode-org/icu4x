@@ -107,10 +107,10 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
     ]
     .map(|(file_name, raw_content)| BenchDataContent {
         file_name: file_name.to_owned(),
-        nfc: nfc_normalizer.normalize(raw_content),
-        nfd: nfd_normalizer.normalize(raw_content),
-        nfkc: nfkc_normalizer.normalize(raw_content),
-        nfkd: nfkd_normalizer.normalize(raw_content),
+        nfc: nfc_normalizer.normalize(raw_content).to_string(),
+        nfd: nfd_normalizer.normalize(raw_content).to_string(),
+        nfkc: nfkc_normalizer.normalize(raw_content).to_string(),
+        nfkd: nfkd_normalizer.normalize(raw_content).to_string(),
     })
 }
 
