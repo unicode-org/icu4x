@@ -11,6 +11,7 @@ use crate::transliterate::provider::{
     RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker,
 };
 use crate::transliterate::transliterator::hardcoded::Case;
+use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -78,8 +79,9 @@ impl ComposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
+        if let Cow::Owned(buf) = self.0.as_borrowed().normalize(rep.as_str_modifiable()) {
+            rep.replace_modifiable_with_str(&buf);
+        } // else the input was already normalized, so no need to modify `rep`
     }
 }
 
@@ -114,8 +116,9 @@ impl DecomposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
+        if let Cow::Owned(buf) = self.0.as_borrowed().normalize(rep.as_str_modifiable()) {
+            rep.replace_modifiable_with_str(&buf);
+        } // else the input was already normalized, so no need to modify `rep`
     }
 }
 
