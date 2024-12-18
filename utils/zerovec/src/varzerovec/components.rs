@@ -571,7 +571,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> Iterator for VarZeroSliceIter<
 
 impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> ExactSizeIterator for VarZeroSliceIter<'a, T, F> {
     fn len(&self) -> usize {
-        self.components.len()
+        self.components.len() - self.index
     }
 }
 
