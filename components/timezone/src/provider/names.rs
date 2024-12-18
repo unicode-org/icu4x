@@ -14,41 +14,8 @@
 
 use crate::TimeZoneBcp47Id;
 use icu_provider::prelude::*;
-use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTrie};
+use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{VarZeroVec, ZeroVec};
-
-/// A mapping from lowercase IANA time zone identifiers to BCP-47 time zone identifiers.
-///
-/// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(marker(
-    IanaToBcp47MapV1Marker,
-    "time_zone/iana_to_bcp47@1",
-    singleton
-))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct IanaToBcp47MapV1<'data> {
-    /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
-    /// The IANA identifiers are lowercase.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroTrie<ZeroVec<'data, u8>>,
-    /// A sorted list of BCP-47 time zone identifiers.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    // Note: this is 9739B as `ZeroVec<TimeZoneBcp47Id>` (`ZeroVec<TinyStr8>`)
-    // and 9335B as `VarZeroVec<str>`
-    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
-    /// An XxHash64 checksum of [`Self::bcp47_ids`].
-    pub bcp47_ids_checksum: u64,
-}
 
 /// [`IanaToBcp47MapV3`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
 ///
@@ -119,13 +86,13 @@ pub struct IanaToBcp47MapV3<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {
-    /// An XxHash64 checksum of [`IanaToBcp47MapV1::bcp47_ids`].
+    /// An XxHash64 checksum of [`IanaToBcp47MapV3::bcp47_ids`].
     ///
-    /// The checksum here should match the checksum in [`IanaToBcp47MapV1`]
+    /// The checksum here should match the checksum in [`IanaToBcp47MapV3`]
     /// if these were generated from the same data set.
     pub bcp47_ids_checksum: u64,
     /// The IANA time zone identifier corresponding to the BCP-47 ID in
-    /// [`IanaToBcp47MapV1::bcp47_ids`].
+    /// [`IanaToBcp47MapV3::bcp47_ids`].
     ///
     /// Since there can be more than one IANA identifier for a particular
     /// BCP-47 identifier, this list contains only the current canonical
