@@ -31,7 +31,7 @@ fn main() {
                 if !GeneralCategoryGroup::Letter.contains(gc.get(ch)) {
                     continue;
                 }
-                let mut buf = [u8; 4];
+                let mut buf = [0u8; 4];
                 let nfd = decomposer.normalize_utf8(ch.encode_utf8(&mut buf).as_bytes());
                 let mut data: Option<GreekPrecomposedLetterData> = None;
 
