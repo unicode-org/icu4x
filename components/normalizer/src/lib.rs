@@ -91,6 +91,7 @@ use crate::provider::CanonicalDecompositionDataV2Marker;
 use crate::provider::CompatibilityDecompositionDataV2Marker;
 use crate::provider::DecompositionDataV2;
 use crate::provider::Uts46DecompositionDataV2Marker;
+use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::REPLACEMENT_CHARACTER;
@@ -1442,12 +1443,18 @@ macro_rules! decomposing_normalize_to {
 
 macro_rules! normalizer_methods {
     () => {
-        /// Normalize a string slice into a `String`.
-        pub fn normalize(&self, text: &str) -> String {
+        /// Normalize a string slice into a `Cow<'a, str>`.
+        pub fn normalize<'a>(&self, text: &'a str) -> Cow<'a, str> {
+            let up_to = self.is_normalized_up_to(text);
+            if up_to == text.len() {
+                return Cow::Borrowed(text);
+            }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let _ = self.normalize_to(text, &mut ret);
-            ret
+            let (head, tail) = text.split_at(up_to);
+            ret.push_str(head);
+            let _ = self.normalize_to(tail, &mut ret);
+            Cow::Owned(ret)
         }
 
         /// Return the index a string slice is normalized up to.
@@ -1466,14 +1473,20 @@ macro_rules! normalizer_methods {
             sink.finished()
         }
 
-        /// Normalize a slice of potentially-invalid UTF-16 into a `Vec`.
+        /// Normalize a slice of potentially-invalid UTF-16 into a `Cow<'a, [u16]>`.
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        pub fn normalize_utf16(&self, text: &[u16]) -> Vec<u16> {
-            let mut ret = Vec::new();
-            let _ = self.normalize_utf16_to(text, &mut ret);
-            ret
+        pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
+            let up_to = self.is_normalized_utf16_up_to(text);
+            if up_to == text.len() {
+                return Cow::Borrowed(text);
+            }
+            let mut ret = Vec::with_capacity(text.len());
+            let (head, tail) = text.split_at(up_to);
+            ret.extend_from_slice(head);
+            let _ = self.normalize_utf16_to(tail, &mut ret);
+            Cow::Owned(ret)
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
@@ -1494,15 +1507,25 @@ macro_rules! normalizer_methods {
             sink.finished()
         }
 
-        /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
+        /// Normalize a slice of potentially-invalid UTF-8 into a `Cow<'a, str>`.
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
-        pub fn normalize_utf8(&self, text: &[u8]) -> String {
+        pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
+            let up_to = self.is_normalized_utf8_up_to(text);
+            if up_to == text.len() {
+                // SAFETY: The normalization check also checks for
+                // UTF-8 well-formedness.
+                return Cow::Borrowed(unsafe { core::str::from_utf8_unchecked(text) });
+            }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let _ = self.normalize_utf8_to(text, &mut ret);
-            ret
+            let (head, tail) = text.split_at(up_to);
+            // SAFETY: The normalization check also checks for
+            // UTF-8 well-formedness.
+            ret.push_str(unsafe { core::str::from_utf8_unchecked(head) });
+            let _ = self.normalize_utf8_to(tail, &mut ret);
+            Cow::Owned(ret)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to

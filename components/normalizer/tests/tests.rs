@@ -1670,11 +1670,11 @@ fn test_utf16_basic() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     assert_eq!(
-        normalizer.normalize_utf16(&[0x0061]).as_slice(),
+        normalizer.normalize_utf16(&[0x0061]).as_ref(),
         [0x0061].as_slice()
     );
     assert_eq!(
-        normalizer.normalize_utf16(&[0x0300, 0x0323]).as_slice(),
+        normalizer.normalize_utf16(&[0x0300, 0x0323]).as_ref(),
         [0x0323, 0x0300].as_slice()
     );
 }
