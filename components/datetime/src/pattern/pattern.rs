@@ -75,6 +75,34 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// assert_eq!(actual_components_bag, expected_components_bag);
 /// ```
 ///
+/// Check the hour cycle of a resolved pattern:
+///
+/// ```
+/// use icu::calendar::Time;
+/// use icu::datetime::fields::components;
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::TimeFormatter;
+/// use icu::locale::locale;
+/// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
+/// use writeable::assert_writeable_eq;
+///
+/// let pattern = TimeFormatter::try_new(
+///     locale!("es-MX").into(),
+///     T::medium(),
+/// )
+/// .unwrap()
+/// // The pattern can depend on the datetime being formatted.
+/// .format(&Time::try_new(12, 0, 0, 0).unwrap())
+/// .pattern();
+///
+/// assert_writeable_eq!(pattern, "hh:mm:ss a");
+///
+/// // Get the hour cycle from the resolved components:
+/// let components = components::Bag::from(&pattern);
+/// assert_eq!(components.hour_cycle, Some(HourCycle::H12));
+/// ```
+///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 /// [`FormattedDateTime::pattern`]: crate::FormattedDateTime::pattern
 /// [`TypedDateTimeNames`]: crate::pattern::TypedDateTimeNames

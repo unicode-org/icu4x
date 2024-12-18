@@ -870,6 +870,9 @@ impl_display_with_writeable!(FormattedDateTime<'_>);
 
 impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
+    ///
+    /// From the pattern, one can check the properties of the included components, such as
+    /// the hour cycle being used for formatting. See [`DateTimePattern`].
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
     }
