@@ -105,14 +105,12 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
-use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem,
 };
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
-use tinystr::TinyStr8;
 use writeable::Writeable;
 
 size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 96);
@@ -143,7 +141,6 @@ define_preferences!(
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2Marker>,
-    numsys: TinyStr8,
     digits: DataPayload<provider::DecimalDigitsV1Marker>,
 }
 
@@ -219,34 +216,27 @@ impl FixedDecimalFormatter {
             let resolved_nu = symbols.get().numsys();
 
             // Attempt to load the provided numbering system first
-            let provided_digits = provider.load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(provided_nu),
-                    &locale!("und").into(),
-                ),
-                ..Default::default()
-            });
-
-            let (numsys, digits) = if let Ok(provided_digits) = provided_digits {
-                (provided_nu, provided_digits.payload)
-            } else {
-                let digits = provider
-                    .load(DataRequest {
+            let digits = provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic(provided_nu),
+                        &locale!("und").into(),
+                    ),
+                    ..Default::default()
+                })
+                .or_else(|_err| {
+                    provider.load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             DataMarkerAttributes::from_str_or_panic(resolved_nu),
                             &locale!("und").into(),
                         ),
                         ..Default::default()
-                    })?
-                    .payload;
-
-                (resolved_nu, digits)
-            };
-            let numsys = numsys.parse().unwrap();
+                    })
+                })?
+                .payload;
             Ok(Self {
                 options,
                 symbols,
-                numsys,
                 digits,
             })
         } else {
@@ -271,11 +261,9 @@ impl FixedDecimalFormatter {
                     ..Default::default()
                 })?
                 .payload;
-            let numsys = resolved_nu.parse().unwrap();
             Ok(Self {
                 options,
                 symbols,
-                numsys,
                 digits,
             })
         }
@@ -295,54 +283,11 @@ impl FixedDecimalFormatter {
     pub fn format_to_string(&self, value: &SignedFixedDecimal) -> String {
         self.format(value).write_to_string().into_owned()
     }
-
-    /// Gets the resolved numbering system identifier of this formatter.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::decimal::FixedDecimalFormatter;
-    /// use icu::locale::locale;
-    ///
-    /// let fmt_en = FixedDecimalFormatter::try_new(
-    ///     locale!("en").into(),
-    ///     Default::default()
-    /// )
-    /// .unwrap();
-    ///
-    /// let fmt_bn = FixedDecimalFormatter::try_new(
-    ///     locale!("bn").into(),
-    ///     Default::default()
-    /// )
-    /// .unwrap();
-    ///
-    /// let fmt_zh_nu = FixedDecimalFormatter::try_new(
-    ///     locale!("zh-u-nu-hanidec").into(),
-    ///     Default::default()
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_eq!(fmt_en.numbering_system(), "latn");
-    /// assert_eq!(fmt_bn.numbering_system(), "beng");
-    /// assert_eq!(fmt_zh_nu.numbering_system(), "hanidec");
-    /// ```
-    pub fn numbering_system(&self) -> Value {
-        match Value::try_from_str(&self.numsys) {
-            Ok(v) => v,
-            Err(e) => {
-                debug_assert!(
-                    false,
-                    "Problem converting numbering system ID to Value: {e}"
-                );
-                Value::new_empty()
-            }
-        }
-    }
 }
 
 #[test]
 fn test_numbering_resolution_fallback() {
-    fn test_locale(locale: icu_locale_core::Locale, expected_numsys: &str, expected_format: &str) {
+    fn test_locale(locale: icu_locale_core::Locale, expected_format: &str) {
         let formatter = FixedDecimalFormatter::try_new((&locale).into(), Default::default())
             .expect("Must load");
         let fd = 1234.into();
@@ -351,24 +296,19 @@ fn test_numbering_resolution_fallback() {
             expected_format,
             "Correct format for {locale}"
         );
-        assert_eq!(
-            formatter.numbering_system(),
-            expected_numsys,
-            "Correct numbering system for {locale}"
-        );
     }
 
     // Loading en with default latn numsys
-    test_locale(locale!("en"), "latn", "1,234");
+    test_locale(locale!("en"), "1,234");
     // Loading en with arab numsys not present in symbols data will mix en symbols with arab digits
-    test_locale(locale!("en-u-nu-arab"), "arab", "١,٢٣٤");
+    test_locale(locale!("en-u-nu-arab"), "١,٢٣٤");
     // Loading ar-EG with default (arab) numsys
-    test_locale(locale!("ar-EG"), "arab", "١٬٢٣٤");
+    test_locale(locale!("ar-EG"), "١٬٢٣٤");
     // Loading ar-EG with overridden latn numsys, present in symbols data, uses ar-EG-u-nu-latn symbols data
-    test_locale(locale!("ar-EG-u-nu-latn"), "latn", "1,234");
+    test_locale(locale!("ar-EG-u-nu-latn"), "1,234");
     // Loading ar-EG with overridden thai numsys, not present in symbols data, uses ar-EG symbols data + thai digits
-    test_locale(locale!("ar-EG-u-nu-thai"), "thai", "๑٬๒๓๔");
+    test_locale(locale!("ar-EG-u-nu-thai"), "๑٬๒๓๔");
     // Loading with nonexistant numbering systems falls back to default
-    test_locale(locale!("en-u-nu-wxyz"), "latn", "1,234");
-    test_locale(locale!("ar-EG-u-nu-wxyz"), "arab", "١٬٢٣٤");
+    test_locale(locale!("en-u-nu-wxyz"), "1,234");
+    test_locale(locale!("ar-EG-u-nu-wxyz"), "١٬٢٣٤");
 }
