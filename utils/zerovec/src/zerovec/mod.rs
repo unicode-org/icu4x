@@ -11,6 +11,7 @@ mod serde;
 mod slice;
 
 pub use slice::ZeroSlice;
+pub use slice::ZeroSliceIter;
 
 use crate::ule::*;
 use alloc::borrow::Cow;
