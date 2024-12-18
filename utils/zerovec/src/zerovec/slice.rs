@@ -363,8 +363,8 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + ExactSizeIterator<Item = T> + '_ {
-        self.as_ule_slice().iter().copied().map(T::from_unaligned)
+    pub fn iter<'a>(&'a self) -> ZeroSliceIter<'a, T> {
+        ZeroSliceIter(self.as_ule_slice().iter())
     }
 
     /// Returns a tuple with the first element and a subslice of the remaining elements.
@@ -398,6 +398,29 @@ where
             ));
         }
         None
+    }
+}
+
+/// An iterator over elements in a VarZeroVec
+#[derive(Debug)]
+pub struct ZeroSliceIter<'a, T: AsULE>(core::slice::Iter<'a, T::ULE>);
+
+impl<'a, T: AsULE> Iterator for ZeroSliceIter<'a, T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {
+        self.0.next().copied().map(T::from_unaligned)
+    }
+}
+
+impl<'a, T: AsULE> ExactSizeIterator for ZeroSliceIter<'a, T> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<'a, T: AsULE> DoubleEndedIterator for ZeroSliceIter<'a, T> {
+    fn next_back(&mut self) -> Option<T> {
+        self.0.next_back().copied().map(T::from_unaligned)
     }
 }
 

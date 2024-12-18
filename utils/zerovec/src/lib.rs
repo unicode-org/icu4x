@@ -289,6 +289,8 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
+    pub use crate::zerovec::ZeroSliceIter;
+
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
