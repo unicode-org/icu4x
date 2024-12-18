@@ -112,6 +112,7 @@ use icu_locale_core::preferences::{
 };
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
+use tinystr::TinyStr8;
 use writeable::Writeable;
 
 size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 96);
@@ -142,6 +143,7 @@ define_preferences!(
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2Marker>,
+    numsys: TinyStr8,
     digits: DataPayload<provider::DecimalDigitsV1Marker>,
 }
 
@@ -171,61 +173,96 @@ impl FixedDecimalFormatter {
             prefs.locale_prefs,
         );
         let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
-        let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(provided_nu.unwrap_or("")),
-                    &locale,
-                ),
-                ..Default::default()
-            })?
-            .payload;
 
-        let resolved_nu = symbols.get().numsys();
+        // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
+        // the resolved one may end up being different due to a lack of data or fallback, e.g. attempting to resolve en-u-nu-thai will likely produce en-u-nu-Latn data.
+        //
+        // This correctly handles the following cases:
+        // - Explicitly specified numbering system that is the same as the resolved numbering system: This code effects no change
+        // - Explicitly specified numbering system that is different from the resolved one: This code overrides it, but the symbols are still correctly loaded for the locale
+        // - No explicitly specified numbering system: The default numbering system for the locale is used.
+        // - Explicitly specified numbering system without data for it: this falls back to the resolved numbering system
+        //
+        // Assuming the provider has symbols for en-u-nu-latn, th-u-nu-thai (default for th), and th-u-nu-latin, this produces the following behavior:
+        //
+        // | Input Locale | Symbols | Digits | Return value of `numbering_system()` |
+        // |--------------|---------|--------|--------------------------------------|
+        // | en           | latn    | latn   | latn                                 |
+        // | en-u-nu-thai | latn    | thai   | thai                                 |
+        // | th           | thai    | thai   | thai                                 |
+        // | th-u-nu-latn | latn    | latn   | latn                                 |
+        // | en-u-nu-wxyz | latn    | latn   | latn                                 |
+        // | th-u-nu-wxyz | thai    | thai   | thai                                 |
 
-        let digits = if let Some(provided_nu) = provided_nu {
-            // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
-            // the resolved one may end up being different due to a lack of data or fallback, e.g. attempting to resolve en-u-nu-thai will likely produce en-u-nu-Latn data.
-            //
-            // This correctly handles the following cases:
-            // - Explicitly specified numbering system that is the same as the resolved numbering system: This code effects no change
-            // - Explicitly specified numbering system that is different from the resolved one: This code overrides it, but the symbols are still correctly loaded for the locale
-            // - No explicitly specified numbering system: The default numbering system for the locale is used.
-            // - Explicitly specified numbering system without data for it: this falls back to the resolved numbering system
-            //
-            // Assuming the provider has symbols for en-u-nu-latn, th-u-nu-thai (default for th), and th-u-nu-latin, this produces the following behavior:
-            //
-            // | Input Locale | Symbols | Digits | Return value of `numbering_system()` |
-            // |--------------|---------|--------|--------------------------------------|
-            // | en           | latn    | latn   | latn                                 |
-            // | en-u-nu-thai | latn    | thai   | thai                                 |
-            // | th           | thai    | thai   | thai                                 |
-            // | th-u-nu-latn | latn    | latn   | latn                                 |
-            // | en-u-nu-wxyz | latn    | latn   | latn                                 |
-            // | th-u-nu-wxyz | thai    | thai   | thai                                 |
-
-            // Attempt to load the provided numbering system first
-            provider
+        if let Some(provided_nu) = provided_nu {
+            // Load symbols for the locale/numsys pair provided
+            let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::from_str_or_panic(provided_nu),
-                        &locale!("und").into(),
+                        &locale,
                     ),
                     ..Default::default()
                 })
-                // If it doesn't exist, fall back to the resolved numbering system
+                // If it doesn't exist, fall back to the locale
                 .or_else(|_err| {
                     provider.load(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            DataMarkerAttributes::empty(),
+                            &locale,
+                        ),
+                        ..Default::default()
+                    })
+                })?
+                .payload;
+
+            let resolved_nu = symbols.get().numsys();
+
+            // Attempt to load the provided numbering system first
+            let provided_digits = provider.load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(provided_nu),
+                    &locale!("und").into(),
+                ),
+                ..Default::default()
+            });
+
+            let (numsys, digits) = if let Ok(provided_digits) = provided_digits {
+                (provided_nu, provided_digits.payload)
+            } else {
+                let digits = provider
+                    .load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             DataMarkerAttributes::from_str_or_panic(resolved_nu),
                             &locale!("und").into(),
                         ),
                         ..Default::default()
-                    })
-                })?
-                .payload
+                    })?
+                    .payload;
+
+                (resolved_nu, digits)
+            };
+            let numsys = numsys.parse().unwrap();
+            Ok(Self {
+                options,
+                symbols,
+                numsys,
+                digits,
+            })
         } else {
-            provider
+            let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::empty(),
+                        &locale,
+                    ),
+                    ..Default::default()
+                })?
+                .payload;
+
+            let resolved_nu = symbols.get().numsys();
+
+            let digits = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::from_str_or_panic(resolved_nu),
@@ -233,14 +270,15 @@ impl FixedDecimalFormatter {
                     ),
                     ..Default::default()
                 })?
-                .payload
-        };
-
-        Ok(Self {
-            options,
-            symbols,
-            digits,
-        })
+                .payload;
+            let numsys = resolved_nu.parse().unwrap();
+            Ok(Self {
+                options,
+                symbols,
+                numsys,
+                digits,
+            })
+        }
     }
 
     /// Formats a [`SignedFixedDecimal`], returning a [`FormattedFixedDecimal`].
@@ -289,7 +327,7 @@ impl FixedDecimalFormatter {
     /// assert_eq!(fmt_zh_nu.numbering_system(), "hanidec");
     /// ```
     pub fn numbering_system(&self) -> Value {
-        match Value::try_from_str(self.symbols.get().numsys()) {
+        match Value::try_from_str(&self.numsys) {
             Ok(v) => v,
             Err(e) => {
                 debug_assert!(
