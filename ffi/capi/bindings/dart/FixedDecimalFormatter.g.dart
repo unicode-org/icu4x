@@ -72,13 +72,6 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     _icu4x_FixedDecimalFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();
   }
-
-  /// See the [Rust documentation for `numbering_system`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.numbering_system) for more information.
-  String numberingSystem() {
-    final write = _Write();
-    _icu4x_FixedDecimalFormatter_numbering_system_mv1(_ffi, write._ffi);
-    return write.finalize();
-  }
 }
 
 @meta.RecordUse()
@@ -105,8 +98,3 @@ external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_manual_data
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_format_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_FixedDecimalFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_numbering_system_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_FixedDecimalFormatter_numbering_system_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);

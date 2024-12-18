@@ -41,8 +41,6 @@ public:
 
   inline std::string format(const icu4x::SignedFixedDecimal& value) const;
 
-  inline std::string numbering_system() const;
-
   inline const icu4x::capi::FixedDecimalFormatter* AsFFI() const;
   inline icu4x::capi::FixedDecimalFormatter* AsFFI();
   inline static const icu4x::FixedDecimalFormatter* FromFFI(const icu4x::capi::FixedDecimalFormatter* ptr);

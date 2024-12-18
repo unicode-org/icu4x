@@ -127,17 +127,4 @@ export class FixedDecimalFormatter {
             write.free();
         }
     }
-
-    numberingSystem() {
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_FixedDecimalFormatter_numbering_system_mv1(this.ffiValue, write.buffer);
-    
-        try {
-            return write.readString8();
-        }
-        
-        finally {
-            write.free();
-        }
-    }
 }

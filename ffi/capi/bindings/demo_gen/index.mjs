@@ -1087,27 +1087,6 @@ let termini = Object.assign({
         ]
     },
 
-    "FixedDecimalFormatter.numberingSystem": {
-        func: FixedDecimalFormatterDemo.numberingSystem,
-        // For avoiding webpacking minifying issues:
-        funcName: "FixedDecimalFormatter.numberingSystem",
-        parameters: [
-            
-            {
-                name: "Self:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "Self:GroupingStrategy",
-                type: "FixedDecimalGroupingStrategy",
-                typeUse: "enumerator"
-            }
-            
-        ]
-    },
-
     "SignedFixedDecimal.toString": {
         func: SignedFixedDecimalDemo.toString,
         // For avoiding webpacking minifying issues:
