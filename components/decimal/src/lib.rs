@@ -301,3 +301,36 @@ impl FixedDecimalFormatter {
         }
     }
 }
+
+#[test]
+fn test_numbering_resolution_fallback() {
+    fn test_locale(locale: icu_locale_core::Locale, expected_numsys: &str, expected_format: &str) {
+        let formatter = FixedDecimalFormatter::try_new((&locale).into(), Default::default())
+            .expect("Must load");
+        let fd = 1234.into();
+        writeable::assert_writeable_eq!(
+            formatter.format(&fd),
+            expected_format,
+            "Correct format for {locale}"
+        );
+        assert_eq!(
+            formatter.numbering_system(),
+            expected_numsys,
+            "Correct numbering system for {locale}"
+        );
+    }
+
+    // Loading en with default latn numsys
+    test_locale(locale!("en"), "latn", "1,234");
+    // Loading en with arab numsys not present in symbols data will mix en symbols with arab digits
+    test_locale(locale!("en-u-nu-arab"), "arab", "١,٢٣٤");
+    // Loading ar-EG with default (arab) numsys
+    test_locale(locale!("ar-EG"), "arab", "١٬٢٣٤");
+    // Loading ar-EG with overridden latn numsys, present in symbols data, uses ar-EG-u-nu-latn symbols data
+    test_locale(locale!("ar-EG-u-nu-latn"), "latn", "1,234");
+    // Loading ar-EG with overridden thai numsys, not present in symbols data, uses ar-EG symbols data + thai digits
+    test_locale(locale!("ar-EG-u-nu-thai"), "thai", "๑٬๒๓๔");
+    // Loading with nonexistant numbering systems falls back to default
+    test_locale(locale!("en-u-nu-wxyz"), "latn", "1,234");
+    test_locale(locale!("ar-EG-u-nu-wxyz"), "arab", "١٬٢٣٤");
+}
