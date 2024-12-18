@@ -21,15 +21,15 @@ pub struct FormattedUnit<'l> {
 }
 
 impl Writeable for FormattedUnit<'_> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
-        W: core::fmt::Write + ?Sized,
+        W: writeable::PartsWrite + ?Sized,
     {
         self.display_name
             .patterns
             .get(self.value.into(), self.plural_rules)
             .interpolate((self.fixed_decimal_formatter.format(self.value),))
-            .write_to(sink)
+            .write_to_parts(sink)
     }
 }
 

@@ -66,11 +66,13 @@ where
 {
     type Error = Infallible;
 
-    type W<'a> = WriteableAsTryWriteableInfallible<&'a W>
+    type W<'a>
+        = WriteableAsTryWriteableInfallible<&'a W>
     where
         Self: 'a;
 
-    type L<'a, 'l> = &'l str
+    type L<'a, 'l>
+        = &'l str
     where
         Self: 'a;
 
@@ -89,11 +91,13 @@ where
 {
     type Error = Infallible;
 
-    type W<'a> = WriteableAsTryWriteableInfallible<&'a W>
+    type W<'a>
+        = WriteableAsTryWriteableInfallible<&'a W>
     where
         Self: 'a;
 
-    type L<'a, 'l> = &'l str
+    type L<'a, 'l>
+        = &'l str
     where
         Self: 'a;
 

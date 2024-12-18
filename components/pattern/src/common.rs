@@ -229,11 +229,13 @@ where
 {
     type Error = T::Error;
 
-    type W<'a> = T::W<'a>
+    type W<'a>
+        = T::W<'a>
     where
         Self: 'a;
 
-    type L<'a, 'l> = T::L<'a, 'l>
+    type L<'a, 'l>
+        = T::L<'a, 'l>
     where
         Self: 'a;
 
