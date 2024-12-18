@@ -69,6 +69,8 @@ namespace capi {
     
     void icu4x_SignedFixedDecimal_trim_end_mv1(icu4x::capi::SignedFixedDecimal* self);
     
+    void icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(icu4x::capi::SignedFixedDecimal* self);
+    
     void icu4x_SignedFixedDecimal_pad_start_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position);
     
     void icu4x_SignedFixedDecimal_pad_end_mv1(icu4x::capi::SignedFixedDecimal* self, int16_t position);
@@ -205,6 +207,10 @@ inline void icu4x::SignedFixedDecimal::trim_start() {
 
 inline void icu4x::SignedFixedDecimal::trim_end() {
   icu4x::capi::icu4x_SignedFixedDecimal_trim_end_mv1(this->AsFFI());
+}
+
+inline void icu4x::SignedFixedDecimal::trim_end_if_integer() {
+  icu4x::capi::icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(this->AsFFI());
 }
 
 inline void icu4x::SignedFixedDecimal::pad_start(int16_t position) {

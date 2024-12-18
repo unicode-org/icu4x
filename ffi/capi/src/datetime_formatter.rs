@@ -7,17 +7,21 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::{
-        fieldsets::{T, YMD, YMDT},
-        options::Length,
-    };
+    use icu_datetime::fieldsets::{T, YMD, YMDT};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_datetime::options::Length;
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DateTimeFormatterLoadError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
     use crate::{
+        calendar::ffi::AnyCalendarKind,
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
-        errors::ffi::{DateTimeFormatError, DateTimeFormatterLoadError},
-        locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
+        errors::ffi::DateTimeFormatError,
         time::ffi::Time,
     };
 
@@ -55,6 +59,7 @@ pub mod ffi {
 
         /// Creates a new [`TimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -63,14 +68,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = T::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(TimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(TimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`Time`] to a string.
@@ -124,6 +128,7 @@ pub mod ffi {
 
         /// Creates a new [`GregorianDateFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -132,14 +137,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(GregorianDateFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(GregorianDateFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`IsoDate`] to a string.
@@ -189,6 +193,7 @@ pub mod ffi {
 
         /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -197,14 +202,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(GregorianDateTimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`IsoDateTime`] to a string.
@@ -243,6 +247,7 @@ pub mod ffi {
 
         /// Creates a new [`DateFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -251,14 +256,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMD::with_length(Length::from(length));
 
-            Ok(Box::new(DateFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new,
-                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(DateFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Formats a [`Date`] to a string.
@@ -306,6 +310,12 @@ pub mod ffi {
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
+
+        /// Returns the calendar system used in this formatter.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
+            self.0.calendar_kind().into()
+        }
     }
 
     #[diplomat::opaque]
@@ -333,6 +343,7 @@ pub mod ffi {
 
         /// Creates a new [`DateTimeFormatter`] using a particular data source.
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -341,14 +352,13 @@ pub mod ffi {
             let prefs = (&locale.0).into();
             let options = YMDT::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(DateTimeFormatter(call_constructor!(
-                icu_datetime::DateTimeFormatter::try_new,
-                icu_datetime::DateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options
-            )?)))
+            Ok(Box::new(DateTimeFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
         /// Formats a [`DateTime`] to a string.
         pub fn format_datetime(
@@ -371,6 +381,12 @@ pub mod ffi {
             let any = value.0.to_any();
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
+        }
+
+        /// Returns the calendar system used in this formatter.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
+        pub fn calendar_kind(&self) -> AnyCalendarKind {
+            self.0.calendar_kind().into()
         }
     }
 }

@@ -245,6 +245,13 @@ export class SignedFixedDecimal {
         finally {}
     }
 
+    trimEndIfInteger() {wasm.icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(this.ffiValue);
+    
+        try {}
+        
+        finally {}
+    }
+
     padStart(position) {wasm.icu4x_SignedFixedDecimal_pad_start_mv1(this.ffiValue, position);
     
         try {}

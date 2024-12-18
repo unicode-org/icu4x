@@ -21,7 +21,7 @@ use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
 use icu_decimal::FixedDecimalFormatterPreferences;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HourCycle, NumberingSystem,
@@ -765,6 +765,36 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
             _calendar: PhantomData,
         })
     }
+
+    /// Returns the calendar system used in this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::AnyCalendarKind;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("th").into(),
+    ///     YMD::long(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format_any_calendar(&Date::try_new_iso(2024, 12, 16).unwrap()),
+    ///     "16 ธันวาคม 2567"
+    /// );
+    ///
+    /// assert_eq!(formatter.calendar_kind(), AnyCalendarKind::Buddhist);
+    /// assert_eq!(formatter.calendar_kind().as_bcp47_string(), "buddhist");
+    /// ```
+    pub fn calendar_kind(&self) -> AnyCalendarKind {
+        self.calendar.kind()
+    }
 }
 
 /// A formatter optimized for time and time zone formatting.
@@ -840,6 +870,9 @@ impl_display_with_writeable!(FormattedDateTime<'_>);
 
 impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
+    ///
+    /// From the pattern, one can check the properties of the included components, such as
+    /// the hour cycle being used for formatting. See [`DateTimePattern`].
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
     }

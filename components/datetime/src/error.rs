@@ -30,6 +30,12 @@ pub enum DateTimeFormatterLoadError {
     Data(DataError),
 }
 
+impl From<DataError> for DateTimeFormatterLoadError {
+    fn from(error: DataError) -> Self {
+        Self::Data(error)
+    }
+}
+
 /// An error from mixing calendar types in a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[displaydoc("DateTimeFormatter for {this_kind} calendar was given a {date_kind:?} calendar")]

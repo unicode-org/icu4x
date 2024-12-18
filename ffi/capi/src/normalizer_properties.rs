@@ -8,6 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
+    #[cfg(feature = "buffer_provider")]
     use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// Lookup of the Canonical_Combining_Class Unicode property
@@ -52,15 +53,11 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
-                icu_normalizer::properties::CanonicalCombiningClassMap::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider,
-                icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider,
-                provider
-            )?)))
+            Ok(Box::new(CanonicalCombiningClassMap(provider.call_constructor(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider)?)))
         }
 
         #[diplomat::rust_link(
@@ -129,14 +126,16 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalComposition>, DataError> {
-            Ok(Box::new(CanonicalComposition(call_constructor!(
-                icu_normalizer::properties::CanonicalComposition::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalComposition::try_new_with_any_provider,
-                icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider,
-                provider,
+            Ok(Box::new(CanonicalComposition(provider.call_constructor(
+                |provider| {
+                    icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider(
+                        provider,
+                    )
+                },
             )?)))
         }
 
@@ -201,15 +200,11 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(call_constructor!(
-                icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r.static_to_owned())],
-                icu_normalizer::properties::CanonicalDecomposition::try_new_with_any_provider,
-                icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider,
-                provider,
-            )?)))
+            Ok(Box::new(CanonicalDecomposition(provider.call_constructor(icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider)?)))
         }
 
         /// Performs non-recursive canonical decomposition (including for Hangul).

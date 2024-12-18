@@ -278,6 +278,16 @@ pub mod ffi {
             self.0.absolute.trim_end()
         }
 
+        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::trim_end_if_integer, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::UnsignedFixedDecimal::trimmed_end_if_integer,
+            FnInStruct,
+            hidden
+        )]
+        pub fn trim_end_if_integer(&mut self) {
+            self.0.absolute.trim_end_if_integer()
+        }
+
         /// Zero-pad the [`SignedFixedDecimal`] on the left to a particular position
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::pad_start, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::padded_start, FnInStruct, hidden)]
