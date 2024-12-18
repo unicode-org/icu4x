@@ -170,25 +170,36 @@ impl FixedDecimalFormatter {
         let locale = DataLocale::from_preferences_locale::<provider::DecimalSymbolsV2Marker>(
             prefs.locale_prefs,
         );
-        let nu: &str = prefs
-            .numbering_system
-            .as_ref()
-            .map(|s| s.as_str())
-            .unwrap_or("");
+        let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
         let symbols: DataPayload<provider::DecimalSymbolsV2Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(nu),
+                    DataMarkerAttributes::from_str_or_panic(provided_nu.unwrap_or("")),
                     &locale,
                 ),
                 ..Default::default()
             })?
             .payload;
 
+        let mut resolved_nu = symbols.get().numsys();
+
+        if let Some(provided_nu) = provided_nu {
+            // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
+            // the resolved one may end up being different due to a lack of data or fallback, e.g. attempting to resolve en-u-nu-thai will likely produce en-u-nu-Latn data.
+            //
+            // This correctly handles the following cases:
+            // - Explicitly specified numbering system that is the same as the resolved numbering system: This code effects no change
+            // - Explicitly specified numbering system that is different from the resolved one: This code overrides it, but the symbols are still correctly loaded for the locale
+            // - No explicitly specified numbering system: The default numbering system for the locale is used.
+            //
+            // This does not handle the case where there is no data for the explicitly specified numbering system, instead returning an error. e.g. formatting en-u-nu-wxyz will produce an error.
+            resolved_nu = provided_nu;
+        }
+
         let digits = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
+                    DataMarkerAttributes::from_str_or_panic(resolved_nu),
                     &locale!("und").into(),
                 ),
                 ..Default::default()
