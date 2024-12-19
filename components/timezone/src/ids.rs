@@ -5,11 +5,11 @@
 use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::fmt;
 use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, Writeable};
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
-use zerovec::vecs::VarZeroSliceIter;
-use core::fmt;
+use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::names::{
@@ -485,6 +485,56 @@ impl TimeZoneIdMapperBorrowed<'_> {
             }
         }
     }
+
+    /// Returns an iterator over BCP-47 time zone identifiers in alphabetical order.
+    ///
+    /// To iterate over canonical IANA time zone IDs, use
+    /// [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::iter_canonical_iana()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::TimeZoneIdMapper;
+    ///
+    /// let ids = TimeZoneIdMapper::new()
+    ///     .iter_bcp47()
+    ///     .skip(30)
+    ///     .take(5)
+    ///     .map(|id| id.to_string())
+    ///     .collect::<Vec<_>>();
+    ///
+    /// assert_eq!(
+    ///     ids,
+    ///     &[
+    ///         "arush",
+    ///         "asppg",
+    ///         "atvie",
+    ///         "auadl",
+    ///         "aubhq",
+    ///     ]
+    /// );
+    /// ```
+    pub fn iter_bcp47(&self) -> TimeZoneBcp47Iter {
+        TimeZoneBcp47Iter {
+            inner: self.data.bcp47_ids.iter(),
+        }
+    }
+}
+
+/// An iterator over BCP-47 time zone identifiers.
+///
+/// See [`TimeZoneIdMapperBorrowed::iter_bcp47()`]
+#[derive(Debug)]
+pub struct TimeZoneBcp47Iter<'a> {
+    inner: ZeroSliceIter<'a, TimeZoneBcp47Id>,
+}
+
+impl<'a> Iterator for TimeZoneBcp47Iter<'a> {
+    type Item = TimeZoneBcp47Id;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
 }
 
 /// A mapper that supplements [`TimeZoneIdMapper`] with about 8 KB of additional data to
@@ -686,7 +736,10 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
     /// ```
-    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<(TimeZoneIanaIdBorrowed, TimeZoneBcp47Id)> {
+    pub fn canonicalize_iana(
+        &self,
+        iana_id: &str,
+    ) -> Option<(TimeZoneIanaIdBorrowed, TimeZoneBcp47Id)> {
         let trie_value = self.inner.iana_lookup_quick(iana_id)?;
         let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
@@ -727,7 +780,10 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
     /// assert_eq!(mapper.canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<TimeZoneIanaIdBorrowed> {
+    pub fn canonical_iana_from_bcp47(
+        &self,
+        bcp47_id: TimeZoneBcp47Id,
+    ) -> Option<TimeZoneIanaIdBorrowed> {
         let index = self.inner.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let Some(string) = self.data.canonical_iana_ids.get(index) else {
             debug_assert!(false, "index should be in range");
@@ -736,19 +792,49 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
         Some(TimeZoneIanaIdBorrowed(string))
     }
 
-    pub fn iter_iana_ids(&self) -> TimeZoneIanaIdIterator {
-        TimeZoneIanaIdIterator {
-            inner: self.data.canonical_iana_ids.iter()
+    /// Returns an iterator over all canonical IANA time zone identifiers in an arbitrary order.
+    ///
+    /// To iterate over BCP-47 IDs, use [`TimeZoneIdMapperBorrowed::iter_bcp47()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::TimeZoneIdMapperWithFastCanonicalization;
+    ///
+    /// let ids = TimeZoneIdMapperWithFastCanonicalization::new()
+    ///     .iter_canonical_iana()
+    ///     .skip(30)
+    ///     .take(5)
+    ///     .map(|id| id.to_string())
+    ///     .collect::<Vec<_>>();
+    ///
+    /// assert_eq!(
+    ///     ids,
+    ///     &[
+    ///         "America/Argentina/Ushuaia",
+    ///         "Pacific/Pago_Pago",
+    ///         "Europe/Vienna",
+    ///         "Australia/Adelaide",
+    ///         "Australia/Broken_Hill",
+    ///     ]
+    /// );
+    /// ```
+    pub fn iter_canonical_iana(&self) -> TimeZoneCanonicalIanaIter {
+        TimeZoneCanonicalIanaIter {
+            inner: self.data.canonical_iana_ids.iter(),
         }
     }
 }
 
+/// An iterator over canonical IANA time zone identifiers.
+///
+/// See [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::iter_canonical_iana()`]
 #[derive(Debug)]
-pub struct TimeZoneIanaIdIterator<'a> {
-    inner: VarZeroSliceIter<'a, str>
+pub struct TimeZoneCanonicalIanaIter<'a> {
+    inner: VarZeroSliceIter<'a, str>,
 }
 
-impl<'a> Iterator for TimeZoneIanaIdIterator<'a> {
+impl<'a> Iterator for TimeZoneCanonicalIanaIter<'a> {
     type Item = TimeZoneIanaIdBorrowed<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
