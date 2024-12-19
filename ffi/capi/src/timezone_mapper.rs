@@ -9,8 +9,8 @@ pub mod ffi {
     use alloc::boxed::Box;
     use writeable::Writeable;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     use tinystr::TinyAsciiStr;
 
@@ -27,6 +27,7 @@ pub mod ffi {
     pub struct TimeZoneIdMapper(pub icu_timezone::TimeZoneIdMapper);
 
     impl TimeZoneIdMapper {
+        /// Create a new [`TimeZoneIdMapper`] using compiled data
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -36,16 +37,15 @@ pub mod ffi {
             ))
         }
 
+        /// Create a new [`TimeZoneIdMapper`] using a particular data source
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapper>, DataError> {
-            Ok(Box::new(TimeZoneIdMapper(call_constructor!(
-                icu_timezone::TimeZoneIdMapper::new [r => Ok(r.static_to_owned())],
-                icu_timezone::TimeZoneIdMapper::try_new_with_any_provider,
+            Ok(Box::new(TimeZoneIdMapper(provider.call_constructor(
                 icu_timezone::TimeZoneIdMapper::try_new_with_buffer_provider,
-                provider,
             )?)))
         }
 
@@ -141,6 +141,7 @@ pub mod ffi {
     );
 
     impl TimeZoneIdMapperWithFastCanonicalization {
+        /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
@@ -156,7 +157,7 @@ pub mod ffi {
                 icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new().static_to_owned(),
             ))
         }
-
+        /// Create a new [`TimeZoneIdMapperWithFastCanonicalization`] using a particular data source
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
@@ -166,16 +167,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(auto, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {
             Ok(Box::new(TimeZoneIdMapperWithFastCanonicalization(
-                call_constructor!(
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r.static_to_owned())],
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_any_provider,
-                    icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider,
-                    provider,
-                )?,
+                provider.call_constructor(icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider)?,
             )))
         }
 

@@ -99,6 +99,7 @@ pub mod neo_pattern;
 #[cfg(all(feature = "experimental", feature = "serde"))]
 mod neo_serde;
 pub mod options;
+pub mod parts;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;

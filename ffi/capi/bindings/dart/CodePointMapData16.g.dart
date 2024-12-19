@@ -66,12 +66,16 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a map for the `Script` property, using compiled data.
+  ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
   factory CodePointMapData16.script() {
     final result = _icu4x_CodePointMapData16_create_script_mv1();
     return CodePointMapData16._fromFfi(result, []);
   }
 
+  /// Create a map for the `Script` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
   ///
   /// Throws [DataError] on failure.

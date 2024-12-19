@@ -8,9 +8,12 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::errors::ffi::DataError;
     use crate::errors::ffi::FixedDecimalParseError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
@@ -56,17 +59,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "cardinal_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_cardinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_cardinal,
-                icu_plurals::PluralRules::try_new_cardinal_with_any_provider,
-                icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider,
-                provider,
-                prefs
+            Ok(Box::new(PluralRules(provider.call_constructor(
+                |provider| {
+                    icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider(provider, prefs)
+                },
             )?)))
         }
         /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
@@ -86,17 +88,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "ordinal_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ordinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(call_constructor!(
-                icu_plurals::PluralRules::try_new_ordinal,
-                icu_plurals::PluralRules::try_new_ordinal_with_any_provider,
-                icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider,
-                provider,
-                prefs
+            Ok(Box::new(PluralRules(provider.call_constructor(
+                |provider| {
+                    icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider(provider, prefs)
+                },
             )?)))
         }
         /// Get the category for a given number represented as operands

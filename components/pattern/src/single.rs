@@ -65,16 +65,23 @@ where
     W: Writeable,
 {
     type Error = Infallible;
+
     type W<'a>
         = WriteableAsTryWriteableInfallible<&'a W>
     where
-        W: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
-        (
-            WriteableAsTryWriteableInfallible(&self.0),
-            crate::PATTERN_PLACEHOLDER_PART,
-        )
+        Self: 'a;
+
+    type L<'a, 'l>
+        = &'l str
+    where
+        Self: 'a;
+
+    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
+        WriteableAsTryWriteableInfallible(&self.0)
+    }
+    #[inline]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        literal
     }
 }
 
@@ -83,17 +90,24 @@ where
     W: Writeable,
 {
     type Error = Infallible;
+
     type W<'a>
         = WriteableAsTryWriteableInfallible<&'a W>
     where
-        W: 'a;
-    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+        Self: 'a;
+
+    type L<'a, 'l>
+        = &'l str
+    where
+        Self: 'a;
+
+    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         let [value] = self;
-        (
-            WriteableAsTryWriteableInfallible(value),
-            crate::PATTERN_PLACEHOLDER_PART,
-        )
+        WriteableAsTryWriteableInfallible(value)
+    }
+    #[inline]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        literal
     }
 }
 

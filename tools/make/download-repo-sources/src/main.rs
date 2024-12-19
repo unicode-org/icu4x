@@ -71,6 +71,8 @@ fn main() -> eyre::Result<()> {
             )?;
         }
 
+        log::info!("Reading: {root:?}");
+
         Ok(root)
     }
 

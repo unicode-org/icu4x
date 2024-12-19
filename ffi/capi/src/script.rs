@@ -8,10 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
     use crate::properties_iter::ffi::CodePointRangeIterator;
     use crate::properties_sets::ffi::CodePointSetData;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
@@ -30,6 +30,7 @@ pub mod ffi {
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
 
     impl ScriptWithExtensions {
+        /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::new,
@@ -44,6 +45,7 @@ pub mod ffi {
             ))
         }
 
+        /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
         #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::script::ScriptWithExtensionsBorrowed::new,
@@ -51,14 +53,16 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<ScriptWithExtensions>, DataError> {
-            Ok(Box::new(ScriptWithExtensions(call_constructor!(
-                icu_properties::script::ScriptWithExtensions::new [r => Ok(r.static_to_owned())],
-                icu_properties::script::ScriptWithExtensions::try_new_with_any_provider,
-                icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider,
-                provider
+            Ok(Box::new(ScriptWithExtensions(provider.call_constructor(
+                |provider| {
+                    icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider(
+                        provider,
+                    )
+                },
             )?)))
         }
 

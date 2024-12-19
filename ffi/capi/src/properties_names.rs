@@ -8,8 +8,8 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]
@@ -57,6 +57,8 @@ pub mod ffi {
             .map(|u_16| u_16 as i16)
             .unwrap_or(-1)
         }
+
+        /// Create a name-to-enum mapper for the `General_Category` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(auto, named_constructor = "general_category")]
         #[cfg(feature = "compiled_data")]
@@ -68,20 +70,22 @@ pub mod ffi {
             ))
         }
 
+        /// Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(auto, named_constructor = "hangul_syllable_type")]
         #[cfg(feature = "compiled_data")]
@@ -92,21 +96,24 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::HangulSyllableType>::new [r => Ok(r.static_to_owned())],
-                    icu_properties::PropertyParser::<icu_properties::props::HangulSyllableType>::try_new_unstable,
-                    provider,
-                )?
+                            icu_properties::PropertyParser::<
+                                icu_properties::props::HangulSyllableType,
+                            >::try_new_unstable,
+                            provider,
+                        )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(auto, named_constructor = "east_asian_width")]
         #[cfg(feature = "compiled_data")]
@@ -117,21 +124,22 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_class")]
         #[cfg(feature = "compiled_data")]
@@ -142,42 +150,46 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::BidiClass>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::BidiClass>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]
         #[cfg(feature = "compiled_data")]
         pub fn create_indic_syllabic_category() -> Box<PropertyValueNameToEnumMapper> {
             Box::new(PropertyValueNameToEnumMapper(icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::new().static_to_owned().erase()))
         }
-
+        /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::new [r => Ok(r.static_to_owned())],
-                    icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::try_new_unstable,
-                    provider,
-                )?
+                        icu_properties::PropertyParser::<
+                            icu_properties::props::IndicSyllabicCategory,
+                        >::try_new_unstable,
+                        provider,
+                    )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "line_break")]
         #[cfg(feature = "compiled_data")]
@@ -188,21 +200,22 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::LineBreak>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::LineBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_cluster_break")]
         #[cfg(feature = "compiled_data")]
@@ -214,21 +227,24 @@ pub mod ffi {
                 .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::GraphemeClusterBreak>::new [r => Ok(r.static_to_owned())],
-                    icu_properties::PropertyParser::<icu_properties::props::GraphemeClusterBreak>::try_new_unstable,
-                    provider,
-                )?
+                            icu_properties::PropertyParser::<
+                                icu_properties::props::GraphemeClusterBreak,
+                            >::try_new_unstable,
+                            provider,
+                        )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "word_break")]
         #[cfg(feature = "compiled_data")]
@@ -239,21 +255,22 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::WordBreak>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::WordBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "sentence_break")]
         #[cfg(feature = "compiled_data")]
@@ -264,21 +281,22 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Script` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::Script, Struct)]
         #[diplomat::attr(auto, named_constructor = "script")]
         #[cfg(feature = "compiled_data")]
@@ -289,15 +307,15 @@ pub mod ffi {
                     .erase(),
             ))
         }
-
+        /// Create a name-to-enum mapper for the `Script` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::Script, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "script_with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_script_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::Script>::new [r => Ok(r.static_to_owned())],
                     icu_properties::PropertyParser::<icu_properties::props::Script>::try_new_unstable,
                     provider,
                 )?
@@ -352,7 +370,7 @@ pub mod ffi {
             .map(Into::into)
             .unwrap_or_default()
         }
-
+        /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
@@ -363,17 +381,20 @@ pub mod ffi {
                 .static_to_owned(),
             ))
         }
+        /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
             Ok(Box::new(GeneralCategoryNameToMaskMapper(
                 call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new [r => Ok(r.static_to_owned())],
-                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::try_new_unstable,
-                    provider,
-                )?,
+                            icu_properties::PropertyParser::<
+                                icu_properties::props::GeneralCategoryGroup,
+                            >::try_new_unstable,
+                            provider,
+                        )?,
             )))
         }
     }

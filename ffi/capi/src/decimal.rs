@@ -8,11 +8,14 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{
-        errors::ffi::DataError, fixed_decimal::ffi::SignedFixedDecimal, locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
-    };
-    use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatterPreferences};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
+    use crate::{errors::ffi::DataError, fixed_decimal::ffi::SignedFixedDecimal};
+    use icu_decimal::options::FixedDecimalFormatterOptions;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_decimal::FixedDecimalFormatterPreferences;
 
     use writeable::Writeable;
 
@@ -56,6 +59,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_grouping_strategy_and_provider")]
         #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_grouping_strategy_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -67,14 +71,13 @@ pub mod ffi {
             options.grouping_strategy = grouping_strategy
                 .map(Into::into)
                 .unwrap_or(options.grouping_strategy);
-            Ok(Box::new(FixedDecimalFormatter(call_constructor!(
-                icu_decimal::FixedDecimalFormatter::try_new,
-                icu_decimal::FixedDecimalFormatter::try_new_with_any_provider,
-                icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                options,
-            )?)))
+            Ok(Box::new(FixedDecimalFormatter(
+                provider.call_constructor_custom_err(move |provider| {
+                    icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider(
+                        provider, prefs, options,
+                    )
+                })?,
+            )))
         }
 
         /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data.

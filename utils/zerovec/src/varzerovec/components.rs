@@ -475,31 +475,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
-    pub fn iter(self) -> impl Iterator<Item = &'a T> {
-        // The indices array doesn't contain 0 or len, we need to graft it on
-        // However we don't want to graft it on for an empty vector.
-        let (begin, end) = if self.is_empty() {
-            (None, None)
-        } else {
-            (Some(0), Some(self.things.len()))
-        };
-        begin
-            .into_iter()
-            .chain(
-                self.indices_slice()
-                    .iter()
-                    .copied()
-                    .map(IntegerULE::iule_to_usize),
-            )
-            .zip(
-                self.indices_slice()
-                    .iter()
-                    .copied()
-                    .map(IntegerULE::iule_to_usize)
-                    .chain(end),
-            )
-            .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
-            .map(|bytes| unsafe { T::from_bytes_unchecked(bytes) })
+    pub fn iter(self) -> VarZeroSliceIter<'a, T, F> {
+        VarZeroSliceIter::new(self)
     }
 
     pub fn to_vec(self) -> Vec<Box<T>> {
@@ -521,6 +498,80 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .map(IntegerULE::iule_to_usize)
             .collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {indices:?} }}")
+    }
+}
+
+/// An iterator over VarZeroSlice
+#[derive(Debug)]
+pub struct VarZeroSliceIter<'a, T: ?Sized, F> {
+    components: VarZeroVecComponents<'a, T, F>,
+    index: usize,
+    // Safety invariant: must be a valid index into the data segment of `components`, or an index at the end
+    // i.e. start_index <= components.things.len()
+    //
+    // It must be a valid index into the `things` array of components, coming from `components.indices_slice()`
+    start_index: usize,
+}
+
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSliceIter<'a, T, F> {
+    fn new(c: VarZeroVecComponents<'a, T, F>) -> Self {
+        Self {
+            components: c,
+            index: 0,
+            // Invariant upheld, 0 is always a valid index-or-end
+            start_index: 0,
+        }
+    }
+}
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> Iterator for VarZeroSliceIter<'a, T, F> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        // Note: the indices array doesn't contain 0 or len, we need to specially handle those edges. The 0 is handled
+        // by start_index, and the len is handled by the code for `end`.
+
+        if self.index >= self.components.len() {
+            return None;
+        }
+
+        // Invariant established: self.index is in bounds for self.components.len(),
+        // which means it is in bounds for self.components.indices_slice() since that has the same length
+
+        let end = if self.index + 1 == self.components.len() {
+            // We don't store the end index since it is computable, so the last element should use self.components.things.len()
+            self.components.things.len()
+        } else {
+            // Safety: self.index was known to be in bounds from the bounds check above.
+            unsafe {
+                self.components
+                    .indices_slice()
+                    .get_unchecked(self.index)
+                    .iule_to_usize()
+            }
+        };
+        // Invariant established: end has the same invariant as self.start_index since it comes from indices_slice, which is guaranteed
+        // to only contain valid indexes
+
+        let item = unsafe {
+            // Safety: self.start_index and end both have in-range invariants, plus they are valid indices from indices_slice
+            // which means we can treat this data as a T
+            T::from_bytes_unchecked(self.components.things.get_unchecked(self.start_index..end))
+        };
+        self.index += 1;
+        // Invariant upheld: end has the same invariant as self.start_index
+        self.start_index = end;
+        Some(item)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remainder = self.components.len() - self.index;
+        (remainder, Some(remainder))
+    }
+}
+
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> ExactSizeIterator for VarZeroSliceIter<'a, T, F> {
+    fn len(&self) -> usize {
+        self.components.len() - self.index
     }
 }
 

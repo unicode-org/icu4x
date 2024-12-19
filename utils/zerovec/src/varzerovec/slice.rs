@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::components::VarZeroVecComponents;
+use super::components::{VarZeroSliceIter, VarZeroVecComponents};
 use super::vec::VarZeroVecInner;
 use super::*;
 use crate::ule::*;
@@ -179,7 +179,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// assert_eq!(iter_results[2], "baz");
     /// assert_eq!(iter_results[3], "quux");
     /// ```
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
+    pub fn iter<'b>(&'b self) -> VarZeroSliceIter<'b, T, F> {
         self.as_components().iter()
     }
 

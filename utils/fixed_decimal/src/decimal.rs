@@ -680,6 +680,66 @@ impl UnsignedFixedDecimal {
         self.check_invariants();
     }
 
+    /// Returns this number with its trailing zeros removed,
+    /// but only if the number is an integer
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::UnsignedFixedDecimal;
+    ///
+    /// let dec = UnsignedFixedDecimal::from(12340000u32)
+    ///     .multiplied_pow10(-2);
+    /// assert_eq!("123400.00", dec.to_string());
+    /// assert_eq!("123400", dec.trimmed_end_if_integer().to_string());
+    ///
+    /// // No effect if there are nonzero fractional digits:
+    /// let dec = UnsignedFixedDecimal::from(123400u32)
+    ///     .multiplied_pow10(-4)
+    ///     .padded_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    /// assert_eq!("0012.3400", dec.trimmed_end_if_integer().to_string());
+    /// ```
+    pub fn trimmed_end_if_integer(mut self) -> Self {
+        self.trim_end_if_integer();
+        self
+    }
+
+    /// Removes the trailing zeros of this number,
+    /// but only if the number is an integer
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::UnsignedFixedDecimal;
+    ///
+    /// let mut dec = UnsignedFixedDecimal::from(12340000u32)
+    ///     .multiplied_pow10(-2);
+    /// assert_eq!("123400.00", dec.to_string());
+    ///
+    /// dec.trim_end_if_integer();
+    /// assert_eq!("123400", dec.to_string());
+    ///
+    /// // No effect on trailing zeros in the integer:
+    /// dec.trim_end_if_integer();
+    /// assert_eq!("123400", dec.to_string());
+    ///
+    /// // No effect if there are nonzero fractional digits:
+    /// dec.multiply_pow10(-4);
+    /// dec.pad_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// dec.trim_end_if_integer();
+    /// assert_eq!("0012.3400", dec.to_string());
+    /// ```
+    pub fn trim_end_if_integer(&mut self) {
+        if self.nonzero_magnitude_end() >= 0 {
+            self.lower_magnitude = 0;
+        }
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
     /// Returns this number padded with leading zeros on a particular position.
     ///
     /// Negative position numbers have no effect.

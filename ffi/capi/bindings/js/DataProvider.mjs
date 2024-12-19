@@ -7,6 +7,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X data provider, capable of loading ICU4X data keys from some source.
 *
+*Currently the only source supported is loading from "blob" formatted data from a bytes buffer or the file system.
+*
+*If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
+*in their names.
+*
 *See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
 */
 const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -38,26 +43,6 @@ export class DataProvider {
 
     get ffiValue() {
         return this.#ptr;
-    }
-
-    static compiled() {
-        const result = wasm.icu4x_DataProvider_compiled_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static empty() {
-        const result = wasm.icu4x_DataProvider_empty_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
     }
 
     forkByKey(other) {

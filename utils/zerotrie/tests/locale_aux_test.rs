@@ -55,7 +55,7 @@ fn test_combined() {
         8445
     );
 
-    let total_str_len = litemap.iter_keys().map(|k| k.len()).sum::<usize>();
+    let total_str_len = litemap.keys().map(|k| k.len()).sum::<usize>();
     assert_eq!(total_str_len, 8115);
 
     // Lookup table size:
@@ -118,7 +118,7 @@ fn test_aux_split() {
         let trie = ZeroTriePerfectHash::try_from(&litemap).unwrap();
         total_perfecthash_len += trie.byte_len();
 
-        for k in litemap.iter_keys() {
+        for k in litemap.keys() {
             unique_locales.insert(k.clone());
         }
 

@@ -28,13 +28,9 @@ namespace icu4x {
 class DataProvider {
 public:
 
-  inline static std::unique_ptr<icu4x::DataProvider> compiled();
-
   inline static diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> from_fs(std::string_view path);
 
   inline static diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> from_byte_slice(diplomat::span<const uint8_t> blob);
-
-  inline static std::unique_ptr<icu4x::DataProvider> empty();
 
   inline diplomat::result<std::monostate, icu4x::DataError> fork_by_key(icu4x::DataProvider& other);
 

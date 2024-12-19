@@ -8,8 +8,8 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
@@ -56,15 +56,15 @@ pub mod ffi {
         /// Construct an [`GraphemeClusterSegmenter`].
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
-            Ok(Box::new(GraphemeClusterSegmenter(call_constructor!(
-                icu_segmenter::GraphemeClusterSegmenter::new [r => Ok(r)],
-                icu_segmenter::GraphemeClusterSegmenter::try_new_with_any_provider,
-                icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider,
-                provider,
-            )?)))
+            Ok(Box::new(GraphemeClusterSegmenter(
+                provider.call_constructor(|provider| {
+                    icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider(provider)
+                })?,
+            )))
         }
         /// Segments a string.
         ///
