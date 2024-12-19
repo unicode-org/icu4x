@@ -503,7 +503,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
 /// An iterator over VarZeroSlice
 #[derive(Debug)]
-pub struct VarZeroSliceIter<'a, T: ?Sized, F> {
+pub struct VarZeroSliceIter<'a, T: ?Sized, F = Index16> {
     components: VarZeroVecComponents<'a, T, F>,
     index: usize,
     // Safety invariant: must be a valid index into the data segment of `components`, or an index at the end
