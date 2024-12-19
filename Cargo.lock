@@ -1708,6 +1708,7 @@ dependencies = [
  "ixdtf",
  "serde",
  "tinystr",
+ "writeable",
  "zerotrie",
  "zerovec",
 ]

@@ -6,7 +6,9 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
+use writeable::{impl_display_with_writeable, Writeable};
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
+use core::fmt;
 
 use crate::{
     provider::names::{
@@ -683,7 +685,7 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
     /// ```
-    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<(&str, TimeZoneBcp47Id)> {
+    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<(TimeZoneIanaIdBorrowed, TimeZoneBcp47Id)> {
         let trie_value = self.inner.iana_lookup_quick(iana_id)?;
         let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
@@ -693,7 +695,7 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
             debug_assert!(false, "index should be in range");
             return None;
         };
-        Some((string, bcp47_id))
+        Some((TimeZoneIanaIdBorrowed(string), bcp47_id))
     }
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
@@ -724,13 +726,55 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
     /// assert_eq!(mapper.canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
+    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<TimeZoneIanaIdBorrowed> {
         let index = self.inner.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let Some(string) = self.data.canonical_iana_ids.get(index) else {
             debug_assert!(false, "index should be in range");
             return None;
         };
-        Some(string)
+        Some(TimeZoneIanaIdBorrowed(string))
+    }
+
+    pub fn iter_iana_ids(&self) -> TimeZoneIanaIdIterator {
+        TimeZoneIanaIdIterator {
+            inner: self.data.canonical_iana_ids.iter()
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct TimeZoneIanaIdIterator<'a> {
+    inner: core::slice::Iter<'a, &'a str>,
+}
+
+impl<'a> Iterator for TimeZoneIanaIdIterator<'a> {
+    type Item = TimeZoneIanaIdBorrowed<'a>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next().map(|s| TimeZoneIanaIdBorrowed(s))
+    }
+}
+
+/// A time zone IANA ID.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct TimeZoneIanaIdBorrowed<'a>(&'a str);
+
+impl Writeable for TimeZoneIanaIdBorrowed<'_> {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.0.write_to(sink)
+    }
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        Cow::Borrowed(self.0)
+    }
+}
+
+impl_display_with_writeable!(TimeZoneIanaIdBorrowed<'_>);
+
+impl PartialEq<&str> for TimeZoneIanaIdBorrowed<'_> {
+    fn eq(&self, other: &&str) -> bool {
+        self.0 == *other
     }
 }
 

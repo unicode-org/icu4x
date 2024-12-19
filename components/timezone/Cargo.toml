@@ -28,6 +28,7 @@ ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerotrie = { workspace = true, features = ["alloc", "yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
+writeable = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
