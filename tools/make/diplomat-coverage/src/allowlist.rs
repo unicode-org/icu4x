@@ -19,6 +19,7 @@ lazy_static::lazy_static! {
         "Borrow",
         "BorrowMut",
         "Clone",
+        "CloneToUninit",
         "Copy",
         "Debug",
         "Default", // We expose this when we see fit
