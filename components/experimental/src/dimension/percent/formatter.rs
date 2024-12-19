@@ -25,6 +25,9 @@ define_preferences!(
     [Copy]
     PercentFormatterPreferences,
     {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem
     }
 );

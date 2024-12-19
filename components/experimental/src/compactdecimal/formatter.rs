@@ -28,7 +28,9 @@ define_preferences!(
     [Copy]
     CompactDecimalFormatterPreferences,
     {
-        /// The numbering system used for formatting.
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem
     }
 );
