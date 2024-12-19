@@ -85,9 +85,7 @@ use crate::provider::DecompositionDataV2;
 use crate::provider::Uts46DecompositionDataV2Marker;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use alloc::vec::Vec;
 use core::char::REPLACEMENT_CHARACTER;
-use core::str::from_utf8_unchecked;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
@@ -100,9 +98,10 @@ use provider::CanonicalDecompositionTablesV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
+#[cfg(feature = "utf16_iter")]
 use utf16_iter::Utf16CharsEx;
+#[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
-use write16::Write16;
 use zerovec::{zeroslice, ZeroSlice};
 
 /// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
@@ -263,6 +262,7 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 }
 
 #[inline(always)]
+#[cfg(feature = "utf16_iter")]
 fn in_inclusive_range16(u: u16, start: u16, end: u16) -> bool {
     u.wrapping_sub(start) <= (end - start)
 }
@@ -372,6 +372,7 @@ impl CharacterAndTrieValue {
 
     /// See trie-value-format.md
     #[inline(always)]
+    #[cfg(feature = "utf8_iter")]
     pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
         // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
         // to be compared with zero. U+FFFD has that flag set despite really
@@ -1469,12 +1470,15 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
             let up_to = self.is_normalized_utf16_up_to(text);
             if up_to == text.len() {
                 return Cow::Borrowed(text);
             }
-            let mut ret = Vec::with_capacity(text.len());
+            let mut ret = alloc::vec::Vec::with_capacity(text.len());
             let (head, tail) = text.split_at(up_to);
             ret.extend_from_slice(head);
             let _ = self.normalize_utf16_to(tail, &mut ret);
@@ -1482,6 +1486,9 @@ macro_rules! normalizer_methods {
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         pub fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
             let mut sink = IsNormalizedSinkUtf16::new(text);
             let _ = self.normalize_utf16_to(text, &mut sink);
@@ -1491,6 +1498,9 @@ macro_rules! normalizer_methods {
         /// Checks whether a slice of potentially-invalid UTF-16 is normalized.
         ///
         /// Unpaired surrogates are treated as the REPLACEMENT CHARACTER.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
             let mut sink = IsNormalizedSinkUtf16::new(text);
             if self.normalize_utf16_to(text, &mut sink).is_err() {
@@ -1503,6 +1513,9 @@ macro_rules! normalizer_methods {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
             let up_to = self.is_normalized_utf8_up_to(text);
             if up_to == text.len() {
@@ -1521,6 +1534,9 @@ macro_rules! normalizer_methods {
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         pub fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             let _ = self.normalize_utf8_to(text, &mut sink);
@@ -1531,6 +1547,9 @@ macro_rules! normalizer_methods {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard before checking.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             if self.normalize_utf8_to(text, &mut sink).is_err() {
@@ -1807,6 +1826,9 @@ impl DecomposingNormalizerBorrowed<'_> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -1829,7 +1851,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                         break 'fastest;
                     }
                     // End of stream
-                    sink.write_str(unsafe { from_utf8_unchecked(pending_slice) })?;
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
                     return Ok(());
                 }
                 decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
@@ -1858,7 +1880,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                     let back = consumed_so_far.next_back();
                     debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
                     let consumed_so_far_slice = consumed_so_far.as_slice();
-                    sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                     // We could call `gather_and_sort_combining` here and
                     // `continue 'outer`, but this should be better for code
@@ -1871,7 +1893,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                     - decomposition.delegate.as_slice().len()
                     - upcoming.len_utf8()];
-                sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+                sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                 // Now let's figure out if we got a starter or a non-starter.
                 if decomposition_starts_with_non_starter(
@@ -1902,6 +1924,9 @@ impl DecomposingNormalizerBorrowed<'_> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
         write16::Write16,
@@ -2383,6 +2408,9 @@ impl ComposingNormalizerBorrowed<'_> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -2422,7 +2450,7 @@ impl ComposingNormalizerBorrowed<'_> {
                         let back = consumed_so_far.next_back();
                         debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
                         let consumed_so_far_slice = consumed_so_far.as_slice();
-                        sink.write_str(unsafe{ from_utf8_unchecked(consumed_so_far_slice)})?;
+                        sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) })?;
                         undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
                         composition.decomposition.pending = None;
                         break 'fast;
@@ -2442,11 +2470,11 @@ impl ComposingNormalizerBorrowed<'_> {
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
                     }
                     let consumed_so_far_slice = consumed_so_far.as_slice();
-                    sink.write_str(unsafe { from_utf8_unchecked(consumed_so_far_slice)})?;
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice)})?;
                     break 'fast;
                 }
                 // End of stream
-                sink.write_str(unsafe {from_utf8_unchecked(pending_slice) })?;
+                sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
                 return Ok(());
             }
         },
@@ -2464,6 +2492,9 @@ impl ComposingNormalizerBorrowed<'_> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
         write16::Write16,
@@ -2695,10 +2726,12 @@ impl ComposingNormalizer {
     }
 }
 
+#[cfg(feature = "utf16_iter")]
 struct IsNormalizedSinkUtf16<'a> {
     expect: &'a [u16],
 }
 
+#[cfg(feature = "utf16_iter")]
 impl<'a> IsNormalizedSinkUtf16<'a> {
     pub fn new(slice: &'a [u16]) -> Self {
         IsNormalizedSinkUtf16 { expect: slice }
@@ -2711,7 +2744,8 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     }
 }
 
-impl Write16 for IsNormalizedSinkUtf16<'_> {
+#[cfg(feature = "utf16_iter")]
+impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2737,10 +2771,12 @@ impl Write16 for IsNormalizedSinkUtf16<'_> {
     }
 }
 
+#[cfg(feature = "utf8_iter")]
 struct IsNormalizedSinkUtf8<'a> {
     expect: &'a [u8],
 }
 
+#[cfg(feature = "utf8_iter")]
 impl<'a> IsNormalizedSinkUtf8<'a> {
     pub fn new(slice: &'a [u8]) -> Self {
         IsNormalizedSinkUtf8 { expect: slice }
@@ -2753,6 +2789,7 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     }
 }
 
+#[cfg(feature = "utf8_iter")]
 impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
