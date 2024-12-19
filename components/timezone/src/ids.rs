@@ -8,6 +8,7 @@ use alloc::vec::Vec;
 use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, Writeable};
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
+use zerovec::vecs::VarZeroSliceIter;
 use core::fmt;
 
 use crate::{
@@ -744,7 +745,7 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
 
 #[derive(Debug)]
 pub struct TimeZoneIanaIdIterator<'a> {
-    inner: core::slice::Iter<'a, &'a str>,
+    inner: VarZeroSliceIter<'a, str>
 }
 
 impl<'a> Iterator for TimeZoneIanaIdIterator<'a> {
