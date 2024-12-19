@@ -409,7 +409,7 @@ mod test {
             .get_datetime_resources(&langid!("fil").into(), Either::Left(&value!("gregory")))
             .unwrap();
 
-        let skeletons = DateSkeletonPatternsV1::from(&data).0;
+        let skeletons = DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats).0;
 
         assert_eq!(
             Some(

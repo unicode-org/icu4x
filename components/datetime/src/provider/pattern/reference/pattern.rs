@@ -25,6 +25,13 @@ pub struct Pattern {
 }
 
 impl Pattern {
+    /// Convert a [`Pattern`] to a vector of pattern items.
+    ///
+    /// The [`Pattern`] can be restored via the `From` impl.
+    pub fn into_items(self) -> Vec<PatternItem> {
+        self.items
+    }
+
     #[cfg(feature = "datagen")]
     pub(crate) fn items(&self) -> &[PatternItem] {
         &self.items
