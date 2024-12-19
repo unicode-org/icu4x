@@ -144,6 +144,10 @@ pub mod ffi {
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::split_normalized_utf8,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf8_up_to,
             FnInStruct
         )]
@@ -155,10 +159,14 @@ pub mod ffi {
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized_up_to")]
         pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
-            self.0.as_borrowed().is_normalized_utf8_up_to(s)
+            self.0.as_borrowed().split_normalized_utf8(s).0.len()
         }
 
-        /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        /// Return the index a slice of potentially-invalid UTF-16 is normalized up to
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::split_normalized_utf16,
+            FnInStruct
+        )]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf16_up_to,
             FnInStruct
@@ -166,7 +174,7 @@ pub mod ffi {
         #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized_up_to")]
         #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16_up_to")]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
-            self.0.as_borrowed().is_normalized_utf16_up_to(s)
+            self.0.as_borrowed().split_normalized_utf16(s).0.len()
         }
     }
 
@@ -307,6 +315,10 @@ pub mod ffi {
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::split_normalized_utf8,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf8_up_to,
             FnInStruct
         )]
@@ -316,16 +328,20 @@ pub mod ffi {
             hidden
         )]
         pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
-            self.0.as_borrowed().is_normalized_utf8_up_to(s)
+            self.0.as_borrowed().split_normalized_utf8(s).0.len()
         }
 
-        /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        /// Return the index a slice of potentially-invalid UTF-16 is normalized up to
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::split_normalized_utf16,
+            FnInStruct
+        )]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf16_up_to,
             FnInStruct
         )]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
-            self.0.as_borrowed().is_normalized_utf16_up_to(s)
+            self.0.as_borrowed().split_normalized_utf16(s).0.len()
         }
     }
 }

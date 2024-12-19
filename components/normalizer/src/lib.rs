@@ -1438,20 +1438,32 @@ macro_rules! normalizer_methods {
     () => {
         /// Normalize a string slice into a `Cow<'a, str>`.
         pub fn normalize<'a>(&self, text: &'a str) -> Cow<'a, str> {
-            let up_to = self.is_normalized_up_to(text);
-            if up_to == text.len() {
-                return Cow::Borrowed(text);
+            let (head, tail) = self.split_normalized(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
             }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let (head, tail) = text.split_at(up_to);
             ret.push_str(head);
             let _ = self.normalize_to(tail, &mut ret);
             Cow::Owned(ret)
         }
 
+        /// Split a string slice into maximum normalized prefix and unnormalized suffix
+        /// such that the concatenation of the prefix and the normalization of the suffix
+        /// is the normalization of the whole input.
+        pub fn split_normalized<'a>(&self, text: &'a str) -> (&'a str, &'a str) {
+            if let Some(pair) = text.split_at_checked(self.is_normalized_up_to(text)) {
+                pair
+            } else {
+                // GIGO
+                debug_assert!(false);
+                ("", text)
+            }
+        }
+
         /// Return the index a string slice is normalized up to.
-        pub fn is_normalized_up_to(&self, text: &str) -> usize {
+        fn is_normalized_up_to(&self, text: &str) -> usize {
             let mut sink = IsNormalizedSinkStr::new(text);
             let _ = self.normalize_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1459,11 +1471,7 @@ macro_rules! normalizer_methods {
 
         /// Check whether a string slice is normalized.
         pub fn is_normalized(&self, text: &str) -> bool {
-            let mut sink = IsNormalizedSinkStr::new(text);
-            if self.normalize_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_up_to(text) == text.len()
         }
 
         /// Normalize a slice of potentially-invalid UTF-16 into a `Cow<'a, [u16]>`.
@@ -1474,22 +1482,37 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
-            let up_to = self.is_normalized_utf16_up_to(text);
-            if up_to == text.len() {
-                return Cow::Borrowed(text);
+            let (head, tail) = self.split_normalized_utf16(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
             }
             let mut ret = alloc::vec::Vec::with_capacity(text.len());
-            let (head, tail) = text.split_at(up_to);
             ret.extend_from_slice(head);
             let _ = self.normalize_utf16_to(tail, &mut ret);
             Cow::Owned(ret)
+        }
+
+        /// Split a slice of potentially-invalid UTF-16 into maximum normalized (and valid)
+        /// prefix and unnormalized suffix such that the concatenation of the prefix and the
+        /// normalization of the suffix is the normalization of the whole input.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
+        pub fn split_normalized_utf16<'a>(&self, text: &'a [u16]) -> (&'a [u16], &'a [u16]) {
+            if let Some(pair) = text.split_at_checked(self.is_normalized_utf16_up_to(text)) {
+                pair
+            } else {
+                // GIGO
+                debug_assert!(false);
+                (&[], text)
+            }
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
         ///
         /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
-        pub fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
+        fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
             let mut sink = IsNormalizedSinkUtf16::new(text);
             let _ = self.normalize_utf16_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1502,11 +1525,7 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
-            let mut sink = IsNormalizedSinkUtf16::new(text);
-            if self.normalize_utf16_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_utf16_up_to(text) == text.len()
         }
 
         /// Normalize a slice of potentially-invalid UTF-8 into a `Cow<'a, str>`.
@@ -1517,27 +1536,40 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
-            let up_to = self.is_normalized_utf8_up_to(text);
-            if up_to == text.len() {
-                // SAFETY: The normalization check also checks for
-                // UTF-8 well-formedness.
-                return Cow::Borrowed(unsafe { core::str::from_utf8_unchecked(text) });
+            let (head, tail) = self.split_normalized_utf8(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
             }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let (head, tail) = text.split_at(up_to);
-            // SAFETY: The normalization check also checks for
-            // UTF-8 well-formedness.
-            ret.push_str(unsafe { core::str::from_utf8_unchecked(head) });
+            ret.push_str(head);
             let _ = self.normalize_utf8_to(tail, &mut ret);
             Cow::Owned(ret)
+        }
+
+        /// Split a slice of potentially-invalid UTF-8 into maximum normalized (and valid)
+        /// prefix and unnormalized suffix such that the concatenation of the prefix and the
+        /// normalization of the suffix is the normalization of the whole input.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
+        pub fn split_normalized_utf8<'a>(&self, text: &'a [u8]) -> (&'a str, &'a [u8]) {
+            if let Some((head, tail)) = text.split_at_checked(self.is_normalized_utf8_up_to(text)) {
+                // SAFETY: The normalization check also checks for
+                // UTF-8 well-formedness.
+                (unsafe { core::str::from_utf8_unchecked(head) }, tail)
+            } else {
+                // GIGO
+                debug_assert!(false);
+                ("", text)
+            }
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         ///
         /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
-        pub fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
+        fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             let _ = self.normalize_utf8_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1551,11 +1583,7 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
-            let mut sink = IsNormalizedSinkUtf8::new(text);
-            if self.normalize_utf8_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_utf8_up_to(text) == text.len()
         }
     };
 }
@@ -2736,9 +2764,6 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     pub fn new(slice: &'a [u16]) -> Self {
         IsNormalizedSinkUtf16 { expect: slice }
     }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
-    }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()
     }
@@ -2781,9 +2806,6 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     pub fn new(slice: &'a [u8]) -> Self {
         IsNormalizedSinkUtf8 { expect: slice }
     }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
-    }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()
     }
@@ -2823,9 +2845,6 @@ struct IsNormalizedSinkStr<'a> {
 impl<'a> IsNormalizedSinkStr<'a> {
     pub fn new(slice: &'a str) -> Self {
         IsNormalizedSinkStr { expect: slice }
-    }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
     }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()
