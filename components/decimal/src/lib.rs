@@ -120,7 +120,9 @@ define_preferences!(
     [Copy]
     FixedDecimalFormatterPreferences,
     {
-        /// Numbering System. Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem
     }
 );

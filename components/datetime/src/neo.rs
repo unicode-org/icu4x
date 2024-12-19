@@ -56,11 +56,17 @@ define_preferences!(
     [Copy]
     DateTimeFormatterPreferences,
     {
-        /// The user's preferred numbering system
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem,
-        /// The user's preferred hour cycle
+        /// The user's preferred hour cycle.
+        ///
+        /// Corresponds to the `-u-hc` in Unicode Locale Identifier.
         hour_cycle: HourCycle,
         /// The user's preferred calendar system
+        ///
+        /// Corresponds to the `-u-ca` in Unicode Locale Identifier.
         calendar_algorithm: CalendarAlgorithm
     }
 );

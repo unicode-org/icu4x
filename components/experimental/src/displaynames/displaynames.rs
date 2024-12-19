@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 
 define_preferences!(
-    /// The preferences for list formatting.
+    /// The preferences for display names.
     [Copy]
     DisplayNamesPreferences,
     {}

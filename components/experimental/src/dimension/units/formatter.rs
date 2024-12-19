@@ -26,6 +26,9 @@ define_preferences!(
     [Copy]
     UnitsFormatterPreferences,
     {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem
     }
 );

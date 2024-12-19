@@ -26,6 +26,9 @@ define_preferences!(
     [Copy]
     CurrencyFormatterPreferences,
     {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         numbering_system: NumberingSystem
     }
 );
