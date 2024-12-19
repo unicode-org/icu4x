@@ -13,7 +13,7 @@ The top level of the crate provides normalization of input into the four normali
 Normalization Forms](https://www.unicode.org/reports/tr15/): NFC, NFD, NFKC, and NFKD.
 
 Three kinds of contiguous inputs are supported: known-well-formed UTF-8 (`&str`), potentially-not-well-formed UTF-8,
-and potentially-not-well-formed UTF-8. Additionally, an iterator over `char` can be wrapped in a normalizing iterator.
+and potentially-not-well-formed UTF-16. Additionally, an iterator over `char` can be wrapped in a normalizing iterator.
 
 The `uts46` module provides the combination of mapping and normalization operations for [UTS #46: Unicode IDNA
 Compatibility Processing](https://www.unicode.org/reports/tr46/). This functionality is not meant to be used by
