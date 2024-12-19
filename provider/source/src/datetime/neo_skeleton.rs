@@ -675,7 +675,7 @@ mod date_skeleton_consistency_tests {
             data.length_combinations_v1,
         ) {
             PatternPlurals::SinglePattern(x) => x,
-            PatternPlurals::MultipleVariants(_) => unreachable!()
+            PatternPlurals::MultipleVariants(_) => unreachable!(),
         };
 
         // Canonicalize the two patterns to make comparison more precise
