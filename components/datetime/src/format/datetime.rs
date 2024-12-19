@@ -30,11 +30,11 @@ where
     num.pad_start(length.to_len() as i16);
 
     if let Some(fdf) = fixed_decimal_format {
-        w.with_part(part, |w| fdf.format(&num).write_to(w))?;
+        w.with_part(part, |w| fdf.format(&num).write_to_parts(w))?;
         Ok(Ok(()))
     } else {
         w.with_part(part, |w| {
-            w.with_part(writeable::Part::ERROR, |r| num.write_to(r))
+            w.with_part(writeable::Part::ERROR, |r| num.write_to_parts(r))
         })?;
         Ok(Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded))
     }
