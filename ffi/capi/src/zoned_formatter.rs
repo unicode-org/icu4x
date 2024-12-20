@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::fieldsets::YMDTV;
+    use icu_datetime::fieldsets::{Combo, Vs, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
     use icu_timezone::ZoneVariant;
@@ -32,7 +32,7 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDTV>,
+        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, Combo<YMDT, Vs>>,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -48,7 +48,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(Length::from(length));
+            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
@@ -66,7 +66,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(Length::from(length));
+            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 provider.call_constructor_custom_err(move |provider| {
@@ -101,7 +101,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDTV>);
+    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<Combo<YMDT, Vs>>);
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data using compiled data.
@@ -116,7 +116,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(Length::from(length));
+            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
@@ -134,7 +134,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDTV::with_length(Length::from(length));
+            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 provider.call_constructor_custom_err(move |provider| {
