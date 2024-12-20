@@ -838,7 +838,7 @@ impl<'a> Iterator for TimeZoneCanonicalIanaIter<'a> {
     type Item = TimeZoneIanaIdBorrowed<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next().map(|s| TimeZoneIanaIdBorrowed(s))
+        self.inner.next().map(TimeZoneIanaIdBorrowed)
     }
 }
 
