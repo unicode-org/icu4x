@@ -59,14 +59,22 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`icu_decimal::provider`] module for an example.
         numbering_system: NumberingSystem,
         /// The user's preferred hour cycle.
         ///
         /// Corresponds to the `-u-hc` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved hour cycle, you can inspect the formatting pattern.
+        /// See [`DateTimePattern`](crate::pattern::DateTimePattern) for an example.
         hour_cycle: HourCycle,
         /// The user's preferred calendar system
         ///
         /// Corresponds to the `-u-ca` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved calendar system, use [`DateTimeFormatter::calendar_kind()`].
         calendar_algorithm: CalendarAlgorithm
     }
 );
