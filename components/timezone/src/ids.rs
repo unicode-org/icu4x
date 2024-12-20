@@ -792,7 +792,7 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
         Some(TimeZoneIanaIdBorrowed(string))
     }
 
-    /// Returns an iterator over all canonical IANA time zone identifiers in an arbitrary order.
+    /// Returns an iterator over all canonical IANA time zone identifiers in an arbitrary, unstable order.
     ///
     /// To iterate over BCP-47 IDs, use [`TimeZoneIdMapperBorrowed::iter_bcp47()`].
     ///
