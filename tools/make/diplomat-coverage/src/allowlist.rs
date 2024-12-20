@@ -193,6 +193,18 @@ lazy_static::lazy_static! {
         "icu::locale::extensions",
         "icu::locale::subtags",
 
+        // Not planned for 2.0: FFI uses locales, not preference bags. FFI could in the future gain a preferences bag API as well
+        "icu::locale::preferences::extensions::unicode::keywords",
+        "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
+        "icu::calendar::AnyCalendarPreferences",
+        "icu::calendar::any_calendar::AnyCalendarPreferences",
+        "icu::datetime::DateTimeFormatterPreferences",
+        "icu::decimal::FixedDecimalFormatterPreferences",
+        "icu::list::ListFormatterPreferences",
+        "icu::locale::preferences::LocalePreferences",
+        "icu::plurals::PluralRulesPreferences",
+        "icu::locale::preferences::PreferenceKey",
+
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
 
