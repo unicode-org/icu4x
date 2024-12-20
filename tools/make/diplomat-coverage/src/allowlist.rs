@@ -261,6 +261,8 @@ lazy_static::lazy_static! {
 
         "icu::experimental",
 
+        "icu::pattern",
+
         "icu::datetime::fields::components",
         "icu::datetime::fieldsets::serde",
         "icu::datetime::neo_pattern",
