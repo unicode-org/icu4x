@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::Field;
+use crate::fields::{self, Field, FieldLength};
 use crate::pattern::PatternLoadError;
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
@@ -19,36 +19,43 @@ use super::UnstableSealed;
 /// not weekday, day period, or time zone names.
 #[allow(missing_docs)]
 pub trait DateTimeNamesMarker: UnstableSealed {
-    type YearNames: DateTimeNamesHolderTrait<YearNamesV1Marker>;
-    type MonthNames: DateTimeNamesHolderTrait<MonthNamesV1Marker>;
-    type WeekdayNames: DateTimeNamesHolderTrait<WeekdayNamesV1Marker>;
-    type DayPeriodNames: DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>;
-    type ZoneEssentials: DateTimeNamesHolderTrait<tz::EssentialsV1Marker>;
-    type ZoneLocations: DateTimeNamesHolderTrait<tz::LocationsV1Marker>;
-    type ZoneGenericLong: DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>;
-    type ZoneGenericShort: DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>;
-    type ZoneSpecificLong: DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>;
-    type ZoneSpecificShort: DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>;
-    type MetazoneLookup: DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>;
+    type YearNames: NamesContainer<YearNamesV1Marker, FieldLength>;
+    type MonthNames: NamesContainer<MonthNamesV1Marker, (fields::Month, FieldLength)>;
+    type WeekdayNames: NamesContainer<WeekdayNamesV1Marker, (fields::Weekday, FieldLength)>;
+    type DayPeriodNames: NamesContainer<DayPeriodNamesV1Marker, FieldLength>;
+    type ZoneEssentials: NamesContainer<tz::EssentialsV1Marker, ()>;
+    type ZoneLocations: NamesContainer<tz::LocationsV1Marker, ()>;
+    type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1Marker, ()>;
+    type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1Marker, ()>;
+    type ZoneSpecificLong: NamesContainer<tz::MzSpecificLongV1Marker, ()>;
+    type ZoneSpecificShort: NamesContainer<tz::MzSpecificShortV1Marker, ()>;
+    type MetazoneLookup: NamesContainer<tz::MzPeriodV1Marker, ()>;
 }
 
-/// Helper trait for [`DateTimeNamesMarker`].
+/// Trait that associates a container for a payload parameterized by the given variables.
 #[allow(missing_docs)]
-pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker>: UnstableSealed {
-    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload<M, Variables>
-        + fmt::Debug;
+pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
+where
+    Variables: PartialEq + Copy + fmt::Debug,
+{
+    type Container: MaybePayload<M, Variables> + fmt::Debug;
 }
 
-impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for () {
-    type Container<Variables: PartialEq + Copy + fmt::Debug> = ();
+impl<M: DynamicDataMarker, Variables> NamesContainer<M, Variables> for ()
+where
+    Variables: PartialEq + Copy + fmt::Debug,
+{
+    type Container = ();
 }
 
 macro_rules! impl_holder_trait {
     ($marker:path) => {
         impl UnstableSealed for $marker {}
-        impl DateTimeNamesHolderTrait<$marker> for $marker {
-            type Container<Variables: PartialEq + Copy + fmt::Debug> =
-                DataPayloadWithVariables<$marker, Variables>;
+        impl<Variables> NamesContainer<$marker, Variables> for $marker
+        where
+            Variables: PartialEq + Copy + fmt::Debug,
+        {
+            type Container = DataPayloadWithVariables<$marker, Variables>;
         }
     };
 }
