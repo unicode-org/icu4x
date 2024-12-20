@@ -127,6 +127,7 @@ where
     }
 }
 
+// NOTE: This impl enables `with_fset` functions to work.
 impl<M: DynamicDataMarker, Variables> From<()> for DataPayloadWithVariables<M, Variables> {
     #[inline]
     fn from(_: ()) -> Self {
