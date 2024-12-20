@@ -39,6 +39,7 @@ pub use get_field::GetField;
 
 pub use names_storage::DataPayloadWithVariables;
 pub use names_storage::DataPayloadWithVariablesBorrowed;
+pub use names_storage::DateTimeNamesFrom;
 pub use names_storage::DateTimeNamesMarker;
 pub use names_storage::MaybePayload;
 pub use names_storage::MaybePayloadError;
