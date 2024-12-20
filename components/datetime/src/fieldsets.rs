@@ -89,11 +89,8 @@ use icu_timezone::TimeZoneInfo;
 
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
-    ($any:expr, yes) => {
+    ($any:expr, $nonempty:expr) => {
         $any
-    };
-    () => {
-        unreachable!() // prevent bugs
     };
 }
 
@@ -142,6 +139,45 @@ macro_rules! impl_composite {
     };
 }
 
+macro_rules! impl_marker_length_constructors {
+    (
+        $type:ident,
+        $(alignment: $alignment_yes:ident,)?
+        $(year_style: $yearstyle_yes:ident,)?
+        $(time_precision: $timeprecision_yes:ident,)?
+    ) => {
+        impl $type {
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
+            pub const fn with_length(length: Length) -> Self {
+                Self {
+                    length,
+                    $(
+                        alignment: yes_to!(None, $alignment_yes),
+                    )?
+                    $(
+                        year_style: yes_to!(None, $yearstyle_yes),
+                    )?
+                    $(
+                        time_precision: yes_to!(None, $timeprecision_yes),
+                    )?
+                }
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length.")]
+            pub const fn long() -> Self {
+                Self::with_length(Length::Long)
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length.")]
+            pub const fn medium() -> Self {
+                Self::with_length(Length::Medium)
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
+            pub const fn short() -> Self {
+                Self::with_length(Length::Short)
+            }
+        }
+    };
+}
+
 macro_rules! impl_marker_with_options {
     (
         $(#[$attr:meta])*
@@ -150,7 +186,7 @@ macro_rules! impl_marker_with_options {
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
         $(time_precision: $timeprecision_yes:ident,)?
-        $(enumerated: $enumerated_yes:ident,)?
+        $(length_override: $length_override:ident,)?
     ) => {
         $(#[$attr])*
         #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -181,56 +217,20 @@ macro_rules! impl_marker_with_options {
                 pub time_precision: datetime_marker_helper!(@option/timeprecision, $timeprecision_yes),
             )?
         }
-        impl $type {
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
-            pub const fn with_length(length: Length) -> Self {
-                Self {
-                    length,
-                    $(
-                        alignment: yes_to!(None, $alignment_yes),
-                    )?
-                    $(
-                        year_style: yes_to!(None, $yearstyle_yes),
-                    )?
-                    $(
-                        time_precision: yes_to!(None, $timeprecision_yes),
-                    )?
-                }
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length.")]
-            pub const fn long() -> Self {
-                Self::with_length(Length::Long)
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length.")]
-            pub const fn medium() -> Self {
-                Self::with_length(Length::Medium)
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
-            pub const fn short() -> Self {
-                Self::with_length(Length::Short)
-            }
-        }
         #[allow(dead_code)]
         impl $type {
-            $(
-                const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
-                #[warn(dead_code)]
-            )?
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
-                    length: self.length,
+                    length: yes_or!(self.length, $(Length::$length_override)?),
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
                 }
             }
-            $(
-                const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
-                #[warn(dead_code)]
-            )?
+            #[allow(unused)]
             pub(crate) fn from_raw_options(options: RawOptions) -> Self {
                 Self {
-                    length: options.length,
+                    $(length: yes_to!(options.length, $sample_length),)?
                     $(alignment: yes_to!(options.alignment, $alignment_yes),)?
                     $(year_style: yes_to!(options.year_style, $yearstyle_yes),)?
                     $(time_precision: yes_to!(options.time_precision, $timeprecision_yes),)?
@@ -273,34 +273,11 @@ macro_rules! impl_marker_with_options {
 }
 
 macro_rules! impl_combo_get_field {
-    ($type:ident, $composite:ident, $enum:ident, $wrap:ident, $in:ident, $out:ident) => {
-        impl GetField<CompositeFieldSet> for Combo<$type, $in> {
+    ($type:ident, $composite:ident, $enum:ident, $wrap:ident, $variant:ident) => {
+        impl GetField<CompositeFieldSet> for Combo<$type, $variant> {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::$composite(self.dt().to_enum(), ZoneStyle::$out)
-            }
-        }
-    };
-}
-
-macro_rules! impl_combo_generic_fns {
-    ($type:ident) => {
-        impl<Z> Combo<$type, Z> {
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length and a time zone.")]
-            pub fn with_length(length: Length) -> Self {
-                Self::new($type::with_length(length))
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length and a time zone.")]
-            pub const fn long() -> Self {
-                Self::new($type::long())
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length and a time zone.")]
-            pub const fn medium() -> Self {
-                Self::new($type::medium())
-            }
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length and a time zone.")]
-            pub const fn short() -> Self {
-                Self::new($type::short())
+                CompositeFieldSet::$composite(self.dt().to_enum(), self.z().to_enum())
             }
         }
     };
@@ -314,35 +291,56 @@ macro_rules! impl_zone_combo_helpers {
         $wrap:ident
     ) => {
         impl $type {
-            /// Associates this field set with a specific non-location format time zone, as in
+            /// Associates this field set with a long specific non-location format time zone, as in
             /// “Pacific Daylight Time”.
             #[inline]
-            pub fn zone_z(self) -> Combo<Self, Zs> {
-                Combo::new(self)
+            pub fn with_zone_specific_long(self) -> Combo<Self, Z> {
+                Combo::new(self, Z::new())
             }
-            /// Associates this field set with an offset format time zone, as in
+            /// Associates this field set with a short specific non-location format time zone, as in
+            /// “PDT”.
+            #[inline]
+            pub fn with_zone_specific(self) -> Combo<Self, Zs> {
+                Combo::new(self, Zs::new())
+            }
+            /// Associates this field set with a long offset format time zone, as in
+            /// “GMT−08:00”.
+            #[inline]
+            pub fn with_zone_offset_long(self) -> Combo<Self, O> {
+                Combo::new(self, O::new())
+            }
+            /// Associates this field set with a short offset format time zone, as in
             /// “GMT−8”.
             #[inline]
-            pub fn zone_o(self) -> Combo<Self, O> {
-                Combo::new(self)
+            pub fn with_zone_offset(self) -> Combo<Self, Os> {
+                Combo::new(self, Os::new())
             }
-            /// Associates this field set with a generic non-location format time zone, as in
+            /// Associates this field set with a long generic non-location format time zone, as in
             /// “Pacific Time”.
             #[inline]
-            pub fn zone_v(self) -> Combo<Self, Vs> {
-                Combo::new(self)
+            pub fn with_zone_generic_long(self) -> Combo<Self, V> {
+                Combo::new(self, V::new())
+            }
+            /// Associates this field set with a short generic non-location format time zone, as in
+            /// “PT”.
+            #[inline]
+            pub fn with_zone_generic(self) -> Combo<Self, Vs> {
+                Combo::new(self, Vs::new())
             }
             /// Associates this field set with a location format time zone, as in
             /// “Los Angeles time”.
             #[inline]
-            pub fn zone_l(self) -> Combo<Self, L> {
-                Combo::new(self)
+            pub fn with_zone_location(self) -> Combo<Self, L> {
+                Combo::new(self, L::new())
             }
         }
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Zs, Z);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, O, O);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Vs, V);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, L, L);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Z);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Zs);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, O);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Os);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, V);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, Vs);
+        impl_combo_get_field!($type, $composite, $enum, $wrap, L);
     };
 }
 
@@ -436,6 +434,11 @@ macro_rules! impl_date_or_calendar_period_marker {
             $(alignment: $option_alignment_yes,)?
             $(year_style: $year_yes,)?
         );
+        impl_marker_length_constructors!(
+            $type,
+            $(alignment: $option_alignment_yes,)?
+            $(year_style: $year_yes,)?
+        );
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -525,7 +528,6 @@ macro_rules! impl_date_marker {
             $(option_alignment = $option_alignment_yes,)?
         );
         impl_zone_combo_helpers!($type, DateZone, DateFieldSet, wrap);
-        impl_combo_generic_fns!($type);
         impl_composite!($type, Date, DateFieldSet);
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample_time, "**” ⇒ ", $description, " with time")]
@@ -583,8 +585,13 @@ macro_rules! impl_date_marker {
             $(year_style: $year_yes,)?
             time_precision: yes,
         );
+        impl_marker_length_constructors!(
+            $type_time,
+            alignment: yes,
+            $(year_style: $year_yes,)?
+            time_precision: yes,
+        );
         impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet, wrap);
-        impl_combo_generic_fns!($type_time);
         impl UnstableSealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -745,8 +752,12 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
+        impl_marker_length_constructors!(
+            $type,
+            alignment: yes,
+            time_precision: yes,
+        );
         impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet, wrap);
-        impl_combo_generic_fns!($type);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -793,18 +804,13 @@ macro_rules! impl_zone_marker {
         $type:ident,
         // A plain language description of the field set for documentation.
         description = $description:literal,
-        // Length of the sample string below.
-        sample_length = $sample_length:ident,
+        // Length of the skeleton if this is the only field.
+        length_override = $length_override:ident,
         // A sample string. A docs test will be generated!
         sample = $sample:literal,
-        // The field symbol and field length when the semantic length is short/medium.
-        field_short = $field_short:expr,
-        // The field symbol and field length when the semantic length is long.
-        field_long = $field_long:expr,
+        // The field symbol and field length.
+        field = $field:expr,
         // The type in ZoneFieldSet for this field set
-        resolved_type = $resolved_type:ident,
-        // Whether to skip tests and render a message instead.
-        $(skip_tests = $skip_tests:literal,)?
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
         // Whether locations formats can occur.
@@ -825,17 +831,13 @@ macro_rules! impl_zone_marker {
         $(input_variant = $variant_input_yes:ident,)?
         // Whether to require the Local Time
         $(input_localtime = $localtime_input_yes:ident,)?
-        // Whether this time zone style is enumerated in ZoneFieldSet
-        $(enumerated = $enumerated_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
             ///
-            #[doc = yes_or!("", $($skip_tests)?)]
-            ///
             /// # Examples
             ///
-            #[doc = concat!("```", ternary!("compile_fail", "", $($skip_tests)?))]
+            /// ```
             /// use icu::calendar::{Date, Time};
             /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::TimeFormatter;
@@ -846,7 +848,7 @@ macro_rules! impl_zone_marker {
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
             ///     locale!("en").into(),
-            #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
+            #[doc = concat!("    ", stringify!($type), "::new(),")]
             /// )
             /// .unwrap();
             ///
@@ -863,7 +865,7 @@ macro_rules! impl_zone_marker {
             /// ```
             $(#[$attr])*
             $type,
-            sample_length: $sample_length,
+            length_override: $length_override,
         );
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -898,86 +900,22 @@ macro_rules! impl_zone_marker {
             type Z = Self;
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
-        $(
-            const _: () = yes_to!((), $enumerated_yes); // condition for this macro block
-            impl_composite!($type, Zone, ZoneFieldSet);
-            impl $type {
-                pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
-                    match self.length {
-                        Length::Short | Length::Medium => $field_short,
-                        Length::Long => $field_long,
-                    }
-                }
+        impl_composite!($type, Zone, ZoneFieldSet);
+        impl $type {
+            /// Creates a new field set with default options.
+            pub const fn new() -> Self {
+                Self {}
             }
-        )?
+            pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+                $field
+            }
+        }
+        impl Default for $type {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
     };
-}
-
-macro_rules! impl_zoneddatetime_marker {
-    (
-        $type:ident,
-        description = $description:literal,
-        sample_length = $sample_length:ident,
-        sample = $sample:literal,
-        datetime = $datetime:path,
-        zone = $zone:path,
-    ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
-        /// use icu::datetime::DateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
-        /// use icu::locale::locale;
-        /// use writeable::assert_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
-        ///     locale!("en-GB").into(),
-        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
-        /// )
-        /// .unwrap();
-        ///
-        /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
-        ///
-        /// assert_writeable_eq!(
-        ///     fmt.format_any_calendar(&dtz),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::FixedCalendarDateTimeFormatter;
-        #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
-        /// use icu::locale::locale;
-        /// use writeable::assert_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     locale!("en-GB").into(),
-        #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
-        /// )
-        /// .unwrap();
-        ///
-        /// let mut dtz = IxdtfParser::new().try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
-        ///     .unwrap()
-        ///     .to_calendar(Gregorian);
-        ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&dtz),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        pub type $type = Combo<$datetime, $zone>;
-    }
 }
 
 impl_date_marker!(
@@ -1228,7 +1166,7 @@ impl_zone_marker!(
     /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::Z;
+    /// use icu::datetime::fieldsets::{Z, Zs};
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_writeable_eq;
@@ -1241,7 +1179,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     Z::short(),
+    ///     Zs::new(),
     /// )
     /// .unwrap();
     ///
@@ -1252,7 +1190,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     Z::long(),
+    ///     Z::new(),
     /// )
     /// .unwrap();
     ///
@@ -1281,7 +1219,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     Z::medium(),
+    ///     Z::new(),
     /// )
     /// .unwrap();
     ///
@@ -1289,12 +1227,10 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Z,
-    description = "time zone in specific non-location format",
-    sample_length = long,
+    description = "time zone in specific non-location format, long length",
+    length_override = Long,
     sample = "Central Daylight Time",
-    field_short = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
-    field_long = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
-    resolved_type = Z,
+    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     zone_specific_long = yes,
@@ -1303,7 +1239,6 @@ impl_zone_marker!(
     input_tzid = yes,
     input_variant = yes,
     input_localtime = yes,
-    enumerated = yes,
 );
 
 impl_zone_marker!(
@@ -1314,7 +1249,7 @@ impl_zone_marker!(
     /// ```compile_fail,E0271
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::{Combo, T, Zs};
+    /// use icu::datetime::fieldsets::T;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
@@ -1326,7 +1261,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     Combo::<T, Zs>::medium(),
+    ///     T::medium().with_zone_specific_short(),
     /// )
     /// .unwrap();
     ///
@@ -1335,13 +1270,10 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_at_time);
     /// ```
     Zs,
-    description = "time zone in specific non-location format (only short)",
-    sample_length = short,
+    description = "time zone in specific non-location format, short length",
+    length_override = Short,
     sample = "CDT",
-    field_short = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
-    field_long = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
-    resolved_type = Z,
-    skip_tests = "This field set can be used only in combination with others.",
+    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
@@ -1373,40 +1305,48 @@ impl_zone_marker!(
     ///
     /// let formatter = TimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     O::medium(),
+    ///     O::new(),
     /// )
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&utc_offset),
-    ///     "GMT-6"
+    ///     "GMT-06:00"
     /// );
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_basic),
-    ///     "GMT-6"
+    ///     "GMT-06:00"
     /// );
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_at_time),
-    ///     "GMT-6"
+    ///     "GMT-06:00"
     /// );
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&time_zone_full),
-    ///     "GMT-6"
+    ///     "GMT-06:00"
     /// );
     /// ```
     O,
-    description = "UTC offset",
-    sample_length = medium,
-    sample = "GMT-5",
-    field_short = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
-    field_long = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
-    resolved_type = O,
+    description = "UTC offset, long length",
+    length_override = Long,
+    sample = "GMT-05:00",
+    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
     zone_essentials = yes,
-    enumerated = yes,
 );
+
+impl_zone_marker!(
+    Os,
+    description = "UTC offset, short length",
+    length_override = Short,
+    sample = "GMT-5",
+    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
+    zone_essentials = yes,
+);
+
+// TODO: Add short/long UTC offset?
 
 impl_zone_marker!(
     /// When a display name is unavailable, falls back to the location format:
@@ -1416,7 +1356,7 @@ impl_zone_marker!(
     /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::V;
+    /// use icu::datetime::fieldsets::Vs;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_writeable_eq;
@@ -1428,7 +1368,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     V::short(),
+    ///     Vs::new(),
     /// )
     /// .unwrap();
     ///
@@ -1444,7 +1384,7 @@ impl_zone_marker!(
     /// use icu::calendar::{Date, Time};
     /// use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
     /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldsets::V;
+    /// use icu::datetime::fieldsets::Vs;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -1453,7 +1393,7 @@ impl_zone_marker!(
     /// // Set up the formatter
     /// let mut tzf = TimeFormatter::try_new(
     ///     locale!("en").into(),
-    ///     V::short(),
+    ///     Vs::new(),
     /// )
     /// .unwrap();
     ///
@@ -1513,12 +1453,10 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     V,
-    description = "time zone in generic non-location format",
-    sample_length = long,
+    description = "time zone in generic non-location format, long length",
+    length_override = Long,
     sample = "Central Time",
-    field_short = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
-    field_long = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
-    resolved_type = V,
+    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_long = yes,
@@ -1526,7 +1464,6 @@ impl_zone_marker!(
     metazone_periods = yes,
     input_tzid = yes,
     input_localtime = yes,
-    enumerated = yes,
 );
 
 impl_zone_marker!(
@@ -1555,13 +1492,10 @@ impl_zone_marker!(
     /// formatter.format(&time_zone_basic);
     /// ```
     Vs,
-    description = "time zone in generic non-location format (only short)",
-    sample_length = short,
+    description = "time zone in generic non-location format, short length",
+    length_override = Short,
     sample = "CT",
-    field_short = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
-    field_long = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
-    resolved_type = V,
-    skip_tests = "This field set can be used only in combination with others.",
+    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_short = yes,
@@ -1597,42 +1531,12 @@ impl_zone_marker!(
     /// ```
     L,
     description = "time zone in location format",
-    sample_length = long,
+    length_override = Long,
     sample = "Chicago Time",
-    field_short = (fields::TimeZone::Location, fields::FieldLength::Four),
-    field_long = (fields::TimeZone::Location, fields::FieldLength::Four),
-    resolved_type = L,
+    field = (fields::TimeZone::Location, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     input_tzid = yes,
-    enumerated = yes,
-);
-
-impl_zoneddatetime_marker!(
-    YMDTV,
-    description = "locale-dependent date and time fields with a time zone",
-    sample_length = medium,
-    sample = "17 May 2024, 15:47:50 GMT",
-    datetime = YMDT,
-    zone = Vs,
-);
-
-impl_zoneddatetime_marker!(
-    YMDTZ,
-    description = "locale-dependent date and time fields with a time zone",
-    sample_length = medium,
-    sample = "17 May 2024, 15:47:50 BST",
-    datetime = YMDT,
-    zone = Zs,
-);
-
-impl_zoneddatetime_marker!(
-    YMDTO,
-    description = "locale-dependent date and time fields with a time zone",
-    sample_length = medium,
-    sample = "17 May 2024, 15:47:50 GMT+1",
-    datetime = YMDT,
-    zone = O,
 );
 
 impl_zone_combo_helpers!(DateFieldSet, DateZone, UNREACHABLE, no_wrap);

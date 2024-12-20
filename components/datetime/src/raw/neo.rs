@@ -566,7 +566,7 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
-            CompositeFieldSet::DateZone(field_set, time_zone_style) => {
+            CompositeFieldSet::DateZone(field_set, zone_field_set) => {
                 let options = field_set.to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
@@ -574,14 +574,11 @@ impl DateTimeZonePatternSelectionData {
                     field_set.id_str(),
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Date)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
-            CompositeFieldSet::TimeZone(field_set, time_zone_style) => {
+            CompositeFieldSet::TimeZone(field_set, zone_field_set) => {
                 let options = field_set.to_raw_options();
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
@@ -589,14 +586,11 @@ impl DateTimeZonePatternSelectionData {
                     field_set,
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Time)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
-            CompositeFieldSet::DateTimeZone(field_set, time_zone_style) => {
+            CompositeFieldSet::DateTimeZone(field_set, zone_field_set) => {
                 let options = field_set.to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
@@ -610,9 +604,6 @@ impl DateTimeZonePatternSelectionData {
                     field_set.to_time_field_set(),
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Date + Time)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
                 let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
