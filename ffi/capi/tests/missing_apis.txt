@@ -629,6 +629,12 @@ icu::timezone::IxdtfParser::try_offset_only_iso_from_str#FnInStruct
 icu::timezone::IxdtfParser::try_offset_only_iso_from_utf8#FnInStruct
 icu::timezone::ParseError#Enum
 icu::timezone::TimeZoneBcp47Id::into_option#FnInStruct
+icu::timezone::TimeZoneBcp47Iter#Struct
+icu::timezone::TimeZoneBcp47Iter::next#FnInStruct
+icu::timezone::TimeZoneCanonicalIanaIter#Struct
+icu::timezone::TimeZoneCanonicalIanaIter::next#FnInStruct
+icu::timezone::TimeZoneIdMapperBorrowed::iter_bcp47#FnInStruct
+icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::iter_canonical_iana#FnInStruct
 icu::timezone::UtcOffset::into_option#FnInStruct
 icu::timezone::WindowsTimeZoneMapper#Struct
 icu::timezone::WindowsTimeZoneMapper::new#FnInStruct

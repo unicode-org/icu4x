@@ -117,8 +117,8 @@ pub use self::ixdtf::IxdtfParser;
 
 pub use error::InvalidOffsetError;
 pub use ids::{
-    TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
-    TimeZoneIdMapperWithFastCanonicalizationBorrowed,
+    TimeZoneBcp47Iter, TimeZoneCanonicalIanaIter, TimeZoneIdMapper, TimeZoneIdMapperBorrowed,
+    TimeZoneIdMapperWithFastCanonicalization, TimeZoneIdMapperWithFastCanonicalizationBorrowed,
 };
 pub use provider::TimeZoneBcp47Id;
 pub use time_zone::models;
