@@ -294,7 +294,7 @@ where
 
 /// A trait for a [`DateTimeNamesMarker`] that can be created from a more specific one, `M`.
 ///
-/// This trait is blanket-implemented on all field sets that are more general than `M`.
+/// This trait is blanket-implemented on all [field sets](crate::fieldsets) that are more general than `M`.
 ///
 /// # Examples
 ///
