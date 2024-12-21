@@ -2,6 +2,87 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Builder APIs for [dynamic field sets](crate::fieldsets::enums).
+//!
+//! These APIs are designed for when the field set is not known at compile time. This could
+//! happen if:
+//!
+//! 1. The field set is sent over the network or read from a data file
+//! 2. Implementing another interface with different types
+//!
+//! If the field set is known at compile time, use the static fieldset APIs instead of the
+//! builder exported in this module.
+//!
+//! All examples below will show both ways to build a field set.
+//!
+//! # Examples
+//!
+//! ```
+//! use icu::datetime::fieldsets;
+//! use icu::datetime::fieldsets::builder::*;
+//! use icu::datetime::fieldsets::enums::*;
+//! use icu::datetime::options::*;
+//!
+//! // Year, Month, Day
+//! // Medium length
+//! // Always display the era
+//!
+//! let static_field_set = fieldsets::YMD::medium()
+//!     .with_year_style(YearStyle::Always);
+//!
+//! let mut builder = FieldSetBuilder::default();
+//! builder.date_fields = Some(DateFields::YMD);
+//! builder.length = Some(Length::Medium);
+//! builder.year_style = Some(YearStyle::Always);
+//! let dynamic_field_set = builder.build_date().unwrap();
+//!
+//! assert_eq!(
+//!     dynamic_field_set,
+//!     DateFieldSet::YMD(static_field_set),
+//! );
+//!
+//! // Weekday and Time of day
+//! // Long length
+//! // Display time to the minute
+//!
+//! let static_field_set = fieldsets::ET::long()
+//!     .with_time_precision(TimePrecision::MinuteExact);
+//!
+//! let mut builder = FieldSetBuilder::default();
+//! builder.date_fields = Some(DateFields::E);
+//! builder.length = Some(Length::Long);
+//! builder.time_precision = Some(TimePrecision::MinuteExact);
+//! let dynamic_field_set = builder.build_date_and_time().unwrap();
+//!
+//! assert_eq!(
+//!     dynamic_field_set,
+//!     DateAndTimeFieldSet::ET(static_field_set),
+//! );
+//!
+//! // Time and Time Zone
+//! // Short length
+//! // Long specific non-location time zone
+//! // Display time to the millisecond
+//! // Render for column alignment
+//!
+//! let static_field_set = fieldsets::T::short()
+//!     .with_time_precision(TimePrecision::SecondF3)
+//!     .with_alignment(Alignment::Column)
+//!     .with_zone_specific_long();
+//!
+//! let mut builder = FieldSetBuilder::default();
+//! builder.length = Some(Length::Short);
+//! builder.time_precision = Some(TimePrecision::SecondF3);
+//! builder.alignment = Some(Alignment::Column);
+//! builder.zone_style = Some(ZoneStyle::Z);
+//! let dynamic_field_set = builder.build_composite().unwrap();
+//!
+//! assert_eq!(
+//!     dynamic_field_set,
+//!     CompositeFieldSet::TimeZone(static_field_set),
+//! );
+//! ```
+
 use crate::fieldsets::{self, enums::*};
 use crate::options::*;
 
@@ -73,6 +154,7 @@ pub enum ZoneStyle {
     L,
 }
 
+/// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum BuilderError {
@@ -82,20 +164,48 @@ pub enum BuilderError {
     InvalidOptions,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+/// A builder for [dynamic field sets](crate::fieldsets::enums).
+///
+/// This builder is useful if you do not know the field set at code compilation time. If you do,
+/// the static field set APIs should yield smaller binary size.
+///
+/// For examples, see the [module docs](crate::fieldsets::builder).
+// Note: could be Copy but we don't want implicit moves
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct FieldSetBuilder {
+    /// The length of a formatted date/time string.
+    ///
+    /// If `None`, defaults to [`Length::Medium`].
     pub length: Option<Length>,
+    /// The set of date fields, such as "year and month" or "weekday".
+    ///
+    /// If `None`, a date will not be displayed.
     pub date_fields: Option<DateFields>,
+    /// The precision to display the time of day.
+    ///
+    /// If `None`, a time will not be displayed.
     pub time_precision: Option<TimePrecision>,
+    /// The style to display the time zone.
+    ///
+    /// If `None`, a time zone will not be displayed.
     pub zone_style: Option<ZoneStyle>,
+    /// The alignment context, such as when displaying dates in a table.
+    ///
+    /// This option may be specified only if the field set can honor it.
     pub alignment: Option<Alignment>,
+    /// How to display the year and era.
+    ///
+    /// This option may be specified only if the year is included in [`Self::date_fields`].
     pub year_style: Option<YearStyle>,
 }
 
 const DEFAULT_LENGTH: Length = Length::Medium;
 
 impl FieldSetBuilder {
+    /// Builds a [`DateFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date(mut self) -> Result<DateFieldSet, BuilderError> {
         let date_field_set = match self.date_fields.take() {
             Some(DateFields::D) => {
@@ -128,6 +238,9 @@ impl FieldSetBuilder {
         Ok(date_field_set)
     }
 
+    /// Builds a [`TimeFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_time(mut self) -> Result<TimeFieldSet, BuilderError> {
         let time_field_set =
             TimeFieldSet::T(fieldsets::T::take_from_builder(&mut self, DEFAULT_LENGTH));
@@ -135,95 +248,126 @@ impl FieldSetBuilder {
         Ok(time_field_set)
     }
 
-    pub fn build_datetime(mut self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
-        let datetime_field_set = match (self.date_fields.take(), self.time_precision.is_some()) {
-            (Some(DateFields::D), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::D(
-                fieldsets::D::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::MD), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::MD(
-                fieldsets::MD::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::YMD), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(
-                fieldsets::YMD::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::DE), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::DE(
-                fieldsets::DE::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::MDE), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::MDE(
-                fieldsets::MDE::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::YMDE), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::YMDE(
-                fieldsets::YMDE::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::E), false) => CompositeDateTimeFieldSet::Date(DateFieldSet::E(
-                fieldsets::E::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::M), false) => {
-                CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::M(
-                    fieldsets::M::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+    fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
+        let zone_field_set = match self.zone_style.take() {
+            Some(ZoneStyle::Z) => {
+                ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::YM), false) => {
-                CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::YM(
-                    fieldsets::YM::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::Zs) => {
+                ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::Y), false) => {
-                CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::Y(
-                    fieldsets::Y::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::O) => {
+                ZoneFieldSet::O(fieldsets::O::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::D), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::DT(
-                    fieldsets::DT::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::Os) => {
+                ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::MD), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::MDT(
-                    fieldsets::MDT::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::V) => {
+                ZoneFieldSet::V(fieldsets::V::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::YMD), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDT(
-                    fieldsets::YMDT::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::Vs) => {
+                ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::DE), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::DET(
-                    fieldsets::DET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
+            Some(ZoneStyle::L) => {
+                ZoneFieldSet::L(fieldsets::L::take_from_builder(self, DEFAULT_LENGTH))
             }
-            (Some(DateFields::MDE), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::MDET(
-                    fieldsets::MDET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
-            }
-            (Some(DateFields::YMDE), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
-                    fieldsets::YMDET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
-            }
-            (Some(DateFields::E), true) => {
-                CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(
-                    fieldsets::ET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ))
-            }
-            (None, true) => CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
-                fieldsets::T::take_from_builder(&mut self, DEFAULT_LENGTH),
-            )),
-            (Some(DateFields::M), true)
-            | (Some(DateFields::YM), true)
-            | (Some(DateFields::Y), true)
-            | (None, false) => {
-                return Err(BuilderError::InvalidFields);
-            }
+            None => return Err(BuilderError::InvalidFields),
         };
-        self.check_options_consumed()?;
-        Ok(datetime_field_set)
+        Ok(zone_field_set)
     }
 
-    pub fn build(self) -> Result<CompositeFieldSet, BuilderError> {
-        todo!()
+    /// Builds a [`ZoneFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_zone(mut self) -> Result<ZoneFieldSet, BuilderError> {
+        let zone_field_set = self.build_zone_without_checking_options()?;
+        self.check_options_consumed()?;
+        Ok(zone_field_set)
+    }
+
+    /// Builds a [`DateAndTimeFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_date_and_time(mut self) -> Result<DateAndTimeFieldSet, BuilderError> {
+        let date_and_time_field_set =
+            match self.date_fields.take() {
+                Some(DateFields::D) => DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(
+                    &mut self,
+                    DEFAULT_LENGTH,
+                )),
+                Some(DateFields::MD) => DateAndTimeFieldSet::MDT(
+                    fieldsets::MDT::take_from_builder(&mut self, DEFAULT_LENGTH),
+                ),
+                Some(DateFields::YMD) => DateAndTimeFieldSet::YMDT(
+                    fieldsets::YMDT::take_from_builder(&mut self, DEFAULT_LENGTH),
+                ),
+                Some(DateFields::DE) => DateAndTimeFieldSet::DET(
+                    fieldsets::DET::take_from_builder(&mut self, DEFAULT_LENGTH),
+                ),
+                Some(DateFields::MDE) => DateAndTimeFieldSet::MDET(
+                    fieldsets::MDET::take_from_builder(&mut self, DEFAULT_LENGTH),
+                ),
+                Some(DateFields::YMDE) => DateAndTimeFieldSet::YMDET(
+                    fieldsets::YMDET::take_from_builder(&mut self, DEFAULT_LENGTH),
+                ),
+                Some(DateFields::E) => DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(
+                    &mut self,
+                    DEFAULT_LENGTH,
+                )),
+                Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
+                    return Err(BuilderError::InvalidFields)
+                }
+            };
+        Ok(date_and_time_field_set)
+    }
+
+    /// Builds a [`CompositeDateTimeFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_composite_datetime(self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
+        match (self.date_fields.is_some(), self.time_precision.is_some()) {
+            (true, false) => self.build_date().map(CompositeDateTimeFieldSet::Date),
+            (false, true) => self.build_time().map(CompositeDateTimeFieldSet::Time),
+            (true, true) => self
+                .build_date_and_time()
+                .map(CompositeDateTimeFieldSet::DateTime),
+            (false, false) => Err(BuilderError::InvalidFields),
+        }
+    }
+
+    /// Builds a [`CompositeFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_composite(mut self) -> Result<CompositeFieldSet, BuilderError> {
+        match (
+            self.date_fields.is_some(),
+            self.time_precision.is_some(),
+            self.zone_style.is_some(),
+        ) {
+            (true, false, false) => self.build_date().map(CompositeFieldSet::Date),
+            (false, true, false) => self.build_time().map(CompositeFieldSet::Time),
+            (true, true, false) => self.build_date_and_time().map(CompositeFieldSet::DateTime),
+            (false, false, true) => self.build_zone().map(CompositeFieldSet::Zone),
+            (true, false, true) => {
+                let zone_field_set = self.build_zone_without_checking_options()?;
+                let date_field_set = self.build_date()?;
+                Ok(CompositeFieldSet::DateZone(date_field_set, zone_field_set))
+            }
+            (false, true, true) => {
+                let zone_field_set = self.build_zone_without_checking_options()?;
+                let time_field_set = self.build_time()?;
+                Ok(CompositeFieldSet::TimeZone(time_field_set, zone_field_set))
+            }
+            (true, true, true) => {
+                let zone_field_set = self.build_zone_without_checking_options()?;
+                let date_and_time_field_set = self.build_date_and_time()?;
+                Ok(CompositeFieldSet::DateTimeZone(
+                    date_and_time_field_set,
+                    zone_field_set,
+                ))
+            }
+            (false, false, false) => Err(BuilderError::InvalidFields),
+        }
     }
 
     fn check_options_consumed(self) -> Result<(), BuilderError> {
