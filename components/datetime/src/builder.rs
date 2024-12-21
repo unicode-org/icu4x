@@ -66,20 +66,20 @@
 //! // Render for column alignment
 //!
 //! let static_field_set = fieldsets::T::short()
-//!     .with_time_precision(TimePrecision::SecondF3)
+//!     .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F3))
 //!     .with_alignment(Alignment::Column)
 //!     .with_zone_specific_long();
 //!
 //! let mut builder = FieldSetBuilder::default();
 //! builder.length = Some(Length::Short);
-//! builder.time_precision = Some(TimePrecision::SecondF3);
+//! builder.time_precision = Some(TimePrecision::SecondExact(FractionalSecondDigits::F3));
 //! builder.alignment = Some(Alignment::Column);
 //! builder.zone_style = Some(ZoneStyle::Z);
 //! let dynamic_field_set = builder.build_composite().unwrap();
 //!
 //! assert_eq!(
 //!     dynamic_field_set,
-//!     CompositeFieldSet::TimeZone(static_field_set),
+//!     CompositeFieldSet::TimeZone(static_field_set.into_enums()),
 //! );
 //! ```
 

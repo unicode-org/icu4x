@@ -287,11 +287,20 @@ macro_rules! impl_marker_with_options {
 }
 
 macro_rules! impl_combo_get_field {
-    ($type:ident, $composite:ident, $enum:ident, $wrap:ident, $variant:ident) => {
+    ($type:ident, $composite:ident, $enum:ident, $variant:ident) => {
         impl GetField<CompositeFieldSet> for Combo<$type, $variant> {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
                 CompositeFieldSet::$composite(Combo::new(self.dt().to_enum(), self.z().to_enum()))
+            }
+        }
+        impl Combo<$type, $variant> {
+            /// Convert this specific [`Combo`] into a more general [`Combo`].
+            /// Useful when adding to the field of a [`CompositeFieldSet`].
+            ///
+            /// [`CompositeFieldSet`]: enums::CompositeFieldSet
+            pub fn into_enums(self) -> Combo<$enum, ZoneFieldSet> {
+                Combo::new(self.dt().to_enum(), self.z().to_enum())
             }
         }
     };
@@ -301,8 +310,7 @@ macro_rules! impl_zone_combo_helpers {
     (
         $type:ident,
         $composite:ident,
-        $enum:ident,
-        $wrap:ident
+        $enum:ident
     ) => {
         impl $type {
             /// Associates this field set with a long specific non-location format time zone, as in
@@ -348,13 +356,13 @@ macro_rules! impl_zone_combo_helpers {
                 Combo::new(self, L::new())
             }
         }
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Z);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Zs);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, O);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Os);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, V);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, Vs);
-        impl_combo_get_field!($type, $composite, $enum, $wrap, L);
+        impl_combo_get_field!($type, $composite, $enum, Z);
+        impl_combo_get_field!($type, $composite, $enum, Zs);
+        impl_combo_get_field!($type, $composite, $enum, O);
+        impl_combo_get_field!($type, $composite, $enum, Os);
+        impl_combo_get_field!($type, $composite, $enum, V);
+        impl_combo_get_field!($type, $composite, $enum, Vs);
+        impl_combo_get_field!($type, $composite, $enum, L);
     };
 }
 
@@ -541,7 +549,7 @@ macro_rules! impl_date_marker {
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
-        impl_zone_combo_helpers!($type, DateZone, DateFieldSet, wrap);
+        impl_zone_combo_helpers!($type, DateZone, DateFieldSet);
         impl_composite!($type, Date, DateFieldSet);
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample_time, "**” ⇒ ", $description, " with time")]
@@ -605,7 +613,7 @@ macro_rules! impl_date_marker {
             $(year_style: $year_yes,)?
             time_precision: yes,
         );
-        impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet, wrap);
+        impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet);
         impl UnstableSealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -771,7 +779,7 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
-        impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet, wrap);
+        impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -1553,8 +1561,8 @@ impl_zone_marker!(
     input_tzid = yes,
 );
 
-impl_zone_combo_helpers!(DateFieldSet, DateZone, UNREACHABLE, no_wrap);
+impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet);
 
-impl_zone_combo_helpers!(TimeFieldSet, TimeZone, UNREACHABLE, no_wrap);
+impl_zone_combo_helpers!(TimeFieldSet, TimeZone, TimeFieldSet);
 
-impl_zone_combo_helpers!(DateAndTimeFieldSet, DateTimeZone, UNREACHABLE, no_wrap);
+impl_zone_combo_helpers!(DateAndTimeFieldSet, DateTimeZone, DateAndTimeFieldSet);
