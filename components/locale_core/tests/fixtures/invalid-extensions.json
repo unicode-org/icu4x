@@ -12,7 +12,7 @@
   {
     "input": {
       "type": "Locale",
-      "identifier": "pl-US-x-@A_3"
+      "identifier": "pl-US-x-@A-3"
     },
     "output": {
       "error": "InvalidExtension",

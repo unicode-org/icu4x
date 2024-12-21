@@ -112,12 +112,12 @@ mod tests {
         let mut locale = locale!("fr");
         lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("de_Latn_ch"), &locale),
-            Ok(&locale!("de_Latn_ch"))
+            effective_locale(&locale!("de-Latn-ch"), &locale),
+            Ok(&locale!("de-Latn-ch"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("de_Latn_ch")),
-            Ok(&locale!("fr_Latn_FR"))
+            effective_locale(&locale, &locale!("de-Latn-ch")),
+            Ok(&locale!("fr-Latn-FR"))
         );
     }
 
@@ -127,11 +127,11 @@ mod tests {
         let mut locale = locale!("ja");
         lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("de_Latn_ch"), &locale),
+            effective_locale(&locale!("de-Latn-ch"), &locale),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("de_Latn_ch")),
+            effective_locale(&locale, &locale!("de-Latn-ch")),
             Ok(&locale!("de-Latn-CH"))
         );
     }
@@ -142,27 +142,27 @@ mod tests {
         let mut locale = locale!("ja");
         lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("ja_Hani_JP"), &locale),
-            Ok(&locale!("ja_Hani_JP"))
+            effective_locale(&locale!("ja-Hani-JP"), &locale),
+            Ok(&locale!("ja-Hani-JP"))
         );
         assert_eq!(
-            effective_locale(&locale!("ja_Kana_JP"), &locale),
+            effective_locale(&locale!("ja-Kana-JP"), &locale),
             Ok(&locale!("ja-Kana-JP"))
         );
         assert_eq!(
-            effective_locale(&locale!("ja_Hira_JP"), &locale),
+            effective_locale(&locale!("ja-Hira-JP"), &locale),
             Ok(&locale!("ja-Hira-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Hani_JP")),
+            effective_locale(&locale, &locale!("ja-Hani-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Kana_JP")),
+            effective_locale(&locale, &locale!("ja-Kana-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Hira_JP")),
+            effective_locale(&locale, &locale!("ja-Hira-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
     }
@@ -173,15 +173,15 @@ mod tests {
         let scripts = icu_properties::PropertyNamesShort::<icu_properties::props::Script>::new();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
-            Ok(locale!("und_Latn"))
+            Ok(locale!("und-Latn"))
         );
         assert_eq!(
             likely_person_name_locale(&person_name("駿", "宮崎").unwrap(), swe, scripts),
-            Ok(locale!("und_Hani"))
+            Ok(locale!("und-Hani"))
         );
         assert_eq!(
             likely_person_name_locale(&person_name("하야오", "미야자키").unwrap(), swe, scripts),
-            Ok(locale!("und_Hang"))
+            Ok(locale!("und-Hang"))
         );
         assert_eq!(
             likely_person_name_locale(
@@ -189,7 +189,7 @@ mod tests {
                 swe,
                 scripts
             ),
-            Ok(locale!("und_Kana"))
+            Ok(locale!("und-Kana"))
         );
     }
 
