@@ -42,15 +42,14 @@
 //! );
 //!
 //! // Weekday and Time of day
-//! // Long length
+//! // Medium length, implicit in the builder
 //! // Display time to the minute
 //!
-//! let static_field_set = fieldsets::ET::long()
+//! let static_field_set = fieldsets::ET::medium()
 //!     .with_time_precision(TimePrecision::MinuteExact);
 //!
 //! let mut builder = FieldSetBuilder::default();
 //! builder.date_fields = Some(DateFields::E);
-//! builder.length = Some(Length::Long);
 //! builder.time_precision = Some(TimePrecision::MinuteExact);
 //! let dynamic_field_set = builder.build_date_and_time().unwrap();
 //!
@@ -200,6 +199,8 @@ pub struct FieldSetBuilder {
     pub year_style: Option<YearStyle>,
 }
 
+// This is the default length when the builder is used. This could have been defined in the macro
+// that generates the `take_from_builder` fns, but it would be easily lost.
 const DEFAULT_LENGTH: Length = Length::Medium;
 
 impl FieldSetBuilder {
@@ -325,6 +326,7 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_composite_datetime(self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
+        // Check for the presence of date and time, then delegate to the correct impl.
         match (self.date_fields.is_some(), self.time_precision.is_some()) {
             (true, false) => self.build_date().map(CompositeDateTimeFieldSet::Date),
             (false, true) => self.build_time().map(CompositeDateTimeFieldSet::Time),
@@ -339,6 +341,7 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_composite(mut self) -> Result<CompositeFieldSet, BuilderError> {
+        // Check for the presence of date, time, and zone, then delegate to the correct impl.
         match (
             self.date_fields.is_some(),
             self.time_precision.is_some(),

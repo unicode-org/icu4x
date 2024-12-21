@@ -237,6 +237,8 @@ macro_rules! impl_marker_with_options {
                     $(time_precision: yes_to!(options.time_precision, $timeprecision_yes),)?
                 }
             }
+            /// Builds this field set, removing the needed options from the builder.
+            /// If length is needed but is None, falls back to `default_length`.
             #[allow(unused)]
             pub(crate) fn take_from_builder(
                 options: &mut builder::FieldSetBuilder,
