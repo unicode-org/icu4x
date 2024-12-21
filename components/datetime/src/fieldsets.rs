@@ -238,14 +238,13 @@ macro_rules! impl_marker_with_options {
                 }
             }
             /// Builds this field set, removing the needed options from the builder.
-            /// If length is needed but is None, falls back to `default_length`.
+            /// If length is needed but is None, falls back to `builder::DEFAULT_LENGTH`.
             #[allow(unused)]
             pub(crate) fn take_from_builder(
-                options: &mut builder::FieldSetBuilder,
-                default_length: Length
+                options: &mut builder::FieldSetBuilder
             ) -> Self {
                 Self {
-                    $(length: yes_to!(options.length.take().unwrap_or(default_length), $sample_length),)?
+                    $(length: yes_to!(options.length.take().unwrap_or(builder::DEFAULT_LENGTH), $sample_length),)?
                     $(alignment: yes_to!(options.alignment.take(), $alignment_yes),)?
                     $(year_style: yes_to!(options.year_style.take(), $yearstyle_yes),)?
                     $(time_precision: yes_to!(options.time_precision.take(), $timeprecision_yes),)?

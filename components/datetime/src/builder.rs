@@ -201,7 +201,7 @@ pub struct FieldSetBuilder {
 
 // This is the default length when the builder is used. This could have been defined in the macro
 // that generates the `take_from_builder` fns, but it would be easily lost.
-const DEFAULT_LENGTH: Length = Length::Medium;
+pub(crate) const DEFAULT_LENGTH: Length = Length::Medium;
 
 impl FieldSetBuilder {
     /// Builds a [`DateFieldSet`].
@@ -209,28 +209,19 @@ impl FieldSetBuilder {
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date(mut self) -> Result<DateFieldSet, BuilderError> {
         let date_field_set = match self.date_fields.take() {
-            Some(DateFields::D) => {
-                DateFieldSet::D(fieldsets::D::take_from_builder(&mut self, DEFAULT_LENGTH))
-            }
-            Some(DateFields::MD) => {
-                DateFieldSet::MD(fieldsets::MD::take_from_builder(&mut self, DEFAULT_LENGTH))
-            }
+            Some(DateFields::D) => DateFieldSet::D(fieldsets::D::take_from_builder(&mut self)),
+            Some(DateFields::MD) => DateFieldSet::MD(fieldsets::MD::take_from_builder(&mut self)),
             Some(DateFields::YMD) => {
-                DateFieldSet::YMD(fieldsets::YMD::take_from_builder(&mut self, DEFAULT_LENGTH))
+                DateFieldSet::YMD(fieldsets::YMD::take_from_builder(&mut self))
             }
-            Some(DateFields::DE) => {
-                DateFieldSet::DE(fieldsets::DE::take_from_builder(&mut self, DEFAULT_LENGTH))
-            }
+            Some(DateFields::DE) => DateFieldSet::DE(fieldsets::DE::take_from_builder(&mut self)),
             Some(DateFields::MDE) => {
-                DateFieldSet::MDE(fieldsets::MDE::take_from_builder(&mut self, DEFAULT_LENGTH))
+                DateFieldSet::MDE(fieldsets::MDE::take_from_builder(&mut self))
             }
-            Some(DateFields::YMDE) => DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(
-                &mut self,
-                DEFAULT_LENGTH,
-            )),
-            Some(DateFields::E) => {
-                DateFieldSet::E(fieldsets::E::take_from_builder(&mut self, DEFAULT_LENGTH))
+            Some(DateFields::YMDE) => {
+                DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(&mut self))
             }
+            Some(DateFields::E) => DateFieldSet::E(fieldsets::E::take_from_builder(&mut self)),
             Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
                 return Err(BuilderError::InvalidFields)
             }
@@ -243,35 +234,20 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_time(mut self) -> Result<TimeFieldSet, BuilderError> {
-        let time_field_set =
-            TimeFieldSet::T(fieldsets::T::take_from_builder(&mut self, DEFAULT_LENGTH));
+        let time_field_set = TimeFieldSet::T(fieldsets::T::take_from_builder(&mut self));
         self.check_options_consumed()?;
         Ok(time_field_set)
     }
 
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
         let zone_field_set = match self.zone_style.take() {
-            Some(ZoneStyle::Z) => {
-                ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::Zs) => {
-                ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::O) => {
-                ZoneFieldSet::O(fieldsets::O::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::Os) => {
-                ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::V) => {
-                ZoneFieldSet::V(fieldsets::V::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::Vs) => {
-                ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self, DEFAULT_LENGTH))
-            }
-            Some(ZoneStyle::L) => {
-                ZoneFieldSet::L(fieldsets::L::take_from_builder(self, DEFAULT_LENGTH))
-            }
+            Some(ZoneStyle::Z) => ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self)),
+            Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),
+            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
+            Some(ZoneStyle::Os) => ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self)),
+            Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
+            Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
+            Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
             None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)
@@ -290,35 +266,32 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date_and_time(mut self) -> Result<DateAndTimeFieldSet, BuilderError> {
-        let date_and_time_field_set =
-            match self.date_fields.take() {
-                Some(DateFields::D) => DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(
-                    &mut self,
-                    DEFAULT_LENGTH,
-                )),
-                Some(DateFields::MD) => DateAndTimeFieldSet::MDT(
-                    fieldsets::MDT::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ),
-                Some(DateFields::YMD) => DateAndTimeFieldSet::YMDT(
-                    fieldsets::YMDT::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ),
-                Some(DateFields::DE) => DateAndTimeFieldSet::DET(
-                    fieldsets::DET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ),
-                Some(DateFields::MDE) => DateAndTimeFieldSet::MDET(
-                    fieldsets::MDET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ),
-                Some(DateFields::YMDE) => DateAndTimeFieldSet::YMDET(
-                    fieldsets::YMDET::take_from_builder(&mut self, DEFAULT_LENGTH),
-                ),
-                Some(DateFields::E) => DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(
-                    &mut self,
-                    DEFAULT_LENGTH,
-                )),
-                Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
-                    return Err(BuilderError::InvalidFields)
-                }
-            };
+        let date_and_time_field_set = match self.date_fields.take() {
+            Some(DateFields::D) => {
+                DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(&mut self))
+            }
+            Some(DateFields::MD) => {
+                DateAndTimeFieldSet::MDT(fieldsets::MDT::take_from_builder(&mut self))
+            }
+            Some(DateFields::YMD) => {
+                DateAndTimeFieldSet::YMDT(fieldsets::YMDT::take_from_builder(&mut self))
+            }
+            Some(DateFields::DE) => {
+                DateAndTimeFieldSet::DET(fieldsets::DET::take_from_builder(&mut self))
+            }
+            Some(DateFields::MDE) => {
+                DateAndTimeFieldSet::MDET(fieldsets::MDET::take_from_builder(&mut self))
+            }
+            Some(DateFields::YMDE) => {
+                DateAndTimeFieldSet::YMDET(fieldsets::YMDET::take_from_builder(&mut self))
+            }
+            Some(DateFields::E) => {
+                DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self))
+            }
+            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
+                return Err(BuilderError::InvalidFields)
+            }
+        };
         Ok(date_and_time_field_set)
     }
 
