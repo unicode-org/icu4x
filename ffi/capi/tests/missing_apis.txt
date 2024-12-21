@@ -93,6 +93,7 @@ icu::datetime::Length::into_option#FnInEnum
 icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::TimeFormatter#Typedef
 icu::datetime::fieldsets::Combo#Struct
+icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D#Struct
 icu::datetime::fieldsets::D::long#FnInStruct
 icu::datetime::fieldsets::D::medium#FnInStruct
@@ -341,6 +342,16 @@ icu::datetime::fieldsets::Z#Struct
 icu::datetime::fieldsets::Z::new#FnInStruct
 icu::datetime::fieldsets::Zs#Struct
 icu::datetime::fieldsets::Zs::new#FnInStruct
+icu::datetime::fieldsets::builder::BuilderError#Enum
+icu::datetime::fieldsets::builder::DateFields#Enum
+icu::datetime::fieldsets::builder::FieldSetBuilder#Struct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_composite#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_composite_datetime#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_date#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_date_and_time#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_time#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_zone#FnInStruct
+icu::datetime::fieldsets::builder::ZoneStyle#Enum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet#Enum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet#Enum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::to_composite_field_set#FnInEnum
