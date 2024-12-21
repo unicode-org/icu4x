@@ -220,6 +220,7 @@ macro_rules! impl_marker_with_options {
             )?
         }
         impl $type {
+            #[allow(dead_code)]
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
                     length: yes_or!(self.length, $(Length::$length_override)?),
