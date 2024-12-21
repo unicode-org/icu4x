@@ -566,45 +566,45 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
-            CompositeFieldSet::DateZone(field_set, zone_field_set) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::DateZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     prefs,
-                    field_set.id_str(),
+                    combo.dt().id_str(),
                     options,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
-            CompositeFieldSet::TimeZone(field_set, zone_field_set) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::TimeZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
-                    field_set,
+                    combo.dt(),
                     options,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
-            CompositeFieldSet::DateTimeZone(field_set, zone_field_set) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::DateTimeZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     prefs,
-                    field_set.to_date_field_set().id_str(),
+                    combo.dt().to_date_field_set().id_str(),
                     options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
-                    field_set.to_time_field_set(),
+                    combo.dt().to_time_field_set(),
                     options,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,
