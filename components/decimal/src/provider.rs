@@ -11,6 +11,72 @@
 //! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
+//!
+//! # Examples
+//!
+//! ## Get the resolved numbering system
+//!
+//! In a constructor call, the _last_ request for [`DecimalDigitsV1Marker`]
+//! contains the resolved numbering system as its attribute:
+//!
+//! ```
+//! use icu_provider::prelude::*;
+//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1Marker;
+//! use icu::locale::locale;
+//! use std::any::TypeId;
+//! use std::cell::RefCell;
+//!
+//! struct NumberingSystemInspectionProvider<P> {
+//!     inner: P,
+//!     numbering_system: RefCell<Option<Box<DataMarkerAttributes>>>,
+//! }
+//!
+//! impl<M, P> DataProvider<M> for NumberingSystemInspectionProvider<P>
+//! where
+//!     M: DataMarker,
+//!     P: DataProvider<M>,
+//! {
+//!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1Marker>() {
+//!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
+//!         }
+//!         self.inner.load(req)
+//!     }
+//! }
+//!
+//! let provider = NumberingSystemInspectionProvider {
+//!     inner: icu::decimal::provider::Baked,
+//!     numbering_system: RefCell::new(None),
+//! };
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-thai").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-adlm").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("adlm"));
+//! ```
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
