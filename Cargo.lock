@@ -308,6 +308,7 @@ name = "calendrical_calculations"
 version = "0.1.2"
 dependencies = [
  "core_maths",
+ "criterion",
  "displaydoc",
  "log",
 ]
