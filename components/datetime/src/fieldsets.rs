@@ -219,7 +219,6 @@ macro_rules! impl_marker_with_options {
                 pub time_precision: datetime_marker_helper!(@option/timeprecision, $timeprecision_yes),
             )?
         }
-        #[allow(dead_code)]
         impl $type {
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
