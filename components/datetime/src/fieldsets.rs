@@ -291,7 +291,7 @@ macro_rules! impl_combo_get_field {
         impl GetField<CompositeFieldSet> for Combo<$type, $variant> {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
-                CompositeFieldSet::$composite(self.dt().to_enum(), self.z().to_enum())
+                CompositeFieldSet::$composite(Combo::new(self.dt().to_enum(), self.z().to_enum()))
             }
         }
     };

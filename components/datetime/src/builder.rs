@@ -83,7 +83,7 @@
 //! );
 //! ```
 
-use crate::fieldsets::{self, enums::*};
+use crate::fieldsets::{self, enums::*, Combo};
 use crate::options::*;
 
 /// An enumeration over all possible date and calendar period field sets
@@ -351,20 +351,26 @@ impl FieldSetBuilder {
             (true, false, true) => {
                 let zone_field_set = self.build_zone_without_checking_options()?;
                 let date_field_set = self.build_date()?;
-                Ok(CompositeFieldSet::DateZone(date_field_set, zone_field_set))
+                Ok(CompositeFieldSet::DateZone(Combo::new(
+                    date_field_set,
+                    zone_field_set,
+                )))
             }
             (false, true, true) => {
                 let zone_field_set = self.build_zone_without_checking_options()?;
                 let time_field_set = self.build_time()?;
-                Ok(CompositeFieldSet::TimeZone(time_field_set, zone_field_set))
+                Ok(CompositeFieldSet::TimeZone(Combo::new(
+                    time_field_set,
+                    zone_field_set,
+                )))
             }
             (true, true, true) => {
                 let zone_field_set = self.build_zone_without_checking_options()?;
                 let date_and_time_field_set = self.build_date_and_time()?;
-                Ok(CompositeFieldSet::DateTimeZone(
+                Ok(CompositeFieldSet::DateTimeZone(Combo::new(
                     date_and_time_field_set,
                     zone_field_set,
-                ))
+                )))
             }
             (false, false, false) => Err(BuilderError::InvalidFields),
         }
