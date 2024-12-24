@@ -1284,7 +1284,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     T::medium().with_zone_specific_short(),
+    ///     T::medium().with_zone_specific(),
     /// )
     /// .unwrap();
     ///
@@ -1467,7 +1467,7 @@ impl_zone_marker!(
     ///
     /// let formatter = TimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     V::medium(),
+    ///     V::new(),
     /// )
     /// .unwrap();
     ///
@@ -1502,11 +1502,11 @@ impl_zone_marker!(
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());1
+    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     Vs::medium(),
+    ///     Vs::new(),
     /// )
     /// .unwrap();
     ///
@@ -1544,7 +1544,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     L::medium(),
+    ///     L::new(),
     /// )
     /// .unwrap();
     ///
