@@ -96,6 +96,7 @@ use databake::*;
 use heck::ToShoutySnakeCase;
 use heck::ToSnakeCase;
 use icu_provider::export::*;
+use icu_provider::marker::data_marker_path;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
@@ -781,12 +782,12 @@ impl DataExporter for BakedExporter {
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if marker.path.as_str() == icu_provider::hello_world::HelloWorldV1Marker::INFO.path.as_str() {
+            if marker.path == icu_provider::hello_world::HelloWorldV1Marker::INFO.path {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
             }
 
             $(
-                if marker.path.as_str() == $path {
+                if marker.path == data_marker_path!($path) {
                     return stringify!($marker)
                         .replace("icu :: ", "icu_")
                         .parse()
@@ -795,7 +796,7 @@ macro_rules! cb {
             )+
 
             $(
-                if marker.path.as_str() == $epath {
+                if marker.path == data_marker_path!($epath) {
                     return stringify!($emarker)
                         .replace("icu :: ", "icu_")
                         .parse()
