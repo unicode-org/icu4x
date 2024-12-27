@@ -478,12 +478,12 @@ impl LocaleExpander {
     ///
     /// let lc = LocaleExpander::new();
     ///
-    /// let mut locale = locale!("zh_TW");
+    /// let mut locale = locale!("zh-TW");
     /// assert_eq!(
     ///     lc.minimize_favor_script(&mut locale.id),
     ///     TransformResult::Modified
     /// );
-    /// assert_eq!(locale, locale!("zh_Hant"));
+    /// assert_eq!(locale, locale!("zh-Hant"));
     /// ```
     pub fn minimize_favor_script(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         self.minimize_impl(langid, false)

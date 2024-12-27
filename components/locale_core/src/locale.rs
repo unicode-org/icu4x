@@ -39,13 +39,13 @@ use core::str::FromStr;
 ///  * *valid* - well-formed and only uses registered language subtags, extensions, keywords, types...
 ///  * *canonical* - valid and no deprecated codes or structure.
 ///
-/// At the moment parsing normalizes a well-formed locale identifier converting
-/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
-///
 /// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
+///
+/// ICU4X's Locale parsing does not allow for non-BCP-47-compatible locales [allowed by UTS 35 for backwards compatability][tr35-bcp].
+/// Furthermore, it currently does not allow for language tags to have more than three characters.
 ///
 /// # Examples
 ///
@@ -75,7 +75,7 @@ use core::str::FromStr;
 /// ```
 /// use icu::locale::{subtags::*, Locale};
 ///
-/// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
+/// let loc: Locale = "eN-latn-Us-Valencia-u-hC-H12"
 ///     .parse()
 ///     .expect("Failed to parse.");
 ///
@@ -89,6 +89,7 @@ use core::str::FromStr;
 /// ```
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
+/// [tr35-bcp]: https://unicode.org/reports/tr35/#BCP_47_Conformance
 #[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
@@ -159,7 +160,7 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::normalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(b"pL-latn-pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
@@ -178,7 +179,7 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::normalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize("pL-latn-pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
