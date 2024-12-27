@@ -54,49 +54,49 @@ target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_cap
 	-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release  --target-dir target-panic-abort-linker-plugin-lto 
 
 # Naive target: basic release mode, full std
-release.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(GCC) test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o release.elf
+1-release.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(GCC) test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o 1-release.elf
 
 # gcc with maximum link-time code stripping (gc-sections and strip-all)
-release-gcc-stripped.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(GCC) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o release-gcc-stripped.elf -Wl,--gc-sections -Wl,--strip-all
+2-release-gcc-stripped.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(GCC) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o 2-release-gcc-stripped.elf -Wl,--gc-sections -Wl,--strip-all
 
-# clang single-step; rust with release, panic-abort (std panic-immediate-abort)
-panic-abort-clang.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) test.c -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o panic-abort-clang.elf
-
-
-
-# clang single-step with gc-sections, stripping; rust with release, LTO, panic-abort (std panic-immediate-abort)
-panic-abort-clang-stripped.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) test.c -fdata-sections -ffunction-sections -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o panic-abort-clang-stripped.elf  -Wl,--gc-sections -Wl,--strip-all
+# clang; rust with release, panic-abort (std panic-immediate-abort)
+3-panic-abort-clang.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(CLANG) test.c -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 3-panic-abort-clang.elf
 
 
-# clang single-step with LTO, rust with release, LTO, panic-abort (std panic-immediate-abort)
-panic-abort-lto-clang.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o panic-abort-lto-clang.elf
-
-# clang single-step with LTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort)
-panic-abort-lto-clang-stripped.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o panic-abort-lto-clang-stripped.elf -Wl,--gc-sections -Wl,--strip-all
+# clang with LTO, rust with release, LTO, panic-abort (std panic-immediate-abort)
+4-panic-abort-lto-clang.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 4-panic-abort-lto-clang.elf
 
 
-# clang one-step with lld, ThinLTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort), with cross-compiler LTO
-panic-abort-linker-plugin-lto-clang-stripped.elf: target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) --target=x86_64-unknown-linux-gnu test.c -I${HEADERS} -o panic-abort-linker-plugin-lto-clang-stripped.elf target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections -Wl,--strip-all
+# clang with gc-sections, stripping; rust with release, LTO, panic-abort (std panic-immediate-abort)
+5-panic-abort-clang-stripped.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(CLANG) test.c -fdata-sections -ffunction-sections -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 5-panic-abort-clang-stripped.elf  -Wl,--gc-sections -Wl,--strip-all
 
 
-build: release.elf release-gcc-stripped.elf panic-abort-clang.elf panic-abort-clang-stripped.elf panic-abort-lto-clang.elf panic-abort-lto-clang-stripped.elf panic-abort-linker-plugin-lto-clang-stripped.elf 
+# clang with LTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort)
+6-panic-abort-lto-clang-stripped.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 6-panic-abort-lto-clang-stripped.elf -Wl,--gc-sections -Wl,--strip-all
+
+
+# clang with lld, ThinLTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort), with cross-compiler LTO
+7-panic-abort-linker-plugin-lto-clang-stripped.elf: target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) --target=x86_64-unknown-linux-gnu test.c -I${HEADERS} -o 7-panic-abort-linker-plugin-lto-clang-stripped.elf target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections -Wl,--strip-all
+
+
+build: 1-release.elf 2-release-gcc-stripped.elf 3-panic-abort-clang.elf 4-panic-abort-lto-clang.elf 5-panic-abort-clang-stripped.elf  6-panic-abort-lto-clang-stripped.elf 7-panic-abort-linker-plugin-lto-clang-stripped.elf 
 	ls -l *.elf
 
 test: build
-	./release.elf bn
-	./release-gcc-stripped.elf bn
-	./panic-abort-clang.elf bn
-	./panic-abort-clang-stripped.elf bn
-	./panic-abort-lto-clang.elf bn
-	./panic-abort-lto-clang-stripped.elf bn
-	./panic-abort-linker-plugin-lto-clang-stripped.elf bn
+	./1-release.elf bn
+	./2-release-gcc-stripped.elf bn
+	./3-panic-abort-clang.elf bn
+	./4-panic-abort-lto-clang.elf bn
+	./5-panic-abort-clang-stripped.elf bn
+	./6-panic-abort-lto-clang-stripped.elf bn
+	./7-panic-abort-linker-plugin-lto-clang-stripped.elf bn
 
 clean:
 	git clean -xf *
