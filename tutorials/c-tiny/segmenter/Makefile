@@ -55,35 +55,36 @@ target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_cap
 
 # Naive target: basic release mode, full std
 1-release.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(GCC) test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o 1-release.elf
+	$(GCC) test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -o 1-release.elf
 
 # gcc with maximum link-time code stripping (gc-sections and strip-all)
 2-release-gcc-stripped.elf: target-normal/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(GCC) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -g -o 2-release-gcc-stripped.elf -Wl,--gc-sections -Wl,--strip-all
+	$(GCC) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-normal/release/libicu_capi.a -ldl -lm -o 2-release-gcc-stripped.elf -Wl,--gc-sections -Wl,--strip-all
 
 # clang; rust with release, panic-abort (std panic-immediate-abort)
 3-panic-abort-clang.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) test.c -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 3-panic-abort-clang.elf
+	$(CLANG) test.c -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -o 3-panic-abort-clang.elf
 
 
 # clang with LTO, rust with release, LTO, panic-abort (std panic-immediate-abort)
 4-panic-abort-lto-clang.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 4-panic-abort-lto-clang.elf
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -o 4-panic-abort-lto-clang.elf
 
 
 # clang with gc-sections, stripping; rust with release, LTO, panic-abort (std panic-immediate-abort)
 5-panic-abort-clang-stripped.elf: target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) test.c -fdata-sections -ffunction-sections -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 5-panic-abort-clang-stripped.elf  -Wl,--gc-sections -Wl,--strip-all
+	$(CLANG) test.c -fdata-sections -ffunction-sections -I${HEADERS} target-panic-abort/x86_64-unknown-linux-gnu/release/libicu_capi.a -o 5-panic-abort-clang-stripped.elf  -Wl,--gc-sections -Wl,--strip-all
 
 
 # clang with LTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort)
 6-panic-abort-lto-clang-stripped.elf: target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a $(ALL_HEADERS) test.c
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -g -o 6-panic-abort-lto-clang-stripped.elf -Wl,--gc-sections -Wl,--strip-all
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -fdata-sections -ffunction-sections test.c -I${HEADERS} target-panic-abort-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -o 6-panic-abort-lto-clang-stripped.elf -Wl,--gc-sections -Wl,--strip-all
 
 
 # clang with lld, ThinLTO, gc-sections, stripping, rust with release, LTO, panic-abort (std panic-immediate-abort), with cross-compiler LTO
 7-panic-abort-linker-plugin-lto-clang-stripped.elf: target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) --target=x86_64-unknown-linux-gnu test.c -I${HEADERS} -o 7-panic-abort-linker-plugin-lto-clang-stripped.elf target-panic-abort-linker-plugin-lto/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections -Wl,--strip-all
+
 
 
 build: 1-release.elf 2-release-gcc-stripped.elf 3-panic-abort-clang.elf 4-panic-abort-lto-clang.elf 5-panic-abort-clang-stripped.elf  6-panic-abort-lto-clang-stripped.elf 7-panic-abort-linker-plugin-lto-clang-stripped.elf 
