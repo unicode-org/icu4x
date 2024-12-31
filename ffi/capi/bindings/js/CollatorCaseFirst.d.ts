@@ -12,6 +12,6 @@ export class CollatorCaseFirst {
     get ffiValue() : number;
 
     static Off : CollatorCaseFirst;
-    static LowerFirst : CollatorCaseFirst;
-    static UpperFirst : CollatorCaseFirst;
+    static Lower : CollatorCaseFirst;
+    static Upper : CollatorCaseFirst;
 }

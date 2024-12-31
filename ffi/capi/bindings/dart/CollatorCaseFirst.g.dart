@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 enum CollatorCaseFirst {
   off,
 
-  lowerFirst,
+  lower,
 
-  upperFirst;
+  upper;
 }

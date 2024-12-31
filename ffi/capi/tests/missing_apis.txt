@@ -16,6 +16,19 @@
 
 icu::calendar::types::YearAmbiguity#Enum
 icu::calendar::types::YearInfo::year_ambiguity#FnInStruct
+icu::collator::CollationCaseFirst::as_str#FnInEnum
+icu::collator::CollationCaseFirst::try_from_key_value#FnInEnum
+icu::collator::CollationCaseFirst::unicode_extension_key#FnInEnum
+icu::collator::CollationCaseFirst::unicode_extension_value#FnInEnum
+icu::collator::CollationNumericOrdering::as_str#FnInEnum
+icu::collator::CollationNumericOrdering::try_from_key_value#FnInEnum
+icu::collator::CollationNumericOrdering::unicode_extension_key#FnInEnum
+icu::collator::CollationNumericOrdering::unicode_extension_value#FnInEnum
+icu::collator::CollationType#Enum
+icu::collator::CollationType::as_str#FnInEnum
+icu::collator::CollationType::try_from_key_value#FnInEnum
+icu::collator::CollationType::unicode_extension_key#FnInEnum
+icu::collator::CollationType::unicode_extension_value#FnInEnum
 icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::format_any_calendar#FnInStruct

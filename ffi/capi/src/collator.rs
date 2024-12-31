@@ -25,10 +25,8 @@ pub mod ffi {
     pub struct CollatorOptionsV1 {
         pub strength: DiplomatOption<CollatorStrength>,
         pub alternate_handling: DiplomatOption<CollatorAlternateHandling>,
-        pub case_first: DiplomatOption<CollatorCaseFirst>,
         pub max_variable: DiplomatOption<CollatorMaxVariable>,
         pub case_level: DiplomatOption<CollatorCaseLevel>,
-        pub numeric: DiplomatOption<CollatorNumeric>,
         pub backward_second_level: DiplomatOption<CollatorBackwardSecondLevel>,
     }
 
@@ -44,7 +42,7 @@ pub mod ffi {
         pub case_first: CollatorCaseFirst,
         pub max_variable: CollatorMaxVariable,
         pub case_level: CollatorCaseLevel,
-        pub numeric: CollatorNumeric,
+        pub numeric: CollatorNumericOrdering,
         pub backward_second_level: CollatorBackwardSecondLevel,
     }
 
@@ -69,11 +67,10 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    #[diplomat::enum_convert(icu_collator::CaseFirst, needs_wildcard)]
     pub enum CollatorCaseFirst {
         Off = 0,
-        LowerFirst = 1,
-        UpperFirst = 2,
+        Lower = 1,
+        Upper = 2,
     }
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
@@ -94,10 +91,9 @@ pub mod ffi {
         On = 1,
     }
 
-    #[diplomat::rust_link(icu::collator::Numeric, Enum)]
+    #[diplomat::rust_link(icu::collator::NumericOrdering, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    #[diplomat::enum_convert(icu_collator::Numeric, needs_wildcard)]
-    pub enum CollatorNumeric {
+    pub enum CollatorNumericOrdering {
         Off = 0,
         On = 1,
     }
@@ -193,10 +189,8 @@ impl From<ffi::CollatorOptionsV1> for icu_collator::CollatorOptions {
         let mut result = icu_collator::CollatorOptions::default();
         result.strength = options.strength.into_converted_option();
         result.alternate_handling = options.alternate_handling.into_converted_option();
-        result.case_first = options.case_first.into_converted_option();
         result.max_variable = options.max_variable.into_converted_option();
         result.case_level = options.case_level.into_converted_option();
-        result.numeric = options.numeric.into_converted_option();
         result.backward_second_level = options.backward_second_level.into_converted_option();
 
         result
@@ -213,6 +207,50 @@ impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOption
             case_level: options.case_level.into(),
             numeric: options.numeric.into(),
             backward_second_level: options.backward_second_level.into(),
+        }
+    }
+}
+
+impl From<icu_collator::CaseFirst> for ffi::CollatorCaseFirst {
+    fn from(other: icu_collator::CaseFirst) -> Self {
+        match other {
+            icu_collator::CaseFirst::Upper => ffi::CollatorCaseFirst::Upper,
+            icu_collator::CaseFirst::Lower => ffi::CollatorCaseFirst::Lower,
+            icu_collator::CaseFirst::False => ffi::CollatorCaseFirst::Off,
+            _ => {
+                debug_assert!(false, "unknown variant for icu_collator::CaseFirst");
+                ffi::CollatorCaseFirst::Off
+            }
+        }
+    }
+}
+impl From<ffi::CollatorCaseFirst> for icu_collator::CaseFirst {
+    fn from(this: ffi::CollatorCaseFirst) -> Self {
+        match this {
+            ffi::CollatorCaseFirst::Off => icu_collator::CaseFirst::False,
+            ffi::CollatorCaseFirst::Lower => icu_collator::CaseFirst::Lower,
+            ffi::CollatorCaseFirst::Upper => icu_collator::CaseFirst::Upper,
+        }
+    }
+}
+
+impl From<icu_collator::NumericOrdering> for ffi::CollatorNumericOrdering {
+    fn from(other: icu_collator::NumericOrdering) -> Self {
+        match other {
+            icu_collator::NumericOrdering::True => ffi::CollatorNumericOrdering::On,
+            icu_collator::NumericOrdering::False => ffi::CollatorNumericOrdering::Off,
+            _ => {
+                debug_assert!(false, "unknown variant for icu_collator::NumericOrdering");
+                ffi::CollatorNumericOrdering::Off
+            }
+        }
+    }
+}
+impl From<ffi::CollatorNumericOrdering> for icu_collator::NumericOrdering {
+    fn from(this: ffi::CollatorNumericOrdering) -> Self {
+        match this {
+            ffi::CollatorNumericOrdering::Off => icu_collator::NumericOrdering::False,
+            ffi::CollatorNumericOrdering::On => icu_collator::NumericOrdering::True,
         }
     }
 }

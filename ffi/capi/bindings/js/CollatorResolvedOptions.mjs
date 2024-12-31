@@ -4,7 +4,7 @@ import { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel.mjs"
 import { CollatorCaseFirst } from "./CollatorCaseFirst.mjs"
 import { CollatorCaseLevel } from "./CollatorCaseLevel.mjs"
 import { CollatorMaxVariable } from "./CollatorMaxVariable.mjs"
-import { CollatorNumeric } from "./CollatorNumeric.mjs"
+import { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 import { CollatorStrength } from "./CollatorStrength.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -153,7 +153,7 @@ export class CollatorResolvedOptions {
         const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
         structObj.caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
         const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        structObj.numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
+        structObj.numeric = new CollatorNumericOrdering(diplomatRuntime.internalConstructor, numericDeref);
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
         structObj.backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
 
