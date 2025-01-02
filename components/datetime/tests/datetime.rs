@@ -448,11 +448,11 @@ fn test_time_zone_format_configs() {
 fn test_time_zone_format_offset_seconds() {
     use icu_datetime::fieldsets::O;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
-        .unwrap();
+    let tzf =
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::new()).unwrap();
     assert_writeable_eq!(
         tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
-        "GMT+0:00:12",
+        "GMT+00:00:12",
     );
 }
 
@@ -460,8 +460,8 @@ fn test_time_zone_format_offset_seconds() {
 fn test_time_zone_format_offset_fallback() {
     use icu_datetime::fieldsets::O;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
-        .unwrap();
+    let tzf =
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::new()).unwrap();
     assert_writeable_eq!(
         tzf.format(
             &TimeZoneIdMapper::new()

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
 use crate::{provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
@@ -13,15 +11,12 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// # Examples
 ///
-/// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
+/// Only one way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
 /// use icu::datetime::fieldsets::{Combo, E, L};
 ///
-/// let field_set_1 = E::long().zone_l();
-/// let field_set_2 = Combo::<E, L>::long();
-///
-/// assert_eq!(field_set_1, field_set_2);
+/// let field_set = E::long().with_zone_location();
 /// ```
 ///
 /// Format the weekday, hour, and location-based zone:
@@ -36,7 +31,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().zone_l(),
+///     ET::short().hm().with_zone_location(),
 /// )
 /// .unwrap();
 ///
@@ -63,7 +58,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().zone_l(),
+///     ET::short().hm().with_zone_location(),
 /// )
 /// .unwrap();
 ///
@@ -91,7 +86,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
 ///     locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).zone_v(),
+///     DateFieldSet::YMD(YMD::long()).with_zone_generic(),
 /// )
 /// .unwrap();
 ///
@@ -104,18 +99,45 @@ use crate::{provider::neo::*, scaffold::*};
 ///     "October 18, 2024 PT"
 /// );
 /// ```
+///
+/// Format with a time of day and long time zone:
+///
+/// ```
+/// use icu::calendar::Gregorian;
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::locale::locale;
+/// use icu::timezone::IxdtfParser;
+/// use writeable::assert_writeable_eq;
+///
+/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     T::medium().with_zone_specific_long(),
+/// )
+/// .unwrap();
+///
+/// let zdt = IxdtfParser::new()
+///     .try_iso_from_str("2024-10-18T15:44-0700[America/Los_Angeles]")
+///     .unwrap()
+///     .to_calendar(Gregorian);
+///
+/// assert_writeable_eq!(
+///     formatter.format(&zdt),
+///     "3:44:00 PM Pacific Daylight Time"
+/// );
+/// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Combo<DT, Z> {
     date_time_field_set: DT,
-    _z: PhantomData<Z>,
+    zone_field_set: Z,
 }
 
 impl<DT, Z> Combo<DT, Z> {
     #[inline]
-    pub(crate) const fn new(date_time_field_set: DT) -> Self {
+    pub(crate) const fn new(date_time_field_set: DT, zone_field_set: Z) -> Self {
         Self {
             date_time_field_set,
-            _z: PhantomData,
+            zone_field_set,
         }
     }
 }
@@ -126,6 +148,10 @@ impl<DT, Z> Combo<DT, Z> {
     #[inline]
     pub(crate) fn dt(self) -> DT {
         self.date_time_field_set
+    }
+    #[inline]
+    pub(crate) fn z(self) -> Z {
+        self.zone_field_set
     }
 }
 

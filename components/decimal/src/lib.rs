@@ -52,10 +52,9 @@
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 //! ```
 //!
-//! ### Format a number using an alternative numbering system
+//! ## Format a number using an alternative numbering system
 //!
-//! Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
-//! symbols for that numbering system.
+//! Numbering systems specified in the `-u-nu` subtag will be followed.
 //!
 //! ```
 //! use fixed_decimal::SignedFixedDecimal;
@@ -123,6 +122,9 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`provider`] module for an example.
         numbering_system: NumberingSystem
     }
 );
@@ -135,7 +137,7 @@ define_preferences!(
 /// 2. Locale-sensitive grouping separator positions
 /// 3. Locale-sensitive plus and minus signs
 ///
-/// Read more about the options in the [`options`] module.
+/// To get the resolved numbering system, see [`provider`].
 ///
 /// See the crate-level documentation for examples.
 #[doc = fixed_decimal_formatter_size!()]

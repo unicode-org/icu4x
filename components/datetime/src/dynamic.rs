@@ -62,9 +62,10 @@
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
 
+use crate::fieldsets::Combo;
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fields, fieldsets, Length};
+use crate::{fields, fieldsets};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -132,9 +133,6 @@ pub enum TimeFieldSet {
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 ///
-/// Note: [`fieldsets::Zs`] and [`fieldsets::Vs`] are not included in this enum
-/// because they are data size optimizations only.
-///
 /// # Time Zone Data Size
 ///
 /// Time zone names contribute a lot of data size. For resource-constrained
@@ -145,39 +143,27 @@ pub enum TimeFieldSet {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
-    /// The specific non-location format, as in
+    /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
     Z(fieldsets::Z),
-    /// The offset format, as in
-    /// “GMT−8”.
+    /// The short specific non-location format, as in
+    /// “PDT”.
+    Zs(fieldsets::Zs),
+    /// The long offset format, as in
+    /// “GMT−8:00”.
     O(fieldsets::O),
-    /// The generic non-location format, as in
+    /// The short offset format, as in
+    /// “GMT−8”.
+    Os(fieldsets::Os),
+    /// The long generic non-location format, as in
     /// “Pacific Time”.
     V(fieldsets::V),
+    /// The short generic non-location format, as in
+    /// “PT”.
+    Vs(fieldsets::Vs),
     /// The location format, as in
     /// “Los Angeles time”.
     L(fieldsets::L),
-}
-
-/// An enumeration over all possible zone styles.
-///
-/// This is similar to [`ZoneFieldSet`], except the fields are not
-/// self-contained semantic skeletons: they do not contain the length.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[non_exhaustive]
-pub enum ZoneStyle {
-    /// The specific non-location format, as in
-    /// “Pacific Daylight Time”.
-    Z,
-    /// The offset format, as in
-    /// “GMT−8”.
-    O,
-    /// The generic non-location format, as in
-    /// “Pacific Time”.
-    V,
-    /// The location format, as in
-    /// “Los Angeles time”.
-    L,
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -241,9 +227,9 @@ impl CompositeDateTimeFieldSet {
             CompositeFieldSet::Time(v) => Some(Self::Time(v)),
             CompositeFieldSet::Zone(_) => None,
             CompositeFieldSet::DateTime(v) => Some(Self::DateTime(v)),
-            CompositeFieldSet::DateZone(_, _) => None,
-            CompositeFieldSet::TimeZone(_, _) => None,
-            CompositeFieldSet::DateTimeZone(_, _) => None,
+            CompositeFieldSet::DateZone(_) => None,
+            CompositeFieldSet::TimeZone(_) => None,
+            CompositeFieldSet::DateTimeZone(_) => None,
         }
     }
 
@@ -282,11 +268,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(DateFieldSet, ZoneStyle),
+    DateZone(Combo<DateFieldSet, ZoneFieldSet>),
     /// Field set for a time and a time zone together.
-    TimeZone(TimeFieldSet, ZoneStyle),
+    TimeZone(Combo<TimeFieldSet, ZoneFieldSet>),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(DateAndTimeFieldSet, ZoneStyle),
+    DateTimeZone(Combo<DateAndTimeFieldSet, ZoneFieldSet>),
 }
 
 macro_rules! first {
@@ -483,21 +469,13 @@ impl_attrs! {
     ZoneFieldSet,
     [
         Z,
+        Zs,
         O,
+        Os,
         V,
+        Vs,
         L,
     ]
-}
-
-impl ZoneFieldSet {
-    pub(crate) fn from_time_zone_style_and_length(style: ZoneStyle, length: Length) -> Self {
-        match style {
-            ZoneStyle::Z => Self::Z(fieldsets::Z::with_length(length)),
-            ZoneStyle::O => Self::O(fieldsets::O::with_length(length)),
-            ZoneStyle::V => Self::V(fieldsets::V::with_length(length)),
-            ZoneStyle::L => Self::L(fieldsets::L::with_length(length)),
-        }
-    }
 }
 
 impl_attrs! {

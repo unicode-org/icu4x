@@ -52,10 +52,9 @@ let fixed_decimal = {
 assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 ```
 
-#### Format a number using an alternative numbering system
+### Format a number using an alternative numbering system
 
-Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
-symbols for that numbering system.
+Numbering systems specified in the `-u-nu` subtag will be followed.
 
 ```rust
 use fixed_decimal::SignedFixedDecimal;

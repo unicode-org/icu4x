@@ -170,7 +170,7 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_roc",
         "icu::calendar::DateTime::try_new_ummalqura_with_calendar",
 
-        // Calendar structs mostly for internal use but which might expose
+        // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
         "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattingEra",
@@ -178,42 +178,32 @@ lazy_static::lazy_static! {
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
 
-        // Not yet fully exposed over FFI, Temporal doesn't yet want this.
+        // Not planned for 2.0: Temporal doesn't yet want this.
         "icu::calendar::types::CyclicYear",
         "icu::calendar::types::YearInfo::cyclic",
         "icu::calendar::types::YearInfo::related_iso",
 
-        // Experimental API mostly used for provider, components bags, and patterns,
-        // may in the future be exposed for options
-        "icu::datetime::fields",
 
-        // experimental
-        "icu::datetime::fields::components",
-        "icu::datetime::fieldsets::serde",
-        "icu::datetime::neo_pattern",
-        "icu::datetime::neo_skeleton",
-        "icu::datetime::options::components",
-        "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeWriteError",
-        "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::pattern::TypedDateTimeNames",
-
-        // experimental
-        "icu::experimental",
-
-        // Experimental and unused decimal types
-        "fixed_decimal::CompactDecimal",
-        "fixed_decimal::FixedInteger",
-        "fixed_decimal::ScientificDecimal",
-
-        // Don't want parts for 2.0, would need to introduce diplomat writeable with parts
+        // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
         "icu::decimal::parts",
 
-        // Not planned until someone needs them
+        // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
         "icu::locale::subtags",
+
+        // Not planned for 2.0: FFI uses locales, not preference bags. FFI could in the future gain a preferences bag API as well
+        "icu::locale::preferences::extensions::unicode::keywords",
+        "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
+        "icu::calendar::AnyCalendarPreferences",
+        "icu::calendar::any_calendar::AnyCalendarPreferences",
+        "icu::datetime::DateTimeFormatterPreferences",
+        "icu::decimal::FixedDecimalFormatterPreferences",
+        "icu::list::ListFormatterPreferences",
+        "icu::locale::preferences::LocalePreferences",
+        "icu::plurals::PluralRulesPreferences",
+        "icu::locale::preferences::PreferenceKey",
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
@@ -221,32 +211,19 @@ lazy_static::lazy_static! {
         // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
 
-        // Do not want for 2.0: we need DiplomatWriteable16
+        // Not planned for 2.0: we need DiplomatWriteable16
         "icu::normalizer::ComposingNormalizer::normalize_utf16",
         "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
         "icu::normalizer::DecomposingNormalizer::normalize_utf16",
         "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
 
-        // Do not want for 2.0:
+        // Not planned for 2.0
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
         "icu::normalizer::ComposingNormalizer::normalize_iter",
         "icu::normalizer::DecomposingNormalizer::normalize_iter",
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
-
-        // experimental
-        "icu::plurals::rules",
-
-        // Experimental
-        "icu::plurals::PluralRulesWithRanges",
-        "icu::plurals::PluralRulesWithRanges::categories",
-        "icu::plurals::PluralRulesWithRanges::category_for",
-        "icu::plurals::PluralRulesWithRanges::category_for_range",
-        "icu::plurals::PluralRulesWithRanges::resolve_range",
-        "icu::plurals::PluralRulesWithRanges::try_new",
-        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
-        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
         // Not planned for 2.0
         // We aren't exposing these collections directly, we instead expose them in a domain specific
@@ -276,6 +253,44 @@ lazy_static::lazy_static! {
         // fork by locale/key ones. Could be added if we have callbacks.
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
+
+        // Stuff that is experimental
+        //
+        // We should occasionally review these
+        // =========================
+
+        "icu::experimental",
+
+        "icu::pattern",
+
+        "icu::datetime::fields::components",
+        "icu::datetime::fieldsets::serde",
+        "icu::datetime::neo_pattern",
+        "icu::datetime::neo_skeleton",
+        "icu::datetime::options::components",
+        "icu::datetime::options::preferences",
+        "icu::datetime::DateTimeWriteError",
+        "icu::datetime::FormattedDateTimePattern",
+        "icu::datetime::pattern::TypedDateTimeNames",
+
+        "fixed_decimal::CompactDecimal",
+        "fixed_decimal::FixedInteger",
+        "fixed_decimal::ScientificDecimal",
+
+        // Experimental API mostly used for provider, components bags, and patterns,
+        // may in the future be exposed for options
+        "icu::datetime::fields",
+
+        "icu::plurals::rules",
+
+        "icu::plurals::PluralRulesWithRanges",
+        "icu::plurals::PluralRulesWithRanges::categories",
+        "icu::plurals::PluralRulesWithRanges::category_for",
+        "icu::plurals::PluralRulesWithRanges::category_for_range",
+        "icu::plurals::PluralRulesWithRanges::resolve_range",
+        "icu::plurals::PluralRulesWithRanges::try_new",
+        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
+        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits

@@ -228,41 +228,30 @@ pub struct TypedDateTimeNames<
 }
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
-    year_names:
-        <FSet::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
-    month_names: <FSet::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
-        fields::Month,
-        FieldLength,
-    )>,
-    weekday_names:
-        <FSet::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<(
-            fields::Weekday,
-            FieldLength,
-        )>,
+    year_names: <FSet::YearNames as NamesContainer<YearNamesV1Marker, FieldLength>>::Container,
+    month_names: <FSet::MonthNames as NamesContainer<
+        MonthNamesV1Marker,
+        (fields::Month, FieldLength),
+    >>::Container,
+    weekday_names: <FSet::WeekdayNames as NamesContainer<
+        WeekdayNamesV1Marker,
+        (fields::Weekday, FieldLength),
+    >>::Container,
     dayperiod_names:
-        <FSet::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
-            FieldLength,
-        >,
+        <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, FieldLength>>::Container,
     zone_essentials:
-        <FSet::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
-    locations_root:
-        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    locations:
-        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    mz_generic_long: <FSet::ZoneGenericLong as DateTimeNamesHolderTrait<
-        tz::MzGenericLongV1Marker,
-    >>::Container<()>,
-    mz_generic_short: <FSet::ZoneGenericShort as DateTimeNamesHolderTrait<
-        tz::MzGenericShortV1Marker,
-    >>::Container<()>,
-    mz_specific_long: <FSet::ZoneSpecificLong as DateTimeNamesHolderTrait<
-        tz::MzSpecificLongV1Marker,
-    >>::Container<()>,
-    mz_specific_short: <FSet::ZoneSpecificShort as DateTimeNamesHolderTrait<
-        tz::MzSpecificShortV1Marker,
-    >>::Container<()>,
-    mz_periods:
-        <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container<()>,
+        <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
+    locations_root: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
+    locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
+    mz_generic_long:
+        <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container,
+    mz_generic_short:
+        <FSet::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container,
+    mz_specific_long:
+        <FSet::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container,
+    mz_specific_short:
+        <FSet::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container,
+    mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     _marker: PhantomData<FSet>,
@@ -284,6 +273,27 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
             .field("mz_specific_short", &self.mz_specific_short)
             .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
             .finish()
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
+    pub(crate) fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> RawDateTimeNames<FSet2> {
+        RawDateTimeNames {
+            year_names: FSet2::map_year_names(self.year_names),
+            month_names: FSet2::map_month_names(self.month_names),
+            weekday_names: FSet2::map_weekday_names(self.weekday_names),
+            dayperiod_names: FSet2::map_day_period_names(self.dayperiod_names),
+            zone_essentials: FSet2::map_zone_essentials(self.zone_essentials),
+            locations_root: FSet2::map_zone_locations(self.locations_root),
+            locations: FSet2::map_zone_locations(self.locations),
+            mz_generic_long: FSet2::map_zone_generic_long(self.mz_generic_long),
+            mz_generic_short: FSet2::map_zone_generic_short(self.mz_generic_short),
+            mz_specific_long: FSet2::map_zone_specific_long(self.mz_specific_long),
+            mz_specific_short: FSet2::map_zone_specific_short(self.mz_specific_short),
+            mz_periods: FSet2::map_metazone_lookup(self.mz_periods),
+            fixed_decimal_formatter: self.fixed_decimal_formatter,
+            _marker: PhantomData,
+        }
     }
 }
 
@@ -1310,23 +1320,120 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             self.inner.as_borrowed(),
         ))
     }
+
+    /// Maps a [`TypedDateTimeNames`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`DateFieldSet`] to one for
+    /// [`CompositeDateTimeFieldSet`].
+    ///
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fields;
+    /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// // Create an instance that can format abbreviated month names:
+    /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
+    ///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
+    /// names
+    ///     .include_month_names(fields::Month::Format, FieldLength::Three)
+    ///     .unwrap();
+    ///
+    /// // Test it with a pattern:
+    /// let pattern_str = "MMM d y";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+    /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
+    ///
+    /// // Convert the field set to `CompositeDateTimeFieldSet`:
+    /// let composite_names = names.with_fset::<CompositeDateTimeFieldSet>();
+    ///
+    /// // It should still work:
+    /// assert_try_writeable_eq!(composite_names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
+    /// ```
+    ///
+    /// Converting into a narrower type is not supported:
+    ///
+    /// ```compile_fail,E0277
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
+    ///
+    /// let composite_names: TypedDateTimeNames<Gregorian, CompositeDateTimeFieldSet> = todo!();
+    ///
+    /// // error[E0277]: the trait bound `(): From<DataPayloadWithVariables<DayPeriodNamesV1Marker, FieldLength>>` is not satisfied
+    /// let narrow_names = composite_names.with_fset::<DateFieldSet>();
+    /// ```
+    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> TypedDateTimeNames<C, FSet2> {
+        TypedDateTimeNames {
+            prefs: self.prefs,
+            inner: self.inner.with_fset(),
+            _calendar: PhantomData,
+        }
+    }
 }
 
 impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn new_without_number_formatting() -> Self {
         Self {
-            year_names: <FSet::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container::<_>::new_empty(),
-            month_names: <FSet::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),
-            weekday_names: <FSet::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
-            dayperiod_names: <FSet::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
-            zone_essentials: <FSet::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container::<_>::new_empty(),
-            locations_root: <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
-            locations: <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_long: <FSet::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_short: <FSet::ZoneGenericShort as DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_long: <FSet::ZoneSpecificLong as DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_short: <FSet::ZoneSpecificShort as DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>>::Container::<_>::new_empty(),
-            mz_periods: <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container::<_>::new_empty(),
+            year_names: <FSet::YearNames as NamesContainer<
+                YearNamesV1Marker,
+                FieldLength,
+            >>::Container::new_empty(),
+            month_names: <FSet::MonthNames as NamesContainer<
+                MonthNamesV1Marker,
+                (fields::Month, FieldLength),
+            >>::Container::new_empty(),
+            weekday_names: <FSet::WeekdayNames as NamesContainer<
+                WeekdayNamesV1Marker,
+                (fields::Weekday, FieldLength),
+            >>::Container::new_empty(),
+            dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
+                DayPeriodNamesV1Marker,
+                FieldLength,
+            >>::Container::new_empty(),
+            zone_essentials: <FSet::ZoneEssentials as NamesContainer<
+                tz::EssentialsV1Marker,
+                (),
+            >>::Container::new_empty(),
+            locations_root: <FSet::ZoneLocations as NamesContainer<
+                tz::LocationsV1Marker,
+                (),
+            >>::Container::new_empty(),
+            locations: <FSet::ZoneLocations as NamesContainer<
+                tz::LocationsV1Marker,
+                (),
+            >>::Container::new_empty(),
+            mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<
+                tz::MzGenericLongV1Marker,
+                (),
+            >>::Container::new_empty(),
+            mz_generic_short: <FSet::ZoneGenericShort as NamesContainer<
+                tz::MzGenericShortV1Marker,
+                (),
+            >>::Container::new_empty(),
+            mz_specific_long: <FSet::ZoneSpecificLong as NamesContainer<
+                tz::MzSpecificLongV1Marker,
+                (),
+            >>::Container::new_empty(),
+            mz_specific_short: <FSet::ZoneSpecificShort as NamesContainer<
+                tz::MzSpecificShortV1Marker,
+                (),
+            >>::Container::new_empty(),
+            mz_periods: <FSet::MetazoneLookup as NamesContainer<
+                tz::MzPeriodV1Marker,
+                (),
+            >>::Container::new_empty(),
             fixed_decimal_formatter: None,
             _marker: PhantomData,
         }

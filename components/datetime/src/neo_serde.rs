@@ -5,7 +5,7 @@
 //! Serde definitions for semantic skeleta
 
 use crate::{
-    fieldsets::{self, enums::*},
+    fieldsets::{self, enums::*, Combo},
     options::*,
     raw::neo::RawOptions,
 };
@@ -109,7 +109,7 @@ impl From<CompositeFieldSet> for CompositeFieldSetSerde {
                 FieldSetSerde::from_calendar_period_field_set(v)
             }
             CompositeFieldSet::Time(v) => FieldSetSerde::from_time_field_set(v),
-            CompositeFieldSet::Zone(v) => FieldSetSerde::from_zone_field_set(v),
+            CompositeFieldSet::Zone(v) => FieldSetSerde::from_zone_field_set(v, true),
             CompositeFieldSet::DateTime(v) => {
                 let (date_serde, date_options) =
                     FieldSetSerde::from_date_field_set(v.to_date_field_set());
@@ -120,22 +120,25 @@ impl From<CompositeFieldSet> for CompositeFieldSetSerde {
                     date_options.merge(time_options),
                 )
             }
-            CompositeFieldSet::DateZone(v, z) => {
-                let (date_serde, date_options) = FieldSetSerde::from_date_field_set(v);
-                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+            CompositeFieldSet::DateZone(v) => {
+                let (date_serde, date_options) = FieldSetSerde::from_date_field_set(v.dt());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (date_serde.extend(zone_serde), date_options)
             }
-            CompositeFieldSet::TimeZone(v, z) => {
-                let (time_serde, time_options) = FieldSetSerde::from_time_field_set(v);
-                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+            CompositeFieldSet::TimeZone(v) => {
+                let (time_serde, time_options) = FieldSetSerde::from_time_field_set(v.dt());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (time_serde.extend(zone_serde), time_options)
             }
-            CompositeFieldSet::DateTimeZone(v, z) => {
+            CompositeFieldSet::DateTimeZone(v) => {
                 let (date_serde, date_options) =
-                    FieldSetSerde::from_date_field_set(v.to_date_field_set());
+                    FieldSetSerde::from_date_field_set(v.dt().to_date_field_set());
                 let (time_serde, time_options) =
-                    FieldSetSerde::from_time_field_set(v.to_time_field_set());
-                let zone_serde = FieldSetSerde::from_time_zone_style(z);
+                    FieldSetSerde::from_time_field_set(v.dt().to_time_field_set());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (
                     date_serde.extend(time_serde).extend(zone_serde),
                     date_options.merge(time_options),
@@ -178,7 +181,7 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
                 .map(CompositeFieldSet::Time)
                 .ok_or(Self::Error::InvalidFields),
             (false, false, true) => zone
-                .to_zone_field_set(options)
+                .to_zone_field_set(options, true)
                 .map(CompositeFieldSet::Zone)
                 .ok_or(Self::Error::InvalidFields),
             (true, true, false) => date
@@ -195,29 +198,34 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
             (true, false, true) => date
                 .to_date_field_set(options)
                 .and_then(|date_field_set| {
-                    zone.to_time_zone_style()
-                        .map(|style| CompositeFieldSet::DateZone(date_field_set, style))
+                    zone.to_zone_field_set(options, false)
+                        .map(|zone_field_set| {
+                            CompositeFieldSet::DateZone(Combo::new(date_field_set, zone_field_set))
+                        })
                 })
                 .ok_or(Self::Error::InvalidFields),
             (false, true, true) => time
                 .to_time_field_set(options)
                 .and_then(|time_field_set| {
-                    zone.to_time_zone_style()
-                        .map(|style| CompositeFieldSet::TimeZone(time_field_set, style))
+                    zone.to_zone_field_set(options, false)
+                        .map(|zone_field_set| {
+                            CompositeFieldSet::TimeZone(Combo::new(time_field_set, zone_field_set))
+                        })
                 })
                 .ok_or(Self::Error::InvalidFields),
             (true, true, true) => date
                 .to_date_field_set(options)
                 .and_then(|date_field_set| {
-                    zone.to_time_zone_style().map(|style| {
-                        CompositeFieldSet::DateTimeZone(
-                            DateAndTimeFieldSet::from_date_field_set_with_raw_options(
-                                date_field_set,
-                                options,
-                            ),
-                            style,
-                        )
-                    })
+                    zone.to_zone_field_set(options, false)
+                        .map(|zone_field_set| {
+                            CompositeFieldSet::DateTimeZone(Combo::new(
+                                DateAndTimeFieldSet::from_date_field_set_with_raw_options(
+                                    date_field_set,
+                                    options,
+                                ),
+                                zone_field_set,
+                            ))
+                        })
                 })
                 .ok_or(Self::Error::InvalidFields),
             (false, false, false) => Err(Self::Error::NoFields),
@@ -302,14 +310,16 @@ enum FieldSetField {
     // Time Fields
     Time = 16,
     // Zone Fields
-    ZoneGeneric = 32,
-    ZoneGenericShort = 33,
-    ZoneGenericLong = 34,
-    ZoneSpecific = 35,
-    ZoneSpecificShort = 36,
-    ZoneSpecificLong = 37,
-    ZoneLocation = 38,
-    ZoneOffset = 39,
+    ZoneSpecific = 32, // defaults to short if not standalone
+    // ZoneSpecificShort = 33,
+    ZoneSpecificLong = 34,
+    ZoneOffset = 35, // defaults to short if not standalone
+    // ZoneOffsetShort = 36,
+    ZoneOffsetLong = 37,
+    ZoneGeneric = 38, // defaults to short if not standalone
+    // ZoneGenericShort = 39,
+    ZoneGenericLong = 40,
+    ZoneLocation = 41,
 }
 
 impl FieldSetField {
@@ -321,10 +331,16 @@ impl FieldSetField {
         Time,
         WeekOfYear,
         WeekOfMonth,
-        ZoneGeneric,
         ZoneSpecific,
-        ZoneLocation,
+        // ZoneSpecificShort,
+        ZoneSpecificLong,
         ZoneOffset,
+        // ZoneOffsetShort,
+        ZoneOffsetLong,
+        ZoneGeneric,
+        // ZoneGenericShort,
+        ZoneGenericLong,
+        ZoneLocation,
     ];
 }
 
@@ -386,8 +402,11 @@ impl FieldSetSerde {
 
     // Zone Components
     const ZONE_SPECIFIC: Self = Self::from_fields(&[ZoneSpecific]);
+    const ZONE_SPECIFIC_LONG: Self = Self::from_fields(&[ZoneSpecificLong]);
     const ZONE_OFFSET: Self = Self::from_fields(&[ZoneOffset]);
+    const ZONE_OFFSET_LONG: Self = Self::from_fields(&[ZoneOffsetLong]);
     const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
+    const ZONE_GENERIC_LONG: Self = Self::from_fields(&[ZoneGenericLong]);
     const ZONE_LOCATION: Self = Self::from_fields(&[ZoneLocation]);
 
     const fn from_fields(fields: &[FieldSetField]) -> Self {
@@ -526,57 +545,59 @@ impl FieldSetSerde {
         }
     }
 
-    fn from_time_zone_style(value: ZoneStyle) -> Self {
-        match value {
-            ZoneStyle::Z => Self::ZONE_SPECIFIC,
-            ZoneStyle::O => Self::ZONE_OFFSET,
-            ZoneStyle::V => Self::ZONE_GENERIC,
-            ZoneStyle::L => Self::ZONE_LOCATION,
+    fn from_zone_field_set(value: ZoneFieldSet, is_standalone: bool) -> (Self, RawOptions) {
+        match (value, is_standalone) {
+            // Standalone: return the field and length separately
+            (ZoneFieldSet::Z(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
+            (ZoneFieldSet::Zs(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
+            (ZoneFieldSet::O(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
+            (ZoneFieldSet::Os(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
+            (ZoneFieldSet::V(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
+            (ZoneFieldSet::Vs(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
+            (ZoneFieldSet::L(v), true) => (Self::ZONE_LOCATION, v.to_raw_options()),
+            // Non-standalone: return the short as default and long as opt-in
+            (ZoneFieldSet::Z(v), false) => (Self::ZONE_SPECIFIC_LONG, v.to_raw_options()),
+            (ZoneFieldSet::Zs(v), false) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
+            (ZoneFieldSet::O(v), false) => (Self::ZONE_OFFSET_LONG, v.to_raw_options()),
+            (ZoneFieldSet::Os(v), false) => (Self::ZONE_OFFSET, v.to_raw_options()),
+            (ZoneFieldSet::V(v), false) => (Self::ZONE_GENERIC_LONG, v.to_raw_options()),
+            (ZoneFieldSet::Vs(v), false) => (Self::ZONE_GENERIC, v.to_raw_options()),
+            (ZoneFieldSet::L(v), false) => (Self::ZONE_LOCATION, v.to_raw_options()),
         }
     }
 
-    fn to_time_zone_style(self) -> Option<ZoneStyle> {
-        match self {
-            FieldSetSerde::ZONE_SPECIFIC => Some(ZoneStyle::Z),
-            FieldSetSerde::ZONE_OFFSET => Some(ZoneStyle::O),
-            FieldSetSerde::ZONE_GENERIC => Some(ZoneStyle::V),
-            FieldSetSerde::ZONE_LOCATION => Some(ZoneStyle::L),
-            _ => None,
-        }
-    }
-
-    fn from_zone_field_set(value: ZoneFieldSet) -> (Self, RawOptions) {
-        match value {
-            ZoneFieldSet::Z(v) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
-            ZoneFieldSet::O(v) => (Self::ZONE_OFFSET, v.to_raw_options()),
-            ZoneFieldSet::V(v) => (Self::ZONE_GENERIC, v.to_raw_options()),
-            ZoneFieldSet::L(v) => (Self::ZONE_LOCATION, v.to_raw_options()),
-        }
-    }
-
-    fn to_zone_field_set(self, options: RawOptions) -> Option<ZoneFieldSet> {
+    fn to_zone_field_set(self, options: RawOptions, is_standalone: bool) -> Option<ZoneFieldSet> {
         use ZoneFieldSet::*;
-        match self {
-            Self::ZONE_SPECIFIC => Some(Z(fieldsets::Z::from_raw_options(options))),
-            Self::ZONE_OFFSET => Some(O(fieldsets::O::from_raw_options(options))),
-            Self::ZONE_GENERIC => Some(V(fieldsets::V::from_raw_options(options))),
-            Self::ZONE_LOCATION => Some(L(fieldsets::L::from_raw_options(options))),
-            _ => None,
+        match (self, is_standalone, options.length) {
+            (Self::ZONE_SPECIFIC_LONG, _, _) => Some(Z(fieldsets::Z::new())),
+            (Self::ZONE_SPECIFIC, false, _) => Some(Zs(fieldsets::Zs::new())),
+            (Self::ZONE_SPECIFIC, true, Length::Long) => Some(Z(fieldsets::Z::new())),
+            (Self::ZONE_SPECIFIC, true, Length::Short) => Some(Zs(fieldsets::Zs::new())),
+            (Self::ZONE_OFFSET_LONG, _, _) => Some(O(fieldsets::O::new())),
+            (Self::ZONE_OFFSET, false, _) => Some(Os(fieldsets::Os::new())),
+            (Self::ZONE_OFFSET, true, Length::Long) => Some(O(fieldsets::O::new())),
+            (Self::ZONE_OFFSET, true, Length::Short) => Some(Os(fieldsets::Os::new())),
+            (Self::ZONE_GENERIC_LONG, _, _) => Some(V(fieldsets::V::new())),
+            (Self::ZONE_GENERIC, false, _) => Some(Vs(fieldsets::Vs::new())),
+            (Self::ZONE_GENERIC, true, Length::Long) => Some(V(fieldsets::V::new())),
+            (Self::ZONE_GENERIC, true, Length::Short) => Some(Vs(fieldsets::Vs::new())),
+            (Self::ZONE_LOCATION, _, _) => Some(L(fieldsets::L::new())),
+            (_, _, _) => None,
         }
     }
 }
 
 #[test]
 fn test_basic() {
-    let skeleton = CompositeFieldSet::DateTimeZone(
+    let skeleton = CompositeFieldSet::DateTimeZone(Combo::new(
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET {
             length: Length::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),
             time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
         }),
-        ZoneStyle::V,
-    );
+        ZoneFieldSet::Vs(fieldsets::Vs::new()),
+    ));
     let skeleton_serde = CompositeFieldSetSerde::from(skeleton);
 
     let json_string = serde_json::to_string(&skeleton_serde).unwrap();
