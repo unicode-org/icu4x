@@ -52,6 +52,7 @@ An `LLVM_COMPATIBLE_NIGHTLY` is said to "work with" an LLVM version when the siz
  - It MUST be available via apt on all currently-supported Ubuntu LTS
  - It MUST be available via apt on Debian `testing`
  - It MUST be available via `brew`
+ - It MUST be available on Fedora via `yum`
  - It MUST be available on the GitHub Actions runners with `ubuntu-latest`
  - It SHOULD be available on the latest XCode
  - It SHOULD be available on ICU4X developer machines using nonstandard package management (more on this below)
@@ -83,6 +84,13 @@ Verification:  Visit the page https://packages.debian.org/search?keywords=llvm-1
 
 Note: "Debian stable" is typically _very_ old and is not what most Debian-based systems use. E.g. Debian stable is currently on Rust 1.63, which is more than two years old. Stable is intended to be extremely stable without even performing backwards-compatible upgrades.
 
+#### Fedora
+
+Policy: Must be available on latest stable Fedora
+
+Command: `yum install llvm18`
+
+Verification: Visit the page https://packages.fedoraproject.org/pkgs/llvm18/llvm18/ (with the number 18 replaced with desired LLVM version), and ensure that in the "Releases overview" table, there is an entry in the "Stable" column for "Fedora N" where N is a number. You can double check that N is the latest stable by visiting [this page](https://fedoraproject.org/).
 
 #### XCode
 
