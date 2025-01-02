@@ -56,6 +56,7 @@ An `LLVM_COMPATIBLE_NIGHTLY` is said to "work with" an LLVM version when the siz
  - It MUST be available on the GitHub Actions runners with `ubuntu-latest`
  - It SHOULD be available on the latest XCode
  - It SHOULD be available on ICU4X developer machines using nonstandard package management (more on this below)
+ - It SHOULD be available on RHEL and latest Rocky Linux via `yum`
  
 
 
@@ -110,6 +111,14 @@ Policy: Must be available via brew.
 Command: `brew install llvm@18` on OSX.
 
 Verification:  Visit https://formulae.brew.sh/formula/llvm#default and ensure the `llvm@N` package is listed, for version N.
+
+#### RHEL / Rocky Linux
+
+Policy: Should be available via `yum`, but policy can be overridden by TC approval in cases where there is a strong case for a new feature.
+
+Command: `yum module install llvm-toolset` or `dnf install llvm-toolset` (RHEL 9)
+
+Verification: Latest Rocky Linux (currently Rocky Linux 9) and RHEL should be listed on [this page](https://pkgs.org/search/?q=llvm-toolset) with an LLVM version that is equal to or greater than the desired LLVM version. It's okay if the exact LLVM version is not listed, `yum module install` allows installing older versions via explicit command.
 
 #### GitHub Actions
 
