@@ -53,15 +53,6 @@ where
     }
 }
 
-/// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
-///
-/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
-/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
-pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
-    /// Returns a set of [`DataIdentifierCow`].
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
-}
-
 #[cfg(target_has_atomic = "ptr")]
 impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
 where
@@ -87,6 +78,60 @@ pub trait DryDataProvider<M: DataMarker>: DataProvider<M> {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError>;
 }
 
+impl<M, P> DryDataProvider<M> for &P
+where
+    M: DataMarker,
+    P: DryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        (*self).dry_load(req)
+    }
+}
+
+impl<M, P> DryDataProvider<M> for Box<P>
+where
+    M: DataMarker,
+    P: DryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load(req)
+    }
+}
+
+impl<M, P> DryDataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DataMarker,
+    P: DryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load(req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DryDataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DataMarker,
+    P: DryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load(req)
+    }
+}
+
+/// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
+///
+/// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
+/// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
+    /// Returns a set of [`DataIdentifierCow`].
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+}
+
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
@@ -106,23 +151,6 @@ where
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError>;
-}
-
-/// A dynanmic data provider that can determine whether it can load a particular data identifier,
-/// potentially cheaper than actually performing the load.
-pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
-    /// This method goes through the motions of [`load_data`], but only returns the metadata.
-    ///
-    /// If `dry_load_data` returns an error, [`load_data`] must return the same error, but
-    /// not vice-versa. Concretely, [`load_data`] could return deserialization or I/O errors
-    /// that `dry_load_data` cannot predict.
-    ///
-    /// [`load_data`]: DynamicDataProvider::load_data
-    fn dry_load_data(
-        &self,
-        marker: DataMarkerInfo,
-        req: DataRequest,
-    ) -> Result<DataResponseMetadata, DataError>;
 }
 
 impl<M, P> DynamicDataProvider<M> for &P
@@ -183,6 +211,84 @@ where
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
         (**self).load_data(marker, req)
+    }
+}
+
+/// A dynanmic data provider that can determine whether it can load a particular data identifier,
+/// potentially cheaper than actually performing the load.
+pub trait DynamicDryDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
+    /// This method goes through the motions of [`load_data`], but only returns the metadata.
+    ///
+    /// If `dry_load_data` returns an error, [`load_data`] must return the same error, but
+    /// not vice-versa. Concretely, [`load_data`] could return deserialization or I/O errors
+    /// that `dry_load_data` cannot predict.
+    ///
+    /// [`load_data`]: DynamicDataProvider::load_data
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError>;
+}
+
+impl<M, P> DynamicDryDataProvider<M> for &P
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        (*self).dry_load_data(marker, req)
+    }
+}
+
+impl<M, P> DynamicDryDataProvider<M> for Box<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load_data(marker, req)
+    }
+}
+
+impl<M, P> DynamicDryDataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load_data(marker, req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DynamicDryDataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        (**self).dry_load_data(marker, req)
     }
 }
 
