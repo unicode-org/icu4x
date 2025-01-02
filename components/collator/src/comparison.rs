@@ -76,7 +76,11 @@ icu_locale_core::preferences::define_preferences!(
     CollatorPreferences,
     {
         /// The collation type. This corresponds to the `-u-co` BCP-47 tag.
-        collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType
+        collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType,
+        /// The type of case ordering. This corresponds to the `-u-kf` BCP-47 tag.
+        case_first: icu_locale_core::preferences::extensions::unicode::keywords::CollationCaseFirst,
+        /// The type of numeric ordering. This corresponds to the `-u-kn` BPC-47 tag.
+        numeric_ordering: icu_locale_core::preferences::extensions::unicode::keywords::CollationNumericOrdering
     }
 );
 
@@ -85,7 +89,7 @@ impl LocaleSpecificDataHolder {
     fn try_new_unstable_internal<D>(
         provider: &D,
         prefs: CollatorPreferences,
-        options: CollatorOptions,
+        mut options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationTailoringV1Marker>
@@ -94,6 +98,12 @@ impl LocaleSpecificDataHolder {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
+        options.case_first = options
+            .case_first
+            .or_else(|| prefs.case_first.map(Into::into));
+        options.numeric = options
+            .numeric
+            .or_else(|| prefs.numeric_ordering.map(Into::into));
         let marker_attributes = prefs
             .collation_type
             .as_ref()

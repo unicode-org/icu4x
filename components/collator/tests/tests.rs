@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::*;
-use icu_locale_core::{langid, locale};
+use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -1946,6 +1946,37 @@ fn test_ecma_sensitivity() {
         let collator = Collator::try_new(Default::default(), options).unwrap();
         assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
         assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+}
+
+#[test]
+fn test_prefs_overrides() {
+    let prefs = "da-u-kn-kf-upper".parse::<Locale>().unwrap().into();
+
+    // preferences set the unset options
+    {
+        let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+        assert_eq!(resolved.numeric, Numeric::On);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Greater);
+    }
+
+    // preferences don't override explicit options
+    {
+        let mut options = CollatorOptions::default();
+        options.case_first = Some(CaseFirst::Off);
+        options.numeric = Some(Numeric::Off);
+
+        let collator = Collator::try_new(prefs, options).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CaseFirst::Off);
+        assert_eq!(resolved.numeric, Numeric::Off);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Less);
     }
 }
 

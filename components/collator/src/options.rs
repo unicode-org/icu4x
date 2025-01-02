@@ -10,6 +10,10 @@
 
 use crate::elements::{CASE_MASK, TERTIARY_MASK};
 
+use icu_locale_core::preferences::extensions::unicode::keywords::{
+    CollationCaseFirst, CollationNumericOrdering,
+};
+
 /// The collation strength that indicates how many levels to compare.
 ///
 /// If an earlier level isn't equal, the earlier level is decisive.
@@ -198,6 +202,27 @@ pub enum CaseFirst {
     UpperFirst = 2,
 }
 
+impl From<CollationCaseFirst> for CaseFirst {
+    fn from(value: CollationCaseFirst) -> Self {
+        match value {
+            CollationCaseFirst::Upper => CaseFirst::UpperFirst,
+            CollationCaseFirst::Lower => CaseFirst::LowerFirst,
+            CollationCaseFirst::False => CaseFirst::Off,
+            _ => unreachable!("`CaseFirst` and `CollationCaseFirst` must always be in sync."),
+        }
+    }
+}
+
+impl From<CaseFirst> for CollationCaseFirst {
+    fn from(value: CaseFirst) -> Self {
+        match value {
+            CaseFirst::Off => CollationCaseFirst::False,
+            CaseFirst::LowerFirst => CollationCaseFirst::Lower,
+            CaseFirst::UpperFirst => CollationCaseFirst::Upper,
+        }
+    }
+}
+
 /// What characters get shifted to the quaternary level
 /// with `AlternateHandling::Shifted`.
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
@@ -245,6 +270,25 @@ pub enum Numeric {
     /// Turn on numeric sorting for any sequence of decimal digits, sorting at
     /// a primary level according to the numeric value.
     On = 1,
+}
+
+impl From<CollationNumericOrdering> for Numeric {
+    fn from(value: CollationNumericOrdering) -> Self {
+        match value {
+            CollationNumericOrdering::True => Numeric::On,
+            CollationNumericOrdering::False => Numeric::Off,
+            _ => unreachable!("`Numeric` and `CollationNumericOrdering` must always be in sync."),
+        }
+    }
+}
+
+impl From<Numeric> for CollationNumericOrdering {
+    fn from(value: Numeric) -> Self {
+        match value {
+            Numeric::Off => CollationNumericOrdering::False,
+            Numeric::On => CollationNumericOrdering::True,
+        }
+    }
 }
 
 /// Whether second level compares the last accent difference
