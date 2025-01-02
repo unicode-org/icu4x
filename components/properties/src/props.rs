@@ -527,7 +527,7 @@ impl GeneralCategoryGroup {
     /// assert!(GeneralCategoryGroup::Other.contains(gc.get('\u{E007F}')));
     /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get('\u{E007F}')));
     /// ```
-    pub const fn contains(&self, val: GeneralCategory) -> bool {
+    pub const fn contains(self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
 
