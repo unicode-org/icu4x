@@ -812,8 +812,6 @@ icu::properties::props::GeneralCategoryGroup::empty#FnInStruct
 icu::properties::props::GeneralCategoryGroup::intersection#FnInStruct
 icu::properties::props::GeneralCategoryGroup::union#FnInStruct
 icu::properties::props::GeneralCategoryOutOfBoundsError#Struct
-icu::segmenter::SentenceBreakOptions#Struct
-icu::segmenter::WordBreakOptions#Struct
 icu::timezone::CustomZonedDateTime#Struct
 icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
 icu::timezone::CustomZonedDateTime::to_iso#FnInStruct
