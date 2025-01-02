@@ -1453,10 +1453,12 @@ macro_rules! normalizer_methods {
         /// such that the concatenation of the prefix and the normalization of the suffix
         /// is the normalization of the whole input.
         pub fn split_normalized<'a>(&self, text: &'a str) -> (&'a str, &'a str) {
-            if let Some(pair) = text.split_at_checked(self.is_normalized_up_to(text)) {
-                pair
+            let up_to = self.is_normalized_up_to(text);
+            if up_to <= text.len() {
+                // not using split_at_checked due to MSRV
+                text.split_at(up_to)
             } else {
-                // GIGO
+                // Internal bug, not even GIGO
                 debug_assert!(false);
                 ("", text)
             }
@@ -1499,10 +1501,12 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn split_normalized_utf16<'a>(&self, text: &'a [u16]) -> (&'a [u16], &'a [u16]) {
-            if let Some(pair) = text.split_at_checked(self.is_normalized_utf16_up_to(text)) {
-                pair
+            let up_to = self.is_normalized_utf16_up_to(text);
+            if up_to <= text.len() {
+                // not using split_at_checked due to MSRV
+                text.split_at(up_to)
             } else {
-                // GIGO
+                // Internal bug, not even GIGO
                 debug_assert!(false);
                 (&[], text)
             }
@@ -1554,12 +1558,15 @@ macro_rules! normalizer_methods {
         /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn split_normalized_utf8<'a>(&self, text: &'a [u8]) -> (&'a str, &'a [u8]) {
-            if let Some((head, tail)) = text.split_at_checked(self.is_normalized_utf8_up_to(text)) {
+            let up_to = self.is_normalized_utf8_up_to(text);
+            if up_to <= text.len() {
+                // not using split_at_checked due to MSRV
+                let (head, tail) = text.split_at(up_to);
                 // SAFETY: The normalization check also checks for
                 // UTF-8 well-formedness.
                 (unsafe { core::str::from_utf8_unchecked(head) }, tail)
             } else {
-                // GIGO
+                // Internal bug, not even GIGO
                 debug_assert!(false);
                 ("", text)
             }
