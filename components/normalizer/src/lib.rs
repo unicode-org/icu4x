@@ -1458,7 +1458,7 @@ macro_rules! normalizer_methods {
                 // not using split_at_checked due to MSRV
                 text.split_at(up_to)
             } else {
-                // Internal bug, not even GIGO
+                // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
                 ("", text)
             }
@@ -1506,7 +1506,7 @@ macro_rules! normalizer_methods {
                 // not using split_at_checked due to MSRV
                 text.split_at(up_to)
             } else {
-                // Internal bug, not even GIGO
+                // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
                 (&[], text)
             }
@@ -1566,7 +1566,7 @@ macro_rules! normalizer_methods {
                 // UTF-8 well-formedness.
                 (unsafe { core::str::from_utf8_unchecked(head) }, tail)
             } else {
-                // Internal bug, not even GIGO
+                // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
                 ("", text)
             }

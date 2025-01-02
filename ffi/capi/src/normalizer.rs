@@ -152,6 +152,10 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::split_normalized,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::is_normalized_up_to,
             FnInStruct,
             hidden
@@ -320,6 +324,10 @@ pub mod ffi {
         )]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf8_up_to,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::split_normalized,
             FnInStruct
         )]
         #[diplomat::rust_link(
