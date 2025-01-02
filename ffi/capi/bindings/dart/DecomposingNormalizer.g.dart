@@ -106,6 +106,8 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
   ///
   /// See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf8_up_to) for more information.
+  ///
+  /// See the [Rust documentation for `split_normalized`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized) for more information.
   int isNormalizedUpTo(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(_ffi, s._utf8AllocIn(temp.arena));
