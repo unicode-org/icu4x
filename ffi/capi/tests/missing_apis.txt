@@ -805,13 +805,6 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
-icu::properties::props::GeneralCategoryGroup::all#FnInStruct
-icu::properties::props::GeneralCategoryGroup::complement#FnInStruct
-icu::properties::props::GeneralCategoryGroup::contains#FnInStruct
-icu::properties::props::GeneralCategoryGroup::empty#FnInStruct
-icu::properties::props::GeneralCategoryGroup::intersection#FnInStruct
-icu::properties::props::GeneralCategoryGroup::union#FnInStruct
-icu::properties::props::GeneralCategoryOutOfBoundsError#Struct
 icu::timezone::CustomZonedDateTime#Struct
 icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
 icu::timezone::CustomZonedDateTime::to_iso#FnInStruct

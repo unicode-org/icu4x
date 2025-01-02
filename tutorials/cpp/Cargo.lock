@@ -577,6 +577,7 @@ dependencies = [
  "icu_timezone_data",
  "serde",
  "tinystr",
+ "writeable",
  "zerotrie",
  "zerovec",
 ]

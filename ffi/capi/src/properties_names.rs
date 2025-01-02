@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use crate::properties_enums::ffi::GeneralCategoryGroup;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -324,15 +325,15 @@ pub mod ffi {
         }
     }
 
-    /// A type capable of looking up General Category mask values from a string name.
+    /// A type capable of looking up General Category Group values from a string name.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::PropertyParser, Struct)]
     #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
-    pub struct GeneralCategoryNameToMaskMapper(
+    pub struct GeneralCategoryNameToGroupMapper(
         icu_properties::PropertyParser<icu_properties::props::GeneralCategoryGroup>,
     );
 
-    impl GeneralCategoryNameToMaskMapper {
+    impl GeneralCategoryNameToGroupMapper {
         /// Get the mask value matching the given name, using strict matching
         ///
         /// Returns 0 if the name is unknown for this property
@@ -342,7 +343,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
+        pub fn get_strict(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_strict(name)
             } else {
@@ -361,7 +362,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
+        pub fn get_loose(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_loose(name)
             } else {
@@ -374,8 +375,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<GeneralCategoryNameToMaskMapper> {
-            Box::new(GeneralCategoryNameToMaskMapper(
+        pub fn create() -> Box<GeneralCategoryNameToGroupMapper> {
+            Box::new(GeneralCategoryNameToGroupMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new(
                 )
                 .static_to_owned(),
@@ -387,8 +388,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
-            Ok(Box::new(GeneralCategoryNameToMaskMapper(
+        ) -> Result<Box<GeneralCategoryNameToGroupMapper>, DataError> {
+            Ok(Box::new(GeneralCategoryNameToGroupMapper(
                 call_constructor_unstable!(
                             icu_properties::PropertyParser::<
                                 icu_properties::props::GeneralCategoryGroup,
