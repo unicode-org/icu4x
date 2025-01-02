@@ -22,9 +22,9 @@ ALL_RUST_SRC = $(wildcard ../../../components/**/*.rs) $(wildcard ../../../provi
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-17
-LLD := lld-17
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2024-01-01"
+CLANG := clang-18
+LLD := lld-18
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2024-07-01"
 
 
 target-normal/release/libicu_capi.a:
