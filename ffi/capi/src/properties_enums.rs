@@ -1782,6 +1782,7 @@ pub mod ffi {
             props::GeneralCategoryGroup::empty().into()
         }
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::union, FnInStruct)]
+        #[diplomat::attr(any(c, cpp), rename = "union_")]
         pub fn union(self, other: Self) -> Self {
             self.into_props_group()
                 .union(other.into_props_group())

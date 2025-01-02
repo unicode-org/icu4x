@@ -38,7 +38,7 @@ struct GeneralCategoryGroup {
 
   inline static icu4x::GeneralCategoryGroup empty();
 
-  inline icu4x::GeneralCategoryGroup union(icu4x::GeneralCategoryGroup other);
+  inline icu4x::GeneralCategoryGroup union_(icu4x::GeneralCategoryGroup other);
 
   inline icu4x::GeneralCategoryGroup intersection(icu4x::GeneralCategoryGroup other);
 

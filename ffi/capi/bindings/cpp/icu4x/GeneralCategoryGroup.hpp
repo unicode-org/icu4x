@@ -71,7 +71,7 @@ inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::empty() {
   return icu4x::GeneralCategoryGroup::FromFFI(result);
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::union(icu4x::GeneralCategoryGroup other) {
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::union_(icu4x::GeneralCategoryGroup other) {
   auto result = icu4x::capi::icu4x_GeneralCategoryGroup_union_mv1(this->AsFFI(),
     other.AsFFI());
   return icu4x::GeneralCategoryGroup::FromFFI(result);
