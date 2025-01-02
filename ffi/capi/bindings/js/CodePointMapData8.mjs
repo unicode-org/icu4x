@@ -3,6 +3,7 @@ import { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
 import { CodePointSetData } from "./CodePointSetData.mjs"
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
+import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -58,16 +59,6 @@ export class CodePointMapData8 {
         finally {}
     }
 
-    static generalCategoryToMask(gc) {
-        const result = wasm.icu4x_CodePointMapData8_general_category_to_mask_mv1(gc);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
     iterRangesForValue(value) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
@@ -94,17 +85,21 @@ export class CodePointMapData8 {
         finally {}
     }
 
-    iterRangesForMask(mask) {
+    iterRangesForGroup(group) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         
-        const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(this.ffiValue, mask);
+        const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(this.ffiValue, ...group._intoFFI(functionCleanupArena, {}));
     
         try {
             return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
-        finally {}
+        finally {
+            functionCleanupArena.free();
+        }
     }
 
     getSetForValue(value) {

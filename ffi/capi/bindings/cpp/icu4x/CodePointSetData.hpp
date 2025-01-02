@@ -13,6 +13,7 @@
 #include "CodePointRangeIterator.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "GeneralCategoryGroup.hpp"
 
 
 namespace icu4x {
@@ -25,7 +26,7 @@ namespace capi {
     
     icu4x::capi::CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_complemented_mv1(const icu4x::capi::CodePointSetData* self);
     
-    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_general_category_group_mv1(uint32_t group);
+    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_general_category_group_mv1(icu4x::capi::GeneralCategoryGroup group);
     
     typedef struct icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result;
     icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(const icu4x::capi::DataProvider* provider, uint32_t group);
@@ -384,8 +385,8 @@ inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointSetData::i
   return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_general_category_group(uint32_t group) {
-  auto result = icu4x::capi::icu4x_CodePointSetData_create_general_category_group_mv1(group);
+inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_general_category_group(icu4x::GeneralCategoryGroup group) {
+  auto result = icu4x::capi::icu4x_CodePointSetData_create_general_category_group_mv1(group.AsFFI());
   return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
 }
 

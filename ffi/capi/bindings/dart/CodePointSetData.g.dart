@@ -62,8 +62,9 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
-  factory CodePointSetData.generalCategoryGroup(int group) {
-    final result = _icu4x_CodePointSetData_create_general_category_group_mv1(group);
+  factory CodePointSetData.generalCategoryGroup(GeneralCategoryGroup group) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_CodePointSetData_create_general_category_group_mv1(group._toFfi(temp.arena));
     return CodePointSetData._fromFfi(result, []);
   }
 
@@ -1498,9 +1499,9 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_mv1(ffi.Poi
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_complemented_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_general_category_group_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_general_category_group_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_general_category_group_mv1(int group);
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_general_category_group_mv1(_GeneralCategoryGroupFfi group);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_general_category_group_with_provider_mv1')
