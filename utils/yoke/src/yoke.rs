@@ -9,7 +9,7 @@ use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::Yokeable;
 use core::marker::PhantomData;
-use core::ops::Deref;
+use core::ops::{Deref, DerefMut};
 use stable_deref_trait::StableDeref;
 
 #[cfg(feature = "alloc")]
@@ -223,6 +223,52 @@ where
         <C as Deref>::Target: 'static,
     {
         let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs at the bottom of this file
+                // for the justification of why yokeable could only borrow from the Cart.
+                unsafe { Y::make(deserialized) },
+            ),
+            cart,
+        })
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure. Mutable
+    /// references can be taken to the cart.
+    ///
+    /// The closure can read and write data outside of its scope, but data it returns
+    /// may borrow only from the argument passed to the closure.
+    pub fn attach_to_cart_mut<F>(mut cart: C, f: F) -> Self
+    where
+        F: for<'de> FnOnce(&'de mut <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+        <C as Deref>::Target: 'static,
+        // `StableDeref` requires `deref` and `deref_mut` to return the same address.
+        C: DerefMut,
+    {
+        let deserialized = f(cart.deref_mut());
+        Self {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs at the bottom of this file
+                // for the justification of why yokeable could only borrow from the Cart.
+                unsafe { Y::make(deserialized) },
+            ),
+            cart,
+        }
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    pub fn try_attach_to_cart_mut<E, F>(mut cart: C, f: F) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(
+            &'de mut <C as Deref>::Target,
+        ) -> Result<<Y as Yokeable<'de>>::Output, E>,
+        <C as Deref>::Target: 'static,
+        C: DerefMut,
+    {
+        let deserialized = f(cart.deref_mut())?;
         Ok(Self {
             yokeable: KindaSortaDangling::new(
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
