@@ -11,6 +11,7 @@
 #include "CodePointSetData.d.h"
 #include "DataError.d.h"
 #include "DataProvider.d.h"
+#include "GeneralCategoryGroup.d.h"
 
 #include "CodePointMapData8.d.h"
 
@@ -21,13 +22,11 @@
 
 uint8_t icu4x_CodePointMapData8_get_mv1(const CodePointMapData8* self, char32_t cp);
 
-uint32_t icu4x_CodePointMapData8_general_category_to_mask_mv1(uint8_t gc);
-
 CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_mv1(const CodePointMapData8* self, uint8_t value);
 
 CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(const CodePointMapData8* self, uint8_t value);
 
-CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(const CodePointMapData8* self, uint32_t mask);
+CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_group_mv1(const CodePointMapData8* self, GeneralCategoryGroup group);
 
 CodePointSetData* icu4x_CodePointMapData8_get_set_for_value_mv1(const CodePointMapData8* self, uint8_t value);
 

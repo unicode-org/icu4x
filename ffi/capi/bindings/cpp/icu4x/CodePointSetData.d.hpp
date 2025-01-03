@@ -16,6 +16,7 @@ namespace capi { struct CodePointSetData; }
 class CodePointSetData;
 namespace capi { struct DataProvider; }
 class DataProvider;
+struct GeneralCategoryGroup;
 class DataError;
 }
 
@@ -36,7 +37,7 @@ public:
 
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_complemented() const;
 
-  inline static std::unique_ptr<icu4x::CodePointSetData> create_general_category_group(uint32_t group);
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_general_category_group(icu4x::GeneralCategoryGroup group);
 
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_general_category_group_with_provider(const icu4x::DataProvider& provider, uint32_t group);
 

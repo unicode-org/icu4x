@@ -2,6 +2,7 @@
 import { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
+import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -82,13 +83,17 @@ export class CodePointSetData {
     }
 
     static createGeneralCategoryGroup(group) {
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(group);
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(...group._intoFFI(functionCleanupArena, {}));
     
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
         
-        finally {}
+        finally {
+            functionCleanupArena.free();
+        }
     }
 
     static createGeneralCategoryGroupWithProvider(provider, group) {

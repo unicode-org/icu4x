@@ -14,6 +14,7 @@
 #include "CodePointSetData.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "GeneralCategoryGroup.hpp"
 
 
 namespace icu4x {
@@ -22,13 +23,11 @@ namespace capi {
     
     uint8_t icu4x_CodePointMapData8_get_mv1(const icu4x::capi::CodePointMapData8* self, char32_t cp);
     
-    uint32_t icu4x_CodePointMapData8_general_category_to_mask_mv1(uint8_t gc);
-    
     icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_mv1(const icu4x::capi::CodePointMapData8* self, uint8_t value);
     
     icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(const icu4x::capi::CodePointMapData8* self, uint8_t value);
     
-    icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(const icu4x::capi::CodePointMapData8* self, uint32_t mask);
+    icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_group_mv1(const icu4x::capi::CodePointMapData8* self, icu4x::capi::GeneralCategoryGroup group);
     
     icu4x::capi::CodePointSetData* icu4x_CodePointMapData8_get_set_for_value_mv1(const icu4x::capi::CodePointMapData8* self, uint8_t value);
     
@@ -100,11 +99,6 @@ inline uint8_t icu4x::CodePointMapData8::get(char32_t cp) const {
   return result;
 }
 
-inline uint32_t icu4x::CodePointMapData8::general_category_to_mask(uint8_t gc) {
-  auto result = icu4x::capi::icu4x_CodePointMapData8_general_category_to_mask_mv1(gc);
-  return result;
-}
-
 inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_value(uint8_t value) const {
   auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_value_mv1(this->AsFFI(),
     value);
@@ -117,9 +111,9 @@ inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::
   return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
-  auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(this->AsFFI(),
-    mask);
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const {
+  auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_group_mv1(this->AsFFI(),
+    group.AsFFI());
   return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 

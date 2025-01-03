@@ -12,6 +12,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
+export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
+
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
 
 export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
@@ -112,7 +114,7 @@ export { CodePointMapData16 } from "./CodePointMapData16.mjs"
 
 export { CodePointMapData8 } from "./CodePointMapData8.mjs"
 
-export { GeneralCategoryNameToMaskMapper } from "./GeneralCategoryNameToMaskMapper.mjs"
+export { GeneralCategoryNameToGroupMapper } from "./GeneralCategoryNameToGroupMapper.mjs"
 
 export { PropertyValueNameToEnumMapper } from "./PropertyValueNameToEnumMapper.mjs"
 

@@ -38,16 +38,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return result;
   }
 
-  /// Converts a general category to its corresponding mask value
-  ///
-  /// Nonexistent general categories will map to the empty mask
-  ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-  static int generalCategoryToMask(int gc) {
-    final result = _icu4x_CodePointMapData8_general_category_to_mask_mv1(gc);
-    return result;
-  }
-
   /// Produces an iterator over ranges of code points that map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
@@ -78,10 +68,11 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// other maps will have unpredictable results
   ///
   /// See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
-  CodePointRangeIterator iterRangesForMask(int mask) {
+  CodePointRangeIterator iterRangesForGroup(GeneralCategoryGroup group) {
+    final temp = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(_ffi, mask);
+    final result = _icu4x_CodePointMapData8_iter_ranges_for_group_mv1(_ffi, group._toFfi(temp.arena));
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
@@ -336,11 +327,6 @@ external void _icu4x_CodePointMapData8_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external int _icu4x_CodePointMapData8_get_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_general_category_to_mask_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_CodePointMapData8_general_category_to_mask_mv1(int gc);
-
-@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_value_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_value_mv1(ffi.Pointer<ffi.Opaque> self, int value);
@@ -351,9 +337,9 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_value_
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(ffi.Pointer<ffi.Opaque> self, int value);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_mask_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_group_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(ffi.Pointer<ffi.Opaque> self, int mask);
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_group_mv1(ffi.Pointer<ffi.Opaque> self, _GeneralCategoryGroupFfi group);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_get_set_for_value_mv1')

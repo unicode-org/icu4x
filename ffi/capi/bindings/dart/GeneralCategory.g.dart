@@ -159,11 +159,23 @@ enum GeneralCategory {
     }
   }
 
+  /// Convert to an integer using the ICU4C integer mappings for `General_Category`
   int toInteger() {
     final result = _icu4x_GeneralCategory_to_integer_mv1(_ffi);
     return result;
   }
 
+  /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
+  ///
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+  GeneralCategoryGroup toGroup() {
+    final result = _icu4x_GeneralCategory_to_group_mv1(_ffi);
+    return GeneralCategoryGroup._fromFfi(result);
+  }
+
+  /// Convert from an integer using the ICU4C integer mappings for `General_Category`
+  ///
+  /// See the [Rust documentation for `GeneralCategoryOutOfBoundsError`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryOutOfBoundsError.html) for more information.
   static GeneralCategory? fromInteger(int other) {
     final result = _icu4x_GeneralCategory_from_integer_mv1(other);
     if (!result.isOk) {
@@ -177,6 +189,11 @@ enum GeneralCategory {
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_to_integer_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_GeneralCategory_to_integer_mv1(int self);
+
+@meta.RecordUse()
+@ffi.Native<_GeneralCategoryGroupFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_to_group_mv1')
+// ignore: non_constant_identifier_names
+external _GeneralCategoryGroupFfi _icu4x_GeneralCategory_to_group_mv1(int self);
 
 @meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_from_integer_mv1')

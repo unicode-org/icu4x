@@ -66,6 +66,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_content_locale(

@@ -10,6 +10,7 @@
 #include "CodePointRangeIterator.d.h"
 #include "DataError.d.h"
 #include "DataProvider.d.h"
+#include "GeneralCategoryGroup.d.h"
 
 #include "CodePointSetData.d.h"
 
@@ -24,7 +25,7 @@ CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_mv1(const CodePointSe
 
 CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_complemented_mv1(const CodePointSetData* self);
 
-CodePointSetData* icu4x_CodePointSetData_create_general_category_group_mv1(uint32_t group);
+CodePointSetData* icu4x_CodePointSetData_create_general_category_group_mv1(GeneralCategoryGroup group);
 
 typedef struct icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result {union {CodePointSetData* ok; DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result;
 icu4x_CodePointSetData_create_general_category_group_with_provider_mv1_result icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(const DataProvider* provider, uint32_t group);

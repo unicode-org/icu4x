@@ -514,6 +514,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone_data",
  "tinystr",
+ "writeable",
  "zerotrie",
  "zerovec",
 ]

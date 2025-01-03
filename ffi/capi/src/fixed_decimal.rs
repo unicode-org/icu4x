@@ -16,6 +16,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+    #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal, Typedef, hidden)]
     pub struct SignedFixedDecimal(pub fixed_decimal::SignedFixedDecimal);
 
     /// The sign of a FixedDecimal, as shown in formatting.

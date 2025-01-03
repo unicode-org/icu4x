@@ -94,6 +94,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
