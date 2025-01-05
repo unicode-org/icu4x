@@ -58,9 +58,9 @@ An `LLVM_COMPATIBLE_NIGHTLY` is said to "work with" an LLVM version when the siz
  - It SHOULD be available on ICU4X developer machines using nonstandard package management (more on this below)
  - It SHOULD be available on RHEL and latest Rocky Linux via `yum`
  
+Here, SHOULD requirements can be overridden by TC approval, where the developer must make a per-use case argument as to why the upgrade is beneficial to the project.
 
-
-More information on each of these bullet points, and how to verify them without needing that OS. below. Commands are for installing LLVM 18, for illustrative purposes..
+More information on each of these bullet points, and how to verify them without needing that OS. below. Commands are for installing LLVM 18, for illustrative purposes.
 
 
 #### Ubuntu
