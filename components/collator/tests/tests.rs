@@ -1451,7 +1451,9 @@ fn test_nb_nn_no() {
             DataRequest {
                 id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
                     CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                >(
+                    prefs._internal_get_locale_preferences()
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1474,7 +1476,9 @@ fn test_nb_nn_no() {
             DataRequest {
                 id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
                     CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                >(
+                    prefs._internal_get_locale_preferences()
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1497,7 +1501,9 @@ fn test_nb_nn_no() {
             DataRequest {
                 id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
                     CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                >(
+                    prefs._internal_get_locale_preferences()
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }

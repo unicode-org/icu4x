@@ -479,7 +479,7 @@ macro_rules! __define_preferences {
         #[non_exhaustive]
         pub struct $name {
             /// Locale Preferences for the Preferences structure.
-            pub locale_prefs: $crate::preferences::LocalePreferences,
+            pub(crate) locale_prefs: $crate::preferences::LocalePreferences,
 
             $(
                 $(#[$key_doc])*
@@ -564,6 +564,16 @@ macro_rules! __define_preferences {
                     }
                 )*
             }
+
+            #[doc(hidden)]
+            pub fn _internal_get_locale_preferences(&self) -> $crate::preferences::LocalePreferences {
+                self.locale_prefs
+            }
+
+            #[doc(hidden)]
+            pub fn _internal_set_locale_preferences(&mut self, prefs: $crate::preferences::LocalePreferences) {
+                self.locale_prefs = prefs;
+            }
         }
     )
 }
@@ -578,7 +588,7 @@ macro_rules! __prefs_convert {
         impl From<&$name1> for $name2 {
             fn from(other: &$name1) -> Self {
                 let mut result = Self::default();
-                result.locale_prefs = other.locale_prefs;
+                result._internal_set_locale_preferences(other._internal_get_locale_preferences());
                 result
             }
         }
@@ -595,7 +605,7 @@ macro_rules! __prefs_convert {
         impl From<&$name1> for $name2 {
             fn from(other: &$name1) -> Self {
                 let mut result = Self::default();
-                result.locale_prefs = other.locale_prefs;
+                result._internal_set_locale_preferences(other._internal_get_locale_preferences());
                 $(
                     result.$key = other.$key;
                 )*
