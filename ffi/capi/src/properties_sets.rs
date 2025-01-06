@@ -79,11 +79,14 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "general_category_group")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_general_category_group(group: u32) -> Box<CodePointSetData> {
+        pub fn create_general_category_group(
+            group: crate::properties_enums::ffi::GeneralCategoryGroup,
+        ) -> Box<CodePointSetData> {
             let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
 
             Box::new(CodePointSetData(
-                data.as_borrowed().get_set_for_value_group(group.into()),
+                data.as_borrowed()
+                    .get_set_for_value_group(group.into_props_group()),
             ))
         }
 

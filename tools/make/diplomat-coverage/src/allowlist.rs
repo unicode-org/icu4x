@@ -254,6 +254,13 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
+        // Not planned for 2.0
+        // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
+        "fixed_decimal::Signed",
+        "fixed_decimal::UnsignedFixedDecimal",
+        "fixed_decimal::UnsignedRoundingMode",
+
+
         // Stuff that is experimental
         //
         // We should occasionally review these

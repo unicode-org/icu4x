@@ -14,6 +14,7 @@ pub mod ffi {
         WordBreak,
     };
 
+    use crate::properties_enums::ffi::GeneralCategoryGroup;
     use crate::properties_iter::ffi::CodePointRangeIterator;
     use crate::properties_sets::ffi::CodePointSetData;
     #[cfg(feature = "buffer_provider")]
@@ -52,19 +53,6 @@ pub mod ffi {
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32(cp)
-        }
-
-        /// Converts a general category to its corresponding mask value
-        ///
-        /// Nonexistent general categories will map to the empty mask
-        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
-        pub fn general_category_to_mask(gc: u8) -> u32 {
-            if let Ok(gc) = icu_properties::props::GeneralCategory::try_from(gc) {
-                let group: icu_properties::props::GeneralCategoryGroup = gc.into();
-                group.into()
-            } else {
-                0
-            }
         }
 
         /// Produces an iterator over ranges of code points that map to `value`
@@ -106,13 +94,16 @@ pub mod ffi {
             icu::properties::CodePointMapDataBorrowed::iter_ranges_for_group,
             FnInStruct
         )]
-        pub fn iter_ranges_for_mask<'a>(&'a self, mask: u32) -> Box<CodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_group<'a>(
+            &'a self,
+            group: GeneralCategoryGroup,
+        ) -> Box<CodePointRangeIterator<'a>> {
             let ranges = self
                 .0
                 .as_borrowed()
                 .iter_ranges_mapped(move |v| {
                     let val_mask = 1_u32.checked_shl(v.into()).unwrap_or(0);
-                    val_mask & mask != 0
+                    val_mask & group.mask != 0
                 })
                 .filter(|v| v.value)
                 .map(|v| v.range);

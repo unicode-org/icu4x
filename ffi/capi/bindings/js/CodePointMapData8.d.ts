@@ -3,6 +3,7 @@ import type { CodePointRangeIterator } from "./CodePointRangeIterator"
 import type { CodePointSetData } from "./CodePointSetData"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
+import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -23,13 +24,11 @@ export class CodePointMapData8 {
 
     get(cp: codepoint): number;
 
-    static generalCategoryToMask(gc: number): number;
-
     iterRangesForValue(value: number): CodePointRangeIterator;
 
     iterRangesForValueComplemented(value: number): CodePointRangeIterator;
 
-    iterRangesForMask(mask: number): CodePointRangeIterator;
+    iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator;
 
     getSetForValue(value: number): CodePointSetData;
 

@@ -18,6 +18,7 @@ namespace capi { struct CodePointSetData; }
 class CodePointSetData;
 namespace capi { struct DataProvider; }
 class DataProvider;
+struct GeneralCategoryGroup;
 class DataError;
 }
 
@@ -34,13 +35,11 @@ public:
 
   inline uint8_t get(char32_t cp) const;
 
-  inline static uint32_t general_category_to_mask(uint8_t gc);
-
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;
 
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint8_t value) const;
 
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_mask(uint32_t mask) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const;
 
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint8_t value) const;
 

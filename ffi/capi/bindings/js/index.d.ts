@@ -14,6 +14,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
+export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
+
 export { LineBreakOptions } from "./LineBreakOptions"
 
 export { WeekendContainsDay } from "./WeekendContainsDay"
@@ -114,7 +116,7 @@ export { CodePointMapData16 } from "./CodePointMapData16"
 
 export { CodePointMapData8 } from "./CodePointMapData8"
 
-export { GeneralCategoryNameToMaskMapper } from "./GeneralCategoryNameToMaskMapper"
+export { GeneralCategoryNameToGroupMapper } from "./GeneralCategoryNameToGroupMapper"
 
 export { PropertyValueNameToEnumMapper } from "./PropertyValueNameToEnumMapper"
 
