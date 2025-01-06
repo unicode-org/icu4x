@@ -131,13 +131,6 @@ pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV2Marker>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for GraphemeClusterSegmenter {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl GraphemeClusterSegmenter {
     /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale from compiled data.
     ///

@@ -209,13 +209,6 @@ fn update_langid_minimize(
     }
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for LocaleExpander {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl LocaleExpander {
     /// Creates a [`LocaleExpander`] with compiled data for commonly-used locales
     /// (locales with *Basic* or higher [CLDR coverage]).
@@ -228,6 +221,7 @@ impl LocaleExpander {
     ///
     /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(

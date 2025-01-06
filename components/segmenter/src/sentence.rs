@@ -112,13 +112,6 @@ pub struct SentenceSegmenter {
     payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1Marker>>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for SentenceSegmenter {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl SentenceSegmenter {
     /// Constructs a [`SentenceSegmenter`] with an invariant locale and compiled data.
     ///

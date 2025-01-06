@@ -194,13 +194,6 @@ fn uts35_check_language_rules(
     TransformResult::Unmodified
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for LocaleCanonicalizer<LocaleExpander> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl LocaleCanonicalizer<LocaleExpander> {
     /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
     ///
@@ -208,6 +201,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
