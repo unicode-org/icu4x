@@ -152,7 +152,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 }
 
 /// Get the current time zone of the system
-pub fn get_system_timezone() -> Result<String, RetrievalError> {
+pub fn get_system_time_zone() -> Result<String, RetrievalError> {
     // SAFETY: Returns the time zone currently used by the system
     // Returns an immutable reference to TimeZone object owned by us
     let timezone = unsafe { timezone::CFTimeZoneCopySystem() };
