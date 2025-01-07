@@ -57,13 +57,13 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(provider.call_constructor(
-                move |provider| {
-                    icu_list::ListFormatter::try_new_and_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                },
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_and_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
 
         /// Construct a new ListFormatter instance for And patterns from compiled data.
@@ -92,13 +92,13 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(provider.call_constructor(
-                move |provider| {
-                    icu_list::ListFormatter::try_new_or_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                },
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_or_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
 
         /// Construct a new ListFormatter instance for And patterns from compiled data.
@@ -127,13 +127,13 @@ pub mod ffi {
         ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(ListFormatter(provider.call_constructor(
-                move |provider| {
-                    icu_list::ListFormatter::try_new_unit_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                },
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_unit_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]

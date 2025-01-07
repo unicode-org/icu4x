@@ -104,9 +104,8 @@ pub mod ffi {
             group: u32,
         ) -> Result<Box<CodePointSetData>, DataError> {
             Ok(Box::new(CodePointSetData(
-                call_constructor_unstable!(
-                    icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable,
-                    provider,
+                icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable(
+                    &provider.get_unstable()?,
                 )?
                 .as_borrowed()
                 .get_set_for_value_group(group.into()),
@@ -130,10 +129,11 @@ pub mod ffi {
         pub fn create_ascii_hex_digit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<AsciiHexDigit>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<AsciiHexDigit>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Alnum` property, using compiled data.
@@ -153,10 +153,11 @@ pub mod ffi {
         pub fn create_alnum_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Alnum>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Alnum>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Alphabetic` property, using compiled data.
@@ -176,10 +177,11 @@ pub mod ffi {
         pub fn create_alphabetic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Alphabetic>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Alphabetic>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Bidi_Control` property, using compiled data.
@@ -199,10 +201,11 @@ pub mod ffi {
         pub fn create_bidi_control_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<BidiControl>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<BidiControl>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Bidi_Mirrored` property, using compiled data.
@@ -222,10 +225,11 @@ pub mod ffi {
         pub fn create_bidi_mirrored_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<BidiMirrored>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<BidiMirrored>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Blank` property, using compiled data.
@@ -245,10 +249,11 @@ pub mod ffi {
         pub fn create_blank_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Blank>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Blank>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Cased` property, using compiled data.
@@ -268,10 +273,11 @@ pub mod ffi {
         pub fn create_cased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Cased>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Cased>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Case_Ignorable` property, using compiled data.
@@ -291,10 +297,11 @@ pub mod ffi {
         pub fn create_case_ignorable_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<CaseIgnorable>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<CaseIgnorable>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Full_Composition_Exclusion` property, using compiled data.
@@ -315,10 +322,11 @@ pub mod ffi {
         pub fn create_full_composition_exclusion_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<FullCompositionExclusion>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<FullCompositionExclusion>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Casefolded` property, using compiled data.
@@ -338,10 +346,11 @@ pub mod ffi {
         pub fn create_changes_when_casefolded_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasefolded>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasefolded>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Casemapped` property, using compiled data.
@@ -361,10 +370,11 @@ pub mod ffi {
         pub fn create_changes_when_casemapped_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasemapped>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasemapped>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
@@ -385,10 +395,11 @@ pub mod ffi {
         pub fn create_changes_when_nfkc_casefolded_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenNfkcCasefolded>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenNfkcCasefolded>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Lowercased` property, using compiled data.
@@ -408,10 +419,11 @@ pub mod ffi {
         pub fn create_changes_when_lowercased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenLowercased>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenLowercased>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Titlecased` property, using compiled data.
@@ -431,10 +443,11 @@ pub mod ffi {
         pub fn create_changes_when_titlecased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenTitlecased>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenTitlecased>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Changes_When_Uppercased` property, using compiled data.
@@ -454,10 +467,11 @@ pub mod ffi {
         pub fn create_changes_when_uppercased_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenUppercased>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenUppercased>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Dash` property, using compiled data.
@@ -477,10 +491,11 @@ pub mod ffi {
         pub fn create_dash_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Dash>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Dash>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Deprecated` property, using compiled data.
@@ -500,10 +515,11 @@ pub mod ffi {
         pub fn create_deprecated_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Deprecated>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Deprecated>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
@@ -524,10 +540,11 @@ pub mod ffi {
         pub fn create_default_ignorable_code_point_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<DefaultIgnorableCodePoint>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<DefaultIgnorableCodePoint>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Diacritic` property, using compiled data.
@@ -547,10 +564,11 @@ pub mod ffi {
         pub fn create_diacritic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Diacritic>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Diacritic>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Emoji_Modifier_Base` property, using compiled data.
@@ -570,10 +588,11 @@ pub mod ffi {
         pub fn create_emoji_modifier_base_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<EmojiModifierBase>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<EmojiModifierBase>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Emoji_Component` property, using compiled data.
@@ -593,10 +612,11 @@ pub mod ffi {
         pub fn create_emoji_component_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<EmojiComponent>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<EmojiComponent>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Emoji_Modifier` property, using compiled data.
@@ -616,10 +636,11 @@ pub mod ffi {
         pub fn create_emoji_modifier_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<EmojiModifier>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<EmojiModifier>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Emoji` property, using compiled data.
@@ -639,10 +660,11 @@ pub mod ffi {
         pub fn create_emoji_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Emoji>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Emoji>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Emoji_Presentation` property, using compiled data.
@@ -662,10 +684,11 @@ pub mod ffi {
         pub fn create_emoji_presentation_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<EmojiPresentation>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<EmojiPresentation>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Extender` property, using compiled data.
@@ -685,10 +708,11 @@ pub mod ffi {
         pub fn create_extender_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Extender>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Extender>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Extended_Pictographic` property, using compiled data.
@@ -708,10 +732,11 @@ pub mod ffi {
         pub fn create_extended_pictographic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<ExtendedPictographic>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<ExtendedPictographic>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Graph` property, using compiled data.
@@ -731,10 +756,11 @@ pub mod ffi {
         pub fn create_graph_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Graph>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Graph>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Grapheme_Base` property, using compiled data.
@@ -754,10 +780,11 @@ pub mod ffi {
         pub fn create_grapheme_base_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<GraphemeBase>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<GraphemeBase>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Grapheme_Extend` property, using compiled data.
@@ -777,10 +804,11 @@ pub mod ffi {
         pub fn create_grapheme_extend_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<GraphemeExtend>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<GraphemeExtend>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Grapheme_Link` property, using compiled data.
@@ -800,10 +828,11 @@ pub mod ffi {
         pub fn create_grapheme_link_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<GraphemeLink>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<GraphemeLink>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Hex_Digit` property, using compiled data.
@@ -823,10 +852,11 @@ pub mod ffi {
         pub fn create_hex_digit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<HexDigit>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<HexDigit>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Hyphen` property, using compiled data.
@@ -846,10 +876,11 @@ pub mod ffi {
         pub fn create_hyphen_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Hyphen>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Hyphen>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Id_Continue` property, using compiled data.
@@ -869,10 +900,11 @@ pub mod ffi {
         pub fn create_id_continue_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<IdContinue>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdContinue>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Ideographic` property, using compiled data.
@@ -892,10 +924,11 @@ pub mod ffi {
         pub fn create_ideographic_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Ideographic>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Ideographic>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Id_Start` property, using compiled data.
@@ -915,10 +948,11 @@ pub mod ffi {
         pub fn create_id_start_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<IdStart>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdStart>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Ids_Binary_Operator` property, using compiled data.
@@ -938,10 +972,11 @@ pub mod ffi {
         pub fn create_ids_binary_operator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<IdsBinaryOperator>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdsBinaryOperator>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Ids_Trinary_Operator` property, using compiled data.
@@ -961,10 +996,11 @@ pub mod ffi {
         pub fn create_ids_trinary_operator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<IdsTrinaryOperator>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<IdsTrinaryOperator>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Join_Control` property, using compiled data.
@@ -984,10 +1020,11 @@ pub mod ffi {
         pub fn create_join_control_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<JoinControl>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<JoinControl>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Logical_Order_Exception` property, using compiled data.
@@ -1007,10 +1044,11 @@ pub mod ffi {
         pub fn create_logical_order_exception_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<LogicalOrderException>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<LogicalOrderException>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Lowercase` property, using compiled data.
@@ -1030,10 +1068,11 @@ pub mod ffi {
         pub fn create_lowercase_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Lowercase>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Lowercase>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Math` property, using compiled data.
@@ -1053,10 +1092,11 @@ pub mod ffi {
         pub fn create_math_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Math>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Math>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Noncharacter_Code_Point` property, using compiled data.
@@ -1076,10 +1116,11 @@ pub mod ffi {
         pub fn create_noncharacter_code_point_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<NoncharacterCodePoint>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<NoncharacterCodePoint>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Nfc_Inert` property, using compiled data.
@@ -1099,10 +1140,11 @@ pub mod ffi {
         pub fn create_nfc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<NfcInert>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<NfcInert>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Nfd_Inert` property, using compiled data.
@@ -1122,10 +1164,11 @@ pub mod ffi {
         pub fn create_nfd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<NfdInert>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<NfdInert>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Nfkc_Inert` property, using compiled data.
@@ -1145,10 +1188,11 @@ pub mod ffi {
         pub fn create_nfkc_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<NfkcInert>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<NfkcInert>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Nfkd_Inert` property, using compiled data.
@@ -1168,10 +1212,11 @@ pub mod ffi {
         pub fn create_nfkd_inert_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<NfkdInert>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<NfkdInert>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Pattern_Syntax` property, using compiled data.
@@ -1191,10 +1236,11 @@ pub mod ffi {
         pub fn create_pattern_syntax_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<PatternSyntax>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<PatternSyntax>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Pattern_White_Space` property, using compiled data.
@@ -1214,10 +1260,11 @@ pub mod ffi {
         pub fn create_pattern_white_space_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<PatternWhiteSpace>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<PatternWhiteSpace>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
@@ -1238,10 +1285,11 @@ pub mod ffi {
         pub fn create_prepended_concatenation_mark_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<PrependedConcatenationMark>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<PrependedConcatenationMark>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Print` property, using compiled data.
@@ -1261,10 +1309,11 @@ pub mod ffi {
         pub fn create_print_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Print>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Print>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Quotation_Mark` property, using compiled data.
@@ -1284,10 +1333,11 @@ pub mod ffi {
         pub fn create_quotation_mark_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<QuotationMark>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<QuotationMark>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Radical` property, using compiled data.
@@ -1307,10 +1357,11 @@ pub mod ffi {
         pub fn create_radical_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Radical>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Radical>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Regional_Indicator` property, using compiled data.
@@ -1330,10 +1381,11 @@ pub mod ffi {
         pub fn create_regional_indicator_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<RegionalIndicator>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<RegionalIndicator>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Soft_Dotted` property, using compiled data.
@@ -1353,10 +1405,11 @@ pub mod ffi {
         pub fn create_soft_dotted_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<SoftDotted>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<SoftDotted>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Segment_Starter` property, using compiled data.
@@ -1376,10 +1429,11 @@ pub mod ffi {
         pub fn create_segment_starter_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<SegmentStarter>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<SegmentStarter>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Case_Sensitive` property, using compiled data.
@@ -1399,10 +1453,11 @@ pub mod ffi {
         pub fn create_case_sensitive_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<CaseSensitive>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<CaseSensitive>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Sentence_Terminal` property, using compiled data.
@@ -1422,10 +1477,11 @@ pub mod ffi {
         pub fn create_sentence_terminal_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<SentenceTerminal>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<SentenceTerminal>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Terminal_Punctuation` property, using compiled data.
@@ -1445,10 +1501,11 @@ pub mod ffi {
         pub fn create_terminal_punctuation_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<TerminalPunctuation>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<TerminalPunctuation>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Unified_Ideograph` property, using compiled data.
@@ -1468,10 +1525,11 @@ pub mod ffi {
         pub fn create_unified_ideograph_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<UnifiedIdeograph>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<UnifiedIdeograph>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Uppercase` property, using compiled data.
@@ -1491,10 +1549,11 @@ pub mod ffi {
         pub fn create_uppercase_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Uppercase>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Uppercase>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Variation_Selector` property, using compiled data.
@@ -1514,10 +1573,11 @@ pub mod ffi {
         pub fn create_variation_selector_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<VariationSelector>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<VariationSelector>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `White_Space` property, using compiled data.
@@ -1537,10 +1597,11 @@ pub mod ffi {
         pub fn create_white_space_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<WhiteSpace>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<WhiteSpace>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Xdigit` property, using compiled data.
@@ -1560,10 +1621,11 @@ pub mod ffi {
         pub fn create_xdigit_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<Xdigit>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<Xdigit>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Xid_Continue` property, using compiled data.
@@ -1583,10 +1645,11 @@ pub mod ffi {
         pub fn create_xid_continue_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<XidContinue>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<XidContinue>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// Create a set for the `Xid_Start` property, using compiled data.
@@ -1606,10 +1669,11 @@ pub mod ffi {
         pub fn create_xid_start_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::try_new_unstable::<XidStart>,
-                provider
-            )?)))
+            Ok(Box::new(CodePointSetData(
+                icu_properties::CodePointSetData::try_new_unstable::<XidStart>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
 
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
@@ -1634,10 +1698,9 @@ pub mod ffi {
             property_name: &DiplomatStr,
         ) -> Result<Box<CodePointSetData>, DataError> {
             Ok(Box::new(CodePointSetData(
-                call_constructor_unstable!(
-                    icu_properties::CodePointSetData::try_new_for_ecma262_unstable,
-                    provider,
-                    property_name
+                icu_properties::CodePointSetData::try_new_for_ecma262_unstable(
+                    &provider.get_unstable()?,
+                    property_name,
                 )
                 .ok_or(DataError::Custom)??,
             )))

@@ -11,7 +11,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::errors::ffi::DataError;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::{ffi::DataProvider, DataProviderInner};
+    use crate::provider::ffi::DataProvider;
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale::ffi::LocaleExpander;
@@ -44,9 +44,9 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleDirectionality>, DataError> {
-            Ok(Box::new(LocaleDirectionality(provider.call_constructor(
-                icu_locale::LocaleDirectionality::try_new_with_buffer_provider,
-            )?)))
+            Ok(Box::new(LocaleDirectionality(
+                icu_locale::LocaleDirectionality::try_new_with_buffer_provider(provider.get()?)?,
+            )))
         }
 
         /// Construct a new LocaleDirectionality instance with a custom expander and compiled data.
@@ -67,20 +67,12 @@ pub mod ffi {
             provider: &DataProvider,
             expander: &LocaleExpander,
         ) -> Result<Box<LocaleDirectionality>, DataError> {
-            #[allow(unused_imports)]
-            use icu_provider::prelude::*;
-            Ok(Box::new(LocaleDirectionality(match &provider.0 {
-                DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
-                    "This provider has been destroyed",
-                ))?,
-
-                DataProviderInner::Buffer(buffer_provider) => {
-                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
-                        &buffer_provider.as_deserializing(),
-                        expander.0.clone(),
-                    )?
-                }
-            })))
+            Ok(Box::new(LocaleDirectionality(
+                icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
+                    &provider.get_unstable()?,
+                    expander.0.clone(),
+                )?,
+            )))
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]

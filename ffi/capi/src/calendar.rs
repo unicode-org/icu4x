@@ -135,9 +135,9 @@ pub mod ffi {
         ) -> Result<Box<Calendar>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(Calendar(Arc::new(provider.call_constructor(
-                |provider| icu_calendar::AnyCalendar::try_new_with_buffer_provider(provider, prefs),
-            )?))))
+            Ok(Box::new(Calendar(Arc::new(
+                icu_calendar::AnyCalendar::try_new_with_buffer_provider(provider.get()?, prefs)?,
+            ))))
         }
 
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
@@ -148,14 +148,12 @@ pub mod ffi {
             provider: &DataProvider,
             kind: AnyCalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(provider.call_constructor(
-                |provider| {
-                    icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider(
-                        provider,
-                        kind.into(),
-                    )
-                },
-            )?))))
+            Ok(Box::new(Calendar(Arc::new(
+                icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider(
+                    provider.get()?,
+                    kind.into(),
+                )?,
+            ))))
         }
 
         /// Returns the kind of this calendar

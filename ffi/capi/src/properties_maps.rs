@@ -136,9 +136,10 @@ pub mod ffi {
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable,
-                provider,
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                GeneralCategory,
+            >::try_new_unstable(
+                &provider.get_unstable()?
             )?))
         }
 
@@ -157,10 +158,11 @@ pub mod ffi {
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<BidiClass>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<BidiClass>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `East_Asian_Width` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
@@ -177,10 +179,11 @@ pub mod ffi {
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<EastAsianWidth>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<EastAsianWidth>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `Hangul_Syllable_Type` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
@@ -198,9 +201,10 @@ pub mod ffi {
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<HangulSyllableType>::try_new_unstable,
-                provider,
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                HangulSyllableType,
+            >::try_new_unstable(
+                &provider.get_unstable()?
             )?))
         }
         /// Create a map for the `Indic_Syllabic_Property` property, using compiled data.
@@ -219,9 +223,10 @@ pub mod ffi {
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<IndicSyllabicCategory>::try_new_unstable,
-                provider,
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                IndicSyllabicCategory,
+            >::try_new_unstable(
+                &provider.get_unstable()?
             )?))
         }
         /// Create a map for the `Line_Break` property, using compiled data.
@@ -238,10 +243,11 @@ pub mod ffi {
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<LineBreak>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<LineBreak>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
@@ -259,9 +265,10 @@ pub mod ffi {
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<GraphemeClusterBreak>::try_new_unstable,
-                provider,
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                GraphemeClusterBreak,
+            >::try_new_unstable(
+                &provider.get_unstable()?
             )?))
         }
         /// Create a map for the `Word_Break` property, using compiled data.
@@ -278,10 +285,11 @@ pub mod ffi {
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<WordBreak>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<WordBreak>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `Sentence_Break` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
@@ -297,10 +305,11 @@ pub mod ffi {
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<SentenceBreak>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<SentenceBreak>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `Joining_Type` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
@@ -317,10 +326,11 @@ pub mod ffi {
         pub fn create_joining_type_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<JoiningType>::try_new_unstable,
-                provider,
-            )?))
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<JoiningType>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
         }
         /// Create a map for the `Canonical_Combining_Class` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
@@ -339,9 +349,10 @@ pub mod ffi {
         pub fn create_canonical_combining_class_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(call_constructor_unstable!(
-                icu_properties::CodePointMapData::<CanonicalCombiningClass>::try_new_unstable,
-                provider,
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                CanonicalCombiningClass,
+            >::try_new_unstable(
+                &provider.get_unstable()?
             )?))
         }
     }
@@ -425,9 +436,8 @@ pub mod ffi {
         ) -> Result<Box<CodePointMapData16>, DataError> {
             #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(CodePointMapData16(
-                call_constructor_unstable!(
-                    icu_properties::CodePointMapData::<Script>::try_new_unstable,
-                    provider,
+                icu_properties::CodePointMapData::<Script>::try_new_unstable(
+                    &provider.get_unstable()?,
                 )?
                 .try_into_converted()
                 .map_err(|_| ())
