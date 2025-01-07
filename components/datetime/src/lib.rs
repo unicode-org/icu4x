@@ -90,7 +90,6 @@ extern crate alloc;
 mod combo;
 mod error;
 mod external_loaders;
-pub mod fields;
 pub mod fieldsets;
 mod format;
 pub mod input;

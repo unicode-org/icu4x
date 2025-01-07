@@ -30,7 +30,7 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
-    fields::{self, Field, FieldLength, FieldSymbol},
+    provider::fields::{self, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
     provider::pattern::{reference, runtime::Pattern, PatternItem},
 };

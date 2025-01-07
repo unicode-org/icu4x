@@ -8,7 +8,7 @@ use super::{
 };
 #[cfg(test)]
 use super::{GenericPattern, Pattern};
-use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;

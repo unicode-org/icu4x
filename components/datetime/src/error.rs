@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{fields::Field, pattern::PatternLoadError};
+use crate::pattern::PatternLoadError;
 use displaydoc::Display;
 use icu_calendar::{
     any_calendar::AnyCalendarKind,
@@ -35,6 +35,10 @@ impl From<DataError> for DateTimeFormatterLoadError {
         Self::Data(error)
     }
 }
+
+/// The specific field for which an error occurred.
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+pub struct ErrorField(pub(crate) crate::provider::fields::Field);
 
 /// An error from mixing calendar types in a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -97,7 +101,7 @@ pub enum DateTimeWriteError {
     /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
     /// `M02` for month 2, etc.).
     #[displaydoc("Names for {0:?} not loaded")]
-    NamesNotLoaded(Field),
+    NamesNotLoaded(ErrorField),
     /// An input field (such as "hour" or "month") is missing.
     ///
     /// This *only* happens if the formatter has been created using
@@ -114,5 +118,5 @@ pub enum DateTimeWriteError {
     ///
     /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
     #[displaydoc("Unsupported field {0:?}")]
-    UnsupportedField(Field),
+    UnsupportedField(ErrorField),
 }

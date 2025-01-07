@@ -5,7 +5,7 @@
 //! Runtime `Skeleton` implementation for more efficient deserialization.
 
 use super::reference;
-use crate::fields::Field;
+use crate::provider::fields::Field;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 

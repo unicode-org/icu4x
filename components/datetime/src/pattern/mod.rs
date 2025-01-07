@@ -21,10 +21,13 @@ use icu_pattern::SinglePlaceholderPattern;
 pub(crate) use names::RawDateTimeNames;
 pub(crate) use names::RawDateTimeNamesBorrowed;
 pub(crate) use names::TimeZoneDataPayloadsBorrowed;
+pub use names::YearNameLength;
+pub use names::MonthNameLength;
+pub use names::WeekdayNameLength;
+pub use names::DayPeriodNameLength;
 pub use names::TypedDateTimeNames;
 pub use pattern::DateTimePattern;
-
-use crate::fields::Field;
+use crate::error::ErrorField;
 
 pub(crate) enum GetNameForMonthError {
     Invalid,
@@ -65,19 +68,19 @@ pub enum PatternLoadError {
     /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
     /// and `L` (format vs standalone month) conflict.
     #[displaydoc("A field {0:?} conflicts with a previous field.")]
-    ConflictingField(Field),
+    ConflictingField(ErrorField),
     /// The field symbol is not supported in that length.
     ///
     /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
     #[displaydoc("The field {0:?} symbol is not supported in that length.")]
-    UnsupportedLength(Field),
+    UnsupportedLength(ErrorField),
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
     /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
     #[displaydoc("The specific type does not support the field {0:?}.")]
-    TypeTooSpecific(Field),
+    TypeTooSpecific(ErrorField),
     /// An error arising from the [`data provider`](icu_provider) for loading names.
     #[displaydoc("Problem loading data for field {1:?}: {0}")]
-    Data(icu_provider::DataError, Field),
+    Data(icu_provider::DataError, ErrorField),
 }
