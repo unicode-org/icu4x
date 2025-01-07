@@ -3,18 +3,16 @@ import { lib } from "./index.mjs";
 export default {
 	"WordSegmenter.segment": {
 		func: (model, text) => {
-			let provider = lib.DataProvider.compiled();
-
 			var segmenter;
 			switch (model) {
 				case "Auto":
-					segmenter = lib.WordSegmenter.createAuto(provider);
+					segmenter = lib.WordSegmenter.createAuto();
 					break;
 				case "LSTM":
-					segmenter = lib.WordSegmenter.createLstm(provider);
+					segmenter = lib.WordSegmenter.createLstm();
 					break;
 				case "Dictionary":
-					segmenter = lib.WordSegmenter.createDictionary(provider);
+					segmenter = lib.WordSegmenter.createDictionary();
 			}
 			
 			let last = 0;
