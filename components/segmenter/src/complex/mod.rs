@@ -85,7 +85,7 @@ impl ComplexPayloads {
 
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_lstm() -> Self {
+    pub(crate) fn new_root_lstm() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
@@ -207,7 +207,7 @@ impl ComplexPayloads {
 
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_auto() -> Self {
+    pub(crate) fn new_root_auto() -> Self {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
@@ -423,7 +423,7 @@ mod tests {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
 
-        let lstm = ComplexPayloads::new_lstm();
+        let lstm = ComplexPayloads::new_root_lstm();
         let dict = ComplexPayloads::new_dict();
 
         assert_eq!(

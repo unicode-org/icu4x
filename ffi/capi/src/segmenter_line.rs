@@ -66,68 +66,35 @@ pub mod ffi {
     pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::LineBreakIteratorLatin1<'a, 'a>);
 
     impl LineSegmenter {
-        /// Construct a [`LineSegmenter`] with default options using compiled data. It automatically loads the best
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_root_auto, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_auto() -> Box<LineSegmenter> {
-            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_auto()))
+        pub fn create_root_auto() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_root_auto()))
         }
-        /// Construct a [`LineSegmenter`] with default options using a particular data source. It automatically loads the best
-        /// available payload data for Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_auto_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider(provider.get()?)?,
-            )))
-        }
-        /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
+
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai, using compiled data.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_root_lstm, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_lstm() -> Box<LineSegmenter> {
-            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_lstm()))
+        pub fn create_root_lstm() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_root_lstm()))
         }
-        /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
-        /// Burmese, Khmer, Lao, and Thai,  using a particular data source.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_lstm_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider(provider.get()?)?,
-            )))
-        }
-        /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
+
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
         /// Burmese, Khmer, Lao, and Thai, using compiled data
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_root_dictionary, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_dictionary() -> Box<LineSegmenter> {
-            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_dictionary()))
+        pub fn create_root_dictionary() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(
+                icu_segmenter::LineSegmenter::new_root_dictionary(),
+            ))
         }
-        /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
-        /// Burmese, Khmer, Lao, and Thai, using a particular data source.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_dictionary_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider(
-                    provider.get()?,
-                )?,
-            )))
-        }
+
         /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]

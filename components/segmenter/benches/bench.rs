@@ -17,7 +17,7 @@ const TEST_STR_TH: &str =
 fn line_break_iter_latin1(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/Latin1");
 
-    let segmenter = LineSegmenter::new_dictionary();
+    let segmenter = LineSegmenter::new_root_dictionary();
 
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Anywhere;
@@ -44,9 +44,9 @@ fn line_break_iter_latin1(c: &mut Criterion) {
 fn line_break_iter_utf8(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF8");
 
-    let segmenter_auto = LineSegmenter::new_auto();
-    let segmenter_lstm = LineSegmenter::new_lstm();
-    let segmenter_dictionary = LineSegmenter::new_dictionary();
+    let segmenter_auto = LineSegmenter::new_root_auto();
+    let segmenter_lstm = LineSegmenter::new_root_lstm();
+    let segmenter_dictionary = LineSegmenter::new_root_dictionary();
 
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Anywhere;
@@ -93,9 +93,9 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
     let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
 
-    let segmenter_auto = LineSegmenter::new_auto();
-    let segmenter_lstm = LineSegmenter::new_lstm();
-    let segmenter_dictionary = LineSegmenter::new_dictionary();
+    let segmenter_auto = LineSegmenter::new_root_auto();
+    let segmenter_lstm = LineSegmenter::new_root_lstm();
+    let segmenter_dictionary = LineSegmenter::new_root_dictionary();
 
     let mut options = LineBreakOptions::default();
     options.strictness = LineBreakStrictness::Anywhere;

@@ -116,7 +116,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// let segmenter = WordSegmenter::new_root_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -127,7 +127,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// let segmenter = WordSegmenter::new_root_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -140,7 +140,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// # use icu::segmenter::WordSegmenter;
-/// # let segmenter = WordSegmenter::new_auto();
+/// # let segmenter = WordSegmenter::new_root_auto();
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
 /// let segments: Vec<&str> = segmenter
@@ -162,7 +162,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// ```rust
 /// # use itertools::Itertools;
 /// # use icu::segmenter::{WordType, WordSegmenter};
-/// # let segmenter = WordSegmenter::new_auto();
+/// # let segmenter = WordSegmenter::new_root_auto();
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
 ///     .segment_str(text)
@@ -201,7 +201,7 @@ impl WordSegmenter {
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_auto();
+    /// let segmenter = WordSegmenter::new_root_auto();
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -211,27 +211,15 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_auto() -> Self {
+    pub fn new_root_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
-            complex: ComplexPayloads::new_auto(),
+            complex: ComplexPayloads::new_root_auto(),
             payload_locale_override: None,
         }
     }
-
-    #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_auto: skip,
-            try_new_auto_with_any_provider,
-            try_new_auto_with_buffer_provider,
-            try_new_auto_unstable,
-            Self
-        ]
-    );
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
@@ -323,7 +311,7 @@ impl WordSegmenter {
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_lstm();
+    /// let segmenter = WordSegmenter::new_root_lstm();
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -335,27 +323,15 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm() -> Self {
+    pub fn new_root_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
-            complex: ComplexPayloads::new_lstm(),
+            complex: ComplexPayloads::new_root_lstm(),
             payload_locale_override: None,
         }
     }
-
-    #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_lstm: skip,
-            try_new_lstm_with_any_provider,
-            try_new_lstm_with_buffer_provider,
-            try_new_lstm_unstable,
-            Self
-        ]
-    );
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
@@ -442,7 +418,7 @@ impl WordSegmenter {
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_dictionary();
+    /// let segmenter = WordSegmenter::new_root_dictionary();
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -451,7 +427,7 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary() -> Self {
+    pub fn new_root_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
@@ -460,17 +436,6 @@ impl WordSegmenter {
             payload_locale_override: None,
         }
     }
-
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_dictionary: skip,
-            try_new_dictionary_with_any_provider,
-            try_new_dictionary_with_buffer_provider,
-            try_new_dictionary_unstable,
-            Self
-        ]
-    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
@@ -785,7 +750,7 @@ impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
 #[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
-    let segmenter = WordSegmenter::new_auto();
+    let segmenter = WordSegmenter::new_root_auto();
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

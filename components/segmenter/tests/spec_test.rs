@@ -106,7 +106,7 @@ fn line_break_test(file: &'static str) {
             .lines()
             .map(|l| l.unwrap()),
     );
-    let segmenter = LineSegmenter::new_dictionary();
+    let segmenter = LineSegmenter::new_root_dictionary();
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

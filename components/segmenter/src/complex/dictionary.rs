@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     fn burmese_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_root_dictionary();
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -203,7 +203,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        let word_segmenter = WordSegmenter::new_dictionary();
+        let word_segmenter = WordSegmenter::new_root_dictionary();
         let dict_segmenter = DictionarySegmenter::new(
             response.payload.get(),
             crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
@@ -244,7 +244,7 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_root_dictionary();
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![0, 27, 54, 81]);
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_root_dictionary();
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![0, 12, 21, 33, 42, 54, 63]);

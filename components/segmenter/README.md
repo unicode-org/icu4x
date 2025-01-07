@@ -29,7 +29,7 @@ Find line break opportunities:
 ```rust
 use icu::segmenter::LineSegmenter;
 
-let segmenter = LineSegmenter::new_auto();
+let segmenter = LineSegmenter::new_root_auto();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -69,7 +69,7 @@ Find all word boundaries:
 ```rust
 use icu::segmenter::WordSegmenter;
 
-let segmenter = WordSegmenter::new_auto();
+let segmenter = WordSegmenter::new_root_auto();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")

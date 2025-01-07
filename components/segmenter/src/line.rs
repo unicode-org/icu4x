@@ -279,7 +279,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// # use icu::segmenter::LineSegmenter;
 /// #
-/// # let segmenter = LineSegmenter::new_auto();
+/// # let segmenter = LineSegmenter::new_root_auto();
 /// #
 /// let text = "Summary\r\nThis annex…";
 /// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
@@ -309,7 +309,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu::segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::new_auto();
+/// let segmenter = LineSegmenter::new_root_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -340,7 +340,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu::segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::new_auto();
+/// let segmenter = LineSegmenter::new_root_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -353,7 +353,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// use icu::properties::{props::LineBreak, CodePointMapData};
 /// use icu::segmenter::LineSegmenter;
 ///
-/// # let segmenter = LineSegmenter::new_auto();
+/// # let segmenter = LineSegmenter::new_root_auto();
 /// #
 /// let text = "Summary\r\nThis annex…";
 ///
@@ -394,21 +394,9 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_auto() -> Self {
+    pub fn new_root_auto() -> Self {
         Self::new_auto_with_options(Default::default())
     }
-
-    #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_auto: skip,
-            try_new_auto_with_any_provider,
-            try_new_auto_with_buffer_provider,
-            try_new_auto_unstable,
-            Self,
-        ]
-    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     #[cfg(feature = "auto")]
@@ -435,21 +423,9 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm() -> Self {
+    pub fn new_root_lstm() -> Self {
         Self::new_lstm_with_options(Default::default())
     }
-
-    #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_lstm: skip,
-            try_new_lstm_with_any_provider,
-            try_new_lstm_with_buffer_provider,
-            try_new_lstm_unstable,
-            Self,
-        ]
-    );
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
@@ -475,20 +451,9 @@ impl LineSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary() -> Self {
+    pub fn new_root_dictionary() -> Self {
         Self::new_dictionary_with_options(Default::default())
     }
-
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new_dictionary: skip,
-            try_new_dictionary_with_any_provider,
-            try_new_dictionary_with_buffer_provider,
-            try_new_dictionary_unstable,
-            Self,
-        ]
-    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
@@ -563,7 +528,7 @@ impl LineSegmenter {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
-            complex: ComplexPayloads::new_lstm(),
+            complex: ComplexPayloads::new_root_lstm(),
         }
     }
 
@@ -1740,7 +1705,7 @@ mod tests {
     fn thai_line_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let segmenter = LineSegmenter::new_lstm();
+        let segmenter = LineSegmenter::new_root_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [0, 12, 21, 33, TEST_STR.len()], "Thai test");
 
@@ -1759,7 +1724,7 @@ mod tests {
         // "Burmese Language" in Burmese
         const TEST_STR: &str = "မြန်မာဘာသာစကား";
 
-        let segmenter = LineSegmenter::new_lstm();
+        let segmenter = LineSegmenter::new_root_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks, [0, 12, 18, 30, TEST_STR.len()], "Burmese test");
@@ -1775,7 +1740,7 @@ mod tests {
     fn khmer_line_break() {
         const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
 
-        let segmenter = LineSegmenter::new_lstm();
+        let segmenter = LineSegmenter::new_root_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: This small sample matches the ICU dictionary segmenter
         assert_eq!(breaks, [0, 39, 48, 54, 72, TEST_STR.len()], "Khmer test");
@@ -1794,7 +1759,7 @@ mod tests {
     fn lao_line_break() {
         const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
 
-        let segmenter = LineSegmenter::new_lstm();
+        let segmenter = LineSegmenter::new_root_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: LSTM finds a break at '12' that the dictionary does not find
         assert_eq!(breaks, [0, 12, 21, 30, 39, TEST_STR.len()], "Lao test");
@@ -1806,7 +1771,7 @@ mod tests {
 
     #[test]
     fn empty_string() {
-        let segmenter = LineSegmenter::new_auto();
+        let segmenter = LineSegmenter::new_root_auto();
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }
