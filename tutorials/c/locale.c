@@ -241,9 +241,9 @@ int main() {
     icu4x_Locale_destroy_mv1(locale);
 
     // Create a LocaleCanonicalizer and LocaleExpander.
-    LocaleCanonicalizer* lc = icu4x_LocaleCanonicalizer_create_mv1();
+    LocaleCanonicalizer* lc = icu4x_LocaleCanonicalizer_create_extended_mv1();
 
-    LocaleExpander* le = icu4x_LocaleExpander_create_mv1();
+    LocaleExpander* le = icu4x_LocaleExpander_create_extended_mv1();
 
 
     // Test maximize.
