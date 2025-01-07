@@ -103,11 +103,11 @@ pub mod ffi {
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "auto_with_options_v2")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_options_v2(
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_auto_with_options(options),
@@ -122,11 +122,11 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider(
@@ -143,11 +143,11 @@ pub mod ffi {
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "lstm_with_options_v2")]
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm_with_options_v2(
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_lstm_with_options(options),
@@ -162,11 +162,11 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider(
@@ -186,11 +186,11 @@ pub mod ffi {
         #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "dictionary_with_options_v2")]
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary_with_options_v2(
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_dictionary_with_options(options),
@@ -208,11 +208,11 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
             Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider(

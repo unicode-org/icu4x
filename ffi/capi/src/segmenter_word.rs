@@ -59,7 +59,7 @@ pub mod ffi {
 
     impl WordSegmenter {
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
-        /// or dictionary payload data, using compiled data.
+        /// or dictionary payload data, using compiled data. This does not assume any content locale.
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
@@ -108,7 +108,7 @@ pub mod ffi {
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
-        /// Thai, using compiled data.
+        /// Thai, using compiled data.  This does not assume any content locale.
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
@@ -156,7 +156,7 @@ pub mod ffi {
         }
 
         /// Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
-        /// Burmese, Khmer, Lao, and Thai, using compiled data.
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
         /// Khmer, Lao, and Thai.
