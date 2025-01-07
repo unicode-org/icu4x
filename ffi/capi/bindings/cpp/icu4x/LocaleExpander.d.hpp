@@ -31,9 +31,9 @@ namespace icu4x {
 class LocaleExpander {
 public:
 
-  inline static std::unique_ptr<icu4x::LocaleExpander> create();
+  inline static std::unique_ptr<icu4x::LocaleExpander> create_common();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> create_common_with_provider(const icu4x::DataProvider& provider);
 
   inline static std::unique_ptr<icu4x::LocaleExpander> create_extended();
 

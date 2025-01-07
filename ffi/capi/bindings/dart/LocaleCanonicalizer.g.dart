@@ -26,19 +26,19 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// Create a new [`LocaleCanonicalizer`] using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
   factory LocaleCanonicalizer() {
-    final result = _icu4x_LocaleCanonicalizer_create_mv1();
+    final result = _icu4x_LocaleCanonicalizer_create_common_mv1();
     return LocaleCanonicalizer._fromFfi(result, []);
   }
 
   /// Create a new [`LocaleCanonicalizer`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleCanonicalizer.withProvider(DataProvider provider) {
-    final result = _icu4x_LocaleCanonicalizer_create_with_provider_mv1(provider._ffi);
+    final result = _icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -47,7 +47,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// Create a new [`LocaleCanonicalizer`] with extended data using compiled data.
   ///
-  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
   factory LocaleCanonicalizer.extended() {
     final result = _icu4x_LocaleCanonicalizer_create_extended_mv1();
     return LocaleCanonicalizer._fromFfi(result, []);
@@ -55,7 +55,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// Create a new [`LocaleCanonicalizer`] with extended data.
   ///
-  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleCanonicalizer.extendedWithProvider(DataProvider provider) {
@@ -79,14 +79,14 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 external void _icu4x_LocaleCanonicalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_common_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LocaleCanonicalizer_create_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleCanonicalizer_create_common_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_common_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleCanonicalizer_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleCanonicalizer_create_extended_mv1')

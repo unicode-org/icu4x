@@ -19,10 +19,10 @@
 
 
 
-LocaleExpander* icu4x_LocaleExpander_create_mv1(void);
+LocaleExpander* icu4x_LocaleExpander_create_common_mv1(void);
 
-typedef struct icu4x_LocaleExpander_create_with_provider_mv1_result {union {LocaleExpander* ok; DataError err;}; bool is_ok;} icu4x_LocaleExpander_create_with_provider_mv1_result;
-icu4x_LocaleExpander_create_with_provider_mv1_result icu4x_LocaleExpander_create_with_provider_mv1(const DataProvider* provider);
+typedef struct icu4x_LocaleExpander_create_common_with_provider_mv1_result {union {LocaleExpander* ok; DataError err;}; bool is_ok;} icu4x_LocaleExpander_create_common_with_provider_mv1_result;
+icu4x_LocaleExpander_create_common_with_provider_mv1_result icu4x_LocaleExpander_create_common_with_provider_mv1(const DataProvider* provider);
 
 LocaleExpander* icu4x_LocaleExpander_create_extended_mv1(void);
 
