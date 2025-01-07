@@ -73,11 +73,11 @@ void iterate_word_breakpoints(Iterator& iterator) {
 
 void test_line(const std::string_view& str) {
     const auto segmenter_auto =
-        LineSegmenter::create_auto();
+        LineSegmenter::create_root_auto();
     const auto segmenter_lstm =
-        LineSegmenter::create_lstm();
+        LineSegmenter::create_root_lstm();
     const auto segmenter_dictionary =
-        LineSegmenter::create_dictionary();
+        LineSegmenter::create_root_dictionary();
 
     const LineSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -104,11 +104,11 @@ void test_grapheme(const std::string_view& str) {
 
 void test_word(const std::string_view& str) {
     const auto segmenter_auto =
-        WordSegmenter::create_auto();
+        WordSegmenter::create_root_auto();
     const auto segmenter_lstm =
-        WordSegmenter::create_lstm();
+        WordSegmenter::create_root_lstm();
     const auto segmenter_dictionary =
-        WordSegmenter::create_dictionary();
+        WordSegmenter::create_root_dictionary();
 
     const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -144,7 +144,7 @@ void test_word_with_options(const std::string_view& str) {
 }
 
 void test_sentence(const std::string_view& str) {
-    const auto segmenter = SentenceSegmenter::create();
+    const auto segmenter = SentenceSegmenter::create_root();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
