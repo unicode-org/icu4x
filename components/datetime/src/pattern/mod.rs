@@ -30,24 +30,29 @@ pub use pattern::DateTimePattern;
 use crate::error::ErrorField;
 
 pub(crate) enum GetNameForMonthError {
-    Invalid,
+    InvalidMonthCode,
+    InvalidFieldLength,
     NotLoaded,
 }
 pub(crate) enum GetNameForWeekdayError {
+    InvalidFieldLength,
     NotLoaded,
 }
 
-pub(crate) enum GetSymbolForEraError {
-    Invalid,
+pub(crate) enum GetNameForEraError {
+    InvalidEraCode,
+    InvalidFieldLength,
     NotLoaded,
 }
 
-pub(crate) enum GetSymbolForCyclicYearError {
-    Invalid { max: usize },
+pub(crate) enum GetNameForCyclicYearError {
+    InvalidYearNumber { max: usize },
+    InvalidFieldLength,
     NotLoaded,
 }
 
 pub(crate) enum GetNameForDayPeriodError {
+    InvalidFieldLength,
     NotLoaded,
 }
 

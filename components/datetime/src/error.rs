@@ -111,6 +111,15 @@ pub enum DateTimeWriteError {
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
     #[displaydoc("Incomplete input, missing value for {0:?}")]
     MissingInputField(&'static str),
+    /// The pattern contains a field that has a valid symbol but invalid length.
+    ///
+    /// This *only* happens if the formatter has been created using
+    /// [`TypedDateTimeNames::with_pattern_unchecked`], and the pattern contains
+    /// a field with a length not supported in formatting.
+    ///
+    /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
+    #[displaydoc("Field length for {0:?} is invalid")]
+    InvalidFieldLength(ErrorField),
     /// Unsupported field
     ///
     /// This *only* happens if the formatter has been created using

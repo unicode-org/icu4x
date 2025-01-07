@@ -138,8 +138,9 @@ where
             let era_symbol = datetime_names
                 .get_name_for_era(l, era)
                 .map_err(|e| match e {
-                    GetSymbolForEraError::Invalid => DateTimeWriteError::InvalidEra(era),
-                    GetSymbolForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
+                    GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
+                    GetNameForEraError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                    GetNameForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
                 });
             match era_symbol {
                 Err(e) => {
@@ -181,13 +182,14 @@ where
                         })
                     })?;
                     return Ok(Err(match e {
-                        GetSymbolForCyclicYearError::Invalid { max } => {
+                        GetNameForCyclicYearError::InvalidYearNumber { max } => {
                             DateTimeWriteError::InvalidCyclicYear {
                                 value: cyclic.get() as usize,
                                 max,
                             }
                         }
-                        GetSymbolForCyclicYearError::NotLoaded => {
+                        GetNameForCyclicYearError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                        GetNameForCyclicYearError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
                     }));
@@ -255,9 +257,10 @@ where
                         w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))
                     })?;
                     Err(match e {
-                        GetNameForMonthError::Invalid => {
+                        GetNameForMonthError::InvalidMonthCode => {
                             DateTimeWriteError::InvalidMonthCode(month.formatting_code)
                         }
+                        GetNameForMonthError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
                         GetNameForMonthError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
@@ -272,6 +275,7 @@ where
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
+                    GetNameForWeekdayError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
                     GetNameForWeekdayError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
                 }) {
                 Err(e) => {
@@ -392,6 +396,7 @@ where
                         })
                     })?;
                     Err(match e {
+                        GetNameForDayPeriodError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
                         GetNameForDayPeriodError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }

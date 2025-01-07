@@ -4,7 +4,7 @@
 
 use super::{
     DateTimePattern, DateTimePatternFormatter, GetNameForDayPeriodError, GetNameForMonthError,
-    GetNameForWeekdayError, GetSymbolForCyclicYearError, GetSymbolForEraError,
+    GetNameForWeekdayError, GetNameForCyclicYearError, GetNameForEraError,
     MonthPlaceholderValue, PatternLoadError,
 };
 use crate::error::ErrorField;
@@ -68,6 +68,27 @@ impl YearNameLength {
             length,
         )
     }
+
+    pub(crate) fn from_field_length(field_length: FieldLength) -> Option<Self> {
+        // UTS 35 says that "G..GGG" and "U..UUU" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match field_length {
+            FieldLength::Three => Some(YearNameLength::Abbreviated),
+            FieldLength::Four => Some(YearNameLength::Wide),
+            FieldLength::Five => Some(YearNameLength::Narrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        let field_length = match self {
+            YearNameLength::Abbreviated => FieldLength::Three,
+            YearNameLength::Wide => FieldLength::Four,
+            YearNameLength::Narrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field { symbol: FieldSymbol::Era, length: field_length })
+    }
 }
 
 /// Choices for loading month names.
@@ -115,6 +136,33 @@ impl MonthNameLength {
             context,
             length,
         )
+    }
+
+    pub(crate) fn from_field(field_symbol: fields::Month, field_length: FieldLength) -> Option<Self> {
+        use fields::Month;
+        match (field_symbol, field_length) {
+            (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
+            (Month::Format, FieldLength::Four) => Some(MonthNameLength::Wide),
+            (Month::Format, FieldLength::Five) => Some(MonthNameLength::Narrow),
+            (Month::StandAlone, FieldLength::Three) => Some(MonthNameLength::StandaloneAbbreviated),
+            (Month::StandAlone, FieldLength::Four) => Some(MonthNameLength::StandaloneWide),
+            (Month::StandAlone, FieldLength::Five) => Some(MonthNameLength::StandaloneNarrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Month;
+        let (field_symbol, field_length) = match self {
+            MonthNameLength::Abbreviated => (Month::Format, FieldLength::Three),
+            MonthNameLength::Wide => (Month::Format, FieldLength::Four),
+            MonthNameLength::Narrow => (Month::Format, FieldLength::Five),
+            MonthNameLength::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
+            MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
+            MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
+        };
+        ErrorField(fields::Field { symbol: FieldSymbol::Month(field_symbol), length: field_length })
     }
 }
 
@@ -174,6 +222,46 @@ impl WeekdayNameLength {
             context,
             length,
         )
+    }
+
+    pub(crate) fn from_field(field_symbol: fields::Weekday, field_length: FieldLength) -> Option<Self> {
+        use fields::Weekday;
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let field_symbol = field_symbol.to_format_symbol();
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
+        match (field_symbol, field_length) {
+            (Weekday::Format, FieldLength::Three) => Some(WeekdayNameLength::Abbreviated),
+            (Weekday::Format, FieldLength::Four) => Some(WeekdayNameLength::Wide),
+            (Weekday::Format, FieldLength::Five) => Some(WeekdayNameLength::Narrow),
+            (Weekday::Format, FieldLength::Six) => Some(WeekdayNameLength::Short),
+            (Weekday::StandAlone, FieldLength::Three) => Some(WeekdayNameLength::StandaloneAbbreviated),
+            (Weekday::StandAlone, FieldLength::Four) => Some(WeekdayNameLength::StandaloneWide),
+            (Weekday::StandAlone, FieldLength::Five) => Some(WeekdayNameLength::StandaloneNarrow),
+            (Weekday::StandAlone, FieldLength::Six) => Some(WeekdayNameLength::StandaloneShort),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Weekday;
+        let (field_symbol, field_length) = match self {
+            WeekdayNameLength::Abbreviated => (Weekday::Format, FieldLength::Three),
+            WeekdayNameLength::Wide => (Weekday::Format, FieldLength::Four),
+            WeekdayNameLength::Narrow => (Weekday::Format, FieldLength::Five),
+            WeekdayNameLength::Short => (Weekday::Format, FieldLength::Six),
+            WeekdayNameLength::StandaloneAbbreviated => (Weekday::StandAlone, FieldLength::Three),
+            WeekdayNameLength::StandaloneWide => (Weekday::StandAlone, FieldLength::Four),
+            WeekdayNameLength::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
+            WeekdayNameLength::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
+        };
+        ErrorField(fields::Field { symbol: FieldSymbol::Weekday(field_symbol), length: field_length })
     }
 }
 
@@ -241,6 +329,36 @@ impl DayPeriodNameLength {
             marker_attrs::Context::Format,
             length,
         )
+    }
+
+    pub(crate) fn from_field(field_symbol: fields::DayPeriod, field_length: FieldLength) -> Option<Self> {
+        use fields::DayPeriod;
+        // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match (field_symbol, field_length) {
+            (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
+            (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
+            (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
+            (DayPeriod::NoonMidnight, FieldLength::Three) => Some(DayPeriodNameLength::MeridiemAbbreviated),
+            (DayPeriod::NoonMidnight, FieldLength::Four) => Some(DayPeriodNameLength::MeridiemWide),
+            (DayPeriod::NoonMidnight, FieldLength::Five) => Some(DayPeriodNameLength::MeridiemNarrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = fields::DayPeriod::AmPm;
+        let field_length = match self {
+            DayPeriodNameLength::Abbreviated => FieldLength::Three,
+            DayPeriodNameLength::Wide => FieldLength::Four,
+            DayPeriodNameLength::Narrow => FieldLength::Five,
+            DayPeriodNameLength::MeridiemAbbreviated => FieldLength::Three,
+            DayPeriodNameLength::MeridiemWide => FieldLength::Four,
+            DayPeriodNameLength::MeridiemNarrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field { symbol: FieldSymbol::DayPeriod(field_symbol), length: field_length })
     }
 }
 
@@ -637,6 +755,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &C::YearNamesV1Marker::bind(provider),
             self.prefs,
             length,
+            length.to_approximate_error_field()
         )?;
         Ok(self)
     }
@@ -696,6 +815,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &C::MonthNamesV1Marker::bind(provider),
             self.prefs,
             length,
+            length.to_approximate_error_field()
         )?;
         Ok(self)
     }
@@ -763,7 +883,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     {
         let provider = DayPeriodNamesV1Marker::bind(provider);
         self.inner
-            .load_day_period_names(&provider, self.prefs, length)?;
+            .load_day_period_names(&provider, self.prefs, length, length.to_approximate_error_field())?;
         Ok(self)
     }
 
@@ -822,6 +942,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &WeekdayNamesV1Marker::bind(provider),
             self.prefs,
             length,
+            length.to_approximate_error_field()
         )?;
         Ok(self)
     }
@@ -2181,15 +2302,17 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
+        let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForMonthError::InvalidFieldLength)?;
         let month_names = self
             .month_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
@@ -2221,7 +2344,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
         name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::Invalid)
+            .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(
@@ -2230,18 +2353,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, GetNameForWeekdayError> {
-        // UTS 35 says that "e" and "E" have the same non-numeric names
-        let field_symbol = field_symbol.to_format_symbol();
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
+        let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;
         let weekday_names = self
             .weekday_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(weekday_name_length)
             .ok_or(GetNameForWeekdayError::NotLoaded)?;
         weekday_names
             .names
@@ -2258,24 +2374,24 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_length: FieldLength,
         era: FormattingEra,
-    ) -> Result<&str, GetSymbolForEraError> {
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+    ) -> Result<&str, GetNameForEraError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForEraError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForEraError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForEraError::NotLoaded)?;
 
         match (year_names, era) {
             (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
                 .get(era_code.0.as_str().into())
-                .ok_or(GetSymbolForEraError::Invalid),
+                .ok_or(GetNameForEraError::InvalidEraCode),
             (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())
-                    .ok_or(GetSymbolForEraError::Invalid)
+                    .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            _ => Err(GetSymbolForEraError::Invalid),
+            _ => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 
@@ -2283,21 +2399,21 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_length: FieldLength,
         cyclic: NonZeroU8,
-    ) -> Result<&str, GetSymbolForCyclicYearError> {
-        // UTS 35 says that "U..UUU" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+    ) -> Result<&str, GetNameForCyclicYearError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForCyclicYearError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForCyclicYearError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForCyclicYearError::NotLoaded)?;
 
         let YearNamesV1::Cyclic(cyclics) = year_names else {
-            return Err(GetSymbolForCyclicYearError::Invalid { max: 0 });
+            return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
         cyclics
             .get((cyclic.get() as usize) - 1)
-            .ok_or(GetSymbolForCyclicYearError::Invalid {
+            .ok_or(GetNameForCyclicYearError::InvalidYearNumber {
                 max: cyclics.len() + 1,
             })
     }
@@ -2310,11 +2426,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        let day_period_name_length = DayPeriodNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForDayPeriodError::InvalidFieldLength)?;
         let dayperiod_names = self
             .dayperiod_names
-            .get_with_variables(field_length)
+            .get_with_variables(day_period_name_length)
             .ok_or(GetNameForDayPeriodError::NotLoaded)?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),
