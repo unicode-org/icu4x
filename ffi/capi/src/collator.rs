@@ -141,15 +141,13 @@ pub mod ffi {
             options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
             let options = options.into();
-            Ok(Box::new(Collator(provider.call_constructor(
-                |provider| {
-                    icu_collator::Collator::try_new_with_buffer_provider(
-                        provider,
-                        (&locale.0).into(),
-                        options,
-                    )
-                },
-            )?)))
+            Ok(Box::new(Collator(
+                icu_collator::Collator::try_new_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    options,
+                )?,
+            )))
         }
         /// Compare two strings.
         ///

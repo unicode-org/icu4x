@@ -74,11 +74,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
         /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
@@ -107,11 +108,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
         /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
@@ -140,11 +142,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
         /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
@@ -174,11 +177,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
         /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
@@ -208,11 +212,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
     }
 }

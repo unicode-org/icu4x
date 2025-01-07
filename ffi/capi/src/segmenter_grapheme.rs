@@ -61,9 +61,9 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
             Ok(Box::new(GraphemeClusterSegmenter(
-                provider.call_constructor(|provider| {
-                    icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider(provider)
-                })?,
+                icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
         /// Segments a string.

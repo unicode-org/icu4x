@@ -41,10 +41,9 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
-            Ok(Box::new(Bidi(call_constructor_unstable!(
-                icu_properties::CodePointMapData::try_new_unstable,
-                provider,
-            )?)))
+            Ok(Box::new(Bidi(
+                icu_properties::CodePointMapData::try_new_unstable(&provider.get_unstable()?)?,
+            )))
         }
         /// Use the data loaded in this object to process a string and calculate bidi information
         ///

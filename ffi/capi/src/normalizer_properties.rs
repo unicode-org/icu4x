@@ -57,7 +57,7 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(provider.call_constructor(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider)?)))
+            Ok(Box::new(CanonicalCombiningClassMap(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider(provider.get()?)?)))
         }
 
         #[diplomat::rust_link(
@@ -130,13 +130,11 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalComposition>, DataError> {
-            Ok(Box::new(CanonicalComposition(provider.call_constructor(
-                |provider| {
-                    icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider(
-                        provider,
-                    )
-                },
-            )?)))
+            Ok(Box::new(CanonicalComposition(
+                icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
+            )))
         }
 
         /// Performs canonical composition (including Hangul) on a pair of characters
@@ -204,7 +202,11 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(provider.call_constructor(icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider)?)))
+            Ok(Box::new(CanonicalDecomposition(
+                icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
+            )))
         }
 
         /// Performs non-recursive canonical decomposition (including for Hangul).

@@ -69,11 +69,11 @@ pub mod ffi {
             let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
         /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
@@ -137,11 +137,11 @@ pub mod ffi {
             let options = YMDT::with_length(Length::from(length)).with_zone_generic();
 
             Ok(Box::new(ZonedDateTimeFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
         /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.

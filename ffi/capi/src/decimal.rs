@@ -72,11 +72,11 @@ pub mod ffi {
                 .map(Into::into)
                 .unwrap_or(options.grouping_strategy);
             Ok(Box::new(FixedDecimalFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_decimal::FixedDecimalFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
 

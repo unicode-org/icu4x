@@ -84,9 +84,9 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleFallbacker>, DataError> {
-            Ok(Box::new(LocaleFallbacker(provider.call_constructor(
-                icu_locale::LocaleFallbacker::try_new_with_buffer_provider,
-            )?)))
+            Ok(Box::new(LocaleFallbacker(
+                icu_locale::LocaleFallbacker::try_new_with_buffer_provider(provider.get()?)?,
+            )))
         }
 
         /// Creates a new `LocaleFallbacker` without data for limited functionality.

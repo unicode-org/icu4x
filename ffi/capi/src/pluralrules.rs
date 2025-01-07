@@ -65,11 +65,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(provider.call_constructor(
-                |provider| {
-                    icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider(provider, prefs)
-                },
-            )?)))
+            Ok(Box::new(PluralRules(
+                icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                )?,
+            )))
         }
         /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
@@ -94,11 +95,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(provider.call_constructor(
-                |provider| {
-                    icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider(provider, prefs)
-                },
-            )?)))
+            Ok(Box::new(PluralRules(
+                icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                )?,
+            )))
         }
         /// Get the category for a given number represented as operands
         #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
