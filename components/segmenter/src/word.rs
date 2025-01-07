@@ -222,8 +222,8 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_auto)]
+    pub fn try_new_root_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<WordBreakDataOverrideV1Marker>
@@ -252,7 +252,7 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_auto)]
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
@@ -334,8 +334,8 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_lstm)]
+    pub fn try_new_root_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<WordBreakDataOverrideV1Marker>
@@ -363,7 +363,7 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_lstm)]
     pub fn try_new_lstm_with_options_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
@@ -437,8 +437,8 @@ impl WordSegmenter {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_dictionary)]
+    pub fn try_new_root_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<WordBreakDataOverrideV1Marker>
@@ -465,7 +465,7 @@ impl WordSegmenter {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_dictionary)]
     pub fn try_new_dictionary_with_options_unstable<D>(
         provider: &D,
         options: WordBreakOptions,

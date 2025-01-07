@@ -138,6 +138,7 @@ impl GraphemeClusterSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(

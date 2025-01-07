@@ -398,9 +398,9 @@ impl LineSegmenter {
         Self::new_auto_with_options(Default::default())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_auto)]
     #[cfg(feature = "auto")]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_root_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -428,8 +428,8 @@ impl LineSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_lstm)]
+    pub fn try_new_root_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -455,8 +455,8 @@ impl LineSegmenter {
         Self::new_dictionary_with_options(Default::default())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_dictionary)]
+    pub fn try_new_root_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
@@ -471,7 +471,7 @@ impl LineSegmenter {
     ///
     /// The current behavior, which is subject to change, is to use the LSTM model when available.
     ///
-    /// See also [`Self::new_auto`].
+    /// See also [`Self::new_root_auto`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
     ///
@@ -515,7 +515,7 @@ impl LineSegmenter {
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
     /// the full dictionary but more expensive during segmentation (inference).
     ///
-    /// See also [`Self::new_dictionary`].
+    /// See also [`Self::new_root_lstm`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
     ///
@@ -569,7 +569,7 @@ impl LineSegmenter {
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
     ///
-    /// See also [`Self::new_dictionary`].
+    /// See also [`Self::new_root_dictionary`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -1522,7 +1522,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked)
+        let segmenter = LineSegmenter::try_new_root_dictionary_unstable(&crate::provider::Baked)
             .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");

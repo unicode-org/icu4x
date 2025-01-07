@@ -51,7 +51,12 @@ pub mod ffi {
             )))
         }
         /// Construct a new LocaleDirectionality instance using compiled data.
-        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::LocaleDirectionality::new_with_expander,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, named_constructor = "extended")]
         #[cfg(feature = "compiled_data")]
         pub fn create_extended() -> Box<LocaleDirectionality> {
@@ -61,7 +66,12 @@ pub mod ffi {
         }
 
         /// Construct a new LocaleDirectionality instance using a particular data source.
-        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_extended, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::LocaleDirectionality::new_with_expander,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(

@@ -25,7 +25,7 @@ This minimize method returns a new Locale that is the result of running the
 use icu::locale::Locale;
 use icu::locale::{LocaleCanonicalizer, TransformResult};
 
-let lc = LocaleCanonicalizer::new();
+let lc = LocaleCanonicalizer::new_extended();
 
 let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()

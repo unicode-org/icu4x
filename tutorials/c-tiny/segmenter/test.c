@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    LineSegmenter* segmenter = icu4x_LineSegmenter_create_auto_mv1();
+    LineSegmenter* segmenter = icu4x_LineSegmenter_create_root_auto_mv1();
 
 
     char output[40];

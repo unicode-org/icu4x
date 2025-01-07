@@ -128,8 +128,8 @@ impl SentenceSegmenter {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root)]
+    pub fn try_new_root_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
     {

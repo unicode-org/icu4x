@@ -28,7 +28,7 @@ use tinystr::TinyAsciiStr;
 /// use icu::locale::Locale;
 /// use icu::locale::{LocaleCanonicalizer, TransformResult};
 ///
-/// let lc = LocaleCanonicalizer::new();
+/// let lc = LocaleCanonicalizer::new_extended();
 ///
 /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
@@ -202,7 +202,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
     pub const fn new_common() -> Self {
         Self::new_with_expander(LocaleExpander::new_common())
     }
@@ -217,7 +216,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
@@ -251,7 +250,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
@@ -319,7 +318,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// ```
     /// use icu::locale::{Locale, LocaleCanonicalizer, TransformResult};
     ///
-    /// let lc = LocaleCanonicalizer::new();
+    /// let lc = LocaleCanonicalizer::new_extended();
     ///
     /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
