@@ -29,7 +29,7 @@
 //! 3. [`Time`](icu_calendar::Time)
 //! 4. [`UtcOffset`](icu_timezone::UtcOffset)
 //! 5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
-//! 6. [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+//! 6. [`ZonedDateTime`](icu_timezone::ZonedDateTime)
 //!
 //! Not all inputs are valid for all field sets.
 //!

@@ -20,7 +20,7 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
+use icu_timezone::{TimeZoneInfo, TimeZoneModel, UtcOffset, ZonedDateTime};
 
 /// A calendar that can be found in CLDR.
 ///
@@ -416,13 +416,13 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
-    for CustomZonedDateTime<A, Z>
+    for ZonedDateTime<A, Z>
 {
-    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, Z>;
+    type Converted<'a> = ZonedDateTime<Ref<'a, AnyCalendar>, Z>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
         let date = self.date.to_any().to_calendar(Ref(calendar));
-        CustomZonedDateTime {
+        ZonedDateTime {
             date,
             time: self.time,
             zone: self.zone,
@@ -490,7 +490,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for CustomZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
@@ -520,10 +520,7 @@ impl<C> InFixedCalendar<C> for Time {}
 
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
 
-impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C>
-    for CustomZonedDateTime<A, Z>
-{
-}
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for ZonedDateTime<A, Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}
 

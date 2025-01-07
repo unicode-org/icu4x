@@ -9,7 +9,7 @@ use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFor
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
+use icu_timezone::{TimeZoneInfo, ZoneVariant, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
@@ -23,7 +23,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
+                    let datetimes: Vec<ZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -31,7 +31,7 @@ fn datetime_benches(c: &mut Criterion) {
                                 mock::parse_zoned_gregorian_from_str(value)
                             } else {
                                 let DateTime { date, time } = mock::parse_gregorian_from_str(value);
-                                CustomZonedDateTime {
+                                ZonedDateTime {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
