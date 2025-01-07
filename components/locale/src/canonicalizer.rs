@@ -195,36 +195,72 @@ fn uts35_check_language_rules(
 }
 
 impl LocaleCanonicalizer<LocaleExpander> {
-    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for common locales.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_without_default)]
-    pub const fn new() -> Self {
-        Self::new_with_expander(LocaleExpander::new_extended())
+    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
+    pub const fn new_common() -> Self {
+        Self::new_with_expander(LocaleExpander::new_common())
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            new_common: skip,
+            try_new_common_with_any_provider,
+            try_new_common_with_buffer_provider,
+            try_new_common_unstable,
             Self,
         ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
             + ?Sized,
     {
-        let expander = LocaleExpander::try_new_unstable(provider)?;
+        let expander = LocaleExpander::try_new_common_unstable(provider)?;
+        Self::try_new_with_expander_unstable(provider, expander)
+    }
+
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for all locales.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
+    pub const fn new_extended() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new_extended: skip,
+            try_new_extended_with_any_provider,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
+    where
+        P: DataProvider<AliasesV2Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsExtendedV1Marker>
+            + ?Sized,
+    {
+        let expander = LocaleExpander::try_new_extended_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
     }
 }

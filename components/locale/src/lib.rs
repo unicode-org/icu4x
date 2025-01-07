@@ -37,7 +37,7 @@
 //! ```
 //! use icu::locale::{locale, LocaleExpander, TransformResult};
 //!
-//! let lc = LocaleExpander::new();
+//! let lc = LocaleExpander::new_common();
 //!
 //! let mut locale = locale!("zh-CN");
 //! assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
@@ -52,7 +52,7 @@
 //! use icu::locale::{locale, LocaleExpander, TransformResult};
 //! use writeable::assert_writeable_eq;
 //!
-//! let lc = LocaleExpander::new();
+//! let lc = LocaleExpander::new_common();
 //!
 //! let mut locale = locale!("zh-Hans-CN");
 //! assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);

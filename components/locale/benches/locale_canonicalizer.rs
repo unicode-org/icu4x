@@ -69,7 +69,7 @@ fn canonicalize_noop_bench(c: &mut Criterion) {
 }
 
 fn maximize_bench(c: &mut Criterion) {
-    let lc = LocaleExpander::new();
+    let lc = LocaleExpander::new_common();
 
     let mut group = c.benchmark_group("likelysubtags");
 
