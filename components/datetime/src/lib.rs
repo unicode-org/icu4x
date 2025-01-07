@@ -95,7 +95,6 @@ pub mod fieldsets;
 mod format;
 pub mod input;
 mod neo;
-pub mod neo_pattern;
 #[cfg(all(feature = "experimental", feature = "serde"))]
 mod neo_serde;
 pub mod options;
