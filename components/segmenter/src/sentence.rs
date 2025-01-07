@@ -69,7 +69,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 ///
 /// ```rust
 /// use icu::segmenter::SentenceSegmenter;
-/// let segmenter = SentenceSegmenter::new();
+/// let segmenter = SentenceSegmenter::new_root();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -80,7 +80,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 ///
 /// ```rust
 /// use icu::segmenter::SentenceSegmenter;
-/// let segmenter = SentenceSegmenter::new();
+/// let segmenter = SentenceSegmenter::new_root();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -93,7 +93,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 ///
 /// ```rust
 /// # use icu::segmenter::SentenceSegmenter;
-/// # let segmenter = SentenceSegmenter::new();
+/// # let segmenter = SentenceSegmenter::new_root();
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
 /// let sentences: Vec<&str> = segmenter
@@ -119,7 +119,7 @@ impl SentenceSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub fn new_root() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
@@ -127,16 +127,6 @@ impl SentenceSegmenter {
             payload_locale_override: None,
         }
     }
-
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
-    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
@@ -287,7 +277,7 @@ impl SentenceSegmenter {
 #[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
-    let segmenter = SentenceSegmenter::new();
+    let segmenter = SentenceSegmenter::new_root();
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

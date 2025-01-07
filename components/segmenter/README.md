@@ -89,7 +89,7 @@ Segment the string into sentences:
 ```rust
 use icu::segmenter::SentenceSegmenter;
 
-let segmenter = SentenceSegmenter::new();
+let segmenter = SentenceSegmenter::new_root();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
