@@ -42,32 +42,14 @@ export class SentenceSegmenter {
         return this.#ptr;
     }
 
-    static create() {
-        const result = wasm.icu4x_SentenceSegmenter_create_mv1();
+    static createRoot() {
+        const result = wasm.icu4x_SentenceSegmenter_create_root_mv1();
     
         try {
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
-    }
-
-    static createWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_SentenceSegmenter_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createWithContentLocale(locale) {

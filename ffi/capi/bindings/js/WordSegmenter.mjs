@@ -42,32 +42,14 @@ export class WordSegmenter {
         return this.#ptr;
     }
 
-    static createAuto() {
-        const result = wasm.icu4x_WordSegmenter_create_auto_mv1();
+    static createRootAuto() {
+        const result = wasm.icu4x_WordSegmenter_create_root_auto_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
-    }
-
-    static createAutoWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_auto_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createAutoWithContentLocale(locale) {
@@ -106,32 +88,14 @@ export class WordSegmenter {
         }
     }
 
-    static createLstm() {
-        const result = wasm.icu4x_WordSegmenter_create_lstm_mv1();
+    static createRootLstm() {
+        const result = wasm.icu4x_WordSegmenter_create_root_lstm_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
-    }
-
-    static createLstmWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_lstm_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createLstmWithContentLocale(locale) {
@@ -170,32 +134,14 @@ export class WordSegmenter {
         }
     }
 
-    static createDictionary() {
-        const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1();
+    static createRootDictionary() {
+        const result = wasm.icu4x_WordSegmenter_create_root_dictionary_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
-    }
-
-    static createDictionaryWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createDictionaryWithContentLocale(locale) {

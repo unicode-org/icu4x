@@ -15,9 +15,7 @@ export class SentenceSegmenter {
 
     get ffiValue(): pointer;
 
-    static create(): SentenceSegmenter;
-
-    static createWithProvider(provider: DataProvider): SentenceSegmenter;
+    static createRoot(): SentenceSegmenter;
 
     static createWithContentLocale(locale: Locale): SentenceSegmenter;
 

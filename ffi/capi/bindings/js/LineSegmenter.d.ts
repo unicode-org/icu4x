@@ -16,29 +16,23 @@ export class LineSegmenter {
 
     get ffiValue(): pointer;
 
-    static createAuto(): LineSegmenter;
+    static createRootAuto(): LineSegmenter;
 
-    static createAutoWithProvider(provider: DataProvider): LineSegmenter;
+    static createRootLstm(): LineSegmenter;
 
-    static createLstm(): LineSegmenter;
+    static createRootDictionary(): LineSegmenter;
 
-    static createLstmWithProvider(provider: DataProvider): LineSegmenter;
+    static autoWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static createDictionary(): LineSegmenter;
+    static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static createDictionaryWithProvider(provider: DataProvider): LineSegmenter;
+    static lstmWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static autoWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static dictionaryWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static lstmWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
-
-    static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
-
-    static dictionaryWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
-
-    static dictionaryWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static dictionaryWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
     segment(input: string): LineBreakIteratorUtf16;
 }

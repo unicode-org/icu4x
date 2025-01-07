@@ -37,29 +37,23 @@ namespace icu4x {
 class LineSegmenter {
 public:
 
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_auto();
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_root_auto();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_auto_with_provider(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_root_lstm();
 
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_lstm();
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_root_dictionary();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_lstm_with_provider(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_auto_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_dictionary();
+  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_auto_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_dictionary_with_provider(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_lstm_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_auto_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
+  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_lstm_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_auto_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
+  inline static std::unique_ptr<icu4x::LineSegmenter> create_dictionary_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_lstm_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_lstm_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
-
-  inline static std::unique_ptr<icu4x::LineSegmenter> create_dictionary_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_dictionary_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options);
+  inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_dictionary_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   inline std::unique_ptr<icu4x::LineBreakIteratorUtf8> segment(std::string_view input) const;
 

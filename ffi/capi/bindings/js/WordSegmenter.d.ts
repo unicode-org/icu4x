@@ -15,25 +15,19 @@ export class WordSegmenter {
 
     get ffiValue(): pointer;
 
-    static createAuto(): WordSegmenter;
-
-    static createAutoWithProvider(provider: DataProvider): WordSegmenter;
+    static createRootAuto(): WordSegmenter;
 
     static createAutoWithContentLocale(locale: Locale): WordSegmenter;
 
     static createAutoWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): WordSegmenter;
 
-    static createLstm(): WordSegmenter;
-
-    static createLstmWithProvider(provider: DataProvider): WordSegmenter;
+    static createRootLstm(): WordSegmenter;
 
     static createLstmWithContentLocale(locale: Locale): WordSegmenter;
 
     static createLstmWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): WordSegmenter;
 
-    static createDictionary(): WordSegmenter;
-
-    static createDictionaryWithProvider(provider: DataProvider): WordSegmenter;
+    static createRootDictionary(): WordSegmenter;
 
     static createDictionaryWithContentLocale(locale: Locale): WordSegmenter;
 
