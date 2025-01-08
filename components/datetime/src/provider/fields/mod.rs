@@ -118,7 +118,7 @@ impl From<ErrorField> for Field {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fields::{Field, FieldLength, FieldSymbol, Second, Year};
+    use crate::provider::fields::{Field, FieldLength, FieldSymbol, Second, Year};
     use zerovec::ule::{AsULE, ULE};
 
     #[test]

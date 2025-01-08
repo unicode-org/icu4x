@@ -4,7 +4,7 @@
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
-    fields::components,
+    provider::fields::components,
     fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
     FixedCalendarDateTimeFormatter,

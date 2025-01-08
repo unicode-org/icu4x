@@ -393,7 +393,7 @@ impl<'p> Parser<'p> {
 mod tests {
     use super::super::super::reference::Pattern;
     use super::*;
-    use crate::fields::{self, FieldLength};
+    use crate::provider::fields::{self, FieldLength};
 
     #[test]
     fn pattern_parse_simple() {

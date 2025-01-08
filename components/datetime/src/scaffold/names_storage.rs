@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::ErrorField;
-use crate::provider::fields::Field;
 use crate::pattern::{YearNameLength, MonthNameLength, WeekdayNameLength, DayPeriodNameLength, PatternLoadError};
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;

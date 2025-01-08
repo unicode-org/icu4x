@@ -80,11 +80,11 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use either::Either;
-    use icu::datetime::fields::components;
+    use icu::datetime::provider::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
-        fields::{Day, Field, FieldLength, Month, Weekday},
+        provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
         provider::pattern::{reference, runtime},
     };
