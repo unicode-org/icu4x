@@ -115,6 +115,13 @@ impl From<ErrorField> for Field {
     }
 }
 
+impl From<Field> for ErrorField {
+    /// Create an [`ErrorField`] (stable wrapper) from a [`Field`] (unstable)
+    fn from(value: Field) -> Self {
+        Self(value)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

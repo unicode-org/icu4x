@@ -434,6 +434,9 @@ size_test!(
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
+/// 
+/// // Unstable API used only for error construction below
+/// use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol, Weekday};
 ///
 /// // Create an instance that can format all fields (CompositeFieldSet):
 /// let mut names: TypedDateTimeNames<Gregorian, CompositeFieldSet> =
@@ -452,7 +455,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::NamesNotLoaded(_)),
+///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (7, 10, parts::WEEKDAY), // mon
