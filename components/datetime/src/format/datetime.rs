@@ -139,7 +139,7 @@ where
                 .get_name_for_era(l, era)
                 .map_err(|e| match e {
                     GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
-                    GetNameForEraError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                    GetNameForEraError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
                     GetNameForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
                 });
             match era_symbol {
@@ -188,7 +188,7 @@ where
                                 max,
                             }
                         }
-                        GetNameForCyclicYearError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                        GetNameForCyclicYearError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
                         GetNameForCyclicYearError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
@@ -260,7 +260,7 @@ where
                         GetNameForMonthError::InvalidMonthCode => {
                             DateTimeWriteError::InvalidMonthCode(month.formatting_code)
                         }
-                        GetNameForMonthError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                        GetNameForMonthError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
                         GetNameForMonthError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
@@ -275,7 +275,7 @@ where
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
-                    GetNameForWeekdayError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                    GetNameForWeekdayError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
                     GetNameForWeekdayError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
                 }) {
                 Err(e) => {
@@ -396,7 +396,7 @@ where
                         })
                     })?;
                     Err(match e {
-                        GetNameForDayPeriodError::InvalidFieldLength => DateTimeWriteError::InvalidFieldLength(ErrorField(field)),
+                        GetNameForDayPeriodError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
                         GetNameForDayPeriodError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }

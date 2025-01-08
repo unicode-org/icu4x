@@ -119,7 +119,7 @@ pub enum DateTimeWriteError {
     ///
     /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
     #[displaydoc("Field length for {0:?} is invalid")]
-    InvalidFieldLength(ErrorField),
+    UnsupportedLength(ErrorField),
     /// Unsupported field
     ///
     /// This *only* happens if the formatter has been created using

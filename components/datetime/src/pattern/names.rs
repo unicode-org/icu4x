@@ -265,6 +265,7 @@ impl WeekdayNameLength {
     }
 }
 
+/// Choices for loading day period names.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DayPeriodNameLength {
@@ -2105,6 +2106,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             let PatternItem::Field(field) = item else {
                 continue;
             };
+            let error_field = ErrorField(field);
 
             use crate::provider::fields::*;
             use FieldLength::*;
@@ -2115,54 +2117,38 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // G..GGGGG
                 (FS::Era, One | Two | Three | Four | Five) => {
-                    // UTS 35 says that "G..GGG" are all Abbreviated
-                    let field_length = field_length.numeric_to_abbr();
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(year_provider, prefs, YearNameLength::from_field_length(field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
                 }
 
                 // U..UUUUU
                 (FS::Year(Year::Cyclic), One | Two | Three | Four | Five) => {
                     numeric_field = Some(field);
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(year_provider, prefs, YearNameLength::from_field_length(field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
                 }
 
-                // MMM..MMMMM
-                (FS::Month(Month::Format), Three | Four | Five) => {
-                    PatternLoadError::UnsupportedLength(ErrorField(field))
-                    self.load_month_names(month_provider, prefs, Month::Format, field.length)?;
+                // MMM..MMMMM, LLL..LLLLL
+                (FS::Month(field_symbol @ Month::Format | field_symbol @ Month::StandAlone), Three | Four | Five) => {
+                    self.load_month_names(month_provider, prefs, MonthNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
                 }
 
-                // LLL..LLLLL
-                (FS::Month(Month::StandAlone), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, Month::StandAlone, field.length)?;
+                // e..ee, c..cc
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
+                    // TODO(#5643): Requires locale-aware day-of-week calculation
+                    return Err(PatternLoadError::UnsupportedLength(ErrorField(field)));
                 }
 
-                // E..EE
-                (FS::Weekday(Weekday::Format), One | Two) => {
-                    // UTS 35 says that "E..EEE" are all Abbreviated
-                    // However, this doesn't apply to "e" and "c".
-                    let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-                        field_length.numeric_to_abbr()
-                    } else {
-                        field_length
-                    };
+                // E..EEEEEE, eee..eeeeee, ccc..cccccc
+                (FS::Weekday(field_symbol), One | Two | Three | Four | Five | Six) => {
                     self.load_weekday_names(
                         weekday_provider,
                         prefs,
-                        Weekday::Format,
-                        field.length,
+                        WeekdayNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field
                     )?;
-                }
-                // EEE..EEEEEE, eee..eeeeee, ccc..cccccc
-                (FS::Weekday(symbol), Three | Four | Five | Six) => {
-                    self.load_weekday_names(weekday_provider, prefs, symbol, field.length)?;
                 }
 
                 // a..aaaaa, b..bbbbb
-                (FS::DayPeriod(_), One | Two | Three | Four | Five) => {
-                    // UTS 35 says that "a..aaa" are all Abbreviated
-                    let field_length = field_length.numeric_to_abbr();
-                    self.load_day_period_names(dayperiod_provider, prefs, field.length)?;
+                (FS::DayPeriod(field_symbol), One | Two | Three | Four | Five) => {
+                    self.load_day_period_names(dayperiod_provider, prefs, DayPeriodNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
                 }
 
                 ///// Time zone symbols /////
@@ -2250,12 +2236,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // M..MM, L..LL
                 (FS::Month(_), One | Two) => numeric_field = Some(field),
-
-                // e..ee, c..cc
-                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
-                    // TODO(#5643): Requires locale-aware day-of-week calculation
-                    return Err(PatternLoadError::UnsupportedLength(field));
-                }
 
                 // d..dd
                 (FS::Day(Day::DayOfMonth), One | Two) => numeric_field = Some(field),
