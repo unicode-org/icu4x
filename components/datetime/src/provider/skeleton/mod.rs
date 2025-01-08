@@ -52,7 +52,7 @@
 //! </div>
 
 #[cfg(doc)]
-use crate::fields::components;
+use crate::provider::fields::components;
 
 mod error;
 mod helpers;

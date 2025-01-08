@@ -37,7 +37,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fields::components;
+/// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -79,7 +79,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// ```
 /// use icu::calendar::Time;
-/// use icu::datetime::fields::components;
+/// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::TimeFormatter;

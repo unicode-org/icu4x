@@ -393,9 +393,10 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::FieldLength;
-/// use icu::datetime::fields;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::pattern::MonthNameLength;
+/// use icu::datetime::pattern::WeekdayNameLength;
+/// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
@@ -403,11 +404,11 @@ size_test!(
 /// let mut names: TypedDateTimeNames<Gregorian> =
 ///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
 /// names
-///     .include_month_names(fields::Month::Format, FieldLength::Three)
+///     .include_month_names(MonthNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_weekday_names(fields::Weekday::Format, FieldLength::Three)
+///     .include_weekday_names(WeekdayNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_day_period_names(FieldLength::Three)
+///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
 ///     .unwrap();
 ///
 /// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
@@ -427,7 +428,6 @@ size_test!(
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
@@ -452,7 +452,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
+///     Err(DateTimeWriteError::NamesNotLoaded(_)),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (7, 10, parts::WEEKDAY), // mon
@@ -483,7 +483,7 @@ size_test!(
 /// let empty = EmptyDataProvider::new();
 /// assert!(matches!(
 ///     names.load_for_pattern(&empty, &pattern),
-///     Err(PatternLoadError::Data(_, Field { symbol: FieldSymbol::Weekday(_), .. })),
+///     Err(PatternLoadError::Data(_, _)),
 /// ));
 /// ```
 ///
@@ -495,7 +495,6 @@ size_test!(
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
@@ -685,7 +684,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
-    /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::locale::locale;
@@ -756,8 +754,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::YearNameLength;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -766,14 +764,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_year_names(FieldLength::Three),
+    ///     names.include_year_names(YearNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
@@ -816,7 +814,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -824,26 +822,24 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Month::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
     ///
     /// // First length is successful:
     /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
     /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_month_names(alt_field_symbol, FieldLength::Four),
+    ///     names.include_month_names(MonthNameLength::StandaloneWide),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
-    ///     names.include_month_names(field_symbol, FieldLength::Three),
+    ///     names.include_month_names(MonthNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
@@ -887,7 +883,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -897,14 +893,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_day_period_names(FieldLength::Three),
+    ///     names.include_day_period_names(DayPeriodNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
@@ -947,34 +943,32 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::WeekdayNameLength;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Weekday::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
     ///
     /// // First length is successful:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_weekday_names(alt_field_symbol, FieldLength::Four),
+    ///     names.include_weekday_names(WeekdayNameLength::StandaloneWide),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
-    ///     names.include_weekday_names(field_symbol, FieldLength::Three),
+    ///     names.include_weekday_names(WeekdayNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
@@ -1659,8 +1653,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::DateTime;
     /// use icu::datetime::pattern::TypedDateTimeNames;
-    /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::fields;
+    /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
@@ -1670,7 +1663,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
     /// names
-    ///     .include_month_names(fields::Month::Format, FieldLength::Three)
+    ///     .include_month_names(MonthNameLength::Abbreviated)
     ///     .unwrap();
     ///
     /// // Test it with a pattern:

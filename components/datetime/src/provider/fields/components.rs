@@ -14,7 +14,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::fields::components;
+//! use icu::datetime::provider::fields::components;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);

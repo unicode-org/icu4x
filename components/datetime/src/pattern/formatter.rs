@@ -68,10 +68,10 @@ where
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::MonthNameLength;
+    /// use icu::datetime::pattern::YearNameLength;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -80,9 +80,9 @@ where
     /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
     /// names
-    ///     .include_month_names(fields::Month::Format, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap()
-    ///     .include_year_names(FieldLength::Four)
+    ///     .include_year_names(YearNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -108,17 +108,17 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::Time;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
     ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
-    /// names.include_day_period_names(FieldLength::Three).unwrap();
+    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
