@@ -27500,7 +27500,7 @@ time_zone/essentials@1, ur-IN, -> und
 time_zone/essentials@1, vec, -> eo
 time_zone/essentials@1, xnr, 173B, 81B, 331c125b1ab74aab
 time_zone/essentials@1, yo, 109B, 17B, 6f563aca2d7a093
-time_zone/generic_long@1, <lookup>, 1058B, 212 identifiers
+time_zone/generic_long@1, <lookup>, 1082B, 215 identifiers
 time_zone/generic_long@1, <total>, 678239B, 660909B, 192 unique payloads
 time_zone/generic_long@1, af, 2047B, 1957B, b4e3f678dc595bb3
 time_zone/generic_long@1, ak, 3390B, 3300B, 287bcdec136673fe
@@ -27665,11 +27665,12 @@ time_zone/generic_long@1, so, 3372B, 3282B, 68ebaa553594905f
 time_zone/generic_long@1, sq, 4118B, 4028B, cf635a86be568296
 time_zone/generic_long@1, sr, 6067B, 5977B, 154cced301f02d60
 time_zone/generic_long@1, sr-BA, 6637B, 6547B, 104a329b76bdf106
+time_zone/generic_long@1, sr-Cyrl-ME, 6106B, 6016B, 6ddc145d2b9cce72
 time_zone/generic_long@1, sr-Latn, 3716B, 3626B, 5bef584862593ab0
 time_zone/generic_long@1, sr-Latn-BA, 4001B, 3911B, b1fa0a8cdd4e7800
 time_zone/generic_long@1, sr-Latn-XK, 3740B, 3650B, dd6abf7b61ff737a
 time_zone/generic_long@1, sr-ME, -> sr-Latn-XK
-time_zone/generic_long@1, sr-XK, 6106B, 6016B, 6ddc145d2b9cce72
+time_zone/generic_long@1, sr-XK, -> sr-Cyrl-ME
 time_zone/generic_long@1, st, -> kok-Latn
 time_zone/generic_long@1, su, 367B, 276B, 89680e0c695500a4
 time_zone/generic_long@1, sv, 2458B, 2368B, 62fce6ec9f4e4d5
@@ -27711,10 +27712,12 @@ time_zone/generic_long@1, yue-Hans, 2222B, 2132B, c2e9c5a722de2c62
 time_zone/generic_long@1, za, 133B, 41B, 27d8256d91e2df39
 time_zone/generic_long@1, zh, 2308B, 2218B, 8cb121e1f234d170
 time_zone/generic_long@1, zh-HK, 2252B, 2162B, 179110b06f2a16d
+time_zone/generic_long@1, zh-Hans-HK, -> zh
+time_zone/generic_long@1, zh-Hans-MO, -> zh
 time_zone/generic_long@1, zh-Hant, 2198B, 2108B, 8d13b95e02828800
 time_zone/generic_long@1, zh-MO, -> zh-HK
 time_zone/generic_long@1, zu, 4818B, 4728B, 53d1af37c3e8dfce
-time_zone/generic_short@1, <lookup>, 652B, 134 identifiers
+time_zone/generic_short@1, <lookup>, 666B, 136 identifiers
 time_zone/generic_short@1, <total>, 9134B, 3616B, 60 unique payloads
 time_zone/generic_short@1, af, 146B, 54B, 7f36306982b97171
 time_zone/generic_short@1, ar, 118B, 26B, 3d852dce56d3489d
@@ -27848,10 +27851,12 @@ time_zone/generic_short@1, te, -> bn
 time_zone/generic_short@1, und, -> es-419
 time_zone/generic_short@1, vi, 186B, 94B, ed4d4aac08e2bea6
 time_zone/generic_short@1, yrl, -> kgp
+time_zone/generic_short@1, zh-Hans-HK, -> es-419
+time_zone/generic_short@1, zh-Hans-MO, -> es-419
 time_zone/generic_short@1, zh-Hant, 176B, 84B, 1944b724241800b8
 time_zone/generic_short@1, zh-SG, -> ta-MY
-time_zone/locations@1, <lookup>, 1097B, 218 identifiers
-time_zone/locations@1, <total>, 1435127B, 1407337B, 204 unique payloads
+time_zone/locations@1, <lookup>, 1121B, 221 identifiers
+time_zone/locations@1, <total>, 1446976B, 1419050B, 205 unique payloads
 time_zone/locations@1, af, 3930B, 3794B, 981a95db24b32b2
 time_zone/locations@1, ak, 5949B, 5813B, d996ff5b755957ee
 time_zone/locations@1, am, 11144B, 11008B, 92392ef1ec902512
@@ -28020,6 +28025,7 @@ time_zone/locations@1, so, 7620B, 7484B, 77b4a112ec12ae0a
 time_zone/locations@1, sq, 6773B, 6637B, 11443a7c1e1ebe28
 time_zone/locations@1, sr, 11835B, 11699B, e3d9108d734cbb24
 time_zone/locations@1, sr-BA, 11856B, 11720B, d6af991ebc07494c
+time_zone/locations@1, sr-Cyrl-ME, 11849B, 11713B, f3d214595c9111bd
 time_zone/locations@1, sr-Latn, 6821B, 6685B, 241a39de1a122a51
 time_zone/locations@1, sr-Latn-BA, 6901B, 6765B, 6f23b784e04e63a2
 time_zone/locations@1, sr-Latn-XK, 6816B, 6680B, 2e7533eae3e9ecb8
@@ -28066,13 +28072,15 @@ time_zone/locations@1, yue-Hans, 9099B, 8963B, 631e297c86a34fd9
 time_zone/locations@1, za, 193B, 55B, 1b9ca2496649ef7a
 time_zone/locations@1, zh, 9166B, 9030B, a1c86924cc75a347
 time_zone/locations@1, zh-HK, 9165B, 9029B, 55e6e6fefd627dd9
+time_zone/locations@1, zh-Hans-HK, -> zh
+time_zone/locations@1, zh-Hans-MO, -> zh
 time_zone/locations@1, zh-Hant, 9060B, 8924B, ea7ff60940f7e5
 time_zone/locations@1, zh-MO, -> zh-HK
 time_zone/locations@1, zh-SG, 9163B, 9027B, cdda2647bc617a7a
 time_zone/locations@1, zu, 8939B, 8803B, 4ffe068623c9adb7
 time_zone/metazone_period@1, <singleton>, 11097B, 11009B, dcfa50fb39ebd549
-time_zone/specific_long@1, <lookup>, 973B, 195 identifiers
-time_zone/specific_long@1, <total>, 1464039B, 1447028B, 189 unique payloads
+time_zone/specific_long@1, <lookup>, 997B, 198 identifiers
+time_zone/specific_long@1, <total>, 1474077B, 1456977B, 190 unique payloads
 time_zone/specific_long@1, af, 5610B, 5520B, 751fcaa0f7ccc94e
 time_zone/specific_long@1, ak, 6345B, 6255B, b9516dafd9b842c3
 time_zone/specific_long@1, am, 12314B, 12225B, 96939a9a8aa30986
@@ -28220,6 +28228,7 @@ time_zone/specific_long@1, so, 8043B, 7953B, d80901ecbb5b6005
 time_zone/specific_long@1, sq, 8040B, 7950B, d039dcdc58f732f1
 time_zone/specific_long@1, sr, 9902B, 9813B, 1783bcb2dfbb26f2
 time_zone/specific_long@1, sr-BA, 10577B, 10488B, 90eea9563ae21c54
+time_zone/specific_long@1, sr-Cyrl-ME, 10038B, 9949B, c31ae6826b734197
 time_zone/specific_long@1, sr-Latn, 6388B, 6298B, bcf8e3118e469a4
 time_zone/specific_long@1, sr-Latn-BA, 6805B, 6715B, 52a299610abeacec
 time_zone/specific_long@1, sr-Latn-XK, 6552B, 6462B, 955ed22bf654af0a
@@ -28265,10 +28274,12 @@ time_zone/specific_long@1, yue-Hans, 7072B, 6982B, 30fa6f1f1cb06446
 time_zone/specific_long@1, za, 134B, 42B, 61572806ecd3d6e7
 time_zone/specific_long@1, zh, 4821B, 4731B, 2c3f0c752025cb3a
 time_zone/specific_long@1, zh-HK, 4877B, 4787B, b1518ddb27490db6
+time_zone/specific_long@1, zh-Hans-HK, -> zh
+time_zone/specific_long@1, zh-Hans-MO, -> zh
 time_zone/specific_long@1, zh-Hant, 7072B, 6982B, 60f81204ecb2f7fa
 time_zone/specific_long@1, zh-MO, -> zh-HK
 time_zone/specific_long@1, zu, 9245B, 9155B, ee4f1d7fe5be23b
-time_zone/specific_short@1, <lookup>, 648B, 134 identifiers
+time_zone/specific_short@1, <lookup>, 662B, 136 identifiers
 time_zone/specific_short@1, <total>, 11620B, 6196B, 59 unique payloads
 time_zone/specific_short@1, af, 162B, 70B, 980198c0a02267e2
 time_zone/specific_short@1, ar, 120B, 28B, 4d85073c8b1d2ef9
@@ -28402,5 +28413,7 @@ time_zone/specific_short@1, te, -> bn
 time_zone/specific_short@1, und, -> es-419
 time_zone/specific_short@1, vi, -> chr
 time_zone/specific_short@1, yrl, -> kgp
+time_zone/specific_short@1, zh-Hans-HK, -> es-419
+time_zone/specific_short@1, zh-Hans-MO, -> es-419
 time_zone/specific_short@1, zh-Hant, 264B, 172B, 4ecd4f3a2482f8c4
 time_zone/specific_short@1, zh-SG, -> ta-MY

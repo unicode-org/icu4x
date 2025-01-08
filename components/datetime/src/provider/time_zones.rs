@@ -40,7 +40,11 @@ pub(crate) mod tz {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(TimeZoneEssentialsV1Marker = "time_zone/essentials@1")]
+#[icu_provider::data_struct(marker(
+    TimeZoneEssentialsV1Marker,
+    "time_zone/essentials@1",
+    fallback_by = "script"
+))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
@@ -75,7 +79,11 @@ pub struct TimeZoneEssentialsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LocationsV1Marker = "time_zone/locations@1")]
+#[icu_provider::data_struct(marker(
+    LocationsV1Marker,
+    "time_zone/locations@1",
+    fallback_by = "script"
+))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
@@ -132,8 +140,16 @@ pub struct LocationsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneGenericNamesLongV1Marker, "time_zone/generic_long@1"),
-    marker(MetazoneGenericNamesShortV1Marker, "time_zone/generic_short@1")
+    marker(
+        MetazoneGenericNamesLongV1Marker,
+        "time_zone/generic_long@1",
+        fallback_by = "script"
+    ),
+    marker(
+        MetazoneGenericNamesShortV1Marker,
+        "time_zone/generic_short@1",
+        fallback_by = "script"
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -159,8 +175,16 @@ pub struct MetazoneGenericNamesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneSpecificNamesLongV1Marker, "time_zone/specific_long@1"),
-    marker(MetazoneSpecificNamesShortV1Marker, "time_zone/specific_short@1")
+    marker(
+        MetazoneSpecificNamesLongV1Marker,
+        "time_zone/specific_long@1",
+        fallback_by = "script"
+    ),
+    marker(
+        MetazoneSpecificNamesShortV1Marker,
+        "time_zone/specific_short@1",
+        fallback_by = "script"
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
