@@ -277,30 +277,13 @@ impl WeekdayNameLength {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum DayPeriodNameLength {
-    /// An abbreviated 12-hour day period name.
-    ///
-    /// Example: "AM"
-    Abbreviated,
-    /// A wide 12-hour day period name.
-    ///
-    /// The wide form may be the same as the abbreviated form if the "real" long form
-    /// (eg "ante meridiem") is not customarily used.
-    ///
-    /// Example: "AM"
-    Wide,
-    /// An narrow 12-hour day period name.
-    ///
-    /// The narrow form must be unique, unlike some other fields.
-    ///
-    /// Example: "A"
-    Narrow,
     /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
     ///
     /// Examples:
     ///
     /// - "AM"
     /// - "mid."
-    MeridiemAbbreviated,
+    Abbreviated,
     /// A wide 12-hour day period name, including display names for 0h and 12h.
     ///
     /// The wide form may be the same as the abbreviated form if the "real" long form
@@ -310,7 +293,7 @@ pub enum DayPeriodNameLength {
     ///
     /// - "AM"
     /// - "mignight"
-    MeridiemWide,
+    Wide,
     /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
     ///
     /// The narrow form must be unique, unlike some other fields.
@@ -319,20 +302,16 @@ pub enum DayPeriodNameLength {
     ///
     /// - "AM"
     /// - "md"
-    MeridiemNarrow,
+    Narrow,
 }
 
 impl DayPeriodNameLength {
     pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
         use marker_attrs::Length;
-        // Names for 'a' and 'b' are stored in the same data marker
         let length = match self {
             DayPeriodNameLength::Abbreviated => Length::Abbr,
             DayPeriodNameLength::Wide => Length::Wide,
             DayPeriodNameLength::Narrow => Length::Narrow,
-            DayPeriodNameLength::MeridiemAbbreviated => Length::Abbr,
-            DayPeriodNameLength::MeridiemWide => Length::Wide,
-            DayPeriodNameLength::MeridiemNarrow => Length::Narrow,
         };
         marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
     }
@@ -342,19 +321,17 @@ impl DayPeriodNameLength {
         field_length: FieldLength,
     ) -> Option<Self> {
         use fields::DayPeriod;
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = match field_symbol {
+            DayPeriod::NoonMidnight => DayPeriod::AmPm,
+            other => other
+        };
         // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         match (field_symbol, field_length) {
             (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
             (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
             (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
-            (DayPeriod::NoonMidnight, FieldLength::Three) => {
-                Some(DayPeriodNameLength::MeridiemAbbreviated)
-            }
-            (DayPeriod::NoonMidnight, FieldLength::Four) => Some(DayPeriodNameLength::MeridiemWide),
-            (DayPeriod::NoonMidnight, FieldLength::Five) => {
-                Some(DayPeriodNameLength::MeridiemNarrow)
-            }
             _ => None,
         }
     }
@@ -367,9 +344,6 @@ impl DayPeriodNameLength {
             DayPeriodNameLength::Abbreviated => FieldLength::Three,
             DayPeriodNameLength::Wide => FieldLength::Four,
             DayPeriodNameLength::Narrow => FieldLength::Five,
-            DayPeriodNameLength::MeridiemAbbreviated => FieldLength::Three,
-            DayPeriodNameLength::MeridiemWide => FieldLength::Four,
-            DayPeriodNameLength::MeridiemNarrow => FieldLength::Five,
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::DayPeriod(field_symbol),
