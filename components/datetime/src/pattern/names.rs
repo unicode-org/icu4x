@@ -324,7 +324,7 @@ impl DayPeriodNameLength {
         // Names for 'a' and 'b' are stored in the same data marker
         let field_symbol = match field_symbol {
             DayPeriod::NoonMidnight => DayPeriod::AmPm,
-            other => other
+            other => other,
         };
         // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
@@ -434,7 +434,7 @@ size_test!(
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
-/// 
+///
 /// // Unstable API used only for error construction below
 /// use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol, Weekday};
 ///
