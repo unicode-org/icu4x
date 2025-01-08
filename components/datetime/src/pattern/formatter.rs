@@ -449,22 +449,22 @@ mod tests {
             // 'c' and 'cc' are numeric
             TestCase {
                 pattern: "<ccc>",
-                length: WeekdayNameLength::Abbreviated,
+                length: WeekdayNameLength::StandaloneAbbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<cccc>",
-                length: WeekdayNameLength::Wide,
+                length: WeekdayNameLength::StandaloneWide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<ccccc>",
-                length: WeekdayNameLength::Narrow,
+                length: WeekdayNameLength::StandaloneNarrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<cccccc>",
-                length: WeekdayNameLength::Short,
+                length: WeekdayNameLength::StandaloneShort,
                 expected: "<пт>",
             },
         ];
