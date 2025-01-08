@@ -197,6 +197,18 @@ impl CldrCache {
         Ok(Some(new_langid.into()))
     }
 
+    fn replace_script_by_likely_lang(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
+        if !locale.language.is_default() || locale.region.is_some() || locale.script.is_none() {
+            return Ok(None);
+        }
+        let mut new_langid =
+            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        self.extended_locale_expander()?.maximize(&mut new_langid);
+        self.extended_locale_expander()?.minimize_favor_script(&mut new_langid);
+        Ok(Some(new_langid.into()))
+
+    }
+
     /// ICU4X does not store locales with their script
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
@@ -245,6 +257,8 @@ impl<'a> CldrDirLang<'a> {
         let path = format!("{}-{dir_suffix}/main/{locale}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
+        } else if let Some(new_locale) = self.0.replace_script_by_likely_lang(locale)? {
+            self.read_and_parse(&new_locale, file_name)
         } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
             self.read_and_parse(&new_locale, file_name)
         } else {

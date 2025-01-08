@@ -542,8 +542,8 @@ impl LocaleExpander {
     }
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
-    #[inline]
-    pub(crate) fn get_likely_script(&self, langid: &LanguageIdentifier) -> Option<Script> {
+    #[doc(hidden)]
+    pub fn get_likely_script(&self, langid: &LanguageIdentifier) -> Option<Script> {
         langid
             .script
             .or_else(|| self.infer_likely_script(langid.language, langid.region))

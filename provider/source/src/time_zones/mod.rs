@@ -158,12 +158,46 @@ macro_rules! impl_iterable_data_provider {
         $(
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    Ok(self
+                    let mut locales = self
                         .cldr()?
                         .dates("gregorian")
                         .list_locales()?
                         .map(DataIdentifierCow::from_locale)
-                        .collect())
+                        .collect::<HashSet<_>>();
+                    let expander = self.cldr()?.extended_locale_expander()?;
+                    let all_scripts = locales
+                        .iter()
+                        .flat_map(|l| {
+                            expander.get_likely_script(&icu::locale::LanguageIdentifier::from((
+                                l.locale.language,
+                                l.locale.script,
+                                l.locale.region,
+                            )))
+                        })
+                        .filter(|&script| {
+                            true
+                                && script != icu::locale::subtags::script!("Cans")
+                                && script != icu::locale::subtags::script!("Mong")
+                                && script != icu::locale::subtags::script!("Mtei")
+                                && script != icu::locale::subtags::script!("Nkoo")
+                                && script != icu::locale::subtags::script!("Rohg")
+                                && script != icu::locale::subtags::script!("Shaw")
+                                && script != icu::locale::subtags::script!("Tavt")
+                                && script != icu::locale::subtags::script!("Thaa")
+                        })
+                        .map(|script| {
+                            DataIdentifierCow::from_locale(
+                                icu::locale::LanguageIdentifier::from((
+                                    Default::default(),
+                                    Some(script),
+                                    None,
+                                ))
+                                .into(),
+                            )
+                        })
+                        .collect::<HashSet<_>>();
+                    locales.extend(all_scripts);
+                    Ok(locales)
                 }
             }
         )+
