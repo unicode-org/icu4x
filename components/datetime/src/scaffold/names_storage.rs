@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::ErrorField;
-use crate::pattern::{YearNameLength, MonthNameLength, WeekdayNameLength, DayPeriodNameLength, PatternLoadError};
+use crate::pattern::{
+    DayPeriodNameLength, MonthNameLength, PatternLoadError, WeekdayNameLength, YearNameLength,
+};
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use core::fmt;
@@ -333,11 +335,11 @@ pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
         other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
     ) -> <Self::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container;
     fn map_month_names(
-        other: <M::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container
+        other: <M::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container,
     ) -> <Self::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container;
     fn map_weekday_names(
         other: <M::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container,
-    ) -> <Self::WeekdayNames as NamesContainer<WeekdayNamesV1Marker,WeekdayNameLength>>::Container;
+    ) -> <Self::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container;
     fn map_day_period_names(
         other: <M::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container,
     ) -> <Self::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container;

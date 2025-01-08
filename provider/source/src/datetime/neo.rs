@@ -543,7 +543,9 @@ fn months_convert(
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
 #[allow(dead_code)] // TODO: Implement numeric overrides in neo patterns
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
-    use icu::datetime::provider::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
+    use icu::datetime::provider::fields::{
+        self, FieldLength, FieldNumericOverrides::*, FieldSymbol,
+    };
     let ca::LengthPattern::WithNumberingSystems {
         ref numbering_systems,
         ..

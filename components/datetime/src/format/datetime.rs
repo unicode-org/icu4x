@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
-use crate::error::{ErrorField, DateTimeWriteError};
-use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
+use crate::error::{DateTimeWriteError, ErrorField};
 use crate::input::ExtractedInput;
+use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
 use crate::{parts, pattern::*};
@@ -139,8 +139,12 @@ where
                 .get_name_for_era(l, era)
                 .map_err(|e| match e {
                     GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
-                    GetNameForEraError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
-                    GetNameForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
+                    GetNameForEraError::InvalidFieldLength => {
+                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                    }
+                    GetNameForEraError::NotLoaded => {
+                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                    }
                 });
             match era_symbol {
                 Err(e) => {
@@ -188,7 +192,9 @@ where
                                 max,
                             }
                         }
-                        GetNameForCyclicYearError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
+                        GetNameForCyclicYearError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
                         GetNameForCyclicYearError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
@@ -260,7 +266,9 @@ where
                         GetNameForMonthError::InvalidMonthCode => {
                             DateTimeWriteError::InvalidMonthCode(month.formatting_code)
                         }
-                        GetNameForMonthError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
+                        GetNameForMonthError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
                         GetNameForMonthError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
@@ -275,8 +283,12 @@ where
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
-                    GetNameForWeekdayError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
-                    GetNameForWeekdayError::NotLoaded => DateTimeWriteError::NamesNotLoaded(ErrorField(field)),
+                    GetNameForWeekdayError::InvalidFieldLength => {
+                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                    }
+                    GetNameForWeekdayError::NotLoaded => {
+                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                    }
                 }) {
                 Err(e) => {
                     w.with_part(PART, |w| {
@@ -396,7 +408,9 @@ where
                         })
                     })?;
                     Err(match e {
-                        GetNameForDayPeriodError::InvalidFieldLength => DateTimeWriteError::UnsupportedLength(ErrorField(field)),
+                        GetNameForDayPeriodError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
                         GetNameForDayPeriodError::NotLoaded => {
                             DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }

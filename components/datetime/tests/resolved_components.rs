@@ -4,9 +4,9 @@
 
 use icu_calendar::{Date, DateTime, Gregorian, Time};
 use icu_datetime::{
-    provider::fields::components,
     fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
+    provider::fields::components,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;

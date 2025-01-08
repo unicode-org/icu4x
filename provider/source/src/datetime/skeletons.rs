@@ -84,8 +84,8 @@ mod test {
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
-        provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
+        provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::pattern::{reference, runtime},
     };
     use icu::locale::locale;

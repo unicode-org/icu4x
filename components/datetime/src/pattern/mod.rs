@@ -15,19 +15,19 @@ mod names;
 #[allow(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
 mod pattern;
 
+use crate::error::ErrorField;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
+pub use names::DayPeriodNameLength;
+pub use names::MonthNameLength;
 pub(crate) use names::RawDateTimeNames;
 pub(crate) use names::RawDateTimeNamesBorrowed;
 pub(crate) use names::TimeZoneDataPayloadsBorrowed;
-pub use names::YearNameLength;
-pub use names::MonthNameLength;
-pub use names::WeekdayNameLength;
-pub use names::DayPeriodNameLength;
 pub use names::TypedDateTimeNames;
+pub use names::WeekdayNameLength;
+pub use names::YearNameLength;
 pub use pattern::DateTimePattern;
-use crate::error::ErrorField;
 
 pub(crate) enum GetNameForMonthError {
     InvalidMonthCode,

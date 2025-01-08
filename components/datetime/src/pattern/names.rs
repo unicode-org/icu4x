@@ -3,15 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    DateTimePattern, DateTimePatternFormatter, GetNameForDayPeriodError, GetNameForMonthError,
-    GetNameForWeekdayError, GetNameForCyclicYearError, GetNameForEraError,
-    MonthPlaceholderValue, PatternLoadError,
+    DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
+    GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
+    PatternLoadError,
 };
 use crate::error::ErrorField;
 use crate::fieldsets::enums::CompositeDateTimeFieldSet;
 use crate::input;
-use crate::provider::fields::{self, FieldSymbol, FieldLength};
-use crate::provider::neo::{*, marker_attrs};
+use crate::provider::fields::{self, FieldLength, FieldSymbol};
+use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::scaffold::*;
@@ -33,23 +33,23 @@ use icu_provider::prelude::*;
 #[non_exhaustive]
 pub enum YearNameLength {
     /// An abbreviated calendar-dependent year or era name.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "AD"
     /// - "甲子"
     Abbreviated,
     /// A wide calendar-dependent year or era name.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "Anno Domini"
     /// - "甲子"
     Wide,
     /// A narrow calendar-dependent year or era name. Not necesarily unique.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "A"
     /// - "甲子"
     Narrow,
@@ -63,10 +63,7 @@ impl YearNameLength {
             YearNameLength::Wide => Length::Wide,
             YearNameLength::Narrow => Length::Narrow,
         };
-        marker_attrs::name_attr_for(
-            marker_attrs::Context::Format,
-            length,
-        )
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
     }
 
     pub(crate) fn from_field_length(field_length: FieldLength) -> Option<Self> {
@@ -87,7 +84,10 @@ impl YearNameLength {
             YearNameLength::Wide => FieldLength::Four,
             YearNameLength::Narrow => FieldLength::Five,
         };
-        ErrorField(fields::Field { symbol: FieldSymbol::Era, length: field_length })
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Era,
+            length: field_length,
+        })
     }
 }
 
@@ -96,27 +96,27 @@ impl YearNameLength {
 #[non_exhaustive]
 pub enum MonthNameLength {
     /// An abbreviated calendar-dependent month name for formatting with other fields.
-    /// 
+    ///
     /// Example: "Sep"
     Abbreviated,
     /// A wide calendar-dependent month name for formatting with other fields.
-    /// 
+    ///
     /// Example: "September"
     Wide,
     /// A narrow calendar-dependent month name for formatting with other fields. Not necesarily unique.
-    /// 
+    ///
     /// Example: "S"
     Narrow,
     /// An abbreviated calendar-dependent month name for stand-alone display.
-    /// 
+    ///
     /// Example: "Sep"
     StandaloneAbbreviated,
     /// A wide calendar-dependent month name for stand-alone display.
-    /// 
+    ///
     /// Example: "September"
     StandaloneWide,
     /// A narrow calendar-dependent month name for stand-alone display. Not necesarily unique.
-    /// 
+    ///
     /// Example: "S"
     StandaloneNarrow,
 }
@@ -132,13 +132,13 @@ impl MonthNameLength {
             MonthNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
             MonthNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
         };
-        marker_attrs::name_attr_for(
-            context,
-            length,
-        )
+        marker_attrs::name_attr_for(context, length)
     }
 
-    pub(crate) fn from_field(field_symbol: fields::Month, field_length: FieldLength) -> Option<Self> {
+    pub(crate) fn from_field(
+        field_symbol: fields::Month,
+        field_length: FieldLength,
+    ) -> Option<Self> {
         use fields::Month;
         match (field_symbol, field_length) {
             (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
@@ -162,7 +162,10 @@ impl MonthNameLength {
             MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
             MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
         };
-        ErrorField(fields::Field { symbol: FieldSymbol::Month(field_symbol), length: field_length })
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Month(field_symbol),
+            length: field_length,
+        })
     }
 }
 
@@ -171,35 +174,35 @@ impl MonthNameLength {
 #[non_exhaustive]
 pub enum WeekdayNameLength {
     /// An abbreviated weekday name for formatting with other fields.
-    /// 
+    ///
     /// Example: "Tue"
     Abbreviated,
     /// A wide weekday name for formatting with other fields.
-    /// 
+    ///
     /// Example: "Tuesday"
     Wide,
     /// A narrow weekday name for formatting with other fields. Not necesarily unique.
-    /// 
+    ///
     /// Example: "T"
     Narrow,
     /// A short weekday name for formatting with other fields.
-    /// 
+    ///
     /// Example: "Tu"
     Short,
     /// An abbreviated weekday name for stand-alone display.
-    /// 
+    ///
     /// Example: "Tue"
     StandaloneAbbreviated,
     /// A wide weekday name for stand-alone display.
-    /// 
+    ///
     /// Example: "Tuesday"
     StandaloneWide,
     /// A narrow weekday name for stand-alone display. Not necesarily unique.
-    /// 
+    ///
     /// Example: "T"
     StandaloneNarrow,
     /// A short weekday name for stand-alone display.
-    /// 
+    ///
     /// Example: "Tu"
     StandaloneShort,
 }
@@ -218,13 +221,13 @@ impl WeekdayNameLength {
             WeekdayNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
             WeekdayNameLength::StandaloneShort => (Context::Standalone, Length::Short),
         };
-        marker_attrs::name_attr_for(
-            context,
-            length,
-        )
+        marker_attrs::name_attr_for(context, length)
     }
 
-    pub(crate) fn from_field(field_symbol: fields::Weekday, field_length: FieldLength) -> Option<Self> {
+    pub(crate) fn from_field(
+        field_symbol: fields::Weekday,
+        field_length: FieldLength,
+    ) -> Option<Self> {
         use fields::Weekday;
         // UTS 35 says that "e" and "E" have the same non-numeric names
         let field_symbol = field_symbol.to_format_symbol();
@@ -240,7 +243,9 @@ impl WeekdayNameLength {
             (Weekday::Format, FieldLength::Four) => Some(WeekdayNameLength::Wide),
             (Weekday::Format, FieldLength::Five) => Some(WeekdayNameLength::Narrow),
             (Weekday::Format, FieldLength::Six) => Some(WeekdayNameLength::Short),
-            (Weekday::StandAlone, FieldLength::Three) => Some(WeekdayNameLength::StandaloneAbbreviated),
+            (Weekday::StandAlone, FieldLength::Three) => {
+                Some(WeekdayNameLength::StandaloneAbbreviated)
+            }
             (Weekday::StandAlone, FieldLength::Four) => Some(WeekdayNameLength::StandaloneWide),
             (Weekday::StandAlone, FieldLength::Five) => Some(WeekdayNameLength::StandaloneNarrow),
             (Weekday::StandAlone, FieldLength::Six) => Some(WeekdayNameLength::StandaloneShort),
@@ -261,7 +266,10 @@ impl WeekdayNameLength {
             WeekdayNameLength::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
             WeekdayNameLength::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
         };
-        ErrorField(fields::Field { symbol: FieldSymbol::Weekday(field_symbol), length: field_length })
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        })
     }
 }
 
@@ -270,45 +278,45 @@ impl WeekdayNameLength {
 #[non_exhaustive]
 pub enum DayPeriodNameLength {
     /// An abbreviated 12-hour day period name.
-    /// 
+    ///
     /// Example: "AM"
     Abbreviated,
     /// A wide 12-hour day period name.
-    /// 
+    ///
     /// The wide form may be the same as the abbreviated form if the "real" long form
     /// (eg "ante meridiem") is not customarily used.
-    /// 
+    ///
     /// Example: "AM"
     Wide,
     /// An narrow 12-hour day period name.
-    /// 
+    ///
     /// The narrow form must be unique, unlike some other fields.
-    /// 
+    ///
     /// Example: "A"
     Narrow,
     /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "AM"
     /// - "mid."
     MeridiemAbbreviated,
     /// A wide 12-hour day period name, including display names for 0h and 12h.
-    /// 
+    ///
     /// The wide form may be the same as the abbreviated form if the "real" long form
     /// (eg "ante meridiem") is not customarily used.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "AM"
     /// - "mignight"
     MeridiemWide,
     /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
-    /// 
+    ///
     /// The narrow form must be unique, unlike some other fields.
-    /// 
+    ///
     /// Examples:
-    /// 
+    ///
     /// - "AM"
     /// - "md"
     MeridiemNarrow,
@@ -326,13 +334,13 @@ impl DayPeriodNameLength {
             DayPeriodNameLength::MeridiemWide => Length::Wide,
             DayPeriodNameLength::MeridiemNarrow => Length::Narrow,
         };
-        marker_attrs::name_attr_for(
-            marker_attrs::Context::Format,
-            length,
-        )
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
     }
 
-    pub(crate) fn from_field(field_symbol: fields::DayPeriod, field_length: FieldLength) -> Option<Self> {
+    pub(crate) fn from_field(
+        field_symbol: fields::DayPeriod,
+        field_length: FieldLength,
+    ) -> Option<Self> {
         use fields::DayPeriod;
         // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
@@ -340,9 +348,13 @@ impl DayPeriodNameLength {
             (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
             (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
             (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
-            (DayPeriod::NoonMidnight, FieldLength::Three) => Some(DayPeriodNameLength::MeridiemAbbreviated),
+            (DayPeriod::NoonMidnight, FieldLength::Three) => {
+                Some(DayPeriodNameLength::MeridiemAbbreviated)
+            }
             (DayPeriod::NoonMidnight, FieldLength::Four) => Some(DayPeriodNameLength::MeridiemWide),
-            (DayPeriod::NoonMidnight, FieldLength::Five) => Some(DayPeriodNameLength::MeridiemNarrow),
+            (DayPeriod::NoonMidnight, FieldLength::Five) => {
+                Some(DayPeriodNameLength::MeridiemNarrow)
+            }
             _ => None,
         }
     }
@@ -359,7 +371,10 @@ impl DayPeriodNameLength {
             DayPeriodNameLength::MeridiemWide => FieldLength::Four,
             DayPeriodNameLength::MeridiemNarrow => FieldLength::Five,
         };
-        ErrorField(fields::Field { symbol: FieldSymbol::DayPeriod(field_symbol), length: field_length })
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::DayPeriod(field_symbol),
+            length: field_length,
+        })
     }
 }
 
@@ -565,16 +580,14 @@ pub struct TypedDateTimeNames<
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     year_names: <FSet::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
-    month_names: <FSet::MonthNames as NamesContainer<
-        MonthNamesV1Marker,
-        MonthNameLength,
+    month_names:
+        <FSet::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container,
+    weekday_names:
+        <FSet::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container,
+    dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
+        DayPeriodNamesV1Marker,
+        DayPeriodNameLength,
     >>::Container,
-    weekday_names: <FSet::WeekdayNames as NamesContainer<
-        WeekdayNamesV1Marker,
-        WeekdayNameLength,
-    >>::Container,
-    dayperiod_names:
-        <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container,
     zone_essentials:
         <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
     locations_root: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
@@ -756,7 +769,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &C::YearNamesV1Marker::bind(provider),
             self.prefs,
             length,
-            length.to_approximate_error_field()
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -816,7 +829,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &C::MonthNamesV1Marker::bind(provider),
             self.prefs,
             length,
-            length.to_approximate_error_field()
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -883,8 +896,12 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let provider = DayPeriodNamesV1Marker::bind(provider);
-        self.inner
-            .load_day_period_names(&provider, self.prefs, length, length.to_approximate_error_field())?;
+        self.inner.load_day_period_names(
+            &provider,
+            self.prefs,
+            length,
+            length.to_approximate_error_field(),
+        )?;
         Ok(self)
     }
 
@@ -943,7 +960,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &WeekdayNamesV1Marker::bind(provider),
             self.prefs,
             length,
-            length.to_approximate_error_field()
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -1803,10 +1820,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                attributes,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.year_names
@@ -1829,10 +1843,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                attributes,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.month_names
@@ -1855,10 +1866,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                attributes,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.dayperiod_names
@@ -1881,10 +1889,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                attributes,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.weekday_names
@@ -2117,18 +2122,39 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // G..GGGGG
                 (FS::Era, One | Two | Three | Four | Five) => {
-                    self.load_year_names(year_provider, prefs, YearNameLength::from_field_length(field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 // U..UUUUU
                 (FS::Year(Year::Cyclic), One | Two | Three | Four | Five) => {
                     numeric_field = Some(field);
-                    self.load_year_names(year_provider, prefs, YearNameLength::from_field_length(field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 // MMM..MMMMM, LLL..LLLLL
-                (FS::Month(field_symbol @ Month::Format | field_symbol @ Month::StandAlone), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, MonthNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
+                (
+                    FS::Month(field_symbol @ Month::Format | field_symbol @ Month::StandAlone),
+                    Three | Four | Five,
+                ) => {
+                    self.load_month_names(
+                        month_provider,
+                        prefs,
+                        MonthNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 // e..ee, c..cc
@@ -2142,13 +2168,21 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     self.load_weekday_names(
                         weekday_provider,
                         prefs,
-                        WeekdayNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field
+                        WeekdayNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
                     )?;
                 }
 
                 // a..aaaaa, b..bbbbb
                 (FS::DayPeriod(field_symbol), One | Two | Three | Four | Five) => {
-                    self.load_day_period_names(dayperiod_provider, prefs, DayPeriodNameLength::from_field(field_symbol, field.length).ok_or(PatternLoadError::UnsupportedLength(error_field))?, error_field)?;
+                    self.load_day_period_names(
+                        dayperiod_provider,
+                        prefs,
+                        DayPeriodNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 ///// Time zone symbols /////
@@ -2391,11 +2425,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
-        cyclics
-            .get((cyclic.get() as usize) - 1)
-            .ok_or(GetNameForCyclicYearError::InvalidYearNumber {
+        cyclics.get((cyclic.get() as usize) - 1).ok_or(
+            GetNameForCyclicYearError::InvalidYearNumber {
                 max: cyclics.len() + 1,
-            })
+            },
+        )
     }
 
     pub(crate) fn get_name_for_day_period(

@@ -246,15 +246,9 @@ mod tests {
         let locale = locale!("en").into();
         let mut names: TypedDateTimeNames<Gregorian> = TypedDateTimeNames::try_new(locale).unwrap();
         names
-            .load_month_names(
-                &crate::provider::Baked,
-                MonthNameLength::Wide,
-            )
+            .load_month_names(&crate::provider::Baked, MonthNameLength::Wide)
             .unwrap()
-            .load_weekday_names(
-                &crate::provider::Baked,
-                WeekdayNameLength::Abbreviated,
-            )
+            .load_weekday_names(&crate::provider::Baked, WeekdayNameLength::Abbreviated)
             .unwrap()
             .load_year_names(&crate::provider::Baked, YearNameLength::Narrow)
             .unwrap()
