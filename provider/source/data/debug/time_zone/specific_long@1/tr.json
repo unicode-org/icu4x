@@ -345,20 +345,6 @@
     ],
     [
       [
-        "chat",
-        "Standard"
-      ],
-      "Chatham Standart Saati"
-    ],
-    [
-      [
-        "chat",
-        "Daylight"
-      ],
-      "Chatham Yaz Saati"
-    ],
-    [
-      [
         "chil",
         "Standard"
       ],
@@ -485,20 +471,6 @@
     ],
     [
       [
-        "fiji",
-        "Standard"
-      ],
-      "Fiji Standart Saati"
-    ],
-    [
-      [
-        "fiji",
-        "Daylight"
-      ],
-      "Fiji Yaz Saati"
-    ],
-    [
-      [
         "frgu",
         "Standard"
       ],
@@ -562,13 +534,6 @@
     ],
     [
       [
-        "guam",
-        "Standard"
-      ],
-      "Guam Standart Saati"
-    ],
-    [
-      [
         "gulf",
         "Standard"
       ],
@@ -594,34 +559,6 @@
         "Daylight"
       ],
       "Hawaii-Aleut Yaz Saati"
-    ],
-    [
-      [
-        "hoko",
-        "Standard"
-      ],
-      "Hong Kong Standart Saati"
-    ],
-    [
-      [
-        "hoko",
-        "Daylight"
-      ],
-      "Hong Kong Yaz Saati"
-    ],
-    [
-      [
-        "hovd",
-        "Standard"
-      ],
-      "Hovd Standart Saati"
-    ],
-    [
-      [
-        "hovd",
-        "Daylight"
-      ],
-      "Hovd Yaz Saati"
     ],
     [
       [
@@ -786,20 +723,6 @@
     ],
     [
       [
-        "loho",
-        "Standard"
-      ],
-      "Lord Howe Standart Saati"
-    ],
-    [
-      [
-        "loho",
-        "Daylight"
-      ],
-      "Lord Howe Yaz Saati"
-    ],
-    [
-      [
         "maga",
         "Standard"
       ],
@@ -839,20 +762,6 @@
         "Standard"
       ],
       "Markiz Adaları Saati"
-    ],
-    [
-      [
-        "maur",
-        "Standard"
-      ],
-      "Mauritius Standart Saati"
-    ],
-    [
-      [
-        "maur",
-        "Daylight"
-      ],
-      "Mauritius Yaz Saati"
     ],
     [
       [
@@ -989,34 +898,6 @@
     ],
     [
       [
-        "omsk",
-        "Standard"
-      ],
-      "Omsk Standart Saati"
-    ],
-    [
-      [
-        "omsk",
-        "Daylight"
-      ],
-      "Omsk Yaz Saati"
-    ],
-    [
-      [
-        "paki",
-        "Standard"
-      ],
-      "Pakistan Standart Saati"
-    ],
-    [
-      [
-        "paki",
-        "Daylight"
-      ],
-      "Pakistan Yaz Saati"
-    ],
-    [
-      [
         "pala",
         "Standard"
       ],
@@ -1028,20 +909,6 @@
         "Standard"
       ],
       "Papua Yeni Gine Saati"
-    ],
-    [
-      [
-        "para",
-        "Standard"
-      ],
-      "Paraguay Standart Saati"
-    ],
-    [
-      [
-        "para",
-        "Daylight"
-      ],
-      "Paraguay Yaz Saati"
     ],
     [
       [
@@ -1084,20 +951,6 @@
         "Standard"
       ],
       "Rothera Saati"
-    ],
-    [
-      [
-        "sama",
-        "Standard"
-      ],
-      "Samara Standart Saati"
-    ],
-    [
-      [
-        "sama",
-        "Daylight"
-      ],
-      "Samara Yaz Saati"
     ],
     [
       [
@@ -1185,20 +1038,6 @@
     ],
     [
       [
-        "tong",
-        "Standard"
-      ],
-      "Tonga Standart Saati"
-    ],
-    [
-      [
-        "tong",
-        "Daylight"
-      ],
-      "Tonga Yaz Saati"
-    ],
-    [
-      [
         "truk",
         "Standard"
       ],
@@ -1213,20 +1052,6 @@
     ],
     [
       [
-        "urug",
-        "Standard"
-      ],
-      "Uruguay Standart Saati"
-    ],
-    [
-      [
-        "urug",
-        "Daylight"
-      ],
-      "Uruguay Yaz Saati"
-    ],
-    [
-      [
         "uzbe",
         "Standard"
       ],
@@ -1238,20 +1063,6 @@
         "Daylight"
       ],
       "Özbekistan Yaz Saati"
-    ],
-    [
-      [
-        "vanu",
-        "Standard"
-      ],
-      "Vanuatu Standart Saati"
-    ],
-    [
-      [
-        "vanu",
-        "Daylight"
-      ],
-      "Vanuatu Yaz Saati"
     ],
     [
       [
@@ -1273,20 +1084,6 @@
         "Daylight"
       ],
       "Vladivostok Yaz Saati"
-    ],
-    [
-      [
-        "volg",
-        "Standard"
-      ],
-      "Volgograd Standart Saati"
-    ],
-    [
-      [
-        "volg",
-        "Daylight"
-      ],
-      "Volgograd Yaz Saati"
     ],
     [
       [
@@ -1322,20 +1119,6 @@
         "Daylight"
       ],
       "Yakutsk Yaz Saati"
-    ],
-    [
-      [
-        "yeka",
-        "Standard"
-      ],
-      "Yekaterinburg Standart Saati"
-    ],
-    [
-      [
-        "yeka",
-        "Daylight"
-      ],
-      "Yekaterinburg Yaz Saati"
     ],
     [
       [
