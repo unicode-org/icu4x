@@ -229,7 +229,11 @@ pub struct DecimalSymbolsV2<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalDigitsV1Marker = "decimal/digits@1")]
+#[icu_provider::data_struct(marker(
+    DecimalDigitsV1Marker,
+    "decimal/digits@1",
+    attributes_domain = "numbering_system"
+))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
