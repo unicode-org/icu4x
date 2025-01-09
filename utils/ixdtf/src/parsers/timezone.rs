@@ -141,7 +141,7 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
         return Ok(UtcOffsetRecordOrZ::Z);
     }
 
-    let separated = cursor.peek_n(3).map_or(false, is_time_separator);
+    let separated = cursor.peek_n(3).is_some_and(is_time_separator);
 
     let (mut utc_to_minute, parsed_minute) = parse_utc_offset_minute_precision(cursor)?;
 

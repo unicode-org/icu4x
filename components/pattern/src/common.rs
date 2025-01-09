@@ -231,7 +231,7 @@ pub trait PlaceholderValueProvider<K> {
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l>;
 }
 
-impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
+impl<K, T> PlaceholderValueProvider<K> for &'_ T
 where
     T: PlaceholderValueProvider<K> + ?Sized,
 {

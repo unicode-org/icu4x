@@ -2279,7 +2279,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 }
 
-impl<'data> RawDateTimeNamesBorrowed<'data> {
+impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_month(
         &self,
         field_symbol: fields::Month,
