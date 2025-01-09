@@ -639,20 +639,6 @@
     ],
     [
       [
-        "hovd",
-        "Standard"
-      ],
-      "Hovd, standardno vreme"
-    ],
-    [
-      [
-        "hovd",
-        "Daylight"
-      ],
-      "Hovd, letnje vreme"
-    ],
-    [
-      [
         "ince",
         "Standard"
       ],
@@ -692,20 +678,6 @@
         "Standard"
       ],
       "Zapadno-indonezijsko vreme"
-    ],
-    [
-      [
-        "iran",
-        "Standard"
-      ],
-      "Iran, standardno vreme"
-    ],
-    [
-      [
-        "iran",
-        "Daylight"
-      ],
-      "Iran, letnje vreme"
     ],
     [
       [
@@ -1059,34 +1031,6 @@
     ],
     [
       [
-        "omsk",
-        "Standard"
-      ],
-      "Omsk, standardno vreme"
-    ],
-    [
-      [
-        "omsk",
-        "Daylight"
-      ],
-      "Omsk, letnje vreme"
-    ],
-    [
-      [
-        "paki",
-        "Standard"
-      ],
-      "Pakistan, standardno vreme"
-    ],
-    [
-      [
-        "paki",
-        "Daylight"
-      ],
-      "Pakistan, letnje vreme"
-    ],
-    [
-      [
         "pala",
         "Standard"
       ],
@@ -1255,38 +1199,10 @@
     ],
     [
       [
-        "tong",
-        "Standard"
-      ],
-      "Tonga, standardno vreme"
-    ],
-    [
-      [
-        "tong",
-        "Daylight"
-      ],
-      "Tonga, letnje vreme"
-    ],
-    [
-      [
         "truk",
         "Standard"
       ],
       "Čuuk vreme"
-    ],
-    [
-      [
-        "turk",
-        "Standard"
-      ],
-      "Turkmenistan, standardno vreme"
-    ],
-    [
-      [
-        "turk",
-        "Daylight"
-      ],
-      "Turkmenistan, letnje vreme"
     ],
     [
       [
@@ -1311,20 +1227,6 @@
     ],
     [
       [
-        "vanu",
-        "Standard"
-      ],
-      "Vanuatu, standardno vreme"
-    ],
-    [
-      [
-        "vanu",
-        "Daylight"
-      ],
-      "Vanuatu, letnje vreme"
-    ],
-    [
-      [
         "vene",
         "Standard"
       ],
@@ -1343,20 +1245,6 @@
         "Daylight"
       ],
       "Vladivostok, letnje vreme"
-    ],
-    [
-      [
-        "volg",
-        "Standard"
-      ],
-      "Volgograd, standardno vreme"
-    ],
-    [
-      [
-        "volg",
-        "Daylight"
-      ],
-      "Volgograd, letnje vreme"
     ],
     [
       [

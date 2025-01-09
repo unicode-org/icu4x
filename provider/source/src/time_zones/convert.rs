@@ -605,7 +605,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
 
         let mz_periods =
             DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
-        let locations = DataProvider::<LocationsV1Marker>::load(self, req)?.payload;
+        let locations = self.calculate_locations(req)?;
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {
@@ -623,17 +623,23 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
                     return false;
                 };
                 tzs.iter().any(|tz| {
-                    let Some(location) = locations.get().locations.get(tz) else {
+                    let Some(location) = locations.get(tz) else {
                         return true;
                     };
                     if zv == ZoneVariant::Daylight {
                         writeable::cmp_utf8(
-                            &locations.get().pattern_daylight.interpolate([location]),
+                            &time_zone_names_resource
+                                .region_format_dt
+                                .0
+                                .interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal
                     } else if zv == ZoneVariant::Standard {
                         writeable::cmp_utf8(
-                            &locations.get().pattern_standard.interpolate([location]),
+                            &time_zone_names_resource
+                                .region_format_st
+                                .0
+                                .interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal
                     } else {
