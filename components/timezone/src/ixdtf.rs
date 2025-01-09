@@ -22,14 +22,17 @@ use ixdtf::{
 };
 
 /// The error type for parsing IXDTF syntax strings in `icu_timezone`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
     /// Syntax error for IXDTF string.
+    #[displaydoc("Syntax error in the IXDTF string: {0}")]
     Syntax(IxdtfParseError),
     /// Parsed record is out of valid date range.
+    #[displaydoc("Value out of range: {0}")]
     Range(RangeError),
     /// Parsed date and time records were not a valid ISO date.
+    #[displaydoc("Parsed date and time records were not a valid ISO date: {0}")]
     Date(DateError),
     /// There were missing fields required to parse component.
     MissingFields,
@@ -40,6 +43,7 @@ pub enum ParseError {
     /// The set of time zone fields was not expected for the given type.
     /// For example, if a named time zone was present with offset-only parsing,
     /// or an offset was present with named-time-zone-only parsing.
+    #[displaydoc("The set of time zone fields was not expected for the given type")]
     MismatchedTimeZoneFields,
     /// An unknown calendar was provided.
     UnknownCalendar,
@@ -59,6 +63,9 @@ pub enum ParseError {
     /// IxdtfParser::new().try_loose_iso_from_str("2024-08-12T14:32:00+02:00[Europe/Zurich]").unwrap();
     /// IxdtfParser::new().try_loose_iso_from_str("2024-08-12T14:32:00[Europe/Zurich]").unwrap();
     /// ```
+    #[displaydoc(
+        "A timezone calculation is required to interpret this string, which is not supported"
+    )]
     RequiresCalculation,
 }
 

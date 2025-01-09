@@ -22,29 +22,45 @@ use crate::measure::provider::si_prefix::{Base, SiPrefix};
 pub struct IcuRatio(Ratio<BigInt>);
 
 /// Represents an error when the ratio string is invalid and cannot be parsed.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, displaydoc::Display)]
 pub enum RatioFromStrError {
     /// Represents an error when the ratio string is divided by zero.
     DivisionByZero,
 
     /// Represents an error when the ratio string contains multiple slashes.
+    ///
     /// For example, "1/2/3".
+    #[displaydoc("Represents an error when the ratio string contains multiple slashes")]
     MultipleSlashes,
 
     /// Represents an error when the ratio string contains non-numeric characters in fractions.
+    ///
     /// For example, "1/2A".
+    #[displaydoc(
+        "Represents an error when the ratio string contains non-numeric characters in fractions"
+    )]
     NonNumericCharactersInFractions,
 
     /// Represents an error when the ratio string contains multiple scientific notations.
+    ///
     /// For example, "1.5E6E6".
+    #[displaydoc(
+        "Represents an error when the ratio string contains multiple scientific notations"
+    )]
     MultipleScientificNotations,
 
     /// Represents an error when the ratio string contains multiple decimal points.
+    ///
     /// For example, "1.5.6".
+    #[displaydoc("Represents an error when the ratio string contains multiple decimal points")]
     MultipleDecimalPoints,
 
     /// Represents an error when the exponent part of the ratio string is not an integer.
+    ///
     /// For example, "1.5E6.5".
+    #[displaydoc(
+        "Represents an error when the exponent part of the ratio string is not an integer"
+    )]
     ExponentPartIsNotAnInteger,
 
     /// Represents an error when the ratio string is dificient in some other way.

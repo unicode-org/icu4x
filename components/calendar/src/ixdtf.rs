@@ -10,12 +10,14 @@ use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParseError as IxdtfError;
 
 /// An error returned from parsing an IXDTF string to an `icu_calendar` type.
-#[derive(Debug)]
+#[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
     /// Syntax error in the IXDTF string.
+    #[displaydoc("Syntax error in the IXDTF string: {0}")]
     Syntax(IxdtfError),
     /// Value is out of range.
+    #[displaydoc("Value out of range: {0}")]
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
     MissingFields,

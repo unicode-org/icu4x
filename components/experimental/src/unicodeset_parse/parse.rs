@@ -30,14 +30,20 @@ use icu_properties::{provider::*, PropertyParser};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseErrorKind {
-    /// An unexpected character was encountered. This variant implies the other variants
+    /// An unexpected character was encountered.
+    ///
+    /// This variant implies the other variants
     /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
+    #[displaydoc("An unexpected character was encountered")]
     UnexpectedChar(char),
-    /// The property name or value is unknown. For property names, make sure you use the spelling
+    /// The property name or value is unknown.
+    ///
+    /// For property names, make sure you use the spelling
     /// defined in [ECMA-262](https://tc39.es/ecma262/#table-nonbinary-unicode-properties).
+    #[displaydoc("The property name or value is unknown")]
     UnknownProperty,
     /// A reference to an unknown variable.
     UnknownVariable,
@@ -47,11 +53,13 @@ pub enum ParseErrorKind {
     Eof,
     /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
     Internal,
-    /// The provided syntax is not supported by us. Note that unknown properties will return the
+    /// The provided syntax is not supported by us.
+    ///
+    /// Note that unknown properties will return the
     /// `UnknownProperty` variant, not this one.
+    #[displaydoc("The provided syntax is not supported by us.")]
     Unimplemented,
-    /// The provided escape sequence is not a valid Unicode code point or represents too many
-    /// code points.
+    /// The provided escape sequence is not a valid Unicode code point or represents too many code points.
     InvalidEscape,
 }
 use zerovec::VarZeroVec;
