@@ -316,8 +316,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
-        // MSRV Rust 1.79: Use split_at_unchecked
-        let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
+        let (len_bytes, data_bytes) = unsafe { slice.split_at_unchecked(F::Len::SIZE) };
         // Safety: F::Len allows all byte sequences
         let len_ule = F::Len::slice_from_bytes_unchecked(len_bytes);
 
@@ -328,7 +327,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // whereas we're calling something that asks for `parse_bytes_with_length()`.
         // The two methods perform similar validation, with parse_bytes() validating an additional
         // 4-byte `length` header.
-        Self::from_bytes_unchecked_with_length(len_u32, slice.get_unchecked(F::Len::SIZE..))
+        Self::from_bytes_unchecked_with_length(len_u32, data_bytes)
     }
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously

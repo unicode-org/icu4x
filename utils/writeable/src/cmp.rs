@@ -19,7 +19,8 @@ impl fmt::Write for WriteComparator<'_> {
             return Ok(());
         }
         let cmp_len = core::cmp::min(other.len(), self.code_units.len());
-        let (this, remainder) = self.code_units.split_at(cmp_len);
+        // SAFETY: cmp_len is at most self.code_units.len()
+        let (this, remainder) = unsafe { self.code_units.split_at_unchecked(cmp_len) };
         self.code_units = remainder;
         self.result = this.cmp(other.as_bytes());
         Ok(())
