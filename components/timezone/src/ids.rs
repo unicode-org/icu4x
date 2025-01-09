@@ -529,7 +529,7 @@ pub struct TimeZoneBcp47Iter<'a> {
     inner: ZeroSliceIter<'a, TimeZoneBcp47Id>,
 }
 
-impl<'a> Iterator for TimeZoneBcp47Iter<'a> {
+impl Iterator for TimeZoneBcp47Iter<'_> {
     type Item = TimeZoneBcp47Id;
 
     fn next(&mut self) -> Option<Self::Item> {
