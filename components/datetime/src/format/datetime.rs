@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
-use crate::error::DateTimeWriteError;
-use crate::fields::{self, FieldLength, FieldSymbol, Second, Year};
+use crate::error::{DateTimeWriteError, ErrorField};
 use crate::input::ExtractedInput;
+use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
 use crate::{parts, pattern::*};
@@ -138,8 +138,13 @@ where
             let era_symbol = datetime_names
                 .get_name_for_era(l, era)
                 .map_err(|e| match e {
-                    GetSymbolForEraError::Invalid => DateTimeWriteError::InvalidEra(era),
-                    GetSymbolForEraError::NotLoaded => DateTimeWriteError::NamesNotLoaded(field),
+                    GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
+                    GetNameForEraError::InvalidFieldLength => {
+                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                    }
+                    GetNameForEraError::NotLoaded => {
+                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                    }
                 });
             match era_symbol {
                 Err(e) => {
@@ -181,14 +186,17 @@ where
                         })
                     })?;
                     return Ok(Err(match e {
-                        GetSymbolForCyclicYearError::Invalid { max } => {
+                        GetNameForCyclicYearError::InvalidYearNumber { max } => {
                             DateTimeWriteError::InvalidCyclicYear {
                                 value: cyclic.get() as usize,
                                 max,
                             }
                         }
-                        GetSymbolForCyclicYearError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(field)
+                        GetNameForCyclicYearError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
+                        GetNameForCyclicYearError::NotLoaded => {
+                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
                     }));
                 }
@@ -255,11 +263,14 @@ where
                         w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))
                     })?;
                     Err(match e {
-                        GetNameForMonthError::Invalid => {
+                        GetNameForMonthError::InvalidMonthCode => {
                             DateTimeWriteError::InvalidMonthCode(month.formatting_code)
                         }
+                        GetNameForMonthError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
                         GetNameForMonthError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(field)
+                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
                     })
                 }
@@ -272,7 +283,12 @@ where
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
-                    GetNameForWeekdayError::NotLoaded => DateTimeWriteError::NamesNotLoaded(field),
+                    GetNameForWeekdayError::InvalidFieldLength => {
+                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                    }
+                    GetNameForWeekdayError::NotLoaded => {
+                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                    }
                 }) {
                 Err(e) => {
                     w.with_part(PART, |w| {
@@ -392,8 +408,11 @@ where
                         })
                     })?;
                     Err(match e {
+                        GetNameForDayPeriodError::InvalidFieldLength => {
+                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        }
                         GetNameForDayPeriodError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(field)
+                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
                         }
                     })
                 }
@@ -551,7 +570,7 @@ fn perform_timezone_fallback(
                     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
                 }
                 FormatTimeZoneError::NamesNotLoaded => {
-                    Err(DateTimeWriteError::NamesNotLoaded(field))
+                    Err(DateTimeWriteError::NamesNotLoaded(ErrorField(field)))
                 }
                 FormatTimeZoneError::MissingInputField(f) => {
                     Err(DateTimeWriteError::MissingInputField(f))

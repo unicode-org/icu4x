@@ -5,7 +5,7 @@
 #[cfg(feature = "datagen")]
 use super::runtime;
 use super::{reference, PatternItem};
-use crate::fields;
+use crate::provider::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{self, skeleton};
 #[cfg(feature = "datagen")]

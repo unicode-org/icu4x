@@ -21,6 +21,8 @@ use core::{
     convert::TryFrom,
 };
 
+use crate::error::ErrorField;
+
 /// An error relating to the field for a date pattern field as a whole.
 ///
 /// Separate error types exist for parts of a field, like the
@@ -106,10 +108,24 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
     }
 }
 
+impl From<ErrorField> for Field {
+    /// Recover a [`Field`] (unstable) from an [`ErrorField`] (stable wrapper)
+    fn from(value: ErrorField) -> Self {
+        value.0
+    }
+}
+
+impl From<Field> for ErrorField {
+    /// Create an [`ErrorField`] (stable wrapper) from a [`Field`] (unstable)
+    fn from(value: Field) -> Self {
+        Self(value)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fields::{Field, FieldLength, FieldSymbol, Second, Year};
+    use crate::provider::fields::{Field, FieldLength, FieldSymbol, Second, Year};
     use zerovec::ule::{AsULE, ULE};
 
     #[test]

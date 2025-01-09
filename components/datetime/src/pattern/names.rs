@@ -3,14 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    DateTimePattern, DateTimePatternFormatter, GetNameForDayPeriodError, GetNameForMonthError,
-    GetNameForWeekdayError, GetSymbolForCyclicYearError, GetSymbolForEraError,
-    MonthPlaceholderValue, PatternLoadError,
+    DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
+    GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
+    PatternLoadError,
 };
-use crate::fields::{self, FieldLength, FieldSymbol};
+use crate::error::ErrorField;
 use crate::fieldsets::enums::CompositeDateTimeFieldSet;
 use crate::input;
-use crate::provider::neo::*;
+use crate::provider::fields::{self, FieldLength, FieldSymbol};
+use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::scaffold::*;
@@ -26,6 +27,330 @@ use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
+
+/// Choices for loading year names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum YearNameLength {
+    /// An abbreviated calendar-dependent year or era name.
+    ///
+    /// Examples:
+    ///
+    /// - "AD"
+    /// - "甲子"
+    Abbreviated,
+    /// A wide calendar-dependent year or era name.
+    ///
+    /// Examples:
+    ///
+    /// - "Anno Domini"
+    /// - "甲子"
+    Wide,
+    /// A narrow calendar-dependent year or era name. Not necesarily unique.
+    ///
+    /// Examples:
+    ///
+    /// - "A"
+    /// - "甲子"
+    Narrow,
+}
+
+impl YearNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::Length;
+        let length = match self {
+            YearNameLength::Abbreviated => Length::Abbr,
+            YearNameLength::Wide => Length::Wide,
+            YearNameLength::Narrow => Length::Narrow,
+        };
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
+    }
+
+    pub(crate) fn from_field_length(field_length: FieldLength) -> Option<Self> {
+        // UTS 35 says that "G..GGG" and "U..UUU" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match field_length {
+            FieldLength::Three => Some(YearNameLength::Abbreviated),
+            FieldLength::Four => Some(YearNameLength::Wide),
+            FieldLength::Five => Some(YearNameLength::Narrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        let field_length = match self {
+            YearNameLength::Abbreviated => FieldLength::Three,
+            YearNameLength::Wide => FieldLength::Four,
+            YearNameLength::Narrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Era,
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading month names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum MonthNameLength {
+    /// An abbreviated calendar-dependent month name for formatting with other fields.
+    ///
+    /// Example: "Sep"
+    Abbreviated,
+    /// A wide calendar-dependent month name for formatting with other fields.
+    ///
+    /// Example: "September"
+    Wide,
+    /// A narrow calendar-dependent month name for formatting with other fields. Not necesarily unique.
+    ///
+    /// Example: "S"
+    Narrow,
+    /// An abbreviated calendar-dependent month name for stand-alone display.
+    ///
+    /// Example: "Sep"
+    StandaloneAbbreviated,
+    /// A wide calendar-dependent month name for stand-alone display.
+    ///
+    /// Example: "September"
+    StandaloneWide,
+    /// A narrow calendar-dependent month name for stand-alone display. Not necesarily unique.
+    ///
+    /// Example: "S"
+    StandaloneNarrow,
+}
+
+impl MonthNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::{Context, Length};
+        let (context, length) = match self {
+            MonthNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            MonthNameLength::Wide => (Context::Format, Length::Wide),
+            MonthNameLength::Narrow => (Context::Format, Length::Narrow),
+            MonthNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            MonthNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            MonthNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+        };
+        marker_attrs::name_attr_for(context, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::Month,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::Month;
+        match (field_symbol, field_length) {
+            (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
+            (Month::Format, FieldLength::Four) => Some(MonthNameLength::Wide),
+            (Month::Format, FieldLength::Five) => Some(MonthNameLength::Narrow),
+            (Month::StandAlone, FieldLength::Three) => Some(MonthNameLength::StandaloneAbbreviated),
+            (Month::StandAlone, FieldLength::Four) => Some(MonthNameLength::StandaloneWide),
+            (Month::StandAlone, FieldLength::Five) => Some(MonthNameLength::StandaloneNarrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Month;
+        let (field_symbol, field_length) = match self {
+            MonthNameLength::Abbreviated => (Month::Format, FieldLength::Three),
+            MonthNameLength::Wide => (Month::Format, FieldLength::Four),
+            MonthNameLength::Narrow => (Month::Format, FieldLength::Five),
+            MonthNameLength::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
+            MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
+            MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Month(field_symbol),
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading weekday names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum WeekdayNameLength {
+    /// An abbreviated weekday name for formatting with other fields.
+    ///
+    /// Example: "Tue"
+    Abbreviated,
+    /// A wide weekday name for formatting with other fields.
+    ///
+    /// Example: "Tuesday"
+    Wide,
+    /// A narrow weekday name for formatting with other fields. Not necesarily unique.
+    ///
+    /// Example: "T"
+    Narrow,
+    /// A short weekday name for formatting with other fields.
+    ///
+    /// Example: "Tu"
+    Short,
+    /// An abbreviated weekday name for stand-alone display.
+    ///
+    /// Example: "Tue"
+    StandaloneAbbreviated,
+    /// A wide weekday name for stand-alone display.
+    ///
+    /// Example: "Tuesday"
+    StandaloneWide,
+    /// A narrow weekday name for stand-alone display. Not necesarily unique.
+    ///
+    /// Example: "T"
+    StandaloneNarrow,
+    /// A short weekday name for stand-alone display.
+    ///
+    /// Example: "Tu"
+    StandaloneShort,
+}
+
+impl WeekdayNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::{Context, Length};
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let (context, length) = match self {
+            WeekdayNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            WeekdayNameLength::Wide => (Context::Format, Length::Wide),
+            WeekdayNameLength::Narrow => (Context::Format, Length::Narrow),
+            WeekdayNameLength::Short => (Context::Format, Length::Short),
+            WeekdayNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            WeekdayNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            WeekdayNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+            WeekdayNameLength::StandaloneShort => (Context::Standalone, Length::Short),
+        };
+        marker_attrs::name_attr_for(context, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::Weekday,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::Weekday;
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let field_symbol = field_symbol.to_format_symbol();
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
+        match (field_symbol, field_length) {
+            (Weekday::Format, FieldLength::Three) => Some(WeekdayNameLength::Abbreviated),
+            (Weekday::Format, FieldLength::Four) => Some(WeekdayNameLength::Wide),
+            (Weekday::Format, FieldLength::Five) => Some(WeekdayNameLength::Narrow),
+            (Weekday::Format, FieldLength::Six) => Some(WeekdayNameLength::Short),
+            (Weekday::StandAlone, FieldLength::Three) => {
+                Some(WeekdayNameLength::StandaloneAbbreviated)
+            }
+            (Weekday::StandAlone, FieldLength::Four) => Some(WeekdayNameLength::StandaloneWide),
+            (Weekday::StandAlone, FieldLength::Five) => Some(WeekdayNameLength::StandaloneNarrow),
+            (Weekday::StandAlone, FieldLength::Six) => Some(WeekdayNameLength::StandaloneShort),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Weekday;
+        let (field_symbol, field_length) = match self {
+            WeekdayNameLength::Abbreviated => (Weekday::Format, FieldLength::Three),
+            WeekdayNameLength::Wide => (Weekday::Format, FieldLength::Four),
+            WeekdayNameLength::Narrow => (Weekday::Format, FieldLength::Five),
+            WeekdayNameLength::Short => (Weekday::Format, FieldLength::Six),
+            WeekdayNameLength::StandaloneAbbreviated => (Weekday::StandAlone, FieldLength::Three),
+            WeekdayNameLength::StandaloneWide => (Weekday::StandAlone, FieldLength::Four),
+            WeekdayNameLength::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
+            WeekdayNameLength::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading day period names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum DayPeriodNameLength {
+    /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "mid."
+    Abbreviated,
+    /// A wide 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// The wide form may be the same as the abbreviated form if the "real" long form
+    /// (eg "ante meridiem") is not customarily used.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "mignight"
+    Wide,
+    /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// The narrow form must be unique, unlike some other fields.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "md"
+    Narrow,
+}
+
+impl DayPeriodNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::Length;
+        let length = match self {
+            DayPeriodNameLength::Abbreviated => Length::Abbr,
+            DayPeriodNameLength::Wide => Length::Wide,
+            DayPeriodNameLength::Narrow => Length::Narrow,
+        };
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::DayPeriod,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::DayPeriod;
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = match field_symbol {
+            DayPeriod::NoonMidnight => DayPeriod::AmPm,
+            other => other,
+        };
+        // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match (field_symbol, field_length) {
+            (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
+            (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
+            (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = fields::DayPeriod::AmPm;
+        let field_length = match self {
+            DayPeriodNameLength::Abbreviated => FieldLength::Three,
+            DayPeriodNameLength::Wide => FieldLength::Four,
+            DayPeriodNameLength::Narrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::DayPeriod(field_symbol),
+            length: field_length,
+        })
+    }
+}
 
 pub struct EmptyDataProvider;
 
@@ -68,9 +393,10 @@ size_test!(
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::FieldLength;
-/// use icu::datetime::fields;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::pattern::MonthNameLength;
+/// use icu::datetime::pattern::WeekdayNameLength;
+/// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
@@ -78,11 +404,11 @@ size_test!(
 /// let mut names: TypedDateTimeNames<Gregorian> =
 ///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
 /// names
-///     .include_month_names(fields::Month::Format, FieldLength::Three)
+///     .include_month_names(MonthNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_weekday_names(fields::Weekday::Format, FieldLength::Three)
+///     .include_weekday_names(WeekdayNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_day_period_names(FieldLength::Three)
+///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
 ///     .unwrap();
 ///
 /// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
@@ -102,13 +428,15 @@ size_test!(
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::timezone::{TimeZoneInfo, IxdtfParser};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
+///
+/// // Unstable API used only for error construction below
+/// use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol, Weekday};
 ///
 /// // Create an instance that can format all fields (CompositeFieldSet):
 /// let mut names: TypedDateTimeNames<Gregorian, CompositeFieldSet> =
@@ -127,7 +455,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
+///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (7, 10, parts::WEEKDAY), // mon
@@ -158,7 +486,7 @@ size_test!(
 /// let empty = EmptyDataProvider::new();
 /// assert!(matches!(
 ///     names.load_for_pattern(&empty, &pattern),
-///     Err(PatternLoadError::Data(_, Field { symbol: FieldSymbol::Weekday(_), .. })),
+///     Err(PatternLoadError::Data(_, _)),
 /// ));
 /// ```
 ///
@@ -170,7 +498,6 @@ size_test!(
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
@@ -228,17 +555,15 @@ pub struct TypedDateTimeNames<
 }
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
-    year_names: <FSet::YearNames as NamesContainer<YearNamesV1Marker, FieldLength>>::Container,
-    month_names: <FSet::MonthNames as NamesContainer<
-        MonthNamesV1Marker,
-        (fields::Month, FieldLength),
+    year_names: <FSet::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
+    month_names:
+        <FSet::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container,
+    weekday_names:
+        <FSet::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container,
+    dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
+        DayPeriodNamesV1Marker,
+        DayPeriodNameLength,
     >>::Container,
-    weekday_names: <FSet::WeekdayNames as NamesContainer<
-        WeekdayNamesV1Marker,
-        (fields::Weekday, FieldLength),
-    >>::Container,
-    dayperiod_names:
-        <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, FieldLength>>::Container,
     zone_essentials:
         <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
     locations_root: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
@@ -299,10 +624,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
-    year_names: OptionalNames<FieldLength, &'l YearNamesV1<'l>>,
-    month_names: OptionalNames<(fields::Month, FieldLength), &'l MonthNamesV1<'l>>,
-    weekday_names: OptionalNames<(fields::Weekday, FieldLength), &'l LinearNamesV1<'l>>,
-    dayperiod_names: OptionalNames<FieldLength, &'l LinearNamesV1<'l>>,
+    year_names: OptionalNames<YearNameLength, &'l YearNamesV1<'l>>,
+    month_names: OptionalNames<MonthNameLength, &'l MonthNamesV1<'l>>,
+    weekday_names: OptionalNames<WeekdayNameLength, &'l LinearNamesV1<'l>>,
+    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l LinearNamesV1<'l>>,
     zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
     locations_root: OptionalNames<(), &'l tz::LocationsV1<'l>>,
     locations: OptionalNames<(), &'l tz::LocationsV1<'l>>,
@@ -362,7 +687,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
-    /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::locale::locale;
@@ -411,7 +735,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
-        field_length: FieldLength,
+        length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<C::YearNamesV1Marker> + ?Sized,
@@ -419,7 +743,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         self.inner.load_year_names(
             &C::YearNamesV1Marker::bind(provider),
             self.prefs,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -432,8 +757,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::YearNameLength;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
@@ -442,26 +767,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_year_names(FieldLength::Three),
+    ///     names.include_year_names(YearNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_year_names(
         &mut self,
-        field_length: FieldLength,
+        length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
     {
-        self.load_year_names(&crate::provider::Baked, field_length)
+        self.load_year_names(&crate::provider::Baked, length)
     }
 
     /// Loads month names for the specified symbol and length.
@@ -470,8 +795,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn load_month_names<P>(
         &mut self,
         provider: &P,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<C::MonthNamesV1Marker> + ?Sized,
@@ -479,8 +803,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         self.inner.load_month_names(
             &C::MonthNamesV1Marker::bind(provider),
             self.prefs,
-            field_symbol,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -493,7 +817,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -501,39 +825,36 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Month::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
     ///
     /// // First length is successful:
     /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
     /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_month_names(alt_field_symbol, FieldLength::Four),
+    ///     names.include_month_names(MonthNameLength::StandaloneWide),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
-    ///     names.include_month_names(field_symbol, FieldLength::Three),
+    ///     names.include_month_names(MonthNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_month_names(
         &mut self,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
     {
-        self.load_month_names(&crate::provider::Baked, field_symbol, field_length)
+        self.load_month_names(&crate::provider::Baked, length)
     }
 
     /// Loads day period names for the specified length.
@@ -542,14 +863,18 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
-        field_length: FieldLength,
+        length: DayPeriodNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let provider = DayPeriodNamesV1Marker::bind(provider);
-        self.inner
-            .load_day_period_names(&provider, self.prefs, field_length)?;
+        self.inner.load_day_period_names(
+            &provider,
+            self.prefs,
+            length,
+            length.to_approximate_error_field(),
+        )?;
         Ok(self)
     }
 
@@ -561,7 +886,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -571,26 +896,26 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_day_period_names(FieldLength::Three),
+    ///     names.include_day_period_names(DayPeriodNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
-        field_length: FieldLength,
+        length: DayPeriodNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<DayPeriodNamesV1Marker>,
     {
-        self.load_day_period_names(&crate::provider::Baked, field_length)
+        self.load_day_period_names(&crate::provider::Baked, length)
     }
 
     /// Loads weekday names for the specified symbol and length.
@@ -599,8 +924,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn load_weekday_names<P>(
         &mut self,
         provider: &P,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
+        length: WeekdayNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         P: DataProvider<WeekdayNamesV1Marker> + ?Sized,
@@ -608,8 +932,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         self.inner.load_weekday_names(
             &WeekdayNamesV1Marker::bind(provider),
             self.prefs,
-            field_symbol,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
@@ -622,47 +946,44 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern::PatternLoadError;
+    /// use icu::datetime::pattern::WeekdayNameLength;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Weekday::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
     ///
     /// // First length is successful:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_weekday_names(alt_field_symbol, FieldLength::Four),
+    ///     names.include_weekday_names(WeekdayNameLength::StandaloneWide),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// assert!(matches!(
-    ///     names.include_weekday_names(field_symbol, FieldLength::Three),
+    ///     names.include_weekday_names(WeekdayNameLength::Abbreviated),
     ///     Err(PatternLoadError::ConflictingField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_weekday_names(
         &mut self,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
+        length: WeekdayNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<WeekdayNamesV1Marker>,
     {
-        self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
+        self.load_weekday_names(&crate::provider::Baked, length)
     }
 
     /// Loads shared essential patterns for time zone formatting.
@@ -1335,8 +1656,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::DateTime;
     /// use icu::datetime::pattern::TypedDateTimeNames;
-    /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::fields;
+    /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
@@ -1346,7 +1666,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
     ///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
     /// names
-    ///     .include_month_names(fields::Month::Format, FieldLength::Three)
+    ///     .include_month_names(MonthNameLength::Abbreviated)
     ///     .unwrap();
     ///
     /// // Test it with a pattern:
@@ -1388,19 +1708,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Self {
             year_names: <FSet::YearNames as NamesContainer<
                 YearNamesV1Marker,
-                FieldLength,
+                YearNameLength,
             >>::Container::new_empty(),
             month_names: <FSet::MonthNames as NamesContainer<
                 MonthNamesV1Marker,
-                (fields::Month, FieldLength),
+                MonthNameLength,
             >>::Container::new_empty(),
             weekday_names: <FSet::WeekdayNames as NamesContainer<
                 WeekdayNamesV1Marker,
-                (fields::Weekday, FieldLength),
+                WeekdayNameLength,
             >>::Container::new_empty(),
             dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
                 DayPeriodNamesV1Marker,
-                FieldLength,
+                DayPeriodNameLength,
             >>::Container::new_empty(),
             zone_essentials: <FSet::ZoneEssentials as NamesContainer<
                 tz::EssentialsV1Marker,
@@ -1461,38 +1781,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_length: FieldLength,
+        length: YearNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
+        let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Era,
-            length: field_length,
-        };
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        let variables = field_length;
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    marker_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.year_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1500,40 +1804,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
+        let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Month(field_symbol),
-            length: field_length,
-        };
-        let variables = (field_symbol, field_length);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    match field_symbol {
-                        fields::Month::Format => marker_attrs::Context::Format,
-                        fields::Month::StandAlone => marker_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.month_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1541,39 +1827,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_length: FieldLength,
+        length: DayPeriodNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
+        let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            // Names for 'a' and 'b' are stored in the same data marker
-            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
-            length: field_length,
-        };
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        let variables = field_length;
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    marker_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.dayperiod_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1581,51 +1850,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
+        length: WeekdayNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
+        let attributes = length.to_attributes();
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Weekday(field_symbol),
-            length: field_length,
-        };
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
-        let variables = (field_symbol, field_length);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    match field_symbol {
-                        // UTS 35 says that "e" and "E" have the same non-numeric names
-                        fields::Weekday::Format | fields::Weekday::Local => {
-                            marker_attrs::Context::Format
-                        }
-                        fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.weekday_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1638,10 +1878,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1649,8 +1889,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.zone_essentials
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1663,10 +1903,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1674,19 +1914,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.locations_root
             .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.locations
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
     fn load_mz_periods<P>(
         &mut self,
         provider: &P,
-        field: fields::Field,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized,
@@ -1694,8 +1934,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         let variables = ();
         self.mz_periods
             .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1706,10 +1946,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1717,9 +1957,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.mz_generic_long
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.load_mz_periods(mz_period_provider, error_field)?;
         Ok(())
     }
 
@@ -1730,10 +1970,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1741,9 +1981,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.mz_generic_short
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.load_mz_periods(mz_period_provider, error_field)?;
         Ok(())
     }
 
@@ -1754,10 +1994,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1765,9 +2005,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.mz_specific_long
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.load_mz_periods(mz_period_provider, error_field)?;
         Ok(())
     }
 
@@ -1778,10 +2018,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
         let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1789,9 +2029,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.mz_specific_short
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.load_mz_periods(mz_period_provider, error_field)?;
         Ok(())
     }
 
@@ -1841,8 +2081,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             let PatternItem::Field(field) = item else {
                 continue;
             };
+            let error_field = ErrorField(field);
 
-            use fields::*;
+            use crate::provider::fields::*;
             use FieldLength::*;
             use FieldSymbol as FS;
 
@@ -1851,42 +2092,67 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // G..GGGGG
                 (FS::Era, One | Two | Three | Four | Five) => {
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 // U..UUUUU
                 (FS::Year(Year::Cyclic), One | Two | Three | Four | Five) => {
                     numeric_field = Some(field);
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
-                // MMM..MMMMM
-                (FS::Month(Month::Format), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, Month::Format, field.length)?;
+                // MMM..MMMMM, LLL..LLLLL
+                (
+                    FS::Month(field_symbol @ Month::Format | field_symbol @ Month::StandAlone),
+                    Three | Four | Five,
+                ) => {
+                    self.load_month_names(
+                        month_provider,
+                        prefs,
+                        MonthNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
-                // LLL..LLLLL
-                (FS::Month(Month::StandAlone), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, Month::StandAlone, field.length)?;
+                // e..ee, c..cc
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
+                    // TODO(#5643): Requires locale-aware day-of-week calculation
+                    return Err(PatternLoadError::UnsupportedLength(ErrorField(field)));
                 }
 
-                // E..EE
-                (FS::Weekday(Weekday::Format), One | Two) => {
+                // E..EEEEEE, eee..eeeeee, ccc..cccccc
+                (FS::Weekday(field_symbol), One | Two | Three | Four | Five | Six) => {
                     self.load_weekday_names(
                         weekday_provider,
                         prefs,
-                        Weekday::Format,
-                        field.length,
+                        WeekdayNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
                     )?;
-                }
-                // EEE..EEEEEE, eee..eeeeee, ccc..cccccc
-                (FS::Weekday(symbol), Three | Four | Five | Six) => {
-                    self.load_weekday_names(weekday_provider, prefs, symbol, field.length)?;
                 }
 
                 // a..aaaaa, b..bbbbb
-                (FS::DayPeriod(_), One | Two | Three | Four | Five) => {
-                    self.load_day_period_names(dayperiod_provider, prefs, field.length)?;
+                (FS::DayPeriod(field_symbol), One | Two | Three | Four | Five) => {
+                    self.load_day_period_names(
+                        dayperiod_provider,
+                        prefs,
+                        DayPeriodNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 ///// Time zone symbols /////
@@ -1975,12 +2241,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 // M..MM, L..LL
                 (FS::Month(_), One | Two) => numeric_field = Some(field),
 
-                // e..ee, c..cc
-                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
-                    // TODO(#5643): Requires locale-aware day-of-week calculation
-                    return Err(PatternLoadError::UnsupportedLength(field));
-                }
-
                 // d..dd
                 (FS::Day(Day::DayOfMonth), One | Two) => numeric_field = Some(field),
                 // D..DDD
@@ -2005,14 +2265,14 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 ///// Unsupported symbols /////
                 _ => {
-                    return Err(PatternLoadError::UnsupportedLength(field));
+                    return Err(PatternLoadError::UnsupportedLength(ErrorField(field)));
                 }
             }
         }
 
         if let Some(field) = numeric_field {
             self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, prefs)
-                .map_err(|e| PatternLoadError::Data(e, field))?;
+                .map_err(|e| PatternLoadError::Data(e, ErrorField(field)))?;
         }
 
         Ok(())
@@ -2026,15 +2286,17 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
+        let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForMonthError::InvalidFieldLength)?;
         let month_names = self
             .month_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
@@ -2066,7 +2328,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
         name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::Invalid)
+            .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(
@@ -2075,18 +2337,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, GetNameForWeekdayError> {
-        // UTS 35 says that "e" and "E" have the same non-numeric names
-        let field_symbol = field_symbol.to_format_symbol();
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
+        let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;
         let weekday_names = self
             .weekday_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(weekday_name_length)
             .ok_or(GetNameForWeekdayError::NotLoaded)?;
         weekday_names
             .names
@@ -2103,24 +2358,24 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_length: FieldLength,
         era: FormattingEra,
-    ) -> Result<&str, GetSymbolForEraError> {
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+    ) -> Result<&str, GetNameForEraError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForEraError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForEraError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForEraError::NotLoaded)?;
 
         match (year_names, era) {
             (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
                 .get(era_code.0.as_str().into())
-                .ok_or(GetSymbolForEraError::Invalid),
+                .ok_or(GetNameForEraError::InvalidEraCode),
             (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())
-                    .ok_or(GetSymbolForEraError::Invalid)
+                    .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            _ => Err(GetSymbolForEraError::Invalid),
+            _ => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 
@@ -2128,23 +2383,23 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_length: FieldLength,
         cyclic: NonZeroU8,
-    ) -> Result<&str, GetSymbolForCyclicYearError> {
-        // UTS 35 says that "U..UUU" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+    ) -> Result<&str, GetNameForCyclicYearError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForCyclicYearError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForCyclicYearError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForCyclicYearError::NotLoaded)?;
 
         let YearNamesV1::Cyclic(cyclics) = year_names else {
-            return Err(GetSymbolForCyclicYearError::Invalid { max: 0 });
+            return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
-        cyclics
-            .get((cyclic.get() as usize) - 1)
-            .ok_or(GetSymbolForCyclicYearError::Invalid {
+        cyclics.get((cyclic.get() as usize) - 1).ok_or(
+            GetNameForCyclicYearError::InvalidYearNumber {
                 max: cyclics.len() + 1,
-            })
+            },
+        )
     }
 
     pub(crate) fn get_name_for_day_period(
@@ -2155,11 +2410,11 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        let day_period_name_length = DayPeriodNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForDayPeriodError::InvalidFieldLength)?;
         let dayperiod_names = self
             .dayperiod_names
-            .get_with_variables(field_length)
+            .get_with_variables(day_period_name_length)
             .ok_or(GetNameForDayPeriodError::NotLoaded)?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),

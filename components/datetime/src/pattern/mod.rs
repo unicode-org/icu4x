@@ -15,36 +15,44 @@ mod names;
 #[allow(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
 mod pattern;
 
+use crate::error::ErrorField;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
+pub use names::DayPeriodNameLength;
+pub use names::MonthNameLength;
 pub(crate) use names::RawDateTimeNames;
 pub(crate) use names::RawDateTimeNamesBorrowed;
 pub(crate) use names::TimeZoneDataPayloadsBorrowed;
 pub use names::TypedDateTimeNames;
+pub use names::WeekdayNameLength;
+pub use names::YearNameLength;
 pub use pattern::DateTimePattern;
 
-use crate::fields::Field;
-
 pub(crate) enum GetNameForMonthError {
-    Invalid,
+    InvalidMonthCode,
+    InvalidFieldLength,
     NotLoaded,
 }
 pub(crate) enum GetNameForWeekdayError {
+    InvalidFieldLength,
     NotLoaded,
 }
 
-pub(crate) enum GetSymbolForEraError {
-    Invalid,
+pub(crate) enum GetNameForEraError {
+    InvalidEraCode,
+    InvalidFieldLength,
     NotLoaded,
 }
 
-pub(crate) enum GetSymbolForCyclicYearError {
-    Invalid { max: usize },
+pub(crate) enum GetNameForCyclicYearError {
+    InvalidYearNumber { max: usize },
+    InvalidFieldLength,
     NotLoaded,
 }
 
 pub(crate) enum GetNameForDayPeriodError {
+    InvalidFieldLength,
     NotLoaded,
 }
 
@@ -65,19 +73,19 @@ pub enum PatternLoadError {
     /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
     /// and `L` (format vs standalone month) conflict.
     #[displaydoc("A field {0:?} conflicts with a previous field.")]
-    ConflictingField(Field),
+    ConflictingField(ErrorField),
     /// The field symbol is not supported in that length.
     ///
     /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
     #[displaydoc("The field {0:?} symbol is not supported in that length.")]
-    UnsupportedLength(Field),
+    UnsupportedLength(ErrorField),
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
     /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
     #[displaydoc("The specific type does not support the field {0:?}.")]
-    TypeTooSpecific(Field),
+    TypeTooSpecific(ErrorField),
     /// An error arising from the [`data provider`](icu_provider) for loading names.
     #[displaydoc("Problem loading data for field {1:?}: {0}")]
-    Data(icu_provider::DataError, Field),
+    Data(icu_provider::DataError, ErrorField),
 }

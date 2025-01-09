@@ -127,7 +127,7 @@ pub mod marker_attrs {
 
     /// Field lengths supported in data marker attribute.
     ///
-    /// For a stable version of this enum, use [`FieldLength`].
+    /// For a stable version of this enum, use one of the length enums in [`pattern`].
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -135,7 +135,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`FieldLength`]: crate::fields::FieldLength
+    /// [`pattern`]: crate::pattern
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     #[allow(clippy::exhaustive_enums)] // documented as unstable
     pub enum Length {
@@ -174,7 +174,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`fields`]: crate::fields
+    /// [`fields`]: crate::provider::fields
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     #[allow(clippy::exhaustive_enums)] // documented as unstable
     pub enum Context {

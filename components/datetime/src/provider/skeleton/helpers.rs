@@ -8,13 +8,13 @@ use core::cmp::Ordering;
 
 use super::plural::PatternPlurals;
 use crate::{
-    fields::{self, components, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatternsV1},
             DateSkeletonPatternsV1,
         },
+        fields::{self, components, Field, FieldLength, FieldSymbol},
         pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
     },
 };

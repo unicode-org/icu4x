@@ -694,8 +694,12 @@ icu::datetime::pattern::DateTimePattern::try_from_pattern_str#FnInStruct
 icu::datetime::pattern::DateTimePattern::write_to#FnInStruct
 icu::datetime::pattern::DateTimePatternFormatter#Struct
 icu::datetime::pattern::DateTimePatternFormatter::format#FnInStruct
+icu::datetime::pattern::DayPeriodNameLength#Enum
 icu::datetime::pattern::FormattedDateTimePattern#Struct
 icu::datetime::pattern::FormattedDateTimePattern::try_write_to_parts#FnInStruct
+icu::datetime::pattern::MonthNameLength#Enum
+icu::datetime::pattern::WeekdayNameLength#Enum
+icu::datetime::pattern::YearNameLength#Enum
 icu::list::ListFormatterOptions#Struct
 icu::list::ListFormatterOptions::default#FnInStruct
 icu::list::ListFormatterOptions::with_length#FnInStruct

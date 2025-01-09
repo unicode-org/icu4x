@@ -57,7 +57,6 @@ pub mod enums;
 pub use crate::combo::Combo;
 
 use crate::{
-    fields,
     options::*,
     provider::{neo::*, time_zones::tz, *},
     raw::neo::RawOptions,

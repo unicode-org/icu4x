@@ -8,7 +8,7 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
-use crate::fields::FieldSymbol;
+use crate::provider::fields::FieldSymbol;
 use alloc::string::String;
 use core::fmt::{self, Write};
 use writeable::{impl_display_with_writeable, Writeable};

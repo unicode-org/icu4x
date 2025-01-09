@@ -14,7 +14,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::fields::components;
+//! use icu::datetime::provider::fields::components;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -30,8 +30,8 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
-    fields::{self, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
+    provider::fields::{self, Field, FieldLength, FieldSymbol},
     provider::pattern::{reference, runtime::Pattern, PatternItem},
 };
 
