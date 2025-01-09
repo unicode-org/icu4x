@@ -16,6 +16,7 @@ use icu::locale::{langid, LanguageIdentifier};
 use icu::timezone::provider::*;
 use icu::timezone::UtcOffset;
 use icu::timezone::ZoneVariant;
+use icu_locale_core::subtags::Variants;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -65,6 +66,31 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
+    fn get_dedupe_target(&self, locale: &DataLocale) -> Result<DataLocale, DataError> {
+        let mut dedupe_target = LanguageIdentifier {
+            language: locale.language,
+            script: locale.script,
+            region: locale.region,
+            variants: locale
+                .variant
+                .map(Variants::from_variant)
+                .unwrap_or_default(),
+        };
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut dedupe_target);
+        dedupe_target.language = Default::default();
+        dedupe_target.region = Default::default();
+        dedupe_target.variants = Default::default();
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut dedupe_target);
+        self.cldr()?
+            .extended_locale_expander()?
+            .minimize_favor_script(&mut dedupe_target);
+        Ok(dedupe_target.into())
+    }
+
     fn calculate_locations(
         &self,
         req: DataRequest,
@@ -264,14 +290,40 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req)?;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?;
-            locations.retain(|k, v| und.get(k).unwrap() != v);
+        let dedupe_target = self.get_dedupe_target(req.id.locale)?;
+
+        if dedupe_target != *req.id.locale {
+            // The target does not always exist. Currently `nqo` and `csw` have scripts that have likely
+            // languages that are unsupported (`man` and `iu`, respectively).
+            // There's nothing to fall back to, there's no point in deduplicating against `und`, as there
+            // is a script difference.
+            if self
+                .cldr()?
+                .dates("gregorian")
+                .file_exists(&dedupe_target, "timeZoneNames.json")?
+                && self
+                    .cldr()?
+                    .displaynames()
+                    .file_exists(&dedupe_target, "territories.json")?
+            {
+                let dedupe_locations = self.calculate_locations(DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&dedupe_target),
+                    ..Default::default()
+                })?;
+                if locations == dedupe_locations {
+                    // Don't deduplicate perfect matches. This is better done by data struct deduplication
+                } else {
+                    locations.retain(|k, v| dedupe_locations.get(k).unwrap() != v);
+                }
+            }
         }
+
+        debug_assert!(dedupe_target.region.is_none() && dedupe_target.variant.is_none());
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(LocationsV1 {
+                dedupe_target: (dedupe_target.language, dedupe_target.script),
                 locations: locations.into_iter().collect(),
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),

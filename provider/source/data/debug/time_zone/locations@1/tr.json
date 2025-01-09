@@ -1,4 +1,8 @@
 {
+  "dedupe_target": [
+    "en",
+    null
+  ],
   "locations": {
     "aedxb": "Birleşik Arap Emirlikleri",
     "afkbl": "Afganistan",
@@ -15,7 +19,6 @@
     "bebru": "Belçika",
     "bgsof": "Bulgaristan",
     "bhbah": "Bahreyn",
-    "bjptn": "Benin",
     "bolpb": "Bolivya",
     "bqkra": "Karayip Hollandası",
     "bsnas": "Bahamalar",
@@ -103,7 +106,6 @@
     "kzakx": "Aktöbe",
     "kzala": "Almatı",
     "kzguw": "Atırav",
-    "kzksn": "Kostanay",
     "kzkzo": "Kızılorda",
     "lbbey": "Lübnan",
     "lccas": "Saint Lucia",
@@ -141,8 +143,6 @@
     "noosl": "Norveç",
     "nzakl": "Yeni Zelanda",
     "ommct": "Umman",
-    "papty": "Panama",
-    "pelim": "Peru",
     "pfnhv": "Markiz Adaları",
     "phmnl": "Filipinler",
     "plwaw": "Polonya",
@@ -174,7 +174,6 @@
     "silju": "Slovenya",
     "sjlyr": "Svalbard ve Jan Mayen",
     "skbts": "Slovakya",
-    "sndkr": "Senegal",
     "somgq": "Somali",
     "srpbm": "Surinam",
     "ssjub": "Güney Sudan",

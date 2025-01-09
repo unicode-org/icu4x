@@ -1912,12 +1912,33 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.locations_root
-            .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.locations
             .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+
+        #[allow(clippy::unwrap_used)] // we just loaded it
+        let (dedupe_language, dedupe_script) = self
+            .locations
+            .get()
+            .inner
+            .get_with_variables(variables)
+            .unwrap()
+            .dedupe_target;
+        let dedupe_locale = DataLocale {
+            language: dedupe_language,
+            script: dedupe_script,
+            ..Default::default()
+        };
+        self.locations_root
+            .load_put(
+                provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&dedupe_locale),
+                    ..Default::default()
+                },
+                variables,
+            )
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
