@@ -104,7 +104,7 @@ impl FieldSymbol {
     ///
     /// This model limits the available number of possible types and symbols to 16 each.
     #[inline]
-    pub(crate) fn idx(&self) -> u8 {
+    pub(crate) fn idx(self) -> u8 {
         let (high, low) = match self {
             FieldSymbol::Era => (0, 0),
             FieldSymbol::Year(year) => (1, year.idx()),
@@ -149,7 +149,7 @@ impl FieldSymbol {
 
     /// Returns the index associated with this FieldSymbol.
     #[cfg(feature = "datagen")]
-    fn idx_for_skeleton(&self) -> u8 {
+    fn idx_for_skeleton(self) -> u8 {
         match self {
             FieldSymbol::Era => 0,
             FieldSymbol::Year(_) => 1,
@@ -170,7 +170,7 @@ impl FieldSymbol {
     ///
     /// Second and DecimalSecond are considered equal.
     #[cfg(feature = "datagen")]
-    pub(crate) fn skeleton_cmp(&self, other: &Self) -> Ordering {
+    pub(crate) fn skeleton_cmp(self, other: Self) -> Ordering {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
     }
 
@@ -197,7 +197,7 @@ impl FieldSymbol {
     ///
     /// This function maps field lengths 1 and 2 to field length 3.
     #[cfg(feature = "datagen")]
-    pub(crate) fn is_at_least_abbreviated(&self) -> bool {
+    pub(crate) fn is_at_least_abbreviated(self) -> bool {
         matches!(
             self,
             FieldSymbol::Era
@@ -264,7 +264,7 @@ pub(crate) enum TextOrNumeric {
 /// when matching skeletons with a components [`Bag`](crate::options::components::Bag).
 #[cfg(feature = "datagen")]
 pub(crate) trait LengthType {
-    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric;
+    fn get_length_type(self, length: FieldLength) -> TextOrNumeric;
 }
 
 impl FieldSymbol {
@@ -276,7 +276,7 @@ impl FieldSymbol {
     /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
     /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
     /// ordered most significant to least significant.
-    fn get_canonical_order(&self) -> u8 {
+    fn get_canonical_order(self) -> u8 {
         match self {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
@@ -394,7 +394,7 @@ macro_rules! field_type {
 
         #[cfg(feature = "datagen")]
         impl LengthType for $i {
-            fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+            fn get_length_type(self, _length: FieldLength) -> TextOrNumeric {
                 TextOrNumeric::$length_type
             }
         }
@@ -523,9 +523,9 @@ field_type! (
 
 #[cfg(feature = "datagen")]
 impl LengthType for Year {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+    fn get_length_type(self, _length: FieldLength) -> TextOrNumeric {
         // https://unicode.org/reports/tr35/tr35-dates.html#dfst-year
-        match *self {
+        match self {
             Year::Cyclic => TextOrNumeric::Text,
             _ => TextOrNumeric::Numeric,
         }
@@ -545,7 +545,7 @@ field_type!(
 
 #[cfg(feature = "datagen")]
 impl LengthType for Month {
-    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
+    fn get_length_type(self, length: FieldLength) -> TextOrNumeric {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
             FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
@@ -699,7 +699,7 @@ field_type!(
 
 #[cfg(feature = "datagen")]
 impl LengthType for Weekday {
-    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
+    fn get_length_type(self, length: FieldLength) -> TextOrNumeric {
         match self {
             Self::Format => TextOrNumeric::Text,
             Self::Local | Self::StandAlone => match length {
@@ -762,7 +762,7 @@ field_type!(
 
 #[cfg(feature = "datagen")]
 impl LengthType for TimeZone {
-    fn get_length_type(&self, _: FieldLength) -> TextOrNumeric {
+    fn get_length_type(self, _: FieldLength) -> TextOrNumeric {
         use TextOrNumeric::*;
         match self {
             Self::Iso | Self::IsoWithZ => Numeric,

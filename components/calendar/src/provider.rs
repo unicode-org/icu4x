@@ -185,7 +185,7 @@ impl WeekdaySet {
 
 impl IsoWeekday {
     /// Defines the bit order used for encoding and reading weekend days.
-    const fn bit_value(&self) -> u8 {
+    const fn bit_value(self) -> u8 {
         match self {
             IsoWeekday::Monday => 1 << 6,
             IsoWeekday::Tuesday => 1 << 5,
