@@ -6,7 +6,7 @@ extern crate alloc;
 
 use databake::*;
 
-#[derive(Bake)]
+#[derive(Bake, Debug)]
 #[databake(path = test)]
 pub struct IntExample {
     x: u8,
@@ -17,7 +17,7 @@ fn test_int_example() {
     test_bake!(IntExample, const, crate::IntExample { x: 17u8 }, test,);
 }
 
-#[derive(Bake)]
+#[derive(Bake, Debug)]
 #[databake(path = test)]
 pub struct GenericsExample<T> {
     x: u32,
@@ -37,7 +37,7 @@ fn test_generics_example() {
     );
 }
 
-#[derive(Bake)]
+#[derive(Bake, Debug)]
 #[databake(path = test)]
 pub struct CowExample<'a> {
     x: u8,
