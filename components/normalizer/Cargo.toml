@@ -66,3 +66,6 @@ utf8_iter = ["dep:utf8_iter"]
 name = "bench"
 harness = false
 required_features = ["utf16_iter", "utf8_iter"]
+
+[lints]
+workspace = true

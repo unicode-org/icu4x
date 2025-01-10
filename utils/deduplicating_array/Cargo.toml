@@ -26,3 +26,7 @@ postcard = { workspace = true, features = ["alloc"] }
 
 [[example]]
 name = "postcard"
+
+
+[lints]
+workspace = true

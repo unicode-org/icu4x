@@ -140,3 +140,7 @@ required-features = ["experimental"]
 [[example]]
 name = "work_log"
 required-features = ["compiled_data"]
+
+
+[lints]
+workspace = true

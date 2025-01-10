@@ -73,3 +73,7 @@ required-features = ["bench"]
 name = "serde"
 harness = false
 required-features = ["bench", "serde"]
+
+
+[lints]
+workspace = true

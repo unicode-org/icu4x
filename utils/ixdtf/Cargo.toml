@@ -35,3 +35,7 @@ serde-json-core = { workspace = true, features = ["std"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
+
+
+[lints]
+workspace = true

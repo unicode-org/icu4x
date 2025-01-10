@@ -29,3 +29,7 @@ derive = ["dep:databake-derive"]
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
 databake-derive = { workspace = true, optional = true}
+
+
+[lints]
+workspace = true

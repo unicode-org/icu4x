@@ -56,3 +56,7 @@ compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data"]
 [[bench]]
 name = "bench"
 harness = false
+
+
+[lints]
+workspace = true

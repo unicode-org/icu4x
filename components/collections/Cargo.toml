@@ -71,3 +71,7 @@ path = "benches/iai_cpt.rs"
 name = "inv_list"
 harness = false
 path = "benches/inv_list.rs"
+
+
+[lints]
+workspace = true

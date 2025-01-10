@@ -52,3 +52,7 @@ denylist = ["bench"]
 
 [[example]]
 name = "and_list"
+
+
+[lints]
+workspace = true

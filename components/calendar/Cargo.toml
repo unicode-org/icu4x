@@ -77,3 +77,7 @@ name = "iso_date_manipulations"
 
 [[example]]
 name = "iso_datetime_manipulations"
+
+
+[lints]
+workspace = true

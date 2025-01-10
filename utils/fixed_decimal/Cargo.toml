@@ -54,3 +54,6 @@ denylist = ["bench"]
 [[bench]]
 name = "fixed_decimal"
 harness = false
+
+[lints]
+workspace = true

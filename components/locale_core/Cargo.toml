@@ -83,3 +83,7 @@ test = true
 [[example]]
 name = "syntatically_canonicalize_locales"
 test = true
+
+
+[lints]
+workspace = true

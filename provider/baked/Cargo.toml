@@ -43,3 +43,7 @@ export = [
     "icu_provider/export",
     "zerotrie/databake",
 ]
+
+
+[lints]
+workspace = true

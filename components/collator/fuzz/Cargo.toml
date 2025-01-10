@@ -30,3 +30,7 @@ name = "compare_utf16"
 path = "fuzz_targets/compare_utf16.rs"
 test = false
 doc = false
+
+
+[lints]
+workspace = true
