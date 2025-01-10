@@ -4,7 +4,6 @@
 
 //! Relative time formatting
 
-#![warn(missing_docs)]
 
 mod format;
 pub mod options;

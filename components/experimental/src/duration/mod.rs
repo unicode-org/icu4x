@@ -4,7 +4,6 @@
 
 //! Duration formatting
 
-#![warn(missing_docs)]
 
 mod duration;
 mod format;

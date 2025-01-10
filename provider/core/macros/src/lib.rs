@@ -3,20 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        // Panics are OK in proc macros
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
+
 
 //! Proc macros for the ICU4X data provider.
 //!

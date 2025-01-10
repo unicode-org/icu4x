@@ -71,19 +71,7 @@
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
-#![cfg_attr(
-    not(test),
-    deny(
-        // The crate is documented to allow panics.
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
-)]
+
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
