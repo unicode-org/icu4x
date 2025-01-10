@@ -374,11 +374,8 @@
 //! [temporal-grammar]: https://tc39.es/proposal-temporal/#sec-temporal-iso8601grammar
 
 #![no_std]
-
 // TODO: until we can enable allow-indexing-slicing-in-tests
 #![cfg_attr(test, allow(clippy::indexing_slicing))]
-
-
 
 mod error;
 pub mod parsers;

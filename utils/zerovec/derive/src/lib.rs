@@ -5,8 +5,12 @@
 //! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
 
 // Proc macro
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
-
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, DeriveInput, Ident};

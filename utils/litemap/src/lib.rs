@@ -32,6 +32,8 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
+// TODO: until we can enable allow-indexing-slicing-in-tests
+#![cfg_attr(test, allow(clippy::indexing_slicing))]
 
 // for intra doc links
 #[cfg(doc)]

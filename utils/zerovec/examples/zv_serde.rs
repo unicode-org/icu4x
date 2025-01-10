@@ -5,6 +5,7 @@
 // This example demonstrates zero-copy, zero-allocation deserialization of a u32 vector
 // stored in a Bincode buffer.
 
+#![allow(clippy::unwrap_used, clippy::expect_used)] // https://github.com/rust-lang/rust-clippy/issues/13981
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 

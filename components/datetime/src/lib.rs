@@ -72,6 +72,9 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+// TODO: until we can enable allow-indexing-slicing-in-tests
+#![cfg_attr(test, allow(clippy::indexing_slicing))]
+
 extern crate alloc;
 
 mod combo;

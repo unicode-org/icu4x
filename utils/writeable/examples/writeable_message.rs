@@ -5,8 +5,12 @@
 // This example illustrates a very simple type implementing Writeable.
 
 // Example code
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
-
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 

@@ -36,7 +36,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
-
 // TODO(#4034): Enable the rest of these lints.
 #![allow(clippy::indexing_slicing, clippy::unwrap_used, clippy::panic)]
 

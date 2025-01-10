@@ -46,7 +46,12 @@
 //!   * enables parallelism during export
 
 // Primarily used in datagen
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 
 mod export_impl;
 mod locale_family;

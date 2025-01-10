@@ -22,9 +22,12 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
-
 // TODO
-#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums, missing_debug_implementations)]
+#![allow(
+    clippy::exhaustive_structs,
+    clippy::exhaustive_enums,
+    missing_debug_implementations
+)]
 
 extern crate alloc;
 

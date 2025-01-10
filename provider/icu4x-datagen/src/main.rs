@@ -25,10 +25,13 @@
     not(any(feature = "provider", feature = "blob_input",)),
     allow(unused_assignments, unreachable_code, unused_variables)
 )]
-
 // Primarily used in datagen
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
-
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;

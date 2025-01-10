@@ -18,7 +18,12 @@
 //!   * enables markers defined in the unstable `icu::experimental` module
 
 // Primarily used in datagen
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;

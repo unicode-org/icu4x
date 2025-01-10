@@ -9,8 +9,12 @@
 //! These macros are re-exported from `icu_provider`.
 
 // Proc macro
-#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
-
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
+)]
 
 extern crate proc_macro;
 use proc_macro::TokenStream;

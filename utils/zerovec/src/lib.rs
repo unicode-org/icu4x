@@ -198,6 +198,8 @@
 // this crate does a lot of nuanced lifetime manipulation, being explicit
 // is better here.
 #![allow(clippy::needless_lifetimes)]
+// TODO: until we can enable allow-indexing-slicing-in-tests
+#![cfg_attr(test, allow(clippy::indexing_slicing))]
 
 extern crate alloc;
 
