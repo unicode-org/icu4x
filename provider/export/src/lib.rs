@@ -45,8 +45,6 @@
 //! * `rayon`
 //!   * enables parallelism during export
 
-
-
 mod export_impl;
 mod locale_family;
 use icu_provider::export::ExporterCloseMetadata;

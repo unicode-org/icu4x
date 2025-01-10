@@ -129,7 +129,6 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
-
 #[cfg(doc)]
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
 extern crate icu_provider;

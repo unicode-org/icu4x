@@ -12,7 +12,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-
 mod parse;
 
 pub use parse::*;

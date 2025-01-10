@@ -195,7 +195,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
-
 // this crate does a lot of nuanced lifetime manipulation, being explicit
 // is better here.
 #![allow(clippy::needless_lifetimes)]

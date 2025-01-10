@@ -4,7 +4,6 @@
 
 //! Duration formatting
 
-
 mod duration;
 mod format;
 mod formatter;

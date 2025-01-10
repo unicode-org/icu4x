@@ -29,7 +29,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
-
 // We're using Greek identifiers here on purpose. These lints can only be disabled at the crate level
 #![allow(confusable_idents, uncommon_codepoints)]
 

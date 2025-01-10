@@ -33,7 +33,6 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
 
-
 // for intra doc links
 #[cfg(doc)]
 extern crate std;

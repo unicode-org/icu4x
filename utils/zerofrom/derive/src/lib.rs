@@ -6,7 +6,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-
 use core::mem;
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};

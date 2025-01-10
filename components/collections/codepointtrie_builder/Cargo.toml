@@ -55,6 +55,3 @@ denylist = ["icu4c"]
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4c_enable_renaming)'] }
 
-
-[lints]
-workspace = true

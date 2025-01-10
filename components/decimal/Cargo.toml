@@ -56,9 +56,6 @@ compiled_data = ["dep:icu_decimal_data"]
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
 
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
-
 [[bench]]
 name = "fixed_decimal_format"
 harness = false

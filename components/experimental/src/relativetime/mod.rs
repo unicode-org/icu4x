@@ -4,7 +4,6 @@
 
 //! Relative time formatting
 
-
 mod format;
 pub mod options;
 pub mod provider;

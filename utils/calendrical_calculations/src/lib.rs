@@ -20,7 +20,6 @@
 //! to add more structure to this crate as needed.
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
-
 #![warn(missing_docs)]
 
 mod astronomy;

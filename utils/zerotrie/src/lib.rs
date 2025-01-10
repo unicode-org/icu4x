@@ -36,7 +36,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
-
 #![warn(missing_docs)]
 
 #[cfg(feature = "alloc")]

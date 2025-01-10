@@ -5,7 +5,6 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(all(not(test), not(doc)), no_std)]
 
-
 //! `writeable` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`Writeable`], a core trait representing an object that can be written to a

@@ -6,7 +6,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-
 mod error;
 mod format;
 mod formatter;

@@ -33,7 +33,6 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
-
 #[cfg(feature = "alloc")]
 extern crate alloc;
 

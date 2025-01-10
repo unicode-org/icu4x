@@ -4,7 +4,6 @@
 
 #![cfg_attr(not(test), no_std)]
 
-
 //! A crate providing unvalidated string and character types.
 
 #[cfg(feature = "alloc")]

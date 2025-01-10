@@ -4,7 +4,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-
 //! Proc macros for the ICU4X data provider.
 //!
 //! These macros are re-exported from `icu_provider`.

@@ -78,7 +78,6 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-
 mod fs_data_provider;
 mod manifest;
 
