@@ -57,7 +57,7 @@ pub enum RatioFromStrError {
     #[displaydoc("The exponent part of the ratio string is not an integer")]
     ExponentPartIsNotAnInteger,
 
-    /// The ratio string is dificient in some other way.
+    /// The ratio string is deficient in some other way.
     ParsingBigIntError(num_bigint::ParseBigIntError),
 }
 
