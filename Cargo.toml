@@ -325,3 +325,16 @@ lto = true
 [profile.bench-memory]
 inherits = "bench"
 debug = true
+
+[workspace.lints.rust]
+missing_docs = "warn"
+missing_debug_implementations = "deny"
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)', 'cfg(needs_alloc_error_handler)'] }
+
+[workspace.lints.clippy]
+indexing_slicing = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+exhaustive_structs = "deny"
+exhaustive_enums = "deny"
