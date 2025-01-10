@@ -33,3 +33,7 @@ writeable = { path = "../../utils/writeable" }
 [features]
 std = []
 export = ["icu_provider/export", "std"]
+
+
+[lints]
+workspace = true

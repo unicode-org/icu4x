@@ -51,8 +51,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![warn(missing_docs)]
-
 extern crate alloc;
 
 #[macro_use]

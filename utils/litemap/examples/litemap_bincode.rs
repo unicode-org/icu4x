@@ -5,6 +5,7 @@
 // LiteMap is intended as a small and low-memory drop-in replacement for
 // HashMap. This example demonstrates how it works with Serde.
 
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::indexing_slicing)] // https://github.com/rust-lang/rust-clippy/issues/13981
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 

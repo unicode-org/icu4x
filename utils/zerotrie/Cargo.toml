@@ -78,3 +78,7 @@ required-features = ["alloc", "litemap"]
 [[test]]
 name = "locale_aux_test"
 required-features = ["alloc", "litemap"]
+
+
+[lints]
+workspace = true

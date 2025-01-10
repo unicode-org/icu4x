@@ -45,20 +45,13 @@
 //! * `rayon`
 //!   * enables parallelism during export
 
-#![cfg_attr(
-    not(test),
-    deny(
-        // This is a tool, and as such we don't care about panics too much
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
+// Primarily used in datagen
+#![allow(
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::unwrap_used,
+    clippy::expect_used
 )]
-#![warn(missing_docs)]
 
 mod export_impl;
 mod locale_family;

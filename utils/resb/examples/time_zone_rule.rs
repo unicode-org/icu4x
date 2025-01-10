@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::unwrap_used, clippy::expect_used)] // https://github.com/rust-lang/rust-clippy/issues/13981
+#![allow(unused)] // serialization test, we don't actually do anything with the data
+
 use std::{char::DecodeUtf16Error, collections::HashMap, fmt::Debug, marker::PhantomData};
 
 use serde::{
@@ -18,14 +21,14 @@ use zerovec::ZeroVec;
 /// terminator is included.
 #[derive(Deserialize, Serialize)]
 #[serde(transparent)]
-pub struct ZeroUTF16String<'a> {
+struct ZeroUTF16String<'a> {
     #[serde(borrow)]
     units: ZeroVec<'a, u16>,
 }
 
 impl ZeroUTF16String<'_> {
     /// Gets whether the UTF-16 string is empty.
-    pub fn is_empty(&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.units.is_empty()
     }
 
@@ -34,14 +37,14 @@ impl ZeroUTF16String<'_> {
     /// This value does not necessarily equal the length of the string in
     /// characters, as characters outside the Basic Multilingual Plane are
     /// represented by 2 units.
-    pub fn len(&self) -> usize {
+    fn len(&self) -> usize {
         self.units.len()
     }
 
     /// Gets an iterator for the units of the string.
     ///
     /// See `len` for details on why this does not correspond to characters.
-    pub fn iter(&self) -> impl Iterator<Item = u16> + '_ {
+    fn iter(&self) -> impl Iterator<Item = u16> + '_ {
         self.units.iter()
     }
 }
@@ -65,7 +68,7 @@ impl Debug for ZeroUTF16String<'_> {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct TzDataRuleData<'a> {
+struct TzDataRuleData<'a> {
     #[serde(borrow)]
     type_offsets: ZeroVec<'a, i32>,
     #[serde(borrow)]
@@ -84,7 +87,7 @@ pub struct TzDataRuleData<'a> {
 }
 
 #[derive(Debug)]
-pub enum TzDataRule<'a> {
+enum TzDataRule<'a> {
     // The rule data is boxed here due to the large size difference between the
     // `TzDataRuleData` struct and `u32`. It's not strictly necessary.
     Table(Box<TzDataRuleData<'a>>),
@@ -133,15 +136,15 @@ impl<'de: 'a, 'a> Visitor<'de> for TzDataRuleEnumVisitor<'a> {
 #[derive(Debug, Deserialize)]
 #[serde(rename = "zoneinfo64")]
 #[serde(rename_all = "PascalCase")]
-pub struct ZoneInfo64<'a> {
+struct ZoneInfo64<'a> {
     #[serde(borrow)]
-    pub zones: Vec<TzDataRule<'a>>,
+    zones: Vec<TzDataRule<'a>>,
     #[serde(borrow)]
-    pub names: Vec<ZeroUTF16String<'a>>,
+    names: Vec<ZeroUTF16String<'a>>,
     #[serde(borrow)]
-    pub rules: HashMap<&'a str, ZeroVec<'a, i32>>,
+    rules: HashMap<&'a str, ZeroVec<'a, i32>>,
     #[serde(borrow)]
-    pub regions: Vec<ZeroUTF16String<'a>>,
+    regions: Vec<ZeroUTF16String<'a>>,
 }
 
 fn main() {

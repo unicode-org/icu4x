@@ -27,3 +27,7 @@ syn = { workspace = true }
 
 [dev-dependencies]
 icu_provider = { path = "..", features = ["macros"] }
+
+
+[lints]
+workspace = true

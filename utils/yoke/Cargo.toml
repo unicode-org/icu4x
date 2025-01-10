@@ -45,3 +45,7 @@ zerofrom = { workspace = true, optional = true}
 bincode = { workspace = true }
 postcard = { workspace = true }
 serde = { workspace = true }
+
+
+[lints]
+workspace = true

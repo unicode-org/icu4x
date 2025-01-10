@@ -35,3 +35,8 @@ features = [
 
 [dev-dependencies]
 icu_locale = { path = "../../components/locale" }
+
+
+# TODO
+# [lints]
+# workspace = true

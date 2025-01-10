@@ -50,3 +50,7 @@ required-features = ["serialize", "text"]
 name = "time_zone_rule"
 # run in `cargo test`
 harness = false
+
+
+[lints]
+workspace = true

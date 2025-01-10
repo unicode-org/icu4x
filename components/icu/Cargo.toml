@@ -152,3 +152,7 @@ skip_feature_sets = [[]]
 [[example]]
 name = "tui"
 required-features = ["serde"]
+
+
+[lints]
+workspace = true

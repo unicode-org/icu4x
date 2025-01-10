@@ -84,3 +84,7 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "data_locale_bench"
 harness = false
+
+
+[lints]
+workspace = true

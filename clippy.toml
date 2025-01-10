@@ -3,3 +3,10 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 msrv = "1.81"
+
+allow-panic-in-tests = true
+allow-expect-in-tests = true
+allow-unwrap-in-tests = true
+
+# Not yet available in Clippy
+# allow-indexing-slicing-in-tests = true

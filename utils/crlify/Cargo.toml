@@ -18,3 +18,8 @@ rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
+
+
+# TODO
+# [lints]
+# workspace = true

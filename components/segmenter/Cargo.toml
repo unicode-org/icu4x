@@ -65,3 +65,7 @@ harness = false
 [[test]]
 name = "complex_word"
 required-features = ["auto"]
+
+
+[lints]
+workspace = true

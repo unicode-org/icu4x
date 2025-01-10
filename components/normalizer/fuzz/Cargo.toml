@@ -35,3 +35,7 @@ name = "compare_self"
 path = "fuzz_targets/compare_self.rs"
 test = false
 doc = false
+
+
+[lints]
+workspace = true

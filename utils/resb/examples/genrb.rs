@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)] // https://github.com/rust-lang/rust-clippy/issues/13981
+
 use std::{
     fs::File,
     io::{BufReader, BufWriter, Read, Write},

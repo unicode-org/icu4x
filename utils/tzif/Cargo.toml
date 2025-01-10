@@ -23,3 +23,8 @@ combine = { workspace = true }
 
 [dev-dependencies]
 walkdir = { workspace = true }
+
+
+# TODO
+# [lints]
+# workspace = true
