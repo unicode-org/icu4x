@@ -79,7 +79,7 @@ pub enum DurationFormatterOptionsError {
     PreviousNumeric,
 
     /// The number of fractional digits is out of acceptable range. See [`FractionalDigits::Fixed`].
-    #[displaydoc("Returned when tThehe number of fractional digits is out of acceptable range")]
+    #[displaydoc("The number of fractional digits is out of acceptable range")]
     FractionalDigitsOutOfRange,
 }
 
