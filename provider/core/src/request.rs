@@ -95,7 +95,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Converts this [`DataIdentifierBorrowed`] into a [`DataIdentifierCow<'static>`].
-    pub fn into_owned(&self) -> DataIdentifierCow<'static> {
+    pub fn into_owned(self) -> DataIdentifierCow<'static> {
         DataIdentifierCow {
             marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
             locale: Cow::Owned(self.locale.clone()),
@@ -103,7 +103,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Borrows this [`DataIdentifierBorrowed`] as a [`DataIdentifierCow<'a>`].
-    pub fn as_cow(&self) -> DataIdentifierCow<'a> {
+    pub fn as_cow(self) -> DataIdentifierCow<'a> {
         DataIdentifierCow {
             marker_attributes: Cow::Borrowed(self.marker_attributes),
             locale: Cow::Borrowed(self.locale),

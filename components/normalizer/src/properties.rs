@@ -100,7 +100,7 @@ impl CanonicalCompositionBorrowed<'_> {
     /// assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
     /// ```
     #[inline(always)]
-    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+    pub fn compose(self, starter: char, second: char) -> Option<char> {
         crate::compose(
             self.canonical_compositions.canonical_compositions.iter(),
             starter,

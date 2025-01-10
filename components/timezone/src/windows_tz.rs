@@ -125,7 +125,7 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
     /// ```
     pub fn windows_tz_to_bcp47_id(
-        &self,
+        self,
         windows_tz: &str,
         region: Option<Region>,
     ) -> Option<TimeZoneBcp47Id> {
