@@ -434,23 +434,19 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
         match self.store.find(|x| (x as usize) <= 0x07) {
             Some(0) => {
                 // Placeholder
-                let Some((&[lead, trail], remainder)) = self
+                let (&[lead, trail], remainder) = self
                     .store
                     .split_at_checked(2)
-                    .map(|(a, b)| (a.as_bytes(), b))
-                else {
-                    return Err(MultiNamedPlaceholderError::InvalidStore);
-                };
+                    .ok_or(MultiNamedPlaceholderError::InvalidStore)
+                    .map(|(a, b)| (a.as_bytes(), b))?;
                 debug_assert!(lead <= 7);
                 if trail > 7 {
                     return Err(MultiNamedPlaceholderError::InvalidStore);
                 }
                 let placeholder_len = (lead << 3) + trail;
-                let Some((placeholder_name, remainder)) =
+                let (placeholder_name, remainder) =
                     remainder.split_at_checked(placeholder_len as usize)
-                else {
-                    return Err(MultiNamedPlaceholderError::InvalidStore);
-                };
+                    .ok_or(MultiNamedPlaceholderError::InvalidStore)?;
                 self.store = remainder;
                 Ok(Some(PatternItem::Placeholder(MultiNamedPlaceholderKey(
                     placeholder_name,
