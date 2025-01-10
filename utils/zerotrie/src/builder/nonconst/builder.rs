@@ -103,7 +103,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .iter()
             .map(|(k, v)| (k.as_ref(), *v))
             .collect::<Vec<(&[u8], usize)>>();
-        items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
+        items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
         Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
@@ -123,7 +123,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
             // We need to re-sort the items with our custom comparator.
             items.to_mut().sort_by(|a, b| {
-                cmp_keys_values(&options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
+                cmp_keys_values(options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
             });
         }
         Self::from_sorted_tuple_slice_impl(&items, options)
@@ -136,7 +136,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     ) -> Result<Self, ZeroTrieBuildError> {
         for ab in items.windows(2) {
             debug_assert!(cmp_keys_values(
-                &options,
+                options,
                 (ab[0].0.as_bytes(), ab[0].1),
                 (ab[1].0.as_bytes(), ab[1].1)
             )
@@ -403,7 +403,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 }
 
 fn cmp_keys_values(
-    options: &ZeroTrieBuilderOptions,
+    options: ZeroTrieBuilderOptions,
     a: (&[u8], usize),
     b: (&[u8], usize),
 ) -> Ordering {

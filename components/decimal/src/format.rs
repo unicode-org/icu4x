@@ -68,7 +68,7 @@ impl Writeable for FormattedFixedDecimal<'_> {
                     upper_magnitude,
                     m,
                     self.options.grouping_strategy,
-                    &self.symbols.grouping_sizes,
+                    self.symbols.grouping_sizes,
                 ) {
                     w.with_part(parts::GROUP, |w| {
                         w.write_str(self.symbols.grouping_separator())

@@ -60,7 +60,7 @@ pub struct Field {
 
 impl Field {
     #[cfg(feature = "datagen")]
-    pub(crate) fn get_length_type(&self) -> TextOrNumeric {
+    pub(crate) fn get_length_type(self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,
             FieldSymbol::Year(year) => year.get_length_type(self.length),

@@ -99,7 +99,7 @@ pub enum BestSkeleton<T> {
 /// only needs to find a single "v" field, and then the time zone name can expand from there.
 fn naively_apply_time_zone_name(
     pattern: &mut runtime::Pattern,
-    time_zone_name: &Option<components::TimeZoneName>,
+    time_zone_name: Option<components::TimeZoneName>,
 ) {
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
@@ -109,7 +109,7 @@ fn naively_apply_time_zone_name(
                 length: _,
             }) = item
             {
-                Some(PatternItem::Field((*time_zone_name).into()))
+                Some(PatternItem::Field((time_zone_name).into()))
             } else {
                 None
             }
@@ -146,7 +146,7 @@ pub fn create_best_pattern_for_fields<'data>(
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
         pattern_plurals.for_each_mut(|pattern| {
             naively_apply_preferences(pattern, components.hour_cycle);
-            naively_apply_time_zone_name(pattern, &components.time_zone_name);
+            naively_apply_time_zone_name(pattern, components.time_zone_name);
             apply_fractional_seconds(pattern, components.fractional_second);
         });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
@@ -163,7 +163,7 @@ pub fn create_best_pattern_for_fields<'data>(
                 if date.is_empty() {
                     pattern_plurals.for_each_mut(|pattern| {
                         naively_apply_preferences(pattern, components.hour_cycle);
-                        naively_apply_time_zone_name(pattern, &components.time_zone_name);
+                        naively_apply_time_zone_name(pattern, components.time_zone_name);
                         apply_fractional_seconds(pattern, components.fractional_second);
                     });
                 }
@@ -192,7 +192,7 @@ pub fn create_best_pattern_for_fields<'data>(
         let mut pattern =
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         naively_apply_preferences(&mut pattern, components.hour_cycle);
-        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+        naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
         apply_fractional_seconds(&mut pattern, components.fractional_second);
         pattern
     });
@@ -317,7 +317,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
         if let PatternItem::Field(pattern_field) = item {
             if let Some(requested_field) = fields
                 .iter()
-                .find(|field| field.symbol.skeleton_cmp(&pattern_field.symbol).is_eq())
+                .find(|field| field.symbol.skeleton_cmp(pattern_field.symbol).is_eq())
             {
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
@@ -431,7 +431,7 @@ pub fn get_best_available_format_pattern<'data>(
                         skeleton_field.symbol != FieldSymbol::Month(fields::Month::StandAlone)
                     );
 
-                    match skeleton_field.symbol.skeleton_cmp(&requested_field.symbol) {
+                    match skeleton_field.symbol.skeleton_cmp(requested_field.symbol) {
                         Ordering::Less => {
                             // Keep searching for a matching skeleton field.
                             skeleton_fields.next();

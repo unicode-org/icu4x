@@ -571,7 +571,7 @@ impl FormatTimeZone for Iso8601Format {
 
 impl Iso8601Format {
     pub(crate) fn format_infallible<W: writeable::PartsWrite + ?Sized>(
-        &self,
+        self,
         sink: &mut W,
         offset: UtcOffset,
     ) -> Result<(), fmt::Error> {

@@ -42,7 +42,6 @@ enum AnyPayloadInner {
     /// Note: This needs to be reference counted, not a `Box`, so that `AnyPayload` is cloneable.
     /// If an `AnyPayload` is cloned, the actual cloning of the data is delayed until
     /// `downcast()` is invoked (at which point we have the concrete type).
-
     #[cfg(not(feature = "sync"))]
     PayloadRc(SelectedRc<dyn Any>),
 

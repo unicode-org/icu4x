@@ -36,7 +36,7 @@ pub(crate) enum Direction {
 
 impl Direction {
     /// Whether `self` is a superset of `other` or not.
-    pub(crate) fn permits(&self, other: Direction) -> bool {
+    pub(crate) fn permits(self, other: Direction) -> bool {
         match self {
             Direction::Forward => other == Direction::Forward,
             Direction::Reverse => other == Direction::Reverse,
