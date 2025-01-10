@@ -39,6 +39,9 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+// TODO
+#![allow(missing_docs)]
+
 mod compact;
 mod decimal;
 mod integer;

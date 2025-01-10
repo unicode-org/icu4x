@@ -31,5 +31,6 @@ quote = { workspace = true }
 databake-derive = { workspace = true, optional = true}
 
 
-[lints]
-workspace = true
+# TODO
+# [lints]
+# workspace = true

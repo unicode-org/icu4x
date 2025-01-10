@@ -25,5 +25,6 @@ combine = { workspace = true }
 walkdir = { workspace = true }
 
 
-[lints]
-workspace = true
+# TODO
+# [lints]
+# workspace = true

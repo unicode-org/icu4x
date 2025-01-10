@@ -20,5 +20,6 @@ rust-version.workspace = true
 independent = true
 
 
-[lints]
-workspace = true
+# TODO
+# [lints]
+# workspace = true

@@ -4,6 +4,9 @@
 
 // This example demonstrates how to use deduplicating_array
 
+// Example code
+#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
+
 #[derive(serde::Serialize, serde::Deserialize)]
 struct DataStruct {
     #[serde(with = "deduplicating_array")]

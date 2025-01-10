@@ -4,6 +4,9 @@
 
 //! Custom derives for `Yokeable` from the `yoke` crate.
 
+// Proc macro
+#![allow(clippy::indexing_slicing, clippy::panic, clippy::unwrap_used, clippy::expect_used)]
+
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;

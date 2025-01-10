@@ -5,6 +5,8 @@
 // This test is a duplicate of one of the doctests, but is written separately
 // since `cargo miri test` doesn't work on doctests yet
 
+#![allow(clippy::unwrap_used)] // https://github.com/rust-lang/rust-clippy/issues/13981
+
 use std::borrow::Cow;
 use std::mem;
 use std::rc::Rc;

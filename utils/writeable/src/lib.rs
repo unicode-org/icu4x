@@ -5,6 +5,9 @@
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(all(not(test), not(doc)), no_std)]
 
+// TODO: until we can enable allow-indexing-slicing-in-tests
+#![cfg_attr(test, allow(clippy::indexing_slicing))]
+
 //! `writeable` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`Writeable`], a core trait representing an object that can be written to a

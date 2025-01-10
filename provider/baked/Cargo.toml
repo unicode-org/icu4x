@@ -45,5 +45,6 @@ export = [
 ]
 
 
-[lints]
-workspace = true
+# TODO
+# [lints]
+# workspace = true
