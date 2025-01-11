@@ -213,3 +213,6 @@ pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
 pub use types::Time;
+
+/// Ranges for `Date` struct
+pub mod range;

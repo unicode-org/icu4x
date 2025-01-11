@@ -77,3 +77,6 @@ name = "iso_date_manipulations"
 
 [[example]]
 name = "iso_datetime_manipulations"
+
+[[example]]
+name = "iso_date_range_iter"
