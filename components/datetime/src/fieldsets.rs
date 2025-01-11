@@ -39,12 +39,12 @@
 //! let field_set_1 = YMDT::long()
 //!     .with_year_style(YearStyle::Full)
 //!     .with_alignment(Alignment::Column)
-//!     .with_time_precision(TimePrecision::MinuteExact);
+//!     .with_time_precision(TimePrecision::Minute);
 //!
 //! let mut field_set_2 = YMDT::long();
 //! field_set_2.year_style = Some(YearStyle::Full);
 //! field_set_2.alignment = Some(Alignment::Column);
-//! field_set_2.time_precision = Some(TimePrecision::MinuteExact);
+//! field_set_2.time_precision = Some(TimePrecision::Minute);
 //!
 //! assert_eq!(field_set_1, field_set_2);
 //! ```
@@ -277,9 +277,9 @@ macro_rules! impl_marker_with_options {
                     self.time_precision = Some(yes_to!(time_precision, $timeprecision_yes));
                     self
                 }
-                /// Sets the time precision to [`TimePrecision::MinuteExact`]
+                /// Sets the time precision to [`TimePrecision::Minute`]
                 pub fn hm(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::MinuteExact);
+                    self.time_precision = Some(TimePrecision::Minute);
                     self
                 }
             }

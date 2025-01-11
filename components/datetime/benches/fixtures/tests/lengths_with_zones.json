@@ -11,7 +11,7 @@
                     "semantic": {
                         "fieldSet": ["time", "zoneSpecific"],
                         "length": "long",
-                        "timePrecision": "secondPlus"
+                        "timePrecision": "auto"
                     }
                 }
             },
@@ -25,7 +25,7 @@
                     "semantic": {
                         "fieldSet": ["time", "zoneSpecific"],
                         "length": "medium",
-                        "timePrecision": "secondPlus"
+                        "timePrecision": "auto"
                     }
                 }
             },
@@ -39,7 +39,7 @@
                     "semantic": {
                         "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
                         "length": "long",
-                        "timePrecision": "secondPlus"
+                        "timePrecision": "auto"
                     }
                 }
             },
@@ -53,7 +53,7 @@
                     "semantic": {
                         "fieldSet": ["year", "month", "day", "time", "zoneSpecific"],
                         "length": "medium",
-                        "timePrecision": "secondPlus"
+                        "timePrecision": "auto"
                     }
                 }
             }
