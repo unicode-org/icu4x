@@ -669,6 +669,8 @@ macro_rules! cb {
         );
     }
 }
+
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 #[cfg(feature = "blob_input")]

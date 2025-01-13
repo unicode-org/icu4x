@@ -305,6 +305,7 @@ impl IterableDataProvider<CustomMarker> for CustomProvider {
     }
 }
 
+extern crate alloc;
 icu_provider::export::make_exportable_provider!(CustomProvider, [CustomMarker,]);
 
 let icu4x_source_provider = SourceDataProvider::new_latest_tested();

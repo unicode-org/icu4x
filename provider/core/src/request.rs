@@ -455,7 +455,7 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_provider::DataLocale;
-    /// use std::cmp::Ordering;
+    /// use core::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",
