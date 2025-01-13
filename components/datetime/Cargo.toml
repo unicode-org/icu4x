@@ -63,14 +63,6 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = [
-    "icu_calendar/std",
-    "icu_decimal/std",
-    "icu_locale_core/std",
-    "icu_plurals/std",
-    "icu_provider/std",
-    "icu_timezone/std",
-]
 serde = [
     "dep:serde",
     "icu_calendar/serde",
@@ -93,7 +85,6 @@ datagen = [
     "icu_plurals/datagen",
     "icu_timezone/datagen",
     "serde",
-    "std",
 ]
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]

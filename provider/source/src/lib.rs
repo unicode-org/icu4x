@@ -104,6 +104,7 @@ macro_rules! cb {
         ], icu_provider::any::AnyMarker);
     }
 }
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);

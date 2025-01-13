@@ -112,7 +112,7 @@ where
 
 #[cfg(feature = "export")]
 impl ExportableProvider for EmptyDataProvider {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         Default::default()
     }
 }

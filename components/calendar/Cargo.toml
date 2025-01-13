@@ -50,7 +50,6 @@ criterion = { workspace = true }
 default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
-std = ["icu_provider/std", "icu_locale_core/std", "calendrical_calculations/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
 bench = []

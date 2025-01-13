@@ -34,6 +34,8 @@ pub enum CompositeFieldSetSerdeError {
     InvalidFields,
 }
 
+impl core::error::Error for CompositeFieldSetSerdeError {}
+
 /// 🚧 \[Experimental\] A type corresponding to [`CompositeFieldSet`] that implements
 /// [`serde::Serialize`] and [`serde::Deserialize`].
 ///

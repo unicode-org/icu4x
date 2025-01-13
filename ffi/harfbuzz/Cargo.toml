@@ -40,5 +40,4 @@ displaydoc = { workspace = true }
 [features]
 default = []
 compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
-std = []
 serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]

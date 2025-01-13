@@ -764,7 +764,7 @@ where
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::empty::EmptyDataProvider;
-    /// use std::any::TypeId;
+    /// use core::any::TypeId;
     /// use std::borrow::Cow;
     ///
     /// struct MyForkingProvider<P0, P1> {

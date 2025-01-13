@@ -42,7 +42,6 @@ criterion = { workspace = true }
 default = ["alloc"]
 alloc = []
 bench = []
-std = []
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

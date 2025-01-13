@@ -30,6 +30,8 @@ pub enum DateTimeFormatterLoadError {
     Data(DataError),
 }
 
+impl core::error::Error for DateTimeFormatterLoadError {}
+
 impl From<DataError> for DateTimeFormatterLoadError {
     fn from(error: DataError) -> Self {
         Self::Data(error)
@@ -51,6 +53,8 @@ pub struct MismatchedCalendarError {
     /// Can be `None` if the input calendar was not specified.
     pub date_kind: Option<AnyCalendarKind>,
 }
+
+impl core::error::Error for MismatchedCalendarError {}
 
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
@@ -129,3 +133,5 @@ pub enum DateTimeWriteError {
     #[displaydoc("Unsupported field {0:?}")]
     UnsupportedField(ErrorField),
 }
+
+impl core::error::Error for DateTimeWriteError {}

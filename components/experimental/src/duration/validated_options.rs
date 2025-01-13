@@ -83,6 +83,8 @@ pub enum DurationFormatterOptionsError {
     FractionalDigitsOutOfRange,
 }
 
+impl core::error::Error for DurationFormatterOptionsError {}
+
 impl ValidatedDurationFormatterOptions {
     pub fn validate(
         value: DurationFormatterOptions,

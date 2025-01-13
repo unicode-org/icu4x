@@ -61,6 +61,8 @@ pub enum RatioFromStrError {
     ParsingBigIntError(num_bigint::ParseBigIntError),
 }
 
+impl core::error::Error for RatioFromStrError {}
+
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
     pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {

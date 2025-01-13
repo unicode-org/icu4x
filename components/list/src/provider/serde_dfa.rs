@@ -94,7 +94,6 @@ impl<'data> SerdeDFA<'data> {
 
         #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
-            #[cfg(not(feature = "std"))]
             use alloc::string::ToString;
             use serde::de::Error;
             return SerdeDFA::new(Cow::<str>::deserialize(deserializer)?)

@@ -76,12 +76,16 @@ impl_holder_trait!(tz::MzPeriodV1Marker);
 
 /// An error returned by [`MaybePayload`].
 #[allow(missing_docs)]
-#[derive(Debug)]
+#[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
+    /// TODO
     TypeTooSpecific,
+    /// TODO
     ConflictingField,
 }
+
+impl core::error::Error for MaybePayloadError {}
 
 impl MaybePayloadError {
     pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {

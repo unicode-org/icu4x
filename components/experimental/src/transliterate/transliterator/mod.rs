@@ -194,7 +194,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// #[derive(Debug)]
 /// struct AsciiUpperTransliterator;
 /// impl CustomTransliterator for AsciiUpperTransliterator {
-///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///     fn transliterate(&self, input: &str, range: core::ops::Range<usize>) -> String {
 ///         input.to_ascii_uppercase()
 ///     }
 /// }

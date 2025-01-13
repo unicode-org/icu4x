@@ -88,6 +88,7 @@ use icu_locale::LocaleFallbacker;
 use icu_provider::export::DataExporter;
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
@@ -121,7 +122,7 @@ use std::sync::Arc;
 /// ```
 #[derive(Clone)]
 pub struct ExportDriver {
-    markers: Option<HashSet<DataMarkerInfo>>,
+    markers: Option<BTreeSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
     #[allow(clippy::type_complexity)] // sigh
     attributes_filters:

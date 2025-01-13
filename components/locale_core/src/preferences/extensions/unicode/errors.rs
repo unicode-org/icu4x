@@ -11,3 +11,5 @@ pub enum PreferencesParseError {
     /// The given keyword value is not a valid preference variant.
     InvalidKeywordValue,
 }
+
+impl core::error::Error for PreferencesParseError {}

@@ -100,7 +100,6 @@
 //!
 //! - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
 //!    explicit `provider` arguments are available.
-//! - `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible.
 //! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
 //! - `logging`: Enables logging through the `log` crate.
 //! - `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
@@ -127,7 +126,7 @@
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(

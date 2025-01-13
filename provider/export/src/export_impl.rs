@@ -516,6 +516,7 @@ fn test_collation_filtering() {
         }
     }
 
+    extern crate alloc;
     icu_provider::export::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationTailoringV1Marker,]
