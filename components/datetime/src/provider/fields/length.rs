@@ -17,8 +17,7 @@ pub enum LengthError {
     InvalidLength,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for LengthError {}
+impl core::error::Error for LengthError {}
 
 /// An enum representing the length of a field within a date or time formatting pattern string.
 ///

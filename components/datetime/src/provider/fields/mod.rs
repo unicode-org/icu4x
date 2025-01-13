@@ -36,8 +36,7 @@ pub enum Error {
     InvalidLength(FieldSymbol),
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
 /// A field within a date pattern string, also referred to as a date field.
 ///

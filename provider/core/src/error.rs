@@ -251,8 +251,7 @@ impl DataError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for DataError {}
+impl core::error::Error for DataError {}
 
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {

@@ -26,8 +26,7 @@ pub enum SymbolError {
     Invalid(u8),
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for SymbolError {}
+impl core::error::Error for SymbolError {}
 
 /// A field symbol for a date formatting pattern.
 ///

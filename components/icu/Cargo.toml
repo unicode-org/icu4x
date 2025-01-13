@@ -66,23 +66,6 @@ default = [
     "icu_experimental?/default",
     "icu_pattern?/default",
 ]
-std = [
-    "icu_calendar/std",
-    "icu_casemap/std",
-    "icu_collator/std",
-    "icu_collections/std",
-    "icu_datetime/std",
-    "icu_decimal/std",
-    "icu_list/std",
-    "icu_locale/std",
-    "icu_normalizer/std",
-    "icu_plurals/std",
-    "icu_properties/std",
-    "icu_segmenter/std",
-    "icu_timezone/std",
-    "icu_experimental?/std",
-    "icu_pattern?/std",
-]
 serde = [
     "icu_calendar/serde",
     "icu_casemap/serde",
@@ -116,7 +99,6 @@ compiled_data = [
     "icu_experimental?/compiled_data",
 ]
 datagen = [
-    "std",
     "dep:icu_provider_registry",
     "dep:memchr",
     "icu_calendar/datagen",

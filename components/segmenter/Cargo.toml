@@ -47,7 +47,6 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "auto"]
-std = ["icu_collections/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:core_maths"]

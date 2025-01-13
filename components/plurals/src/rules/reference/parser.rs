@@ -31,8 +31,7 @@ pub enum ParseError {
     ValueTooLarge,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for ParseError {}
+impl core::error::Error for ParseError {}
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].

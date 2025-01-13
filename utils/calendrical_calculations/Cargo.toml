@@ -38,7 +38,6 @@ log = { workspace = true, optional = true }
 
 [features]
 logging = ["dep:log"]
-std = []
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

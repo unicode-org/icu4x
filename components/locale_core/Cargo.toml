@@ -45,7 +45,6 @@ serde_json = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
 databake = ["dep:databake"]
 serde = ["dep:serde", "tinystr/serde"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
