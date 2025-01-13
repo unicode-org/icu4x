@@ -357,7 +357,7 @@ impl MonthInfo {
 }
 
 /// A struct containing various details about the position of the day within a year. It is returned
-/// by the `day_of_year_info()` method of the `DateInput` trait.
+/// by [`Calendar::day_of_year_info()`].
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
