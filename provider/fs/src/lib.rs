@@ -92,6 +92,7 @@
 )]
 #![warn(missing_docs)]
 
+mod datapath;
 mod fs_data_provider;
 mod manifest;
 

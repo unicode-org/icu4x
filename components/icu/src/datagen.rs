@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_provider::prelude::*;
+use icu_provider::marker::DataMarkerPath;
 use std::collections::HashSet;
 use std::path::Path;
 
@@ -11,18 +12,18 @@ macro_rules! cb {
         fn markers_for_bin_inner(bytes: &[u8]) -> Result<HashSet<DataMarkerInfo>, DataError> {
             use std::sync::OnceLock;
             use crate as icu;
-            static LOOKUP: OnceLock<std::collections::HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            static LOOKUP: OnceLock<std::collections::HashMap<[u8; 4], Result<DataMarkerInfo, &'static str>>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (icu_provider::marker::data_marker_path!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
                     $(
-                        ($path, Some(<$marker>::INFO)),
+                        (icu_provider::marker::data_marker_path!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        ($epath, Some(<$emarker>::INFO)),
+                        (icu_provider::marker::data_marker_path!($epath).hashed().to_bytes(), Ok(<$emarker>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        ($epath, None),
+                        (icu_provider::marker::data_marker_path!($epath).hashed().to_bytes(), Err(stringify!($epath))),
                     )+
 
                 ]
@@ -32,25 +33,14 @@ macro_rules! cb {
 
             use memchr::memmem::*;
 
-            const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
-            const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
 
-            let trailing_tag = Finder::new(TRAILING_TAG);
-
-            find_iter(bytes, LEADING_TAG)
-                .map(|tag_position| tag_position + LEADING_TAG.len())
-                .filter_map(|marker_start| bytes.get(marker_start..))
-                .filter_map(move |marker_fragment| {
-                    trailing_tag
-                        .find(marker_fragment)
-                        .and_then(|end| marker_fragment.get(..end))
-                })
-                .map(std::str::from_utf8)
-                .filter_map(Result::ok)
+            find_iter(bytes, &DataMarkerPath::LEADING_TAG)
+                .map(|tag_position| tag_position + DataMarkerPath::LEADING_TAG.len())
+                .filter_map(|marker_start| bytes.get(marker_start..marker_start+4))
                 .filter_map(|p| {
                     match lookup.get(p) {
-                        Some(Some(marker)) => Some(Ok(*marker)),
-                        Some(None) => Some(Err(DataError::custom("This marker requires the `experimental` Cargo feature").with_display_context(p))),
+                        Some(Ok(marker)) => Some(Ok(*marker)),
+                        Some(Err(path)) => Some(Err(DataError::custom("This marker requires the `experimental` Cargo feature").with_display_context(path))),
                         None => None,
                     }
                 })
@@ -89,20 +79,19 @@ pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError
 
 #[test]
 fn test_markers_for_bin() {
-    let hashset =
-        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
-    let mut sorted = hashset.into_iter().collect::<Vec<_>>();
-    sorted.sort();
     assert_eq!(
-        sorted,
-        &[
+        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
+        [
             crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
             crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
             crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
             crate::datetime::provider::neo::GluePatternV1Marker::INFO,
             crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
             crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
+            crate::decimal::provider::DecimalDigitsV1Marker::INFO,
             crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
         ]
+        .into_iter()
+        .collect()
     );
 }

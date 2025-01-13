@@ -75,13 +75,11 @@ mod tests;
 /// // Note: FooV1Marker implements `DynamicDataMarker` but not `DataMarker`.
 /// // The other two implement `DataMarker`.
 ///
-/// assert_eq!(BarV1Marker::INFO.path.as_str(), "demo/bar@1");
 /// assert_eq!(
 ///     BarV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Language
 /// );
 ///
-/// assert_eq!(BazV1Marker::INFO.path.as_str(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Region
