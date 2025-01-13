@@ -40,7 +40,6 @@ serde_json = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-bench = ["serde"]
 default = ["alloc"]
 alloc = []
 databake = ["dep:databake"]

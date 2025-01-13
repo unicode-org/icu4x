@@ -46,7 +46,6 @@ criterion = { workspace = true }
 [features]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde"]
 databake = ["dep:databake", "zerovec/databake"]
-bench = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI

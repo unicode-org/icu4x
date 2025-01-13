@@ -75,8 +75,6 @@ datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "ti
 ryu = ["fixed_decimal/ryu"]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_list/serde", "icu_pattern/serde", "icu_plurals/serde", "icu_provider/serde", "zerotrie/serde", "icu_normalizer/serde"]
 
-bench = []
-
 [[bench]]
 name = "transliterate"
 path = "benches/transliterate/bench.rs"

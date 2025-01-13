@@ -45,7 +45,6 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-bench = []
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "icu_properties/serde", "potential_utf/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data"]

@@ -55,7 +55,6 @@ criterion = { workspace = true }
 [features]
 derive = ["dep:zerovec-derive"]
 hashmap = ["dep:twox-hash"]
-bench = ["serde", "databake"]
 yoke = ["dep:yoke"]
 serde = ["dep:serde"]
 databake = ["dep:databake"]

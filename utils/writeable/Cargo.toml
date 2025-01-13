@@ -31,7 +31,6 @@ rand = { workspace = true, features = ["small_rng"] }
 criterion = { workspace = true }
 
 [features]
-bench = []
 either = ["dep:either"]
 
 [package.metadata.cargo-all-features]

@@ -55,7 +55,6 @@ export = [
     "icu_provider/deserialize_json",
     "icu_provider/deserialize_postcard_1",
 ]
-bench = []
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

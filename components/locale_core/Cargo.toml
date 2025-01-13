@@ -48,7 +48,6 @@ criterion = { workspace = true }
 databake = ["dep:databake"]
 serde = ["dep:serde", "tinystr/serde"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
-bench = ["serde"]
 
 [lib]
 bench = false # This option is required for Benchmark CI

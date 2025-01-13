@@ -48,7 +48,6 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
-bench = ["serde"]
 compiled_data = ["dep:icu_decimal_data"]
 
 [package.metadata.cargo-all-features]

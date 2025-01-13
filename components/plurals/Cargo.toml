@@ -46,7 +46,6 @@ default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
-bench = ["serde", "datagen"]
 compiled_data = ["dep:icu_plurals_data"]
 
 [lib]

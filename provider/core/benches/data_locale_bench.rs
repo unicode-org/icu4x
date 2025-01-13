@@ -34,11 +34,9 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     data_locale_bench(c);
 }
 
-#[cfg(feature = "bench")]
 fn data_locale_bench(c: &mut Criterion) {
     c.bench_function("data_locale/parse", |b| {
         b.iter(|| {

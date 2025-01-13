@@ -42,7 +42,6 @@ twox-hash = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-bench = []
 export = [
     "icu_provider/export",
     "log",

@@ -24,9 +24,8 @@ approximation of how the component should behave in the wild.
 
 ### Overview Benchmarks
 
-Each component provides one or more tests with a `/overview` postfix which are executed by default when
-calling with `cargo bench` (or `cargo criterion`).
-Those benchmarks are intended to be run often in the change/test development cycle and give a good
+Each component provides one or more tests with a `/overview` postfix, which can be filtered for using
+`cargo bench overview`. Those benchmarks are intended to be run often in the change/test development cycle and give a good
 overview of how the changes affect performance of the module in the most common scenarios.
 
 This overview should be composed of no more than 5 tests (for a total of 1min per execution) and single iteration
@@ -44,7 +43,7 @@ multiple crates), then name of the module and then the name of the test, in this
 ### Detailed Benchmarks
 
 If more detailed benchmarks drilling into various facets of the component are needed, they should be put
-behind `bench` flag and in the same benchmark naming scheme.
+in the same benchmark naming scheme, without the `overview` keyword.
 
 For example:
   - `plurals/parser/lexing`
@@ -56,7 +55,7 @@ For example:
   - `plurals/pluralrules/select`
 
 This allows a user to incorporate `cargo bench` into their change->test->change cycle, while allowing them
-to drill into a more detailed view of the performance impact if needed by calling `cargo bench operands --features bench`.
+to drill into a more detailed view of the performance impact if needed by calling `cargo bench operands`.
 
 ### Wall time vs. Count of instructions
 

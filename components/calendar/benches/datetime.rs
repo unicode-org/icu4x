@@ -75,7 +75,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_iso(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/buddhist",
@@ -84,7 +83,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_buddhist(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/coptic",
@@ -93,7 +91,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_coptic(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/ethiopic",
@@ -113,7 +110,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/chinese_calculating",
@@ -133,7 +129,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/chinese_cached",
@@ -153,7 +148,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/gregorian",
@@ -162,7 +156,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_gregorian(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/indian",
@@ -171,7 +164,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_indian(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/julian",
@@ -180,7 +172,6 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_julian(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
@@ -200,7 +191,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
@@ -220,7 +210,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
@@ -240,7 +229,6 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
