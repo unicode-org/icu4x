@@ -344,15 +344,44 @@ impl TaggedDataMarkerHash {
 /// # use icu_provider::marker::DataMarkerPath;
 /// const K: DataMarkerPath = icu_provider::marker::data_marker_path!("foo/../bar@1");
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Eq)]
 pub struct DataMarkerPath {
     hash: TaggedDataMarkerHash,
+    #[cfg(feature = "export")]
+    path: &'static str,
 }
 
 impl core::hash::Hash for DataMarkerPath {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.hash.hash.hash(state)
+    }
+}
+
+impl PartialEq for DataMarkerPath {
+    fn eq(&self, other: &Self) -> bool {
+        self.hash.eq(&other.hash)
+    }
+}
+
+impl PartialOrd for DataMarkerPath {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for DataMarkerPath {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.hash.cmp(&other.hash)
+    }
+}
+
+impl alloc::fmt::Debug for DataMarkerPath {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        #[cfg(feature = "export")]
+        return write!(f, "{}", self.path);
+        #[cfg(not(feature = "export"))]
+        return write!(f, "DataMarkerPath {{ {:?} }}", self.hash);
     }
 }
 
@@ -375,6 +404,8 @@ impl DataMarkerPath {
 
         Ok(Self {
             hash: TaggedDataMarkerHash::new(hash),
+            #[cfg(feature = "export")]
+            path
         })
     }
 
