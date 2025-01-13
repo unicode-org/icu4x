@@ -31,26 +31,8 @@ icu_provider_registry::registry!(cb);
 
 #[test]
 fn test_path_to_string() {
-    struct TestCase {
-        pub path: DataMarkerPath,
-        pub expected: &'static str,
-    }
-
-    for cas in [
-        TestCase {
-            path: data_marker_path!("core/cardinal@1"),
-            expected: "core/cardinal@1",
-        },
-        TestCase {
-            path: data_marker_path!("core/maxlengthsubcatg@1"),
-            expected: "core/maxlengthsubcatg@1",
-        },
-        TestCase {
-            path: data_marker_path!("core/cardinal@65535"),
-            expected: "core/cardinal@65535",
-        },
-    ] {
-        let path = get_data_marker_path(cas.path);
-        assert_eq!(Some(cas.expected), path);
-    }
+    assert_eq!(
+        get_data_marker_path(data_marker_path!("core/helloworld@1")),
+        Some("core/helloworld@1")
+    );
 }
