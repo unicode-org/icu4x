@@ -521,6 +521,8 @@ pub enum FractionalSecondError {
     OutOfRange,
 }
 
+impl core::error::Error for FractionalSecondError {}
+
 impl From<FractionalSecondDigits> for u8 {
     fn from(value: FractionalSecondDigits) -> u8 {
         use FractionalSecondDigits::*;

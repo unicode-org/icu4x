@@ -163,6 +163,8 @@ pub enum BuilderError {
     InvalidOptions,
 }
 
+impl core::error::Error for BuilderError {}
+
 /// A builder for [dynamic field sets](crate::fieldsets::enums).
 ///
 /// This builder is useful if you do not know the field set at code compilation time. If you do,

@@ -106,6 +106,8 @@ pub enum ParseError {
     TimeDurationDesignator,
 }
 
+impl core::error::Error for ParseError {}
+
 impl ParseError {
     pub(crate) fn abrupt_end(location: &'static str) -> Self {
         ParseError::AbruptEnd { location }

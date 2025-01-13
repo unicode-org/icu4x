@@ -69,6 +69,8 @@ pub enum ParseError {
     RequiresCalculation,
 }
 
+impl core::error::Error for ParseError {}
+
 impl From<IxdtfParseError> for ParseError {
     fn from(value: IxdtfParseError) -> Self {
         Self::Syntax(value)

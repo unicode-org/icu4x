@@ -49,6 +49,8 @@ pub enum PersonNamesFormatterError {
     Pattern(icu_pattern::Error),
 }
 
+impl core::error::Error for PersonNamesFormatterError {}
+
 impl From<DataError> for PersonNamesFormatterError {
     fn from(e: DataError) -> Self {
         PersonNamesFormatterError::Data(e)

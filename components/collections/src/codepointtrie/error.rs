@@ -20,3 +20,5 @@ pub enum Error {
     #[displaydoc("CodePointTrie must be constructed from data vector with at least one element")]
     EmptyDataVector,
 }
+
+impl core::error::Error for Error {}
