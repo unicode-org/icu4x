@@ -79,7 +79,7 @@ impl WindowsTimeZoneMapper {
 }
 
 /// A borrowed wrapper around the windows time zone mapper data.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct WindowsTimeZoneMapperBorrowed<'a> {
     data: &'a WindowsZonesToBcp47MapV1<'a>,
 }
