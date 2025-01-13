@@ -358,6 +358,9 @@ impl core::hash::Hash for DataMarkerPath {
 
 impl DataMarkerPath {
     #[doc(hidden)]
+    pub const LEADING_TAG: [u8; 10] = *b"icu4x_tdmh";
+
+    #[doc(hidden)]
     // macro use
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
