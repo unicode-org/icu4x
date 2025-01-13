@@ -359,7 +359,7 @@ impl MonthInfo {
 /// A struct containing various details about the position of the day within a year. It is returned
 /// by [`Calendar::day_of_year_info()`].
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
     pub day_of_year: u16,
