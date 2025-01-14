@@ -128,32 +128,20 @@ impl SentenceSegmenter {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
-    {
-        let payload = provider.load(Default::default())?.payload;
-        Ok(Self {
-            payload,
-            payload_locale_override: None,
-        })
-    }
-
     icu_provider::gen_any_buffer_data_constructors!(
         (options: SentenceBreakOptions) -> error: DataError,
         /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
         functions: [
-            try_new_with_options,
-            try_new_with_options_with_any_provider,
-            try_new_with_options_with_buffer_provider,
-            try_new_with_options_unstable,
+            try_new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_options)]
-    pub fn try_new_with_options_unstable<D>(
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D>(
         provider: &D,
         options: SentenceBreakOptions,
     ) -> Result<Self, DataError>
