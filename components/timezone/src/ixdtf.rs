@@ -8,9 +8,7 @@ use crate::{
     InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneInfo,
     UtcOffset, ZoneOffsetCalculator, ZoneOffsets, ZoneVariant, ZonedDateTime,
 };
-use icu_calendar::{
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateError, DateTime, Iso, RangeError, Time,
-};
+use icu_calendar::{AnyCalendarKind, AsCalendar, Calendar, Date, DateError, Iso, RangeError, Time};
 use icu_provider::prelude::*;
 use ixdtf::{
     parsers::records::{
@@ -303,21 +301,13 @@ impl<'a> Intermediate<'a> {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
-        let iso = DateTime::<Iso>::try_new_iso(
-            self.date.year,
-            self.date.month,
-            self.date.day,
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-        )?;
+        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
         let offset = match time_zone_id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(time_zone_id
-            .with_offset(offset)
-            .at_time((iso.date, iso.time)))
+        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
     fn loose(
@@ -347,17 +337,9 @@ impl<'a> Intermediate<'a> {
                 _ => None,
             },
         };
-        let iso = DateTime::<Iso>::try_new_iso(
-            self.date.year,
-            self.date.month,
-            self.date.day,
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-        )?;
-        Ok(time_zone_id
-            .with_offset(offset)
-            .at_time((iso.date, iso.time)))
+        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
+        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
     fn full(

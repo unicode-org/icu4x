@@ -419,7 +419,7 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
@@ -432,10 +432,10 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
+    /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&datetime),
+    ///     formatter.format_any_calendar(&date),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -724,7 +724,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
@@ -737,9 +737,9 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// .unwrap();
     ///
     /// // Test that the specific formatter works:
-    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     specific_formatter.format(&datetime),
+    ///     specific_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     ///
@@ -748,7 +748,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
-    ///     general_formatter.format(&datetime),
+    ///     general_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     /// ```
@@ -840,7 +840,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
@@ -853,9 +853,9 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// .unwrap();
     ///
     /// // Test that the specific formatter works:
-    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     specific_formatter.format_any_calendar(&datetime),
+    ///     specific_formatter.format_any_calendar(&date),
     ///     "20 déc. 2024"
     /// );
     ///
@@ -864,7 +864,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
-    ///     general_formatter.format_any_calendar(&datetime),
+    ///     general_formatter.format_any_calendar(&date),
     ///     "20 déc. 2024"
     /// );
     /// ```

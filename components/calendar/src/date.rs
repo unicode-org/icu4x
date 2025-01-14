@@ -89,7 +89,7 @@ impl<C> Deref for Ref<'_, C> {
 ///
 /// This can be constructed  constructed
 /// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
-/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
+/// `new_<calendar>_date()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::Date;

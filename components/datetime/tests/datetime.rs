@@ -74,27 +74,36 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 continue;
             }
         };
-        let input_value = mock::parse_gregorian_from_str(&fx.input.value);
-        let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese::new());
-        let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi::new());
-        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
-        let input_ethioaa =
-            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew);
-        let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
-        let input_islamic_observational =
-            input_value.to_calendar(IslamicObservational::new_always_calculating());
-        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
+        let input_iso = DateTime::try_iso_from_str(&fx.input.value).unwrap();
+
+        let input_buddhist = DateTime::try_from_str(&fx.input.value, Buddhist).unwrap();
+        let input_chinese = DateTime::try_from_str(&fx.input.value, Chinese::new()).unwrap();
+        let input_coptic = DateTime::try_from_str(&fx.input.value, Coptic).unwrap();
+        let input_dangi = DateTime::try_from_str(&fx.input.value, Dangi::new()).unwrap();
+        let input_ethiopian = DateTime::try_from_str(&fx.input.value, Ethiopian::new()).unwrap();
+        let input_ethioaa = DateTime::try_from_str(
+            &fx.input.value,
+            Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem),
+        )
+        .unwrap();
+        let input_gregorian = DateTime::try_from_str(&fx.input.value, Gregorian).unwrap();
+        let input_hebrew = DateTime::try_from_str(&fx.input.value, Hebrew).unwrap();
+        let input_indian = DateTime::try_from_str(&fx.input.value, Indian).unwrap();
+        let input_islamic_civil = DateTime::try_from_str(&fx.input.value, IslamicCivil).unwrap();
+        let input_islamic_observational = DateTime::try_from_str(
+            &fx.input.value,
+            IslamicObservational::new_always_calculating(),
+        )
+        .unwrap();
+        let input_islamic_tabular =
+            DateTime::try_from_str(&fx.input.value, IslamicTabular).unwrap();
         let input_islamic_umm_al_qura =
-            input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
-        let input_iso = input_value.to_calendar(Iso);
-        let input_japanese = input_value.to_calendar(japanese);
-        let input_japanext = input_value.to_calendar(japanext);
-        let input_persian = input_value.to_calendar(Persian);
-        let input_roc = input_value.to_calendar(Roc);
+            DateTime::try_from_str(&fx.input.value, IslamicUmmAlQura::new_always_calculating())
+                .unwrap();
+        let input_japanese = DateTime::try_from_str(&fx.input.value, japanese).unwrap();
+        let input_japanext = DateTime::try_from_str(&fx.input.value, japanext).unwrap();
+        let input_persian = DateTime::try_from_str(&fx.input.value, Persian).unwrap();
+        let input_roc = DateTime::try_from_str(&fx.input.value, Roc).unwrap();
 
         let description = match fx.description {
             Some(description) => {
@@ -243,7 +252,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
             } else {
                 assert_fixture_element(
                     &locale,
-                    &input_value,
+                    &input_gregorian,
                     &input_iso,
                     &output_value,
                     skeleton,
@@ -379,7 +388,7 @@ fn test_dayperiod_patterns() {
         let locale: Locale = test.locale.parse().unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime = mock::parse_gregorian_from_str(dt_input);
+                let datetime = DateTime::try_from_str(dt_input, Gregorian).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let parsed_pattern =

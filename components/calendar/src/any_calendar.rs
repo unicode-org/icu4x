@@ -18,7 +18,7 @@ use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
 use crate::persian::Persian;
 use crate::roc::Roc;
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
+use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
@@ -32,7 +32,7 @@ use icu_provider::prelude::*;
 use core::fmt;
 
 define_preferences!(
-    /// The prefs for datetime formatting.
+    /// The prefs for date formatting.
     [Copy]
     AnyCalendarPreferences,
     {
@@ -53,7 +53,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, cal::Japanese, Time, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, Date, cal::Japanese, types::{Era, MonthCode}};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -64,26 +64,23 @@ define_preferences!(
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
-/// // manually construct a datetime in this calendar
-/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
-/// // construct from era code, year, month code, day, time, and a calendar
+/// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28,
-///                                                manual_time, calendar.clone())
-///                     .expect("Failed to construct DateTime manually");
+/// let manual_date = Date::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+///                     .expect("Failed to construct Date manually");
 ///
 ///
-/// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::try_new_iso(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct ISO DateTime.");
-/// let iso_converted = iso_datetime.to_calendar(calendar);
+/// // construct another date by converting from ISO
+/// let iso_date = Date::try_new_iso(2020, 9, 1)
+///     .expect("Failed to construct ISO Date.");
+/// let iso_converted = iso_date.to_calendar(calendar);
 ///
-/// // Construct a datetime in the appropriate typed calendar and convert
+/// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_datetime = DateTime::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
-///                                                         12, 33, 12, japanese_calendar).unwrap();
-/// // This is a DateTime<AnyCalendar>
-/// let any_japanese_datetime = japanese_datetime.to_any();
+/// let japanese_date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
+///                                                         japanese_calendar).unwrap();
+/// // This is a Date<AnyCalendar>
+/// let any_japanese_date = japanese_date.to_any();
 /// ```
 #[derive(Debug, Clone)]
 #[non_exhaustive]
@@ -839,18 +836,6 @@ impl AnyCalendar {
                 inner: date.inner.clone(),
                 calendar: Ref(self),
             }
-        }
-    }
-
-    /// Given an AnyCalendar datetime, convert that date to another AnyCalendar datetime in this calendar,
-    /// if conversion is needed
-    pub fn convert_any_datetime<'a>(
-        &'a self,
-        date: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
-    ) -> DateTime<Ref<'a, AnyCalendar>> {
-        DateTime {
-            time: date.time,
-            date: self.convert_any_date(&date.date),
         }
     }
 }

@@ -7,14 +7,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Gregorian;
-//! use icu::calendar::{Date, Time};
 //! use icu::decimal::parts;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_parts_eq;
 //!
-//! let dtf = FixedDecimalFormatter::try_new(
+//! let df = FixedDecimalFormatter::try_new(
 //!     locale!("en").into(),
 //!     Default::default(),
 //! )
@@ -24,7 +22,7 @@
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
-//!     dtf.format(&fixed_decimal),
+//!     df.format(&fixed_decimal),
 //!     "-987,654.321",
 //!     [
 //!         (0, 1, parts::MINUS_SIGN),

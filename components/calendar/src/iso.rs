@@ -5,33 +5,19 @@
 //! This module contains types and implementations for the ISO calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime};
+//! use icu::calendar::Date;
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//!
-//! // `Date` checks
 //! assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
-//! assert_eq!(datetime_iso.date.month().ordinal, 1);
-//! assert_eq!(datetime_iso.date.day_of_month().0, 2);
-//! assert_eq!(datetime_iso.time.hour.number(), 13);
-//! assert_eq!(datetime_iso.time.minute.number(), 1);
-//! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -42,7 +28,7 @@ use tinystr::tinystr;
 /// It is identical to the Gregorian calendar, except it uses negative years for years before 1 CE,
 /// and may have differing formatting data for a given locale.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_8601#Dates
 ///
@@ -251,37 +237,6 @@ impl Date<Iso> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
-    }
-}
-
-impl DateTime<Iso> {
-    /// Construct a new ISO datetime from integers.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-    ///     .expect("Failed to initialize ISO DateTime instance.");
-    ///
-    /// assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
-    /// assert_eq!(datetime_iso.date.month().ordinal, 1);
-    /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_iso.time.hour.number(), 13);
-    /// assert_eq!(datetime_iso.time.minute.number(), 1);
-    /// assert_eq!(datetime_iso.time.second.number(), 0);
-    /// ```
-    pub fn try_new_iso(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Iso>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_iso(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

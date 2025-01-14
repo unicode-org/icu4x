@@ -411,7 +411,11 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
+        let date = self.date.to_any().to_calendar(Ref(calendar));
+        DateTime {
+            date,
+            time: self.time,
+        }
     }
 }
 
