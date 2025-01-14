@@ -183,9 +183,9 @@ impl SourceDataProvider {
             .dates(cldr_cal)
             .list_locales()?
             .flat_map(|locale| {
-                keylengths.iter().map(move |&length| {
-                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
-                })
+                keylengths
+                    .iter()
+                    .map(move |&length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
             })
             .collect())
     }
