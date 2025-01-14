@@ -55,7 +55,7 @@ macro_rules! constructor {
                 ListLength::Short => ListFormatterPatternsV2::SHORT,
                 ListLength::Wide => ListFormatterPatternsV2::WIDE,
             };
-            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let locale = <$marker>::make_locale(prefs.locale_prefs);
             let data = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(

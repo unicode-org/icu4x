@@ -150,8 +150,8 @@ pub mod marker {
     //! Additional [`DataMarker`](super::DataMarker) helpers.
 
     pub use super::marker_full::{
-        bind, data_marker_path, impl_data_provider_never_marker, locale_for_data_marker,
-        DataMarkerPath, DataMarkerPathHash, ErasedMarker, NeverMarker,
+        data_marker_path, impl_data_provider_never_marker, DataMarkerExt, DataMarkerPath,
+        DataMarkerPathHash, ErasedMarker, NeverMarker,
     };
 }
 
@@ -170,8 +170,8 @@ pub mod prelude {
     pub use crate::request::*;
     #[doc(no_inline)]
     pub use crate::{
-        marker::locale_for_data_marker, BoundDataProvider, DataError, DataErrorKind, DataLocale,
-        DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider, DataRequest,
+        marker::DataMarkerExt, BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker,
+        DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider, DataRequest,
         DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
         DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, IterableDataProvider,
         IterableDynamicDataProvider, ResultDataError,

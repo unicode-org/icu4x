@@ -81,8 +81,7 @@ impl CurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
             (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
@@ -113,8 +112,7 @@ impl CurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_prefs);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

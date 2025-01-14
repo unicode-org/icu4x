@@ -1449,9 +1449,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_prefs
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1472,9 +1472,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_prefs
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1495,9 +1495,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_prefs
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }

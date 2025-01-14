@@ -101,8 +101,7 @@ impl LocaleSpecificDataHolder {
             .map(|c| DataMarkerAttributes::from_str_or_panic(c.as_str()))
             .unwrap_or_default();
 
-        let data_locale =
-            DataLocale::from_preferences_locale::<CollationTailoringV1Marker>(prefs.locale_prefs);
+        let data_locale = CollationTailoringV1Marker::make_locale(prefs.locale_prefs);
         let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale.clone());
 
         let req = DataRequest {

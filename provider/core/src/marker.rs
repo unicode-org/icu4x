@@ -85,24 +85,29 @@ pub trait DynamicDataMarker: 'static {
 pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;
+}
 
+/// Extension trait for methods on [`DataMarker`]
+pub trait DataMarkerExt: DataMarker + Sized {
+    /// Binds a [`DataMarker`] to a provider supporting it.
+    fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
+    where
+        P: DataProvider<Self>;
+    /// Constructs a [`DataLocale`] using fallback preferences from this [`DataMarker`].
+    fn make_locale(locale: LocalePreferences) -> DataLocale;
+}
+
+impl<M: DataMarker + Sized> DataMarkerExt for M {
     fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
     where
         P: DataProvider<Self>,
-        Self: Sized,
     {
         DataProviderWithMarker::new(provider)
     }
-}
 
-/// Binds a [`DataMarker`] to a provider supporting it.
-pub fn bind<M, P>(provider: P) -> DataProviderWithMarker<M, P>
-where
-    M: DataMarker,
-    P: DataProvider<M>,
-    M: Sized,
-{
-    DataProviderWithMarker::new(provider)
+    fn make_locale(locale: LocalePreferences) -> DataLocale {
+        M::INFO.make_locale(locale)
+    }
 }
 
 /// A [`DynamicDataMarker`] that never returns data.
@@ -624,11 +629,6 @@ impl DataMarkerInfo {
             locale.to_data_locale_language_priority()
         }
     }
-}
-
-/// Turn a LocalePreferences into a DataLocale using the appropriate fallback config for this marker
-pub fn locale_for_data_marker<M: DataMarker>(locale: LocalePreferences) -> DataLocale {
-    M::INFO.make_locale(locale)
 }
 
 /// See [`DataMarkerInfo`].
