@@ -151,7 +151,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`Date`](icu_calendar::Date)
 /// - [`Time`](icu_calendar::Time)
 /// - [`DateTime`](icu_calendar::DateTime)
-/// - [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
 /// - [`UtcOffset`](icu_timezone::UtcOffset)
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///

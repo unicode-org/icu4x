@@ -12,7 +12,7 @@ use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::fieldsets::YMDT;
 use icu_datetime::FixedCalendarDateTimeFormatter;
-use icu_timezone::CustomZonedDateTime;
+use icu_timezone::ZonedDateTime;
 use std::env;
 
 fn main() {
@@ -47,7 +47,7 @@ fn main() {
         let time = Time::try_new(18, 56, 0, 0).unwrap();
         let zone = TimeZoneInfo::utc();
 
-        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
+        let formatted_dt = dtf.format(&ZonedDateTime { date, time, zone });
 
         println!("Today is: {}", formatted_dt);
     }

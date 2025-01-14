@@ -28,7 +28,7 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomZonedDateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
+use icu_timezone::{TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,
@@ -275,23 +275,23 @@ fn assert_fixture_element<A>(
         input_value.date.calendar().debug_name()
     );
 
-    let input_value = CustomZonedDateTime {
+    let input_value = ZonedDateTime {
         date: input_value.date.clone(),
         time: input_value.time,
         zone: TimeZoneInfo::utc(),
     };
-    let input_iso = CustomZonedDateTime {
+    let input_iso = ZonedDateTime {
         date: input_iso.date,
         time: input_iso.time,
         zone: TimeZoneInfo::utc(),
     };
 
-    let any_input = CustomZonedDateTime {
+    let any_input = ZonedDateTime {
         date: input_value.date.to_any(),
         time: input_value.time,
         zone: TimeZoneInfo::utc(),
     };
-    let iso_any_input = CustomZonedDateTime {
+    let iso_any_input = ZonedDateTime {
         date: input_iso.date.to_any(),
         time: input_iso.time,
         zone: TimeZoneInfo::utc(),
