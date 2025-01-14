@@ -69,7 +69,7 @@ mod tests {
         // Match "und"
         assert_eq!(
             name_order_derive(
-                &locale!("de_Latn_ch"),
+                &locale!("de-Latn-ch"),
                 &surname_first,
                 &given_first,
                 fallbacker
@@ -84,7 +84,7 @@ mod tests {
         // since "und" is a catch all set in given first, it is a perfect match.
         assert_eq!(
             name_order_derive(
-                &locale!("ja_Jpan_jp"),
+                &locale!("ja-Jpan-jp"),
                 &surname_first,
                 &given_first,
                 fallbacker
@@ -104,7 +104,7 @@ mod tests {
 
         assert_eq!(
             name_order_derive(
-                &locale!("en_Latn_SG"),
+                &locale!("en-Latn-SG"),
                 &surname_first,
                 &given_first,
                 fallbacker
@@ -116,7 +116,7 @@ mod tests {
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
             name_order_derive(
-                &locale!("zh_Hans_CN"),
+                &locale!("zh-Hans-CN"),
                 &surname_first,
                 &given_first,
                 fallbacker
@@ -128,7 +128,7 @@ mod tests {
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
             name_order_derive(
-                &locale!("zh_Hans"),
+                &locale!("zh-Hans"),
                 &surname_first,
                 &given_first,
                 fallbacker

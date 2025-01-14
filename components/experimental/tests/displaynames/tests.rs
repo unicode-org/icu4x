@@ -22,7 +22,7 @@ fn test_concatenate() {
             should_borrow: true,
         },
         TestCase {
-            input_1: &locale!("zh_Hans"),
+            input_1: &locale!("zh-Hans"),
             expected: "Simplified Chinese",
             should_borrow: true,
         },
