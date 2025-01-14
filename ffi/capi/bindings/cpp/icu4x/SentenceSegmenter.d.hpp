@@ -36,7 +36,7 @@ namespace icu4x {
 class SentenceSegmenter {
 public:
 
-  inline static std::unique_ptr<icu4x::SentenceSegmenter> create_root();
+  inline static std::unique_ptr<icu4x::SentenceSegmenter> create();
 
   inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::Locale& locale);
 

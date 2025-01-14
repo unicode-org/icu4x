@@ -22,11 +22,11 @@
 
 
 
-LineSegmenter* icu4x_LineSegmenter_create_root_auto_mv1(void);
+LineSegmenter* icu4x_LineSegmenter_create_auto_mv1(void);
 
-LineSegmenter* icu4x_LineSegmenter_create_root_lstm_mv1(void);
+LineSegmenter* icu4x_LineSegmenter_create_lstm_mv1(void);
 
-LineSegmenter* icu4x_LineSegmenter_create_root_dictionary_mv1(void);
+LineSegmenter* icu4x_LineSegmenter_create_dictionary_mv1(void);
 
 LineSegmenter* icu4x_LineSegmenter_create_auto_with_options_v2_mv1(const Locale* content_locale, LineBreakOptionsV2 options);
 

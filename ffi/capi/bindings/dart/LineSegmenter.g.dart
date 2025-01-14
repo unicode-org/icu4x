@@ -27,34 +27,34 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `new_root_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_root_auto) for more information.
+  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   factory LineSegmenter.auto() {
-    final result = _icu4x_LineSegmenter_create_root_auto_mv1();
+    final result = _icu4x_LineSegmenter_create_auto_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
 
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
-  /// See the [Rust documentation for `new_root_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_root_lstm) for more information.
+  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   factory LineSegmenter.lstm() {
-    final result = _icu4x_LineSegmenter_create_root_lstm_mv1();
+    final result = _icu4x_LineSegmenter_create_lstm_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
 
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data
   ///
-  /// See the [Rust documentation for `new_root_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_root_dictionary) for more information.
+  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   factory LineSegmenter.dictionary() {
-    final result = _icu4x_LineSegmenter_create_root_dictionary_mv1();
+    final result = _icu4x_LineSegmenter_create_dictionary_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
 
   /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
+  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   factory LineSegmenter.autoWithOptions(Locale? contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
@@ -64,7 +64,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
-  /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
+  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.autoWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
@@ -79,7 +79,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
-  /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
+  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   factory LineSegmenter.lstmWithOptions(Locale? contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
@@ -89,7 +89,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
-  /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
+  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.lstmWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
@@ -104,7 +104,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
-  /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
+  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   factory LineSegmenter.dictionaryWithOptions(Locale? contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
@@ -114,7 +114,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
-  /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
+  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.dictionaryWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
@@ -147,19 +147,19 @@ final class LineSegmenter implements ffi.Finalizable {
 external void _icu4x_LineSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_root_auto_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_auto_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_root_auto_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_auto_mv1();
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_root_lstm_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_lstm_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_root_lstm_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_lstm_mv1();
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_root_dictionary_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_dictionary_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_root_dictionary_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_dictionary_mv1();
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_auto_with_options_v2_mv1')

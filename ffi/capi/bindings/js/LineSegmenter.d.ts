@@ -16,11 +16,11 @@ export class LineSegmenter {
 
     get ffiValue(): pointer;
 
-    static createRootAuto(): LineSegmenter;
+    static createAuto(): LineSegmenter;
 
-    static createRootLstm(): LineSegmenter;
+    static createLstm(): LineSegmenter;
 
-    static createRootDictionary(): LineSegmenter;
+    static createDictionary(): LineSegmenter;
 
     static autoWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 

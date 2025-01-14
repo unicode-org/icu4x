@@ -42,8 +42,8 @@ export class WordSegmenter {
         return this.#ptr;
     }
 
-    static createRootAuto() {
-        const result = wasm.icu4x_WordSegmenter_create_root_auto_mv1();
+    static createAuto() {
+        const result = wasm.icu4x_WordSegmenter_create_auto_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -88,8 +88,8 @@ export class WordSegmenter {
         }
     }
 
-    static createRootLstm() {
-        const result = wasm.icu4x_WordSegmenter_create_root_lstm_mv1();
+    static createLstm() {
+        const result = wasm.icu4x_WordSegmenter_create_lstm_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -134,8 +134,8 @@ export class WordSegmenter {
         }
     }
 
-    static createRootDictionary() {
-        const result = wasm.icu4x_WordSegmenter_create_root_dictionary_mv1();
+    static createDictionary() {
+        const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1();
     
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);

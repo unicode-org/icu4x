@@ -26,9 +26,9 @@ final class SentenceSegmenter implements ffi.Finalizable {
 
   /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
   ///
-  /// See the [Rust documentation for `new_root`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new_root) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
   factory SentenceSegmenter() {
-    final result = _icu4x_SentenceSegmenter_create_root_mv1();
+    final result = _icu4x_SentenceSegmenter_create_mv1();
     return SentenceSegmenter._fromFfi(result, []);
   }
 
@@ -75,9 +75,9 @@ final class SentenceSegmenter implements ffi.Finalizable {
 external void _icu4x_SentenceSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_root_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_SentenceSegmenter_create_root_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_SentenceSegmenter_create_mv1();
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_with_content_locale_mv1')

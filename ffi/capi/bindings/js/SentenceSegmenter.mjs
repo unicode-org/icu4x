@@ -42,8 +42,8 @@ export class SentenceSegmenter {
         return this.#ptr;
     }
 
-    static createRoot() {
-        const result = wasm.icu4x_SentenceSegmenter_create_root_mv1();
+    static create() {
+        const result = wasm.icu4x_SentenceSegmenter_create_mv1();
     
         try {
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, result, []);
