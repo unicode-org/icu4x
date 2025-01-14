@@ -314,8 +314,8 @@ pub mod ffi {
 
         /// Returns the calendar system used in this formatter.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
-        pub fn calendar(&self) -> Calendar {
-            Calendar(Arc::new(self.0.calendar().0.clone()))
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 
@@ -386,8 +386,8 @@ pub mod ffi {
 
         /// Returns the calendar system used in this formatter.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
-        pub fn calendar(&self) -> Calendar {
-            Calendar(Arc::new(self.0.calendar().0.clone()))
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 }
