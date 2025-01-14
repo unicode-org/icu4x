@@ -348,3 +348,71 @@ impl DataLocale {
         }
     }
 }
+
+#[test]
+fn test_data_locale_to_string() {
+    struct TestCase {
+        pub locale: &'static str,
+        pub expected: &'static str,
+    }
+
+    for cas in [
+        TestCase {
+            locale: "und",
+            expected: "und",
+        },
+        TestCase {
+            locale: "und-u-sd-sdd",
+            expected: "und-u-sd-sdd",
+        },
+        TestCase {
+            locale: "en-ZA-u-sd-zaa",
+            expected: "en-ZA-u-sd-zaa",
+        },
+    ] {
+        let locale = cas.locale.parse::<DataLocale>().unwrap();
+        writeable::assert_writeable_eq!(locale, cas.expected);
+    }
+}
+
+#[test]
+fn test_data_locale_from_string() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input: &'static str,
+        pub success: bool,
+    }
+
+    for cas in [
+        TestCase {
+            input: "und",
+            success: true,
+        },
+        TestCase {
+            input: "und-u-cu-gbp",
+            success: false,
+        },
+        TestCase {
+            input: "en-ZA-u-sd-zaa",
+            success: true,
+        },
+        TestCase {
+            input: "en...",
+            success: false,
+        },
+    ] {
+        let data_locale = match (DataLocale::from_str(cas.input), cas.success) {
+            (Ok(l), true) => l,
+            (Err(_), false) => {
+                continue;
+            }
+            (Ok(_), false) => {
+                panic!("DataLocale parsed but it was supposed to fail: {cas:?}");
+            }
+            (Err(_), true) => {
+                panic!("DataLocale was supposed to parse but it failed: {cas:?}");
+            }
+        };
+        writeable::assert_writeable_eq!(data_locale, cas.input);
+    }
+}
