@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::serializers::AbstractSerializer;
+use crate::datapath::get_data_marker_path;
 use crate::manifest::Manifest;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -105,7 +106,10 @@ impl DataExporter for FilesystemExporter {
         id: DataIdentifierBorrowed,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let mut path_buf = self.root.join(marker.path.as_str());
+        let Some(path) = get_data_marker_path(marker.path) else {
+            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
+        };
+        let mut path_buf = self.root.join(path);
         if !id.marker_attributes.is_empty() {
             path_buf.push(id.marker_attributes.as_str());
         }
@@ -145,7 +149,10 @@ impl DataExporter for FilesystemExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
-        let mut path_buf = self.root.join(marker.path.as_str());
+        let Some(path) = get_data_marker_path(marker.path) else {
+            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
+        };
+        let mut path_buf = self.root.join(path);
 
         if !marker.is_singleton && !path_buf.exists() {
             fs::create_dir_all(&path_buf)

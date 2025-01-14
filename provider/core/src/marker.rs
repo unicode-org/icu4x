@@ -328,7 +328,8 @@ unsafe impl EqULE for DataMarkerPathHash {}
 /// ```
 #[derive(Debug, Copy, Clone, Eq)]
 pub struct DataMarkerPath {
-    path: &'static str,
+    #[cfg(any(feature = "export", debug_assertions))]
+    debug: &'static str,
     hash: [u8; 8],
 }
 
@@ -375,7 +376,8 @@ impl DataMarkerPath {
         let hash = fxhash_32(path.as_bytes()).to_le_bytes();
 
         Ok(Self {
-            path,
+            #[cfg(any(feature = "export", debug_assertions))]
+            debug: path,
             hash: [b't', b'd', b'm', b'h', hash[0], hash[1], hash[2], hash[3]],
         })
     }
@@ -415,12 +417,6 @@ impl DataMarkerPath {
             };
             i += 1;
         }
-    }
-
-    /// Gets the path as a static string slice.
-    #[inline]
-    pub const fn as_str(self) -> &'static str {
-        self.path
     }
 
     /// Gets a platform-independent hash of a [`DataMarkerPath`].
@@ -582,7 +578,10 @@ pub use __data_marker_path as data_marker_path;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str(self.path.as_str())
+        #[cfg(any(feature = "export", debug_assertions))]
+        return f.write_str(self.path.debug);
+        #[cfg(not(any(feature = "export", debug_assertions)))]
+        return write!(f, "{:?}", self.path);
     }
 }
 
@@ -686,7 +685,7 @@ fn test_path_to_string() {
             expected: "core/cardinal@65535",
         },
     ] {
-        assert_eq!(cas.expected, cas.path.as_str());
+        assert_eq!(cas.expected, cas.path.debug);
     }
 }
 
@@ -725,6 +724,6 @@ fn test_path_hash() {
             hash: DataMarkerPathHash([176, 131, 182, 223]),
         },
     ] {
-        assert_eq!(cas.hash, cas.path.hashed(), "{}", cas.path.as_str());
+        assert_eq!(cas.hash, cas.path.hashed(), "{}", cas.path.debug);
     }
 }

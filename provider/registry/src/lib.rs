@@ -326,12 +326,13 @@ macro_rules! cb {
         #[test]
         fn test_paths_correct() {
             use icu_provider::prelude::*;
+            use icu_provider::marker::data_marker_path;
 
             $(
-                assert_eq!(<$marker>::INFO.path.as_str(), $path);
+                assert_eq!(<$marker>::INFO.path, data_marker_path!($path));
             )+
             $(
-                assert_eq!(<$emarker>::INFO.path.as_str(), $epath);
+                assert_eq!(<$emarker>::INFO.path, data_marker_path!($epath));
             )+
         }
     }
