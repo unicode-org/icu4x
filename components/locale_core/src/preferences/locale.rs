@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::subtags::{Language, Region, Script, Subtag, Variant, Variants};
+use crate::DataLocale;
 
 /// The structure storing locale subtags used in preferences.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -21,6 +22,34 @@ pub struct LocalePreferences {
     pub(crate) ue_region: Option<Region>,
 }
 
+impl LocalePreferences {
+    fn to_data_locale_maybe_region_priority(self, region_priority: bool) -> DataLocale {
+        DataLocale {
+            language: self.language,
+            script: self.script,
+            region: match (self.region, self.ue_region) {
+                (Some(_), Some(r)) if region_priority => Some(r),
+                (r, _) => r,
+            },
+            variant: self.variant,
+            subdivision: self.subdivision,
+        }
+    }
+
+    /// Convert to a DataLocale, with region-based fallback priority
+    ///
+    /// Most users should use `icu_provider::marker::make_locale()` instead.
+    pub fn to_data_locale_region_priority(self) -> DataLocale {
+        self.to_data_locale_maybe_region_priority(true)
+    }
+
+    /// Convert to a DataLocale, with language-based fallback priority
+    ///
+    /// Most users should use `icu_provider::marker::make_locale()` instead.
+    pub fn to_data_locale_language_priority(self) -> DataLocale {
+        self.to_data_locale_maybe_region_priority(false)
+    }
+}
 impl Default for LocalePreferences {
     fn default() -> Self {
         Self::default()

@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fallback::LocaleFallbackConfig;
+use crate::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use crate::{DataError, DataErrorKind, DataLocale, DataProvider, DataProviderWithMarker};
 use core::fmt;
 use core::marker::PhantomData;
+use icu_locale_core::preferences::LocalePreferences;
 use yoke::Yokeable;
 use zerovec::ule::*;
 
@@ -85,7 +86,6 @@ pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;
 
-    /// Binds this [`DataMarker`] to a provider supporting it.
     fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
     where
         P: DataProvider<Self>,
@@ -93,6 +93,16 @@ pub trait DataMarker: DynamicDataMarker {
     {
         DataProviderWithMarker::new(provider)
     }
+}
+
+/// Binds a [`DataMarker`] to a provider supporting it.
+pub fn bind<M, P>(provider: P) -> DataProviderWithMarker<M, P>
+where
+    M: DataMarker,
+    P: DataProvider<M>,
+    M: Sized,
+{
+    DataProviderWithMarker::new(provider)
 }
 
 /// A [`DynamicDataMarker`] that never returns data.
@@ -607,12 +617,18 @@ impl DataMarkerInfo {
     }
 
     /// Constructs a [`DataLocale`] for this [`DataMarkerInfo`].
-    pub fn make_locale(
-        self,
-        locale: icu_locale_core::preferences::LocalePreferences,
-    ) -> DataLocale {
-        DataLocale::from_preferences_with_info(locale, self)
+    pub fn make_locale(self, locale: LocalePreferences) -> DataLocale {
+        if self.fallback_config.priority == LocaleFallbackPriority::Region {
+            locale.to_data_locale_region_priority()
+        } else {
+            locale.to_data_locale_language_priority()
+        }
     }
+}
+
+/// Turn a LocalePreferences into a DataLocale using the appropriate fallback config for this marker
+pub fn locale_for_data_marker<M: DataMarker>(locale: LocalePreferences) -> DataLocale {
+    M::INFO.make_locale(locale)
 }
 
 /// See [`DataMarkerInfo`].

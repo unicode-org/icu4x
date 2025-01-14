@@ -12,15 +12,7 @@ use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::ops::Deref;
-use core::str::FromStr;
-use icu_locale_core::extensions::unicode as unicode_ext;
-use icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant};
-use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use zerovec::ule::VarULE;
-
-use crate::fallback::LocaleFallbackPriority;
-use crate::DataMarker;
-use crate::DataMarkerInfo;
 
 pub use icu_locale_core::DataLocale;
 

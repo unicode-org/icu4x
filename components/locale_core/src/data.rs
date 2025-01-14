@@ -2,17 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::ToOwned;
-use core::cmp::Ordering;
-use core::default::Default;
-use core::fmt;
-use core::fmt::Debug;
-use core::hash::Hash;
-use core::ops::Deref;
-use core::str::FromStr;
 use crate::extensions::unicode as unicode_ext;
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 use crate::{LanguageIdentifier, Locale, ParseError};
+use core::cmp::Ordering;
+use core::default::Default;
+use core::fmt;
+use core::hash::Hash;
+use core::str::FromStr;
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
 ///
@@ -64,7 +61,8 @@ pub struct DataLocale {
 }
 
 impl DataLocale {
-    fn as_tuple(
+    #[doc(hidden)]
+    pub fn as_tuple(
         &self,
     ) -> (
         Language,
