@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::sync::Arc;
     use icu_datetime::fieldsets::{T, YMD, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
@@ -18,7 +19,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use crate::{
-        calendar::ffi::AnyCalendarKind,
+        calendar::ffi::Calendar,
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
         errors::ffi::DateTimeFormatError,
@@ -312,9 +313,9 @@ pub mod ffi {
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Calendar {
+            Calendar(Arc::new(self.0.calendar().0.clone()))
         }
     }
 
@@ -384,9 +385,9 @@ pub mod ffi {
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Calendar {
+            Calendar(Arc::new(self.0.calendar().0.clone()))
         }
     }
 }

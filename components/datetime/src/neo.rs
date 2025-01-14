@@ -21,7 +21,7 @@ use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
+use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::FixedDecimalFormatterPreferences;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HourCycle, NumberingSystem,
@@ -357,9 +357,7 @@ where
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
@@ -419,11 +417,10 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
@@ -589,9 +586,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_same_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// formatter.format_same_calendar(&Time::midnight());
     /// ```
     pub fn format_same_calendar<I>(
         &self,
@@ -650,9 +645,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_any_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// formatter.format_any_calendar(&Time::midnight());
     /// ```
     pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
@@ -876,7 +869,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
         }
     }
 
-    /// Returns the calendar system used in this formatter.
+    /// Returns the calendar used in this formatter.
     ///
     /// # Examples
     ///
@@ -899,11 +892,11 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///     "16 ธันวาคม 2567"
     /// );
     ///
-    /// assert_eq!(formatter.calendar_kind(), AnyCalendarKind::Buddhist);
-    /// assert_eq!(formatter.calendar_kind().as_bcp47_string(), "buddhist");
+    /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
+    /// assert_eq!(formatter.calendar().kind().as_bcp47_string(), "buddhist");
     /// ```
-    pub fn calendar_kind(&self) -> AnyCalendarKind {
-        self.calendar.kind()
+    pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
+        icu_calendar::Ref(&self.calendar)
     }
 }
 
