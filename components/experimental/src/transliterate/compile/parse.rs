@@ -52,7 +52,7 @@ impl ElementKind {
         }
     }
 
-    pub(crate) fn debug_str(&self) -> &'static str {
+    pub(crate) fn debug_str(self) -> &'static str {
         match self {
             ElementKind::Literal => "literal",
             ElementKind::VariableReference => "variable reference",

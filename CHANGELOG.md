@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Components
+    - `icu_provider`
+        - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952) 
+
 ## icu4x 2.0-beta1
 
 - Components

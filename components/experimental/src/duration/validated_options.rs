@@ -61,21 +61,29 @@ pub struct ValidatedDurationFormatterOptions {
 
 /// Error type for [`DurationFormatterOptions`] validation.
 #[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, displaydoc::Display)]
 pub enum DurationFormatterOptionsError {
-    /// Returned when a unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
+    /// A unit field is set to [`FieldDisplay::Always`] and the style is set to [`FieldStyle::Fractional`].
+    #[displaydoc("A unit field is set to Always and the style is set to Fractional")]
     DisplayAlwaysFractional,
 
-    /// Returned when a previous unit's style is [`FieldStyle::Fractional`], but the following unit's style is not [`FieldStyle::Fractional`].
+    /// A previous unit's style is [`FieldStyle::Fractional`], but the following unit's style is not [`FieldStyle::Fractional`].
+    #[displaydoc(
+        "A previous unit's style is Fractional, but the following unit's style is not Fractional"
+    )]
     PreviousFractional,
 
-    /// Returned when a previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
+    /// A previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
     /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
+    #[displaydoc("A previous unit's style is set to Numeric or TwoDigit and the following unit's style is not Fractional, Numeric, or TwoDigit")]
     PreviousNumeric,
 
-    /// Returned when the number of fractional digits is out of acceptable range. See [`FractionalDigits::Fixed`].
+    /// The number of fractional digits is out of acceptable range. See [`FractionalDigits::Fixed`].
+    #[displaydoc("The number of fractional digits is out of acceptable range")]
     FractionalDigitsOutOfRange,
 }
+
+impl core::error::Error for DurationFormatterOptionsError {}
 
 impl ValidatedDurationFormatterOptions {
     pub fn validate(

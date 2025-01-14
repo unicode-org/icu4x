@@ -95,7 +95,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Converts this [`DataIdentifierBorrowed`] into a [`DataIdentifierCow<'static>`].
-    pub fn into_owned(&self) -> DataIdentifierCow<'static> {
+    pub fn into_owned(self) -> DataIdentifierCow<'static> {
         DataIdentifierCow {
             marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
             locale: Cow::Owned(self.locale.clone()),
@@ -103,7 +103,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Borrows this [`DataIdentifierBorrowed`] as a [`DataIdentifierCow<'a>`].
-    pub fn as_cow(&self) -> DataIdentifierCow<'a> {
+    pub fn as_cow(self) -> DataIdentifierCow<'a> {
         DataIdentifierCow {
             marker_attributes: Cow::Borrowed(self.marker_attributes),
             locale: Cow::Borrowed(self.locale),
@@ -247,7 +247,8 @@ impl Default for DataIdentifierCow<'_> {
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
-#[derive(Clone, Default, Eq)]
+#[derive(Clone, Default, PartialEq, Hash, Eq)]
+#[allow(clippy::exhaustive_structs)] // See #3632
 pub struct DataLocale {
     /// Language subtag
     pub language: Language,
@@ -259,10 +260,6 @@ pub struct DataLocale {
     pub variant: Option<Variant>,
     /// Subivision (-u-sd-) subtag
     pub subdivision: Option<Subtag>,
-
-    // These are ignored by all methods/impls except for get_unicode_ext and get_single_unicode_ext
-    // TODO(#3632): Remove after migrating all inputs to preferences
-    keywords: unicode_ext::Keywords,
 }
 
 impl DataLocale {
@@ -311,21 +308,7 @@ impl DataLocale {
             },
             variant: locale.variant,
             subdivision: locale.subdivision,
-
-            keywords: unicode_ext::Keywords::new(),
         }
-    }
-}
-
-impl PartialEq for DataLocale {
-    fn eq(&self, other: &Self) -> bool {
-        self.as_tuple() == other.as_tuple()
-    }
-}
-
-impl Hash for DataLocale {
-    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        self.as_tuple().hash(state)
     }
 }
 
@@ -338,7 +321,6 @@ impl DataLocale {
             region: None,
             variant: None,
             subdivision: None,
-            keywords: unicode_ext::Keywords::new(),
         }
     }
 }
@@ -360,29 +342,13 @@ icu_locale_core::impl_writeable_for_each_subtag_str_no_test!(DataLocale, selff, 
 
 impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {
-        Self {
-            language: langid.language,
-            script: langid.script,
-            region: langid.region,
-            variant: langid.variants.iter().copied().next(),
-            subdivision: None,
-            keywords: unicode_ext::Keywords::new(),
-        }
+        Self::from(&langid)
     }
 }
 
 impl From<Locale> for DataLocale {
-    fn from(mut locale: Locale) -> Self {
-        let mut r = Self::from(locale.id);
-
-        r.subdivision = locale
-            .extensions
-            .unicode
-            .keywords
-            .remove(unicode_ext::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
-        r.keywords = locale.extensions.unicode.keywords;
-        r
+    fn from(locale: Locale) -> Self {
+        Self::from(&locale)
     }
 }
 
@@ -394,7 +360,6 @@ impl From<&LanguageIdentifier> for DataLocale {
             region: langid.region,
             variant: langid.variants.iter().copied().next(),
             subdivision: None,
-            keywords: unicode_ext::Keywords::new(),
         }
     }
 }
@@ -403,11 +368,12 @@ impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
         let mut r = Self::from(&locale.id);
 
-        let mut keywords = locale.extensions.unicode.keywords.clone();
-        r.subdivision = keywords
-            .remove(unicode_ext::key!("sd"))
+        r.subdivision = locale
+            .extensions
+            .unicode
+            .keywords
+            .get(&unicode_ext::key!("sd"))
             .and_then(|v| v.as_single_subtag().copied());
-        r.keywords = keywords;
         r
     }
 }
@@ -489,7 +455,7 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_provider::DataLocale;
-    /// use std::cmp::Ordering;
+    /// use core::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",
@@ -611,23 +577,6 @@ impl DataLocale {
                 extensions
             },
         }
-    }
-
-    /// Gets the value of the specified Unicode extension keyword for this [`DataLocale`].
-    #[inline]
-    pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
-        self.keywords.get(key).cloned()
-    }
-
-    /// Like `get_unicode_ext` but untyped, easier to use during attributes migration.
-    #[inline]
-    pub fn get_single_unicode_ext(&self, key: &str) -> Option<&str> {
-        Some(
-            self.keywords
-                .get(&key.parse().ok()?)?
-                .as_single_subtag()?
-                .as_str(),
-        )
     }
 }
 

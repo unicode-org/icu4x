@@ -69,11 +69,11 @@ pub mod ffi {
             let options = T::with_length(Length::from(length)).hm();
 
             Ok(Box::new(TimeFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
 
@@ -138,11 +138,11 @@ pub mod ffi {
             let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(GregorianDateFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
 
@@ -203,11 +203,11 @@ pub mod ffi {
             let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(GregorianDateTimeFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
 
@@ -257,11 +257,11 @@ pub mod ffi {
             let options = YMD::with_length(Length::from(length));
 
             Ok(Box::new(DateFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
 
@@ -353,11 +353,11 @@ pub mod ffi {
             let options = YMDT::with_length(Length::from(length)).hm();
 
             Ok(Box::new(DateTimeFormatter(
-                provider.call_constructor_custom_err(move |provider| {
-                    icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                        provider, prefs, options,
-                    )
-                })?,
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
             )))
         }
         /// Formats a [`DateTime`] to a string.

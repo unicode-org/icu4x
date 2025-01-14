@@ -45,5 +45,4 @@ where
     UnclosedQuotedLiteral,
 }
 
-#[cfg(feature = "std")]
-impl<E: Debug> std::error::Error for ParserError<E> {}
+impl<E: Debug> core::error::Error for ParserError<E> {}

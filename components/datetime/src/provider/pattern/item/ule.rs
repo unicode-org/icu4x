@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{GenericPatternItem, PatternItem};
-use crate::fields;
+use crate::provider::fields;
 use core::convert::TryFrom;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -304,7 +304,7 @@ impl AsULE for GenericPatternItem {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fields::{FieldLength, FieldSymbol, Second, Year};
+    use crate::provider::fields::{FieldLength, FieldSymbol, Second, Year};
     use zerovec::ule::{AsULE, ULE};
 
     #[test]

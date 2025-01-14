@@ -2,6 +2,7 @@
 import type { CodePointRangeIterator } from "./CodePointRangeIterator"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
+import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -24,7 +25,7 @@ export class CodePointSetData {
 
     iterRangesComplemented(): CodePointRangeIterator;
 
-    static createGeneralCategoryGroup(group: number): CodePointSetData;
+    static createGeneralCategoryGroup(group: GeneralCategoryGroup): CodePointSetData;
 
     static createGeneralCategoryGroupWithProvider(provider: DataProvider, group: number): CodePointSetData;
 

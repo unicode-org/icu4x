@@ -12,7 +12,7 @@ Verify that Rust is installed. If it's not, you can install it in a few seconds 
 
 ```console
 $ cargo --version
-cargo 1.71.1 (7f1d04c00 2023-07-29)
+cargo 1.81.0 (2dbb1af80 2024-08-20)
 ```
 
 Now you can run

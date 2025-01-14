@@ -39,7 +39,6 @@ rand_pcg = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
 bench = ["ryu"]
 experimental = []
 ryu = ["dep:ryu"]

@@ -116,6 +116,9 @@ pub enum OperandsError {
 }
 
 #[cfg(feature = "datagen")]
+impl core::error::Error for OperandsError {}
+
+#[cfg(feature = "datagen")]
 impl From<core::num::ParseIntError> for OperandsError {
     fn from(_: core::num::ParseIntError) -> Self {
         Self::Invalid

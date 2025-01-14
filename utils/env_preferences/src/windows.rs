@@ -36,7 +36,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 }
 
 /// Get the current time zone of the system
-pub fn get_system_timezone() -> Result<String, RetrievalError> {
+pub fn get_system_time_zone() -> Result<String, RetrievalError> {
     let calendar = Globalization::Calendar::new()?;
     let timezone = calendar.GetTimeZone()?;
     Ok(timezone.to_string_lossy())

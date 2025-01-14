@@ -131,7 +131,7 @@ where
     P0: ExportableProvider,
     P1: ExportableProvider,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_markers(),

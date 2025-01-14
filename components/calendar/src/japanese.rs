@@ -225,7 +225,7 @@ impl Calendar for Japanese {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
-        let (adjusted_year, era) = self.adjusted_year_for(iso.inner());
+        let (adjusted_year, era) = self.adjusted_year_for(*iso.inner());
         JapaneseDateInner {
             inner: *iso.inner(),
             adjusted_year,
@@ -251,7 +251,7 @@ impl Calendar for Japanese {
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         Iso.offset_date(&mut date.inner, offset.cast_unit());
-        let (adjusted_year, era) = self.adjusted_year_for(&date.inner);
+        let (adjusted_year, era) = self.adjusted_year_for(date.inner);
         date.adjusted_year = adjusted_year;
         date.era = era
     }
@@ -668,8 +668,8 @@ impl Japanese {
     /// Given an ISO date, give year and era for that date in the Japanese calendar
     ///
     /// This will also use Gregorian eras for eras that are before the earliest era
-    fn adjusted_year_for(&self, date: &IsoDateInner) -> (i32, TinyStr16) {
-        let date: EraStartDate = date.into();
+    fn adjusted_year_for(&self, date: IsoDateInner) -> (i32, TinyStr16) {
+        let date: EraStartDate = (&date).into();
         let (start, era) = self.japanese_era_for(date);
         // The year in which an era starts is Year 1, and it may be short
         // The only time this function will experience dates that are *before*

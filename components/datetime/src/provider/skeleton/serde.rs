@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::format;
+#[cfg(feature = "datagen")]
+use alloc::string::ToString;
 use core::convert::TryFrom;
 use smallvec::SmallVec;
 
@@ -75,11 +77,12 @@ pub mod reference {
 
 pub mod runtime {
     use super::super::runtime::Skeleton;
-    use zerovec::ZeroVec;
+    use super::*;
 
     #[cfg(feature = "datagen")]
     use ::serde::{ser, Serialize};
     use serde::{de, Deserialize, Deserializer};
+    use zerovec::ZeroVec;
     /// This is an implementation of the serde deserialization visitor pattern.
     #[allow(clippy::upper_case_acronyms)]
     struct DeserializeSkeletonUTS35String;

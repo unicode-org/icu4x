@@ -185,13 +185,6 @@
     [
       [
         "arme",
-        "Standard"
-      ],
-      "Standard na Oras sa Armenia"
-    ],
-    [
-      [
-        "arme",
         "Daylight"
       ],
       "Oras sa Tag-init ng Armenia"
@@ -283,13 +276,6 @@
     [
       [
         "azer",
-        "Standard"
-      ],
-      "Standard na Oras sa Azerbaijan"
-    ],
-    [
-      [
-        "azer",
         "Daylight"
       ],
       "Oras sa Tag-init ng Azerbaijan"
@@ -297,23 +283,9 @@
     [
       [
         "azor",
-        "Standard"
-      ],
-      "Standard na Oras sa Azores"
-    ],
-    [
-      [
-        "azor",
         "Daylight"
       ],
       "Oras sa Tag-init ng Azores"
-    ],
-    [
-      [
-        "bang",
-        "Standard"
-      ],
-      "Standard na Oras sa Bangladesh"
     ],
     [
       [
@@ -360,13 +332,6 @@
     [
       [
         "cave",
-        "Standard"
-      ],
-      "Standard na Oras sa Cape Verde"
-    ],
-    [
-      [
-        "cave",
         "Daylight"
       ],
       "Oras sa Tag-init ng Cape Verde"
@@ -377,13 +342,6 @@
         "Standard"
       ],
       "Standard na Oras sa Chamorro"
-    ],
-    [
-      [
-        "chat",
-        "Standard"
-      ],
-      "Standard na Oras sa Chatham"
     ],
     [
       [
@@ -437,13 +395,6 @@
     [
       [
         "colo",
-        "Standard"
-      ],
-      "Standard na Oras sa Colombia"
-    ],
-    [
-      [
-        "colo",
         "Daylight"
       ],
       "Oras sa Tag-init ng Colombia"
@@ -451,23 +402,9 @@
     [
       [
         "cook",
-        "Standard"
-      ],
-      "Standard na Oras sa Cook Islands"
-    ],
-    [
-      [
-        "cook",
         "Daylight"
       ],
       "Oras sa Kalahati ng Tag-init ng Cook Islands"
-    ],
-    [
-      [
-        "cuba",
-        "Standard"
-      ],
-      "Standard na Oras sa Cuba"
     ],
     [
       [
@@ -570,23 +507,9 @@
     [
       [
         "falk",
-        "Standard"
-      ],
-      "Standard na Oras sa Falkland Islands"
-    ],
-    [
-      [
-        "falk",
         "Daylight"
       ],
       "Oras sa Tag-init ng Falkland Islands"
-    ],
-    [
-      [
-        "fiji",
-        "Standard"
-      ],
-      "Standard na Oras sa Fiji"
     ],
     [
       [
@@ -622,13 +545,6 @@
         "Standard"
       ],
       "Oras sa Gambier"
-    ],
-    [
-      [
-        "geor",
-        "Standard"
-      ],
-      "Standard na Oras sa Georgia"
     ],
     [
       [
@@ -703,23 +619,9 @@
     [
       [
         "hoko",
-        "Standard"
-      ],
-      "Standard na Oras sa Hong Kong"
-    ],
-    [
-      [
-        "hoko",
         "Daylight"
       ],
       "Oras sa Tag-init ng Hong Kong"
-    ],
-    [
-      [
-        "hovd",
-        "Standard"
-      ],
-      "Standard na Oras sa Hovd"
     ],
     [
       [
@@ -773,13 +675,6 @@
     [
       [
         "iran",
-        "Standard"
-      ],
-      "Standard na Oras sa Iran"
-    ],
-    [
-      [
-        "iran",
         "Daylight"
       ],
       "Daylight Time sa Iran"
@@ -811,13 +706,6 @@
         "Daylight"
       ],
       "Daylight Time sa Israel"
-    ],
-    [
-      [
-        "japa",
-        "Standard"
-      ],
-      "Standard na Oras sa Japan"
     ],
     [
       [
@@ -913,13 +801,6 @@
     [
       [
         "loho",
-        "Standard"
-      ],
-      "Standard na Oras sa Lord Howe"
-    ],
-    [
-      [
-        "loho",
         "Daylight"
       ],
       "Daylight Time sa Lorde Howe"
@@ -965,13 +846,6 @@
         "Standard"
       ],
       "Oras sa Marquesas"
-    ],
-    [
-      [
-        "maur",
-        "Standard"
-      ],
-      "Standard na Oras sa Mauritius"
     ],
     [
       [
@@ -1102,13 +976,6 @@
     [
       [
         "norf",
-        "Standard"
-      ],
-      "Standard na Oras sa Norfolk Island"
-    ],
-    [
-      [
-        "norf",
         "Daylight"
       ],
       "Daylight Time sa Norfolk Island"
@@ -1144,23 +1011,9 @@
     [
       [
         "omsk",
-        "Standard"
-      ],
-      "Standard na Oras sa Omsk"
-    ],
-    [
-      [
-        "omsk",
         "Daylight"
       ],
       "Oras sa Tag-init ng Omsk"
-    ],
-    [
-      [
-        "paki",
-        "Standard"
-      ],
-      "Standard na Oras sa Pakistan"
     ],
     [
       [
@@ -1186,13 +1039,6 @@
     [
       [
         "para",
-        "Standard"
-      ],
-      "Standard na Oras sa Paraguay"
-    ],
-    [
-      [
-        "para",
         "Daylight"
       ],
       "Oras sa Tag-init ng Paraguay"
@@ -1203,13 +1049,6 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Peru"
-    ],
-    [
-      [
-        "phil",
-        "Standard"
-      ],
-      "Standard na Oras sa Pilipinas"
     ],
     [
       [
@@ -1277,13 +1116,6 @@
     [
       [
         "sakh",
-        "Standard"
-      ],
-      "Standard na Oras sa Sakhalin"
-    ],
-    [
-      [
-        "sakh",
         "Daylight"
       ],
       "Oras sa Tag-init ng Sakhalin"
@@ -1322,13 +1154,6 @@
         "Standard"
       ],
       "Oras sa Seychelles"
-    ],
-    [
-      [
-        "sing",
-        "Standard"
-      ],
-      "Standard na Oras sa Singapore"
     ],
     [
       [
@@ -1396,13 +1221,6 @@
     [
       [
         "tong",
-        "Standard"
-      ],
-      "Standard na Oras sa Tonga"
-    ],
-    [
-      [
-        "tong",
         "Daylight"
       ],
       "Oras sa Tag-init ng Tonga"
@@ -1417,13 +1235,6 @@
     [
       [
         "turk",
-        "Standard"
-      ],
-      "Standard na Oras sa Turkmenistan"
-    ],
-    [
-      [
-        "turk",
         "Daylight"
       ],
       "Oras sa Tag-init ng Turkmenistan"
@@ -1434,13 +1245,6 @@
         "Standard"
       ],
       "Oras sa Tuvalu"
-    ],
-    [
-      [
-        "urug",
-        "Standard"
-      ],
-      "Standard na Oras sa Uruguay"
     ],
     [
       [
@@ -1462,13 +1266,6 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Uzbekistan"
-    ],
-    [
-      [
-        "vanu",
-        "Standard"
-      ],
-      "Standard na Oras sa Vanuatu"
     ],
     [
       [
@@ -1497,13 +1294,6 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Vladivostok"
-    ],
-    [
-      [
-        "volg",
-        "Standard"
-      ],
-      "Standard na Oras sa Volgograd"
     ],
     [
       [
@@ -1546,13 +1336,6 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Yakutsk"
-    ],
-    [
-      [
-        "yeka",
-        "Standard"
-      ],
-      "Standard na Oras sa Yekaterinburg"
     ],
     [
       [

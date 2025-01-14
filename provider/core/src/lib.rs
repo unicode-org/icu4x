@@ -101,6 +101,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -191,8 +192,9 @@ pub mod fallback;
 pub use log;
 
 #[doc(hidden)] // internal
-#[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
+#[cfg(all(not(feature = "logging"), debug_assertions, not(target_os = "none")))]
 pub mod log {
+    extern crate std;
     pub use std::eprintln as error;
     pub use std::eprintln as warn;
     pub use std::eprintln as info;
@@ -202,7 +204,7 @@ pub mod log {
 
 #[cfg(all(
     not(feature = "logging"),
-    any(not(debug_assertions), not(feature = "std"))
+    any(not(debug_assertions), target_os = "none")
 ))]
 #[doc(hidden)] // internal
 pub mod log {

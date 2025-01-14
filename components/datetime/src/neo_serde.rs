@@ -5,7 +5,7 @@
 //! Serde definitions for semantic skeleta
 
 use crate::{
-    fieldsets::{self, enums::*},
+    fieldsets::{self, enums::*, Combo},
     options::*,
     raw::neo::RawOptions,
 };
@@ -33,6 +33,8 @@ pub enum CompositeFieldSetSerdeError {
     #[displaydoc("the given combination of fields does not create a valid semantic skeleton")]
     InvalidFields,
 }
+
+impl core::error::Error for CompositeFieldSetSerdeError {}
 
 /// 🚧 \[Experimental\] A type corresponding to [`CompositeFieldSet`] that implements
 /// [`serde::Serialize`] and [`serde::Deserialize`].
@@ -120,22 +122,25 @@ impl From<CompositeFieldSet> for CompositeFieldSetSerde {
                     date_options.merge(time_options),
                 )
             }
-            CompositeFieldSet::DateZone(v, z) => {
-                let (date_serde, date_options) = FieldSetSerde::from_date_field_set(v);
-                let (zone_serde, _ignored_options) = FieldSetSerde::from_zone_field_set(z, false);
+            CompositeFieldSet::DateZone(v) => {
+                let (date_serde, date_options) = FieldSetSerde::from_date_field_set(v.dt());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (date_serde.extend(zone_serde), date_options)
             }
-            CompositeFieldSet::TimeZone(v, z) => {
-                let (time_serde, time_options) = FieldSetSerde::from_time_field_set(v);
-                let (zone_serde, _ignored_options) = FieldSetSerde::from_zone_field_set(z, false);
+            CompositeFieldSet::TimeZone(v) => {
+                let (time_serde, time_options) = FieldSetSerde::from_time_field_set(v.dt());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (time_serde.extend(zone_serde), time_options)
             }
-            CompositeFieldSet::DateTimeZone(v, z) => {
+            CompositeFieldSet::DateTimeZone(v) => {
                 let (date_serde, date_options) =
-                    FieldSetSerde::from_date_field_set(v.to_date_field_set());
+                    FieldSetSerde::from_date_field_set(v.dt().to_date_field_set());
                 let (time_serde, time_options) =
-                    FieldSetSerde::from_time_field_set(v.to_time_field_set());
-                let (zone_serde, _ignored_options) = FieldSetSerde::from_zone_field_set(z, false);
+                    FieldSetSerde::from_time_field_set(v.dt().to_time_field_set());
+                let (zone_serde, _ignored_options) =
+                    FieldSetSerde::from_zone_field_set(v.z(), false);
                 (
                     date_serde.extend(time_serde).extend(zone_serde),
                     date_options.merge(time_options),
@@ -197,7 +202,7 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
                 .and_then(|date_field_set| {
                     zone.to_zone_field_set(options, false)
                         .map(|zone_field_set| {
-                            CompositeFieldSet::DateZone(date_field_set, zone_field_set)
+                            CompositeFieldSet::DateZone(Combo::new(date_field_set, zone_field_set))
                         })
                 })
                 .ok_or(Self::Error::InvalidFields),
@@ -206,7 +211,7 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
                 .and_then(|time_field_set| {
                     zone.to_zone_field_set(options, false)
                         .map(|zone_field_set| {
-                            CompositeFieldSet::TimeZone(time_field_set, zone_field_set)
+                            CompositeFieldSet::TimeZone(Combo::new(time_field_set, zone_field_set))
                         })
                 })
                 .ok_or(Self::Error::InvalidFields),
@@ -215,13 +220,13 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
                 .and_then(|date_field_set| {
                     zone.to_zone_field_set(options, false)
                         .map(|zone_field_set| {
-                            CompositeFieldSet::DateTimeZone(
+                            CompositeFieldSet::DateTimeZone(Combo::new(
                                 DateAndTimeFieldSet::from_date_field_set_with_raw_options(
                                     date_field_set,
                                     options,
                                 ),
                                 zone_field_set,
-                            )
+                            ))
                         })
                 })
                 .ok_or(Self::Error::InvalidFields),
@@ -586,7 +591,7 @@ impl FieldSetSerde {
 
 #[test]
 fn test_basic() {
-    let skeleton = CompositeFieldSet::DateTimeZone(
+    let skeleton = CompositeFieldSet::DateTimeZone(Combo::new(
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET {
             length: Length::Medium,
             alignment: Some(Alignment::Column),
@@ -594,7 +599,7 @@ fn test_basic() {
             time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
         }),
         ZoneFieldSet::Vs(fieldsets::Vs::new()),
-    );
+    ));
     let skeleton_serde = CompositeFieldSetSerde::from(skeleton);
 
     let json_string = serde_json::to_string(&skeleton_serde).unwrap();

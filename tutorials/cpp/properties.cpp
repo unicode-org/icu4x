@@ -7,7 +7,7 @@
 #include <icu4x/CodePointSetData.hpp>
 #include <icu4x/EmojiSetData.hpp>
 #include <icu4x/ExemplarCharacters.hpp>
-#include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
+#include <icu4x/GeneralCategoryNameToGroupMapper.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/PropertyValueNameToEnumMapper.hpp>
 
@@ -173,35 +173,35 @@ int main() {
         std::cout << "Script name mapper returns correct values" << std::endl;
     }
 
-    std::unique_ptr<GeneralCategoryNameToMaskMapper> mask_mapper = GeneralCategoryNameToMaskMapper::create();
-    int32_t mask = mask_mapper->get_strict("Lu");
-    if (mask != 0x02) {
-        std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << mask << std::endl;
+    std::unique_ptr<GeneralCategoryNameToGroupMapper> group_mapper = GeneralCategoryNameToGroupMapper::create();
+    GeneralCategoryGroup group = group_mapper->get_strict("Lu");
+    if (group.mask != 0x02) {
+        std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("L");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `Lu`, found " << mask << std::endl;
+    group = group_mapper->get_strict("L");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Lu`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("Letter");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `Letter`, found " << mask << std::endl;
+    group = group_mapper->get_strict("Letter");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Letter`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_loose("l");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `l`, found " << mask << std::endl;
+    group = group_mapper->get_loose("l");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `l`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("letter");
-    if (mask != 0) {
-        std::cout << "Expected no mask for (strict matched) name `letter`, found " << mask << std::endl;
+    group = group_mapper->get_strict("letter");
+    if (group.mask != 0) {
+        std::cout << "Expected no mask for (strict matched) name `letter`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("EverythingLol");
-    if (mask != 0) {
-        std::cout << "Expected no mask for nonexistent name `EverythingLol`, found " << mask << std::endl;
+    group = group_mapper->get_strict("EverythingLol");
+    if (group.mask != 0) {
+        std::cout << "Expected no mask for nonexistent name `EverythingLol`, found " << group.mask << std::endl;
         result = 1;
     }
 
@@ -213,9 +213,9 @@ int main() {
     }
 
 
-    mask = mask_mapper->get_strict("Lu");
+    group = group_mapper->get_strict("Lu");
     std::unique_ptr<CodePointMapData8> gc = CodePointMapData8::create_general_category();
-    auto ranges = gc->iter_ranges_for_mask(mask);
+    auto ranges = gc->iter_ranges_for_group(group);
     auto next = ranges->next();
     if (next.done) {
         std::cout << "Got empty iterator!";
@@ -227,8 +227,8 @@ int main() {
     }
 
     // Test iteration to completion for a small set
-    mask = mask_mapper->get_strict("Control");
-    ranges = gc->iter_ranges_for_mask(mask);
+    group = group_mapper->get_strict("Control");
+    ranges = gc->iter_ranges_for_group(group);
     next = ranges->next();
 
     if (next.start != 0 || next.end != 0x1f) {

@@ -68,7 +68,7 @@ mod linux_tests {
 #[cfg(target_os = "macos")]
 #[cfg(test)]
 mod macos_test {
-    use env_preferences::{get_locales, get_system_calendars, get_system_timezone};
+    use env_preferences::{get_locales, get_system_calendars, get_system_time_zone};
     use icu_locale::Locale;
 
     #[test]
@@ -111,7 +111,7 @@ mod macos_test {
 
     #[test]
     fn test_time_zone() {
-        let time_zone = get_system_timezone().unwrap();
+        let time_zone = get_system_time_zone().unwrap();
         assert!(!time_zone.is_empty(), "Couldn't retreive time_zone");
     }
 }
@@ -119,7 +119,7 @@ mod macos_test {
 #[cfg(target_os = "windows")]
 #[cfg(test)]
 mod windows_test {
-    use env_preferences::{get_locales, get_system_calendars, get_system_timezone};
+    use env_preferences::{get_locales, get_system_calendars, get_system_time_zone};
     use icu_locale::Locale;
 
     #[test]
@@ -155,7 +155,7 @@ mod windows_test {
 
     #[test]
     fn test_time_zone() {
-        let time_zone = get_system_timezone().unwrap();
+        let time_zone = get_system_time_zone().unwrap();
         assert!(!time_zone.is_empty(), "Couldn't retreive time_zone");
         assert!(time_zone.is_ascii(), "Invalid TimeZone format");
     }

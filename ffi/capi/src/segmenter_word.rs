@@ -81,11 +81,9 @@ pub mod ffi {
         pub fn create_auto_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(
-                |provider| {
-                    icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider(provider)
-                },
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider(provider.get()?)?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
@@ -94,6 +92,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
@@ -116,14 +115,12 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(
-                |provider| {
-                    icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider(
-                        provider,
-                        locale.into(),
-                    )
-                },
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -149,11 +146,9 @@ pub mod ffi {
         pub fn create_lstm_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(
-                |provider| {
-                    icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider(provider)
-                },
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider(provider.get()?)?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -184,14 +179,12 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(
-                |provider| {
-                    icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider(
-                        provider,
-                        locale.into(),
-                    )
-                },
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
@@ -217,11 +210,11 @@ pub mod ffi {
         pub fn create_dictionary_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(
-                |provider| {
-                    icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider(provider)
-                },
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider(
+                    provider.get()?,
+                )?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
@@ -258,7 +251,12 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(provider.call_constructor(|provider| icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider(provider, locale.into()))?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
         /// Segments a string.
         ///

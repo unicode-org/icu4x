@@ -34,9 +34,8 @@ fn test_and_condition(condition: &ast::AndCondition, operands: &PluralOperands) 
 }
 
 fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
-    calculate_expression(&relation.expression, operands).map_or(false, |exp| {
-        test_range(&relation.range_list, exp, relation.operator)
-    })
+    calculate_expression(&relation.expression, operands)
+        .is_some_and(|exp| test_range(&relation.range_list, exp, relation.operator))
 }
 
 // UTS 35 Part 2 Section 5.1 specifies that CLDR rules contain only integer values.

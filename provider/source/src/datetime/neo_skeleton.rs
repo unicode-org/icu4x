@@ -7,10 +7,10 @@ use std::collections::HashSet;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use calendar::patterns::GenericLengthPatternsV1;
 use either::Either;
-use icu::datetime::fields::components;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::provider::calendar::{DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
@@ -558,7 +558,7 @@ fn test_en_overlap_patterns() {
 mod date_skeleton_consistency_tests {
     use super::*;
     use crate::CoverageLevel;
-    use icu::datetime::fields;
+    use icu::datetime::provider::fields;
     use pattern::CoarseHourCycle;
 
     /// When canonicalizing the pattern, normalize only (G=GGG) or be more aggressive
@@ -597,7 +597,7 @@ mod date_skeleton_consistency_tests {
         pattern: &mut reference::Pattern,
         strategy: PatternCanonicalizationStrategy,
     ) {
-        use icu::datetime::fields::{Field, FieldLength, FieldSymbol};
+        use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol};
         use icu::datetime::provider::pattern::PatternItem;
         use PatternCanonicalizationStrategy::*;
 

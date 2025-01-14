@@ -84,6 +84,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
     }
 }
 
+extern crate alloc;
 make_exportable_provider!(TestingProvider, [HelloWorldV1Marker,]);
 
 fn families(

@@ -226,20 +226,6 @@
     ],
     [
       [
-        "arme",
-        "Standard"
-      ],
-      "hora estándar de Armenia"
-    ],
-    [
-      [
-        "arme",
-        "Daylight"
-      ],
-      "hora de verano de Armenia"
-    ],
-    [
-      [
         "arwe",
         "Standard"
       ],
@@ -380,20 +366,6 @@
     ],
     [
       [
-        "chat",
-        "Standard"
-      ],
-      "hora estándar de Chatham"
-    ],
-    [
-      [
-        "chat",
-        "Daylight"
-      ],
-      "hora de verano de Chatham"
-    ],
-    [
-      [
         "chil",
         "Standard"
       ],
@@ -436,20 +408,6 @@
     ],
     [
       [
-        "colo",
-        "Standard"
-      ],
-      "hora estándar de Colombia"
-    ],
-    [
-      [
-        "colo",
-        "Daylight"
-      ],
-      "hora de verano de Colombia"
-    ],
-    [
-      [
         "cook",
         "Standard"
       ],
@@ -461,20 +419,6 @@
         "Daylight"
       ],
       "hora de verano media de las islas Cook"
-    ],
-    [
-      [
-        "cuba",
-        "Standard"
-      ],
-      "hora estándar de Cuba"
-    ],
-    [
-      [
-        "cuba",
-        "Daylight"
-      ],
-      "hora de verano de Cuba"
     ],
     [
       [
@@ -604,20 +548,6 @@
     ],
     [
       [
-        "geor",
-        "Standard"
-      ],
-      "hora estándar de Georgia"
-    ],
-    [
-      [
-        "geor",
-        "Daylight"
-      ],
-      "hora de verano de Georgia"
-    ],
-    [
-      [
         "giis",
         "Standard"
       ],
@@ -685,34 +615,6 @@
         "Daylight"
       ],
       "hora de verano de Hawái-Aleutianas"
-    ],
-    [
-      [
-        "hoko",
-        "Standard"
-      ],
-      "hora estándar de Hong Kong"
-    ],
-    [
-      [
-        "hoko",
-        "Daylight"
-      ],
-      "hora de verano de Hong Kong"
-    ],
-    [
-      [
-        "hovd",
-        "Standard"
-      ],
-      "hora estándar de Hovd"
-    ],
-    [
-      [
-        "hovd",
-        "Daylight"
-      ],
-      "hora de verano de Hovd"
     ],
     [
       [
@@ -793,20 +695,6 @@
     ],
     [
       [
-        "kamc",
-        "Standard"
-      ],
-      "hora estándar de Kamchatka"
-    ],
-    [
-      [
-        "kamc",
-        "Daylight"
-      ],
-      "hora de verano de Kamchatka"
-    ],
-    [
-      [
         "kawe",
         "Standard"
       ],
@@ -874,20 +762,6 @@
         "Standard"
       ],
       "hora de las Espóradas Ecuatoriales"
-    ],
-    [
-      [
-        "loho",
-        "Standard"
-      ],
-      "hora estándar de Lord Howe"
-    ],
-    [
-      [
-        "loho",
-        "Daylight"
-      ],
-      "hora de verano de Lord Howe"
     ],
     [
       [
@@ -1094,20 +968,6 @@
     ],
     [
       [
-        "omsk",
-        "Standard"
-      ],
-      "hora estándar de Omsk"
-    ],
-    [
-      [
-        "omsk",
-        "Daylight"
-      ],
-      "hora de verano de Omsk"
-    ],
-    [
-      [
         "pala",
         "Standard"
       ],
@@ -1119,34 +979,6 @@
         "Standard"
       ],
       "hora de Papúa Nueva Guinea"
-    ],
-    [
-      [
-        "para",
-        "Standard"
-      ],
-      "hora estándar de Paraguay"
-    ],
-    [
-      [
-        "para",
-        "Daylight"
-      ],
-      "hora de verano de Paraguay"
-    ],
-    [
-      [
-        "peru",
-        "Standard"
-      ],
-      "hora estándar de Perú"
-    ],
-    [
-      [
-        "peru",
-        "Daylight"
-      ],
-      "hora de verano de Perú"
     ],
     [
       [
@@ -1203,20 +1035,6 @@
         "Standard"
       ],
       "hora de Rothera"
-    ],
-    [
-      [
-        "sama",
-        "Standard"
-      ],
-      "hora estándar de Samara"
-    ],
-    [
-      [
-        "sama",
-        "Daylight"
-      ],
-      "hora de verano de Samara"
     ],
     [
       [
@@ -1311,20 +1129,6 @@
     ],
     [
       [
-        "tong",
-        "Standard"
-      ],
-      "hora estándar de Tonga"
-    ],
-    [
-      [
-        "tong",
-        "Daylight"
-      ],
-      "hora de verano de Tonga"
-    ],
-    [
-      [
         "truk",
         "Standard"
       ],
@@ -1339,20 +1143,6 @@
     ],
     [
       [
-        "urug",
-        "Standard"
-      ],
-      "hora estándar de Uruguay"
-    ],
-    [
-      [
-        "urug",
-        "Daylight"
-      ],
-      "hora de verano de Uruguay"
-    ],
-    [
-      [
         "uzbe",
         "Standard"
       ],
@@ -1364,20 +1154,6 @@
         "Daylight"
       ],
       "hora de verano de Uzbekistán"
-    ],
-    [
-      [
-        "vanu",
-        "Standard"
-      ],
-      "hora estándar de Vanuatu"
-    ],
-    [
-      [
-        "vanu",
-        "Daylight"
-      ],
-      "hora de verano de Vanuatu"
     ],
     [
       [

@@ -17,8 +17,7 @@ pub enum LengthError {
     InvalidLength,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for LengthError {}
+impl core::error::Error for LengthError {}
 
 /// An enum representing the length of a field within a date or time formatting pattern string.
 ///
@@ -70,7 +69,7 @@ const LAST_NUMERIC_OVERRIDE: u8 = 31;
 
 impl FieldLength {
     #[inline]
-    pub(crate) fn idx(&self) -> u8 {
+    pub(crate) fn idx(self) -> u8 {
         match self {
             FieldLength::One => 1,
             FieldLength::Two => 2,
@@ -79,7 +78,7 @@ impl FieldLength {
             FieldLength::Five => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
-                .saturating_add(*o as u8)
+                .saturating_add(o as u8)
                 .min(LAST_NUMERIC_OVERRIDE),
         }
     }

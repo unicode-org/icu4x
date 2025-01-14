@@ -263,7 +263,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
 impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// TODO
-    pub fn get_set_for_value_group(&self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
+    pub fn get_set_for_value_group(self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
         let matching_gc_ranges = self
             .iter_ranges()
             .filter(|cpm_range| (1 << cpm_range.value as u32) & value.0 != 0)

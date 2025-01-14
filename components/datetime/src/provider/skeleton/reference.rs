@@ -5,7 +5,7 @@
 //! Reference `Skeleton` implementation for parsing.
 
 use super::error::SkeletonError;
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 #[cfg(feature = "datagen")]
 use crate::provider::pattern::reference::Pattern;
 use alloc::vec::Vec;

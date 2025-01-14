@@ -59,14 +59,22 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`icu_decimal::provider`] module for an example.
         numbering_system: NumberingSystem,
         /// The user's preferred hour cycle.
         ///
         /// Corresponds to the `-u-hc` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved hour cycle, you can inspect the formatting pattern.
+        /// See [`DateTimePattern`](crate::pattern::DateTimePattern) for an example.
         hour_cycle: HourCycle,
         /// The user's preferred calendar system
         ///
         /// Corresponds to the `-u-ca` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved calendar system, use [`DateTimeFormatter::calendar_kind()`].
         calendar_algorithm: CalendarAlgorithm
     }
 );
@@ -704,6 +712,55 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
             calendar: calendar.to_any(),
         }
     }
+
+    /// Maps a [`FixedCalendarDateTimeFormatter`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
+    ///
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let specific_formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("fr").into(),
+    ///     YMD::medium(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // Test that the specific formatter works:
+    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// assert_writeable_eq!(
+    ///     specific_formatter.format(&datetime),
+    ///     "20 déc. 2024"
+    /// );
+    ///
+    /// // Make a more general formatter:
+    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    ///
+    /// // Test that it still works:
+    /// assert_writeable_eq!(
+    ///     general_formatter.format(&datetime),
+    ///     "20 déc. 2024"
+    /// );
+    /// ```
+    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(
+        self,
+    ) -> FixedCalendarDateTimeFormatter<C, FSet2> {
+        FixedCalendarDateTimeFormatter {
+            selection: self.selection,
+            names: self.names.with_fset(),
+            _calendar: PhantomData,
+        }
+    }
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
@@ -770,6 +827,53 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
             names: self.names,
             _calendar: PhantomData,
         })
+    }
+
+    /// Maps a [`DateTimeFormatter`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
+    ///
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let specific_formatter = DateTimeFormatter::try_new(
+    ///     locale!("fr").into(),
+    ///     YMD::medium(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // Test that the specific formatter works:
+    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// assert_writeable_eq!(
+    ///     specific_formatter.format_any_calendar(&datetime),
+    ///     "20 déc. 2024"
+    /// );
+    ///
+    /// // Make a more general formatter:
+    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    ///
+    /// // Test that it still works:
+    /// assert_writeable_eq!(
+    ///     general_formatter.format_any_calendar(&datetime),
+    ///     "20 déc. 2024"
+    /// );
+    /// ```
+    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
+        DateTimeFormatter {
+            selection: self.selection,
+            names: self.names.with_fset(),
+            calendar: self.calendar,
+        }
     }
 
     /// Returns the calendar system used in this formatter.

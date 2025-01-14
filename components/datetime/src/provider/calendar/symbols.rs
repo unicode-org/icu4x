@@ -17,7 +17,7 @@ size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+/// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
 #[doc = date_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -61,7 +61,7 @@ size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
 
 /// Symbol data for the day periods needed to format a time.
 ///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+/// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
 #[doc = time_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -90,7 +90,7 @@ pub struct TimeSymbolsV1<'data> {
 /// `"heisei"` / `"meiji"` / `"reiwa"` / ...  Not all era codes are inherited as-is,
 /// such as for the extended Japanese calendar.
 ///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+/// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -128,10 +128,10 @@ macro_rules! symbols {
         $(#[$symbols_attr])*
         #[doc = concat!("Formatting symbols for [`",
                 stringify!($field_id),
-                "`](crate::fields::FieldSymbol::",
+                "`](crate::provider::fields::FieldSymbol::",
                 stringify!($field_id),
                 ").\n\n",
-                "For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).")]
+                "For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).")]
         pub mod $name {
             use super::*;
 

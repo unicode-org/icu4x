@@ -335,12 +335,12 @@ impl CollationElement32 {
     }
 
     #[inline(always)]
-    fn low_byte(&self) -> u8 {
+    fn low_byte(self) -> u8 {
         self.0 as u8
     }
 
     #[inline(always)]
-    fn tag_checked(&self) -> Option<Tag> {
+    fn tag_checked(self) -> Option<Tag> {
         let t = self.low_byte();
         if t < SPECIAL_CE32_LOW_BYTE {
             None
@@ -358,7 +358,7 @@ impl CollationElement32 {
     ///
     /// Panics in debug mode if called on a non-special element.
     #[inline(always)]
-    pub(crate) fn tag(&self) -> Tag {
+    pub(crate) fn tag(self) -> Tag {
         debug_assert!(self.low_byte() >= SPECIAL_CE32_LOW_BYTE);
         // By construction, the byte being transmuted to the enum is within
         // the value space of the enum, so the transmute cannot be UB.
@@ -415,7 +415,7 @@ impl CollationElement32 {
     ///
     /// In debug builds if this element doesn't have a length.
     #[inline(always)]
-    pub fn len(&self) -> usize {
+    pub fn len(self) -> usize {
         debug_assert!(self.tag() == Tag::Expansion32 || self.tag() == Tag::Expansion);
         ((self.0 >> 8) & 31) as usize
     }
@@ -426,7 +426,7 @@ impl CollationElement32 {
     ///
     /// In debug builds if this element doesn't have an index.
     #[inline(always)]
-    pub fn index(&self) -> usize {
+    pub fn index(self) -> usize {
         debug_assert!(
             self.tag() == Tag::Expansion32
                 || self.tag() == Tag::Expansion
@@ -439,23 +439,23 @@ impl CollationElement32 {
     }
 
     #[inline(always)]
-    pub fn digit(&self) -> u8 {
+    pub fn digit(self) -> u8 {
         debug_assert!(self.tag() == Tag::Digit);
         ((self.0 >> 8) & 0xF) as u8
     }
 
     #[inline(always)]
-    pub fn every_suffix_starts_with_combining(&self) -> bool {
+    pub fn every_suffix_starts_with_combining(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_NEXT_CCC) != 0
     }
     #[inline(always)]
-    pub fn at_least_one_suffix_contains_starter(&self) -> bool {
+    pub fn at_least_one_suffix_contains_starter(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_HAS_STARTER) != 0
     }
     #[inline(always)]
-    pub fn at_least_one_suffix_ends_with_non_starter(&self) -> bool {
+    pub fn at_least_one_suffix_ends_with_non_starter(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_TRAILING_CCC) != 0
     }
@@ -512,37 +512,37 @@ impl CollationElement {
     }
 
     #[inline(always)]
-    pub fn clone_with_non_primary_zeroed(&self) -> Self {
+    pub fn clone_with_non_primary_zeroed(self) -> Self {
         CollationElement(self.0 & 0xFFFFFFFF00000000)
     }
 
     /// Get the primary weight
     #[inline(always)]
-    pub fn primary(&self) -> u32 {
+    pub fn primary(self) -> u32 {
         (self.0 >> 32) as u32
     }
 
     /// Get the non-primary weights
     #[inline(always)]
-    pub fn non_primary(&self) -> NonPrimary {
+    pub fn non_primary(self) -> NonPrimary {
         NonPrimary::new(self.0 as u32)
     }
 
     /// Get the secondary weight
     #[inline(always)]
-    pub fn secondary(&self) -> u16 {
+    pub fn secondary(self) -> u16 {
         self.non_primary().secondary()
     }
     #[inline(always)]
-    pub fn quaternary(&self) -> u32 {
+    pub fn quaternary(self) -> u32 {
         self.non_primary().quaternary()
     }
     #[inline(always)]
-    pub fn tertiary_ignorable(&self) -> bool {
+    pub fn tertiary_ignorable(self) -> bool {
         self.non_primary().tertiary_ignorable()
     }
     #[inline(always)]
-    pub fn either_half_zero(&self) -> bool {
+    pub fn either_half_zero(self) -> bool {
         self.primary() == 0 || (self.0 as u32) == 0
     }
 
@@ -580,40 +580,40 @@ impl NonPrimary {
         NonPrimary(bits)
     }
     /// Get the bits
-    pub fn bits(&self) -> u32 {
+    pub fn bits(self) -> u32 {
         self.0
     }
     /// Get the secondary weight
     #[inline(always)]
-    pub fn secondary(&self) -> u16 {
+    pub fn secondary(self) -> u16 {
         (self.0 >> 16) as u16
     }
     /// Get the case bits as the high two bits of a u16
     #[inline(always)]
-    pub fn case(&self) -> u16 {
+    pub fn case(self) -> u16 {
         (self.0 as u16) & CASE_MASK
     }
     /// Get the tertiary weight as u16 with the high
     /// two bits of each half zeroed.
     #[inline(always)]
-    pub fn tertiary(&self) -> u16 {
+    pub fn tertiary(self) -> u16 {
         (self.0 as u16) & TERTIARY_MASK
     }
     #[inline(always)]
-    pub fn tertiary_ignorable(&self) -> bool {
+    pub fn tertiary_ignorable(self) -> bool {
         (self.0 as u16) <= NO_CE_TERTIARY
     }
     /// Get the quaternary weight in the original
     /// storage bit positions with the other bits
     /// set to one.
     #[inline(always)]
-    pub fn quaternary(&self) -> u32 {
+    pub fn quaternary(self) -> u32 {
         self.0 | !(QUATERNARY_MASK as u32)
     }
     /// Get any combination of tertiary, case, and quaternary
     /// by mask.
     #[inline(always)]
-    pub fn tertiary_case_quarternary(&self, mask: u16) -> u16 {
+    pub fn tertiary_case_quarternary(self, mask: u16) -> u16 {
         debug_assert!((mask & CASE_MASK) == CASE_MASK || (mask & CASE_MASK) == 0);
         debug_assert!((mask & TERTIARY_MASK) == TERTIARY_MASK || (mask & TERTIARY_MASK) == 0);
         debug_assert!((mask & QUATERNARY_MASK) == QUATERNARY_MASK || (mask & QUATERNARY_MASK) == 0);
@@ -621,7 +621,7 @@ impl NonPrimary {
     }
 
     #[inline(always)]
-    pub fn case_quaternary(&self) -> u16 {
+    pub fn case_quaternary(self) -> u16 {
         (self.0 as u16) & (CASE_MASK | QUATERNARY_MASK)
     }
 }

@@ -31,5 +31,4 @@ icu_locale = { path = "../../components/locale" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
-std = []
-export = ["icu_provider/export", "std"]
+export = ["icu_provider/export"]

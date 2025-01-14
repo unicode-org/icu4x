@@ -369,7 +369,7 @@ impl TimeZoneIdMapperBorrowed<'_> {
 
     /// Queries the data for `iana_id` without recording the normalized string.
     /// This is a fast, no-alloc lookup.
-    fn iana_lookup_quick(&self, iana_id: impl AsRef<[u8]>) -> Option<IanaTrieValue> {
+    fn iana_lookup_quick(self, iana_id: impl AsRef<[u8]>) -> Option<IanaTrieValue> {
         let mut cursor = self.data.map.cursor();
         let iana_id = iana_id.as_ref();
         if !iana_id.contains(&b'/') {
@@ -429,7 +429,7 @@ impl TimeZoneIdMapperBorrowed<'_> {
     /// Performs a reverse lookup by walking the trie with an optional start position.
     /// This is not a fast operation since it requires a linear search.
     fn iana_search(
-        &self,
+        self,
         needle: IanaTrieValue,
         mut string: String,
         mut stack: Vec<(ZeroAsciiIgnoreCaseTrieCursor, usize, usize)>,
@@ -529,7 +529,7 @@ pub struct TimeZoneBcp47Iter<'a> {
     inner: ZeroSliceIter<'a, TimeZoneBcp47Id>,
 }
 
-impl<'a> Iterator for TimeZoneBcp47Iter<'a> {
+impl Iterator for TimeZoneBcp47Iter<'_> {
     type Item = TimeZoneBcp47Id;
 
     fn next(&mut self) -> Option<Self::Item> {

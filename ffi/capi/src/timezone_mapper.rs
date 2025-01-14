@@ -44,9 +44,9 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapper>, DataError> {
-            Ok(Box::new(TimeZoneIdMapper(provider.call_constructor(
-                icu_timezone::TimeZoneIdMapper::try_new_with_buffer_provider,
-            )?)))
+            Ok(Box::new(TimeZoneIdMapper(
+                icu_timezone::TimeZoneIdMapper::try_new_with_buffer_provider(provider.get()?)?,
+            )))
         }
 
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::iana_to_bcp47, FnInStruct)]
@@ -172,7 +172,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {
             Ok(Box::new(TimeZoneIdMapperWithFastCanonicalization(
-                provider.call_constructor(icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider)?,
+                icu_timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
 

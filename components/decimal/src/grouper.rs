@@ -16,7 +16,7 @@ pub fn check(
     upper_magnitude: i16,
     magnitude: i16,
     strategy: GroupingStrategy,
-    sizes: &GroupingSizesV1,
+    sizes: GroupingSizesV1,
 ) -> bool {
     let primary = if sizes.primary == 0 {
         return false;

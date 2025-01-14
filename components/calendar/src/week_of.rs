@@ -88,7 +88,7 @@ impl WeekCalculator {
     /// ```
     ///
     /// [1]: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
-    pub fn week_of_month(&self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
+    pub fn week_of_month(self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
         WeekOfMonth(simple_week_of(
             self.first_weekday,
             day_of_month.0 as u16,
@@ -121,7 +121,7 @@ impl WeekCalculator {
     ///         .week_of_year(iso_date.day_of_year_info(), IsoWeekday::Friday)
     /// );
     /// ```
-    pub fn week_of_year(&self, day_of_year_info: DayOfYearInfo, iso_weekday: IsoWeekday) -> WeekOf {
+    pub fn week_of_year(self, day_of_year_info: DayOfYearInfo, iso_weekday: IsoWeekday) -> WeekOf {
         week_of(
             self,
             day_of_year_info.days_in_prev_year,
@@ -140,13 +140,13 @@ impl WeekCalculator {
     }
 
     /// Returns the zero based index of `weekday` vs this calendar's start of week.
-    fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
+    fn weekday_index(self, weekday: IsoWeekday) -> i8 {
         (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
     }
 
     /// Weekdays that are part of the 'weekend', for calendar purposes.
     /// Days may not be contiguous, and order is based off the first weekday.
-    pub fn weekend(&self) -> impl Iterator<Item = IsoWeekday> {
+    pub fn weekend(self) -> impl Iterator<Item = IsoWeekday> {
         WeekdaySetIterator::new(
             self.first_weekday,
             self.weekend.unwrap_or(WeekdaySet::new(&[])),
@@ -184,6 +184,7 @@ enum RelativeWeek {
 }
 
 /// Information about a year or month.
+#[derive(Clone, Copy)]
 struct UnitInfo {
     /// The weekday of this year/month's first day.
     first_day: IsoWeekday,
@@ -212,7 +213,7 @@ impl UnitInfo {
     ///
     /// The returned value can be negative if this unit's first week started during the previous
     /// unit.
-    fn first_week_offset(&self, calendar: &WeekCalculator) -> i8 {
+    fn first_week_offset(self, calendar: WeekCalculator) -> i8 {
         let first_day_index = calendar.weekday_index(self.first_day);
         if 7 - first_day_index >= calendar.min_week_days as i8 {
             -first_day_index
@@ -222,7 +223,7 @@ impl UnitInfo {
     }
 
     /// Returns the number of weeks in this unit according to `calendar`.
-    fn num_weeks(&self, calendar: &WeekCalculator) -> u8 {
+    fn num_weeks(self, calendar: WeekCalculator) -> u8 {
         let first_week_offset = self.first_week_offset(calendar);
         let num_days_including_first_week =
             (self.duration_days as i32) - (first_week_offset as i32);
@@ -234,7 +235,7 @@ impl UnitInfo {
     }
 
     /// Returns the week number for the given day in this unit.
-    fn relative_week(&self, calendar: &WeekCalculator, day: u16) -> RelativeWeek {
+    fn relative_week(self, calendar: WeekCalculator, day: u16) -> RelativeWeek {
         let days_since_first_week =
             i32::from(day) - i32::from(self.first_week_offset(calendar)) - 1;
         if days_since_first_week < 0 {
@@ -280,7 +281,7 @@ pub struct WeekOf {
 ///  - day: 1-based day of month/year.
 ///  - week_day: The weekday of `day`..
 pub fn week_of(
-    calendar: &WeekCalculator,
+    calendar: WeekCalculator,
     num_days_in_previous_unit: u16,
     num_days_in_unit: u16,
     day: u16,
@@ -334,7 +335,7 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
 
     #[allow(clippy::unwrap_used)] // week_of should can't fail with MIN_UNIT_DAYS
     week_of(
-        &calendar,
+        calendar,
         // The duration of the previous unit does not influence the result if min_week_days = 1
         // so we only need to use a valid value.
         MIN_UNIT_DAYS,
@@ -430,29 +431,29 @@ mod tests {
     fn test_first_week_offset() {
         let first_week_offset =
             |calendar, day| UnitInfo::new(day, 30).unwrap().first_week_offset(calendar);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Monday), 0);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Tuesday), -1);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Wednesday), -2);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Thursday), -3);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Friday), 3);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Saturday), 2);
-        assert_eq!(first_week_offset(&ISO_CALENDAR, IsoWeekday::Sunday), 1);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Monday), 0);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Tuesday), -1);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Wednesday), -2);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Thursday), -3);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Friday), 3);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Saturday), 2);
+        assert_eq!(first_week_offset(ISO_CALENDAR, IsoWeekday::Sunday), 1);
 
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Saturday), 0);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Sunday), -1);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Monday), -2);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Tuesday), -3);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Wednesday), 3);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Thursday), 2);
-        assert_eq!(first_week_offset(&AE_CALENDAR, IsoWeekday::Friday), 1);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Saturday), 0);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Sunday), -1);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Monday), -2);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Tuesday), -3);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Wednesday), 3);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Thursday), 2);
+        assert_eq!(first_week_offset(AE_CALENDAR, IsoWeekday::Friday), 1);
 
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Sunday), 0);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Monday), -1);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Tuesday), -2);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Wednesday), -3);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Thursday), -4);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Friday), -5);
-        assert_eq!(first_week_offset(&US_CALENDAR, IsoWeekday::Saturday), -6);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Sunday), 0);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Monday), -1);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Tuesday), -2);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Wednesday), -3);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Thursday), -4);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Friday), -5);
+        assert_eq!(first_week_offset(US_CALENDAR, IsoWeekday::Saturday), -6);
     }
 
     #[test]
@@ -461,21 +462,21 @@ mod tests {
         assert_eq!(
             UnitInfo::new(IsoWeekday::Thursday, 4 + 2 * 7 + 4)
                 .unwrap()
-                .num_weeks(&ISO_CALENDAR),
+                .num_weeks(ISO_CALENDAR),
             4
         );
         // 3 days in first week, 4 in last week.
         assert_eq!(
             UnitInfo::new(IsoWeekday::Friday, 3 + 2 * 7 + 4)
                 .unwrap()
-                .num_weeks(&ISO_CALENDAR),
+                .num_weeks(ISO_CALENDAR),
             3
         );
         // 3 days in first & last week.
         assert_eq!(
             UnitInfo::new(IsoWeekday::Friday, 3 + 2 * 7 + 3)
                 .unwrap()
-                .num_weeks(&ISO_CALENDAR),
+                .num_weeks(ISO_CALENDAR),
             2
         );
 
@@ -483,7 +484,7 @@ mod tests {
         assert_eq!(
             UnitInfo::new(IsoWeekday::Saturday, 1 + 2 * 7 + 1)
                 .unwrap()
-                .num_weeks(&US_CALENDAR),
+                .num_weeks(US_CALENDAR),
             4
         );
     }
@@ -493,7 +494,7 @@ mod tests {
     /// This alternative implementation serves as an exhaustive safety check
     /// of relative_week() (in addition to the manual test points used
     /// for testing week_of()).
-    fn classify_days_of_unit(calendar: &WeekCalculator, unit: &UnitInfo) -> Vec<RelativeWeek> {
+    fn classify_days_of_unit(calendar: WeekCalculator, unit: &UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<IsoWeekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
             let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
@@ -535,11 +536,11 @@ mod tests {
                     for start_of_unit in 1..7 {
                         let unit =
                             UnitInfo::new(IsoWeekday::from(start_of_unit), unit_duration).unwrap();
-                        let expected = classify_days_of_unit(&calendar, &unit);
+                        let expected = classify_days_of_unit(calendar, &unit);
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;
                             assert_eq!(
-                                unit.relative_week(&calendar, day as u16),
+                                unit.relative_week(calendar, day as u16),
                                 *expected_week_of,
                                 "For the {day}/{unit_duration} starting on IsoWeekday \
                         {start_of_unit} using start_of_week {start_of_week} \
@@ -553,7 +554,7 @@ mod tests {
     }
 
     fn week_of_month_from_iso_date(
-        calendar: &WeekCalculator,
+        calendar: WeekCalculator,
         yyyymmdd: u32,
     ) -> Result<WeekOf, RangeError> {
         let year = (yyyymmdd / 10000) as i32;
@@ -575,14 +576,14 @@ mod tests {
     #[test]
     fn test_week_of_month_using_dates() {
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20210418).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20210418).unwrap(),
             WeekOf {
                 week: 3,
                 unit: RelativeUnit::Current,
             }
         );
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20210419).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20210419).unwrap(),
             WeekOf {
                 week: 4,
                 unit: RelativeUnit::Current,
@@ -591,7 +592,7 @@ mod tests {
 
         // First day of year is a Thursday.
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20180101).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20180101).unwrap(),
             WeekOf {
                 week: 1,
                 unit: RelativeUnit::Current,
@@ -599,7 +600,7 @@ mod tests {
         );
         // First day of year is a Friday.
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20210101).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20210101).unwrap(),
             WeekOf {
                 week: 5,
                 unit: RelativeUnit::Previous,
@@ -608,7 +609,7 @@ mod tests {
 
         // The month ends on a Wednesday.
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20200930).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20200930).unwrap(),
             WeekOf {
                 week: 1,
                 unit: RelativeUnit::Next,
@@ -616,7 +617,7 @@ mod tests {
         );
         // The month ends on a Thursday.
         assert_eq!(
-            week_of_month_from_iso_date(&ISO_CALENDAR, 20201231).unwrap(),
+            week_of_month_from_iso_date(ISO_CALENDAR, 20201231).unwrap(),
             WeekOf {
                 week: 5,
                 unit: RelativeUnit::Current,
@@ -625,14 +626,14 @@ mod tests {
 
         // US calendar always assigns the week to the current month. 2020-12-31 is a Thursday.
         assert_eq!(
-            week_of_month_from_iso_date(&US_CALENDAR, 20201231).unwrap(),
+            week_of_month_from_iso_date(US_CALENDAR, 20201231).unwrap(),
             WeekOf {
                 week: 5,
                 unit: RelativeUnit::Current,
             }
         );
         assert_eq!(
-            week_of_month_from_iso_date(&US_CALENDAR, 20210101).unwrap(),
+            week_of_month_from_iso_date(US_CALENDAR, 20210101).unwrap(),
             WeekOf {
                 week: 1,
                 unit: RelativeUnit::Current,

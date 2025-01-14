@@ -6,7 +6,7 @@
 
 use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
-use crate::{fields::FieldLength, input::ExtractedInput};
+use crate::{input::ExtractedInput, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::{Date, Iso, Time};
@@ -571,7 +571,7 @@ impl FormatTimeZone for Iso8601Format {
 
 impl Iso8601Format {
     pub(crate) fn format_infallible<W: writeable::PartsWrite + ?Sized>(
-        &self,
+        self,
         sink: &mut W,
         offset: UtcOffset,
     ) -> Result<(), fmt::Error> {

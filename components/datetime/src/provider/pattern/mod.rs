@@ -17,7 +17,7 @@ mod item;
 pub mod reference;
 pub mod runtime;
 
-use crate::fields;
+use crate::provider::fields;
 pub use error::PatternError;
 #[cfg(feature = "datagen")]
 pub(crate) use hour_cycle::naively_apply_preferences;

@@ -316,7 +316,7 @@ impl fmt::Display for MonthCode {
 
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct MonthInfo {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
@@ -355,11 +355,11 @@ impl MonthInfo {
         self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
     }
 }
+
 /// A struct containing various details about the position of the day within a year. It is returned
-// by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
-// [`DateInput`] trait.
+/// by [`Calendar::day_of_year_info()`](crate::Calendar::day_of_year_info).
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
     pub day_of_year: u16,

@@ -62,9 +62,10 @@
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
 
+use crate::fieldsets::Combo;
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fields, fieldsets};
+use crate::{fieldsets, provider};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -226,9 +227,9 @@ impl CompositeDateTimeFieldSet {
             CompositeFieldSet::Time(v) => Some(Self::Time(v)),
             CompositeFieldSet::Zone(_) => None,
             CompositeFieldSet::DateTime(v) => Some(Self::DateTime(v)),
-            CompositeFieldSet::DateZone(_, _) => None,
-            CompositeFieldSet::TimeZone(_, _) => None,
-            CompositeFieldSet::DateTimeZone(_, _) => None,
+            CompositeFieldSet::DateZone(_) => None,
+            CompositeFieldSet::TimeZone(_) => None,
+            CompositeFieldSet::DateTimeZone(_) => None,
         }
     }
 
@@ -267,11 +268,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(DateFieldSet, ZoneFieldSet),
+    DateZone(Combo<DateFieldSet, ZoneFieldSet>),
     /// Field set for a time and a time zone together.
-    TimeZone(TimeFieldSet, ZoneFieldSet),
+    TimeZone(Combo<TimeFieldSet, ZoneFieldSet>),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(DateAndTimeFieldSet, ZoneFieldSet),
+    DateTimeZone(Combo<DateAndTimeFieldSet, ZoneFieldSet>),
 }
 
 macro_rules! first {
@@ -371,7 +372,7 @@ macro_rules! impl_attrs {
     (@zone, $type:path, [$($variant:ident),+,]) => {
         impl_attrs! { @composite, $type, Zone }
         impl $type {
-            pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+            pub(crate) fn to_field(self) -> (provider::fields::TimeZone, provider::fields::FieldLength) {
                 match self {
                     $(
                         Self::$variant(variant) => variant.to_field(),
@@ -452,9 +453,9 @@ impl_attrs! {
 impl TimeFieldSet {
     pub(crate) const fn id_str_for_hour_cycle(
         self,
-        hour_cycle: Option<fields::Hour>,
+        hour_cycle: Option<provider::fields::Hour>,
     ) -> &'static DataMarkerAttributes {
-        use fields::Hour::*;
+        use provider::fields::Hour::*;
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,

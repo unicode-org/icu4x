@@ -13,5 +13,4 @@ pub enum PatternError {
     InvalidPlaceholder,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for PatternError {}
+impl core::error::Error for PatternError {}

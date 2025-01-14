@@ -238,8 +238,9 @@ where
     pub fn as_bytes(&self) -> &[u8] {
         self.0.as_ref()
     }
+
     #[cfg(all(feature = "alloc", test))]
-    pub fn check(&self) -> Result<(), (&'static str, u8)> {
+    pub(crate) fn check(&self) -> Result<(), (&'static str, u8)> {
         use alloc::vec;
         let len = self.num_items();
         let mut seen = vec![false; len];

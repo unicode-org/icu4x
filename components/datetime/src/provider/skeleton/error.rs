@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields;
+use crate::provider::fields;
 use displaydoc::Display;
 
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
@@ -32,8 +32,7 @@ pub enum SkeletonError {
     Fields(fields::Error),
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for SkeletonError {}
+impl core::error::Error for SkeletonError {}
 
 impl From<fields::Error> for SkeletonError {
     fn from(e: fields::Error) -> Self {

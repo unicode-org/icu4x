@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::Field;
-use crate::pattern::PatternLoadError;
+use crate::error::ErrorField;
+use crate::pattern::{
+    DayPeriodNameLength, MonthNameLength, PatternLoadError, WeekdayNameLength, YearNameLength,
+};
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
 use core::fmt;
@@ -19,36 +21,43 @@ use super::UnstableSealed;
 /// not weekday, day period, or time zone names.
 #[allow(missing_docs)]
 pub trait DateTimeNamesMarker: UnstableSealed {
-    type YearNames: DateTimeNamesHolderTrait<YearNamesV1Marker>;
-    type MonthNames: DateTimeNamesHolderTrait<MonthNamesV1Marker>;
-    type WeekdayNames: DateTimeNamesHolderTrait<WeekdayNamesV1Marker>;
-    type DayPeriodNames: DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>;
-    type ZoneEssentials: DateTimeNamesHolderTrait<tz::EssentialsV1Marker>;
-    type ZoneLocations: DateTimeNamesHolderTrait<tz::LocationsV1Marker>;
-    type ZoneGenericLong: DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>;
-    type ZoneGenericShort: DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>;
-    type ZoneSpecificLong: DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>;
-    type ZoneSpecificShort: DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>;
-    type MetazoneLookup: DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>;
+    type YearNames: NamesContainer<YearNamesV1Marker, YearNameLength>;
+    type MonthNames: NamesContainer<MonthNamesV1Marker, MonthNameLength>;
+    type WeekdayNames: NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>;
+    type DayPeriodNames: NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>;
+    type ZoneEssentials: NamesContainer<tz::EssentialsV1Marker, ()>;
+    type ZoneLocations: NamesContainer<tz::LocationsV1Marker, ()>;
+    type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1Marker, ()>;
+    type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1Marker, ()>;
+    type ZoneSpecificLong: NamesContainer<tz::MzSpecificLongV1Marker, ()>;
+    type ZoneSpecificShort: NamesContainer<tz::MzSpecificShortV1Marker, ()>;
+    type MetazoneLookup: NamesContainer<tz::MzPeriodV1Marker, ()>;
 }
 
-/// Helper trait for [`DateTimeNamesMarker`].
+/// Trait that associates a container for a payload parameterized by the given variables.
 #[allow(missing_docs)]
-pub trait DateTimeNamesHolderTrait<M: DynamicDataMarker>: UnstableSealed {
-    type Container<Variables: PartialEq + Copy + fmt::Debug>: MaybePayload<M, Variables>
-        + fmt::Debug;
+pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
+where
+    Variables: PartialEq + Copy + fmt::Debug,
+{
+    type Container: MaybePayload<M, Variables> + fmt::Debug;
 }
 
-impl<M: DynamicDataMarker> DateTimeNamesHolderTrait<M> for () {
-    type Container<Variables: PartialEq + Copy + fmt::Debug> = ();
+impl<M: DynamicDataMarker, Variables> NamesContainer<M, Variables> for ()
+where
+    Variables: PartialEq + Copy + fmt::Debug,
+{
+    type Container = ();
 }
 
 macro_rules! impl_holder_trait {
     ($marker:path) => {
         impl UnstableSealed for $marker {}
-        impl DateTimeNamesHolderTrait<$marker> for $marker {
-            type Container<Variables: PartialEq + Copy + fmt::Debug> =
-                DataPayloadWithVariables<$marker, Variables>;
+        impl<Variables> NamesContainer<$marker, Variables> for $marker
+        where
+            Variables: PartialEq + Copy + fmt::Debug,
+        {
+            type Container = DataPayloadWithVariables<$marker, Variables>;
         }
     };
 }
@@ -67,18 +76,22 @@ impl_holder_trait!(tz::MzPeriodV1Marker);
 
 /// An error returned by [`MaybePayload`].
 #[allow(missing_docs)]
-#[derive(Debug)]
+#[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
+    /// TODO
     TypeTooSpecific,
+    /// TODO
     ConflictingField,
 }
 
+impl core::error::Error for MaybePayloadError {}
+
 impl MaybePayloadError {
-    pub(crate) fn into_load_error(self, field: Field) -> PatternLoadError {
+    pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {
         match self {
-            Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(field),
-            Self::ConflictingField => PatternLoadError::ConflictingField(field),
+            Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(error_field),
+            Self::ConflictingField => PatternLoadError::ConflictingField(error_field),
         }
     }
 }
@@ -102,7 +115,7 @@ pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
     fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables>;
 }
 
-/// An implementation of [`MaybePayload`] that wraps a [`DataPayload`],
+/// An implementation of [`MaybePayload`] that wraps an optional [`DataPayload`],
 /// parameterized by `Variables`.
 pub struct DataPayloadWithVariables<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
@@ -117,6 +130,16 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.inner.fmt(f)
+    }
+}
+
+// NOTE: This impl enables `with_fset` functions to work.
+impl<M: DynamicDataMarker, Variables> From<()> for DataPayloadWithVariables<M, Variables> {
+    #[inline]
+    fn from(_: ()) -> Self {
+        Self {
+            inner: OptionalNames::None,
+        }
     }
 }
 
@@ -272,5 +295,137 @@ where
                 payload: payload.get(),
             },
         }
+    }
+}
+
+/// A trait for a [`DateTimeNamesMarker`] that can be created from a more specific one, `M`.
+///
+/// This trait is blanket-implemented on all [field sets](crate::fieldsets) that are more general than `M`.
+///
+/// # Examples
+///
+/// Example pairs of field sets where the trait is implemented:
+///
+/// ```
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::fieldsets::enums::DateFieldSet;
+/// use icu::datetime::fieldsets::enums::TimeFieldSet;
+/// use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
+/// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+/// use icu::datetime::scaffold::DateTimeNamesFrom;
+/// use icu::datetime::scaffold::DateTimeNamesMarker;
+///
+/// fn is_trait_implemented<Source, Target>()
+/// where
+///     Source: DateTimeNamesMarker,
+///     Target: DateTimeNamesFrom<Source>
+/// {}
+///
+/// is_trait_implemented::<YMD, DateFieldSet>();
+/// is_trait_implemented::<YMD, CompositeDateTimeFieldSet>();
+/// is_trait_implemented::<YMD, CompositeFieldSet>();
+/// is_trait_implemented::<T, TimeFieldSet>();
+/// is_trait_implemented::<T, CompositeDateTimeFieldSet>();
+/// is_trait_implemented::<T, CompositeFieldSet>();
+/// is_trait_implemented::<DateFieldSet, CompositeDateTimeFieldSet>();
+/// is_trait_implemented::<DateFieldSet, CompositeFieldSet>();
+/// is_trait_implemented::<TimeFieldSet, CompositeDateTimeFieldSet>();
+/// is_trait_implemented::<TimeFieldSet, CompositeFieldSet>();
+/// ```
+#[allow(missing_docs)]
+pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
+    fn map_year_names(
+        other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
+    ) -> <Self::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container;
+    fn map_month_names(
+        other: <M::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container,
+    ) -> <Self::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container;
+    fn map_weekday_names(
+        other: <M::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container,
+    ) -> <Self::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container;
+    fn map_day_period_names(
+        other: <M::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container,
+    ) -> <Self::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container;
+    fn map_zone_essentials(
+        other: <M::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
+    ) -> <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container;
+    fn map_zone_locations(
+        other: <M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
+    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container;
+    fn map_zone_generic_long(
+        other: <M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container,
+    ) -> <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container;
+    fn map_zone_generic_short(
+        other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container,
+    ) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container;
+    fn map_zone_specific_long(
+        other: <M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container,
+    ) -> <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container;
+    fn map_zone_specific_short(
+        other: <M::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container,
+    ) -> <Self::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container;
+    fn map_metazone_lookup(
+        other: <M::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container,
+    ) -> <Self::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container;
+}
+
+impl<M: DateTimeNamesMarker, T: DateTimeNamesMarker> DateTimeNamesFrom<M> for T
+where
+    <Self::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container: From<<M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container>,
+    <Self::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container: From<<M::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container>,
+    <Self::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container: From<<M::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container>,
+    <Self::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container: From<<M::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container>,
+    <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container: From<<M::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container>,
+    <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container: From<<M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container>,
+    <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container: From<<M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container>,
+    <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container: From<<M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container>,
+    <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container: From<<M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container>,
+    <Self::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container: From<<M::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container>,
+    <Self::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container: From<<M::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container>,
+{
+    #[inline]
+    fn map_year_names(other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container) -> <Self::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_month_names(other: <M::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container) -> <Self::MonthNames as NamesContainer<MonthNamesV1Marker, MonthNameLength>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_weekday_names(other: <M::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container) -> <Self::WeekdayNames as NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_day_period_names(other: <M::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container) -> <Self::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_essentials(other: <M::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container) -> <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_locations(other: <M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_generic_long(other: <M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container) -> <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_generic_short(other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_specific_long(other: <M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container) -> <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_specific_short(other: <M::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container) -> <Self::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_metazone_lookup(other: <M::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container) -> <Self::MetazoneLookup as NamesContainer<tz::MzPeriodV1Marker, ()>>::Container {
+        other.into()
     }
 }

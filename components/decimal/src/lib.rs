@@ -52,7 +52,7 @@
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 //! ```
 //!
-//! ### Format a number using an alternative numbering system
+//! ## Format a number using an alternative numbering system
 //!
 //! Numbering systems specified in the `-u-nu` subtag will be followed.
 //!
@@ -73,73 +73,10 @@
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 //! ```
 //!
-//! ### Get the resolved numbering system
-//!
-//! Inspect the data request to get the resolved numbering system (public but unstable):
-//!
-//! ```
-//! use icu_provider::prelude::*;
-//! use icu::decimal::FixedDecimalFormatter;
-//! use icu::decimal::provider::DecimalDigitsV1Marker;
-//! use icu::locale::locale;
-//! use std::any::TypeId;
-//! use std::cell::RefCell;
-//!
-//! struct NumberingSystemInspectionProvider<P> {
-//!     inner: P,
-//!     numbering_system: RefCell<Option<Box<DataMarkerAttributes>>>,
-//! }
-//!
-//! impl<M, P> DataProvider<M> for NumberingSystemInspectionProvider<P>
-//! where
-//!     M: DataMarker,
-//!     P: DataProvider<M>,
-//! {
-//!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1Marker>() {
-//!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
-//!         }
-//!         self.inner.load(req)
-//!     }
-//! }
-//!
-//! let provider = NumberingSystemInspectionProvider {
-//!     inner: icu::decimal::provider::Baked,
-//!     numbering_system: RefCell::new(None),
-//! };
-//!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &provider,
-//!     locale!("th").into(),
-//!     Default::default(),
-//! )
-//! .unwrap();
-//!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
-//!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &provider,
-//!     locale!("th-u-nu-thai").into(),
-//!     Default::default(),
-//! )
-//! .unwrap();
-//!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
-//!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &provider,
-//!     locale!("th-u-nu-adlm").into(),
-//!     Default::default(),
-//! )
-//! .unwrap();
-//!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("adlm"));
-//! ```
-//!
 //! [`FixedDecimalFormatter`]: FixedDecimalFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -149,6 +86,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -185,6 +123,9 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`provider`] module for an example.
         numbering_system: NumberingSystem
     }
 );
@@ -197,7 +138,7 @@ define_preferences!(
 /// 2. Locale-sensitive grouping separator positions
 /// 3. Locale-sensitive plus and minus signs
 ///
-/// Read more about the options in the [`options`] module.
+/// To get the resolved numbering system, see [`provider`].
 ///
 /// See the crate-level documentation for examples.
 #[doc = fixed_decimal_formatter_size!()]

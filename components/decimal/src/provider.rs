@@ -11,6 +11,72 @@
 //! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
+//!
+//! # Examples
+//!
+//! ## Get the resolved numbering system
+//!
+//! In a constructor call, the _last_ request for [`DecimalDigitsV1Marker`]
+//! contains the resolved numbering system as its attribute:
+//!
+//! ```
+//! use icu_provider::prelude::*;
+//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1Marker;
+//! use icu::locale::locale;
+//! use std::any::TypeId;
+//! use std::cell::RefCell;
+//!
+//! struct NumberingSystemInspectionProvider<P> {
+//!     inner: P,
+//!     numbering_system: RefCell<Option<Box<DataMarkerAttributes>>>,
+//! }
+//!
+//! impl<M, P> DataProvider<M> for NumberingSystemInspectionProvider<P>
+//! where
+//!     M: DataMarker,
+//!     P: DataProvider<M>,
+//! {
+//!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1Marker>() {
+//!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
+//!         }
+//!         self.inner.load(req)
+//!     }
+//! }
+//!
+//! let provider = NumberingSystemInspectionProvider {
+//!     inner: icu::decimal::provider::Baked,
+//!     numbering_system: RefCell::new(None),
+//! };
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-thai").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
+//!
+//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-adlm").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("adlm"));
+//! ```
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
@@ -125,7 +191,7 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     pub numsys: Cow<'data, str>,
 }
 
-impl<'data> DecimalSymbolStrsBuilder<'data> {
+impl DecimalSymbolStrsBuilder<'_> {
     /// Build a [`DecimalSymbolsStrs`]
     pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
         VarZeroCow::from_encodeable(self)
@@ -163,7 +229,11 @@ pub struct DecimalSymbolsV2<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalDigitsV1Marker = "decimal/digits@1")]
+#[icu_provider::data_struct(marker(
+    DecimalDigitsV1Marker,
+    "decimal/digits@1",
+    attributes_domain = "numbering_system"
+))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -174,7 +244,7 @@ pub struct DecimalDigitsV1 {
     pub digits: [char; 10],
 }
 
-impl<'data> DecimalSymbolsV2<'data> {
+impl DecimalSymbolsV2<'_> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (

@@ -321,7 +321,9 @@ fn main() -> eyre::Result<()> {
                 .collect::<Result<_, _>>()?,
         }
     } else if let Some(bin_path) = &cli.markers_for_bin {
-        icu::markers_for_bin(bin_path)?.into_iter().collect()
+        icu::markers_for_bin(&std::fs::read(bin_path)?)?
+            .into_iter()
+            .collect()
     } else {
         eyre::bail!("--markers or --markers-for-bin are required.")
     };
@@ -669,6 +671,8 @@ macro_rules! cb {
         );
     }
 }
+
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 #[cfg(feature = "blob_input")]

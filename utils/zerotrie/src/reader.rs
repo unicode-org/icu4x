@@ -323,7 +323,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             if matches!(byte_type, NodeType::Ascii) {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(c)
                 } else {
                     b == c
                 };
@@ -446,7 +446,7 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             NodeType::Ascii => {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(&c)
                 } else {
                     *b == c
                 };

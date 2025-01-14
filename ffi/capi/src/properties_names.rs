@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use crate::properties_enums::ffi::GeneralCategoryGroup;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -78,11 +79,10 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::try_new_unstable,
-                    provider,
-                )?
-                .erase(),
+                icu_properties::PropertyParser::<
+                                    icu_properties::props::GeneralCategory,
+                                >::try_new_unstable(&provider.get_unstable()?)?
+                    .erase(),
             )))
         }
         /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
@@ -104,13 +104,10 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                            icu_properties::PropertyParser::<
+                        icu_properties::PropertyParser::<
                                 icu_properties::props::HangulSyllableType,
-                            >::try_new_unstable,
-                            provider,
-                        )?
-                .erase(),
+                            >::try_new_unstable(&provider.get_unstable()?)?
+                    .erase(),
             )))
         }
         /// Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
@@ -132,11 +129,11 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::try_new_unstable,
-                    provider,
-                )?
-                .erase(),
+                icu_properties::PropertyParser::<
+                                    icu_properties::props::EastAsianWidth,
+                                >::try_new_unstable(&provider.get_unstable()?
+                    )?
+                    .erase(),
             )))
         }
         /// Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
@@ -158,10 +155,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::BidiClass>::try_new_unstable,
-                    provider,
-                )?
+                    icu_properties::PropertyParser::<icu_properties::props::BidiClass>::try_new_unstable(&provider.get_unstable()?)?
                 .erase(),
             )))
         }
@@ -179,15 +173,16 @@ pub mod ffi {
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
-            Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
+            Ok(
+                Box::new(
+                    PropertyValueNameToEnumMapper(
                         icu_properties::PropertyParser::<
                             icu_properties::props::IndicSyllabicCategory,
-                        >::try_new_unstable,
-                        provider,
-                    )?
-                .erase(),
-            )))
+                        >::try_new_unstable(&provider.get_unstable()?)?
+                        .erase(),
+                    ),
+                ),
+            )
         }
         /// Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
@@ -208,9 +203,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::LineBreak>::try_new_unstable,
-                    provider,
+                    icu_properties::PropertyParser::<icu_properties::props::LineBreak>::try_new_unstable(&provider.get_unstable()?
                 )?
                 .erase(),
             )))
@@ -234,15 +227,16 @@ pub mod ffi {
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
-            Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                            icu_properties::PropertyParser::<
-                                icu_properties::props::GraphemeClusterBreak,
-                            >::try_new_unstable,
-                            provider,
-                        )?
-                .erase(),
-            )))
+            Ok(
+                Box::new(
+                    PropertyValueNameToEnumMapper(
+                        icu_properties::PropertyParser::<
+                            icu_properties::props::GraphemeClusterBreak,
+                        >::try_new_unstable(&provider.get_unstable()?)?
+                        .erase(),
+                    ),
+                ),
+            )
         }
         /// Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
@@ -263,10 +257,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::WordBreak>::try_new_unstable,
-                    provider,
-                )?
+                    icu_properties::PropertyParser::<icu_properties::props::WordBreak>::try_new_unstable(&provider.get_unstable()?)?
                 .erase(),
             )))
         }
@@ -289,11 +280,11 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::try_new_unstable,
-                    provider,
-                )?
-                .erase(),
+                icu_properties::PropertyParser::<
+                                        icu_properties::props::SentenceBreak,
+                                    >::try_new_unstable(&provider.get_unstable()?
+                    )?
+                    .erase(),
             )))
         }
         /// Create a name-to-enum mapper for the `Script` property, using compiled data.
@@ -315,24 +306,23 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
-                call_constructor_unstable!(
-                    icu_properties::PropertyParser::<icu_properties::props::Script>::try_new_unstable,
-                    provider,
+                icu_properties::PropertyParser::<icu_properties::props::Script>::try_new_unstable(
+                    &provider.get_unstable()?,
                 )?
                 .erase(),
             )))
         }
     }
 
-    /// A type capable of looking up General Category mask values from a string name.
+    /// A type capable of looking up General Category Group values from a string name.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::PropertyParser, Struct)]
     #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
-    pub struct GeneralCategoryNameToMaskMapper(
+    pub struct GeneralCategoryNameToGroupMapper(
         icu_properties::PropertyParser<icu_properties::props::GeneralCategoryGroup>,
     );
 
-    impl GeneralCategoryNameToMaskMapper {
+    impl GeneralCategoryNameToGroupMapper {
         /// Get the mask value matching the given name, using strict matching
         ///
         /// Returns 0 if the name is unknown for this property
@@ -342,7 +332,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
+        pub fn get_strict(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_strict(name)
             } else {
@@ -361,7 +351,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
+        pub fn get_loose(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_loose(name)
             } else {
@@ -374,8 +364,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<GeneralCategoryNameToMaskMapper> {
-            Box::new(GeneralCategoryNameToMaskMapper(
+        pub fn create() -> Box<GeneralCategoryNameToGroupMapper> {
+            Box::new(GeneralCategoryNameToGroupMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new(
                 )
                 .static_to_owned(),
@@ -387,15 +377,14 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
-            Ok(Box::new(GeneralCategoryNameToMaskMapper(
-                call_constructor_unstable!(
-                            icu_properties::PropertyParser::<
-                                icu_properties::props::GeneralCategoryGroup,
-                            >::try_new_unstable,
-                            provider,
-                        )?,
-            )))
+        ) -> Result<Box<GeneralCategoryNameToGroupMapper>, DataError> {
+            Ok(Box::new(
+                GeneralCategoryNameToGroupMapper(icu_properties::PropertyParser::<
+                    icu_properties::props::GeneralCategoryGroup,
+                >::try_new_unstable(
+                    &provider.get_unstable()?
+                )?),
+            ))
         }
     }
 }

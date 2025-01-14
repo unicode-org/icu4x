@@ -513,7 +513,7 @@ impl CollatorOptionsBitField {
     }
 
     /// This is the BCP47 key `ks`.
-    pub fn strength(&self) -> Strength {
+    pub fn strength(self) -> Strength {
         let mut bits = self.0 & CollatorOptionsBitField::STRENGTH_MASK;
         if !(bits <= 3 || bits == 7) {
             debug_assert!(false, "Bad value for strength.");
@@ -539,7 +539,7 @@ impl CollatorOptionsBitField {
 
     /// The maximum character class that `AlternateHandling::Shifted`
     /// applies to.
-    pub fn max_variable(&self) -> MaxVariable {
+    pub fn max_variable(self) -> MaxVariable {
         // Safe, because we mask two bits and shift them to the low
         // two bits and the enum has values for 0 to 3, inclusive.
         unsafe {
@@ -564,7 +564,7 @@ impl CollatorOptionsBitField {
 
     /// Whether certain characters are moved from the primary level to
     /// the quaternary level.
-    pub fn alternate_handling(&self) -> AlternateHandling {
+    pub fn alternate_handling(self) -> AlternateHandling {
         if (self.0 & CollatorOptionsBitField::ALTERNATE_HANDLING_MASK) != 0 {
             AlternateHandling::Shifted
         } else {
@@ -587,7 +587,7 @@ impl CollatorOptionsBitField {
     }
 
     /// Whether there's a dedicated case level.
-    pub fn case_level(&self) -> bool {
+    pub fn case_level(self) -> bool {
         (self.0 & CollatorOptionsBitField::CASE_LEVEL_MASK) != 0
     }
 
@@ -623,7 +623,7 @@ impl CollatorOptionsBitField {
         }
     }
 
-    fn case_first(&self) -> CaseFirst {
+    fn case_first(self) -> CaseFirst {
         if (self.0 & CollatorOptionsBitField::CASE_FIRST_MASK) != 0 {
             if (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0 {
                 CaseFirst::UpperFirst
@@ -661,7 +661,7 @@ impl CollatorOptionsBitField {
 
     /// Whether second level compares the last accent difference
     /// instead of the first accent difference.
-    pub fn backward_second_level(&self) -> bool {
+    pub fn backward_second_level(self) -> bool {
         (self.0 & CollatorOptionsBitField::BACKWARD_SECOND_LEVEL_MASK) != 0
     }
 
@@ -696,7 +696,7 @@ impl CollatorOptionsBitField {
 
     /// Whether sequences of decimal digits are compared according
     /// to their numeric value.
-    pub fn numeric(&self) -> bool {
+    pub fn numeric(self) -> bool {
         (self.0 & CollatorOptionsBitField::NUMERIC_MASK) != 0
     }
 
@@ -728,7 +728,7 @@ impl CollatorOptionsBitField {
 
     /// If strength is <= secondary, returns `None`.
     /// Otherwise, returns the appropriate mask.
-    pub(crate) fn tertiary_mask(&self) -> Option<u16> {
+    pub(crate) fn tertiary_mask(self) -> Option<u16> {
         if self.strength() <= Strength::Secondary {
             None
         } else if (self.0
@@ -742,7 +742,7 @@ impl CollatorOptionsBitField {
     }
 
     /// Internal upper first getter
-    pub(crate) fn upper_first(&self) -> bool {
+    pub(crate) fn upper_first(self) -> bool {
         (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0
     }
 
