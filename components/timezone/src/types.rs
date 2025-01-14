@@ -4,6 +4,19 @@
 
 use crate::error::InvalidOffsetError;
 use core::str::FromStr;
+use icu_calendar::{AsCalendar, Date, Time};
+
+/// A date and time local to a specified custom time zone.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+pub struct ZonedDateTime<A: AsCalendar, Z> {
+    /// The date, local to the time zone
+    pub date: Date<A>,
+    /// The time, local to the time zone
+    pub time: Time,
+    /// The time zone
+    pub zone: Z,
+}
 
 /// An offset from Coordinated Universal Time (UTC)
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]

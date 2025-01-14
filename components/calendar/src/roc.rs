@@ -5,35 +5,20 @@
 //! This module contains types and implementations for the Republic of China calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Roc, Date, DateTime};
+//! use icu::calendar::{cal::Roc, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_roc = Date::new_from_iso(date_iso, Roc);
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_roc = DateTime::new_from_iso(datetime_iso, Roc);
-//!
-//! // `Date` checks
 //! assert_eq!(date_roc.year().era_year_or_extended(), 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
-//!
-//! // `DateTime` checks
-//! assert_eq!(datetime_roc.date.year().era_year_or_extended(), 59);
-//! assert_eq!(datetime_roc.date.month().ordinal, 1);
-//! assert_eq!(datetime_roc.date.day_of_month().0, 2);
-//! assert_eq!(datetime_roc.time.hour.number(), 13);
-//! assert_eq!(datetime_roc.time.minute.number(), 1);
-//! assert_eq!(datetime_roc.time.second.number(), 0);
 //! ```
 
 use crate::{
     calendar_arithmetic::ArithmeticDate, error::DateError, iso::IsoDateInner, types, Calendar,
-    Date, DateTime, Iso, RangeError, Time,
+    Date, Iso, RangeError,
 };
 use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
@@ -218,57 +203,6 @@ impl Date<Roc> {
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
         let iso_year = year.saturating_add(ROC_ERA_OFFSET);
         Date::try_new_iso(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
-    }
-}
-
-impl DateTime<Roc> {
-    /// Construct a new Republic of China calendar datetime from integers.
-    ///
-    /// Years are specified in the "roc" era, Before Minguo dates are negative (year 0 is 1 Before Minguo)
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    /// use tinystr::tinystr;
-    ///
-    /// // Create a new ROC DateTime
-    /// let datetime_roc = DateTime::try_new_roc(1, 2, 3, 13, 1, 0)
-    ///     .expect("Failed to initialize ROC DateTime instance.");
-    ///
-    /// assert_eq!(
-    ///     datetime_roc.date.year().standard_era().unwrap().0,
-    ///     tinystr!(16, "roc")
-    /// );
-    /// assert_eq!(
-    ///     datetime_roc.date.year().era_year_or_extended(),
-    ///     1,
-    ///     "ROC year check failed!"
-    /// );
-    /// assert_eq!(
-    ///     datetime_roc.date.month().ordinal,
-    ///     2,
-    ///     "ROC month check failed!"
-    /// );
-    /// assert_eq!(
-    ///     datetime_roc.date.day_of_month().0,
-    ///     3,
-    ///     "ROC day of month check failed!"
-    /// );
-    /// assert_eq!(datetime_roc.time.hour.number(), 13);
-    /// assert_eq!(datetime_roc.time.minute.number(), 1);
-    /// assert_eq!(datetime_roc.time.second.number(), 0);
-    /// ```
-    pub fn try_new_roc(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Roc>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_roc(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

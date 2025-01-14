@@ -391,7 +391,7 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
+/// use icu::calendar::{DateTime, Date, Time};
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
@@ -416,7 +416,7 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+/// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::try_new(12, 35, 3, 0).unwrap() };
 /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
@@ -1581,8 +1581,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{Date, DateTime, Gregorian, Time};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -1597,7 +1596,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// // Load data for the pattern and format:
     /// let datetime =
-    ///     DateTime::try_new_gregorian(2023, 12, 5, 17, 43, 12).unwrap();
+    ///     DateTime { date: Date::try_new_gregorian(2023, 12, 5).unwrap(), time: Time::try_new(17, 43, 12, 0).unwrap() };
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -1654,7 +1653,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{Date, DateTime, Time};
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
@@ -1672,7 +1671,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// // Test it with a pattern:
     /// let pattern_str = "MMM d y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+    /// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::midnight() };
     /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:

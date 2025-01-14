@@ -5,34 +5,20 @@
 //! This module contains types and implementations for the Persian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime};
+//! use icu::calendar::Date;
 //!
-//! // `Date` type
 //! let persian_date = Date::try_new_persian(1348, 10, 11)
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
-//! // `DateTime` type
-//! let persian_datetime = DateTime::try_new_persian(1348, 10, 11, 13, 1, 0)
-//!     .expect("Failed to initialize Persian DateTime instance.");
-//!
-//! // `Date` checks
 //! assert_eq!(persian_date.year().era_year_or_extended(), 1348);
 //! assert_eq!(persian_date.month().ordinal, 10);
 //! assert_eq!(persian_date.day_of_month().0, 11);
-//!
-//! // `DateTime` checks
-//! assert_eq!(persian_datetime.date.year().era_year_or_extended(), 1348);
-//! assert_eq!(persian_datetime.date.month().ordinal, 10);
-//! assert_eq!(persian_datetime.date.day_of_month().0, 11);
-//! assert_eq!(persian_datetime.time.hour.number(), 13);
-//! assert_eq!(persian_datetime.time.minute.number(), 1);
-//! assert_eq!(persian_datetime.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -42,7 +28,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// The [Persian Calendar] is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
 /// It has 12 months and other similarities to the Gregorian Calendar
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
 ///
@@ -252,37 +238,6 @@ impl Date<Persian> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
-    }
-}
-
-impl DateTime<Persian> {
-    /// Construct a new Persian datetime from integers.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_persian = DateTime::try_new_persian(474, 10, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize Persian DateTime instance.");
-    ///
-    /// assert_eq!(datetime_persian.date.year().era_year_or_extended(), 474);
-    /// assert_eq!(datetime_persian.date.month().ordinal, 10);
-    /// assert_eq!(datetime_persian.date.day_of_month().0, 11);
-    /// assert_eq!(datetime_persian.time.hour.number(), 13);
-    /// assert_eq!(datetime_persian.time.minute.number(), 1);
-    /// assert_eq!(datetime_persian.time.second.number(), 0);
-    /// ```
-    pub fn try_new_persian(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Persian>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_persian(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

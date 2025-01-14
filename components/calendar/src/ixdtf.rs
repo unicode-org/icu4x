@@ -240,7 +240,7 @@ impl DateTime<Iso> {
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date = Date::<Iso>::try_from_ixdtf_record(ixdtf_record)?;
         let time = Time::try_from_ixdtf_record(ixdtf_record)?;
-        Ok(Self::new(date, time))
+        Ok(Self { date, time })
     }
 }
 
@@ -298,8 +298,10 @@ impl<A: AsCalendar> DateTime<A> {
                 ));
             }
         }
-        let iso_datetime = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
-        let datetime = iso_datetime.to_any().to_calendar(calendar);
-        Ok(datetime)
+        let DateTime { date, time } = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
+        Ok(DateTime {
+            date: date.to_any().to_calendar(calendar),
+            time,
+        })
     }
 }

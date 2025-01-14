@@ -109,7 +109,6 @@ mod time_zone;
 mod types;
 mod windows_tz;
 mod zone_offset;
-mod zoned_datetime;
 
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
@@ -125,10 +124,9 @@ pub use provider::TimeZoneBcp47Id;
 pub use time_zone::models;
 pub use time_zone::TimeZoneInfo;
 pub use time_zone::TimeZoneModel;
-pub use types::{UtcOffset, ZoneVariant};
+pub use types::{UtcOffset, ZoneVariant, ZonedDateTime};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::{ZoneOffsetCalculator, ZoneOffsets};
-pub use zoned_datetime::CustomZonedDateTime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 pub use crate::ixdtf::ParseError;
