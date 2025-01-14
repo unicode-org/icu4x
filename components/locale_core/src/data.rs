@@ -45,8 +45,8 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
-#[derive(Clone, Default, PartialEq, Hash, Eq)]
-#[allow(clippy::exhaustive_structs)] // See #3632
+#[derive(Clone, Copy, Default, PartialEq, Hash, Eq)]
+#[non_exhaustive]
 pub struct DataLocale {
     /// Language subtag
     pub language: Language,
