@@ -21,7 +21,16 @@ use utf8_iter::Utf8CharIndices;
 pub struct WordBreakOptions<'a> {
     /// Content locale for word segmenter
     pub content_locale: Option<&'a LanguageIdentifier>,
+    /// Options independent of the locale
+    pub invariant_options: WordBreakInvariantOptions,
 }
+
+/// Locale-independent options to tailor word breaking behavior
+///
+/// Currently empty but may grow in the future
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct WordBreakInvariantOptions {}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -115,8 +124,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -126,8 +135,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -139,8 +148,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu::segmenter::WordSegmenter;
-/// # let segmenter = WordSegmenter::new_auto();
+/// # use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
 /// let segments: Vec<&str> = segmenter
@@ -161,8 +170,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu::segmenter::{WordType, WordSegmenter};
-/// # let segmenter = WordSegmenter::new_auto();
+/// # use icu::segmenter::{WordType, WordSegmenter, WordBreakInvariantOptions};
+/// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
 ///     .segment_str(text)
@@ -196,12 +205,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_auto();
+    /// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -211,7 +220,7 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_auto() -> Self {
+    pub fn new_auto(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
@@ -288,12 +297,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_lstm();
+    /// let segmenter = WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -305,7 +314,7 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm() -> Self {
+    pub fn new_lstm(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
@@ -378,12 +387,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_dictionary();
+    /// let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -392,7 +401,7 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary() -> Self {
+    pub fn new_dictionary(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
@@ -698,7 +707,7 @@ impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
 #[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
-    let segmenter = WordSegmenter::new_auto();
+    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

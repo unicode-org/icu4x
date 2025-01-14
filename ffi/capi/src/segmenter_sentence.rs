@@ -43,10 +43,13 @@ pub mod ffi {
     impl SentenceSegmenter {
         /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakInvariantOptions, Struct, hidden)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<SentenceSegmenter> {
-            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new()))
+            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new(
+                Default::default(),
+            )))
         }
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]

@@ -64,10 +64,13 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakInvariantOptions, Struct, hidden)]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_auto()))
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_auto(
+                Default::default(),
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
@@ -116,7 +119,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_lstm()))
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_lstm(
+                Default::default(),
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -164,7 +169,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_dictionary()))
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_dictionary(
+                Default::default(),
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,

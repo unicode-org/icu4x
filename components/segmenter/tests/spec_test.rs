@@ -354,7 +354,7 @@ fn run_grapheme_break_extra_test() {
 
 fn sentence_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = SentenceSegmenter::new();
+    let segmenter = SentenceSegmenter::new(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
