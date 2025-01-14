@@ -485,6 +485,7 @@ dependencies = [
  "ixdtf",
  "serde",
  "tinystr",
+ "writeable",
  "zerotrie",
  "zerovec",
 ]
@@ -811,7 +812,7 @@ version = "2.0.0-beta1"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.4.0-dev"
+version = "0.4.0"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -843,4 +844,4 @@ version = "2.0.0-beta1"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.3.0-dev"
+version = "0.3.0"

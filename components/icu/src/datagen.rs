@@ -83,12 +83,9 @@ icu_provider_registry::registry!(cb);
 
 #[test]
 fn test_markers_for_bin() {
-    let hashset = markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
-    let mut sorted = hashset.into_iter().collect::<Vec<_>>();
-    sorted.sort();
     assert_eq!(
-        sorted,
-        &[
+        markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
+        [
             crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
             crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
             crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
@@ -96,6 +93,9 @@ fn test_markers_for_bin() {
             crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
             crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
             crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
+            crate::decimal::provider::DecimalDigitsV1Marker::INFO,
         ]
+        .into_iter()
+        .collect(),
     );
 }
