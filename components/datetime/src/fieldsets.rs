@@ -593,7 +593,7 @@ macro_rules! impl_date_marker {
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = DateTime { date: Date::try_new_iso(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
+            /// let dt = DateTime { date: Date::try_new_gregorian(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
             ///
             /// assert_writeable_eq!(
             ///     fmt.format(&dt),

@@ -1581,7 +1581,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, DateTime, Gregorian, TIme};
+    /// use icu::calendar::{Date, DateTime, Gregorian, Time};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
@@ -1653,7 +1653,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
+    /// use icu::calendar::{Date, DateTime, Time};
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
@@ -1671,14 +1671,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// // Test it with a pattern:
     /// let pattern_str = "MMM d y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let date = Date::try_new_gregorian(2023, 11, 20).unwrap();
-    /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&date), "лист. 20 2023");
+    /// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::midnight() };
+    /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:
     /// let composite_names = names.with_fset::<CompositeDateTimeFieldSet>();
     ///
     /// // It should still work:
-    /// assert_try_writeable_eq!(composite_names.with_pattern_unchecked(&pattern).format(&date), "лист. 20 2023");
+    /// assert_try_writeable_eq!(composite_names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     /// ```
     ///
     /// Converting into a narrower type is not supported:
