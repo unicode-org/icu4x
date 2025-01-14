@@ -357,7 +357,7 @@ impl MonthInfo {
 }
 
 /// A struct containing various details about the position of the day within a year. It is returned
-/// by [`Calendar::day_of_year_info()`].
+/// by [`Calendar::day_of_year_info()`](crate::Calendar::day_of_year_info).
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct DayOfYearInfo {
