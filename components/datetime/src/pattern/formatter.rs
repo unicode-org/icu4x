@@ -107,7 +107,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -235,8 +235,9 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::super::*;
-    use icu_calendar::{Date, DateTime, Gregorian, Time};
+    use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
+    use icu_timezone::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]

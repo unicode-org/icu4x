@@ -3,14 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    },
-    AsCalendar, Calendar, Date, DateTime, Iso, Time,
+    types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
+    AsCalendar, Calendar, Date, Iso,
 };
 use icu_timezone::{
-    TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant, ZonedDateTime,
+    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    DateTime, Time, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
+    ZonedDateTime,
 };
 
 use super::UnstableSealed;

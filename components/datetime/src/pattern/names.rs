@@ -391,13 +391,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::{DateTime, Date, Time};
+/// use icu::calendar::Date;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
 /// use icu::datetime::pattern::WeekdayNameLength;
 /// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
+/// use icu::timezone::{DateTime, Time};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -424,14 +425,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::{Date, Time};
+/// use icu::calendar::Date;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{TimeZoneInfo, IxdtfParser};
+/// use icu::timezone::{Time, TimeZoneInfo, IxdtfParser, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -494,14 +495,13 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
-/// use icu::timezone::TimeZoneInfo;
+/// use icu::timezone::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -1483,7 +1483,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -1581,10 +1581,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, DateTime, Gregorian, Time};
+    /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -1653,12 +1654,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::{Date, DateTime, Time};
+    /// use icu::calendar::Date;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated month names:
@@ -2405,7 +2407,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: input::IsoHour,
+        hour: icu_timezone::types::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;

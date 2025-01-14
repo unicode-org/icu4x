@@ -13,9 +13,10 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::calendar::{Date, DateTime, Gregorian, Time};
+use icu::calendar::{Date, Gregorian};
 use icu::datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu::locale::locale;
+use icu::timezone::{DateTime, Time};
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {

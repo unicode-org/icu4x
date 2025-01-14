@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use crate::{types::*, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use icu_calendar::{types::*, AnyCalendarKind, Date, Iso};
 
 /// Converts Self to an `Option<T>`, either `Some(T)` if able or `None`
