@@ -8,10 +8,7 @@ use icu_segmenter::WordSegmenter;
 
 #[test]
 fn word_break_th() {
-    for segmenter in [
-        WordSegmenter::new_auto(),
-        WordSegmenter::new_lstm(),
-    ] {
+    for segmenter in [WordSegmenter::new_auto(), WordSegmenter::new_lstm()] {
         // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
         let s = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = s.encode_utf16().collect();
@@ -56,10 +53,7 @@ fn word_break_my() {
 
 #[test]
 fn word_break_hiragana() {
-    for segmenter in [
-        WordSegmenter::new_auto(),
-        WordSegmenter::new_dictionary(),
-    ] {
+    for segmenter in [WordSegmenter::new_auto(), WordSegmenter::new_dictionary()] {
         let s = "うなぎうなじ";
         let iter = segmenter.segment_str(s);
         assert_eq!(
@@ -72,10 +66,7 @@ fn word_break_hiragana() {
 
 #[test]
 fn word_break_mixed_han() {
-    for segmenter in [
-        WordSegmenter::new_auto(),
-        WordSegmenter::new_dictionary(),
-    ] {
+    for segmenter in [WordSegmenter::new_auto(), WordSegmenter::new_dictionary()] {
         let s = "Welcome龟山岛龟山岛Welcome";
         let iter = segmenter.segment_str(s);
         assert_eq!(
@@ -96,7 +87,7 @@ fn word_line_th_wikipedia_auto() {
     assert_eq!(utf16.len(), 142);
 
     let segmenter_word_auto = WordSegmenter::new_auto();
-    let segmenter_line_auto = LineSegmenter::new_auto();
+    let segmenter_line_auto = LineSegmenter::new_auto(Default::default());
 
     let breakpoints_word_utf8 = segmenter_word_auto.segment_str(text).collect::<Vec<_>>();
     assert_eq!(
