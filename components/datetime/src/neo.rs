@@ -47,7 +47,7 @@ define_preferences!(
     /// let prefs1: DateTimeFormatterPreferences = Locale::try_from_str("fr-u-ca-buddhist-hc-h12").unwrap().into();
     ///
     /// let mut prefs2 = DateTimeFormatterPreferences::default();
-    /// prefs2.locale_prefs.language = Language::try_from_str("fr").unwrap();
+    /// prefs2.locale_preferences.language = Language::try_from_str("fr").unwrap();
     /// prefs2.hour_cycle = Some(HourCycle::H12);
     /// prefs2.calendar_algorithm = Some(CalendarAlgorithm::Buddhist);
     ///

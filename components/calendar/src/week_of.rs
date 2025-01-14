@@ -49,7 +49,8 @@ impl WeekCalculator {
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {
-        let locale = DataLocale::from_preferences_locale::<WeekDataV2Marker>(prefs.locale_prefs);
+        let locale =
+            DataLocale::from_preferences_locale::<WeekDataV2Marker>(prefs.locale_preferences);
         provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

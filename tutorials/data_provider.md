@@ -47,7 +47,7 @@ let mut get_hello_world_formatter = |prefs: HelloWorldFormatterPreferences| {
     }
 
     // We failed to create the formatter. Load more data for the language and try creating the formatter a second time.
-    let loc = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
+    let loc = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_preferences);
     provider.push(SingleLocaleProvider(loc));
     HelloWorldFormatter::try_new_unstable(&provider, prefs)
         .expect("Language data should now be available")

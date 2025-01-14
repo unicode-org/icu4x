@@ -63,8 +63,9 @@ impl LongCurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
+            prefs.locale_preferences,
+        );
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
             (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
@@ -113,8 +114,9 @@ impl LongCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
+            prefs.locale_preferences,
+        );
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

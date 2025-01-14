@@ -154,8 +154,9 @@ where
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(
+            prefs.locale_preferences,
+        );
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -177,8 +178,9 @@ where
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(
+            prefs.locale_preferences,
+        );
         let essential = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

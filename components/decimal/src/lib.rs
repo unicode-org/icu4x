@@ -172,7 +172,7 @@ impl FixedDecimalFormatter {
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = DataLocale::from_preferences_locale::<provider::DecimalSymbolsV2Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
 

@@ -215,7 +215,7 @@ impl DurationFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = DataLocale::from_preferences_locale::<provider::DigitalDurationDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         let digital = crate::provider::Baked
             .load(DataRequest {
@@ -248,7 +248,7 @@ impl DurationFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = DataLocale::from_preferences_locale::<provider::DigitalDurationDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         let digital = provider
             .load(DataRequest {
