@@ -483,11 +483,12 @@ pub struct DataMarkerInfo {
     /// Useful for reading and writing data to a file system.
     pub path: DataMarkerPath,
     /// TODO
-    pub attributes_domain: &'static str,
-    /// TODO
     pub is_singleton: bool,
     /// TODO
     pub fallback_config: LocaleFallbackConfig,
+    /// TODO
+    #[cfg(feature = "export")]
+    pub attributes_domain: &'static str,
 }
 
 impl PartialOrd for DataMarkerInfo {
@@ -513,9 +514,20 @@ impl DataMarkerInfo {
     pub const fn from_path(path: DataMarkerPath) -> Self {
         Self {
             path,
-            is_singleton: false,
-            attributes_domain: "",
             fallback_config: LocaleFallbackConfig::default(),
+            is_singleton: false,
+            #[cfg(feature = "export")]
+            attributes_domain: "",
+        }
+    }
+
+    /// TODO
+    #[cfg_attr(not(feature = "export"), allow(unused_variables))]
+    pub const fn with_attributes_domain(self, attributes_domain: &'static str) -> Self {
+        Self {
+            #[cfg(feature = "export")]
+            attributes_domain,
+            ..self
         }
     }
 
