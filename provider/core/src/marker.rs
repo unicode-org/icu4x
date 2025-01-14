@@ -329,7 +329,7 @@ unsafe impl EqULE for DataMarkerPathHash {}
 #[derive(Debug, Copy, Clone, Eq)]
 pub struct DataMarkerPath {
     path: &'static str,
-    hash: [u8; 4],
+    hash: [u8; 8],
 }
 
 impl PartialEq for DataMarkerPath {
@@ -376,7 +376,7 @@ impl DataMarkerPath {
 
         Ok(Self {
             path,
-            hash,
+            hash: [b't', b'd', b'm', b'h', hash[0], hash[1], hash[2], hash[3]],
         })
     }
 
@@ -441,7 +441,8 @@ impl DataMarkerPath {
     /// ```
     #[inline]
     pub const fn hashed(self) -> DataMarkerPathHash {
-        DataMarkerPathHash(self.hash)
+        let [.., h1, h2, h3, h4] = self.hash;
+        DataMarkerPathHash([h1, h2, h3, h4])
     }
 }
 
