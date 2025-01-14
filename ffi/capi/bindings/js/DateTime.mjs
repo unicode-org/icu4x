@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X DateTime object capable of containing a date and time for any calendar.
 *
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
+*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
 */
 const DateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateTime_destroy_mv1(ptr);

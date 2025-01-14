@@ -6,14 +6,14 @@ use super::*;
 use crate::fieldsets::enums::*;
 use crate::provider::{neo::*, time_zones::tz, *};
 use icu_calendar::{
-    types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    },
-    Date, Iso, Time,
+    types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
+    Date, Iso,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{
+    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+};
 
 impl UnstableSealed for DateFieldSet {}
 

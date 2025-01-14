@@ -4,7 +4,11 @@
 
 - Components
     - `icu_provider`
-        - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952) 
+        - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952)
+    - `icu_locale`
+        - `LocaleExpander`, `LocaleDirectionality`, and `LocaleCanonicalizer` distinguish between `new_common()` and `new_extended()` constructors (unicode-org#5958)
+    - `icu_segmenter`
+        - Segmenters that can take a content locale now specify `_root()` on their default localeless constructors (unicode-org#5958)
 
 ## icu4x 2.0-beta1
 

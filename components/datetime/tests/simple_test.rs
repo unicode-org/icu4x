@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::Hebrew;
-use icu_calendar::{Date, DateTime, Time};
+use icu_calendar::Date;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
+use icu_timezone::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[

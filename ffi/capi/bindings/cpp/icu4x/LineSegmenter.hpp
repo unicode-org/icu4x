@@ -25,18 +25,9 @@ namespace capi {
     
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_auto_mv1(void);
     
-    typedef struct icu4x_LineSegmenter_create_auto_with_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_auto_with_provider_mv1_result;
-    icu4x_LineSegmenter_create_auto_with_provider_mv1_result icu4x_LineSegmenter_create_auto_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_lstm_mv1(void);
     
-    typedef struct icu4x_LineSegmenter_create_lstm_with_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_lstm_with_provider_mv1_result;
-    icu4x_LineSegmenter_create_lstm_with_provider_mv1_result icu4x_LineSegmenter_create_lstm_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_dictionary_mv1(void);
-    
-    typedef struct icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result;
-    icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result icu4x_LineSegmenter_create_dictionary_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_auto_with_options_v2_mv1(const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
     
@@ -71,19 +62,9 @@ inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_auto()
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_auto_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_auto_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
 inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_lstm() {
   auto result = icu4x::capi::icu4x_LineSegmenter_create_lstm_mv1();
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_lstm_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_lstm_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_dictionary() {
@@ -91,46 +72,41 @@ inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_dictio
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_dictionary_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_dictionary_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_auto_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_auto_with_options_v2_mv1(content_locale.AsFFI(),
+inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_auto_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
+  auto result = icu4x::capi::icu4x_LineSegmenter_create_auto_with_options_v2_mv1(content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_auto_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
+inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_auto_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
   auto result = icu4x::capi::icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(provider.AsFFI(),
-    content_locale.AsFFI(),
+    content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_lstm_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(content_locale.AsFFI(),
+inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_lstm_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
+  auto result = icu4x::capi::icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_lstm_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
+inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_lstm_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
   auto result = icu4x::capi::icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(provider.AsFFI(),
-    content_locale.AsFFI(),
+    content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_dictionary_with_options_v2(const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
-  auto result = icu4x::capi::icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(content_locale.AsFFI(),
+inline std::unique_ptr<icu4x::LineSegmenter> icu4x::LineSegmenter::create_dictionary_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
+  auto result = icu4x::capi::icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_dictionary_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& content_locale, icu4x::LineBreakOptionsV2 options) {
+inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> icu4x::LineSegmenter::create_dictionary_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options) {
   auto result = icu4x::capi::icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(provider.AsFFI(),
-    content_locale.AsFFI(),
+    content_locale ? content_locale->AsFFI() : nullptr,
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LineSegmenter>>(std::unique_ptr<icu4x::LineSegmenter>(icu4x::LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }

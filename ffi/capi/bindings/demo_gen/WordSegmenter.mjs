@@ -6,13 +6,13 @@ export default {
 			var segmenter;
 			switch (model) {
 				case "Auto":
-					segmenter = lib.WordSegmenter.createAuto();
+					segmenter = lib.WordSegmenter.createRootAuto();
 					break;
 				case "LSTM":
-					segmenter = lib.WordSegmenter.createLstm();
+					segmenter = lib.WordSegmenter.createRootLstm();
 					break;
 				case "Dictionary":
-					segmenter = lib.WordSegmenter.createDictionary();
+					segmenter = lib.WordSegmenter.createRootDictionary();
 			}
 			
 			let last = 0;

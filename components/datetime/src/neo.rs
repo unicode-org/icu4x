@@ -344,7 +344,7 @@ where
     /// A time cannot be passed into the formatter when a date is expected:
     ///
     /// ```compile_fail,E0277
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
@@ -576,7 +576,7 @@ where
     /// A time cannot be passed into the formatter when a date is expected:
     ///
     /// ```compile_fail,E0277
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
@@ -636,7 +636,7 @@ where
     /// A time cannot be passed into the formatter when a date is expected:
     ///
     /// ```compile_fail,E0277
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;

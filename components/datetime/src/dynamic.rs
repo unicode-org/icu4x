@@ -28,11 +28,12 @@
 //! Format with the time display depending on a runtime boolean:
 //!
 //! ```
-//! use icu::calendar::{Date, DateTime, Time};
+//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
+//! use icu::timezone::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {

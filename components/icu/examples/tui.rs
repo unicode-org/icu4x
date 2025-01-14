@@ -5,14 +5,14 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-use icu::calendar::{Date, Gregorian, Time};
+use icu::calendar::{Date, Gregorian};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::fieldsets::YMDT;
 use icu_datetime::FixedCalendarDateTimeFormatter;
-use icu_timezone::ZonedDateTime;
+use icu_timezone::{Time, ZonedDateTime};
 use std::env;
 
 fn main() {

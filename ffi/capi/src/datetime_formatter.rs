@@ -162,7 +162,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime {
+            let greg = icu_timezone::DateTime {
                 date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
                 time: value.0.time,
             };
@@ -221,7 +221,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime {
+            let greg = icu_timezone::DateTime {
                 date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
                 time: value.0.time,
             };
@@ -313,7 +313,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = icu_calendar::DateTime {
+            let any = icu_timezone::DateTime {
                 date: value.0.date.to_any(),
                 time: value.0.time,
             };
@@ -388,7 +388,7 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = icu_calendar::DateTime {
+            let any = icu_timezone::DateTime {
                 date: value.0.date.to_any(),
                 time: value.0.time,
             };

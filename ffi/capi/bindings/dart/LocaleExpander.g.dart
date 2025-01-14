@@ -26,19 +26,19 @@ final class LocaleExpander implements ffi.Finalizable {
 
   /// Create a new [`LocaleExpander`] using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
   factory LocaleExpander() {
-    final result = _icu4x_LocaleExpander_create_mv1();
+    final result = _icu4x_LocaleExpander_create_common_mv1();
     return LocaleExpander._fromFfi(result, []);
   }
 
-  /// Create a new [`LocaleExpander`] using a particular data source.
+  /// Create a new [`LocaleExpander`] using a new_common data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleExpander.withProvider(DataProvider provider) {
-    final result = _icu4x_LocaleExpander_create_with_provider_mv1(provider._ffi);
+    final result = _icu4x_LocaleExpander_create_common_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -91,14 +91,14 @@ final class LocaleExpander implements ffi.Finalizable {
 external void _icu4x_LocaleExpander_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_common_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LocaleExpander_create_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleExpander_create_common_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_common_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleExpander_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleExpander_create_common_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_extended_mv1')

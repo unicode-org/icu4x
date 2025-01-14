@@ -25,7 +25,7 @@ final class WordSegmenter implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WordSegmenter_destroy_mv1));
 
   /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
-  /// or dictionary payload data, using compiled data.
+  /// or dictionary payload data, using compiled data. This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
@@ -37,29 +37,12 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 
   /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
-  /// or dictionary payload data, using a particular data source.
-  ///
-  /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
-  /// Khmer, Lao, and Thai.
-  ///
-  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory WordSegmenter.autoWithProvider(DataProvider provider) {
-    final result = _icu4x_WordSegmenter_create_auto_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return WordSegmenter._fromFfi(result.union.ok, []);
-  }
-
-  /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
   /// or dictionary payload data, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_with_options) for more information.
+  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.autoWithContentLocale(Locale locale) {
@@ -76,7 +59,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_with_options) for more information.
+  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.autoWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -88,7 +71,7 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 
   /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
-  /// Thai, using compiled data.
+  /// Thai, using compiled data.  This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
@@ -100,29 +83,12 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 
   /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
-  /// Thai, using a particular data source.
-  ///
-  /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
-  /// Khmer, Lao, and Thai.
-  ///
-  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory WordSegmenter.lstmWithProvider(DataProvider provider) {
-    final result = _icu4x_WordSegmenter_create_lstm_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return WordSegmenter._fromFfi(result.union.ok, []);
-  }
-
-  /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
   /// Thai, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_with_options) for more information.
+  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.lstmWithContentLocale(Locale locale) {
@@ -139,7 +105,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_with_options) for more information.
+  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.lstmWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -151,7 +117,7 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 
   /// Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
-  /// Burmese, Khmer, Lao, and Thai, using compiled data.
+  /// Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
@@ -163,29 +129,12 @@ final class WordSegmenter implements ffi.Finalizable {
   }
 
   /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
-  /// Burmese, Khmer, Lao, and Thai, using a particular data source.
-  ///
-  /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
-  /// Khmer, Lao, and Thai.
-  ///
-  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory WordSegmenter.dictionaryWithProvider(DataProvider provider) {
-    final result = _icu4x_WordSegmenter_create_dictionary_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return WordSegmenter._fromFfi(result.union.ok, []);
-  }
-
-  /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_with_options) for more information.
+  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.dictionaryWithContentLocale(Locale locale) {
@@ -202,7 +151,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_with_options) for more information.
+  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.dictionaryWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -239,11 +188,6 @@ external void _icu4x_WordSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_create_auto_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_auto_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_auto_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
-
-@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_auto_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_auto_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
@@ -259,11 +203,6 @@ external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_auto_with_content_locale
 external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_create_lstm_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_lstm_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
-
-@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_lstm_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
@@ -277,11 +216,6 @@ external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_with_content_locale
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_dictionary_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_create_dictionary_mv1();
-
-@meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_dictionary_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1')

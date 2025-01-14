@@ -2,11 +2,11 @@
 
 <!-- cargo-rdme start -->
 
-Types for dealing with dates, times, and custom calendars.
+Types for dealing with dates and custom calendars.
 
 This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
-The [`types`] module has a lot of common types for dealing with dates and times.
+The [`types`] module has a lot of common types for dealing with dates.
 
 [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 can represent dates for arbitrary calendars.
@@ -14,7 +14,7 @@ can represent dates for arbitrary calendars.
 The [`Iso`] and [`Gregorian`] types are implementations for the ISO and
 Gregorian calendars respectively. Further calendars can be found in the [`cal`] module.
 
-Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
+Most interaction with this crate will be done via the [`Date`] type.
 
 Some of the algorithms implemented here are based on
 Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.

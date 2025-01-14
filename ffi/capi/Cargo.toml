@@ -77,7 +77,7 @@ default_components = [
     "timezone"
 ]
 
-calendar = ["dep:icu_calendar"]
+calendar = ["dep:icu_calendar", "dep:icu_timezone"]
 casemap = ["dep:icu_casemap"]
 collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties

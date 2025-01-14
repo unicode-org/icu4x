@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{ZoneOffsetPeriodV1Marker, EPOCH};
-use crate::{TimeZoneBcp47Id, UtcOffset};
+use crate::{Time, TimeZoneBcp47Id, UtcOffset};
+use icu_calendar::Date;
 use icu_calendar::Iso;
-use icu_calendar::{Date, Time};
 use icu_provider::prelude::*;
 
 /// [`ZoneOffsetCalculator`] uses data from the [data provider] to calculate time zone offsets.
@@ -64,7 +64,8 @@ impl ZoneOffsetCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
+    /// use icu::calendar::Date;
+    /// use icu::timezone::Time;
     /// use icu::timezone::TimeZoneBcp47Id;
     /// use icu::timezone::UtcOffset;
     /// use icu::timezone::ZoneOffsetCalculator;

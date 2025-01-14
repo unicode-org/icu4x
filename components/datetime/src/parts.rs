@@ -8,7 +8,7 @@
 //!
 //! ```
 //! use icu::calendar::Gregorian;
-//! use icu::calendar::{Date, Time};
+//! use icu::calendar::Date;
 //! use icu::datetime::parts as datetime_parts;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::options::FractionalSecondDigits;
@@ -16,7 +16,7 @@
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
-//! use icu::timezone::IxdtfParser;
+//! use icu::timezone::{IxdtfParser, Time};
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(

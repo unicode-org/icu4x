@@ -64,13 +64,14 @@ use crate::{
 };
 use enums::*;
 use icu_calendar::{
-    types::{
-        DayOfMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond, YearInfo,
-    },
-    Date, Iso, Time,
+    types::{DayOfMonth, IsoWeekday, MonthInfo, YearInfo},
+    Date, Iso,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{
+    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+};
 
 /// 🚧 \[Experimental\] Types for dealing with serialization of semantic skeletons.
 ///
@@ -559,10 +560,11 @@ macro_rules! impl_date_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::{DateTime, Date, Time};
+            /// use icu::calendar::Date;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
+            /// use icu::timezone::{DateTime, Time};
             /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
@@ -581,11 +583,12 @@ macro_rules! impl_date_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::{DateTime, Date, Time};
+            /// use icu::calendar::Date;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
+            /// use icu::timezone::{DateTime, Time};
             /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::try_new(")]
@@ -750,7 +753,7 @@ macro_rules! impl_time_marker {
             /// # Examples
             ///
             /// ```
-            /// use icu::calendar::Time;
+            /// use icu::timezone::Time;
             /// use icu::datetime::TimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -860,8 +863,8 @@ macro_rules! impl_zone_marker {
             /// # Examples
             ///
             /// ```
-            /// use icu::calendar::{Date, Time};
-            /// use icu::timezone::{TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+            /// use icu::calendar::Date;
+            /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
             /// use icu::datetime::TimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -1085,7 +1088,7 @@ impl_time_marker!(
     /// or [`DateTimeFormatterPreferences`].
     ///
     /// ```
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
@@ -1138,7 +1141,7 @@ impl_time_marker!(
     /// Hour cycles `h11` and `h24` are supported, too:
     ///
     /// ```
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
@@ -1184,8 +1187,8 @@ impl_zone_marker!(
     /// to the location format for long lengths:
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::calendar::Date;
+    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{Z, Zs};
@@ -1227,11 +1230,11 @@ impl_zone_marker!(
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail,E0271
-    /// use icu::calendar::{DateTime, Date, Iso, Time};
+    /// use icu::calendar::{Date, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::Z;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use writeable::assert_writeable_eq;
     ///
@@ -1269,11 +1272,11 @@ impl_zone_marker!(
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail,E0271
-    /// use icu::calendar::{Date, DateTime, Iso, Time};
+    /// use icu::calendar::{Date, Iso};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::T;
     /// use icu::locale::locale;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use writeable::assert_writeable_eq;
     ///
@@ -1308,10 +1311,10 @@ impl_zone_marker!(
     /// All shapes of time zones can be formatted with this style.
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
+    /// use icu::calendar::Date;
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::O;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -1374,8 +1377,8 @@ impl_zone_marker!(
     /// When a display name is unavailable, falls back to the location format:
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::calendar::Date;
+    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
@@ -1403,8 +1406,8 @@ impl_zone_marker!(
     /// Can also fall back to the UTC offset:
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
+    /// use icu::calendar::Date;
+    /// use icu::timezone::{Time, TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
     /// use icu::datetime::DateTimeWriteError;

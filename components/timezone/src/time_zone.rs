@@ -4,8 +4,8 @@
 
 use core::fmt;
 
-use crate::{scaffold::IntoOption, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-use icu_calendar::{Date, Iso, Time};
+use crate::{scaffold::IntoOption, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_calendar::{Date, Iso};
 
 mod private {
     pub trait Sealed {}
