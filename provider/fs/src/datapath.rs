@@ -8,16 +8,16 @@ use std::sync::OnceLock;
 
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
-        pub(crate) fn get_data_marker_path(marker: DataMarkerPath) -> Option<&'static str> {
-            static LOOKUP: OnceLock<HashMap<DataMarkerPathHash, &'static str>> = OnceLock::new();
+        pub(crate) fn get_data_marker_id(marker: DataMarkerId) -> Option<&'static str> {
+            static LOOKUP: OnceLock<HashMap<DataMarkerIdHash, &'static str>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
-                    (data_marker_path!("core/helloworld@1").hashed(), "core/helloworld@1"),
+                    (data_marker_id!("core/helloworld@1").hashed(), "core/helloworld@1"),
                     $(
-                        (data_marker_path!($path).hashed(), $path),
+                        (data_marker_id!($path).hashed(), $path),
                     )+
                     $(
-                        (data_marker_path!($epath).hashed(), $epath),
+                        (data_marker_id!($epath).hashed(), $epath),
                     )+
                 ]
                 .into_iter()
@@ -32,7 +32,7 @@ icu_provider_registry::registry!(cb);
 #[test]
 fn test_path_to_string() {
     assert_eq!(
-        get_data_marker_path(data_marker_path!("core/helloworld@1")).unwrap(),
+        get_data_marker_id(data_marker_id!("core/helloworld@1")).unwrap(),
         "core/helloworld@1"
     );
 }

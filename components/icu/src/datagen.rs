@@ -36,15 +36,15 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_path!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (icu_provider::marker::data_marker_id!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
                     $(
-                        (icu_provider::marker::data_marker_path!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (icu_provider::marker::data_marker_path!($epath).hashed().to_bytes(), Ok(<$emarker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Ok(<$emarker>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (icu_provider::marker::data_marker_path!($epath).hashed().to_bytes(), Err($epath)),
+                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Err($epath)),
                     )+
 
                 ]

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::serializers::AbstractSerializer;
-use crate::datapath::get_data_marker_path;
+use crate::datapath::get_data_marker_id;
 use crate::manifest::Manifest;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -106,7 +106,7 @@ impl DataExporter for FilesystemExporter {
         id: DataIdentifierBorrowed,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_path(marker.path) else {
+        let Some(path) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
         let mut path_buf = self.root.join(path);
@@ -149,7 +149,7 @@ impl DataExporter for FilesystemExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_path(marker.path) else {
+        let Some(path) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
         let mut path_buf = self.root.join(path);

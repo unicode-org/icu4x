@@ -7,7 +7,7 @@
 
 use crate::blob_schema::*;
 use icu_provider::export::*;
-use icu_provider::{marker::DataMarkerPathHash, prelude::*};
+use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -23,9 +23,9 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 pub struct BlobExporter<'w> {
     /// Map of marker path hash -> locale byte string -> blob ID
     #[allow(clippy::type_complexity)]
-    resources: Mutex<BTreeMap<DataMarkerPathHash, BTreeMap<Vec<u8>, usize>>>,
+    resources: Mutex<BTreeMap<DataMarkerIdHash, BTreeMap<Vec<u8>, usize>>>,
     // All seen markers
-    all_markers: Mutex<BTreeSet<DataMarkerPathHash>>,
+    all_markers: Mutex<BTreeSet<DataMarkerIdHash>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
@@ -81,7 +81,7 @@ impl DataExporter for BlobExporter<'_> {
         self.resources
             .lock()
             .expect("poison")
-            .entry(marker.path.hashed())
+            .entry(marker.id.hashed())
             .or_default()
             .entry({
                 let mut key = id.locale.to_string();
@@ -99,7 +99,7 @@ impl DataExporter for BlobExporter<'_> {
         self.all_markers
             .lock()
             .expect("poison")
-            .insert(marker.path.hashed());
+            .insert(marker.id.hashed());
         Ok(())
     }
 
@@ -150,7 +150,7 @@ impl BlobExporter<'_> {
         let all_markers = self.all_markers.lock().expect("poison");
         let resources = self.resources.lock().expect("poison");
 
-        let markers: ZeroVec<DataMarkerPathHash> = all_markers.iter().copied().collect();
+        let markers: ZeroVec<DataMarkerIdHash> = all_markers.iter().copied().collect();
 
         let locales_vec: Vec<Vec<u8>> = all_markers
             .iter()

@@ -744,9 +744,9 @@ impl DataExporter for BakedExporter {
                         #maybe_msrv
                         impl icu_provider::any::AnyProvider for $provider {
                             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                match marker.path.hashed() {
+                                match marker.id.hashed() {
                                     #(
-                                        h if h == <#marker_bakes as icu_provider::DataMarker>::INFO.path.hashed() =>
+                                        h if h == <#marker_bakes as icu_provider::DataMarker>::INFO.id.hashed() =>
                                             icu_provider::DataProvider::<#marker_bakes>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*
                                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
@@ -781,12 +781,12 @@ impl DataExporter for BakedExporter {
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if marker.path == icu_provider::hello_world::HelloWorldV1Marker::INFO.path {
+            if marker.id == icu_provider::hello_world::HelloWorldV1Marker::INFO.id {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
             }
 
             $(
-                if marker.path == icu_provider::marker::data_marker_path!($path) {
+                if marker.id == icu_provider::marker::data_marker_id!($path) {
                     return stringify!($marker)
                         .replace("icu :: ", "icu_")
                         .parse()
@@ -795,7 +795,7 @@ macro_rules! cb {
             )+
 
             $(
-                if marker.path == icu_provider::marker::data_marker_path!($epath) {
+                if marker.id == icu_provider::marker::data_marker_id!($epath) {
                     return stringify!($emarker)
                         .replace("icu :: ", "icu_")
                         .parse()

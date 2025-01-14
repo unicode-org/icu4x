@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::datapath::get_data_marker_path;
+use crate::datapath::get_data_marker_id;
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
 use icu_provider::DynamicDryDataProvider;
@@ -69,7 +69,7 @@ impl FsDataProvider {
         if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
-        let Some(path) = get_data_marker_path(marker.path) else {
+        let Some(path) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         };
         let mut path = self.root.join(path);
