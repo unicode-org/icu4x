@@ -101,14 +101,14 @@ export class DateTime {
         finally {}
     }
 
-    static fromString(v) {
+    static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
+        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

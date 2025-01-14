@@ -36,7 +36,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
@@ -63,9 +63,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
-///     .unwrap()
-///     .to_calendar(Gregorian);
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", Gregorian)
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -91,7 +90,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
@@ -117,9 +116,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_iso_from_str("2024-10-18T15:44-0700[America/Los_Angeles]")
-///     .unwrap()
-///     .to_calendar(Gregorian);
+///     .try_from_str("2024-10-18T15:44-0700[America/Los_Angeles]", Gregorian)
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
