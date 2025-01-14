@@ -751,9 +751,6 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
-icu::timezone::ZonedDateTime#Struct
-icu::timezone::ZonedDateTime::to_calendar#FnInStruct
-icu::timezone::ZonedDateTime::to_iso#FnInStruct
 icu::timezone::IxdtfParser#Struct
 icu::timezone::IxdtfParser::new#FnInStruct
 icu::timezone::IxdtfParser::try_from_str#FnInStruct
@@ -791,6 +788,7 @@ icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
 icu::timezone::ZoneOffsets#Struct
 icu::timezone::ZoneVariant::into_option#FnInEnum
+icu::timezone::ZonedDateTime#Struct
 icu::timezone::models::AtTime#Enum
 icu::timezone::models::Base#Enum
 icu::timezone::models::Full#Enum
