@@ -25,8 +25,8 @@ The formatters accept input types from the [`calendar`](icu_calendar) and
 [`timezone`](icu_timezone) crates:
 
 1. [`Date`](icu_calendar::Date)
-2. [`DateTime`](icu_timezone::DateTime)
-3. [`Time`](icu_timezone::Time)
+2. [`DateTime`](icu_calendar::DateTime)
+3. [`Time`](icu_calendar::Time)
 4. [`UtcOffset`](icu_timezone::UtcOffset)
 5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 6. [`ZonedDateTime`](icu_timezone::ZonedDateTime)
@@ -49,11 +49,10 @@ If formatting times and time zones without dates, consider using [`TimeFormatter
 ## Examples
 
 ```rust
-use icu::calendar::Date;
+use icu::calendar::{Date, DateTime, Time};
 use icu::datetime::fieldsets;
 use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};
-use icu::timezone::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 // Field set for year, month, day, hour, and minute with a medium length:
