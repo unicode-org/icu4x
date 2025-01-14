@@ -210,6 +210,8 @@ impl DataLocale {
     }
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
+    ///
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
     pub fn total_cmp(&self, other: &Self) -> Ordering {
         self.as_tuple().cmp(&other.as_tuple())
     }

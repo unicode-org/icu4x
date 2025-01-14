@@ -92,7 +92,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     pub fn into_owned(self) -> DataIdentifierCow<'static> {
         DataIdentifierCow {
             marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
-            locale: Cow::Owned(self.locale.clone()),
+            locale: *self.locale,
         }
     }
 
@@ -100,7 +100,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     pub fn as_cow(self) -> DataIdentifierCow<'a> {
         DataIdentifierCow {
             marker_attributes: Cow::Borrowed(self.marker_attributes),
-            locale: Cow::Borrowed(self.locale),
+            locale: *self.locale,
         }
     }
 }
@@ -114,7 +114,7 @@ pub struct DataIdentifierCow<'a> {
     /// Marker-specific request attributes
     pub marker_attributes: Cow<'a, DataMarkerAttributes>,
     /// The CLDR locale
-    pub locale: Cow<'a, DataLocale>,
+    pub locale: DataLocale,
 }
 
 impl PartialOrd for DataIdentifierCow<'_> {
@@ -133,7 +133,7 @@ impl Ord for DataIdentifierCow<'_> {
 
 impl fmt::Display for DataIdentifierCow<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&*self.locale, f)?;
+        fmt::Display::fmt(&self.locale, f)?;
         if !self.marker_attributes.is_empty() {
             write!(f, "/{}", self.marker_attributes.as_str())?;
         }
@@ -154,7 +154,7 @@ impl<'a> DataIdentifierCow<'a> {
     pub fn from_locale(locale: DataLocale) -> Self {
         Self {
             marker_attributes: Cow::Borrowed(DataMarkerAttributes::empty()),
-            locale: Cow::Owned(locale),
+            locale,
         }
     }
 
@@ -162,7 +162,7 @@ impl<'a> DataIdentifierCow<'a> {
     pub fn from_marker_attributes(marker_attributes: &'a DataMarkerAttributes) -> Self {
         Self {
             marker_attributes: Cow::Borrowed(marker_attributes),
-            locale: Cow::Borrowed(Default::default()),
+            locale: Default::default(),
         }
     }
 
@@ -170,7 +170,7 @@ impl<'a> DataIdentifierCow<'a> {
     pub fn from_marker_attributes_owned(marker_attributes: Box<DataMarkerAttributes>) -> Self {
         Self {
             marker_attributes: Cow::Owned(marker_attributes),
-            locale: Cow::Borrowed(Default::default()),
+            locale: Default::default(),
         }
     }
 
@@ -178,7 +178,7 @@ impl<'a> DataIdentifierCow<'a> {
     pub fn from_owned(marker_attributes: Box<DataMarkerAttributes>, locale: DataLocale) -> Self {
         Self {
             marker_attributes: Cow::Owned(marker_attributes),
-            locale: Cow::Owned(locale),
+            locale,
         }
     }
 
@@ -189,7 +189,7 @@ impl<'a> DataIdentifierCow<'a> {
     ) -> Self {
         Self {
             marker_attributes: Cow::Borrowed(marker_attributes),
-            locale: Cow::Owned(locale),
+            locale,
         }
     }
 
@@ -203,7 +203,7 @@ impl Default for DataIdentifierCow<'_> {
     fn default() -> Self {
         Self {
             marker_attributes: Cow::Borrowed(Default::default()),
-            locale: Cow::Borrowed(Default::default()),
+            locale: Default::default(),
         }
     }
 }
