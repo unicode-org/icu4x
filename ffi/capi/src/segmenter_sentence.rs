@@ -42,20 +42,14 @@ pub mod ffi {
 
     impl SentenceSegmenter {
         /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new_root, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_root() -> Box<SentenceSegmenter> {
-            Box::new(SentenceSegmenter(
-                icu_segmenter::SentenceSegmenter::new_root(),
-            ))
+        pub fn create() -> Box<SentenceSegmenter> {
+            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new()))
         }
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceSegmenter::try_new_with_options,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale")]
         #[cfg(feature = "compiled_data")]
@@ -63,16 +57,12 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
             Ok(Box::new(SentenceSegmenter(
-                icu_segmenter::SentenceSegmenter::try_new_with_options(locale.into())?,
+                icu_segmenter::SentenceSegmenter::try_new(locale.into())?,
             )))
         }
 
         /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceSegmenter::try_new_with_options,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_content_locale_and_provider(
@@ -80,7 +70,7 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
             Ok(Box::new(SentenceSegmenter(
-                icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider(
+                icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider(
                     provider.get()?,
                     locale.into(),
                 )?,
