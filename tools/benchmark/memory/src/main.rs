@@ -102,8 +102,6 @@ fn main() {
             .arg("bench-memory")
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("bench")
             .status()
             .unwrap_or_else(|err| {
                 eprintln!("Failed to collect examples {err:?}");
@@ -164,8 +162,6 @@ fn main() {
             // icu_benchmark_macros package.
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("bench")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {

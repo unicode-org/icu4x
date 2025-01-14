@@ -60,8 +60,6 @@ serde = ["dep:serde"]
 databake = ["dep:databake"]
 
 [package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 # We have tons of features here, limit the amount of tests we run
 max_combination_size = 3
 
