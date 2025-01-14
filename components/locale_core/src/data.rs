@@ -61,27 +61,6 @@ pub struct DataLocale {
 }
 
 impl DataLocale {
-    #[doc(hidden)]
-    pub fn as_tuple(
-        &self,
-    ) -> (
-        Language,
-        Option<Script>,
-        Option<Region>,
-        Option<Variant>,
-        Option<Subtag>,
-    ) {
-        (
-            self.language,
-            self.script,
-            self.region,
-            self.variant,
-            self.subdivision,
-        )
-    }
-}
-
-impl DataLocale {
     /// `const` version of `Default::default`
     pub const fn default() -> Self {
         DataLocale {
@@ -210,6 +189,29 @@ impl DataLocale {
             f(subdivision.as_str())?;
         }
         Ok(())
+    }
+
+    fn as_tuple(
+        &self,
+    ) -> (
+        Language,
+        Option<Script>,
+        Option<Region>,
+        Option<Variant>,
+        Option<Subtag>,
+    ) {
+        (
+            self.language,
+            self.script,
+            self.region,
+            self.variant,
+            self.subdivision,
+        )
+    }
+
+    /// Returns an ordering suitable for use in [`BTreeSet`].
+    pub fn total_cmp(&self, other: &Self) -> Ordering {
+        self.as_tuple().cmp(&other.as_tuple())
     }
 
     /// Compare this [`DataLocale`] with BCP-47 bytes.

@@ -125,8 +125,9 @@ impl PartialOrd for DataIdentifierCow<'_> {
 
 impl Ord for DataIdentifierCow<'_> {
     fn cmp(&self, other: &Self) -> Ordering {
-        (&self.marker_attributes, self.locale.as_tuple())
-            .cmp(&(&other.marker_attributes, other.locale.as_tuple()))
+        self.marker_attributes
+            .cmp(&other.marker_attributes)
+            .then_with(|| self.locale.total_cmp(&other.locale))
     }
 }
 

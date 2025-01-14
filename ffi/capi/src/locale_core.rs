@@ -178,6 +178,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
         #[diplomat::rust_link(icu::locale::DataLocale::strict_cmp, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::total_cmp, FnInStruct, hidden)]
         #[diplomat::attr(auto, comparison)]
         pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
