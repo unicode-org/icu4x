@@ -147,28 +147,7 @@ impl LocalePreferences {
     pub const fn language(&self) -> Language {
         self.language
     }
-    /// Preference of Script
-    pub const fn script(&self) -> Option<Script> {
-        self.script
-    }
-    /// Preference of Region
-    pub const fn region(&self) -> Option<Region> {
-        self.region
-    }
 
-    /// Preference of Variant
-    pub const fn variant(&self) -> Option<Variant> {
-        self.variant
-    }
-
-    /// Preference of Regional Subdivision
-    pub const fn subdivision(&self) -> Option<Subtag> {
-        self.subdivision
-    }
-    /// Preference of Unicode Extension Region
-    pub const fn ue_region(&self) -> Option<Region> {
-        self.ue_region
-    }
     /// Extends the preferences with the values from another set of preferences.
     pub fn extend(&mut self, other: LocalePreferences) {
         if !other.language.is_default() {
